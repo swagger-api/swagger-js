@@ -2,9 +2,6 @@ window.context = window.describe
 window.xcontext = window.xdescribe
 
 describe 'SwaggeringApi', ->
-
-  it "knows truth", ->
-    expect(true).toBe(true)
   
   describe 'initialization', ->
 
@@ -58,11 +55,9 @@ describe 'SwaggeringApi', ->
     
       beforeEach ->
         window.wordnik = new SwaggeringApi
-          debug: true
         wordnik.build()
-
         waitsFor ->
-          wordnik.resources.length > 0 and wordnik.basePath?
+          wordnik.isReady()
     
       it "fetchs a list of resources", ->
         runs ->
@@ -71,19 +66,25 @@ describe 'SwaggeringApi', ->
       it "sets basePath", ->
         runs ->
           expect(wordnik.basePath).toBe("http://api.wordnik.com/v4")
+          
+      # it "creates named references to its resources", ->
+      #   runs ->
+      #     expect(wordnik.words).toBeDefined()
+          
+describe 'resource', ->
 
   describe 'descriptionUrl()', ->
-    
-      beforeEach ->
-        window.wordnik = new SwaggeringApi
-          debug: true
-        wordnik.build()
-
-        waitsFor ->
-          wordnik.resources.length > 0 and wordnik.basePath?
-    
-      it "replaces {format} with json", ->
-        runs ->
-          resource = wordnik.resources[0]
-          expect(resource.descriptionUrl()).toMatch(/\.json$/)
-
+  
+    beforeEach ->
+      window.wordnik = new SwaggeringApi()
+      wordnik.build()
+      waitsFor ->
+        wordnik.isReady()
+        
+    it "replaces {format} with json", ->
+      runs ->
+        resource = wordnik.resources[0]
+        expect(resource.descriptionUrl()).toMatch(/\.json$/)
+        
+    # it "", ->
+    #   expect('pending').toEqual('completed') 
