@@ -1,8 +1,7 @@
-class SwaggeringApi
+class Api
   discoveryUrl: "http://api.wordnik.com/v4/resources.json"
   debug: false
   format: "json"
-  resources: []
   api_key: null
   basePath: null
   
@@ -19,7 +18,7 @@ class SwaggeringApi
       @resources = for resource in response.apis
         new Resource resource.path, resource.description, this
   
-  # SwaggeringApis are ready when all their resources are ready
+  # Apis are ready when all their resources are ready
   isReady: ->
     return false unless @resources?
     return false unless @resources.length > 0
@@ -28,66 +27,80 @@ class SwaggeringApi
     true
         
 class Resource
-  operations = []
-  
+
   constructor: (@path, @description, @api) ->
-    $.getJSON @descriptionUrl(), (response) =>
+    @operations = []
+    
+    $.getJSON @url(), (response) =>
       @basePath = response.basePath
 
       # Instantiate Operations
       if response.apis
         for endpoint in response.apis
           if endpoint.operations
-            @operations = for o in endpoint.operations
-              new Operation o.nickname, o.path, o.httpMethod, o.parameters, o.summary, this
-              
+            for o in endpoint.operations
+              @operations.push(new Operation o.nickname, o.path, o.httpMethod, o.parameters, o.summary, this)
+
+      # Store a named reference to this resource on the parent object
+      @api[this.name()] = this
+
       # Mark as ready
       @ready = true
 
-  descriptionUrl: ->
+  # e.g."http://api.wordnik.com/v4/word.json"
+  url: ->
     @api.basePath + @path.replace('{format}', @api.format)
+  
+  # Extract name from path
+  # '/foo/dogs.format' -> 'dogs'
+  name: ->
+    parts = @path.split("/")
+    parts[parts.length - 1].replace('.{format}', '')
 
 class Operation
 
   constructor: (@nickname, @path, @httpMethod, @parameters, @summary, @resource) ->
+    
+    # Store a named reference to this operation on the parent resource
+    @resource[@nickname] = this
 
-  # run: (args) =>
-  # 
-  #   $.ajax
-  #     type: this.httpMethod
-  #     url: @argsToUrl(args)
-  #     # data: {}
-  #     dataType: 'json'
-  #     # headers:
-  #     #   api_key: window.swagger.api_key
-  #     error: (xhr, textStatus, error) ->
-  #       console.log 'ajax.error', error
-  #     success: (data) ->
-  #       console.log 'ajax.success', data
-  #       
-  # argsToUrl: (args) ->
-  # 
-  #   url = @resource.basePath + @path
-  # 
-  #   # Iterate over allowable params, interpolating the 'path' params into the url string.
-  #   # Whatever's left over in the args object will become the query string
-  #   for param in @parameters
-  #     if param.paramType == 'path' and args[param.name]
-  #       url = url.replace("{#{param.name}}", args[param.name])
-  #       delete args[param.name]
-  #   
-  #   # Stick the API key in the query string object
-  #   args['api_key'] = @resource.api.api_key
-  #   
-  #   # Append the query string to the URL
-  #   url += ("?" + $.param(args))
-  # 
-  #   console.log "Request URL: #{url}"
-  #   url
+  run: (args, callback) =>
+  
+    $.ajax
+      type: @httpMethod
+      url: @urlFor(args)
+      # data: {}
+      dataType: @resource.api.format
+      # headers:
+      #   api_key: window.swagger.api_key
+      error: (xhr, textStatus, error) ->
+        console.log 'ajax.error', error
+      success: (data) ->
+        console.log 'ajax.success', data
+        
+  urlFor: (args) ->
+  
+    url = @resource.basePath + @path
+  
+    # Iterate over allowable params, interpolating the 'path' params into the url string.
+    # Whatever's left over in the args object will become the query string
+    for param in @parameters
+      if param.paramType == 'path' and args[param.name]
+        url = url.replace("{#{param.name}}", args[param.name])
+        delete args[param.name]
+    
+    # Stick the API key in the query string object
+    args['api_key'] = @resource.api.api_key
+    
+    # Append the query string to the URL
+    url += ("?" + $.param(args))
+  
+    console.log "Request URL: #{url}"
+    url
     
 # class Parameter
   
 # Expose these classes for later use:
-window.SwaggeringApi = SwaggeringApi
+window.Api = Api
 window.Resource = Resource
 window.Operation = Operation

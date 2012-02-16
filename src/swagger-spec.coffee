@@ -1,14 +1,14 @@
 window.context = window.describe
 window.xcontext = window.xdescribe
 
-describe 'SwaggeringApi', ->
+describe 'Api', ->
   
-  describe 'initialization', ->
+  describe 'constructor', ->
 
     describe 'defaults', ->
     
       beforeEach ->
-        window.wordnik = new SwaggeringApi()      
+        window.wordnik = new Api()
         waitsFor ->
           wordnik
       
@@ -24,14 +24,14 @@ describe 'SwaggeringApi', ->
         runs ->
           expect(wordnik.format).toBe('json')
 
-      it "creates an empty container for resources", ->
-        runs ->
-          expect(wordnik.resources.length).toBe(0)
+      # it "creates an empty container for resources", ->
+      #   runs ->
+      #     expect(wordnik.resources.length).toBe(0)
           
     describe 'customization', ->
 
       beforeEach ->
-        window.unicornApi = new SwaggeringApi
+        window.unicornApi = new Api
           discoveryUrl: "http://unicorns.com"
           debug: true
           apiKey: 'stardust'
@@ -54,7 +54,7 @@ describe 'SwaggeringApi', ->
   describe 'build', ->
     
       beforeEach ->
-        window.wordnik = new SwaggeringApi
+        window.wordnik = new Api
         wordnik.build()
         waitsFor ->
           wordnik.isReady()
@@ -67,24 +67,33 @@ describe 'SwaggeringApi', ->
         runs ->
           expect(wordnik.basePath).toBe("http://api.wordnik.com/v4")
           
-      # it "creates named references to its resources", ->
-      #   runs ->
-      #     expect(wordnik.words).toBeDefined()
+      it "creates named references to its resources", ->
+        runs ->
+          expect(wordnik.words).toBeDefined()
           
-describe 'resource', ->
-
-  describe 'descriptionUrl()', ->
+describe 'Resource', ->
   
-    beforeEach ->
-      window.wordnik = new SwaggeringApi()
-      wordnik.build()
-      waitsFor ->
-        wordnik.isReady()
+  beforeEach ->
+    window.wordnik = new Api()
+    wordnik.build()
+    waitsFor ->
+      wordnik.isReady()
         
-    it "replaces {format} with json", ->
-      runs ->
-        resource = wordnik.resources[0]
-        expect(resource.descriptionUrl()).toMatch(/\.json$/)
+  it "has a url()", ->
+    runs ->
+      resource = wordnik.resources[0]
+      expect(resource.url()).toMatch(/\.json$/)
+      
+  it "has a name() method which is inferred from its path", ->
+    runs ->
+      resource = new Resource("/word.{format}", "an imaginary resource", wordnik)
+      expect(resource.name()).toEqual('word')
         
-    # it "", ->
-    #   expect('pending').toEqual('completed') 
+  it "creates named references to its operations", ->
+    runs ->
+      resource = wordnik.word
+      expect(resource.getDefinitions).toBeDefined()
+
+# describe 'Operation', ->
+  
+# describe 'Parameter', ->
