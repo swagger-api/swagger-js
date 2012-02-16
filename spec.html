@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<head>
+  <title>Jasmine Test Runner</title>
+  
+  <link rel="stylesheet" type="text/css" href="jasmine-1.1.0/jasmine.css">
+  
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script type="text/javascript" src="jasmine-1.1.0/jasmine.js"></script>
+  <script type="text/javascript" src="jasmine-1.1.0/jasmine-html.js"></script>
+
+  <!-- include source files here... -->
+  <script type="text/javascript" src="swagger.js"></script>
+  
+  <!-- include spec files here... -->
+  <script type="text/javascript" src="swagger-spec.js"></script>
+</head>
+<body>
+
+<script type="text/javascript">
+  $(function() { 
+    jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
+    jasmine.getEnv().execute();
+  });
+</script>
+
+</body>
+</html>
