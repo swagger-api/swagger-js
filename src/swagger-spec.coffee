@@ -23,10 +23,6 @@ describe 'Api', ->
       it "sets the default format to JSON", ->
         runs ->
           expect(wordnik.format).toBe('json')
-
-      # it "creates an empty container for resources", ->
-      #   runs ->
-      #     expect(wordnik.resources.length).toBe(0)
           
     describe 'customization', ->
 
@@ -94,6 +90,62 @@ describe 'Resource', ->
       resource = wordnik.word
       expect(resource.getDefinitions).toBeDefined()
 
-# describe 'Operation', ->
+describe 'Operation', ->
   
-# describe 'Parameter', ->
+  beforeEach ->
+    window.wordnik = new Api()
+    wordnik.build()
+    waitsFor ->
+      wordnik.isReady()
+      
+  describe "urlFor", ->
+    
+    describe "path params", ->
+    
+      beforeEach ->
+        runs ->
+          window.operation = wordnik.word.getDefinitions
+          operation.path = "/my/{foo}/kaboo"
+          operation.parameters = [{paramType: 'path', name: 'foo'}]
+          window.args = {foo: 'pee'}
+    
+      it "injects path params into the path", ->
+        runs ->
+          expect(operation.urlFor(args)).toMatch(/\/pee\/kaboo/)
+    
+      it "throws an exception if path has unmatched params", ->
+        runs ->
+          args = {}
+          expect(-> operation.urlFor(args) ).toThrow("foo is a required path param.")
+    
+    describe "API key", ->
+      
+      beforeEach ->
+        runs ->
+          # Circumvent path param validation
+          wordnik.word.getDefinitions.parameters = {}
+    
+      it "includes API key in URL if it's present", ->
+        runs ->
+          wordnik.api_key = 'xyz'
+          expect(wordnik.word.getDefinitions.urlFor({})).toMatch(/api_key=xyz/)
+    
+      it "doesn't include API key in URL if it's null", ->
+        runs ->
+          wordnik.api_key = null
+          expect(wordnik.word.getDefinitions.urlFor({})).not.toMatch(/api_key/)
+
+  describe "run", ->
+    
+    it "runs", ->
+      runs ->
+        args = {word: 'flagrant', limit: 3}
+        res = null
+        wordnik.word.getDefinitions.run args, (response) =>
+          res = response
+        
+        waitsFor ->
+          res?
+
+        runs ->        
+          expect(res.foo).toBe('bar')

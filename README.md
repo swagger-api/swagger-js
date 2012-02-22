@@ -34,6 +34,7 @@ check out [coffeescript.org/#installation](http://coffeescript.org/#installation
 ```bash
 # Watch the /src dir for changes and autocompile them to /lib
 coffee -o lib/ -cw src/
+coffee -cj lib/swagger.js src/swagger.coffee src/reqwest.coffee
 ```
 
 ```bash
