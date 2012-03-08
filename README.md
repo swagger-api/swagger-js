@@ -29,18 +29,21 @@ and it builds itself at runtime.
 </script>
 ```
 
-### Debugging
+### Debugging / cURL
 
-If you set `verbose` to `true` when initializing your client, you'll see `curl`
-equivalents of all your requests in the browser console.
+If you set `verbose` to `true` when initializing your client, you'll see curl
+equivalents of your requests in the browser console, complete with headers
 
 ```javascript
 wordnik = new Api({
-  discoveryUrl: 'http://api.wordnik.com/v4/resources.json',
-  api_key: 'b39ee8d5f05d0f566a0080b4c310ceddf5dc5f7606a616f53',
+  api_key: 'YOUR_API_KEY',
   verbose: true,
   success: function() {
-    wordnik.word.getDefinitions.do({word: 'dog'}, function(definitions){
+    args = {
+      word: 'dog'
+      headers: {fubar: 'maybe'}
+    }
+    wordnik.word.getDefinitions.do(args, function(definitions){
       console.log(definitions[0].word);
       for (var i = 0; i < definitions.length; i++) {
         var definition = definitions[i];
@@ -51,7 +54,7 @@ wordnik = new Api({
 });
 
 // Console output:
-// curl http://api.wordnik.com/v4/word.json/dog/definitions?api_key=YOUR_API_KEY
+// curl --header "fubar: maybe" http://api.wordnik.com/v4/word.json/dog/definitions?api_key=YOUR_API_KEY
 // dog
 // noun: A domesticated carnivorous mammal (Canis familiaris) related to the foxes and wolves and raised in a wide variety of breeds.
 // noun: Any of various carnivorous mammals of the family Canidae, such as the dingo.
@@ -62,17 +65,19 @@ wordnik = new Api({
 Development
 -----------
 
-**Send us a pull request and we'll send you a wordnik tee shirt!**
-
 Please [fork the code](https://github.com/wordnik/swagger.js) and help us make 
-swagger better. Swagger.js is written in CoffeeScript, so you'll need the 
+swagger better. Send us a pull request and **we'll mail you a wordnik tee shirt!**
+
+Swagger.js is written in CoffeeScript, so you'll need the 
 CoffeeScript compiler. To install it, check out 
-[coffeescript.org/#installation](http://coffeescript.org/#installation)
+[coffeescript.org/#installation](http://coffeescript.org/#installation).
 
 ```bash
 # Watch the /src dir for changes and autocompile them to /lib
 coffee -o lib/ -cw src/
 ```
+
+Swagger.js uses the Jasmine testing framework.
 
 ```bash
 # Run the test suite
