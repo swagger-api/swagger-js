@@ -1,20 +1,25 @@
 class Api
   discoveryUrl: "http://api.wordnik.com/v4/resources.json"
   debug: false
-  format: "json"
   api_key: null
   basePath: null
   
   constructor: (options={}) ->
     @discoveryUrl = options.discoveryUrl if options.discoveryUrl?
     @debug = options.debug if options.debug?
-    @format = options.format if options.format?
     @api_key = options.apiKey if options.apiKey?
     @api_key = options.api_key if options.api_key?
+    
+    # Build right away if a callback was passed to the initializer
+    @build(options.callback) if options.callback?
     
   build: (callback) ->
     $.getJSON @discoveryUrl, (response) =>
       @basePath = response.basePath
+      
+      # TODO: Take this out
+      @basePath = @basePath.replace(/\/$/, '')
+      
       @resources = for resource in response.apis
         new Resource resource.path, resource.description, this
   
@@ -34,6 +39,9 @@ class Resource
     
     $.getJSON @url(), (response) =>
       @basePath = response.basePath
+      
+      # TODO: Take this out
+      @basePath = @basePath.replace(/\/$/, '')
 
       # Instantiate Operations
       if response.apis
@@ -50,7 +58,7 @@ class Resource
 
   # e.g."http://api.wordnik.com/v4/word.json"
   url: ->
-    @api.basePath + @path.replace('{format}', @api.format)
+    @api.basePath + @path.replace('{format}', 'json')
   
   # Extract name from path
   # '/foo/dogs.format' -> 'dogs'
@@ -62,21 +70,43 @@ class Operation
 
   constructor: (@nickname, @path, @httpMethod, @parameters, @summary, @resource) ->
     throw "Operations must have a nickname." unless @nickname?
-    throw "Operation #{nickname} is missing httpMethod." unless @httpMethod?
     throw "Operation #{nickname} is missing path." unless @path?
+    throw "Operation #{nickname} is missing httpMethod." unless @httpMethod?
+    
+    # Convert {format} to 'json'
+    @path = @path.replace('{format}', 'json')
+    
+    # # TODO: Take this out
+    # @basePath = @basePath.replace(/\/$/, '')
     
     # Store a named reference to this operation on the parent resource
     @resource[@nickname] = this
+    
+  do: (args, callback) =>
+    
+    # Pull headers out of args    
+    if args.headers?
+      headers = args.headers
+      delete args.headers
+      
+    # Pull body out of args
+    if args.body?
+      body = args.body
+      delete args.body
 
-  run: (args, callback) =>
+    # Stick the API key into the headers, if present
+    headers or= {}
+    headers.api_key = @resource.api.api_key if @resource.api.api_key?
 
-    new Request(@httpMethod, @urlFor(args), callback)
+    new Request(@httpMethod, @urlify(args), headers, body, callback, this)
         
-  urlFor: (args) ->
-
-    console.log "Path: #{@path}"
+  urlify: (args) ->
     
     url = @resource.basePath + @path
+    
+    # Convert {format} to 'json' (in case operation.path was modified after 
+    # the operation was initialized)
+    url = url.replace('{format}', 'json')
   
     # Iterate over allowable params, interpolating the 'path' params into the url string.
     # Whatever's left over in the args object will become the query string
@@ -88,36 +118,38 @@ class Operation
           delete args[param.name]
         else
           throw "#{param.name} is a required path param."
-    
-    # Stick the API key (if present) in the query string object
+
+    # TODO: Remove this in favor of header
+    # Add API key to the params
     args['api_key'] = @resource.api.api_key if @resource.api.api_key?
-    
+
     # Append the query string to the URL
     url += ("?" + $.param(args))
-  
-    console.log "Request URL: #{url}"
+
     url
 
 class Request
   
-  constructor: (@type, @url, @callback) ->
+  constructor: (@type, @url, @headers, @body, @callback, @operation) ->
+    
+    console.log "new Request: %o", this
+    # console.log this.asCurl() if @operation.resource.api.verbose?
 
-    @callback
-      foo: 'bar'
-      
-    # $.ajax
-    #   type: @httpMethod
-    #   url: @urlFor(args)
-    #   # data: {}
-    #   dataType: @resource.api.format
-    #   # headers:
-    #   #   api_key: window.swagger.api_key
-    #   error: (xhr, textStatus, error) ->
-    #     console.log 'ajax.error', error
-    #   success: (data) ->
-    #     console.log 'ajax.success', data
+    $.ajax
+      type: @type
+      url: @url
+      # headers: @headers
+      data: @body
+      dataType: 'json'
+      error: (xhr, textStatus, error) ->
+        console.log xhr, textStatus, error
+      success: (data) =>
+        @callback(data)
+
+  asCurl: ->
+    "curl --header \"api_key: #{@headers.api_key}\" #{@url}"
   
-# Expose these classes for later use:
+# Expose these classes:
 window.Api = Api
 window.Resource = Resource
 window.Operation = Operation
