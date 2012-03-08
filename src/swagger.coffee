@@ -9,11 +9,13 @@ class Api
     @debug = options.debug if options.debug?
     @api_key = options.apiKey if options.apiKey?
     @api_key = options.api_key if options.api_key?
+    @verbose = options.verbose if options.verbose?
+    @success = options.success if options.success?
     
     # Build right away if a callback was passed to the initializer
-    @build(options.callback) if options.callback?
+    @build() if options.success?
     
-  build: (callback) ->
+  build: ->
     $.getJSON @discoveryUrl, (response) =>
       @basePath = response.basePath
       
@@ -23,13 +25,16 @@ class Api
       @resources = for resource in response.apis
         new Resource resource.path, resource.description, this
   
-  # Apis are ready when all their resources are ready
-  isReady: ->
+  # This method is called each time a child resource finished loading
+  # 
+  selfReflect: ->
     return false unless @resources?
     return false unless @resources.length > 0
     for resource in @resources
       return false unless resource.ready?
-    true
+    
+    @ready = true
+    @success() if @success?
         
 class Resource
 
@@ -40,7 +45,7 @@ class Resource
     $.getJSON @url(), (response) =>
       @basePath = response.basePath
       
-      # TODO: Take this out
+      # TODO: Take this out.. it's a wordnik API regression
       @basePath = @basePath.replace(/\/$/, '')
 
       # Instantiate Operations
@@ -55,6 +60,9 @@ class Resource
 
       # Mark as ready
       @ready = true
+
+      # Now that this resource is loaded, tell the API to check in on itself
+      @api.selfReflect()
 
   # e.g."http://api.wordnik.com/v4/word.json"
   url: ->
@@ -130,7 +138,7 @@ class Request
     throw "Request operation is required." unless @operation?
     
     # console.log "new Request: %o", this
-    # console.log this.asCurl() if @operation.resource.api.verbose?
+    console.log this.asCurl() if @operation.resource.api.verbose
     
     # Stick the API key into the headers, if present
     @headers or= {}

@@ -20,9 +20,17 @@ describe 'Api', ->
         runs ->
           expect(wordnik.debug).toBe(false)
       
-      # it "builds right away if a callback was passed to the initializer", ->
-      #   runs ->
-      #     expect(true).toBe(false)
+      it "builds right away if a 'success' callback was passed to the initializer", ->
+        window.successFunctionCalled = false
+        window.sampleApi = new Api
+          success: ->
+            window.successFunctionCalled = true
+            
+        waitsFor ->
+          sampleApi.ready?
+
+        runs ->
+          expect(window.successFunctionCalled).toBe(true)
       
     describe 'customization', ->
 
@@ -53,7 +61,7 @@ describe 'Api', ->
         window.wordnik = new Api
         wordnik.build()
         waitsFor ->
-          wordnik.isReady()
+          wordnik.ready?
     
       it "fetches a list of resources", ->
         runs ->
@@ -73,7 +81,7 @@ describe 'Resource', ->
     window.wordnik = new Api()
     wordnik.build()
     waitsFor ->
-      wordnik.isReady()
+      wordnik.ready?
         
   it "has a url()", ->
     runs ->
@@ -97,7 +105,7 @@ describe 'Operation', ->
     wordnik.api_key = 'b39ee8d5f05d0f566a0080b4c310ceddf5dc5f7606a616f53'
     wordnik.build()
     waitsFor ->
-      wordnik.isReady()
+      wordnik.ready?
 
   describe "urlify", ->
 
@@ -176,7 +184,7 @@ describe 'Request', ->
     wordnik2.api_key = 'magic'
     wordnik2.build()
     waitsFor ->
-      wordnik2.isReady()
+      wordnik2.ready?
 
   describe "constructor", ->
 
