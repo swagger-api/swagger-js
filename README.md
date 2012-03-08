@@ -1,16 +1,16 @@
 swagger.js
 ==========
 
-swagger.js is a javascript client for [swagger](http://swagger.wordnik.com) APIs.
+swagger.js is a javascript client for use with [swagger](http://swagger.wordnik.com)ing APIs.
 
-Find out more about the Swagger project at [swagger.wordnik.com](http://swagger.wordnik.com), 
+Find out more about the swagger project at [swagger.wordnik.com](http://swagger.wordnik.com), 
 and follow us on Twitter at [@swagger_doc](https://twitter.com/#!/swagger_doc).
 
 Usage
 -----
 
-Point swagger.js at a Swagger resource discovery file like
-[api.wordnik.com/v4/resources.json]("http://api.wordnik.com/v4/resources.json")
+Point swagger.js at a resource discovery file like
+[api.wordnik.com/v4/resources.json](http://api.wordnik.com/v4/resources.json)
 and it builds itself at runtime.
 
 ```html
@@ -29,7 +29,7 @@ and it builds itself at runtime.
 </script>
 ```
 
-=== Debugging
+### Debugging
 
 If you set `verbose` to `true` when initializing your client, you'll see `curl`
 equivalents of all your requests in the browser console.
@@ -50,19 +50,23 @@ wordnik = new Api({
   }
 });
 
-// In the console, you'll see..
+// Console output:
 // curl http://api.wordnik.com/v4/word.json/dog/definitions?api_key=YOUR_API_KEY
+// dog
+// noun: A domesticated carnivorous mammal (Canis familiaris) related to the foxes and wolves and raised in a wide variety of breeds.
+// noun: Any of various carnivorous mammals of the family Canidae, such as the dingo.
+// noun: A male animal of the family Canidae, especially of the fox or a domesticated breed.
+// etc...
 ```
 
 Development
 -----------
 
 **Send us a pull request and we'll send you a wordnik tee shirt!**
-[Fork the code](https://github.com/wordnik/swagger.js) and help us make 
-swagger better.
 
-Swagger.js is written in CoffeeScript, so you'll need the CoffeeScript compiler.
-To install it, check out 
+Please [fork the code](https://github.com/wordnik/swagger.js) and help us make 
+swagger better. Swagger.js is written in CoffeeScript, so you'll need the 
+CoffeeScript compiler. To install it, check out 
 [coffeescript.org/#installation](http://coffeescript.org/#installation)
 
 ```bash
