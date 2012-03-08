@@ -19,7 +19,11 @@ describe 'Api', ->
       it "disables the debugger by default", ->
         runs ->
           expect(wordnik.debug).toBe(false)
-          
+      
+      # it "builds right away if a callback was passed to the initializer", ->
+      #   runs ->
+      #     expect(true).toBe(false)
+      
     describe 'customization', ->
 
       beforeEach ->
@@ -167,16 +171,28 @@ describe 'Operation', ->
                         
 describe 'Request', ->
   
+  beforeEach ->
+    window.wordnik2 = new Api()
+    wordnik2.api_key = 'magic'
+    wordnik2.build()
+    waitsFor ->
+      wordnik2.isReady()
+
   describe "constructor", ->
-  
+
     beforeEach ->
-      args =
-        word: 'flagrant'
-        limit: 3
-      window.response = null
-      window.request = wordnik.word.getDefinitions.do args, (response) ->
-        window.response = response
-  
-    # it "sticks the API key into the headers, if present", ->
-    #   runs ->
-    #     expect(false).toBe(true)
+      headers =
+        'mock': 'true' # Request won't run if mock header is present
+      body = null
+      callback = ->
+        'mock callback'
+      operation = wordnik2.word.getExamples
+      window.request = new Request("GET", "http://google.com", headers, body, callback, operation)
+
+    it "sticks the API key into the headers, if present in the parent Api configuration", ->
+      runs ->
+        expect(request.headers.api_key).toMatch(/magic/)
+
+  it "exposes an asCurl() method", ->
+    curl = request.asCurl()
+    expect(curl).toMatch(/curl --header \"mock: true\" --header \"api_key: magic\"/)

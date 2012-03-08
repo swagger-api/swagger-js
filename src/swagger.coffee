@@ -75,10 +75,7 @@ class Operation
     
     # Convert {format} to 'json'
     @path = @path.replace('{format}', 'json')
-    
-    # # TODO: Take this out
-    # @basePath = @basePath.replace(/\/$/, '')
-    
+        
     # Store a named reference to this operation on the parent resource
     @resource[@nickname] = this
     
@@ -93,10 +90,6 @@ class Operation
     if args.body?
       body = args.body
       delete args.body
-
-    # Stick the API key into the headers, if present
-    headers or= {}
-    headers.api_key = @resource.api.api_key if @resource.api.api_key?
 
     new Request(@httpMethod, @urlify(args), headers, body, callback, this)
         
@@ -131,23 +124,34 @@ class Operation
 class Request
   
   constructor: (@type, @url, @headers, @body, @callback, @operation) ->
+    throw "Request type is required (get/post/put/delete)." unless @type?
+    throw "Request url is required." unless @url?
+    throw "Request callback is required." unless @callback?
+    throw "Request operation is required." unless @operation?
     
-    console.log "new Request: %o", this
+    # console.log "new Request: %o", this
     # console.log this.asCurl() if @operation.resource.api.verbose?
+    
+    # Stick the API key into the headers, if present
+    @headers or= {}
+    @headers.api_key = @operation.resource.api.api_key if @operation.resource.api.api_key?
 
-    $.ajax
-      type: @type
-      url: @url
-      # headers: @headers
-      data: @body
-      dataType: 'json'
-      error: (xhr, textStatus, error) ->
-        console.log xhr, textStatus, error
-      success: (data) =>
-        @callback(data)
+    unless @headers.mock?
+      $.ajax
+        type: @type
+        url: @url
+        # TODO: Figure out why the API is not accepting these
+        # headers: @headers
+        data: @body
+        dataType: 'json'
+        error: (xhr, textStatus, error) ->
+          console.log xhr, textStatus, error
+        success: (data) =>
+          @callback(data)
 
   asCurl: ->
-    "curl --header \"api_key: #{@headers.api_key}\" #{@url}"
+    header_args = ("--header \"#{k}: #{v}\"" for k,v of @headers)
+    "curl #{header_args.join(" ")} #{@url}"
   
 # Expose these classes:
 window.Api = Api
