@@ -24,7 +24,6 @@ describe 'Api', ->
         window.successFunctionCalled = false
         window.sampleApi = new Api
           success: ->
-            console.log 'succckk'
             window.successFunctionCalled = true
             
         waitsFor ->
