@@ -88,6 +88,7 @@ wordnik.word.getDefinitions({word: 'bliss'}, function(definitions) {
 
 You can include your own headers in the args object:
 
+```javascript
 args = {word: 'swole', limit:5}
 args.headers = {magic: 'potion'}
 callback = function(examples) { console.log(examples); }
@@ -101,10 +102,12 @@ off a network request you can set a header called `mock` with any value.
 
 For GETs and POSTs, you can include the request body in the args object:
 
+```javascript
 args = {}
 args.body = {name: "gizmo", description: "A thing that does stuff."}
 callback = function(thing) { console.log(thing); }
 myApi.things.createThing(args, callback);
+```
 
 ### Debugging / cURL
 
@@ -138,7 +141,6 @@ wordnik = new Api({
 // noun: A male animal of the family Canidae, especially of the fox or a domesticated breed.
 // etc...
 ```
-
 
 Development
 -----------
