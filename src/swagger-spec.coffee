@@ -1,5 +1,6 @@
 window.context = window.describe
 window.xcontext = window.xdescribe
+window.api_key = 'a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5'
 
 describe 'Api', ->
   
@@ -102,15 +103,13 @@ describe 'Resource', ->
 
   it "creates named functions that map to its operations", ->
     runs ->
-      resource = wordnik.word
-      expect(resource.getDefinitions).toBeDefined()
-      # expect(resource.getDefinitions({word: 'dog'})).toBe(resource.operations.getDefinitions.do)
+      expect(wordnik.word.getDefinitions).toBeDefined()
 
 describe 'Operation', ->
   
   beforeEach ->
     window.wordnik = new Api()
-    wordnik.api_key = 'b39ee8d5f05d0f566a0080b4c310ceddf5dc5f7606a616f53'
+    wordnik.api_key = window.api_key
     wordnik.build()
     waitsFor ->
       wordnik.ready?
