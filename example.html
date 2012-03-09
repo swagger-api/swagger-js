@@ -2,11 +2,28 @@
 <html>
   <head>
     <title>swagger.js example</title>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script type="text/javascript" src="lib/swagger.js"></script>
+    
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://raw.github.com/wordnik/swagger.js/blob/master/lib/swagger.js"></script>
     <script type="text/javascript">
-      // coming soon...
+      $(function() { 
+        wordnik = new Api({
+          api_key: 'b39ee8d5f05d0f566a0080b4c310ceddf5dc5f7606a616f53',
+          verbose: true,
+          success: function() {
+            args = {word: 'sanctimonious'}
+            wordnik.word.getDefinitions.do(args, function(definitions){
+              console.log(definitions[0].word);
+              for (var i = 0; i < definitions.length; i++) {
+                var definition = definitions[i];
+                console.log(definition.partOfSpeech + ": " + definition.text);
+              }
+            });
+          }
+        });        
+      });
     </script>
+
   </head>
   <body>
   </body>

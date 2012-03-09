@@ -24,6 +24,7 @@ describe 'Api', ->
         window.successFunctionCalled = false
         window.sampleApi = new Api
           success: ->
+            console.log 'succckk'
             window.successFunctionCalled = true
             
         waitsFor ->
@@ -62,16 +63,17 @@ describe 'Api', ->
         wordnik.build()
         waitsFor ->
           wordnik.ready?
-    
-      it "fetches a list of resources", ->
-        runs ->
-          expect(wordnik.resources.length).toBeGreaterThan(0)
-          
+              
       it "sets basePath", ->
         runs ->
           expect(wordnik.basePath).toBe("http://api.wordnik.com/v4")
+
+      it "creates a container object for its resources, with resource names as keys", ->
+        runs ->
+          expect(wordnik.resources).toBeDefined()
+          expect(wordnik.resources.word).toBeDefined()
           
-      it "creates named references to its resources", ->
+      it "creates shorthand references to its resources", ->
         runs ->
           expect(wordnik.words).toBeDefined()
           
@@ -85,18 +87,25 @@ describe 'Resource', ->
         
   it "has a url()", ->
     runs ->
-      resource = wordnik.resources[0]
+      resource = wordnik.resources.wordList
       expect(resource.url()).toMatch(/\.json$/)
       
   it "has a name() method which is inferred from its path", ->
     runs ->
-      resource = new Resource("/word.{format}", "an imaginary resource", wordnik)
+      resource = wordnik.word
       expect(resource.name()).toEqual('word')
-        
-  it "creates named references to its operations", ->
+
+  it "creates a container object for its operations, with operation nicknames as keys", ->
+    runs ->
+      resource = wordnik.word
+      expect(resource.operations).toBeDefined()
+      expect(resource.operations.getExamples).toBeDefined()
+
+  it "creates named functions that map to its operations", ->
     runs ->
       resource = wordnik.word
       expect(resource.getDefinitions).toBeDefined()
+      # expect(resource.getDefinitions({word: 'dog'})).toBe(resource.operations.getDefinitions.do)
 
 describe 'Operation', ->
   
@@ -110,7 +119,7 @@ describe 'Operation', ->
   describe "urlify", ->
 
     beforeEach ->
-      window.operation = wordnik.word.getDefinitions
+      window.operation = wordnik.resources.word.operations.getDefinitions
       operation.path = "/my.{format}/{foo}/kaboo"
       operation.parameters = [{paramType: 'path', name: 'foo'}]
       window.args = {foo: 'pee'}
@@ -137,7 +146,7 @@ describe 'Operation', ->
       window.response = null
 
     it "gets back an array of definitions", ->
-      wordnik.word.getDefinitions.do args, (response) ->
+      wordnik.word.getDefinitions args, (response) ->
         window.response = response
       
       waitsFor ->
@@ -152,7 +161,7 @@ describe 'Operation', ->
     it "pulls request headers out of the args object", ->
       args.headers = 
         'head-cheese': 'certainly'
-      window.request = wordnik.word.getDefinitions.do args, (response) ->
+      window.request = wordnik.word.getDefinitions args, (response) ->
         window.response = response
       
       waitsFor ->
@@ -166,7 +175,7 @@ describe 'Operation', ->
       args.body = 
         'name': 'haute couture'
         'pronunciation': 'hottie cooter-otty'
-      window.request = wordnik.word.getDefinitions.do args, (response) ->
+      window.request = wordnik.word.getDefinitions args, (response) ->
         window.response = response
       
       waitsFor ->
@@ -194,7 +203,7 @@ describe 'Request', ->
       body = null
       callback = ->
         'mock callback'
-      operation = wordnik2.word.getExamples
+      operation = wordnik2.word.operations.getExamples
       window.request = new Request("GET", "http://google.com", headers, body, callback, operation)
 
     it "sticks the API key into the headers, if present in the parent Api configuration", ->

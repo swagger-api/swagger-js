@@ -19,18 +19,25 @@ class Api
     $.getJSON @discoveryUrl, (response) =>
       @basePath = response.basePath
       
-      # TODO: Take this out
+      # TODO: Take this out. It's an API regression.
       @basePath = @basePath.replace(/\/$/, '')
       
-      @resources = for resource in response.apis
-        new Resource resource.path, resource.description, this
+      # @resources = for resource in response.apis
+      #   new Resource resource.path, resource.description, this
+
+      # Store a map of resources by name
+      @resources = {}
+      for resource in response.apis
+        res = new Resource resource.path, resource.description, this
+        @resources[res.name()] = res
+        
+      this
   
-  # This method is called each time a child resource finished loading
+  # This method is called each time a child resource finishes loading
   # 
   selfReflect: ->
     return false unless @resources?
-    return false unless @resources.length > 0
-    for resource in @resources
+    for resource_name, resource of @resources
       return false unless resource.ready?
     
     @ready = true
@@ -40,7 +47,7 @@ class Resource
 
   constructor: (@path, @description, @api) ->
     throw "Resources must have a path." unless @path?
-    @operations = []
+    @operations = {}
     
     $.getJSON @url(), (response) =>
       @basePath = response.basePath
@@ -48,12 +55,13 @@ class Resource
       # TODO: Take this out.. it's a wordnik API regression
       @basePath = @basePath.replace(/\/$/, '')
 
-      # Instantiate Operations
+      # Instantiate Operations and store them in the @operations map
       if response.apis
         for endpoint in response.apis
           if endpoint.operations
             for o in endpoint.operations
-              @operations.push(new Operation o.nickname, endpoint.path, o.httpMethod, o.parameters, o.summary, this)
+              op = new Operation o.nickname, endpoint.path, o.httpMethod, o.parameters, o.summary, this
+              @operations[op.nickname] = op
 
       # Store a named reference to this resource on the parent object
       @api[this.name()] = this
@@ -85,9 +93,11 @@ class Operation
     @path = @path.replace('{format}', 'json')
         
     # Store a named reference to this operation on the parent resource
-    @resource[@nickname] = this
-    
-  do: (args, callback) =>
+    # getDefinitions() maps to getDefinitionsData.do()
+    @resource[@nickname]= (args, callback) =>
+      @do(args, callback)
+      
+  do: (args={}, callback = (data) -> console.log(data) ) =>
     
     # Pull headers out of args    
     if args.headers?
