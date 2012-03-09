@@ -33,8 +33,10 @@ and it builds itself at runtime.
 How it Works
 ------------
 
-[Download the latest release of swagger.js](https://raw.github.com/wordnik/swagger.js/blob/master/lib/swagger.js).
-Open `spec.html` in your browser and follow along in the Javascript console.
+1. [Fork the repo](https://github.com/wordnik/swagger.js).
+1. Clone it.
+1. Open `spec.html` in your browser.
+1. Follow along in the Javascript console.
 
 ### Initialization
 
