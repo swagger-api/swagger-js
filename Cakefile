@@ -1,5 +1,5 @@
 fs     = require 'fs'
-{exec} = require 'child_process'
+{spawn, exec} = require 'child_process'
 
 mergeFiles =(inputFiles, outputFile, minify=false) ->
 
@@ -35,13 +35,15 @@ mergeFiles =(inputFiles, outputFile, minify=false) ->
               throw err if err
               console.log js_output_file
 
-task 'bake', 'Compile and concatenate CoffeeScript files to JavaScript, and create minified versions', ->
-  mergeFiles ['reqwest', 'swagger'], 'swagger', false
+# task 'bake', 'Compile and concatenate CoffeeScript files to JavaScript, and create minified versions', ->
+#   mergeFiles ['reqwest', 'swagger'], 'swagger', false
 
 task 'watch', 'Automatically recompile CoffeeScript files to JavaScript', ->
-  exec "coffee -o lib/ -cw src/"
+  coffee = spawn 'coffee', ['-cw', '-o', 'lib', 'src']
+  coffee.stdout.on 'data', (data) -> console.log data.toString().trim()
   
 task 'dev', "Open source files, run spec in browser, and watch for changes", ->
   exec "$EDITOR ."
   exec "open spec.html"
-  exec "coffee -o lib/ -cw src/"
+  coffee = spawn 'coffee', ['-cw', '-o', 'lib', 'src']
+  coffee.stdout.on 'data', (data) -> console.log data.toString().trim()
