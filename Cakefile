@@ -38,5 +38,10 @@ mergeFiles =(inputFiles, outputFile, minify=false) ->
 task 'bake', 'Compile and concatenate CoffeeScript files to JavaScript, and create minified versions', ->
   mergeFiles ['reqwest', 'swagger'], 'swagger', false
 
-# task 'watch', 'Automatically recompile CoffeeScript files to JavaScript', ->
-#   exec "coffee --compile --bare --watch --output /lib /src
+task 'watch', 'Automatically recompile CoffeeScript files to JavaScript', ->
+  exec "coffee -o lib/ -cw src/"
+  
+task 'dev', "Open source files, run spec in browser, and watch for changes", ->
+  exec "$EDITOR ."
+  exec "open spec.html"
+  exec "coffee -o lib/ -cw src/"

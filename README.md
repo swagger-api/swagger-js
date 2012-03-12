@@ -150,20 +150,24 @@ Development
 Please [fork the code](https://github.com/wordnik/swagger.js) and help us improve 
 swagger.js. Send us a pull request and **we'll mail you a wordnik T-shirt!**
 
-Swagger.js is written in CoffeeScript, so you'll need the 
-CoffeeScript compiler. To install it, check out 
+Swagger.js is written in CoffeeScript, so you'll need Node.js and the 
+CoffeeScript compiler. For more detailed installation instructions, see 
 [coffeescript.org/#installation](http://coffeescript.org/#installation).
 
 ```bash
-# Watch /src for changes and auto-compile to /lib
-coffee -o lib/ -cw src/
+open http://nodejs.org/#download 
+npm install -g coffee-script
 ```
 
-Swagger.js uses the Jasmine testing framework.
-
 ```bash
-# Run the test suite
-open spec.html
+# The 'dev' cake task will:
+# 1. Open source files in your $EDITOR
+# 2. Open and run the Jasmine specs in your browser.
+# 3. Watch for changes to CoffeeScript files and auto-compile them to Javascript.
+cake dev
+
+# List all cake tasks:
+cake
 ```
 
 License
