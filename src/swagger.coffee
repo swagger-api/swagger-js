@@ -25,6 +25,10 @@ class SwaggerApi
       # Store a map of resources by name
       @resources = {}
       for resource in response.apis
+        
+        # TODO: Remove this temporary sillyness
+        continue if resource.path is "/tracking.{format}" or resource.path is "/partner.{format}"
+        
         res = new SwaggerResource resource.path, resource.description, this
         @resources[res.name()] = res
         
@@ -152,17 +156,22 @@ class SwaggerRequest
     @headers.api_key = @operation.resource.api.api_key if @operation.resource.api.api_key?
 
     unless @headers.mock?
-      $.ajax
+    
+      obj = 
         type: @type
         url: @url
         # TODO: Figure out why the API is not accepting these
         # headers: @headers
-        data: @body
+        data: JSON.stringify(@body)
         dataType: 'json'
         error: (xhr, textStatus, error) ->
           console.log xhr, textStatus, error
         success: (data) =>
           @callback(data)
+
+      obj.contentType = "application/json" if obj.type.toLowerCase() == "post"
+    
+      $.ajax(obj)
 
   asCurl: ->
     header_args = ("--header \"#{k}: #{v}\"" for k,v of @headers)

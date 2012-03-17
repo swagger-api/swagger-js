@@ -209,3 +209,30 @@ describe 'SwaggerRequest', ->
   it "exposes an asCurl() method", ->
     curl = request.asCurl()
     expect(curl).toMatch(/curl --header \"mock: true\" --header \"api_key: magic\"/)
+    
+  it "supports POST requests", ->
+    window.petstore = new SwaggerApi
+      # discoveryUrl: "http://petstore.swagger.wordnik.com/api/resources.json"
+      discoveryUrl: "http://chorus-dev.nik.io/api/resources.json"
+      success: ->
+        
+        # Use a random suffix to pass uniqueness validations.
+        window.random = Math.floor(Math.random()*1000000)
+        
+        userParts = 
+          username: "kareem#{random}"
+          # firstName: "Kareem"
+          # lastName: "Abdul-Jabbar"
+          email: "kareem#{random}@abdul-jabbar.com"
+          # phone: "415-123-4567"
+          password: "thunderbolt"
+          
+        # petstore.user.createUser {body: userParts}, (response) ->
+        petstore.users.register {body: userParts}, (response) ->
+          window.user = response
+
+    waitsFor ->
+      window.user?
+    
+    runs ->
+      expect(window.user.username).toBe("kareem#{random}")
