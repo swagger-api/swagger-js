@@ -19,7 +19,7 @@ and it builds itself at runtime.
 <script type="text/javascript" src="https://raw.github.com/wordnik/swagger.js/blob/master/lib/swagger.js"></script>
 <script type="text/javascript">
   $(function() { 
-    window.wordnik = new Api({
+    window.wordnik = new SwaggerApi({
       discoveryUrl: "http://api.wordnik.com/v4/resources.json",
       apiKey: "MY_API_KEY",
       success: function() {
@@ -41,14 +41,14 @@ How it Works
 ### Initialization
 
 ```javascript
-wordnik = new Api({
+wordnik = new SwaggerApi({
   api_key: 'YOUR_API_KEY', // Don't have a Wordnik API key? Get one at developer.wordnik.com
   verbose: true,
   success: function() { console.log("Your client is ready to swagger."); }
 });
 ```
 
-When initializing a swagger.js Api class, the default discoveryUrl is 
+When initializing a swagger.js SwaggerApi class, the default discoveryUrl is 
 [http://api.wordnik.com/v4/resources.json](http://api.wordnik.com/v4/resources.json), 
 so we skipped it above.
 
@@ -117,7 +117,7 @@ Set `verbose` to `true` when initializing your client to see cURL
 equivalents of your requests in the browser console, complete with headers:
 
 ```javascript
-wordnik = new Api({
+wordnik = new SwaggerApi({
   api_key: 'YOUR_API_KEY',
   verbose: true,
   success: function() {

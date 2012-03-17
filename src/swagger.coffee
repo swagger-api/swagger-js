@@ -1,4 +1,4 @@
-class Api
+class SwaggerApi
   discoveryUrl: "http://api.wordnik.com/v4/resources.json"
   debug: false
   api_key: null
@@ -21,14 +21,11 @@ class Api
       
       # TODO: Take this out. It's an API regression.
       @basePath = @basePath.replace(/\/$/, '')
-      
-      # @resources = for resource in response.apis
-      #   new Resource resource.path, resource.description, this
 
       # Store a map of resources by name
       @resources = {}
       for resource in response.apis
-        res = new Resource resource.path, resource.description, this
+        res = new SwaggerResource resource.path, resource.description, this
         @resources[res.name()] = res
         
       this
@@ -43,10 +40,10 @@ class Api
     @ready = true
     @success() if @success?
         
-class Resource
+class SwaggerResource
 
   constructor: (@path, @description, @api) ->
-    throw "Resources must have a path." unless @path?
+    throw "SwaggerResources must have a path." unless @path?
     @operations = {}
     
     $.getJSON @url(), (response) =>
@@ -55,12 +52,12 @@ class Resource
       # TODO: Take this out.. it's a wordnik API regression
       @basePath = @basePath.replace(/\/$/, '')
 
-      # Instantiate Operations and store them in the @operations map
+      # Instantiate SwaggerOperations and store them in the @operations map
       if response.apis
         for endpoint in response.apis
           if endpoint.operations
             for o in endpoint.operations
-              op = new Operation o.nickname, endpoint.path, o.httpMethod, o.parameters, o.summary, this
+              op = new SwaggerOperation o.nickname, endpoint.path, o.httpMethod, o.parameters, o.summary, this
               @operations[op.nickname] = op
 
       # Store a named reference to this resource on the parent object
@@ -82,12 +79,12 @@ class Resource
     parts = @path.split("/")
     parts[parts.length - 1].replace('.{format}', '')
 
-class Operation
+class SwaggerOperation
 
   constructor: (@nickname, @path, @httpMethod, @parameters, @summary, @resource) ->
-    throw "Operations must have a nickname." unless @nickname?
-    throw "Operation #{nickname} is missing path." unless @path?
-    throw "Operation #{nickname} is missing httpMethod." unless @httpMethod?
+    throw "SwaggerOperations must have a nickname." unless @nickname?
+    throw "SwaggerOperation #{nickname} is missing path." unless @path?
+    throw "SwaggerOperation #{nickname} is missing httpMethod." unless @httpMethod?
     
     # Convert {format} to 'json'
     @path = @path.replace('{format}', 'json')
@@ -109,7 +106,7 @@ class Operation
       body = args.body
       delete args.body
 
-    new Request(@httpMethod, @urlify(args), headers, body, callback, this)
+    new SwaggerRequest(@httpMethod, @urlify(args), headers, body, callback, this)
         
   urlify: (args) ->
     
@@ -139,15 +136,15 @@ class Operation
 
     url
 
-class Request
+class SwaggerRequest
   
   constructor: (@type, @url, @headers, @body, @callback, @operation) ->
-    throw "Request type is required (get/post/put/delete)." unless @type?
-    throw "Request url is required." unless @url?
-    throw "Request callback is required." unless @callback?
-    throw "Request operation is required." unless @operation?
+    throw "SwaggerRequest type is required (get/post/put/delete)." unless @type?
+    throw "SwaggerRequest url is required." unless @url?
+    throw "SwaggerRequest callback is required." unless @callback?
+    throw "SwaggerRequest operation is required." unless @operation?
     
-    # console.log "new Request: %o", this
+    # console.log "new SwaggerRequest: %o", this
     console.log this.asCurl() if @operation.resource.api.verbose
     
     # Stick the API key into the headers, if present
@@ -172,7 +169,7 @@ class Request
     "curl #{header_args.join(" ")} #{@url}"
   
 # Expose these classes:
-window.Api = Api
-window.Resource = Resource
-window.Operation = Operation
-window.Request = Request
+window.SwaggerApi = SwaggerApi
+window.SwaggerResource = SwaggerResource
+window.SwaggerOperation = SwaggerOperation
+window.SwaggerRequest = SwaggerRequest

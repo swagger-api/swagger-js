@@ -1,13 +1,13 @@
 window.api_key = 'a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5'
 
-describe 'Api', ->
+describe 'SwaggerApi', ->
   
   describe 'constructor', ->
 
     describe 'defaults', ->
     
       beforeEach ->
-        window.wordnik = new Api()
+        window.wordnik = new SwaggerApi
         waitsFor ->
           wordnik
       
@@ -21,7 +21,7 @@ describe 'Api', ->
       
       it "builds right away if a 'success' callback was passed to the initializer", ->
         window.successFunctionCalled = false
-        window.sampleApi = new Api
+        window.sampleApi = new SwaggerApi
           success: ->
             window.successFunctionCalled = true
             
@@ -34,7 +34,7 @@ describe 'Api', ->
     describe 'customization', ->
 
       beforeEach ->
-        window.unicornApi = new Api
+        window.unicornApi = new SwaggerApi
           discoveryUrl: "http://unicorns.com"
           debug: true
           apiKey: 'stardust'
@@ -57,7 +57,7 @@ describe 'Api', ->
   describe 'build', ->
     
       beforeEach ->
-        window.wordnik = new Api
+        window.wordnik = new SwaggerApi
         wordnik.build()
         waitsFor ->
           wordnik.ready?
@@ -75,10 +75,10 @@ describe 'Api', ->
         runs ->
           expect(wordnik.words).toBeDefined()
           
-describe 'Resource', ->
+describe 'SwaggerResource', ->
   
   beforeEach ->
-    window.wordnik = new Api()
+    window.wordnik = new SwaggerApi
     wordnik.build()
     waitsFor ->
       wordnik.ready?
@@ -103,10 +103,10 @@ describe 'Resource', ->
     runs ->
       expect(wordnik.word.getDefinitions).toBeDefined()
 
-describe 'Operation', ->
+describe 'SwaggerOperation', ->
   
   beforeEach ->
-    window.wordnik = new Api()
+    window.wordnik = new SwaggerApi
     wordnik.api_key = window.api_key
     wordnik.build()
     waitsFor ->
@@ -182,10 +182,10 @@ describe 'Operation', ->
         expect(request.body.name).toMatch(/haute/)
         expect(request.body.pronunciation).toMatch(/cooter/)
                         
-describe 'Request', ->
+describe 'SwaggerRequest', ->
   
   beforeEach ->
-    window.wordnik2 = new Api()
+    window.wordnik2 = new SwaggerApi
     wordnik2.api_key = 'magic'
     wordnik2.build()
     waitsFor ->
@@ -195,12 +195,12 @@ describe 'Request', ->
 
     beforeEach ->
       headers =
-        'mock': 'true' # Request won't run if mock header is present
+        'mock': 'true' # SwaggerRequest won't run if mock header is present
       body = null
       callback = ->
         'mock callback'
       operation = wordnik2.word.operations.getExamples
-      window.request = new Request("GET", "http://google.com", headers, body, callback, operation)
+      window.request = new SwaggerRequest("GET", "http://google.com", headers, body, callback, operation)
 
     it "sticks the API key into the headers, if present in the parent Api configuration", ->
       runs ->
