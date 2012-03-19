@@ -169,7 +169,7 @@ class SwaggerRequest
         success: (data) =>
           @callback(data)
 
-      obj.contentType = "application/json" if obj.type.toLowerCase() == "post"
+      obj.contentType = "application/json" if (obj.type.toLowerCase() == "post" or obj.type.toLowerCase() == "put")
     
       $.ajax(obj)
 
