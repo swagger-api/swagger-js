@@ -199,8 +199,10 @@ describe 'SwaggerRequest', ->
       body = null
       callback = ->
         'mock callback'
+      error = ->
+          'mock error'
       operation = wordnik2.word.operations.getExamples
-      window.request = new SwaggerRequest("GET", "http://google.com", headers, body, callback, operation)
+      window.request = new SwaggerRequest("GET", "http://google.com", headers, body, callback, error, operation)
 
     it "sticks the API key into the headers, if present in the parent Api configuration", ->
       runs ->
@@ -236,3 +238,35 @@ describe 'SwaggerRequest', ->
     
     runs ->
       expect(window.user.username).toBe("kareem#{random}")
+      
+  # it "supports PUT requests", ->
+  #       window.chorus = new SwaggerApi
+  #         discoveryUrl: "http://chorus-dev.nik.io/api/resources.json"
+  #         success: ->
+  # 
+  #             # Use a random suffix to pass uniqueness validations.
+  #             window.random = Math.floor(Math.random()*1000000)
+  #                 
+  #             siteParts = 
+  #               name: name
+  #               url : url
+  #               description : desc
+  # 
+  #             window.chorus.sites.createSite { body: siteParts }, (site) ->
+  #               updateSiteParts = 
+  #                 id: site.id 
+  #                 partnerId: site.partnerId
+  #                 name: site.name
+  #                 url : site.url
+  #                 settings: 
+  #                   interBlogRecommendations: true
+  #                   intraBlogRecommendations: false
+  #                         
+  #               window.chorus.sites.updateSite {body: updateSiteParts}, (response) ->
+  #                 window.site = response
+  # 
+  #       waitsFor ->
+  #         window.site?
+  # 
+  #       runs ->
+  #         expect(window.site.interBlogRecommendations).toBe(true)

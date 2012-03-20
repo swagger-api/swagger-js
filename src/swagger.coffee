@@ -95,10 +95,19 @@ class SwaggerOperation
         
     # Store a named reference to this operation on the parent resource
     # getDefinitions() maps to getDefinitionsData.do()
-    @resource[@nickname]= (args, callback) =>
-      @do(args, callback)
+    @resource[@nickname]= (args, callback, error) =>
+      @do(args, callback, error)
       
-  do: (args={}, callback = (data) -> console.log(data) ) =>
+  do: (args={}, callback, error) =>
+  
+    # Define a default error handler
+    unless error?
+      error = (xhr, textStatus, error) -> console.log xhr, textStatus, error
+
+    # Define a default success handler
+    # TODO MAYBE: Call this success instead of callback
+    unless callback?
+      callback = (date) -> console.log data
     
     # Pull headers out of args    
     if args.headers?
@@ -110,7 +119,7 @@ class SwaggerOperation
       body = args.body
       delete args.body
 
-    new SwaggerRequest(@httpMethod, @urlify(args), headers, body, callback, this)
+    new SwaggerRequest(@httpMethod, @urlify(args), headers, body, callback, error, this)
         
   urlify: (args) ->
     
@@ -142,10 +151,11 @@ class SwaggerOperation
 
 class SwaggerRequest
   
-  constructor: (@type, @url, @headers, @body, @callback, @operation) ->
+  constructor: (@type, @url, @headers, @body, @callback, @error, @operation) ->
     throw "SwaggerRequest type is required (get/post/put/delete)." unless @type?
     throw "SwaggerRequest url is required." unless @url?
     throw "SwaggerRequest callback is required." unless @callback?
+    throw "SwaggerRequest error callback is required." unless @error?
     throw "SwaggerRequest operation is required." unless @operation?
     
     # console.log "new SwaggerRequest: %o", this
@@ -165,7 +175,7 @@ class SwaggerRequest
         data: JSON.stringify(@body)
         dataType: 'json'
         error: (xhr, textStatus, error) ->
-          console.log xhr, textStatus, error
+          @error(xhr, textStatus, error)
         success: (data) =>
           @callback(data)
 
