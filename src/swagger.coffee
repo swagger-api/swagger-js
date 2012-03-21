@@ -107,7 +107,7 @@ class SwaggerOperation
     # Define a default success handler
     # TODO MAYBE: Call this success instead of callback
     unless callback?
-      callback = (date) -> console.log data
+      callback = (data) -> console.log data
     
     # Pull headers out of args    
     if args.headers?
