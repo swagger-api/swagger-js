@@ -16,14 +16,14 @@ and it builds itself at runtime.
 
 ```html
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-<script type="text/javascript" src="https://raw.github.com/wordnik/swagger.js/blob/master/lib/swagger.js"></script>
+<script type="text/javascript" src="https://raw.github.com/wordnik/swagger.js/master/lib/swagger.js"></script>
 <script type="text/javascript">
   $(function() { 
     window.wordnik = new SwaggerApi({
       discoveryUrl: "http://api.wordnik.com/v4/resources.json",
       apiKey: "MY_API_KEY",
       success: function() {
-        alert('Shall we dance?');
+        console.log('Shall we dance?');
       }
     });
   });
