@@ -4,10 +4,10 @@
     <title>swagger.js example</title>
     
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script type="text/javascript" src="https://raw.github.com/wordnik/swagger.js/blob/master/lib/swagger.js"></script>
+    <script type="text/javascript" src="https://raw.github.com/wordnik/swagger.js/master/lib/swagger.js"></script>
     <script type="text/javascript">
       $(function() { 
-        wordnik = new Api({
+        wordnik = new SwaggerApi({
           api_key: 'a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5', // sample wordnik API key
           verbose: true,
           success: function() {
