@@ -56,19 +56,31 @@ After executing the above code you should see the success message in your consol
 
 ### Object Hierarchy
 
-Now you have access to an object called wordnik. Try calling this stuff:
+Now you have access to an object called `wordnik`.
+This object is what swagger.js builds at runtime when you
+point it at a `discoveryUrl`. Try exploring it in the console:
 
 ```javascript
 wordnik
 wordnik.resources
 wordnik.resources.word.operations
 wordnik.resources.word.operations.getDefinition
-
 ```
 
-This object structure is what swagger.js builds at runtime when you
-point it at a `discoveryUrl`.
+### Quick Reference
 
+You also get some console help() methods for quick reference. Some examples:
+
+```javascript
+// Apis
+wordnik.help()
+
+// Resources
+wordnik.resource.word.help()
+
+// Operations
+wordnik.resources.word.operations.getExamples.help()
+```
 ### Making Requests
 
 There are two ways to make a request:

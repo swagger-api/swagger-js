@@ -45,6 +45,15 @@ class SwaggerApi
     
     @ready = true
     @success() if @success?
+    
+  help: ->
+    for resource_name, resource of @resources
+      console.log resource_name
+      for operation_name, operation of resource.operations
+        console.log "  #{operation.nickname}"
+        for parameter in operation.parameters
+          console.log "    #{parameter.name}#{if parameter.required then ' (required)'  else ''} - #{parameter.description}"
+    @
         
 class SwaggerResource
 
@@ -82,6 +91,14 @@ class SwaggerResource
 
       # Now that this resource is loaded, tell the API to check in on itself
       @api.selfReflect()
+      
+  help: ->
+    for operation_name, operation of @operations
+      console.log "  #{operation.nickname}"
+      for parameter in operation.parameters
+        console.log "    #{parameter.name}#{if parameter.required then ' (required)'  else ''} - #{parameter.description}"
+    @
+
 
 class SwaggerOperation
 
@@ -148,6 +165,12 @@ class SwaggerOperation
     url += ("?" + $.param(args))
 
     url
+
+  help: ->
+    for parameter in @parameters
+      console.log "    #{parameter.name}#{if parameter.required then ' (required)'  else ''} - #{parameter.description}"
+    @
+
 
 class SwaggerRequest
   
