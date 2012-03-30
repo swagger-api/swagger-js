@@ -83,15 +83,15 @@ describe 'SwaggerResource', ->
     waitsFor ->
       wordnik.ready?
         
-  it "has a url()", ->
+  it "creates a url property", ->
     runs ->
       resource = wordnik.resources.wordList
-      expect(resource.url()).toMatch(/\.json$/)
+      expect(resource.url).toMatch(/\.json$/)
       
-  it "has a name() method which is inferred from its path", ->
+  it "has a name property which is inferred from its path", ->
     runs ->
       resource = wordnik.word
-      expect(resource.name()).toEqual('word')
+      expect(resource.name).toEqual('word')
 
   it "creates a container object for its operations, with operation nicknames as keys", ->
     runs ->

@@ -1,4 +1,6 @@
 class SwaggerApi
+  
+  # Defaults
   discoveryUrl: "http://api.wordnik.com/v4/resources.json"
   debug: false
   api_key: null
@@ -30,7 +32,7 @@ class SwaggerApi
         continue if resource.path is "/tracking.{format}" or resource.path is "/partner.{format}"
         
         res = new SwaggerResource resource.path, resource.description, this
-        @resources[res.name()] = res
+        @resources[res.name] = res
         
       this
   
@@ -50,7 +52,15 @@ class SwaggerResource
     throw "SwaggerResources must have a path." unless @path?
     @operations = {}
     
-    $.getJSON @url(), (response) =>
+    # e.g."http://api.wordnik.com/v4/word.json"
+    @url = @api.basePath + @path.replace('{format}', 'json')
+
+    # Extract name from path
+    # '/foo/dogs.format' -> 'dogs'
+    parts = @path.split("/")
+    @name = parts[parts.length - 1].replace('.{format}', '')
+    
+    $.getJSON @url, (response) =>
       @basePath = response.basePath
       
       # TODO: Take this out.. it's a wordnik API regression
@@ -65,23 +75,13 @@ class SwaggerResource
               @operations[op.nickname] = op
 
       # Store a named reference to this resource on the parent object
-      @api[this.name()] = this
+      @api[this.name] = this
 
       # Mark as ready
       @ready = true
 
       # Now that this resource is loaded, tell the API to check in on itself
       @api.selfReflect()
-
-  # e.g."http://api.wordnik.com/v4/word.json"
-  url: ->
-    @api.basePath + @path.replace('{format}', 'json')
-  
-  # Extract name from path
-  # '/foo/dogs.format' -> 'dogs'
-  name: ->
-    parts = @path.split("/")
-    parts[parts.length - 1].replace('.{format}', '')
 
 class SwaggerOperation
 
