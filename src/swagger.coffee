@@ -117,7 +117,10 @@ class SwaggerOperation
       @do(args, callback, error)
       
   do: (args={}, callback, error) =>
-  
+    
+    # if no callback, must be being called without parameters
+    callback = args if (args? and !callback?)
+        
     # Define a default error handler
     unless error?
       error = (xhr, textStatus, error) -> console.log xhr, textStatus, error
