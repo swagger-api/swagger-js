@@ -102,11 +102,10 @@ class SwaggerResource
 
 class SwaggerOperation
 
-  constructor: (@nickname, @path, @httpMethod, @parameters, @summary, @resource) ->
+  constructor: (@nickname, @path, @httpMethod, @parameters=[], @summary, @resource) ->
     throw "SwaggerOperations must have a nickname." unless @nickname?
     throw "SwaggerOperation #{nickname} is missing path." unless @path?
     throw "SwaggerOperation #{nickname} is missing httpMethod." unless @httpMethod?
-    
     # Convert {format} to 'json'
     @path = @path.replace('{format}', 'json')
         
