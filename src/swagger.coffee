@@ -21,6 +21,8 @@ class SwaggerApi
     $.getJSON @discoveryUrl, (response) =>
       @basePath = response.basePath
       
+      throw "discoveryUrl basePath must be a URL." unless @basePath.match(/^HTTP/i)?
+      
       # TODO: Take this out. It's an API regression.
       @basePath = @basePath.replace(/\/$/, '')
 
