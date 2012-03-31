@@ -118,9 +118,13 @@ class SwaggerOperation
       
   do: (args={}, callback, error) =>
     
-    # if no callback, must be being called without parameters
-    callback = args if (args? and !callback?)
-        
+    # if the args is a function, then it must be a resource without
+    # parameters
+    if (typeof args) == "function"
+      error = callback
+      callback = args
+      args = {}
+      
     # Define a default error handler
     unless error?
       error = (xhr, textStatus, error) -> console.log xhr, textStatus, error
