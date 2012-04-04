@@ -1,0 +1,20 @@
+{
+  "author": "Zeke Sikelianos <zeke@wordnik.com> (http://twitter.com/#!/zeke)",
+  "name": "swagger",
+  "description": "swagger.js is a javascript client for use with swaggering APIs.",
+  "version": "0.0.1",
+  "homepage": "http://swagger.wordnik.com",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/wordnik/swagger.js.git"
+  },
+  "main": "lib/swagger.js",
+  "scripts": {
+    "test": "open spec.html"
+  },
+  "engines": {
+    "node": "~0.6.6"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
