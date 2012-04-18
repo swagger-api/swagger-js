@@ -182,11 +182,11 @@ class SwaggerOperation
 
 class SwaggerRequest
   
-  constructor: (@type, @url, @headers, @body, @callback, @error, @operation) ->
+  constructor: (@type, @url, @headers, @body, @successCallback, @errorCallback, @operation) ->
     throw "SwaggerRequest type is required (get/post/put/delete)." unless @type?
     throw "SwaggerRequest url is required." unless @url?
-    throw "SwaggerRequest callback is required." unless @callback?
-    throw "SwaggerRequest error callback is required." unless @error?
+    throw "SwaggerRequest successCallback is required." unless @successCallback?
+    throw "SwaggerRequest error callback is required." unless @errorCallback?
     throw "SwaggerRequest operation is required." unless @operation?
     
     # console.log "new SwaggerRequest: %o", this
@@ -205,10 +205,10 @@ class SwaggerRequest
         # headers: @headers
         data: JSON.stringify(@body)
         dataType: 'json'
-        error: (xhr, textStatus, error) ->
-          @error(xhr, textStatus, error)
+        error: (xhr, textStatus, error) =>
+          @errorCallback(xhr, textStatus, error)
         success: (data) =>
-          @callback(data)
+          @successCallback(data)
 
       obj.contentType = "application/json" if (obj.type.toLowerCase() == "post" or obj.type.toLowerCase() == "put")
     

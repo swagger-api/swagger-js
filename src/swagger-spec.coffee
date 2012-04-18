@@ -194,14 +194,14 @@ describe 'SwaggerRequest', ->
   describe "constructor", ->
 
     beforeEach ->
-      headers =
+      window.headers =
         'mock': 'true' # SwaggerRequest won't run if mock header is present
-      body = null
-      callback = ->
+      window.body = null
+      window.callback = ->
         'mock callback'
-      error = ->
+      window.error = ->
           'mock error'
-      operation = wordnik2.word.operations.getExamples
+      window.operation = wordnik2.word.operations.getExamples
       window.request = new SwaggerRequest("GET", "http://google.com", headers, body, callback, error, operation)
 
     it "sticks the API key into the headers, if present in the parent Api configuration", ->
@@ -211,6 +211,20 @@ describe 'SwaggerRequest', ->
   it "exposes an asCurl() method", ->
     curl = request.asCurl()
     expect(curl).toMatch(/curl --header \"mock: true\" --header \"api_key: magic\"/)
+
+  it "supports an error callback", ->
+    window.error_message = null
+    success = ->
+      window.error_message = "success"
+    failure = ->
+      window.error_message = "error"
+    window.request = new SwaggerRequest("GET", "http://google.com/foo", {}, {}, success, failure, window.operation)
+        
+    waitsFor ->
+      error_message?
+    
+    runs ->
+      expect(error_message).toBe("error")
     
   it "supports POST requests", ->
     window.petstore = new SwaggerApi
