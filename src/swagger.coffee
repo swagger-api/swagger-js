@@ -18,7 +18,7 @@ class SwaggerApi
     @build() if options.success?
     
   build: ->
-    $.getJSON @discoveryUrl, (response) =>
+    jQuery.getJSON @discoveryUrl, (response) =>
       @basePath = response.basePath
       
       throw "discoveryUrl basePath must be a URL." unless @basePath.match(/^HTTP/i)?
@@ -71,7 +71,7 @@ class SwaggerResource
     parts = @path.split("/")
     @name = parts[parts.length - 1].replace('.{format}', '')
     
-    $.getJSON @url, (response) =>
+    jQuery.getJSON @url, (response) =>
       @basePath = response.basePath
       
       # TODO: Take this out.. it's a wordnik API regression
@@ -170,7 +170,7 @@ class SwaggerOperation
     args['api_key'] = @resource.api.api_key if @resource.api.api_key?
 
     # Append the query string to the URL
-    url += ("?" + $.param(args))
+    url += ("?" + jQuery.param(args))
 
     url
 
@@ -212,7 +212,7 @@ class SwaggerRequest
 
       obj.contentType = "application/json" if (obj.type.toLowerCase() == "post" or obj.type.toLowerCase() == "put")
     
-      $.ajax(obj)
+      jQuery.ajax(obj)
 
   asCurl: ->
     header_args = ("--header \"#{k}: #{v}\"" for k,v of @headers)
