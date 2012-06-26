@@ -44,7 +44,7 @@ describe 'SwaggerApi', ->
     
       it "allows discoveryUrl to be set", ->
         runs ->
-          expect(unicornApi.discoveryUrl).toBe("http://unicorns.com")
+          expect(unicornApi.discoveryUrl).toBe("http://unicorns.com?api_key=stardust")
     
       it "allows debugging to be enabled", ->
         runs ->
@@ -69,12 +69,31 @@ describe 'SwaggerApi', ->
       it "creates a container object for its resources, with resource names as keys", ->
         runs ->
           expect(wordnik.resources).toBeDefined()
+          expect(wordnik.resourcesArray).toBeDefined()
           expect(wordnik.resources.word).toBeDefined()
           
       it "creates shorthand references to its resources", ->
         runs ->
           expect(wordnik.words).toBeDefined()
           
+  describe 'resourceLevelDiscovery', ->
+
+      beforeEach ->
+        window.wordnik = new SwaggerApi({discoveryUrl: 'http://api.wordnik.com/v4/words.json'})
+        wordnik.build()
+        waitsFor ->
+          wordnik.ready?
+
+      it "creates a container object for its resource, with resource name as keys", ->
+        runs ->
+          expect(wordnik.resources).toBeDefined()
+          expect(wordnik.resourcesArray).toBeDefined()
+          expect(wordnik.resources.words).toBeDefined()
+
+      it "creates shorthand references to its resource", ->
+        runs ->
+          expect(wordnik.words).toBeDefined()
+
 describe 'SwaggerResource', ->
   
   beforeEach ->
@@ -97,6 +116,7 @@ describe 'SwaggerResource', ->
     runs ->
       resource = wordnik.word
       expect(resource.operations).toBeDefined()
+      expect(resource.operationsArray).toBeDefined()
       expect(resource.operations.getExamples).toBeDefined()
 
   it "creates named functions that map to its operations", ->
