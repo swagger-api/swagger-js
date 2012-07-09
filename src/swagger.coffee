@@ -281,10 +281,13 @@ class SwaggerOperation
           throw "#{param.name} is a required path param."
 
     # Add API key to the params
-    args['api_key'] = @resource.api.api_key if @resource.api.api_key? and includeApiKey
+    args['api_key'] = @resource.api.api_key if includeApiKey and @resource.api.api_key? and @resource.api.api_key.length > 0 
 
     # Append the query string to the URL
-    url += ("?" + jQuery.param(args))
+    queryParams = jQuery.param(args)
+
+
+    url += ("?" + queryParams) if queryParams? and queryParams.length > 0
 
     url
 
@@ -296,7 +299,7 @@ class SwaggerOperation
 
 
     # Add API key to the params
-    headerParams['api_key'] = @resource.api.api_key if @resource.api.api_key? and includeApiKey
+    headerParams['api_key'] = @resource.api.api_key if includeApiKey and @resource.api.api_key? and @resource.api.api_key.length > 0
 
     headerParams
 
