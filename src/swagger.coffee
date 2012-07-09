@@ -265,7 +265,7 @@ class SwaggerOperation
 
   pathXml: -> @path.replace "{format}", "xml"
 
-  urlify: (args) ->
+  urlify: (args, includeApiKey = true) ->
     
     url = @resource.basePath + @pathJson()
 
@@ -280,14 +280,26 @@ class SwaggerOperation
         else
           throw "#{param.name} is a required path param."
 
-    # TODO: Remove this in favor of header
     # Add API key to the params
-    args['api_key'] = @resource.api.api_key if @resource.api.api_key?
+    args['api_key'] = @resource.api.api_key if @resource.api.api_key? and includeApiKey
 
     # Append the query string to the URL
     url += ("?" + jQuery.param(args))
 
     url
+
+  # From args extract header params and return them
+  getHeaderParams: (args, includeApiKey = true) ->
+    headerParams = {}
+    for param in @parameters
+      headerParams[param.name] = args[param.name] if param.paramType == 'header' and args[param.name]
+
+
+    # Add API key to the params
+    headerParams['api_key'] = @resource.api.api_key if @resource.api.api_key? and includeApiKey
+
+    headerParams
+
 
   help: ->
     for parameter in @parameters
