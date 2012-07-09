@@ -12,6 +12,7 @@ class SwaggerApi
     @api_key = options.apiKey if options.apiKey?
     @api_key = options.api_key if options.api_key?
     @verbose = options.verbose if options.verbose?
+    @supportHeaderParams = if options.supportHeaderParams? then options.supportHeaderParams else false
     @success = options.success if options.success?
     @failure = if options.failure? then options.failure else ->
     @progress = if options.progress? then options.progress else ->
@@ -195,9 +196,9 @@ class SwaggerResource
 class SwaggerOperation
 
   constructor: (@nickname, @path, @httpMethod, @parameters=[], @summary, @resource) ->
-    @api.fail "SwaggerOperations must have a nickname." unless @nickname?
-    @api.fail "SwaggerOperation #{nickname} is missing path." unless @path?
-    @api.fail "SwaggerOperation #{nickname} is missing httpMethod." unless @httpMethod?
+    @resource.api.fail "SwaggerOperations must have a nickname." unless @nickname?
+    @resource.api.fail "SwaggerOperation #{nickname} is missing path." unless @path?
+    @resource.api.fail "SwaggerOperation #{nickname} is missing httpMethod." unless @httpMethod?
     # Convert {format} to 'json'
     @path = @path.replace('{format}', 'json')
     @httpMethod = @httpMethod.toLowerCase()
@@ -284,25 +285,37 @@ class SwaggerOperation
     args['api_key'] = @resource.api.api_key if includeApiKey and @resource.api.api_key? and @resource.api.api_key.length > 0 
 
     # Append the query string to the URL
-    queryParams = jQuery.param(args)
-
+    if @supportHeaderParams()
+      queryParams = jQuery.param(@getQueryParams(args))
+    else
+      queryParams = jQuery.param(@getQueryAndHeaderParams(args))
 
     url += ("?" + queryParams) if queryParams? and queryParams.length > 0
 
     url
 
-  # From args extract header params and return them
+  supportHeaderParams: ->
+    @resource.api.supportHeaderParams
+
+  getQueryAndHeaderParams: (args, includeApiKey = true) ->
+    @getMatchingParams ['query', 'header'], args, includeApiKey
+
+  getQueryParams: (args, includeApiKey = true) ->
+    @getMatchingParams ['query'], args, includeApiKey
+ 
   getHeaderParams: (args, includeApiKey = true) ->
-    headerParams = {}
+    @getMatchingParams ['header'], args, includeApiKey
+
+  # From args extract params of paramType and return them
+  getMatchingParams: (paramTypes, args, includeApiKey) ->
+    matchingParams = {}
     for param in @parameters
-      headerParams[param.name] = args[param.name] if param.paramType == 'header' and args[param.name]
+      matchingParams[param.name] = args[param.name] if jQuery.inArray(param.paramType, paramTypes) and args[param.name]
 
+    #maMchingParams API key to the params
+    matchingParams['api_key'] = @resource.api.api_key if includeApiKey and @resource.api.api_key? and @resource.api.api_key.length > 0
 
-    # Add API key to the params
-    headerParams['api_key'] = @resource.api.api_key if includeApiKey and @resource.api.api_key? and @resource.api.api_key.length > 0
-
-    headerParams
-
+    matchingParams
 
   help: ->
     for parameter in @parameters
