@@ -276,7 +276,7 @@ class SwaggerOperation
       if param.paramType == 'path'
         
         if args[param.name]
-          url = url.replace("{#{param.name}}", args[param.name])
+          url = url.replace("{#{param.name}}", encodeURIComponent(args[param.name]))
           delete args[param.name]
         else
           throw "#{param.name} is a required path param."
@@ -310,10 +310,12 @@ class SwaggerOperation
   getMatchingParams: (paramTypes, args, includeApiKey) ->
     matchingParams = {}
     for param in @parameters
-      matchingParams[param.name] = args[param.name] if jQuery.inArray(param.paramType, paramTypes) and args[param.name]
+      if (jQuery.inArray(param.paramType, paramTypes) >= 0) and args[param.name]
+        matchingParams[param.name] = args[param.name]
 
-    #maMchingParams API key to the params
-    matchingParams['api_key'] = @resource.api.api_key if includeApiKey and @resource.api.api_key? and @resource.api.api_key.length > 0
+    #machingParams API key to the params
+    if includeApiKey and @resource.api.api_key? and @resource.api.api_key.length > 0
+      matchingParams['api_key'] = @resource.api.api_key
 
     matchingParams
 
