@@ -13,6 +13,7 @@ class SwaggerApi
     @api_key = options.api_key if options.api_key?
     @verbose = options.verbose if options.verbose?
     @supportHeaderParams = if options.supportHeaderParams? then options.supportHeaderParams else false
+    @supportedSubmitMethods = if options.supportedSubmitMethods? then options.supportedSubmitMethods else ['get']
     @success = options.success if options.success?
     @failure = if options.failure? then options.failure else ->
     @progress = if options.progress? then options.progress else ->
@@ -296,6 +297,9 @@ class SwaggerOperation
 
   supportHeaderParams: ->
     @resource.api.supportHeaderParams
+
+  supportedSubmitMethods: ->
+    @resource.api.supportedSubmitMethods
 
   getQueryAndHeaderParams: (args, includeApiKey = true) ->
     @getMatchingParams ['query', 'header'], args, includeApiKey
