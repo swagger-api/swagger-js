@@ -9,6 +9,7 @@ class SwaggerApi
   constructor: (options={}) ->
     @discoveryUrl = options.discoveryUrl if options.discoveryUrl?
     @debug = options.debug if options.debug?
+    @apiKeyName = if options.apiKeyName? then options.apiKeyName else 'api_key'
     @api_key = options.apiKey if options.apiKey?
     @api_key = options.api_key if options.api_key?
     @verbose = options.verbose if options.verbose?
@@ -99,7 +100,7 @@ class SwaggerApi
   suffixApiKey: (url) ->
     if @api_key? and jQuery.trim(@api_key).length > 0 and url?
       sep = if url.indexOf('?') > 0 then '&' else '?'
-      url + sep + 'api_key=' + @api_key
+      url + sep + @apiKeyName + '=' + @api_key
     else
       url
 
@@ -283,7 +284,7 @@ class SwaggerOperation
           throw "#{param.name} is a required path param."
 
     # Add API key to the params
-    args['api_key'] = @resource.api.api_key if includeApiKey and @resource.api.api_key? and @resource.api.api_key.length > 0 
+    args[@apiKeyName] = @resource.api.api_key if includeApiKey and @resource.api.api_key? and @resource.api.api_key.length > 0 
 
     # Append the query string to the URL
     if @supportHeaderParams()
@@ -319,7 +320,7 @@ class SwaggerOperation
 
     #machingParams API key to the params
     if includeApiKey and @resource.api.api_key? and @resource.api.api_key.length > 0
-      matchingParams['api_key'] = @resource.api.api_key
+      matchingParams[@resource.api.apiKeyName] = @resource.api.api_key
 
     matchingParams
 
@@ -343,7 +344,7 @@ class SwaggerRequest
     
     # Stick the API key into the headers, if present
     @headers or= {}
-    @headers.api_key = @operation.resource.api.api_key if @operation.resource.api.api_key?
+    @headers[@apiKeyName] = @operation.resource.api.api_key if @operation.resource.api.api_key?
 
     unless @headers.mock?
     
