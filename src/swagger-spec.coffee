@@ -1,4 +1,4 @@
-window.api_key = 'a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5'
+window.api_key = 'special-key'
 
 describe 'SwaggerApi', ->
   
@@ -7,13 +7,13 @@ describe 'SwaggerApi', ->
     describe 'defaults', ->
     
       beforeEach ->
-        window.wordnik = new SwaggerApi
+        window.wordnik = new SwaggerApi({discoveryUrl: 'http://petstore.swagger.wordnik.com/api/resources.json'})
         waitsFor ->
           wordnik
-      
-      it "sets the default discoveryUrl to wordnik's production API", ->
+          
+      it "sets the default discoveryUrl to wordnik swagger sandbox", ->
         runs ->
-          expect(wordnik.discoveryUrl).toBe("http://api.wordnik.com/v4/resources.json")
+          expect(wordnik.discoveryUrl).toBe("http://petstore.swagger.wordnik.com/api/resources.json")
 
       it "disables the debugger by default", ->
         runs ->
@@ -57,29 +57,29 @@ describe 'SwaggerApi', ->
   describe 'build', ->
     
       beforeEach ->
-        window.wordnik = new SwaggerApi
+        window.wordnik = new SwaggerApi({discoveryUrl: 'http://petstore.swagger.wordnik.com/api/resources.json'})
         wordnik.build()
         waitsFor ->
           wordnik.ready?
-              
+
       it "sets basePath", ->
         runs ->
-          expect(wordnik.basePath).toBe("http://api.wordnik.com/v4")
+          expect(wordnik.basePath).toBe("http://petstore.swagger.wordnik.com/api")
 
       it "creates a container object for its resources, with resource names as keys", ->
         runs ->
           expect(wordnik.resources).toBeDefined()
           expect(wordnik.resourcesArray).toBeDefined()
-          expect(wordnik.resources.word).toBeDefined()
+          expect(wordnik.resources.pet).toBeDefined()
           
       it "creates shorthand references to its resources", ->
         runs ->
-          expect(wordnik.words).toBeDefined()
+          expect(wordnik.pet).toBeDefined()
           
   describe 'resourceLevelDiscovery', ->
 
       beforeEach ->
-        window.wordnik = new SwaggerApi({discoveryUrl: 'http://api.wordnik.com/v4/words.json'})
+        window.wordnik = new SwaggerApi({discoveryUrl: 'http://petstore.swagger.wordnik.com/api/pet.json'})
         wordnik.build()
         waitsFor ->
           wordnik.ready?
@@ -88,45 +88,45 @@ describe 'SwaggerApi', ->
         runs ->
           expect(wordnik.resources).toBeDefined()
           expect(wordnik.resourcesArray).toBeDefined()
-          expect(wordnik.resources.words).toBeDefined()
+          expect(wordnik.resources.pet).toBeDefined()
 
       it "creates shorthand references to its resource", ->
         runs ->
-          expect(wordnik.words).toBeDefined()
+          expect(wordnik.pet).toBeDefined()
 
 describe 'SwaggerResource', ->
   
   beforeEach ->
-    window.wordnik = new SwaggerApi
+    window.wordnik = new SwaggerApi({discoveryUrl: 'http://petstore.swagger.wordnik.com/api/resources.json'})
     wordnik.build()
     waitsFor ->
       wordnik.ready?
-        
+
   it "creates a url property", ->
     runs ->
-      resource = wordnik.resources.wordList
+      resource = wordnik.resources.pet
       expect(resource.url).toMatch(/\.json$/)
       
   it "has a name property which is inferred from its path", ->
     runs ->
-      resource = wordnik.word
-      expect(resource.name).toEqual('word')
+      resource = wordnik.pet
+      expect(resource.name).toEqual('pet')
 
   it "creates a container object for its operations, with operation nicknames as keys", ->
     runs ->
-      resource = wordnik.word
+      resource = wordnik.pet
       expect(resource.operations).toBeDefined()
       expect(resource.operationsArray).toBeDefined()
-      expect(resource.operations.getExamples).toBeDefined()
+      expect(resource.operations.getPetById).toBeDefined()
 
   it "creates named functions that map to its operations", ->
     runs ->
-      expect(wordnik.word.getDefinitions).toBeDefined()
+      expect(wordnik.pet.getPetById).toBeDefined()
 
 describe 'SwaggerOperation', ->
   
   beforeEach ->
-    window.wordnik = new SwaggerApi
+    window.wordnik = new SwaggerApi({discoveryUrl: 'http://petstore.swagger.wordnik.com/api/resources.json'})
     wordnik.api_key = window.api_key
     wordnik.build()
     waitsFor ->
@@ -135,7 +135,7 @@ describe 'SwaggerOperation', ->
   describe "urlify", ->
 
     beforeEach ->
-      window.operation = wordnik.resources.word.operations.getDefinitions
+      window.operation = wordnik.resources.pet.operations.getPetById
       operation.path = "/my.{format}/{foo}/kaboo"
       operation.parameters = [{paramType: 'path', name: 'foo'}]
       window.args = {foo: 'pee'}
@@ -157,27 +157,27 @@ describe 'SwaggerOperation', ->
 
     beforeEach ->
       window.args =
-        word: 'flagrant'
-        limit: 3
+        tags: 'tag1'
+        limit: 2
       window.response = null
 
-    it "gets back an array of definitions", ->
-      wordnik.word.getDefinitions args, (response) ->
+    it "gets back a list of pets", ->
+      wordnik.pet.findPetsByTags args, (response) ->
         window.response = response
-      
+
       waitsFor ->
         response?
 
       runs ->
         expect(response.length).toBeGreaterThan(0)
-        expect(response[0].word).toBeDefined()
-        expect(response[0].text).toBeDefined()
-        expect(response[0].partOfSpeech).toBeDefined()
-          
+        expect(response[0].name).toBeDefined()
+        expect(response[0].id).toBeDefined()
+        expect(response[0].tags).toBeDefined()
+
     it "pulls request headers out of the args object", ->
       args.headers = 
         'head-cheese': 'certainly'
-      window.request = wordnik.word.getDefinitions args, (response) ->
+      window.request = wordnik.pet.findPetsByTags args, (response) ->
         window.response = response
       
       waitsFor ->
@@ -191,7 +191,7 @@ describe 'SwaggerOperation', ->
       args.body = 
         'name': 'haute couture'
         'pronunciation': 'hottie cooter-otty'
-      window.request = wordnik.word.getDefinitions args, (response) ->
+      window.request = wordnik.pet.findPetsByTags args, (response) ->
         window.response = response
       
       waitsFor ->
@@ -205,8 +205,7 @@ describe 'SwaggerOperation', ->
 describe 'SwaggerRequest', ->
   
   beforeEach ->
-    window.wordnik2 = new SwaggerApi
-    wordnik2.api_key = 'magic'
+    window.wordnik2 = new SwaggerApi({discoveryUrl: 'http://petstore.swagger.wordnik.com/api/resources.json'})
     wordnik2.build()
     waitsFor ->
       wordnik2.ready?
@@ -215,22 +214,26 @@ describe 'SwaggerRequest', ->
 
     beforeEach ->
       window.headers =
+        'api_key': 'magic'
         'mock': 'true' # SwaggerRequest won't run if mock header is present
       window.body = null
       window.callback = ->
         'mock callback'
       window.error = ->
           'mock error'
-      window.operation = wordnik2.word.operations.getExamples
+      window.operation = wordnik2.pet.operations.getPetById
       window.request = new SwaggerRequest("GET", "http://google.com", headers, body, callback, error, operation)
 
     it "sticks the API key into the headers, if present in the parent Api configuration", ->
+      window.args =
+        petId: '1'
+    
       runs ->
         expect(request.headers.api_key).toMatch(/magic/)
 
   it "exposes an asCurl() method", ->
     curl = request.asCurl()
-    expect(curl).toMatch(/curl --header \"mock: true\" --header \"api_key: magic\"/)
+    expect(curl).toMatch(/--header \"api_key: magic\"/)
 
   it "supports an error callback", ->
     window.error_message = null
@@ -245,62 +248,42 @@ describe 'SwaggerRequest', ->
     
     runs ->
       expect(error_message).toBe("error")
-    
-  # it "supports POST requests", ->
-  #   window.petstore = new SwaggerApi
-  #     # discoveryUrl: "http://petstore.swagger.wordnik.com/api/resources.json"
-  #     discoveryUrl: "http://chorus-dev.nik.io/api/resources.json"
-  #     success: ->
-        
-  #       # Use a random suffix to pass uniqueness validations.
-  #       window.random = Math.floor(Math.random()*1000000)
-        
-  #       userParts = 
-  #         username: "kareem#{random}"
-  #         # firstName: "Kareem"
-  #         # lastName: "Abdul-Jabbar"
-  #         email: "kareem#{random}@abdul-jabbar.com"
-  #         # phone: "415-123-4567"
-  #         password: "thunderbolt"
-          
-  #       # petstore.user.createUser {body: userParts}, (response) ->
-  #       petstore.users.register {body: userParts}, (response) ->
-  #         window.user = response
 
-  #   waitsFor ->
-  #     window.user?
-    
-  #   runs ->
-  #     expect(window.user.username).toBe("kareem#{random}")
+describe 'Crud Methods', ->
+  window.random = Math.floor(Math.random()*1000000)
+
+  beforeEach ->
+    window.petstore = new SwaggerApi({discoveryUrl: 'http://petstore.swagger.wordnik.com/api/resources.json', api_key: 'special-key'})
+    petstore.build()
+    waitsFor ->
+      petstore.ready?
+
+   it "supports POST requests", ->
+     args = body : {
+       id: "#{random}"
+       name: "pet-#{random}"
+       status: "available"}
+
+     petstore.pet.addPet args, (response) ->
+       window.response = response
       
-  # it "supports PUT requests", ->
-  #       window.chorus = new SwaggerApi
-  #         discoveryUrl: "http://chorus-dev.nik.io/api/resources.json"
-  #         success: ->
-  # 
-  #             # Use a random suffix to pass uniqueness validations.
-  #             window.random = Math.floor(Math.random()*1000000)
-  #                 
-  #             siteParts = 
-  #               name: name
-  #               url : url
-  #               description : desc
-  # 
-  #             window.chorus.sites.createSite { body: siteParts }, (site) ->
-  #               updateSiteParts = 
-  #                 id: site.id 
-  #                 partnerId: site.partnerId
-  #                 name: site.name
-  #                 url : site.url
-  #                 settings: 
-  #                   interBlogRecommendations: true
-  #                   intraBlogRecommendations: false
-  #                         
-  #               window.chorus.sites.updateSite {body: updateSiteParts}, (response) ->
-  #                 window.site = response
-  # 
-  #       waitsFor ->
-  #         window.site?
-  # 
-  #       runs ->
-  #         expect(window.site.interBlogRecommendations).toBe(true)
+     waitsFor ->
+       response?
+        
+     runs ->
+       expect(response).toBeDefined()
+
+   it "supports PUT requests", ->
+     args = body : {
+       id: "#{random}"
+       name: "a nice pet-#{random}"
+       status: "available"}
+
+     petstore.pet.updatePet args, (response) ->
+       window.response = response
+      
+     waitsFor ->
+       response?
+
+     runs ->
+       expect(response).toBeDefined()
