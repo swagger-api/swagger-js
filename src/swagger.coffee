@@ -344,7 +344,7 @@ class SwaggerRequest
     
     # Stick the API key into the headers, if present
     @headers or= {}
-    @headers[@apiKeyName] = @operation.resource.api.api_key if @operation.resource.api.api_key?
+    @headers[@operation.resource.api.apiKeyName] = @operation.resource.api.api_key if @operation.resource.api.api_key?
 
     unless @headers.mock?
     
