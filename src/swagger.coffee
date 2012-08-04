@@ -182,7 +182,7 @@ class SwaggerResource
   addOperations: (resource_path, ops) ->
     if ops
       for o in ops
-        op = new SwaggerOperation o.nickname, resource_path, o.httpMethod, o.parameters, o.summary, this
+        op = new SwaggerOperation o.nickname, resource_path, o.httpMethod, o.parameters, o.summary, o.notes, this
         @operations[op.nickname] = op
         @operationsArray.push op
 
@@ -197,7 +197,7 @@ class SwaggerResource
 
 class SwaggerOperation
 
-  constructor: (@nickname, @path, @httpMethod, @parameters=[], @summary, @resource) ->
+  constructor: (@nickname, @path, @httpMethod, @parameters=[], @summary, @notes, @resource) ->
     @resource.api.fail "SwaggerOperations must have a nickname." unless @nickname?
     @resource.api.fail "SwaggerOperation #{nickname} is missing path." unless @path?
     @resource.api.fail "SwaggerOperation #{nickname} is missing httpMethod." unless @httpMethod?
@@ -344,7 +344,7 @@ class SwaggerRequest
     
     # Stick the API key into the headers, if present
     @headers or= {}
-    @headers[@operation.resource.api.apiKeyName] = @operation.resource.api.api_key if @operation.resource.api.api_key?
+    @headers[@apiKeyName] = @operation.resource.api.api_key if @operation.resource.api.api_key?
 
     unless @headers.mock?
     

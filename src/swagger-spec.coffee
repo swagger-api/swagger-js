@@ -139,6 +139,10 @@ describe 'SwaggerOperation', ->
       operation.path = "/my.{format}/{foo}/kaboo"
       operation.parameters = [{paramType: 'path', name: 'foo'}]
       window.args = {foo: 'pee'}
+    
+    it "verifies notes", ->
+      runs ->
+        expect(operation.notes).toMatch(/^Returns a pet when/)?
 
     it "automatically converts {format} to json", ->
       runs ->
