@@ -174,7 +174,7 @@ class SwaggerResource
           @api.selfReflect()
         ).error(
         (error) =>
-          @fail error.status + ' : ' + error.statusText + ' ' + @url
+          @api.fail error.status + ' : ' + error.statusText + ' ' + @url
         )
 
 
