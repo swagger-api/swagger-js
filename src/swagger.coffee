@@ -288,9 +288,9 @@ class SwaggerOperation
 
     # Append the query string to the URL
     if @supportHeaderParams()
-      queryParams = jQuery.param(@getQueryParams(args))
+      queryParams = jQuery.param(@getQueryParams(args, includeApiKey))
     else
-      queryParams = jQuery.param(@getQueryAndHeaderParams(args))
+      queryParams = jQuery.param(@getQueryAndHeaderParams(args, includeApiKey))
 
     url += ("?" + queryParams) if queryParams? and queryParams.length > 0
 
