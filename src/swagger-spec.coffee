@@ -142,7 +142,7 @@ describe 'SwaggerOperation', ->
     
     it "verifies notes", ->
       runs ->
-        expect(operation.notes).toMatch(/^Returns a pet when/)?
+        expect(operation.notes).toMatch(/^Returns a pet/)?
 
     it "automatically converts {format} to json", ->
       runs ->
