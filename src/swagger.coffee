@@ -18,6 +18,7 @@ class SwaggerApi
     @success = options.success if options.success?
     @failure = if options.failure? then options.failure else ->
     @progress = if options.progress? then options.progress else ->
+    @headers = if options.headers? then options.headers else {}
 
     # Suffix discovery url with api_key
     @discoveryUrl = @suffixApiKey(@discoveryUrl)
@@ -321,6 +322,10 @@ class SwaggerOperation
     #machingParams API key to the params
     if includeApiKey and @resource.api.api_key? and @resource.api.api_key.length > 0
       matchingParams[@resource.api.apiKeyName] = @resource.api.api_key
+
+    if (jQuery.inArray('header', paramTypes) >= 0)
+      for name, value of @resource.api.headers
+        matchingParams[name] = value
 
     matchingParams
 
