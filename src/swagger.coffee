@@ -19,6 +19,7 @@ class SwaggerApi
     @failure = if options.failure? then options.failure else ->
     @progress = if options.progress? then options.progress else ->
     @headers = if options.headers? then options.headers else {}
+    @booleanValues = if options.booleanValues? then options.booleanValues else new Array('true', 'false')
 
     # Suffix discovery url with api_key
     @discoveryUrl = @suffixApiKey(@discoveryUrl)
@@ -212,6 +213,10 @@ class SwaggerOperation
       # Path params do not have a name, set the name to the path if name is n/a
       parameter.name = parameter.name || parameter.dataType
 
+      if(parameter.dataType.toLowerCase() is 'boolean')
+        parameter.allowableValues = {}
+        parameter.allowableValues.values = @resource.api.booleanValues
+
       # Set allowableValue attributes
       if parameter.allowableValues?
         # Set isRange and isList flags on param
@@ -229,6 +234,7 @@ class SwaggerOperation
               parameter.allowableValues.descriptiveValues.push {value: v, isDefault: true}
             else
               parameter.allowableValues.descriptiveValues.push {value: v, isDefault: false}
+
 
     # Store a named reference to this operation on the parent resource
     # getDefinitions() maps to getDefinitionsData.do()
