@@ -88,7 +88,8 @@ class SwaggerApi
     return false unless @resources?
     for resource_name, resource of @resources
       return false unless resource.ready?
-    
+
+    @setConsolidatedModels()
     @ready = true
     @success() if @success?
 
@@ -96,6 +97,17 @@ class SwaggerApi
     @failure message
     throw message
 
+  # parses models in all resources and sets a unique consolidated list of models
+  setConsolidatedModels: ->
+    @modelsArray = []
+    @models = {}
+    for resource_name, resource of @resources
+      for modelName of resource.models
+        if not @models[modelName]?
+          @models[modelName] = resource.models[modelName]
+          @modelsArray.push resource.models[modelName]
+    for model in @modelsArray
+      model.setReferencedModels(@models)
 
   # Suffix a passed url with api_key
   #
@@ -130,15 +142,22 @@ class SwaggerResource
     # has a more specific one, we'll set it again there.
     @basePath = @api.basePath
 
-    # We're goign to store operations in a map (operations) and a list (operationsArray)
+    # We're going to store operations in a map (operations) and a list (operationsArray)
     @operations = {}
     @operationsArray = []
 
+    # We're going to store models in a map (models) and a list (modelsArray)
+    @modelsArray = []
+    @models = {}
 
     if resourceObj.operations? and @api.resourcePath?
       # read resource directly from operations object
-      @api.progress 'reading resource ' + @name + ' operations'
+      @api.progress 'reading resource ' + @name + ' models and operations'
+
+      @addModels(resourceObj.models)
+
       @addOperations(resourceObj.path, resourceObj.operations)
+
 
       # Store a named reference to this resource on the parent object
       @api[this.name] = this
@@ -161,6 +180,8 @@ class SwaggerResource
             # TODO: Take this out.. it's a wordnik API regression
             @basePath = @basePath.replace(/\/$/, '')
 
+          @addModels(response.models)
+
           # Instantiate SwaggerOperations and store them in the @operations map and @operationsArray
           if response.apis
             for endpoint in response.apis
@@ -180,11 +201,20 @@ class SwaggerResource
         )
 
 
+  addModels: (models) ->
+    if models?
+      for modelName of models
+        swaggerModel = new SwaggerModel(modelName, models[modelName])
+        @modelsArray.push swaggerModel
+        @models[modelName] = swaggerModel
+      for model in @modelsArray
+        model.setReferencedModels(@models)
+
 
   addOperations: (resource_path, ops) ->
     if ops
       for o in ops
-        op = new SwaggerOperation o.nickname, resource_path, o.httpMethod, o.parameters, o.summary, o.notes, this
+        op = new SwaggerOperation o.nickname, resource_path, o.httpMethod, o.parameters, o.summary, o.notes, o.responseClass, this
         @operations[op.nickname] = op
         @operationsArray.push op
 
@@ -197,9 +227,72 @@ class SwaggerResource
     @
 
 
+class SwaggerModel
+  constructor: (modelName, obj) ->
+    @name = if obj.id? then obj.id else modelName
+    @properties = []
+    for propertyName of obj.properties
+      @properties.push new SwaggerModelProperty(propertyName, obj.properties[propertyName])
+
+  # Set models referenced  bu this model
+  setReferencedModels: (allModels) ->
+    for prop in @properties
+      if allModels[prop.dataType]?
+        prop.refModel = allModels[prop.dataType]
+      else if prop.refDataType? and allModels[prop.refDataType]?
+        prop.refModel = allModels[prop.refDataType]
+
+  getMockSignature: (prefix, modelToIgnore) ->
+    propertiesStr = []
+    for prop in @properties
+      propertiesStr.push prop.toString()
+
+    strong = '<span style="font-weight: bold; color: #000; font-size: 1.0em">';
+    stronger = '<span style="font-weight: bold; color: #000; font-size: 1.1em">';
+    strongClose = '</span>';
+    classOpen = strong + 'class ' + @name + '(' + strongClose
+    classClose = strong + ')' + strongClose
+    returnVal = classOpen + '<span>' + propertiesStr.join('</span>, <span>') + '</span>' + classClose
+
+    if prefix?
+      returnVal = stronger + prefix + strongClose + '<br/>' + returnVal
+
+    # iterate thru all properties and add models
+    # which are not modelToIgnore
+    # modelToIgnore is used to ensure that recursive references do not lead to endless loop
+    for prop in @properties
+      if(prop.refModel? and (not (prop.refModel is modelToIgnore)))
+        returnVal = returnVal + ('<br>' + prop.refModel.getMockSignature(undefined, @))
+
+    returnVal
+
+class SwaggerModelProperty
+  constructor: (@name, obj) ->
+    @dataType = obj.type
+    @isArray = @dataType.toLowerCase() is 'array'
+    @descr = obj.description
+    if obj.items?
+      if obj.items.type? then @refDataType = obj.items.type
+      if obj.items.$ref? then @refDataType = obj.items.$ref
+    @dataTypeWithRef = if @refDataType? then (@dataType + '[' + @refDataType + ']') else @dataType
+    if obj.allowableValues?
+      @valueType = obj.allowableValues.valueType
+      @values = obj.allowableValues.values
+      if @values?
+        @valuesString = "'" + @values.join("' or '") + "'"
+
+  toString: ->
+    str = @name + ': ' + @dataTypeWithRef
+    if @values?
+      str += " = ['" + @values.join("' or '") + "']"
+    if @descr?
+      str += ' {' + @descr + '}'
+    str
+
+
 class SwaggerOperation
 
-  constructor: (@nickname, @path, @httpMethod, @parameters=[], @summary, @notes, @resource) ->
+  constructor: (@nickname, @path, @httpMethod, @parameters=[], @summary, @notes, @responseClass, @resource) ->
     @resource.api.fail "SwaggerOperations must have a nickname." unless @nickname?
     @resource.api.fail "SwaggerOperation #{nickname} is missing path." unless @path?
     @resource.api.fail "SwaggerOperation #{nickname} is missing httpMethod." unless @httpMethod?
@@ -209,6 +302,12 @@ class SwaggerOperation
     @isGetMethod = @httpMethod == "get"
     @resourceName = @resource.name
 
+    # if void clear it
+    if(@responseClass.toLowerCase() is 'void') then @responseClass = undefined
+    if @responseClass?
+      # set the signature of response class
+      @responseClassSignature = @getSignature(@responseClass, @resource.models)
+
     for parameter in @parameters
       # Path params do not have a name, set the name to the path if name is n/a
       parameter.name = parameter.name || parameter.dataType
@@ -216,6 +315,8 @@ class SwaggerOperation
       if(parameter.dataType.toLowerCase() is 'boolean')
         parameter.allowableValues = {}
         parameter.allowableValues.values = @resource.api.booleanValues
+
+      parameter.signature = @getSignature(parameter.dataType, @resource.models)
 
       # Set allowableValue attributes
       if parameter.allowableValues?
@@ -240,6 +341,18 @@ class SwaggerOperation
     # getDefinitions() maps to getDefinitionsData.do()
     @resource[@nickname]= (args, callback, error) =>
       @do(args, callback, error)
+
+  isListType: (dataType) ->
+    if(dataType.indexOf('[') >= 0) then dataType.substring(dataType.indexOf('[') + 1, dataType.indexOf(']')) else undefined
+
+  getSignature: (dataType, models) ->
+    # set listType if it exists
+    listType = @isListType(dataType)
+
+    # set flag which says if its primitive or not
+    isPrimitive = if ((listType? and models[listType]) or models[dataType]?) then false else true
+
+    if (isPrimitive) then dataType else (if listType? then models[listType].getMockSignature(dataType) else models[dataType].getMockSignature(dataType))
       
   do: (args={}, callback, error) =>
     
