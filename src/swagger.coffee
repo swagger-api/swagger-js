@@ -303,7 +303,7 @@ class SwaggerOperation
     @resourceName = @resource.name
 
     # if void clear it
-    if(@responseClass.toLowerCase() is 'void') then @responseClass = undefined
+    if(@responseClass?.toLowerCase() is 'void') then @responseClass = undefined
     if @responseClass?
       # set the signature of response class
       @responseClassSignature = @getSignature(@responseClass, @resource.models)
