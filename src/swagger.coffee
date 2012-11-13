@@ -214,7 +214,7 @@ class SwaggerResource
   addOperations: (resource_path, ops) ->
     if ops
       for o in ops
-        op = new SwaggerOperation o.nickname, resource_path, o.httpMethod, o.parameters, o.summary, o.notes, o.responseClass, this
+        op = new SwaggerOperation o.nickname, resource_path, o.httpMethod, o.parameters, o.summary, o.notes, o.responseClass, o.errorResponses, this
         @operations[op.nickname] = op
         @operationsArray.push op
 
@@ -292,7 +292,7 @@ class SwaggerModelProperty
 
 class SwaggerOperation
 
-  constructor: (@nickname, @path, @httpMethod, @parameters=[], @summary, @notes, @responseClass, @resource) ->
+  constructor: (@nickname, @path, @httpMethod, @parameters=[], @summary, @notes, @responseClass, @errorResponses, @resource) ->
     @resource.api.fail "SwaggerOperations must have a nickname." unless @nickname?
     @resource.api.fail "SwaggerOperation #{nickname} is missing path." unless @path?
     @resource.api.fail "SwaggerOperation #{nickname} is missing httpMethod." unless @httpMethod?
@@ -303,10 +303,12 @@ class SwaggerOperation
     @resourceName = @resource.name
 
     # if void clear it
-    if(@responseClass.toLowerCase() is 'void') then @responseClass = undefined
+    if(@responseClass?.toLowerCase() is 'void') then @responseClass = undefined
     if @responseClass?
       # set the signature of response class
       @responseClassSignature = @getSignature(@responseClass, @resource.models)
+
+    @errorResponses = @errorResponses || []
 
     for parameter in @parameters
       # Path params do not have a name, set the name to the path if name is n/a
