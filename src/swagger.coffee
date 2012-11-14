@@ -1,5 +1,5 @@
 class SwaggerApi
-  
+
   # Defaults
   discoveryUrl: "http://api.wordnik.com/v4/resources.json"
   debug: false
@@ -26,7 +26,7 @@ class SwaggerApi
 
     # Build right away if a callback was passed to the initializer
     @build() if options.success?
-    
+
   build: ->
     @progress 'fetching resource list: ' + @discoveryUrl
     jQuery.getJSON(@discoveryUrl,
@@ -83,7 +83,7 @@ class SwaggerApi
     )
 
   # This method is called each time a child resource finishes loading
-  # 
+  #
   selfReflect: ->
     return false unless @resources?
     for resource_name, resource of @resources
@@ -126,7 +126,7 @@ class SwaggerApi
         for parameter in operation.parameters
           console.log "    #{parameter.name}#{if parameter.required then ' (required)'  else ''} - #{parameter.description}"
     @
-        
+
 class SwaggerResource
 
   constructor: (resourceObj, @api) ->
@@ -302,9 +302,10 @@ class SwaggerOperation
     @isGetMethod = @httpMethod == "get"
     @resourceName = @resource.name
 
-    # if void clear it
-    if(@responseClass?.toLowerCase() is 'void') then @responseClass = undefined
     if @responseClass?
+      # if void clear it
+      if(@responseClass?.toLowerCase() is 'void') then @responseClass = undefined
+
       # set the signature of response class
       @responseClassSignature = @getSignature(@responseClass, @resource.models)
 
@@ -355,16 +356,16 @@ class SwaggerOperation
     isPrimitive = if ((listType? and models[listType]) or models[dataType]?) then false else true
 
     if (isPrimitive) then dataType else (if listType? then models[listType].getMockSignature(dataType) else models[dataType].getMockSignature(dataType))
-      
+
   do: (args={}, callback, error) =>
-    
+
     # if the args is a function, then it must be a resource without
     # parameters
     if (typeof args) == "function"
       error = callback
       callback = args
       args = {}
-      
+
     # Define a default error handler
     unless error?
       error = (xhr, textStatus, error) -> console.log xhr, textStatus, error
@@ -373,12 +374,12 @@ class SwaggerOperation
     # TODO MAYBE: Call this success instead of callback
     unless callback?
       callback = (data) -> console.log data
-    
-    # Pull headers out of args    
+
+    # Pull headers out of args
     if args.headers?
       headers = args.headers
       delete args.headers
-      
+
     # Pull body out of args
     if args.body?
       body = args.body
@@ -391,14 +392,14 @@ class SwaggerOperation
   pathXml: -> @path.replace "{format}", "xml"
 
   urlify: (args, includeApiKey = true) ->
-    
+
     url = @resource.basePath + @pathJson()
 
     # Iterate over allowable params, interpolating the 'path' params into the url string.
     # Whatever's left over in the args object will become the query string
     for param in @parameters
       if param.paramType == 'path'
-        
+
         if args[param.name]
           url = url.replace("{#{param.name}}", encodeURIComponent(args[param.name]))
           delete args[param.name]
@@ -406,7 +407,7 @@ class SwaggerOperation
           throw "#{param.name} is a required path param."
 
     # Add API key to the params
-    args[@apiKeyName] = @resource.api.api_key if includeApiKey and @resource.api.api_key? and @resource.api.api_key.length > 0 
+    args[@apiKeyName] = @resource.api.api_key if includeApiKey and @resource.api.api_key? and @resource.api.api_key.length > 0
 
     # Append the query string to the URL
     if @supportHeaderParams()
@@ -429,7 +430,7 @@ class SwaggerOperation
 
   getQueryParams: (args, includeApiKey = true) ->
     @getMatchingParams ['query'], args, includeApiKey
- 
+
   getHeaderParams: (args, includeApiKey = true) ->
     @getMatchingParams ['header'], args, includeApiKey
 
@@ -457,24 +458,24 @@ class SwaggerOperation
 
 
 class SwaggerRequest
-  
+
   constructor: (@type, @url, @headers, @body, @successCallback, @errorCallback, @operation) ->
     throw "SwaggerRequest type is required (get/post/put/delete)." unless @type?
     throw "SwaggerRequest url is required." unless @url?
     throw "SwaggerRequest successCallback is required." unless @successCallback?
     throw "SwaggerRequest error callback is required." unless @errorCallback?
     throw "SwaggerRequest operation is required." unless @operation?
-    
+
     # console.log "new SwaggerRequest: %o", this
     console.log this.asCurl() if @operation.resource.api.verbose
-    
+
     # Stick the API key into the headers, if present
     @headers or= {}
     @headers[@apiKeyName] = @operation.resource.api.api_key if @operation.resource.api.api_key?
 
     unless @headers.mock?
-    
-      obj = 
+
+      obj =
         type: @type
         url: @url
         # TODO: Figure out why the API is not accepting these
@@ -487,13 +488,13 @@ class SwaggerRequest
           @successCallback(data)
 
       obj.contentType = "application/json" if (obj.type.toLowerCase() == "post" or obj.type.toLowerCase() == "put")
-    
+
       jQuery.ajax(obj)
 
   asCurl: ->
     header_args = ("--header \"#{k}: #{v}\"" for k,v of @headers)
     "curl #{header_args.join(" ")} #{@url}"
-  
+
 # Expose these classes:
 window.SwaggerApi = SwaggerApi
 window.SwaggerResource = SwaggerResource
