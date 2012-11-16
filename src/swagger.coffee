@@ -266,6 +266,12 @@ class SwaggerModel
 
     returnVal
 
+  createJSONSample: (modelToIgnore) ->
+    result = {}
+    for prop in @properties
+      result[prop.name] = prop.getSampleValue(modelToIgnore)
+    result
+
 class SwaggerModelProperty
   constructor: (@name, obj) ->
     @dataType = obj.type
@@ -280,6 +286,16 @@ class SwaggerModelProperty
       @values = obj.allowableValues.values
       if @values?
         @valuesString = "'" + @values.join("' or '") + "'"
+
+  getSampleValue: (modelToIgnore) ->
+    if(@refModel? and (not (@refModel is modelToIgnore)))
+      result = @refModel.createJSONSample(@refModel) 
+    else
+      if @isArray
+        result = @refDataType
+      else
+        result = @dataType
+    if @isArray then [result] else result
 
   toString: ->
     str = @name + ': ' + @dataTypeWithRef
@@ -319,6 +335,7 @@ class SwaggerOperation
         parameter.allowableValues.values = @resource.api.booleanValues
 
       parameter.signature = @getSignature(parameter.dataType, @resource.models)
+      parameter.sampleJSON = @getSampleJSON(parameter.dataType, @resource.models)
 
       # Set allowableValue attributes
       if parameter.allowableValues?
@@ -355,6 +372,21 @@ class SwaggerOperation
     isPrimitive = if ((listType? and models[listType]) or models[dataType]?) then false else true
 
     if (isPrimitive) then dataType else (if listType? then models[listType].getMockSignature(dataType) else models[dataType].getMockSignature(dataType))
+
+  getSampleJSON: (dataType, models) ->
+    # set listType if it exists
+    listType = @isListType(dataType)
+
+    # set flag which says if its primitive or not
+    isPrimitive = if ((listType? and models[listType]) or models[dataType]?) then false else true
+
+    val = if (isPrimitive) then undefined else (if listType? then models[listType].createJSONSample() else models[dataType].createJSONSample())
+
+    # pretty printing obtained JSON
+    if val
+      # if container is list wrap it
+      val = if listType then [val] else val
+      JSON.stringify(val, null, 2)
       
   do: (args={}, callback, error) =>
     
