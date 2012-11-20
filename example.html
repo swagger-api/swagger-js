@@ -4,7 +4,7 @@
     <title>swagger.js example</title>
     
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script type="text/javascript" src="https://raw.github.com/wordnik/swagger.js/master/lib/swagger.js"></script>
+    <script type="text/javascript" src="./lib/swagger.js"></script>
     <script type="text/javascript">
       $(function() { 
         wordnik = new SwaggerApi({
@@ -12,7 +12,7 @@
           verbose: true,
           success: function() {
             args = {word: 'sanctimonious'}
-            wordnik.word.getDefinitions.do(args, function(definitions){
+            wordnik.word.getDefinitions(args, function(definitions){
               console.log(definitions[0].word);
               for (var i = 0; i < definitions.length; i++) {
                 var definition = definitions[i];
