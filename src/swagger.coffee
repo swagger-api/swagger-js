@@ -434,8 +434,8 @@ class SwaggerOperation
       if param.paramType == 'path'
         
         if args[param.name]
-          url = url.replace(/{id.*/,'{id}')
-          url = url.replace("{#{param.name}}", encodeURIComponent(args[param.name]))
+          reg = new RegExp '\{'+param.name+'[^\}]*\}', 'gi'
+          url = url.replace(reg, encodeURIComponent(args[param.name]))
           delete args[param.name]
         else
           throw "#{param.name} is a required path param."
