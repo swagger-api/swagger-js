@@ -434,6 +434,7 @@ class SwaggerOperation
       if param.paramType == 'path'
         
         if args[param.name]
+          url = url.replace(/{id.*/,'{id}')
           url = url.replace("{#{param.name}}", encodeURIComponent(args[param.name]))
           delete args[param.name]
         else
