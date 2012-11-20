@@ -7,13 +7,13 @@ describe 'SwaggerApi', ->
     describe 'defaults', ->
     
       beforeEach ->
-        window.wordnik = new SwaggerApi({discoveryUrl: 'http://petstore.swagger.wordnik.com/api/resources.json'})
+        window.wordnik = new SwaggerApi({discoveryUrl: 'http://petstore.swagger.wordnik.com/api/api-docs.json'})
         waitsFor ->
           wordnik
           
       it "sets the default discoveryUrl to wordnik swagger sandbox", ->
         runs ->
-          expect(wordnik.discoveryUrl).toBe("http://petstore.swagger.wordnik.com/api/resources.json")
+          expect(wordnik.discoveryUrl).toBe("http://petstore.swagger.wordnik.com/api/api-docs.json")
 
       it "disables the debugger by default", ->
         runs ->
@@ -57,7 +57,7 @@ describe 'SwaggerApi', ->
   describe 'build', ->
     
       beforeEach ->
-        window.wordnik = new SwaggerApi({discoveryUrl: 'http://petstore.swagger.wordnik.com/api/resources.json'})
+        window.wordnik = new SwaggerApi({discoveryUrl: 'http://petstore.swagger.wordnik.com/api/api-docs.json'})
         wordnik.build()
         waitsFor ->
           wordnik.ready?
@@ -79,7 +79,7 @@ describe 'SwaggerApi', ->
   describe 'resourceLevelDiscovery', ->
 
       beforeEach ->
-        window.wordnik = new SwaggerApi({discoveryUrl: 'http://petstore.swagger.wordnik.com/api/pet.json'})
+        window.wordnik = new SwaggerApi({discoveryUrl: 'http://petstore.swagger.wordnik.com/api/api-docs.json/pet'})
         wordnik.build()
         waitsFor ->
           wordnik.ready?
@@ -97,7 +97,7 @@ describe 'SwaggerApi', ->
 describe 'SwaggerResource', ->
   
   beforeEach ->
-    window.wordnik = new SwaggerApi({discoveryUrl: 'http://petstore.swagger.wordnik.com/api/resources.json'})
+    window.wordnik = new SwaggerApi({discoveryUrl: 'http://petstore.swagger.wordnik.com/api/api-docs.json'})
     wordnik.build()
     waitsFor ->
       wordnik.ready?
@@ -105,7 +105,7 @@ describe 'SwaggerResource', ->
   it "creates a url property", ->
     runs ->
       resource = wordnik.resources.pet
-      expect(resource.url).toMatch(/\.json$/)
+      expect(resource.url).toMatch(/\.json/)
       
   it "has a name property which is inferred from its path", ->
     runs ->
@@ -126,7 +126,7 @@ describe 'SwaggerResource', ->
 describe 'SwaggerOperation', ->
   
   beforeEach ->
-    window.wordnik = new SwaggerApi({discoveryUrl: 'http://petstore.swagger.wordnik.com/api/resources.json'})
+    window.wordnik = new SwaggerApi({discoveryUrl: 'http://petstore.swagger.wordnik.com/api/api-docs.json'})
     wordnik.api_key = window.api_key
     wordnik.build()
     waitsFor ->
@@ -209,7 +209,7 @@ describe 'SwaggerOperation', ->
 describe 'SwaggerRequest', ->
   
   beforeEach ->
-    window.wordnik2 = new SwaggerApi({discoveryUrl: 'http://petstore.swagger.wordnik.com/api/resources.json'})
+    window.wordnik2 = new SwaggerApi({discoveryUrl: 'http://petstore.swagger.wordnik.com/api/api-docs.json'})
     wordnik2.build()
     waitsFor ->
       wordnik2.ready?
@@ -257,7 +257,7 @@ describe 'Crud Methods', ->
   window.random = Math.floor(Math.random()*1000000)
 
   beforeEach ->
-    window.petstore = new SwaggerApi({discoveryUrl: 'http://petstore.swagger.wordnik.com/api/resources.json', api_key: 'special-key'})
+    window.petstore = new SwaggerApi({discoveryUrl: 'http://petstore.swagger.wordnik.com/api/api-docs.json', api_key: 'special-key'})
     petstore.build()
     waitsFor ->
       petstore.ready?
