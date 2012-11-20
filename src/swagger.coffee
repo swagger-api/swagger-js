@@ -32,6 +32,8 @@ class SwaggerApi
     jQuery.getJSON(@discoveryUrl,
       (response) =>
 
+        @apiVersion = response.apiVersion if response.apiVersion?
+
         # If there is a basePath in response, use that or else derive from discoveryUrl
         if response.basePath? and jQuery.trim(response.basePath).length > 0
           @basePath = response.basePath
