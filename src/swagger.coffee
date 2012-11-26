@@ -325,6 +325,7 @@ class SwaggerOperation
     if @responseClass?
       # set the signature of response class
       @responseClassSignature = @getSignature(@responseClass, @resource.models)
+      @responseSampleJSON = @getSampleJSON(@responseClass, @resource.models)
 
     @errorResponses = @errorResponses || []
 
