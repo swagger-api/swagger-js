@@ -206,9 +206,10 @@ class SwaggerResource
   addModels: (models) ->
     if models?
       for modelName of models
-        swaggerModel = new SwaggerModel(modelName, models[modelName])
-        @modelsArray.push swaggerModel
-        @models[modelName] = swaggerModel
+        if not @models[modelName]?
+          swaggerModel = new SwaggerModel(modelName, models[modelName])
+          @modelsArray.push swaggerModel
+          @models[modelName] = swaggerModel
       for model in @modelsArray
         model.setReferencedModels(@models)
 
