@@ -205,6 +205,29 @@ describe 'SwaggerOperation', ->
         expect(request.body).toBeDefined()
         expect(request.body.name).toMatch(/haute/)
         expect(request.body.pronunciation).toMatch(/cooter/)
+
+  describe 'constructor', ->
+
+    beforeEach ->
+      resource =
+        name: 'hello hello'
+        models: {}
+      window.construct = (c0nstructor, args) ->
+        F = -> c0nstructor.apply(this, args)
+        F.prototype = c0nstructor.prototype
+        new F()
+
+      window.defaultParams = ['nickname', '/path', 'GET',[], 'This is a summary', 'Some notes', '', [], resource, []]
+    
+    it 'must have a nickname set', ->
+      expect(operation).toBeDefined()
+      noNicknameParams = defaultParams
+      noNicknameParams[0] = undefined
+      expect( -> construct SwaggerOperation, noNicknameParams).toThrow()
+
+    it 'must not fail if supportedContentTypes is not set', ->
+      expect(operation).toBeDefined()
+      expect(operation.supportedContentTypes).toBeUndefined()
                         
 describe 'SwaggerRequest', ->
   
