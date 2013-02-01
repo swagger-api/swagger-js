@@ -81,7 +81,14 @@ class SwaggerApi
 
     ).error(
       (error) =>
-        @fail error.status + ' : ' + error.statusText + ' ' + @discoveryUrl
+        if @discoveryUrl.substring(0, 4) isnt 'http'
+          @fail 'Please specify the protocol for ' + @discoveryUrl
+        else if error.status == 0
+          @fail 'Can\'t read from server.  It may not have the appropriate access-control-origin settings.'
+        else if error.status == 404
+          @fail 'Can\'t read swagger JSON from '  + @discoveryUrl
+        else
+          @fail error.status + ' : ' + error.statusText + ' ' + @discoveryUrl
     )
 
   # This method is called each time a child resource finishes loading
@@ -199,7 +206,7 @@ class SwaggerResource
           @api.selfReflect()
         ).error(
         (error) =>
-          @api.fail error.status + ' : ' + error.statusText + ' ' + @url
+          @api.fail "Unable to read api '" + @name + "' from path " + @url + " (server returned " + message + ")"
         )
 
 
