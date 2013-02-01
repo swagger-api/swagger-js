@@ -217,7 +217,13 @@ class SwaggerResource
   addOperations: (resource_path, ops) ->
     if ops
       for o in ops
-        op = new SwaggerOperation o.nickname, resource_path, o.httpMethod, o.parameters, o.summary, o.notes, o.responseClass, o.errorResponses, this, o.supportedContentTypes
+        consumes = o.consumes
+
+        # support old naming
+        if o.supportedContentTypes
+          consumes = o.supportedContentTypes
+
+        op = new SwaggerOperation o.nickname, resource_path, o.httpMethod, o.parameters, o.summary, o.notes, o.responseClass, o.errorResponses, this, o.consumes
         @operations[op.nickname] = op
         @operationsArray.push op
 
@@ -311,7 +317,7 @@ class SwaggerModelProperty
 
 class SwaggerOperation
 
-  constructor: (@nickname, @path, @httpMethod, @parameters=[], @summary, @notes, @responseClass, @errorResponses, @resource, @supportedContentTypes) ->
+  constructor: (@nickname, @path, @httpMethod, @parameters=[], @summary, @notes, @responseClass, @errorResponses, @resource, @consumes) ->
     @resource.api.fail "SwaggerOperations must have a nickname." unless @nickname?
     @resource.api.fail "SwaggerOperation #{nickname} is missing path." unless @path?
     @resource.api.fail "SwaggerOperation #{nickname} is missing httpMethod." unless @httpMethod?
