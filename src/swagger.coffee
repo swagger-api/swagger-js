@@ -206,9 +206,8 @@ class SwaggerResource
           @api.selfReflect()
         ).error(
         (error) =>
-          @api.fail "Unable to read api '" + @name + "' from path " + @url + " (server returned " + message + ")"
+          @api.fail "Unable to read api '" + @name + "' from path " + @url + " (server returned " + error.statusText + ")"
         )
-
 
   addModels: (models) ->
     if models?
