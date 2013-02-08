@@ -45,10 +45,10 @@ class SwaggerApi
           @basePath = @discoveryUrl.substring(0, @discoveryUrl.lastIndexOf('/'))
           log 'derived basepath from discoveryUrl as ' + @basePath
 
-        @resources = {}
-        @resourcesArray = []
+        @apis = {}
+        @apisArray = []
 
-        # If this response contains resourcePath, all the resources in response belong to one single path
+        # If this response contains resourcePath, all the apis in response belong to one single path
         if response.resourcePath?
           # set the resourcePath
           @resourcePath = response.resourcePath
@@ -61,21 +61,21 @@ class SwaggerApi
             else
               res.addOperations(resource.path, resource.operations)
 
-          # if there are some resources
+          # if there are some apis
           if res?
-            @resources[res.name] = res
-            @resourcesArray.push res
+            @apis[res.name] = res
+            @apisArray.push res
             # Mark as ready
             res.ready = true
 
             # Now that this resource is loaded, tell the API to check in on itself
             @selfReflect()
         else
-          # Store a Array of resources and a map of resources by name
+          # Store a Array of apis and a map of apis by name
           for resource in response.apis
             res = new SwaggerResource resource, this
-            @resources[res.name] = res
-            @resourcesArray.push res
+            @apis[res.name] = res
+            @apisArray.push res
 
         this
 
@@ -94,8 +94,8 @@ class SwaggerApi
   # This method is called each time a child resource finishes loading
   # 
   selfReflect: ->
-    return false unless @resources?
-    for resource_name, resource of @resources
+    return false unless @apis?
+    for resource_name, resource of @apis
       return false unless resource.ready?
 
     @setConsolidatedModels()
@@ -106,11 +106,11 @@ class SwaggerApi
     @failure message
     throw message
 
-  # parses models in all resources and sets a unique consolidated list of models
+  # parses models in all apis and sets a unique consolidated list of models
   setConsolidatedModels: ->
     @modelsArray = []
     @models = {}
-    for resource_name, resource of @resources
+    for resource_name, resource of @apis
       for modelName of resource.models
         if not @models[modelName]?
           @models[modelName] = resource.models[modelName]
@@ -128,7 +128,7 @@ class SwaggerApi
       url
 
   help: ->
-    for resource_name, resource of @resources
+    for resource_name, resource of @apis
       console.log resource_name
       for operation_name, operation of resource.operations
         console.log "  #{operation.nickname}"

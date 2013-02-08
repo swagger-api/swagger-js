@@ -8,7 +8,7 @@
     }
   ],
   "description": "swagger.js is a javascript client for use with swaggering APIs.",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "homepage": "http://swagger.wordnik.com",
   "repository": {
     "type": "git",
@@ -17,6 +17,7 @@
   "main": "lib/swagger.js",
   "scripts": {
     "build": "PATH=$PATH:./node_modules/.bin cake bake",
+    "dev": "PATH=$PATH:./node_modules/.bin cake dev",
     "test": "open spec.html"
   },
   "engines": {
