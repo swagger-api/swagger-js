@@ -257,7 +257,7 @@ class SwaggerModel
       else if prop.refDataType? and allModels[prop.refDataType]?
         prop.refModel = allModels[prop.refDataType]
 
-  getMockSignature: (prefix, modelToIgnore) ->
+  getMockSignature: (prefix, modelsToIgnore) ->
     propertiesStr = []
     for prop in @properties
       propertiesStr.push prop.toString()
@@ -272,12 +272,17 @@ class SwaggerModel
     if prefix?
       returnVal = stronger + prefix + strongClose + '<br/>' + returnVal
 
-    # iterate thru all properties and add models
-    # which are not modelToIgnore
-    # modelToIgnore is used to ensure that recursive references do not lead to endless loop
+    # create the array if necessary and then add the current element
+    if !modelsToIgnore
+      modelsToIgnore = []
+    modelsToIgnore.push(@)
+
+    # iterate thru all properties and add models which are not in modelsToIgnore
+    # modelsToIgnore is used to ensure that recursive references do not lead to endless loop
+    # and that the same model is not displayed multiple times
     for prop in @properties
-      if(prop.refModel? and (not (prop.refModel is modelToIgnore)))
-        returnVal = returnVal + ('<br>' + prop.refModel.getMockSignature(undefined, @))
+      if(prop.refModel? and (modelsToIgnore.indexOf(prop.refModel)) == -1)
+        returnVal = returnVal + ('<br>' + prop.refModel.getMockSignature(undefined, modelsToIgnore))
 
     returnVal
 
