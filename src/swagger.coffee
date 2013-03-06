@@ -257,20 +257,17 @@ class SwaggerModel
       else if prop.refDataType? and allModels[prop.refDataType]?
         prop.refModel = allModels[prop.refDataType]
 
-  getMockSignature: (prefix, modelsToIgnore) ->
+  getMockSignature: (modelsToIgnore) ->
     propertiesStr = []
     for prop in @properties
       propertiesStr.push prop.toString()
 
-    strong = '<span style="font-weight: bold; color: #000; font-size: 1.0em">';
-    stronger = '<span style="font-weight: bold; color: #000; font-size: 1.1em">';
+    strong = '<span class="strong">';
+    stronger = '<span class="stronger">';
     strongClose = '</span>';
-    classOpen = strong + 'class ' + @name + '(' + strongClose
-    classClose = strong + ')' + strongClose
-    returnVal = classOpen + '<span>' + propertiesStr.join('</span>, <span>') + '</span>' + classClose
-
-    if prefix?
-      returnVal = stronger + prefix + strongClose + '<br/>' + returnVal
+    classOpen = strong + @name + ' {' + strongClose
+    classClose = strong + '}' + strongClose
+    returnVal = classOpen + '<div>' + propertiesStr.join(',</div><div>') + '</div>' + classClose
 
     # create the array if necessary and then add the current element
     if !modelsToIgnore
@@ -282,7 +279,7 @@ class SwaggerModel
     # and that the same model is not displayed multiple times
     for prop in @properties
       if(prop.refModel? and (modelsToIgnore.indexOf(prop.refModel)) == -1)
-        returnVal = returnVal + ('<br>' + prop.refModel.getMockSignature(undefined, modelsToIgnore))
+        returnVal = returnVal + ('<br>' + prop.refModel.getMockSignature(modelsToIgnore))
 
     returnVal
 
@@ -297,6 +294,8 @@ class SwaggerModelProperty
     @dataType = obj.type
     @isArray = @dataType.toLowerCase() is 'array'
     @descr = obj.description
+    @required = obj.required
+
     if obj.items?
       if obj.items.type? then @refDataType = obj.items.type
       if obj.items.$ref? then @refDataType = obj.items.$ref
@@ -318,11 +317,19 @@ class SwaggerModelProperty
     if @isArray then [result] else result
 
   toString: ->
-    str = @name + ': ' + @dataTypeWithRef
+    req = if @required then 'propReq' else 'propOpt'
+
+    str = '<span class="propName ' + req + '">' + @name + '</span> (<span class="propType">' + @dataTypeWithRef + '</span>';
+    if !@required
+      str += ', <span class="propOptKey">optional</span>'
+
+    str += ')';
     if @values?
-      str += " = ['" + @values.join("' or '") + "']"
+      str += " = <span class='propVals'>['" + @values.join("' or '") + "']</span>"
+
     if @descr?
-      str += ' {' + @descr + '}'
+      str += ': <span class="propDesc">' + @descr + '</span>'
+
     str
 
 
@@ -392,7 +399,7 @@ class SwaggerOperation
     # set flag which says if its primitive or not
     isPrimitive = if ((listType? and models[listType]) or models[dataType]?) then false else true
 
-    if (isPrimitive) then dataType else (if listType? then models[listType].getMockSignature(dataType) else models[dataType].getMockSignature(dataType))
+    if (isPrimitive) then dataType else (if listType? then models[listType].getMockSignature() else models[dataType].getMockSignature())
 
   getSampleJSON: (dataType, models) ->
     # set listType if it exists
