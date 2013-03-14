@@ -292,7 +292,7 @@ class SwaggerModel
 class SwaggerModelProperty
   constructor: (@name, obj) ->
     @dataType = obj.type
-    @isArray = @dataType.toLowerCase() is 'array'
+    @isArray = @dataType && @dataType.toLowerCase() is 'array'
     @descr = obj.description
     @required = obj.required
 
