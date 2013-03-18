@@ -560,3 +560,4 @@ window.SwaggerApi = SwaggerApi
 window.SwaggerResource = SwaggerResource
 window.SwaggerOperation = SwaggerOperation
 window.SwaggerRequest = SwaggerRequest
+window.SwaggerModelProperty = SwaggerModelProperty
