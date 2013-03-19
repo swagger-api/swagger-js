@@ -297,7 +297,12 @@ class SwaggerModelProperty
       if @isArray
         result = @refDataType
       else
-        result = @dataType
+        if @dataType == 'boolean'
+          result = if Math.random() > 0.5 then true else false
+        else if @dataType in ['byte', 'int', 'long', 'float', 'double']
+          result = Math.round(Math.random() * 10)
+        else
+          result = @dataType
     if @isArray then [result] else result
 
   toString: ->
