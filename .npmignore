@@ -1,0 +1,6 @@
+*.sublime-*
+example.html
+*.tgz
+.classpath
+.project
+.npmignore

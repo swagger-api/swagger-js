@@ -1,8 +1,14 @@
 {
-  "author": "Zeke Sikelianos <zeke@sikelianos.com> (http://twitter.com/#!/zeke)",
-  "name": "swagger",
+  "name": "swagger-client",
+  "author": "Zeke Sikelianos <zeke@sikelianos.com>",
+  "contributors": [ 
+    {
+      "name": "Tony Tam",
+      "email": "fehguy@gmail.com"
+    }
+  ],
   "description": "swagger.js is a javascript client for use with swaggering APIs.",
-  "version": "0.0.1",
+  "version": "1.0.2",
   "homepage": "http://swagger.wordnik.com",
   "repository": {
     "type": "git",
@@ -10,11 +16,16 @@
   },
   "main": "lib/swagger.js",
   "scripts": {
+    "build": "PATH=$PATH:./node_modules/.bin cake bake",
+    "dev": "PATH=$PATH:./node_modules/.bin cake dev",
     "test": "open spec.html"
   },
   "engines": {
-    "node": "~0.6.6"
+    "node": ">= 0.6.6"
   },
   "dependencies": {},
-  "devDependencies": {}
+  "devDependencies": {
+    "coffee-script": "~1.5.0"
+  },
+  "license": "apache 2.0"
 }

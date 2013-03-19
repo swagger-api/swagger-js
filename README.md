@@ -1,14 +1,14 @@
-swagger.js
-==========
-
-swagger.js is a javascript client for use with [swagger](http://swagger.wordnik.com)ing APIs.
+This is the Wordnik Swagger javascript client for use with [swagger](http://swagger.wordnik.com) enabled APIs.
 It's written in CoffeeScript and tested with Jasmine.
 
 Find out more about the swagger project at [swagger.wordnik.com](http://swagger.wordnik.com), 
 and follow us on Twitter at [@swagger_doc](https://twitter.com/#!/swagger_doc).
 
-Usage
------
+## READ MORE about swagger!
+
+See the [swagger website](http://swagger.wordnik.com) or the [swagger-core wiki](https://github.com/wordnik/swagger-core/wiki), which contains information about the swagger json spec.
+
+### Usage
 
 Point swagger.js at a resource discovery file like
 [api.wordnik.com/v4/resources.json](http://api.wordnik.com/v4/resources.json)
@@ -30,27 +30,19 @@ and it builds itself at runtime.
 </script>
 ```
 
-How it Works
-------------
+### How it Works
 
-1. [Fork the repo](https://github.com/wordnik/swagger.js).
-1. Clone it.
-1. Open `spec.html` in your browser.
-1. Follow along in the Javascript console.
-
-### Initialization
+When initialized, the swagger.js client will build itself based on the (valid) swagger json files.  You
+initialize the client like such:
 
 ```javascript
 wordnik = new SwaggerApi({
+  discoveryUrl: "http://api.wordnik.com/v4/resources.json",
   api_key: 'YOUR_API_KEY', // Don't have a Wordnik API key? Get one at developer.wordnik.com
   verbose: true,
   success: function() { console.log("Your client is ready to swagger."); }
 });
 ```
-
-When initializing a swagger.js SwaggerApi class, the default discoveryUrl is 
-[http://api.wordnik.com/v4/resources.json](http://api.wordnik.com/v4/resources.json), 
-so we skipped it above.
 
 After executing the above code you should see the success message in your console.
 
@@ -62,9 +54,9 @@ point it at a `discoveryUrl`. Try exploring it in the console:
 
 ```javascript
 wordnik
-wordnik.resources
-wordnik.resources.word.operations
-wordnik.resources.word.operations.getDefinition
+wordnik.apis
+wordnik.apis.word.operations
+wordnik.apis.word.operations.getDefinition
 ```
 
 ### Quick Reference
@@ -75,11 +67,11 @@ You also get some console help() methods for quick reference. Some examples:
 // Apis
 wordnik.help()
 
-// Resources
+// Apis
 wordnik.resource.word.help()
 
 // Operations
-wordnik.resources.word.operations.getExamples.help()
+wordnik.apis.word.operations.getExamples.help()
 ```
 ### Making Requests
 
@@ -90,7 +82,7 @@ There are two ways to make a request:
 wordnik.word.getDefinitions(args, callback);
 
 // longhand form
-wordnik.resources.word.operations.getDefinitions.do(args, callback);
+wordnik.apis.word.operations.getDefinitions.do(args, callback);
 
 // example usage
 wordnik.word.getDefinitions({word: 'bliss'}, function(definitions) {
@@ -167,16 +159,18 @@ CoffeeScript compiler. For more detailed installation instructions, see
 [coffeescript.org/#installation](http://coffeescript.org/#installation).
 
 ```bash
-open http://nodejs.org/#download 
-npm install -g coffee-script
+# generate the javascript libraries and put them in the `lib` folder
+
+npm run-script build
 ```
 
 ```bash
-# The 'dev' cake task will:
+# The 'dev' task will:
 # 1. Open source files in your $EDITOR
 # 2. Open and run the Jasmine specs in your browser.
 # 3. Watch for changes to CoffeeScript files and auto-compile them to Javascript.
-cake dev
+
+npm run-script dev
 
 # List all cake tasks:
 cake
@@ -185,7 +179,7 @@ cake
 License
 -------
 
-Copyright 2011-2012 Wordnik, Inc.
+Copyright 2011-2013 Wordnik, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

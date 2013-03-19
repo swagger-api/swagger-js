@@ -35,13 +35,20 @@ mergeFiles =(inputFiles, outputFile, minify=false) ->
               throw err if err
               console.log js_output_file
 
-# task 'bake', 'Compile and concatenate CoffeeScript files to JavaScript, and create minified versions', ->
-#   mergeFiles ['reqwest', 'swagger'], 'swagger', false
+task 'bake', 'Compile and concatenate CoffeeScript files to JavaScript', ->
+  console.log '   : Compiling...'
+  coffee = spawn 'coffee', ['-c', '-o', 'lib', 'src']
+  coffee.stderr.on 'data', (data) ->
+    process.stderr.write data.toString()
+  coffee.stdout.on 'data', (data) ->
+    print data.toString()
+  coffee.on 'exit', (code) ->
+    callback?() if code is 0
 
 task 'watch', 'Automatically recompile CoffeeScript files to JavaScript', ->
   coffee = spawn 'coffee', ['-cw', '-o', 'lib', 'src']
   coffee.stdout.on 'data', (data) -> console.log data.toString().trim()
-  
+
 task 'dev', "Open source files, run spec in browser, and watch for changes", ->
   exec "$EDITOR ."
   exec "open spec.html"

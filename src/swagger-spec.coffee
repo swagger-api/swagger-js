@@ -68,9 +68,9 @@ describe 'SwaggerApi', ->
 
       it "creates a container object for its resources, with resource names as keys", ->
         runs ->
-          expect(wordnik.resources).toBeDefined()
-          expect(wordnik.resourcesArray).toBeDefined()
-          expect(wordnik.resources.pet).toBeDefined()
+          expect(wordnik.apis).toBeDefined()
+          expect(wordnik.apis).toBeDefined()
+          expect(wordnik.apis.pet).toBeDefined()
           
       it "creates shorthand references to its resources", ->
         runs ->
@@ -86,9 +86,9 @@ describe 'SwaggerApi', ->
 
       it "creates a container object for its resource, with resource name as keys", ->
         runs ->
-          expect(wordnik.resources).toBeDefined()
-          expect(wordnik.resourcesArray).toBeDefined()
-          expect(wordnik.resources.pet).toBeDefined()
+          expect(wordnik.apis).toBeDefined()
+          expect(wordnik.apis).toBeDefined()
+          expect(wordnik.apis.pet).toBeDefined()
 
       it "creates shorthand references to its resource", ->
         runs ->
@@ -104,7 +104,7 @@ describe 'SwaggerResource', ->
 
   it "creates a url property", ->
     runs ->
-      resource = wordnik.resources.pet
+      resource = wordnik.apis.pet
       expect(resource.url).toMatch(/\.json/)
       
   it "has a name property which is inferred from its path", ->
@@ -135,7 +135,7 @@ describe 'SwaggerOperation', ->
   describe "urlify", ->
 
     beforeEach ->
-      window.operation = wordnik.resources.pet.operations.getPetById
+      window.operation = wordnik.apis.pet.operations.getPetById
       operation.path = "/my.{format}/{foo}/kaboo"
       operation.parameters = [{paramType: 'path', name: 'foo'}]
       window.args = {foo: 'pee'}
