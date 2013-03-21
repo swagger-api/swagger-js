@@ -389,6 +389,9 @@ class SwaggerOperation
     @resource[@nickname]= (args, callback, error) =>
       @do(args, callback, error)
 
+    @resource[@nickname].help = =>
+      @help()
+
   isListType: (dataType) ->
     if(dataType.indexOf('[') >= 0) then dataType.substring(dataType.indexOf('[') + 1, dataType.indexOf(']')) else undefined
 
