@@ -467,7 +467,7 @@ class SwaggerOperation
           throw "#{param.name} is a required path param."
 
     # Add API key to the params
-    args[@apiKeyName] = @resource.api.api_key if includeApiKey and @resource.api.api_key? and @resource.api.api_key.length > 0 
+    args[@resource.api.apiKeyName] = @resource.api.api_key if includeApiKey and @resource.api.api_key? and @resource.api.api_key.length > 0 
 
     # Append the query string to the URL
     if @supportHeaderParams()
@@ -531,7 +531,8 @@ class SwaggerRequest
     
     # Stick the API key into the headers, if present
     @headers or= {}
-    @headers[@apiKeyName] = @operation.resource.api.api_key if @operation.resource.api.api_key?
+    apiKeyName = @operation.resource.api.apiKeyName
+    @headers[apiKeyName] = @operation.resource.api.api_key if @operation.resource.api.api_key?
 
     unless @headers.mock?
     
