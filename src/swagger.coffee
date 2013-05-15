@@ -141,6 +141,7 @@ class SwaggerResource
   constructor: (resourceObj, @api) ->
     @path = if @api.resourcePath? then @api.resourcePath else resourceObj.path
     @description = resourceObj.description
+    @summary = resourceObj.summary
 
     # Extract name from path
     # '/foo/dogs.format' -> 'dogs'
