@@ -20,3 +20,4 @@ capybara-*.html
 /db/*.sqlite3
 /spec/tmp/*
 **.orig
+node_modules/*
