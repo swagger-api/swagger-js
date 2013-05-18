@@ -57,7 +57,7 @@ class SwaggerApi
           res = null
           for resource in response.apis
             if res is null
-              res = new SwaggerResource resource, this
+              res = new SwaggerResource(resource, this)
             else
               res.addOperations(resource.path, resource.operations)
 
@@ -70,14 +70,30 @@ class SwaggerApi
 
             # Now that this resource is loaded, tell the API to check in on itself
             @selfReflect()
+
+        else if response.sharedModels?
+          # Process any shared models
+          for modelsResource in response.sharedModels
+            res = new SwaggerResource(modelsResource, this, () =>
+              @apis[res.name] = res
+              @setConsolidatedModels()
+              @apis = {}
+
+              # Store a Array of apis and a map of apis by name
+              for resource in response.apis
+                res = new SwaggerResource(resource, this)
+                @apis[res.name] = res
+                @apisArray.push res
+            )
+
         else
           # Store a Array of apis and a map of apis by name
           for resource in response.apis
-            res = new SwaggerResource resource, this
+            res = new SwaggerResource(resource, this)
             @apis[res.name] = res
             @apisArray.push res
 
-        this
+        @
 
     ).error(
       (error) =>
@@ -138,7 +154,7 @@ class SwaggerApi
         
 class SwaggerResource
 
-  constructor: (resourceObj, @api) ->
+  constructor: (resourceObj, @api, initializedCallback) ->
     @path = if @api.resourcePath? then @api.resourcePath else resourceObj.path
     @description = resourceObj.description
 
@@ -163,7 +179,7 @@ class SwaggerResource
       # read resource directly from operations object
       @api.progress 'reading resource ' + @name + ' models and operations'
 
-      @addModels(resourceObj.models)
+      @addModels(resourceObj.models, @api.models)
 
       @addOperations(resourceObj.path, resourceObj.operations)
 
@@ -189,7 +205,7 @@ class SwaggerResource
             # TODO: Take this out.. it's a wordnik API regression
             @basePath = @basePath.replace(/\/$/, '')
 
-          @addModels(response.models)
+          @addModels(response.models, @api.models)
 
           # Instantiate SwaggerOperations and store them in the @operations map and @operationsArray
           if response.apis
@@ -202,6 +218,9 @@ class SwaggerResource
           # Mark as ready
           @ready = true
 
+          if initializedCallback?
+            initializedCallback()
+
           # Now that this resource is loaded, tell the API to check in on itself
           @api.selfReflect()
         ).error(
@@ -209,7 +228,8 @@ class SwaggerResource
           @api.fail "Unable to read api '" + @name + "' from path " + @url + " (server returned " + error.statusText + ")"
         )
 
-  addModels: (models) ->
+  # Cache models used by this Resource definition.
+  addModels: (models, sharedModels) ->
     if models?
       for modelName of models
         if not @models[modelName]?
@@ -217,7 +237,8 @@ class SwaggerResource
           @modelsArray.push swaggerModel
           @models[modelName] = swaggerModel
       for model in @modelsArray
-        model.setReferencedModels(@models)
+        # Set models referenced by properties of other models. 
+        model.setReferencedModels(@models, sharedModels)
 
 
   addOperations: (resource_path, ops) ->
@@ -249,13 +270,16 @@ class SwaggerModel
     for propertyName of obj.properties
       @properties.push new SwaggerModelProperty(propertyName, obj.properties[propertyName])
 
-  # Set models referenced  bu this model
-  setReferencedModels: (allModels) ->
+  # Set models referenced by this model
+  setReferencedModels: (models, sharedModels) ->
     for prop in @properties
-      if allModels[prop.dataType]?
-        prop.refModel = allModels[prop.dataType]
-      else if prop.refDataType? and allModels[prop.refDataType]?
-        prop.refModel = allModels[prop.refDataType]
+      if models[prop.dataType]?
+        prop.refModel = models[prop.dataType]
+      else if sharedModels? and sharedModels[prop.dataType]?
+        models[prop.dataType] = sharedModels[prop.dataType]
+        prop.refModel = models[prop.dataType]
+      else if prop.refDataType? and models[prop.refDataType]?
+        prop.refModel = models[prop.refDataType]
 
   getMockSignature: (modelsToIgnore) ->
     propertiesStr = []
