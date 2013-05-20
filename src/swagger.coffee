@@ -195,8 +195,11 @@ class SwaggerResource
       @url = @api.suffixApiKey(@api.basePath + @path.replace('{format}', 'json'))
 
       @api.progress 'fetching resource ' + @name + ': ' + @url
-      jQuery.getJSON(@url
-        (response) =>
+      jQuery.ajax({
+        dataType: "json"
+        url: @url
+        cache: false
+        success: (response) =>
 
           # If there is a basePath in response, use that or else use
           # the one from the api object
@@ -218,12 +221,15 @@ class SwaggerResource
           # Mark as ready
           @ready = true
 
+          # Apply Resource overview to the /resource expander
+          @overview = response.overview
+
           if initializedCallback?
             initializedCallback()
 
           # Now that this resource is loaded, tell the API to check in on itself
           @api.selfReflect()
-        ).error(
+        }).error(
         (error) =>
           @api.fail "Unable to read api '" + @name + "' from path " + @url + " (server returned " + error.statusText + ")"
         )
@@ -352,7 +358,7 @@ class SwaggerModelProperty
       str += " = <span class='propVals'>['" + @values.join("' or '") + "']</span>"
 
     if @descr?
-      str += ': <span class="propDesc">' + @descr + '</span>'
+      str += '<span class="propDesc">' + @descr + '</span>'
 
     str
 
