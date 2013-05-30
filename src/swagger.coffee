@@ -283,16 +283,19 @@ class SwaggerModel
 
     returnVal
 
-  createJSONSample: (modelToIgnore) ->
+  createJSONSample: (modelsToIgnore) ->
     result = {}
+    modelsToIgnore = modelsToIgnore || [];
+    modelsToIgnore.push(@name);
     for prop in @properties
-      result[prop.name] = prop.getSampleValue(modelToIgnore)
+      result[prop.name] = prop.getSampleValue(modelsToIgnore)
     result
 
 class SwaggerModelProperty
   constructor: (@name, obj) ->
     @dataType = obj.type
-    @isArray = @dataType && @dataType.toLowerCase() is 'array'
+    @isCollection  = @dataType && (@dataType.toLowerCase() is 'array' || @dataType.toLowerCase() is 'list' ||
+      @dataType.toLowerCase() is 'set');
     @descr = obj.description
     @required = obj.required
 
@@ -306,15 +309,15 @@ class SwaggerModelProperty
       if @values?
         @valuesString = "'" + @values.join("' or '") + "'"
 
-  getSampleValue: (modelToIgnore) ->
-    if(@refModel? and (not (@refModel is modelToIgnore)))
-      result = @refModel.createJSONSample(@refModel) 
+  getSampleValue: (modelsToIgnore) ->
+    if(@refModel? and (modelsToIgnore.indexOf(@refModel.name) is -1))
+      result = @refModel.createJSONSample(modelsToIgnore)
     else
-      if @isArray
+      if @isCollection
         result = @refDataType
       else
         result = @dataType
-    if @isArray then [result] else result
+    if @isCollection then [result] else result
 
   toString: ->
     req = if @required then 'propReq' else 'propOpt'
