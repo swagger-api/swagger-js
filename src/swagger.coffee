@@ -37,7 +37,7 @@ class SwaggerApi
         # If there is a basePath in response, use that or else derive from discoveryUrl
         if response.basePath? and jQuery.trim(response.basePath).length > 0
           @basePath = response.basePath
-          @fail "discoveryUrl basePath must be a URL." unless @basePath.match(/^HTTP/i)?
+
           # TODO: Take this out. It's an API regression.
           @basePath = @basePath.replace(/\/$/, '')
         else
