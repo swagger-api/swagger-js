@@ -57,7 +57,7 @@ class SwaggerApi
           res = null
           for resource in response.apis
             if res is null
-              res = new SwaggerResource resource, this
+              res = new SwaggerResource(resource, this)
             else
               res.addOperations(resource.path, resource.operations)
 
@@ -70,14 +70,30 @@ class SwaggerApi
 
             # Now that this resource is loaded, tell the API to check in on itself
             @selfReflect()
+
+        else if response.sharedModels?
+          # Process any shared models
+          for modelsResource in response.sharedModels
+            res = new SwaggerResource(modelsResource, this, () =>
+              @apis[res.name] = res
+              @setConsolidatedModels()
+              @apis = {}
+
+              # Store a Array of apis and a map of apis by name
+              for resource in response.apis
+                res = new SwaggerResource(resource, this)
+                @apis[res.name] = res
+                @apisArray.push res
+            )
+
         else
           # Store a Array of apis and a map of apis by name
           for resource in response.apis
-            res = new SwaggerResource resource, this
+            res = new SwaggerResource(resource, this)
             @apis[res.name] = res
             @apisArray.push res
 
-        this
+        @
 
     ).error(
       (error) =>
@@ -138,7 +154,7 @@ class SwaggerApi
         
 class SwaggerResource
 
-  constructor: (resourceObj, @api) ->
+  constructor: (resourceObj, @api, initializedCallback) ->
     @path = if @api.resourcePath? then @api.resourcePath else resourceObj.path
     @description = resourceObj.description
 
@@ -163,7 +179,7 @@ class SwaggerResource
       # read resource directly from operations object
       @api.progress 'reading resource ' + @name + ' models and operations'
 
-      @addModels(resourceObj.models)
+      @addModels(resourceObj.models, @api.models)
 
       @addOperations(resourceObj.path, resourceObj.operations)
 
@@ -179,8 +195,11 @@ class SwaggerResource
       @url = @api.suffixApiKey(@api.basePath + @path.replace('{format}', 'json'))
 
       @api.progress 'fetching resource ' + @name + ': ' + @url
-      jQuery.getJSON(@url
-        (response) =>
+      jQuery.ajax({
+        dataType: "json"
+        url: @url
+        cache: false
+        success: (response) =>
 
           # If there is a basePath in response, use that or else use
           # the one from the api object
@@ -189,7 +208,7 @@ class SwaggerResource
             # TODO: Take this out.. it's a wordnik API regression
             @basePath = @basePath.replace(/\/$/, '')
 
-          @addModels(response.models)
+          @addModels(response.models, @api.models)
 
           # Instantiate SwaggerOperations and store them in the @operations map and @operationsArray
           if response.apis
@@ -202,14 +221,21 @@ class SwaggerResource
           # Mark as ready
           @ready = true
 
+          # Apply Resource overview to the /resource expander
+          @overview = response.overview
+
+          if initializedCallback?
+            initializedCallback()
+
           # Now that this resource is loaded, tell the API to check in on itself
           @api.selfReflect()
-        ).error(
+        }).error(
         (error) =>
           @api.fail "Unable to read api '" + @name + "' from path " + @url + " (server returned " + error.statusText + ")"
         )
 
-  addModels: (models) ->
+  # Cache models used by this Resource definition.
+  addModels: (models, sharedModels) ->
     if models?
       for modelName of models
         if not @models[modelName]?
@@ -217,7 +243,8 @@ class SwaggerResource
           @modelsArray.push swaggerModel
           @models[modelName] = swaggerModel
       for model in @modelsArray
-        model.setReferencedModels(@models)
+        # Set models referenced by properties of other models. 
+        model.setReferencedModels(@models, sharedModels)
 
 
   addOperations: (resource_path, ops) ->
@@ -229,7 +256,7 @@ class SwaggerResource
         if o.supportedContentTypes
           consumes = o.supportedContentTypes
 
-        op = new SwaggerOperation o.nickname, resource_path, o.httpMethod, o.parameters, o.summary, o.notes, o.responseClass, o.errorResponses, this, o.consumes, o.produces
+        op = new SwaggerOperation o.nickname, resource_path, o.httpMethod, o.parameters, o.summary, o.notes, o.responseClass, o.responseCodes, this, o.consumes, o.produces
         @operations[op.nickname] = op
         @operationsArray.push op
 
@@ -249,13 +276,16 @@ class SwaggerModel
     for propertyName of obj.properties
       @properties.push new SwaggerModelProperty(propertyName, obj.properties[propertyName])
 
-  # Set models referenced  bu this model
-  setReferencedModels: (allModels) ->
+  # Set models referenced by this model
+  setReferencedModels: (models, sharedModels) ->
     for prop in @properties
-      if allModels[prop.dataType]?
-        prop.refModel = allModels[prop.dataType]
-      else if prop.refDataType? and allModels[prop.refDataType]?
-        prop.refModel = allModels[prop.refDataType]
+      if models[prop.dataType]?
+        prop.refModel = models[prop.dataType]
+      else if sharedModels? and sharedModels[prop.dataType]?
+        models[prop.dataType] = sharedModels[prop.dataType]
+        prop.refModel = models[prop.dataType]
+      else if prop.refDataType? and models[prop.refDataType]?
+        prop.refModel = models[prop.refDataType]
 
   getMockSignature: (modelsToIgnore) ->
     propertiesStr = []
@@ -331,14 +361,14 @@ class SwaggerModelProperty
       str += " = <span class='propVals'>['" + @values.join("' or '") + "']</span>"
 
     if @descr?
-      str += ': <span class="propDesc">' + @descr + '</span>'
+      str += '<span class="propDesc">' + @descr + '</span>'
 
     str
 
 
 class SwaggerOperation
 
-  constructor: (@nickname, @path, @httpMethod, @parameters=[], @summary, @notes, @responseClass, @errorResponses, @resource, @consumes, @produces) ->
+  constructor: (@nickname, @path, @httpMethod, @parameters=[], @summary, @notes, @responseClass, @responseCodes, @resource, @consumes, @produces) ->
     @resource.api.fail "SwaggerOperations must have a nickname." unless @nickname?
     @resource.api.fail "SwaggerOperation #{nickname} is missing path." unless @path?
     @resource.api.fail "SwaggerOperation #{nickname} is missing httpMethod." unless @httpMethod?
@@ -355,7 +385,7 @@ class SwaggerOperation
       @responseClassSignature = @getSignature(@responseClass, @resource.models)
       @responseSampleJSON = @getSampleJSON(@responseClass, @resource.models)
 
-    @errorResponses = @errorResponses || []
+    @responseCodes = @responseCodes || []
 
     for parameter in @parameters
       # Path params do not have a name, set the name to the path if name is n/a
