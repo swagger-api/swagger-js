@@ -159,6 +159,9 @@ class SwaggerResource
     @modelsArray = []
     @models = {}
 
+    # We store endpoints in an array
+    @endpointsArray = []
+
     if resourceObj.operations? and @api.resourcePath?
       # read resource directly from operations object
       @api.progress 'reading resource ' + @name + ' models and operations'
@@ -194,7 +197,7 @@ class SwaggerResource
           # Instantiate SwaggerOperations and store them in the @operations map and @operationsArray
           if response.apis
             for endpoint in response.apis
-              @addOperations(endpoint.path, endpoint.operations)
+              @addEndpoint(endpoint)
 
           # Store a named reference to this resource on the parent object
           @api[this.name] = this
@@ -219,8 +222,13 @@ class SwaggerResource
       for model in @modelsArray
         model.setReferencedModels(@models)
 
+  addEndpoint: (endpoint) ->
+    new_operations = @addOperations(endpoint.path, endpoint.operations)
+    endpoint = new SwaggerEndpoint(endpoint, new_operations)
+    @endpointsArray.push endpoint
 
   addOperations: (resource_path, ops) ->
+    return_operations = []
     if ops
       for o in ops
         consumes = o.consumes
@@ -232,7 +240,8 @@ class SwaggerResource
         op = new SwaggerOperation o.nickname, resource_path, o.httpMethod, o.parameters, o.summary, o.notes, o.responseClass, o.errorResponses, this, o.consumes, o.produces
         @operations[op.nickname] = op
         @operationsArray.push op
-
+        return_operations.push op
+    return_operations
 
   help: ->
     for operation_name, operation of @operations
@@ -334,6 +343,16 @@ class SwaggerModelProperty
       str += ': <span class="propDesc">' + @descr + '</span>'
 
     str
+
+
+class SwaggerEndpoint
+
+  constructor: (endpoint, operations) ->
+    @path = endpoint.path
+    @description = endpoint.description
+    @operationsArray = operations
+    @operations = {}
+    @operations[op.nickname] = op for op in @operationsArray
 
 
 class SwaggerOperation
