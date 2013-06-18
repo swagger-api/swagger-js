@@ -393,7 +393,14 @@ class SwaggerOperation
       @do(args, callback, error)
 
   isListType: (dataType) ->
-    if(dataType.indexOf('[') >= 0) then dataType.substring(dataType.indexOf('[') + 1, dataType.indexOf(']')) else undefined
+      openB = dataType.indexOf('[');
+      closeB = dataType.indexOf(']');
+      if openB >= 0 and closeB == (openB + 1)
+        return dataType.substring(0, openB)
+      else if openB >= 0 and closeB > (openB + 1)
+        return dataType.substring(openB + 1, closeB)
+      else
+        return undefined
 
   getSignature: (dataType, models) ->
     # set listType if it exists
