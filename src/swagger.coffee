@@ -54,9 +54,11 @@ class SwaggerApi
           @resourcePath = response.resourcePath
 
           # create only one resource and add operations to the same one for the rest of them
+          models = response.models
           res = null
           for resource in response.apis
             if res is null
+              resource.models = models
               res = new SwaggerResource resource, this
             else
               res.addOperations(resource.path, resource.operations)
