@@ -204,10 +204,10 @@ class SwaggerResource
 
   help: ->
     for operation_name, operation of @operations
-      console.log "  #{operation.nickname}"
+      msg = "  #{operation.nickname}"
       for parameter in operation.parameters
-        console.log "    #{parameter.name}#{if parameter.required then ' (required)'  else ''} - #{parameter.description}"
-    @
+        msg.concat("    #{parameter.name}#{if parameter.required then ' (required)'  else ''} - #{parameter.description}")
+      msg
 
 
 class SwaggerModel
@@ -470,9 +470,11 @@ class SwaggerOperation
     matchingParams
 
   help: ->
+    msg = ""
     for parameter in @parameters
-      console.log "    #{parameter.name}#{if parameter.required then ' (required)'  else ''} - #{parameter.description}"
-    @
+      if msg isnt "" then msg += "\n"
+      msg += "* #{parameter.name}#{if parameter.required then ' (required)'  else ''} - #{parameter.description}"
+    msg
 
 
 class SwaggerRequest

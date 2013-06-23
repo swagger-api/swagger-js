@@ -29,9 +29,9 @@ describe 'SwaggerRequest', ->
       expect(responseMessages[0].code).toBe 400
       expect(responseMessages[1].code).toBe 404
 
-    it "gets help() from the pet operation", ->
+    it "gets help() from the get pet operation", ->
       operation = swagger.pet.operations.getPetById
-      #expect(operation.help()).toBe "petId (required) - ID of pet that needs to be fetched"
+      expect(operation.help()).toBe "* petId (required) - ID of pet that needs to be fetched"
 
     it "verifies the get pet operation", ->
       operation = swagger.pet.operations.getPetById
@@ -63,8 +63,6 @@ describe 'SwaggerRequest', ->
       expect(param.paramType).toBe "body"
       expect(param.description).toBeDefined
       expect(param.required).toBe true
-
-      console.log param.responseMessages
 
 
     it "verifies the put pet operation", ->
@@ -163,8 +161,6 @@ describe 'SwaggerRequest', ->
       expect(param.allowMultiple).toBe false
       expect(param.required).toBe false
 
-      console.log operation
-
     it "verifies a file upload", ->
       operation = swagger.pet.operations.uploadFile
       expect(operation.httpMethod).toBe "post"
@@ -192,3 +188,6 @@ describe 'SwaggerRequest', ->
       expect(param.allowMultiple).toBe false
       expect(param.required).toBe false
 
+    it "gets help() from the file upload operation", ->
+      operation = swagger.pet.operations.uploadFile
+      expect(operation.help().trim()).toBe "* additionalMetadata - Additional data to pass to server\n* file - file to upload"
