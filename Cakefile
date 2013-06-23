@@ -46,6 +46,6 @@ task 'watch', 'Automatically recompile CoffeeScript files to JavaScript', ->
 
 task 'dev', "Open source files, run spec in browser, and watch for changes", ->
   exec "$EDITOR ."
-  exec "open request-spec.html"
+  exec "open operation-spec.html"
   coffee = spawn 'coffee', ['-cw', '-o', 'lib', 'src']
   coffee.stdout.on 'data', (data) -> console.log data.toString().trim()
