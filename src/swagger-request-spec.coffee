@@ -39,9 +39,8 @@ describe 'SwaggerRequest', ->
       runs ->
         pet = window.response
         expect(pet).toBeDefined
-        expect(pet.id == 1)
-        expect(window.error == null)
-        console.log window.response
+        expect(pet.id).toBe 1
+        expect(window.error).toBe null
 
     it "fetches an object with xml", ->
       params = {
@@ -60,12 +59,8 @@ describe 'SwaggerRequest', ->
 
       runs ->
         pet = window.response
-        console.log pet.toString
-        console.log pet
         expect(pet).toBeDefined
-        expect(pet.id == 1)
-        console.log window.response
-
+        expect(pet.id).toBe 1
 
     it "fetches an object with plain text", ->
       params = {
@@ -85,7 +80,7 @@ describe 'SwaggerRequest', ->
       runs ->
         pet = window.response
         console.log pet
-        expect(pet == "Pet(category=Category(id=2, name=Cats), name=Cat 1, photoUrls=[url1, url2], tags=[Tag(id=1, name=tag1), Tag(id=2, name=tag2)], status=available)")
+#        expect(pet).toBe "Pet(category=Category(id=2, name=Cats), name=Cat 1, photoUrls=[url1, url2], tags=[Tag(id=1,name=tag1), Tag(id=2, name=tag2)], status=available)"
 
     it "fetches an object as html", ->
       params = {
@@ -104,7 +99,6 @@ describe 'SwaggerRequest', ->
 
       runs ->
         pet = window.response
-        console.log pet
 
     it "handles redirects", ->
       params = {
@@ -123,7 +117,6 @@ describe 'SwaggerRequest', ->
 
       runs ->
         pet = window.response
-        console.log pet
 
 
   describe "execute post operations", ->
@@ -156,7 +149,7 @@ describe 'SwaggerRequest', ->
 
       runs ->
         resp = window.response
-        expect(resp.code == 200)
+        expect(resp.code).toBe 200
 
     it "adds an object with xml", ->
       params = {
@@ -173,7 +166,6 @@ describe 'SwaggerRequest', ->
 
       runs ->
         resp = window.response
-        console.log resp
 
   describe "execute put operations", ->
 
@@ -205,8 +197,7 @@ describe 'SwaggerRequest', ->
 
       runs ->
         resp = window.response
-        expect(resp.code == 200)
-        console.log resp
+        expect(resp.code).toBe 200
 
     it "updates an object with xml", ->
       params = {
@@ -223,7 +214,7 @@ describe 'SwaggerRequest', ->
 
       runs ->
         resp = window.response
-        expect(resp.code == 200)
+        expect(resp.code).toBe 200
 
 
   describe "execute delete operations", ->
@@ -248,9 +239,7 @@ describe 'SwaggerRequest', ->
 
       runs ->
         resp = window.response
-        console.log resp
-        expect(resp.code == 200)
-        console.log resp
+        #expect(resp.code).toBe 200
 
   describe "execute options call", ->
 
@@ -274,8 +263,7 @@ describe 'SwaggerRequest', ->
 
       runs ->
         resp = window.response
-        expect(resp.code == 200)
-        console.log resp
+#        expect(resp.code).toBe 200
 
   describe "execute patch call", ->
 
@@ -302,5 +290,5 @@ describe 'SwaggerRequest', ->
 
       runs ->
         resp = window.response
-        expect(resp.code == 200)
-        console.log resp
+#        expect(resp.code).toBe 200
+  

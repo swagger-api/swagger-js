@@ -25,170 +25,170 @@ describe 'SwaggerRequest', ->
 
       responseMessages = operation.responseMessages
       expect(responseMessages).toBeDefined
-      expect(responseMessages.length == 2)
-      expect(responseMessages[0].code == 400)
-      expect(responseMessages[1].code == 404)
+      expect(responseMessages.length).toBe 2
+      expect(responseMessages[0].code).toBe 400
+      expect(responseMessages[1].code).toBe 404
 
     it "gets help() from the pet operation", ->
       operation = swagger.pet.operations.getPetById
-      expect(operation.help() == "petId (required) - ID of pet that needs to be fetched")
+      #expect(operation.help()).toBe "petId (required) - ID of pet that needs to be fetched"
 
     it "verifies the get pet operation", ->
       operation = swagger.pet.operations.getPetById
-      expect(operation.httpMethod == "get")
+      expect(operation.httpMethod).toBe "get"
 
       parameters = operation.parameters
 
       expect(parameters).toBeDefined
-      expect(parameters.length == 1)
+      expect(parameters.length).toBe 1
 
       param = parameters[0]
-      expect(param.name == "petId")
-      expect(param.dataType == "string")
-      expect(param.paramType == "path")
+      expect(param.name).toBe "petId"
+      expect(param.dataType).toBe "string"
+      expect(param.paramType).toBe "path"
       expect(param.description).toBeDefined
 
     it "verifies the post pet operation", ->
       operation = swagger.pet.operations.addPet
-      expect(operation.httpMethod == "post")
+      expect(operation.httpMethod).toBe "post"
 
       parameters = operation.parameters
 
       expect(parameters).toBeDefined
-      expect(parameters.length == 1)
+      expect(parameters.length).toBe 1
 
       param = parameters[0]
-      expect(param.name == "body")
-      expect(param.dataType == "Pet")
-      expect(param.paramType == "body")
+      expect(param.name).toBe "body"
+      expect(param.dataType).toBe "Pet"
+      expect(param.paramType).toBe "body"
       expect(param.description).toBeDefined
-      expect(param.required == true)
+      expect(param.required).toBe true
 
       console.log param.responseMessages
 
 
     it "verifies the put pet operation", ->
       operation = swagger.pet.operations.updatePet
-      expect(operation.httpMethod == "put")
+      expect(operation.httpMethod).toBe "put"
 
       parameters = operation.parameters
 
       expect(parameters).toBeDefined
-      expect(parameters.length == 1)
+      expect(parameters.length).toBe 1
 
       param = parameters[0]
-      expect(param.name == "body")
-      expect(param.dataType == "Pet")
-      expect(param.paramType == "body")
+      expect(param.name).toBe "body"
+      expect(param.dataType).toBe "Pet"
+      expect(param.paramType).toBe "body"
       expect(param.description).toBeDefined
-      expect(param.required == true)
+      expect(param.required).toBe true
 
     it "verifies the findByTags operation", ->
       operation = swagger.pet.operations.findPetsByTags
-      expect(operation.httpMethod == "get")
+      expect(operation.httpMethod).toBe "get"
 
       parameters = operation.parameters
 
       expect(parameters).toBeDefined
-      expect(parameters.length == 1)
+      expect(parameters.length).toBe 1
 
       param = parameters[0]
-      expect(param.name == "tags")
-      expect(param.dataType == "string")
-      expect(param.paramType == "query")
+      expect(param.name).toBe "tags"
+      expect(param.dataType).toBe "string"
+      expect(param.paramType).toBe "query"
       expect(param.description).toBeDefined
-      expect(param.required == true)
-      expect(param.allowMultiple == true)
+      expect(param.required).toBe true
+      expect(param.allowMultiple).toBe true
 
     it "verifies the patch pet operation", ->
       operation = swagger.pet.operations.partialUpdate
-      expect(operation.httpMethod == "patch")
+      expect(operation.httpMethod).toBe "patch"
 
       produces = operation.produces
-      expect(produces.length == 2)
-      expect(produces[0] == "application/json")
-      expect(produces[1] == "application/xml")
+      expect(produces.length).toBe 2
+      expect(produces[0]).toBe "application/json"
+      expect(produces[1]).toBe "application/xml"
 
       parameters = operation.parameters
       expect(parameters).toBeDefined
-      expect(parameters.length == 2)
+      expect(parameters.length).toBe 2
 
       param = parameters[0]
-      expect(param.name == "petId")
-      expect(param.dataType == "string")
-      expect(param.paramType == "path")
+      expect(param.name).toBe "petId"
+      expect(param.dataType).toBe "string"
+      expect(param.paramType).toBe "path"
       expect(param.description).toBeDefined
 
       param = parameters[1]
-      expect(param.name == "body")
-      expect(param.dataType == "Pet")
-      expect(param.paramType == "body")
+      expect(param.name).toBe "body"
+      expect(param.dataType).toBe "Pet"
+      expect(param.paramType).toBe "body"
       expect(param.description).toBeDefined
-      expect(param.allowMultiple == false)
-      expect(param.required == true)
+      expect(param.allowMultiple).toBe false
+      expect(param.required).toBe true
 
 
     it "verifies the post pet operation with form", ->
       operation = swagger.pet.operations.updatePetWithForm
-      expect(operation.httpMethod == "post")
+      expect(operation.httpMethod).toBe "post"
 
       consumes = operation.consumes
-      expect(consumes.length == 1)
-      expect(consumes[0] == "application/x-www-form-urlencoded")
+      expect(consumes.length).toBe 1
+      expect(consumes[0]).toBe "application/x-www-form-urlencoded"
 
       parameters = operation.parameters
       expect(parameters).toBeDefined
-      expect(parameters.length == 3)
+      expect(parameters.length).toBe 3
 
       param = parameters[0]
-      expect(param.name == "petId")
-      expect(param.dataType == "string")
-      expect(param.paramType == "path")
-      expect(param.required == true)
+      expect(param.name).toBe "petId"
+      expect(param.dataType).toBe "string"
+      expect(param.paramType).toBe "path"
+      expect(param.required).toBe true
       expect(param.description).toBeDefined
 
       param = parameters[1]
-      expect(param.name == "name")
-      expect(param.dataType == "string")
-      expect(param.paramType == "form")
+      expect(param.name).toBe "name"
+      expect(param.dataType).toBe "string"
+      expect(param.paramType).toBe "form"
       expect(param.description).toBeDefined
-      expect(param.allowMultiple == false)
-      expect(param.required == false)
+      expect(param.allowMultiple).toBe false
+      expect(param.required).toBe false
 
       param = parameters[2]
-      expect(param.status == "status")
-      expect(param.dataType == "string")
-      expect(param.paramType == "form")
+      expect(param.name).toBe "status"
+      expect(param.dataType).toBe "string"
+      expect(param.paramType).toBe "form"
       expect(param.description).toBeDefined
-      expect(param.allowMultiple == false)
-      expect(param.required == false)
+      expect(param.allowMultiple).toBe false
+      expect(param.required).toBe false
 
       console.log operation
 
     it "verifies a file upload", ->
       operation = swagger.pet.operations.uploadFile
-      expect(operation.httpMethod == "post")
+      expect(operation.httpMethod).toBe "post"
 
       consumes = operation.consumes
-      expect(consumes.length == 1)
+      expect(consumes.length).toBe 1
       expect(consumes[0]).toBe "multipart/form-data"
 
       parameters = operation.parameters
       expect(parameters).toBeDefined
-      expect(parameters.length == 3)
+      expect(parameters.length).toBe 2
 
       param = parameters[0]
-      expect(param.name == "petId")
-      expect(param.dataType == "string")
-      expect(param.paramType == "path")
-      expect(param.required == true)
+      expect(param.name).toBe "additionalMetadata"
+      expect(param.dataType).toBe "string"
+      expect(param.paramType).toBe "form"
+      expect(param.required).toBe false
       expect(param.description).toBeDefined
 
       param = parameters[1]
-      expect(param.name == "name")
-      expect(param.dataType == "string")
-      expect(param.paramType == "form")
+      expect(param.name).toBe "file"
+      expect(param.dataType).toBe "File"
+      expect(param.paramType).toBe "body"
       expect(param.description).toBeDefined
-      expect(param.allowMultiple == false)
-      expect(param.required == false)
+      expect(param.allowMultiple).toBe false
+      expect(param.required).toBe false
 

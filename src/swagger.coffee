@@ -34,7 +34,7 @@ class SwaggerApi
         # TODO: this is where logic for viewing an Api Declaration directly should live
 
         @basePath = @discoveryUrl.substring(0, @discoveryUrl.lastIndexOf('/'))
-        console.log 'derived basepath from discoveryUrl as ' + @basePath
+        # console.log 'derived basepath from discoveryUrl as ' + @basePath
 
         for resource in response.apis
           res = new SwaggerResource resource, this
@@ -485,9 +485,9 @@ class SwaggerRequest
     throw "SwaggerRequest operation is required." unless @operation?
     
     # console.log "new SwaggerRequest: %o", this
-    console.log this.asCurl() if @operation.resource.api.verbose
+    # console.log this.asCurl() if @operation.resource.api.verbose
     
-    console.log("type: " + @type + ", body: " + @body);
+    # console.log("type: " + @type + ", body: " + @body);
 
     headers = params.headers
 
@@ -517,8 +517,6 @@ class SwaggerRequest
     contentType = @requestContentType
     if type.toLowerCase() isnt ("post" or "put" or "patch")
       dataType = null 
-
-    console.log "dataType: " + dataType
 
     unless headers? and headers.mock?
       obj = 
