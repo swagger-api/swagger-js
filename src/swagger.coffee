@@ -229,7 +229,17 @@ class SwaggerResource
         if o.supportedContentTypes
           consumes = o.supportedContentTypes
 
-        op = new SwaggerOperation o.nickname, resource_path, o.httpMethod, o.parameters, o.summary, o.notes, o.responseClass, o.errorResponses, this, o.consumes, o.produces
+        errorResponses = o.responseMessages
+        if errorResponses
+          # update the message code
+          for err in errorResponses
+            err.reason = err.message
+
+        # support old naming
+        if o.errorResponses
+          errorResponses = o.errorResponses
+
+        op = new SwaggerOperation o.nickname, resource_path, o.httpMethod, o.parameters, o.summary, o.notes, o.responseClass, errorResponses, this, o.consumes, o.produces
         @operations[op.nickname] = op
         @operationsArray.push op
 
