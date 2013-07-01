@@ -42,7 +42,10 @@ class SwaggerApi
           @basePath = @basePath.replace(/\/$/, '')
         else
           # The base path derived from discoveryUrl
-          @basePath = @discoveryUrl.substring(0, @discoveryUrl.lastIndexOf('/'))
+          if @discoveryUrl.indexOf('?') > 0
+            @basePath = @discoveryUrl.substring(0, @discoveryUrl.lastIndexOf('?'))
+          else
+            @basePath = @discoveryUrl
           log 'derived basepath from discoveryUrl as ' + @basePath
 
         @apis = {}
@@ -151,6 +154,8 @@ class SwaggerResource
     # has a more specific one, we'll set it again there.
     @basePath = @api.basePath
 
+    console.log 'bp: ' + @basePath
+
     # We're going to store operations in a map (operations) and a list (operationsArray)
     @operations = {}
     @operationsArray = []
@@ -177,6 +182,8 @@ class SwaggerResource
 
       # e.g."http://api.wordnik.com/v4/word.json"
       @url = @api.suffixApiKey(@api.basePath + @path.replace('{format}', 'json'))
+      console.log 'basePath: ' + @api.basePath
+      console.log 'url: ' + @url
 
       @api.progress 'fetching resource ' + @name + ': ' + @url
       jQuery.getJSON(@url
@@ -223,9 +230,8 @@ class SwaggerResource
   addOperations: (resource_path, ops) ->
     if ops
       for o in ops
+        # support both swagger 1.1 and 1.2 specs
         consumes = o.consumes
-
-        # support old naming
         if o.supportedContentTypes
           consumes = o.supportedContentTypes
 
@@ -235,9 +241,11 @@ class SwaggerResource
           for err in errorResponses
             err.reason = err.message
 
-        # support old naming
         if o.errorResponses
           errorResponses = o.errorResponses
+
+        if o.method
+          o.httpMethod = o.method
 
         op = new SwaggerOperation o.nickname, resource_path, o.httpMethod, o.parameters, o.summary, o.notes, o.responseClass, errorResponses, this, o.consumes, o.produces
         @operations[op.nickname] = op
