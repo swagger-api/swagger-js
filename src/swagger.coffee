@@ -5,6 +5,7 @@ class SwaggerApi
   debug: false
   basePath: null
   authorizations: null
+  Shred: null
 
   constructor: (options={}) ->
     @discoveryUrl = options.discoveryUrl if options.discoveryUrl?
@@ -33,7 +34,7 @@ class SwaggerApi
 
         # TODO: this is where logic for viewing an Api Declaration directly should live
 
-        @basePath = @discoveryUrl.substring(0, @discoveryUrl.lastIndexOf('/'))
+        @basePath = @discoveryUrl #.substring(0, @discoveryUrl.lastIndexOf('/'))
         # console.log 'derived basepath from discoveryUrl as ' + @basePath
 
         for resource in response.apis
@@ -486,11 +487,6 @@ class SwaggerRequest
     throw "SwaggerRequest error callback is required." unless @errorCallback?
     throw "SwaggerRequest operation is required." unless @operation?
     
-    # console.log "new SwaggerRequest: %o", this
-    # console.log this.asCurl() if @operation.resource.api.verbose
-    
-    # console.log("type: " + @type + ", body: " + @body);
-
     headers = params.headers
 
     body = params.body
@@ -520,33 +516,60 @@ class SwaggerRequest
     if type.toLowerCase() isnt ("post" or "put" or "patch")
       dataType = null 
 
-    unless headers? and headers.mock?
-      obj = 
-        type: @type
-        url: @url
-        contentType: contentType
-        headers: headers
-        data: body
-        accepts: {
-          json: 'application/json',
-          xml: 'application/xml'
-        }
-        dataType: dataType
-        error: (xhr, textStatus, error) =>
-          @errorCallback(xhr, textStatus, error)
-        success: (data, textstatus, xhr) =>
-          #alert xhr.status
-          @successCallback(data)
+    myHeaders = {}
+    if @requestContentType
+      myHeaders["accept"] = @requestContentType
+    if @responseContentType
+      myHeaders["Content-Type"] = @responseContentType
 
-      jQuery.ajax(obj)
+    unless headers? and headers.mock?
+
+      obj = 
+        url: @url
+        method: @type
+        headers: myHeaders
+        body: body
+        on:
+          error: (response) =>
+            @errorCallback response
+          redirect: (response) =>
+            @successCallback response
+          307: (response) =>
+            @successCallback response
+          response: (response) =>
+            @successCallback response.content.data
+      Shred = require "./shred"
+      shred = new Shred()
+
+      Content = require "./shred/content"
+      #content = new Content()
+
+      identity = (x) =>
+        x
+      toString = (x) =>
+        x.toString
+
+      Content.registerProcessor(
+        ["application/json; charset=utf-8","application/json","json"], { parser: (identity), stringify: toString })
+
+      shred.request obj
 
   asCurl: ->
     header_args = ("--header \"#{k}: #{v}\"" for k,v of @headers)
     "curl #{header_args.join(" ")} #{@url}"
   
 # Expose these classes:
-window.SwaggerApi = SwaggerApi
-#window.SwaggerResource = SwaggerResource
-#window.SwaggerOperation = SwaggerOperation
-window.SwaggerRequest = SwaggerRequest
-#window.SwaggerModelProperty = SwaggerModelProperty
+e = {}
+
+if typeof window != 'undefined'
+  console.log 'exporting to window'
+  e = window
+else
+  console.log 'exporting to exports'
+  e = exports
+
+e.SwaggerApi = SwaggerApi
+e.SwaggerResource = SwaggerResource
+e.SwaggerOperation = SwaggerOperation
+e.SwaggerRequest = SwaggerRequest
+e.SwaggerModelProperty = SwaggerModelProperty
