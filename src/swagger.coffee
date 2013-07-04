@@ -5,7 +5,6 @@ class SwaggerApi
   debug: false
   basePath: null
   authorizations: null
-  Shred: null
 
   constructor: (options={}) ->
     @discoveryUrl = options.discoveryUrl if options.discoveryUrl?
@@ -24,36 +23,42 @@ class SwaggerApi
 
   build: ->
     @progress 'fetching resource list: ' + @discoveryUrl
-    jQuery.getJSON(@discoveryUrl,
-      (response) =>
 
-        @apiVersion = response.apiVersion if response.apiVersion?
+    obj = 
+      url: @discoveryUrl
+      method: "get"
+      on:
+        error: (response) =>
+          if @discoveryUrl.substring(0, 4) isnt 'http'
+            @fail 'Please specify the protocol for ' + @discoveryUrl
+          else if error.status == 0
+            @fail 'Can\'t read from server.  It may not have the appropriate access-control-origin settings.'
+          else if error.status == 404
+            @fail 'Can\'t read swagger JSON from '  + @discoveryUrl
+          else
+            @fail error.status + ' : ' + error.statusText + ' ' + @discoveryUrl
+        response: (rawResponse) =>
+          response = JSON.parse(rawResponse.content._body)
+          @apiVersion = response.apiVersion if response.apiVersion?
 
-        @apis = {}
-        @apisArray = []
+          @apis = {}
+          @apisArray = []
 
-        # TODO: this is where logic for viewing an Api Declaration directly should live
+          # TODO: this is where logic for viewing an Api Declaration directly should live
 
-        @basePath = @discoveryUrl #.substring(0, @discoveryUrl.lastIndexOf('/'))
-        # console.log 'derived basepath from discoveryUrl as ' + @basePath
+          # The base path derived from discoveryUrl
+          if @discoveryUrl.indexOf('?') > 0
+            @basePath = @discoveryUrl.substring(0, @discoveryUrl.lastIndexOf('?'))
+          else
+            @basePath = @discoveryUrl
 
-        for resource in response.apis
-          res = new SwaggerResource resource, this
-          @apis[res.name] = res
-          @apisArray.push res
-        this
+          for resource in response.apis
+            res = new SwaggerResource resource, this
+            @apis[res.name] = res
+            @apisArray.push res
+          this
 
-    ).error(
-      (error) =>
-        if @discoveryUrl.substring(0, 4) isnt 'http'
-          @fail 'Please specify the protocol for ' + @discoveryUrl
-        else if error.status == 0
-          @fail 'Can\'t read from server.  It may not have the appropriate access-control-origin settings.'
-        else if error.status == 404
-          @fail 'Can\'t read swagger JSON from '  + @discoveryUrl
-        else
-          @fail error.status + ' : ' + error.statusText + ' ' + @discoveryUrl
-    )
+    new SwaggerHttp().execute obj
 
   # This method is called each time a child resource finishes loading
   # 
@@ -125,6 +130,7 @@ class SwaggerResource
 
     if resourceObj.operations? and @api.resourcePath?
       # read resource directly from operations object
+
       @api.progress 'reading resource ' + @name + ' models and operations'
 
       @addModels(resourceObj.models)
@@ -142,36 +148,40 @@ class SwaggerResource
       # e.g."http://api.wordnik.com/v4/word.json"
       @url = @api.suffixApiKey(@api.basePath + @path.replace('{format}', 'json'))
 
+      console.log "calling " + @url
+
       @api.progress 'fetching resource ' + @name + ': ' + @url
-      jQuery.getJSON(@url
-        (response) =>
+      obj = 
+        url: @url
+        method: "get"
+        on:
+          error: (response) =>
+            @api.fail "Unable to read api '" + @name + "' from path " + @url + " (server returned " + error.statusText + ")"
+          response: (rawResponse) =>
+            response = JSON.parse(rawResponse.content._body)
+            # If there is a basePath in response, use that or else use
+            # the one from the api object
+            if response.basePath? and jQuery.trim(response.basePath).length > 0
+              @basePath = response.basePath
+              # TODO: Take this out.. it's a wordnik API regression
+              @basePath = @basePath.replace(/\/$/, '')
 
-          # If there is a basePath in response, use that or else use
-          # the one from the api object
-          if response.basePath? and jQuery.trim(response.basePath).length > 0
-            @basePath = response.basePath
-            # TODO: Take this out.. it's a wordnik API regression
-            @basePath = @basePath.replace(/\/$/, '')
+            @addModels(response.models)
 
-          @addModels(response.models)
+            # Instantiate SwaggerOperations and store them in the @operations map and @operationsArray
+            if response.apis
+              for endpoint in response.apis
+                @addOperations(endpoint.path, endpoint.operations)
 
-          # Instantiate SwaggerOperations and store them in the @operations map and @operationsArray
-          if response.apis
-            for endpoint in response.apis
-              @addOperations(endpoint.path, endpoint.operations)
+            # Store a named reference to this resource on the parent object
+            @api[this.name] = this
 
-          # Store a named reference to this resource on the parent object
-          @api[this.name] = this
+            # Mark as ready
+            @ready = true
 
-          # Mark as ready
-          @ready = true
-
-          # Now that this resource is loaded, tell the API to check in on itself
-          @api.selfReflect()
-        ).error(
-        (error) =>
-          @api.fail "Unable to read api '" + @name + "' from path " + @url + " (server returned " + error.statusText + ")"
-        )
+            # Now that this resource is loaded, tell the API to check in on itself
+            @api.selfReflect()
+      new SwaggerHttp().execute obj
 
   addModels: (models) ->
     if models?
@@ -189,6 +199,11 @@ class SwaggerResource
       for o in ops
         consumes = o.consumes
         responseMessages = o.responseMessages
+        method = o.method
+
+        # support old httpMethod
+        if o.httpMethod
+          method = o.httpMethod
 
         # support old naming
         if o.supportedContentTypes
@@ -198,7 +213,7 @@ class SwaggerResource
         if o.errorResponses
           responseMessages = o.errorResponses
 
-        op = new SwaggerOperation o.nickname, resource_path, o.httpMethod, o.parameters, o.summary, o.notes, o.responseClass, responseMessages, this, o.consumes, o.produces
+        op = new SwaggerOperation o.nickname, resource_path, o.method, o.parameters, o.summary, o.notes, o.responseClass, responseMessages, this, consumes, o.produces
         @operations[op.nickname] = op
         @operationsArray.push op
 
@@ -307,15 +322,15 @@ class SwaggerModelProperty
 
 class SwaggerOperation
 
-  constructor: (@nickname, @path, @httpMethod, @parameters=[], @summary, @notes, @responseClass, @responseMessages, @resource, @consumes, @produces) ->
+  constructor: (@nickname, @path, @method, @parameters=[], @summary, @notes, @responseClass, @responseMessages, @resource, @consumes, @produces) ->
     @resource.api.fail "SwaggerOperations must have a nickname." unless @nickname?
     @resource.api.fail "SwaggerOperation #{nickname} is missing path." unless @path?
-    @resource.api.fail "SwaggerOperation #{nickname} is missing httpMethod." unless @httpMethod?
+    @resource.api.fail "SwaggerOperation #{nickname} is missing method." unless @method?
 
     # Convert {format} to 'json'
     @path = @path.replace('{format}', 'json')
-    @httpMethod = @httpMethod.toLowerCase()
-    @isGetMethod = @httpMethod == "get"
+    @method = @method.toLowerCase()
+    @isGetMethod = @method == "get"
     @resourceName = @resource.name
 
     # if void clear it
@@ -421,7 +436,7 @@ class SwaggerOperation
       delete args.body
 
 
-    new SwaggerRequest(@httpMethod, @urlify(args), params, requestContentType, responseContentType, callback, error, this)
+    new SwaggerRequest(@method, @urlify(args), params, requestContentType, responseContentType, callback, error, this)
 
   pathJson: -> @path.replace "{format}", "json"
 
@@ -451,6 +466,12 @@ class SwaggerOperation
 
     url
 
+  supportHeaderParams: ->
+    @resource.api.supportHeaderParams
+
+  supportedSubmitMethods: ->
+    @resource.api.supportedSubmitMethods
+
   getQueryParams: (args) ->
     @getMatchingParams ['query'], args
  
@@ -479,14 +500,14 @@ class SwaggerOperation
 
 
 class SwaggerRequest
-  
+
   constructor: (@type, @url, @params, @requestContentType, @responseContentType, @successCallback, @errorCallback, @operation) ->
     throw "SwaggerRequest type is required (get/post/put/delete)." unless @type?
     throw "SwaggerRequest url is required." unless @url?
     throw "SwaggerRequest successCallback is required." unless @successCallback?
     throw "SwaggerRequest error callback is required." unless @errorCallback?
     throw "SwaggerRequest operation is required." unless @operation?
-    
+
     headers = params.headers
 
     body = params.body
@@ -538,25 +559,33 @@ class SwaggerRequest
             @successCallback response
           response: (response) =>
             @successCallback response.content.data
-      Shred = require "./shred"
-      shred = new Shred()
 
-      Content = require "./shred/content"
-      #content = new Content()
-
-      identity = (x) =>
-        x
-      toString = (x) =>
-        x.toString
-
-      Content.registerProcessor(
-        ["application/json; charset=utf-8","application/json","json"], { parser: (identity), stringify: toString })
-
-      shred.request obj
+      new SwaggerHttp().execute obj
 
   asCurl: ->
     header_args = ("--header \"#{k}: #{v}\"" for k,v of @headers)
     "curl #{header_args.join(" ")} #{@url}"
+
+
+class SwaggerHttp
+  shred: null
+
+  constructor: ->    
+    Shred = require "./shred"
+    @shred = new Shred()
+
+  execute: (obj) ->
+    Content = require "./shred/content"
+
+    identity = (x) =>
+      x
+    toString = (x) =>
+      x.toString
+
+    Content.registerProcessor(
+      ["application/json; charset=utf-8","application/json","json"], { parser: (identity), stringify: toString })
+    @shred.request obj
+
   
 # Expose these classes:
 e = {}

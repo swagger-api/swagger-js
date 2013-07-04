@@ -35,7 +35,7 @@ describe 'SwaggerRequest', ->
 
     it "verifies the get pet operation", ->
       operation = swagger.pet.operations.getPetById
-      expect(operation.httpMethod).toBe "get"
+      expect(operation.method).toBe "get"
 
       parameters = operation.parameters
 
@@ -50,7 +50,7 @@ describe 'SwaggerRequest', ->
 
     it "verifies the post pet operation", ->
       operation = swagger.pet.operations.addPet
-      expect(operation.httpMethod).toBe "post"
+      expect(operation.method).toBe "post"
 
       parameters = operation.parameters
 
@@ -67,7 +67,7 @@ describe 'SwaggerRequest', ->
 
     it "verifies the put pet operation", ->
       operation = swagger.pet.operations.updatePet
-      expect(operation.httpMethod).toBe "put"
+      expect(operation.method).toBe "put"
 
       parameters = operation.parameters
 
@@ -83,7 +83,7 @@ describe 'SwaggerRequest', ->
 
     it "verifies the findByTags operation", ->
       operation = swagger.pet.operations.findPetsByTags
-      expect(operation.httpMethod).toBe "get"
+      expect(operation.method).toBe "get"
 
       parameters = operation.parameters
 
@@ -100,7 +100,7 @@ describe 'SwaggerRequest', ->
 
     it "verifies the patch pet operation", ->
       operation = swagger.pet.operations.partialUpdate
-      expect(operation.httpMethod).toBe "patch"
+      expect(operation.method).toBe "patch"
 
       produces = operation.produces
       expect(produces.length).toBe 2
@@ -128,7 +128,7 @@ describe 'SwaggerRequest', ->
 
     it "verifies the post pet operation with form", ->
       operation = swagger.pet.operations.updatePetWithForm
-      expect(operation.httpMethod).toBe "post"
+      expect(operation.method).toBe "post"
 
       consumes = operation.consumes
       expect(consumes.length).toBe 1
@@ -163,7 +163,7 @@ describe 'SwaggerRequest', ->
 
     it "verifies a file upload", ->
       operation = swagger.pet.operations.uploadFile
-      expect(operation.httpMethod).toBe "post"
+      expect(operation.method).toBe "post"
 
       consumes = operation.consumes
       expect(consumes.length).toBe 1
