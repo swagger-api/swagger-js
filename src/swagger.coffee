@@ -61,6 +61,7 @@ class SwaggerApi
           this
 
     new SwaggerHttp().execute obj
+    @
 
   # This method is called each time a child resource finishes loading
   # 
@@ -472,8 +473,11 @@ class SwaggerOperation
 
     params["parent"] = args["parent"]
 
-    new SwaggerRequest(@method, @urlify(args), params, requestContentType, responseContentType, callback, error, this)
-    true
+    req = new SwaggerRequest(@method, @urlify(args), params, requestContentType, responseContentType, callback, error, this)
+    if args.mock?
+      req
+    else
+      true
 
   pathJson: -> @path.replace "{format}", "json"
 
@@ -658,7 +662,7 @@ class SwaggerHttp
       @Shred = require "./shred"
     else
       @Shred = require "shred"
-    @shred = new @Shred({logCurl: true})
+    @shred = new @Shred()
 
     identity = (x) => x
     toString = (x) => x.toString
@@ -685,6 +689,7 @@ class SwaggerAuthorizations
     auth
 
   apply: (obj) ->
+    console.log "checking auth " + JSON.stringify(@authz)
     for key, value of @authz
       # see if it applies
       value.apply obj
@@ -700,6 +705,7 @@ class ApiKeyAuthorization
     @type = type
 
   apply: (obj) ->
+    console.log "applying auth"
     if @type == "query"
       if obj.url.indexOf('?') > 0
         obj.url = obj.url + "&" + @name + "=" + @value
@@ -714,7 +720,6 @@ class ApiKeyAuthorization
 @SwaggerOperation = SwaggerOperation
 @SwaggerRequest = SwaggerRequest
 @SwaggerModelProperty = SwaggerModelProperty
-@SwaggerAuthorizations = new SwaggerAuthorizations()
 @ApiKeyAuthorization = ApiKeyAuthorization
 
 @authorizations = new SwaggerAuthorizations()
