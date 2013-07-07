@@ -1,5 +1,5 @@
 This is the Wordnik Swagger javascript client for use with [swagger](http://swagger.wordnik.com) enabled APIs.
-It's written in CoffeeScript and tested with Jasmine.
+It's written in CoffeeScript and tested with Jasmine, and is the fastest way to enable a javascript client to communicate with a swagger-enabled server.
 
 Find out more about the swagger project at [swagger.wordnik.com](http://swagger.wordnik.com), 
 and follow us on Twitter at [@swagger_doc](https://twitter.com/#!/swagger_doc).
@@ -8,7 +8,66 @@ and follow us on Twitter at [@swagger_doc](https://twitter.com/#!/swagger_doc).
 
 See the [swagger website](http://swagger.wordnik.com) or the [swagger-core wiki](https://github.com/wordnik/swagger-core/wiki), which contains information about the swagger json spec.
 
-### Usage
+### Calling an API with swagger-js!
+
+Install swagger-client:
+```
+npm install swagger-client
+```
+
+Then let swagger do the work!
+```js
+var swagger = require("swagger-client")
+
+var s = new swagger.SwaggerApi({
+  discoveryUrl: 'http://localhost:8002/api/api-docs'
+});
+s.build();
+
+s.apis.pet.getPetById({petId:1});
+
+```
+
+That's it!  You'll get a JSON response with the default callback handler:
+
+```json
+{
+  "id": 1,
+  "category": {
+    "id": 2,
+    "name": "Cats"
+  },
+  "name": "Cat 1",
+  "photoUrls": [
+    "url1",
+    "url2"
+  ],
+  "tags": [
+    {
+      "id": 1,
+      "name": "tag1"
+    },
+    {
+      "id": 2,
+      "name": "tag2"
+    }
+  ],
+  "status": "available"
+}
+```
+
+Need to pass an API key?  Configure one as a querystring:
+
+```js
+swagger.authorizations.add("apiKey", new swagger.ApiKeyAuthorization("api_key","special-key","query"));
+```
+
+...or with a header:
+
+```js
+swagger.authorizations.add("apiKey", new swagger.ApiKeyAuthorization("api_key","special-key","header"));
+```
+
 
 Point swagger.js at a resource discovery file like
 [api.wordnik.com/v4/resources.json](http://api.wordnik.com/v4/resources.json)
