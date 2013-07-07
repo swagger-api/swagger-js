@@ -23,10 +23,11 @@
   "engines": {
     "node": ">= 0.6.6"
   },
-  "dependencies": {},
-  "devDependencies": {
-    "coffee-script": "~1.5.0",
+  "dependencies": {
     "shred": "0.8.8"
+  },
+  "devDependencies": {
+    "coffee-script": "~1.5.0"
   },
   "license": "apache 2.0"
 }
