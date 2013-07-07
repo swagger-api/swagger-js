@@ -1,3 +1,4 @@
+
 class SwaggerApi
   
   # Defaults
@@ -5,6 +6,7 @@ class SwaggerApi
   debug: false
   basePath: null
   authorizations: null
+  authorizationScheme: null
 
   constructor: (options={}) ->
     @discoveryUrl = options.discoveryUrl if options.discoveryUrl?
@@ -13,17 +15,16 @@ class SwaggerApi
     @failure = if options.failure? then options.failure else ->
     @progress = if options.progress? then options.progress else ->
     @defaultHeaders = if options.headers? then options.headers else {}
-    # @booleanValues = if options.booleanValues? then options.booleanValues else new Array('true', 'false')
 
     # Suffix discovery url with api_key
-    @discoveryUrl = @suffixApiKey(@discoveryUrl)
+    #@discoveryUrl = @suffixApiKey(@discoveryUrl)
 
     # Build right away if a callback was passed to the initializer
     @build() if options.success?
 
   build: ->
     @progress 'fetching resource list: ' + @discoveryUrl
-
+    console.log 'getting ' + @discoveryUrl
     obj = 
       url: @discoveryUrl
       method: "get"
@@ -38,16 +39,17 @@ class SwaggerApi
           else
             @fail error.status + ' : ' + error.statusText + ' ' + @discoveryUrl
         response: (rawResponse) =>
-          response = JSON.parse(rawResponse.content._body)
+          response = JSON.parse(rawResponse.content.data)
           @apiVersion = response.apiVersion if response.apiVersion?
 
           @apis = {}
           @apisArray = []
 
-          # TODO: this is where logic for viewing an Api Declaration directly should live
-
           # The base path derived from discoveryUrl
-          if @discoveryUrl.indexOf('?') > 0
+          if response.basePath
+            # support swagger 1.1, which has basePath
+            @basePath = response.basePath
+          else if @discoveryUrl.indexOf('?') > 0
             @basePath = @discoveryUrl.substring(0, @discoveryUrl.lastIndexOf('?'))
           else
             @basePath = @discoveryUrl
@@ -87,15 +89,6 @@ class SwaggerApi
     for model in @modelsArray
       model.setReferencedModels(@models)
 
-  # Suffix a passed url with api_key
-  # TODO: make this part of a redo
-  suffixApiKey: (url) ->
-    if @api_key? and jQuery.trim(@api_key).length > 0 and url?
-      sep = if url.indexOf('?') > 0 then '&' else '?'
-      url + sep + @apiKeyName + '=' + @api_key
-    else
-      url
-
   help: ->
     for resource_name, resource of @apis
       console.log resource_name
@@ -106,8 +99,15 @@ class SwaggerApi
     @
         
 class SwaggerResource
+  api: null
+  produces: null
+  consumes: null
 
   constructor: (resourceObj, @api) ->
+    this.api = @api
+    produces = []
+    consumes = []
+
     @path = if @api.resourcePath? then @api.resourcePath else resourceObj.path
     @description = resourceObj.description
 
@@ -130,13 +130,11 @@ class SwaggerResource
 
     if resourceObj.operations? and @api.resourcePath?
       # read resource directly from operations object
-
       @api.progress 'reading resource ' + @name + ' models and operations'
 
       @addModels(resourceObj.models)
 
       @addOperations(resourceObj.path, resourceObj.operations)
-
 
       # Store a named reference to this resource on the parent object
       @api[this.name] = this
@@ -146,9 +144,7 @@ class SwaggerResource
       @api.fail "SwaggerResources must have a path." unless @path?
 
       # e.g."http://api.wordnik.com/v4/word.json"
-      @url = @api.suffixApiKey(@api.basePath + @path.replace('{format}', 'json'))
-
-      console.log "calling " + @url
+      @url = @api.basePath + @path.replace('{format}', 'json')
 
       @api.progress 'fetching resource ' + @name + ': ' + @url
       obj = 
@@ -159,12 +155,16 @@ class SwaggerResource
             @api.fail "Unable to read api '" + @name + "' from path " + @url + " (server returned " + error.statusText + ")"
           response: (rawResponse) =>
             response = JSON.parse(rawResponse.content._body)
+
+            if response.produces?
+              @produces = response.produces
+            if response.consumes?
+              @consumes = response.consumes
+
             # If there is a basePath in response, use that or else use
             # the one from the api object
-            if response.basePath? and jQuery.trim(response.basePath).length > 0
+            if response.basePath? and response.basePath.replace(/\s/g,'').length > 0
               @basePath = response.basePath
-              # TODO: Take this out.. it's a wordnik API regression
-              @basePath = @basePath.replace(/\/$/, '')
 
             @addModels(response.models)
 
@@ -181,6 +181,7 @@ class SwaggerResource
 
             # Now that this resource is loaded, tell the API to check in on itself
             @api.selfReflect()
+
       new SwaggerHttp().execute obj
 
   addModels: (models) ->
@@ -197,7 +198,19 @@ class SwaggerResource
   addOperations: (resource_path, ops) ->
     if ops
       for o in ops
-        consumes = o.consumes
+        consumes = null
+        produces = null
+
+        if o.consumes?
+          consumes = o.consumes
+        else
+          consumes = @consumes
+
+        if o.produces?
+          produces = o.produces
+        else
+          produces = @produces
+
         responseMessages = o.responseMessages
         method = o.method
 
@@ -213,10 +226,9 @@ class SwaggerResource
         if o.errorResponses
           responseMessages = o.errorResponses
 
-        op = new SwaggerOperation o.nickname, resource_path, o.method, o.parameters, o.summary, o.notes, o.responseClass, responseMessages, this, consumes, o.produces
+        op = new SwaggerOperation o.nickname, resource_path, method, o.parameters, o.summary, o.notes, o.responseClass, responseMessages, this, consumes, produces
         @operations[op.nickname] = op
         @operationsArray.push op
-
 
   help: ->
     for operation_name, operation of @operations
@@ -319,9 +331,8 @@ class SwaggerModelProperty
 
     str
 
-
+# SwaggerOperation converts an operation into a method which can be executed directly
 class SwaggerOperation
-
   constructor: (@nickname, @path, @method, @parameters=[], @summary, @notes, @responseClass, @responseMessages, @resource, @consumes, @produces) ->
     @resource.api.fail "SwaggerOperations must have a nickname." unless @nickname?
     @resource.api.fail "SwaggerOperation #{nickname} is missing path." unless @path?
@@ -375,7 +386,7 @@ class SwaggerOperation
     # Store a named reference to this operation on the parent resource
     # getDefinitions() maps to getDefinitionsData.do()
     @resource[@nickname]= (args, callback, error) =>
-      @do(args, requestType, responseType, callback, error)
+      @do(args, callback, error)
 
   isListType: (dataType) ->
     if(dataType.indexOf('[') >= 0) then dataType.substring(dataType.indexOf('[') + 1, dataType.indexOf(']')) else undefined
@@ -404,7 +415,9 @@ class SwaggerOperation
       val = if listType then [val] else val
       JSON.stringify(val, null, 2)
       
-  do: (args={}, requestContentType, responseContentType, callback, error) =>
+  do: (args={}, callback, error) =>
+    requestContentType = null
+    responseContentType = null
 
     # if the args is a function, then it must be a resource without
     # parameters
@@ -418,12 +431,23 @@ class SwaggerOperation
       error = (xhr, textStatus, error) -> console.log xhr, textStatus, error
 
     # Define a default success handler
-    # TODO MAYBE: Call this success instead of callback
     unless callback?
-      callback = (data) -> console.log data
+      callback = (data) ->
+        content = null
+        if data.content?
+          content = data.content.data
+        else
+          content = "no data"
+        console.log "default callback: " + content
     
     # params to pass into the request
     params = {}
+
+    if args.requestContentType
+      requestContentType = args.requestContentType
+
+    if args.responseContentType
+      responseContentType = args.responseContentType
 
     # Pull headers out of args    
     if args.headers?
@@ -435,23 +459,34 @@ class SwaggerOperation
       params.body = args.body
       delete args.body
 
+    # pull out any form params
+    possibleParams = (param for param in @parameters when param.paramType is "form")
+    if possibleParams
+      for key, value of possibleParams
+        if args[value.name]
+          params[value.name] = args[value.name]
+
+    # support mock flag
+    if args.mock?
+      params.mock = args["mock"]
+
+    params["parent"] = args["parent"]
 
     new SwaggerRequest(@method, @urlify(args), params, requestContentType, responseContentType, callback, error, this)
+    true
 
   pathJson: -> @path.replace "{format}", "json"
 
   pathXml: -> @path.replace "{format}", "xml"
 
   # converts the operation path into a real URL, and appends query params
-  urlify: (args, includeApiKey = true) ->
-    
+  urlify: (args) ->
     url = @resource.basePath + @pathJson()
 
     # Iterate over allowable params, interpolating the 'path' params into the url string.
     # Whatever's left over in the args object will become the query string
     for param in @parameters
       if param.paramType == 'path'
-
         if args[param.name]
           reg = new RegExp '\{'+param.name+'[^\}]*\}', 'gi'
           url = url.replace(reg, encodeURIComponent(args[param.name]))
@@ -460,15 +495,23 @@ class SwaggerOperation
           throw "#{param.name} is a required path param."
 
     # Append the query string to the URL
-    queryParams = jQuery.param(@getQueryParams(args, includeApiKey))
+    queryParams = ""
+    for param in @parameters
+      if param.paramType == 'query'
+        if args[param.name]
+          if queryParams != ""
+            queryParams += "&"
+          queryParams += encodeURIComponent(param.name) + '=' + encodeURIComponent(args[param.name])
 
     url += ("?" + queryParams) if queryParams? and queryParams.length > 0
 
     url
 
+  # expose default headers
   supportHeaderParams: ->
     @resource.api.supportHeaderParams
 
+  # expose supported submit methods
   supportedSubmitMethods: ->
     @resource.api.supportedSubmitMethods
 
@@ -482,12 +525,11 @@ class SwaggerOperation
   getMatchingParams: (paramTypes, args) ->
     matchingParams = {}
     for param in @parameters
-      if (jQuery.inArray(param.paramType, paramTypes) >= 0) and args[param.name]
+      if args and args[param.name]
         matchingParams[param.name] = args[param.name]
 
-    if (jQuery.inArray('header', paramTypes) >= 0)
-      for name, value of @resource.api.headers
-        matchingParams[name] = value
+    for name, value of @resource.api.headers
+      matchingParams[name] = value
 
     matchingParams
 
@@ -499,49 +541,76 @@ class SwaggerOperation
     msg
 
 
+# Swagger Request turns an operation into an actual request
 class SwaggerRequest
-
-  constructor: (@type, @url, @params, @requestContentType, @responseContentType, @successCallback, @errorCallback, @operation) ->
+  constructor: (@type, @url, @params, @requestContentType, @responseContentType, @successCallback, @errorCallback, @operation, @execution) ->
     throw "SwaggerRequest type is required (get/post/put/delete)." unless @type?
     throw "SwaggerRequest url is required." unless @url?
     throw "SwaggerRequest successCallback is required." unless @successCallback?
     throw "SwaggerRequest error callback is required." unless @errorCallback?
     throw "SwaggerRequest operation is required." unless @operation?
 
+    @type = @type.toUpperCase()
     headers = params.headers
-
-    body = params.body
-
-    contentType = "application/json"
-
-    # if post or put, set the content-type being sent
-    if @requestContentType is "application/json" and (type.toLowerCase() == "post" or type.toLowerCase() == "put")
-      contentType = @requestContentType
-
-    # if get, set the accept type
-    dataType = @responseContentType
-
-    if dataType 
-      if dataType.indexOf('text/plain') isnt -1
-        dataType = 'text'
-      else if dataType.indexOf('xml') isnt -1
-        dataType = 'xml'
-      else if dataType.indexOf('json') isnt -1
-        dataType = 'json'
-      else if dataType.indexOf('text/html') isnt -1
-        dataType = 'html'
-      else
-        throw "invalid dataType"
-
-    contentType = @requestContentType
-    if type.toLowerCase() isnt ("post" or "put" or "patch")
-      dataType = null 
-
     myHeaders = {}
-    if @requestContentType
-      myHeaders["accept"] = @requestContentType
-    if @responseContentType
-      myHeaders["Content-Type"] = @responseContentType
+    body = params.body
+    parent = params["parent"]
+
+    requestContentType = "application/json"
+    # if post or put, set the content-type being sent, otherwise make it null
+    if body and (@type is "POST" or @type is "PUT" or @type is "PATCH")
+      if @requestContentType
+        requestContentType = @requestContentType
+    else
+      # if any form params
+      if (param for param in @operation.parameters when param.paramType is "form").length > 0
+        requestContentType = "application/x-www-form-urlencoded"
+      else if @type isnt "DELETE"
+        requestContentType = null
+
+    # verify the content type is acceptable
+    if requestContentType and @operation.consumes
+      if @operation.consumes.indexOf(requestContentType) is -1
+#        console.log "server doesn't consume " + requestContentType + ", try " + JSON.stringify(@operation.consumes)
+        if @requestContentType == null
+          requestContentType = @operation.consumes[0]
+
+    responseContentType = null
+    # if get or post, set the content-type being sent, otherwise make it null
+    if (@type is "POST" or @type is "GET")
+      if @responseContentType
+        responseContentType = @responseContentType
+      else
+        responseContentType = "application/json"
+    else
+      responseContentType = null
+
+    # verify the content type can be produced
+    if responseContentType and @operation.produces
+      if @operation.produces.indexOf(responseContentType) is -1
+        console.log "server can't produce " + responseContentType
+
+    # prepare the body from params, if needed
+    if requestContentType && requestContentType.indexOf("application/x-www-form-urlencoded") is 0
+      # pull fields from args
+      fields = {}
+      possibleParams = (param for param in @operation.parameters when param.paramType is "form")
+
+      values = {}
+      for key, value of possibleParams
+        if @params[value.name]
+          values[value.name] = @params[value.name]
+      urlEncoded = ""
+      for key, value of values
+        if urlEncoded != ""
+          urlEncoded += "&"
+        urlEncoded += encodeURIComponent(key) + '=' + encodeURIComponent(value)
+      body = urlEncoded
+
+    if requestContentType
+      myHeaders["Content-Type"] = requestContentType
+    if responseContentType
+      myHeaders["Accept"] = responseContentType
 
     unless headers? and headers.mock?
 
@@ -552,53 +621,100 @@ class SwaggerRequest
         body: body
         on:
           error: (response) =>
-            @errorCallback response
+            @errorCallback response, @params["parent"]
           redirect: (response) =>
-            @successCallback response
+            @successCallback response, @params["parent"]
           307: (response) =>
-            @successCallback response
+            @successCallback response, @params["parent"]
           response: (response) =>
-            @successCallback response.content.data
+            @successCallback response, @params["parent"]
 
-      new SwaggerHttp().execute obj
+      # apply authorizations
+      e = {}
+      if typeof window != 'undefined'
+        e = window
+      else
+        e = exports
+      e.authorizations.apply obj
+
+      unless params.mock?
+        new SwaggerHttp().execute obj
+      else
+        return obj
 
   asCurl: ->
     header_args = ("--header \"#{k}: #{v}\"" for k,v of @headers)
     "curl #{header_args.join(" ")} #{@url}"
 
 
+# SwaggerHttp is a wrapper on top of Shred, which makes actual http requests
 class SwaggerHttp
+  Shred: null
   shred: null
+  content: null
 
   constructor: ->    
-    Shred = require "./shred"
-    @shred = new Shred()
+    if typeof window != 'undefined'
+      @Shred = require "./shred"
+    else
+      @Shred = require "shred"
+    @shred = new @Shred({logCurl: true})
+
+    identity = (x) => x
+    toString = (x) => x.toString
+      
+    if typeof window != 'undefined'
+      @content = require "./shred/content"
+      @content.registerProcessor(
+        ["application/json; charset=utf-8","application/json","json"], { parser: (identity), stringify: toString })
+    else
+      @Shred.registerProcessor(
+        ["application/json; charset=utf-8","application/json","json"], { parser: (identity), stringify: toString })
 
   execute: (obj) ->
-    Content = require "./shred/content"
-
-    identity = (x) =>
-      x
-    toString = (x) =>
-      x.toString
-
-    Content.registerProcessor(
-      ["application/json; charset=utf-8","application/json","json"], { parser: (identity), stringify: toString })
     @shred.request obj
 
-  
-# Expose these classes:
-e = {}
+class SwaggerAuthorizations
+  authz: null
 
-if typeof window != 'undefined'
-  console.log 'exporting to window'
-  e = window
-else
-  console.log 'exporting to exports'
-  e = exports
+  constructor: ->
+    @authz = {}
 
-e.SwaggerApi = SwaggerApi
-e.SwaggerResource = SwaggerResource
-e.SwaggerOperation = SwaggerOperation
-e.SwaggerRequest = SwaggerRequest
-e.SwaggerModelProperty = SwaggerModelProperty
+  add: (name, auth) ->
+    @authz[name] = auth
+    auth
+
+  apply: (obj) ->
+    for key, value of @authz
+      # see if it applies
+      value.apply obj
+
+class ApiKeyAuthorization
+  type: null
+  name: null
+  value: null
+
+  constructor: (name, value, type) ->
+    @name = name
+    @value = value
+    @type = type
+
+  apply: (obj) ->
+    if @type == "query"
+      if obj.url.indexOf('?') > 0
+        obj.url = obj.url + "&" + @name + "=" + @value
+      else
+        obj.url = obj.url + "?" + @name + "=" + @value
+      true
+    else if @type == "header"
+      obj.headers[@name] = @value
+
+@SwaggerApi = SwaggerApi
+@SwaggerResource = SwaggerResource
+@SwaggerOperation = SwaggerOperation
+@SwaggerRequest = SwaggerRequest
+@SwaggerModelProperty = SwaggerModelProperty
+@SwaggerAuthorizations = new SwaggerAuthorizations()
+@ApiKeyAuthorization = ApiKeyAuthorization
+
+@authorizations = new SwaggerAuthorizations()

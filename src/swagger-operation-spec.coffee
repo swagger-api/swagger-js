@@ -23,6 +23,8 @@ describe 'SwaggerRequest', ->
     it "verifies the response messages from the get operation", ->
       operation = swagger.pet.operations.getPetById
 
+      console.log operation
+
       responseMessages = operation.responseMessages
       expect(responseMessages).toBeDefined
       expect(responseMessages.length).toBe 2

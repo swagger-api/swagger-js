@@ -37,7 +37,8 @@ describe 'SwaggerRequest', ->
        window.response?
 
       runs ->
-        pet = JSON.parse(window.response)
+        data = window.response.content.data
+        pet = JSON.parse(data)
 
         expect(pet).toBeDefined
         expect(pet.id).toBe 1
@@ -60,7 +61,8 @@ describe 'SwaggerRequest', ->
 
       runs ->
         parser = new DOMParser()
-        pet = parser.parseFromString( window.response, "text/xml" )
+        data = window.response.content.data
+        pet = parser.parseFromString( data, "text/xml" )
         #pet = window.response
         expect(pet).toBeDefined
         #expect(pet.id).toBe 1
@@ -81,8 +83,7 @@ describe 'SwaggerRequest', ->
        window.response?
 
       runs ->
-        pet = window.response
-        #console.log pet
+        pet = window.response.content.data
         expect(pet).toBe "Pet(category=Category(id=2, name=Cats), name=Cat 1, photoUrls=[url1, url2], tags=[Tag(id=1, name=tag1), Tag(id=2, name=tag2)], status=available)"
 
     it "fetches an object as html", ->
@@ -101,7 +102,8 @@ describe 'SwaggerRequest', ->
        window.response?
 
       runs ->
-        pet = window.response
+        pet = window.response.content.data
+        console.log pet
 
     it "handles redirects", ->
       params = {
@@ -119,7 +121,7 @@ describe 'SwaggerRequest', ->
        window.response?
 
       runs ->
-        pet = window.response
+        expect(window.response.status).toBe 200
 
 
   describe "execute post operations", ->
@@ -151,8 +153,8 @@ describe 'SwaggerRequest', ->
        window.response?
 
       runs ->
-        resp = JSON.parse(window.response)
-        console.log resp
+        data = window.response.content.data
+        resp = JSON.parse(data)
         expect(resp.code).toBe 200
 
     it "adds an object with xml", ->
@@ -200,7 +202,8 @@ describe 'SwaggerRequest', ->
        window.response?
 
       runs ->
-        resp = JSON.parse(window.response)
+        data = window.response.content.data
+        resp = JSON.parse(data)
         expect(resp.code).toBe 200
 
     it "updates an object with xml", ->
@@ -218,7 +221,6 @@ describe 'SwaggerRequest', ->
 
       runs ->
         resp = window.response
-        console.log resp
         #expect(resp.code).toBe 200
 
 
@@ -287,15 +289,80 @@ describe 'SwaggerRequest', ->
       params = {
         body: JSON.stringify({name: "ghoul"})
       }
-      requestContentType = null
+      requestContentType = "application/json"
       responseContentType = "application/json"
 
       new SwaggerRequest("PATCH", "http://localhost:8002/api/pet/3", params, requestContentType, responseContentType, success_callback, error_callback, operation)
 
-     waitsFor ->
-       window.response?
+      waitsFor ->
+         window.response?
 
       runs ->
         resp = window.response
         expect(resp).toBe("successfully patched pet")
   
+  describe "api key authorizations", ->
+    beforeEach ->
+      window.body = null
+      window.response = null
+      window.callback = null
+      window.error = null
+      window.success_callback = (data) ->
+        window.response = data
+      window.error_callback = (data) ->
+        window.error = data
+
+    it "applies an api key to the query string", ->
+      params = {
+        headers: {}
+      }
+      requestContentType = null
+      responseContentType = "application/json"
+
+      auth = new ApiKeyAuthorization("api_key", "abc123", "query")
+
+      window.authorizations.add "key", auth
+
+      new SwaggerRequest("GET", "http://localhost:8002/api/pet/1", params, requestContentType, responseContentType, window.success_callback, window.error_callback, operation)
+
+      window.args =
+        petId: '1'
+
+     waitsFor ->
+       window.response?
+
+      runs ->
+        data = window.response.content.data
+        pet = JSON.parse(data)
+
+        expect(pet).toBeDefined
+        expect(pet.id).toBe 1
+        expect(window.error).toBe null
+
+    it "applies an api key as a header", ->
+      params = {
+        headers: {}
+      }
+      requestContentType = null
+      responseContentType = "application/json"
+
+      auth = new ApiKeyAuthorization("api_key", "abc123", "header")
+
+      window.authorizations.add "key", auth
+
+      new SwaggerRequest("GET", "http://localhost:8002/api/pet/1", params, requestContentType, responseContentType, window.success_callback, window.error_callback, operation)
+
+      window.args =
+        petId: '1'
+
+     waitsFor ->
+       window.response?
+
+      runs ->
+        data = window.response.content.data
+        pet = JSON.parse(data)
+
+        expect(pet).toBeDefined
+        expect(pet.id).toBe 1
+        expect(window.error).toBe null
+

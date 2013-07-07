@@ -21,10 +21,22 @@ describe 'SwaggerRequest', ->
         window.error = data
 
     it "verifies the response messages from the get operation", ->
-      operation = swagger.pet.operations.getPetById
+      swagger.pet.getPetById({petId: 1}, window.success_callback)
 
-      responseMessages = operation.responseMessages
-      expect(responseMessages).toBeDefined
-      expect(responseMessages.length).toBe 2
-      expect(responseMessages[0].code).toBe 400
-      expect(responseMessages[1].code).toBe 404
+      waitsFor ->
+        window.response?
+
+      runs ->
+        pet = JSON.parse(window.response)
+        expect(pet.id).toBe 1
+
+    it "verifies the response messages from the get operation with query params", ->
+      swagger.pet.findPetsByStatus({query:{status: "available"}}, window.success_callback)
+
+      waitsFor ->
+        window.response?
+
+      runs ->
+        pet = JSON.parse(window.response)
+        console.log(pet)
+        expect(pet.code).toNotBe 400
