@@ -383,11 +383,14 @@ class SwaggerOperation
             else
               parameter.allowableValues.descriptiveValues.push {value: v, isDefault: false}
 
-
     # Store a named reference to this operation on the parent resource
     # getDefinitions() maps to getDefinitionsData.do()
     @resource[@nickname]= (args, callback, error) =>
       @do(args, callback, error)
+
+    # shortcut to help method
+    @resource[@nickname].help = =>
+      @help()
 
   isListType: (dataType) ->
     if(dataType.indexOf('[') >= 0) then dataType.substring(dataType.indexOf('[') + 1, dataType.indexOf(']')) else undefined
