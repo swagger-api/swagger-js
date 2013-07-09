@@ -2,42 +2,49 @@
 class SwaggerApi
   
   # Defaults
-  discoveryUrl: "http://api.wordnik.com/v4/resources.json"
+  url: "http://api.wordnik.com/v4/resources.json"
   debug: false
   basePath: null
   authorizations: null
   authorizationScheme: null
 
-  constructor: (options={}) ->
-    @discoveryUrl = options.discoveryUrl if options.discoveryUrl?
+  constructor: (url, options={}) ->
+    # if url is a hash, assume only options were passed
+
+    if url 
+      if url.url
+        options = url
+      else
+        @url = url
+    else
+      options = url
+    @url = options.url if options.url?
+
     @supportedSubmitMethods = if options.supportedSubmitMethods? then options.supportedSubmitMethods else ['get']
     @success = options.success if options.success?
     @failure = if options.failure? then options.failure else ->
     @progress = if options.progress? then options.progress else ->
     @defaultHeaders = if options.headers? then options.headers else {}
 
-    # Suffix discovery url with api_key
-    #@discoveryUrl = @suffixApiKey(@discoveryUrl)
-
     # Build right away if a callback was passed to the initializer
     @build() if options.success?
 
   build: ->
-    @progress 'fetching resource list: ' + @discoveryUrl
-    console.log 'getting ' + @discoveryUrl
+    @progress 'fetching resource list: ' + @url
+    console.log 'getting ' + @url
     obj = 
-      url: @discoveryUrl
+      url: @url
       method: "get"
       on:
         error: (response) =>
-          if @discoveryUrl.substring(0, 4) isnt 'http'
-            @fail 'Please specify the protocol for ' + @discoveryUrl
+          if @url.substring(0, 4) isnt 'http'
+            @fail 'Please specify the protocol for ' + @url
           else if error.status == 0
             @fail 'Can\'t read from server.  It may not have the appropriate access-control-origin settings.'
           else if error.status == 404
-            @fail 'Can\'t read swagger JSON from '  + @discoveryUrl
+            @fail 'Can\'t read swagger JSON from '  + @url
           else
-            @fail error.status + ' : ' + error.statusText + ' ' + @discoveryUrl
+            @fail error.status + ' : ' + error.statusText + ' ' + @url
         response: (rawResponse) =>
           response = JSON.parse(rawResponse.content.data)
           @apiVersion = response.apiVersion if response.apiVersion?
@@ -60,14 +67,14 @@ class SwaggerApi
             @apis[newName] = res
             @apisArray.push res
           else
-            # The base path derived from discoveryUrl
+            # The base path derived from url
             if response.basePath
               # support swagger 1.1, which has basePath
               @basePath = response.basePath
-            else if @discoveryUrl.indexOf('?') > 0
-              @basePath = @discoveryUrl.substring(0, @discoveryUrl.lastIndexOf('?'))
+            else if @url.indexOf('?') > 0
+              @basePath = @url.substring(0, @url.lastIndexOf('?'))
             else
-              @basePath = @discoveryUrl
+              @basePath = @url
 
             for resource in response.apis
               res = new SwaggerResource resource, this

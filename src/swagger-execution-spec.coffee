@@ -3,7 +3,7 @@ window.api_key = 'special-key'
 describe 'SwaggerRequest', ->
   
   beforeEach ->
-    window.swagger = new SwaggerApi({discoveryUrl: 'http://localhost:8002/api/api-docs?api_key=special-key'})
+    window.swagger = new SwaggerApi({url: 'http://localhost:8002/api/api-docs?api_key=special-key'})
     swagger.build()
     waitsFor ->
       swagger.ready?
