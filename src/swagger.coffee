@@ -83,6 +83,14 @@ class SwaggerApi
           if this.success
             this.success()
           this
+          
+    # apply authorizations
+    e = {}
+    if typeof window != 'undefined'
+      e = window
+    else
+      e = exports
+    e.authorizations.apply obj
 
     new SwaggerHttp().execute obj
     @
@@ -174,6 +182,14 @@ class SwaggerResource
           response: (rawResponse) =>
             response = JSON.parse(rawResponse.content.data)
             @addApiDeclaration(response)
+
+      # apply authorizations
+      e = {}
+      if typeof window != 'undefined'
+        e = window
+      else
+        e = exports
+      e.authorizations.apply obj
 
       new SwaggerHttp().execute obj
 
