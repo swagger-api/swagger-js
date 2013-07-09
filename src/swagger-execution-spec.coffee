@@ -27,16 +27,16 @@ describe 'SwaggerRequest', ->
         window.response?
 
       runs ->
-        pet = JSON.parse(window.response)
+        pet = JSON.parse(window.response.content.data)
         expect(pet.id).toBe 1
 
     it "verifies the response messages from the get operation with query params", ->
-      swagger.pet.findPetsByStatus({query:{status: "available"}}, window.success_callback)
+      swagger.pet.findPetsByStatus({status: "available"}, window.success_callback)
 
       waitsFor ->
         window.response?
 
       runs ->
-        pet = JSON.parse(window.response)
+        pet = JSON.parse(window.response.content.data)
         console.log(pet)
         expect(pet.code).toNotBe 400

@@ -24,17 +24,19 @@ describe 'SwaggerRequest', ->
       params = {
         headers: {}
         petId: 1
+      }
+      opts = {
         mock: true
       }
 
-      window.response = swagger.pet.getPetById(params, null, null, success_callback, error_callback)
+      window.response = swagger.pet.getPetById(params, opts, success_callback, error_callback)
 
      waitsFor ->
        window.response?
 
       runs ->
         obj = window.response
-        expect(obj.method).toBe "get"
+        expect(obj.method).toBe "GET"
         expect(obj.headers["Accept"]).toBe "application/json"
         expect(obj.url).toBe ("http://localhost:8002/api/pet/1")
 
@@ -42,17 +44,19 @@ describe 'SwaggerRequest', ->
       params = {
         headers: {}
         status: "available"
+      }
+      opts = {
         mock: true
       }
 
-      window.response = swagger.pet.findPetsByStatus(params, success_callback, error_callback)
+      window.response = swagger.pet.findPetsByStatus(params, opts, success_callback, error_callback)
 
      waitsFor ->
        window.response?
 
       runs ->
         obj = window.response
-        expect(obj.method).toBe "get"
+        expect(obj.method).toBe "GET"
         expect(obj.headers["Accept"]).toBe "application/json"
         expect(obj.url).toBe ("http://localhost:8002/api/pet/findByStatus?status=available")
 
@@ -75,9 +79,11 @@ describe 'SwaggerRequest', ->
           name: "monster"
           status: "dead"
         })
+      }
+      opts = {
         mock: true
       }
-      window.response = swagger.pet.addPet(params, success_callback, error_callback)
+      window.response = swagger.pet.addPet(params, opts, success_callback, error_callback)
 
       waitsFor ->
         window.response?
@@ -85,7 +91,7 @@ describe 'SwaggerRequest', ->
       runs ->
         obj = window.response
         console.log obj
-        expect(obj.method).toBe "post"
+        expect(obj.method).toBe "POST"
         expect(obj.headers["Accept"]).toBe "application/json"
         expect(obj.headers["Content-Type"]).toBe "application/json"
         expect(obj.url).toBe ("http://localhost:8002/api/pet")
@@ -96,10 +102,12 @@ describe 'SwaggerRequest', ->
         petId: 1
         name: "dog"
         status: "very happy"
+      }
+      opts = {
         mock: true
       }
 
-      window.response = swagger.pet.updatePetWithForm(params, success_callback, error_callback)
+      window.response = swagger.pet.updatePetWithForm(params, opts, success_callback, error_callback)
 
       waitsFor ->
         window.response?
@@ -108,7 +116,7 @@ describe 'SwaggerRequest', ->
         obj = window.response
         console.log obj
         expect(obj.body).toBe "name=dog&status=very%20happy"
-        expect(obj.method).toBe "post"
+        expect(obj.method).toBe "POST"
         expect(obj.headers["Accept"]).toBe "application/json"
         expect(obj.url).toBe ("http://localhost:8002/api/pet/1")
 
@@ -131,17 +139,19 @@ describe 'SwaggerRequest', ->
           name: "monster"
           status: "dead"
         })
+      }
+      opts = {
         mock: true
       }
 
-      window.response = swagger.pet.updatePet(params, success_callback, error_callback)
+      window.response = swagger.pet.updatePet(params, opts, success_callback, error_callback)
 
      waitsFor ->
        window.response?
 
       runs ->
         obj = window.response
-        expect(obj.method).toBe "put"
+        expect(obj.method).toBe "PUT"
         expect(obj.headers["Accept"]).toBe undefined
         expect(obj.headers["Content-Type"]).toBe "application/json"
         expect(obj.url).toBe ("http://localhost:8002/api/pet")
@@ -162,17 +172,19 @@ describe 'SwaggerRequest', ->
     it "verifies the http request object for a DELETE", ->
       params = {
         petId: 100
+      }
+      opts = {
         mock: true
       }
 
-      window.response = swagger.pet.deletePet(params, success_callback, error_callback)
+      window.response = swagger.pet.deletePet(params, opts, success_callback, error_callback)
 
      waitsFor ->
        window.response?
 
       runs ->
         obj = window.response
-        expect(obj.method).toBe "delete"
+        expect(obj.method).toBe "DELETE"
         expect(obj.headers["Accept"]).toBe undefined
         expect(obj.headers["Content-Type"]).toBe "application/json"
         expect(obj.url).toBe ("http://localhost:8002/api/pet/100")

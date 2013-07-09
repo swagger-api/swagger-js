@@ -84,7 +84,7 @@ describe 'SwaggerRequest', ->
 
       runs ->
         pet = window.response.content.data
-        expect(pet).toBe "Pet(category=Category(id=2, name=Cats), name=Cat 1, photoUrls=[url1, url2], tags=[Tag(id=1, name=tag1), Tag(id=2, name=tag2)], status=available)"
+        expect(pet).toBe "Pet(id=1, category=Category(id=2, name=Cats), name=Cat 1, photoUrls=[url1, url2], tags=[Tag(id=1, name=tag1), Tag(id=2, name=tag2)], status=available)"
 
     it "fetches an object as html", ->
       params = {

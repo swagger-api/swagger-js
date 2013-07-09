@@ -419,17 +419,21 @@ class SwaggerOperation
       val = if listType then [val] else val
       JSON.stringify(val, null, 2)
       
-  do: (args={}, callback, error) =>
+  do: (args={}, opts={}, callback, error) =>
     requestContentType = null
     responseContentType = null
 
     # if the args is a function, then it must be a resource without
-    # parameters
+    # parameters or opts
     if (typeof args) == "function"
-      error = callback
+      error = opts
       callback = args
       args = {}
-      
+
+    if (typeof opts) == "function"
+      error = callback
+      callback = opts
+
     # Define a default error handler
     unless error?
       error = (xhr, textStatus, error) -> console.log xhr, textStatus, error
@@ -446,12 +450,6 @@ class SwaggerOperation
     
     # params to pass into the request
     params = {}
-
-    if args.requestContentType
-      requestContentType = args.requestContentType
-
-    if args.responseContentType
-      responseContentType = args.responseContentType
 
     # Pull headers out of args    
     if args.headers?
@@ -470,14 +468,8 @@ class SwaggerOperation
         if args[value.name]
           params[value.name] = args[value.name]
 
-    # support mock flag
-    if args.mock?
-      params.mock = args["mock"]
-
-    params["parent"] = args["parent"]
-
-    req = new SwaggerRequest(@method, @urlify(args), params, requestContentType, responseContentType, callback, error, this)
-    if args.mock?
+    req = new SwaggerRequest(@method, @urlify(args), params, opts, callback, error, this)
+    if opts.mock?
       req
     else
       true
@@ -550,7 +542,7 @@ class SwaggerOperation
 
 # Swagger Request turns an operation into an actual request
 class SwaggerRequest
-  constructor: (@type, @url, @params, @requestContentType, @responseContentType, @successCallback, @errorCallback, @operation, @execution) ->
+  constructor: (@type, @url, @params, @opts, @successCallback, @errorCallback, @operation, @execution) ->
     throw "SwaggerRequest type is required (get/post/put/delete)." unless @type?
     throw "SwaggerRequest url is required." unless @url?
     throw "SwaggerRequest successCallback is required." unless @successCallback?
@@ -566,8 +558,8 @@ class SwaggerRequest
     requestContentType = "application/json"
     # if post or put, set the content-type being sent, otherwise make it null
     if body and (@type is "POST" or @type is "PUT" or @type is "PATCH")
-      if @requestContentType
-        requestContentType = @requestContentType
+      if @opts.requestContentType
+        requestContentType = @opts.requestContentType
     else
       # if any form params
       if (param for param in @operation.parameters when param.paramType is "form").length > 0
@@ -578,15 +570,15 @@ class SwaggerRequest
     # verify the content type is acceptable
     if requestContentType and @operation.consumes
       if @operation.consumes.indexOf(requestContentType) is -1
-#        console.log "server doesn't consume " + requestContentType + ", try " + JSON.stringify(@operation.consumes)
+        console.log "server doesn't consume " + requestContentType + ", try " + JSON.stringify(@operation.consumes)
         if @requestContentType == null
           requestContentType = @operation.consumes[0]
 
     responseContentType = null
     # if get or post, set the content-type being sent, otherwise make it null
     if (@type is "POST" or @type is "GET")
-      if @responseContentType
-        responseContentType = @responseContentType
+      if @opts.responseContentType
+        responseContentType = @opts.responseContentType
       else
         responseContentType = "application/json"
     else
@@ -628,13 +620,13 @@ class SwaggerRequest
         body: body
         on:
           error: (response) =>
-            @errorCallback response, @params["parent"]
+            @errorCallback response, @opts.parent
           redirect: (response) =>
-            @successCallback response, @params["parent"]
+            @successCallback response, @opts.parent
           307: (response) =>
-            @successCallback response, @params["parent"]
+            @successCallback response, @opts.parent
           response: (response) =>
-            @successCallback response, @params["parent"]
+            @successCallback response, @opts.parent
 
       # apply authorizations
       e = {}
@@ -644,9 +636,10 @@ class SwaggerRequest
         e = exports
       e.authorizations.apply obj
 
-      unless params.mock?
+      unless opts.mock?
         new SwaggerHttp().execute obj
       else
+        console.log obj
         return obj
 
   asCurl: ->
@@ -692,7 +685,6 @@ class SwaggerAuthorizations
     auth
 
   apply: (obj) ->
-    console.log "checking auth " + JSON.stringify(@authz)
     for key, value of @authz
       # see if it applies
       value.apply obj
@@ -708,7 +700,6 @@ class ApiKeyAuthorization
     @type = type
 
   apply: (obj) ->
-    console.log "applying auth"
     if @type == "query"
       if obj.url.indexOf('?') > 0
         obj.url = obj.url + "&" + @name + "=" + @value
