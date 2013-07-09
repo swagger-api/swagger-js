@@ -92,6 +92,27 @@ Download `swagger.js` and `shred.bundle.js` into your lib folder
 </script>
 ```
 
+### Need to send an object to your API via POST or PUT?
+```js
+var body = {
+  id: 100,
+  name: "dog"};
+
+swagger.apis.pet.addPet({body: JSON.stringify(body)});
+```
+
+### Sending XML in as a payload to your API?
+```js
+var body = "<Pet><id>2</id><name>monster</name></Pet>";
+
+swagger.apis.pet.addPet({body: body},{requestContentType:"application/xml"});
+```
+
+### Need XML response?
+```js
+swagger.apis.pet.getPetById({petId:1},{responseContentType:"application/xml"});
+```
+
 ### How does it work?
 The swagger javascript client reads the swagger api definition directly from the server.  As it does, it constructs a client based on the api definition, which means it is completely dynamic.  It even reads the api text descriptions (which are intended for humans!) and provides help if you need it:
 
