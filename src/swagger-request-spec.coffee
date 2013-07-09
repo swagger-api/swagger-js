@@ -22,13 +22,13 @@ describe 'SwaggerRequest', ->
         window.error = data
 
     it "fetches an object with json", ->
-      params = {
-        headers: {}
+      params = {}
+      opts = {
+        requestContentType: null
+        responseContentType: "application/json"
       }
-      requestContentType = null
-      responseContentType = "application/json"
 
-      new SwaggerRequest("GET", "http://localhost:8002/api/pet/1", params, requestContentType, responseContentType, window.success_callback, window.error_callback, operation)
+      new SwaggerRequest("GET", "http://localhost:8002/api/pet/1", params, opts, window.success_callback, window.error_callback, operation)
 
       window.args =
         petId: '1'
@@ -45,13 +45,13 @@ describe 'SwaggerRequest', ->
         expect(window.error).toBe null
 
     it "fetches an object with xml", ->
-      params = {
-        headers: {}
+      params = {}
+      opts = {
+        requestContentType: "application/xml"
+        responseContentType: null
       }
-      requestContentType = "application/xml"
-      responseContentType = null
 
-      new SwaggerRequest("GET", "http://localhost:8002/api/pet/1", params, requestContentType, responseContentType, success_callback, error_callback, operation)
+      new SwaggerRequest("GET", "http://localhost:8002/api/pet/1", params, opts, success_callback, error_callback, operation)
 
       window.args =
         petId: '1'
@@ -68,13 +68,13 @@ describe 'SwaggerRequest', ->
         #expect(pet.id).toBe 1
 
     it "fetches an object with plain text", ->
-      params = {
-        headers: {}
+      params = {}
+      opts = {
+        requestContentType: "text/plain"
+        responseContentType: "text/plain"
       }
-      requestContentType = "text/plain"
-      responseContentType = "text/plain"
 
-      new SwaggerRequest("GET", "http://localhost:8002/api/pet/1", params, requestContentType, responseContentType, success_callback, error_callback, operation)
+      new SwaggerRequest("GET", "http://localhost:8002/api/pet/1", params, opts, success_callback, error_callback, operation)
 
       window.args =
         petId: '1'
@@ -87,13 +87,13 @@ describe 'SwaggerRequest', ->
         expect(pet).toBe "Pet(id=1, category=Category(id=2, name=Cats), name=Cat 1, photoUrls=[url1, url2], tags=[Tag(id=1, name=tag1), Tag(id=2, name=tag2)], status=available)"
 
     it "fetches an object as html", ->
-      params = {
-        headers: {}
+      params = {}
+      opts = {
+        requestContentType: null
+        responseContentType: "text/html"
       }
-      requestContentType = null
-      responseContentType = "text/html"
 
-      new SwaggerRequest("GET", "http://localhost:8002/api/pet/1", params, requestContentType, responseContentType, success_callback, error_callback, operation)
+      new SwaggerRequest("GET", "http://localhost:8002/api/pet/1", params, opts, success_callback, error_callback, operation)
 
       window.args =
         petId: '1'
@@ -106,13 +106,13 @@ describe 'SwaggerRequest', ->
         console.log pet
 
     it "handles redirects", ->
-      params = {
-        headers: {}
+      params = {}
+      opts = {
+        requestContentType: "application/json"
+        responseContentType: null
       }
-      requestContentType = "application/json"
-      responseContentType = null
 
-      new SwaggerRequest("GET", "http://localhost:8002/api/pet.redirect/3", params, requestContentType, responseContentType, success_callback, error_callback, operation)
+      new SwaggerRequest("GET", "http://localhost:8002/api/pet.redirect/3", params, opts, success_callback, error_callback, operation)
 
       window.args =
         petId: '1'
@@ -137,17 +137,18 @@ describe 'SwaggerRequest', ->
 
     it "adds an object with json", ->
       params = {
-        headers: {}
         body: JSON.stringify({
           id: 100
           name: "monster"
           status: "dead"
         })
       }
-      requestContentType = "application/json"
-      responseContentType = "application/json"
+      opts = {
+        requestContentType: "application/json"
+        responseContentType: "application/json"
+      }
 
-      new SwaggerRequest("POST", "http://localhost:8002/api/pet", params, requestContentType, responseContentType, success_callback, error_callback, operation)
+      new SwaggerRequest("POST", "http://localhost:8002/api/pet", params, opts, success_callback, error_callback, operation)
 
      waitsFor ->
        window.response?
@@ -162,10 +163,12 @@ describe 'SwaggerRequest', ->
         headers: {}
         body: "<Pet><id>101</id><category><id>2</id><name>Cats</name></category><name>Cat 1</name><photoUrls>url1</photoUrls><photoUrls>url2</photoUrls><tags><id>1</id><name>tag1</name></tags><tags><id>2</id><name>tag2</name></tags><status>available</status></Pet>"
       }
-      requestContentType = "application/xml"
-      responseContentType = "application/xml"
+      opts = {
+        requestContentType: "application/xml"
+        responseContentType: "application/xml"    
+      }
 
-      new SwaggerRequest("POST", "http://localhost:8002/api/pet", params, requestContentType, responseContentType, success_callback, error_callback, operation)
+      new SwaggerRequest("POST", "http://localhost:8002/api/pet", params, opts, success_callback, error_callback, operation)
 
       waitsFor ->
         window.response?
@@ -186,17 +189,18 @@ describe 'SwaggerRequest', ->
 
     it "updates an object with json", ->
       params = {
-        headers: {}
         body: JSON.stringify({
           id: 1
           name: "monster"
           status: "alive"
         })
       }
-      requestContentType = "application/json"
-      responseContentType = "application/json"
+      opts = {
+        requestContentType: "application/json"
+        responseContentType: "application/json"
+      }
 
-      new SwaggerRequest("PUT", "http://localhost:8002/api/pet", params, requestContentType, responseContentType, success_callback, error_callback, operation)
+      new SwaggerRequest("PUT", "http://localhost:8002/api/pet", params, opts, success_callback, error_callback, operation)
 
      waitsFor ->
        window.response?
@@ -211,10 +215,12 @@ describe 'SwaggerRequest', ->
         headers: {}
         body: "<Pet><id>1</id><category><id>2</id><name>Cats</name></category><name>Cat 1</name><photoUrls>url1</photoUrls><photoUrls>url2</photoUrls><tags><id>1</id><name>tag1</name></tags><tags><id>2</id><name>tag2</name></tags><status>available</status></Pet>"
       }
-      requestContentType = "application/xml"
-      responseContentType = "application/xml"
+      opts = {
+        requestContentType: "application/xml"
+        responseContentType: "application/xml"
+      }
 
-      new SwaggerRequest("PUT", "http://localhost:8002/api/pet", params, requestContentType, responseContentType, success_callback, error_callback, operation)
+      new SwaggerRequest("PUT", "http://localhost:8002/api/pet", params, opts, success_callback, error_callback, operation)
 
      waitsFor ->
        window.response?
@@ -222,7 +228,6 @@ describe 'SwaggerRequest', ->
       runs ->
         resp = window.response
         #expect(resp.code).toBe 200
-
 
   describe "execute delete operations", ->
 
@@ -239,7 +244,7 @@ describe 'SwaggerRequest', ->
       window.success_callback = (data) ->
         window.response = "successfully deleted pet"
       params = {}
-      new SwaggerRequest("DELETE", "http://localhost:8002/api/pet/100", params, null, null, success_callback, error_callback, operation)
+      new SwaggerRequest("DELETE", "http://localhost:8002/api/pet/100", params, {}, success_callback, error_callback, operation)
 
      waitsFor ->
        window.response?
@@ -263,7 +268,7 @@ describe 'SwaggerRequest', ->
       window.success_callback = (data) ->
         window.response = "successfully fetched options"
       params = {}
-      new SwaggerRequest("OPTIONS", "http://localhost:8002/api/pet", params, null, null, success_callback, error_callback, operation)
+      new SwaggerRequest("OPTIONS", "http://localhost:8002/api/pet", params, {}, success_callback, error_callback, operation)
 
      waitsFor ->
        window.response?
@@ -289,10 +294,12 @@ describe 'SwaggerRequest', ->
       params = {
         body: JSON.stringify({name: "ghoul"})
       }
-      requestContentType = "application/json"
-      responseContentType = "application/json"
+      opts = {
+        requestContentType: "application/json"
+        responseContentType: "application/json"
+      }
 
-      new SwaggerRequest("PATCH", "http://localhost:8002/api/pet/3", params, requestContentType, responseContentType, success_callback, error_callback, operation)
+      new SwaggerRequest("PATCH", "http://localhost:8002/api/pet/3", params, opts, success_callback, error_callback, operation)
 
       waitsFor ->
          window.response?
@@ -313,17 +320,17 @@ describe 'SwaggerRequest', ->
         window.error = data
 
     it "applies an api key to the query string", ->
-      params = {
-        headers: {}
+      params = {}
+      opts = {
+        requestContentType: null
+        responseContentType: "application/json"
       }
-      requestContentType = null
-      responseContentType = "application/json"
 
       auth = new ApiKeyAuthorization("api_key", "abc123", "query")
 
       window.authorizations.add "key", auth
 
-      new SwaggerRequest("GET", "http://localhost:8002/api/pet/1", params, requestContentType, responseContentType, window.success_callback, window.error_callback, operation)
+      new SwaggerRequest("GET", "http://localhost:8002/api/pet/1", params, opts, window.success_callback, window.error_callback, operation)
 
       window.args =
         petId: '1'
@@ -340,17 +347,17 @@ describe 'SwaggerRequest', ->
         expect(window.error).toBe null
 
     it "applies an api key as a header", ->
-      params = {
-        headers: {}
+      params = {}
+      opts = {
+        requestContentType: null
+        responseContentType: "application/json"
       }
-      requestContentType = null
-      responseContentType = "application/json"
 
       auth = new ApiKeyAuthorization("api_key", "abc123", "header")
 
       window.authorizations.add "key", auth
 
-      new SwaggerRequest("GET", "http://localhost:8002/api/pet/1", params, requestContentType, responseContentType, window.success_callback, window.error_callback, operation)
+      new SwaggerRequest("GET", "http://localhost:8002/api/pet/1", params, opts, window.success_callback, window.error_callback, operation)
 
       window.args =
         petId: '1'

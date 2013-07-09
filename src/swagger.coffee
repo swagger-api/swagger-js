@@ -45,19 +45,36 @@ class SwaggerApi
           @apis = {}
           @apisArray = []
 
-          # The base path derived from discoveryUrl
-          if response.basePath
-            # support swagger 1.1, which has basePath
-            @basePath = response.basePath
-          else if @discoveryUrl.indexOf('?') > 0
-            @basePath = @discoveryUrl.substring(0, @discoveryUrl.lastIndexOf('?'))
-          else
-            @basePath = @discoveryUrl
+          # if apis.operations exists, this is an api declaration as opposed to a resource listing
+          isApi = false
+          for api in response.apis
+            if api.operations
+              for operation in api.operations
+                isApi = true
 
-          for resource in response.apis
-            res = new SwaggerResource resource, this
-            @apis[res.name] = res
+          if isApi
+            newName = response.resourcePath.replace(/\//g,'')
+            this.resourcePath = response.resourcePath
+
+            res = new SwaggerResource response, this
+            @apis[newName] = res
             @apisArray.push res
+          else
+            # The base path derived from discoveryUrl
+            if response.basePath
+              # support swagger 1.1, which has basePath
+              @basePath = response.basePath
+            else if @discoveryUrl.indexOf('?') > 0
+              @basePath = @discoveryUrl.substring(0, @discoveryUrl.lastIndexOf('?'))
+            else
+              @basePath = @discoveryUrl
+
+            for resource in response.apis
+              res = new SwaggerResource resource, this
+              @apis[res.name] = res
+              @apisArray.push res
+          if this.success
+            this.success()
           this
 
     new SwaggerHttp().execute obj
@@ -129,16 +146,9 @@ class SwaggerResource
     @modelsArray = []
     @models = {}
 
-    if resourceObj.operations? and @api.resourcePath?
+    if resourceObj.apis? and @api.resourcePath?
       # read resource directly from operations object
-      @api.progress 'reading resource ' + @name + ' models and operations'
-
-      @addModels(resourceObj.models)
-
-      @addOperations(resourceObj.path, resourceObj.operations)
-
-      # Store a named reference to this resource on the parent object
-      @api[this.name] = this
+      @addApiDeclaration(resourceObj)
 
     else
       # read from server
@@ -155,35 +165,37 @@ class SwaggerResource
           error: (response) =>
             @api.fail "Unable to read api '" + @name + "' from path " + @url + " (server returned " + error.statusText + ")"
           response: (rawResponse) =>
-            response = JSON.parse(rawResponse.content._body)
-
-            if response.produces?
-              @produces = response.produces
-            if response.consumes?
-              @consumes = response.consumes
-
-            # If there is a basePath in response, use that or else use
-            # the one from the api object
-            if response.basePath? and response.basePath.replace(/\s/g,'').length > 0
-              @basePath = response.basePath
-
-            @addModels(response.models)
-
-            # Instantiate SwaggerOperations and store them in the @operations map and @operationsArray
-            if response.apis
-              for endpoint in response.apis
-                @addOperations(endpoint.path, endpoint.operations)
-
-            # Store a named reference to this resource on the parent object
-            @api[this.name] = this
-
-            # Mark as ready
-            @ready = true
-
-            # Now that this resource is loaded, tell the API to check in on itself
-            @api.selfReflect()
+            response = JSON.parse(rawResponse.content.data)
+            @addApiDeclaration(response)
 
       new SwaggerHttp().execute obj
+
+  addApiDeclaration: (response) ->
+    if response.produces?
+      @produces = response.produces
+    if response.consumes?
+      @consumes = response.consumes
+
+    # If there is a basePath in response, use that or else use
+    # the one from the api object
+    if response.basePath? and response.basePath.replace(/\s/g,'').length > 0
+      @basePath = response.basePath
+
+    @addModels(response.models)
+
+    # Instantiate SwaggerOperations and store them in the @operations map and @operationsArray
+    if response.apis
+      for endpoint in response.apis
+        @addOperations(endpoint.path, endpoint.operations)
+
+    # Store a named reference to this resource on the parent object
+    @api[this.name] = this
+
+    # Mark as ready
+    @ready = true
+
+    # Now that this resource is loaded, tell the API to check in on itself
+    @api.selfReflect()
 
   addModels: (models) ->
     if models?
