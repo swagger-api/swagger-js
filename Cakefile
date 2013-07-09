@@ -29,11 +29,6 @@ mergeFiles =(inputFiles, outputFile, minify=false) ->
           
           js = outputFile.replace /coffee$/, 'js'
           console.log js
-          if minify
-            js_output_file = js.replace /\.js$/, '.min.js'
-            exec "java -jar '/users/zeke/.jars/compiler.jar' --js #{js} --js_output_file #{js_output_file}", (err, stdout, stderr) ->
-              throw err if err
-              console.log js_output_file
 
 task 'bake', 'Compile and concatenate CoffeeScript files to JavaScript', ->
   console.log '   : Compiling...'
@@ -51,6 +46,10 @@ task 'watch', 'Automatically recompile CoffeeScript files to JavaScript', ->
 
 task 'dev', "Open source files, run spec in browser, and watch for changes", ->
   exec "$EDITOR ."
-  exec "open spec.html"
+  exec "open api-listing-spec.html"
+  exec "open execution-spec.html"
+  exec "open http-spec.html"
+  exec "open operation-spec.html"
+  exec "open request-spec.html"
   coffee = spawn 'coffee', ['-cw', '-o', 'lib', 'src']
   coffee.stdout.on 'data', (data) -> console.log data.toString().trim()

@@ -1,5 +1,5 @@
 This is the Wordnik Swagger javascript client for use with [swagger](http://swagger.wordnik.com) enabled APIs.
-It's written in CoffeeScript and tested with Jasmine.
+It's written in CoffeeScript and tested with Jasmine, and is the fastest way to enable a javascript client to communicate with a swagger-enabled server.
 
 Find out more about the swagger project at [swagger.wordnik.com](http://swagger.wordnik.com), 
 and follow us on Twitter at [@swagger_doc](https://twitter.com/#!/swagger_doc).
@@ -8,150 +8,105 @@ and follow us on Twitter at [@swagger_doc](https://twitter.com/#!/swagger_doc).
 
 See the [swagger website](http://swagger.wordnik.com) or the [swagger-core wiki](https://github.com/wordnik/swagger-core/wiki), which contains information about the swagger json spec.
 
-### Usage
+### Calling an API with swagger + node.js!
 
-Point swagger.js at a resource discovery file like
-[api.wordnik.com/v4/resources.json](http://api.wordnik.com/v4/resources.json)
-and it builds itself at runtime.
+Install swagger-client:
+```
+npm install swagger-client
+```
 
-```html
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-<script type="text/javascript" src="https://raw.github.com/wordnik/swagger.js/master/lib/swagger.js"></script>
+Then let swagger do the work!
+```js
+var swagger = require("swagger-client")
+
+var s = new swagger.SwaggerApi({
+  discoveryUrl: 'http://localhost:8002/api/api-docs'
+});
+s.build();
+
+s.apis.pet.getPetById({petId:1});
+
+```
+
+That's it!  You'll get a JSON response with the default callback handler:
+
+```json
+{
+  "id": 1,
+  "category": {
+    "id": 2,
+    "name": "Cats"
+  },
+  "name": "Cat 1",
+  "photoUrls": [
+    "url1",
+    "url2"
+  ],
+  "tags": [
+    {
+      "id": 1,
+      "name": "tag1"
+    },
+    {
+      "id": 2,
+      "name": "tag2"
+    }
+  ],
+  "status": "available"
+}
+```
+
+Need to pass an API key?  Configure one as a querystring:
+
+```js
+swagger.authorizations.add("apiKey", new swagger.ApiKeyAuthorization("api_key","special-key","query"));
+```
+
+...or with a header:
+
+```js
+swagger.authorizations.add("apiKey", new swagger.ApiKeyAuthorization("api_key","special-key","header"));
+```
+
+### Calling an API with swagger + the browser!
+
+Download `swagger.js` and `shred.bundle.js` into your lib folder
+
+```js
+<script src='lib/shred.bundle.js' type='text/javascript'></script>
+<script src='lib/swagger.js' type='text/javascript'></script>
 <script type="text/javascript">
-  $(function() { 
-    window.wordnik = new SwaggerApi({
-      discoveryUrl: "http://api.wordnik.com/v4/resources.json",
-      apiKey: "MY_API_KEY",
-      success: function() {
-        console.log('Shall we dance?');
-      }
-    });
-  });
+  // initialize swagger, point to a resource listing
+  window.swagger = new SwaggerApi({discoveryUrl: "http://petstore.swagger.wordnik.com/api/api-docs.json"});
+  swagger.build();
+
+  // add a success handler to dump the raw json into a div element named `mydata`
+  success = function(data) {
+    document.getElementById("mydata").innerHTML = data.content.data;
+  }
+
+  // a function to fetch a pet
+  function getPet() {
+    swagger.apis.pet.getPetById({petId:1}, success);
+  }
 </script>
 ```
 
-### How it Works
+### How does it work?
+The swagger javascript client reads the swagger api definition directly from the server.  As it does, it constructs a client based on the api definition, which means it is completely dynamic.  It even reads the api text descriptions (which are intended for humans!) and provides help if you need it:
 
-When initialized, the swagger.js client will build itself based on the (valid) swagger json files.  You
-initialize the client like such:
-
-```javascript
-wordnik = new SwaggerApi({
-  discoveryUrl: "http://api.wordnik.com/v4/resources.json",
-  api_key: 'YOUR_API_KEY', // Don't have a Wordnik API key? Get one at developer.wordnik.com
-  verbose: true,
-  success: function() { console.log("Your client is ready to swagger."); }
-});
+```js
+s.apis.pet.getPetById.help()
+'* petId (required) - ID of pet that needs to be fetched'
 ```
 
-After executing the above code you should see the success message in your console.
+The HTTP requests themselves are handled by the excellent [shred](https://github.com/automatthew/shred) library, which has a ton of features itself.  But it runs on both node and the browser.
 
-### Object Hierarchy
-
-Now you have access to an object called `wordnik`.
-This object is what swagger.js builds at runtime when you
-point it at a `discoveryUrl`. Try exploring it in the console:
-
-```javascript
-wordnik
-wordnik.apis
-wordnik.apis.word.operations
-wordnik.apis.word.operations.getDefinition
-```
-
-### Quick Reference
-
-You also get some console help() methods for quick reference. Some examples:
-
-```javascript
-// Apis
-wordnik.help()
-
-// Apis
-wordnik.resource.word.help()
-
-// Operations
-wordnik.apis.word.operations.getExamples.help()
-```
-### Making Requests
-
-There are two ways to make a request:
-
-```javascript
-// shorthand form
-wordnik.word.getDefinitions(args, callback);
-
-// longhand form
-wordnik.apis.word.operations.getDefinitions.do(args, callback);
-
-// example usage
-wordnik.word.getDefinitions({word: 'bliss'}, function(definitions) {
-  console.log(definitions);
-})
-```
-
-### Request Headers
-
-You can include your own headers in the args object:
-
-```javascript
-args = {word: 'swole', limit:5}
-args.headers = {magic: 'potion'}
-callback = function(examples) { console.log(examples); }
-wordnik.word.getExamples(args, callback);
-```
-
-If you want to initialize the Request without actually firing 
-off a network request you can set a header called `mock` with any value.
-
-### Request Body
-
-For GETs and POSTs, you can include the request body in the args object:
-
-```javascript
-args = {}
-args.body = {name: "gizmo", description: "A thing that does stuff."}
-callback = function(thing) { console.log(thing); }
-myApi.things.createThing(args, callback);
-```
-
-### Debugging / cURL
-
-Set `verbose` to `true` when initializing your client to see cURL
-equivalents of your requests in the browser console, complete with headers:
-
-```javascript
-wordnik = new SwaggerApi({
-  api_key: 'YOUR_API_KEY',
-  verbose: true,
-  success: function() {
-    args = {
-      word: 'dog'
-      headers: {fubar: 'maybe'}
-    }
-    wordnik.word.getDefinitions.do(args, function(definitions){
-      console.log(definitions[0].word);
-      for (var i = 0; i < definitions.length; i++) {
-        var definition = definitions[i];
-        console.log(definition.partOfSpeech + ": " + definition.text);
-      }
-    });
-  }
-});
-
-// Console output:
-// curl --header "fubar: maybe" http://api.wordnik.com/v4/word.json/dog/definitions?api_key=YOUR_API_KEY
-// dog
-// noun: A domesticated carnivorous mammal (Canis familiaris) related to the foxes and wolves and raised in a wide variety of breeds.
-// noun: Any of various carnivorous mammals of the family Canidae, such as the dingo.
-// noun: A male animal of the family Canidae, especially of the fox or a domesticated breed.
-// etc...
-```
 
 Development
 -----------
 
-Please [fork the code](https://github.com/wordnik/swagger.js) and help us improve 
+Please [fork the code](https://github.com/wordnik/swagger-js) and help us improve 
 swagger.js. Send us a pull request and **we'll mail you a wordnik T-shirt!**
 
 Swagger.js is written in CoffeeScript, so you'll need Node.js and the 
