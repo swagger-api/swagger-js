@@ -7,6 +7,7 @@ class SwaggerApi
   basePath: null
   authorizations: null
   authorizationScheme: null
+  info: null
 
   constructor: (url, options={}) ->
     # if url is a hash, assume only options were passed
@@ -51,6 +52,8 @@ class SwaggerApi
 
           @apis = {}
           @apisArray = []
+
+          @info = response.info if response.info?
 
           # if apis.operations exists, this is an api declaration as opposed to a resource listing
           isApi = false
