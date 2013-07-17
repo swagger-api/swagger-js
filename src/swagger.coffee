@@ -500,7 +500,7 @@ class SwaggerOperation
       delete args.body
 
     # pull out any form params
-    possibleParams = (param for param in @parameters when param.paramType is "form")
+    possibleParams = (param for param in @parameters when (param.paramType is "form" or param.paramType.toLowerCase() is "file" ))
     if possibleParams
       for key, value of possibleParams
         if args[value.name]
@@ -601,7 +601,10 @@ class SwaggerRequest
     else
       # if any form params
       if (param for param in @operation.parameters when param.paramType is "form").length > 0
-        requestContentType = "application/x-www-form-urlencoded"
+        if (param for param in @operation.parameters when param.dataType.toLowerCase() is "file").length > 0
+          requestContentType = "multipart/form-data"
+        else
+          requestContentType = "application/x-www-form-urlencoded"
       else if @type isnt "DELETE"
         requestContentType = null
 
