@@ -8,6 +8,31 @@ describe 'SwaggerRequest', ->
     waitsFor ->
       swagger.ready?
 
+  describe "verifies the nickname is sanitized", ->
+    it "returns the same nickname", ->
+      pet = window.swagger.apis.pet
+      expect(pet.sanitize("getSomething")).toBe "getSomething"
+
+    it "strips spaces in the nickname", ->
+      pet = window.swagger.apis.pet
+      expect(pet.sanitize("get something")).toBe "get_something"
+
+    it "strips dots in the nickname", ->
+      pet = window.swagger.apis.pet
+      expect(pet.sanitize("get.something")).toBe "get_something"
+
+    it "strips $ in the nickname", ->
+      pet = window.swagger.apis.pet
+      expect(pet.sanitize("get$something")).toBe "get_something"
+
+    it "strips punctuation in the nickname", ->
+      pet = window.swagger.apis.pet
+      expect(pet.sanitize("get[something]")).toBe "get_something"
+
+    it "strips punctuation in the nickname", ->
+      pet = window.swagger.apis.pet
+      expect(pet.sanitize("  \\]}{Get$$_./\[something]")).toBe "Get_something"
+
   describe "verifies the get pet operation", ->
 
     beforeEach ->

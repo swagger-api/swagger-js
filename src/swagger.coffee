@@ -267,9 +267,23 @@ class SwaggerResource
         if o.errorResponses
           responseMessages = o.errorResponses
 
+        # sanitize the nickname
+        o.nickname = @sanitize o.nickname
+
         op = new SwaggerOperation o.nickname, resource_path, method, o.parameters, o.summary, o.notes, o.responseClass, responseMessages, this, consumes, produces
         @operations[op.nickname] = op
         @operationsArray.push op
+
+  sanitize: (nickname) ->
+    # allow only _a-zA-Z0-9
+    op = nickname.replace /[\s!@#$%^&*()_+=\[{\]};:<>|./?,\\'""-]/g, '_'
+    # trim multiple underscores to one
+    op = op.replace /((_){2,})/g, '_'
+    # ditch leading underscores
+    op = op.replace /^(_)*/g, ''
+    # ditch trailing underscores
+    op = op.replace /([_])*$/g, ''
+    op
 
   help: ->
     for operation_name, operation of @operations
