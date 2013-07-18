@@ -704,7 +704,7 @@ class SwaggerHttp
     @shred = new @Shred()
 
     identity = (x) => x
-    toString = (x) => x.toString
+    toString = (x) => x.toString()
       
     if typeof window != 'undefined'
       @content = require "./shred/content"
