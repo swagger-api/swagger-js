@@ -36,7 +36,7 @@ class SwaggerApi
     obj = 
       url: @url
       method: "get"
-      headedrs: {}
+      headers: {}
       on:
         error: (response) =>
           if @url.substring(0, 4) isnt 'http'
