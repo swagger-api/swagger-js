@@ -305,6 +305,7 @@ class SwaggerModel
     modelsToIgnore.push(@name);
     for prop in @properties
       result[prop.name] = prop.getSampleValue(modelsToIgnore)
+    modelsToIgnore.pop(@name);
     result
 
 class SwaggerModelProperty
