@@ -36,6 +36,7 @@ class SwaggerApi
     obj = 
       url: @url
       method: "get"
+      headedrs: {}
       on:
         error: (response) =>
           if @url.substring(0, 4) isnt 'http'
@@ -179,6 +180,7 @@ class SwaggerResource
       obj = 
         url: @url
         method: "get"
+        headers: {}
         on:
           error: (response) =>
             @api.fail "Unable to read api '" + @name + "' from path " + @url + " (server returned " + error.statusText + ")"
