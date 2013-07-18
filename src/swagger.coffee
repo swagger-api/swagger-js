@@ -260,6 +260,10 @@ class SwaggerResource
 
 class SwaggerModel
   constructor: (modelName, obj) ->
+    if obj.required?
+      for propertyName of obj.required
+        obj.properties[propertyName].required = true
+
     @name = if obj.id? then obj.id else modelName
     @properties = []
     for propertyName of obj.properties
