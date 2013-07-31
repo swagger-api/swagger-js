@@ -32,7 +32,6 @@ class SwaggerApi
 
   build: ->
     @progress 'fetching resource list: ' + @url
-    console.log 'getting ' + @url
     obj = 
       url: @url
       method: "get"
@@ -146,6 +145,8 @@ class SwaggerResource
     consumes = []
 
     @path = if @api.resourcePath? then @api.resourcePath else resourceObj.path
+
+    console.log 'using path ' + @path
     @description = resourceObj.description
 
     # Extract name from path
@@ -174,7 +175,12 @@ class SwaggerResource
       @api.fail "SwaggerResources must have a path." unless @path?
 
       # e.g."http://api.wordnik.com/v4/word.json"
-      @url = @api.basePath + @path.replace('{format}', 'json')
+
+      if @path.substring(0,4) == 'http'
+        # user absolute path
+        @url = @path.replace('{format}', 'json')
+      else
+        @url = @api.basePath + @path.replace('{format}', 'json')
 
       @api.progress 'fetching resource ' + @name + ': ' + @url
       obj = 
