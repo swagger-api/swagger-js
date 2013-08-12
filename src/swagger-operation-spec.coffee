@@ -71,7 +71,7 @@ describe 'SwaggerRequest', ->
 
       param = parameters[0]
       expect(param.name).toBe "petId"
-      expect(param.dataType).toBe "string"
+      expect(param.type).toBe "integer"
       expect(param.paramType).toBe "path"
       expect(param.description).toBeDefined
 
@@ -86,7 +86,7 @@ describe 'SwaggerRequest', ->
 
       param = parameters[0]
       expect(param.name).toBe "body"
-      expect(param.dataType).toBe "Pet"
+      expect(param.type).toBe "Pet"
       expect(param.paramType).toBe "body"
       expect(param.description).toBeDefined
       expect(param.required).toBe true
@@ -103,7 +103,7 @@ describe 'SwaggerRequest', ->
 
       param = parameters[0]
       expect(param.name).toBe "body"
-      expect(param.dataType).toBe "Pet"
+      expect(param.type).toBe "Pet"
       expect(param.paramType).toBe "body"
       expect(param.description).toBeDefined
       expect(param.required).toBe true
@@ -119,7 +119,7 @@ describe 'SwaggerRequest', ->
 
       param = parameters[0]
       expect(param.name).toBe "tags"
-      expect(param.dataType).toBe "string"
+      expect(param.type).toBe "string"
       expect(param.paramType).toBe "query"
       expect(param.description).toBeDefined
       expect(param.required).toBe true
@@ -140,13 +140,13 @@ describe 'SwaggerRequest', ->
 
       param = parameters[0]
       expect(param.name).toBe "petId"
-      expect(param.dataType).toBe "string"
+      expect(param.type).toBe "string"
       expect(param.paramType).toBe "path"
       expect(param.description).toBeDefined
 
       param = parameters[1]
       expect(param.name).toBe "body"
-      expect(param.dataType).toBe "Pet"
+      expect(param.type).toBe "Pet"
       expect(param.paramType).toBe "body"
       expect(param.description).toBeDefined
       expect(param.allowMultiple).toBe false
@@ -167,14 +167,14 @@ describe 'SwaggerRequest', ->
 
       param = parameters[0]
       expect(param.name).toBe "petId"
-      expect(param.dataType).toBe "string"
+      expect(param.type).toBe "string"
       expect(param.paramType).toBe "path"
       expect(param.required).toBe true
       expect(param.description).toBeDefined
 
       param = parameters[1]
       expect(param.name).toBe "name"
-      expect(param.dataType).toBe "string"
+      expect(param.type).toBe "string"
       expect(param.paramType).toBe "form"
       expect(param.description).toBeDefined
       expect(param.allowMultiple).toBe false
@@ -182,7 +182,7 @@ describe 'SwaggerRequest', ->
 
       param = parameters[2]
       expect(param.name).toBe "status"
-      expect(param.dataType).toBe "string"
+      expect(param.type).toBe "string"
       expect(param.paramType).toBe "form"
       expect(param.description).toBeDefined
       expect(param.allowMultiple).toBe false
@@ -202,14 +202,14 @@ describe 'SwaggerRequest', ->
 
       param = parameters[0]
       expect(param.name).toBe "additionalMetadata"
-      expect(param.dataType).toBe "string"
+      expect(param.type).toBe "string"
       expect(param.paramType).toBe "form"
       expect(param.required).toBe false
       expect(param.description).toBeDefined
 
       param = parameters[1]
       expect(param.name).toBe "file"
-      expect(param.dataType).toBe "File"
+      expect(param.type).toBe "File"
       expect(param.paramType).toBe "body"
       expect(param.description).toBeDefined
       expect(param.allowMultiple).toBe false

@@ -309,8 +309,9 @@ class SwaggerModel
   # Set models referenced  bu this model
   setReferencedModels: (allModels) ->
     for prop in @properties
-      if allModels[prop.dataType]?
-        prop.refModel = allModels[prop.dataType]
+      type = prop.type || prop.dataType
+      if allModels[type]?
+        prop.refModel = allModels[type]
       else if prop.refDataType? and allModels[prop.refDataType]?
         prop.refModel = allModels[prop.refDataType]
 
@@ -416,14 +417,16 @@ class SwaggerOperation
 
     for parameter in @parameters
       # Path params do not have a name, set the name to the path if name is n/a
-      parameter.name = parameter.name || parameter.dataType
+      parameter.name = parameter.name || parameter.type || parameter.dataType
 
-      if(parameter.dataType.toLowerCase() is 'boolean')
+      type = parameter.type || parameter.dataType
+
+      if(type.toLowerCase() is 'boolean')
         parameter.allowableValues = {}
         parameter.allowableValues.values = @resource.api.booleanValues
 
-      parameter.signature = @getSignature(parameter.dataType, @resource.models)
-      parameter.sampleJSON = @getSampleJSON(parameter.dataType, @resource.models)
+      parameter.signature = @getSignature(type, @resource.models)
+      parameter.sampleJSON = @getSampleJSON(type, @resource.models)
 
       # Set allowableValue attributes
       if parameter.allowableValues?
@@ -452,26 +455,26 @@ class SwaggerOperation
     @resource[@nickname].help = =>
       @help()
 
-  isListType: (dataType) ->
-    if(dataType.indexOf('[') >= 0) then dataType.substring(dataType.indexOf('[') + 1, dataType.indexOf(']')) else undefined
+  isListType: (type) ->
+    if(type.indexOf('[') >= 0) then type.substring(type.indexOf('[') + 1, type.indexOf(']')) else undefined
 
-  getSignature: (dataType, models) ->
+  getSignature: (type, models) ->
     # set listType if it exists
-    listType = @isListType(dataType)
+    listType = @isListType(type)
 
     # set flag which says if its primitive or not
-    isPrimitive = if ((listType? and models[listType]) or models[dataType]?) then false else true
+    isPrimitive = if ((listType? and models[listType]) or models[type]?) then false else true
 
-    if (isPrimitive) then dataType else (if listType? then models[listType].getMockSignature() else models[dataType].getMockSignature())
+    if (isPrimitive) then type else (if listType? then models[listType].getMockSignature() else models[type].getMockSignature())
 
-  getSampleJSON: (dataType, models) ->
+  getSampleJSON: (type, models) ->
     # set listType if it exists
-    listType = @isListType(dataType)
+    listType = @isListType(type)
 
     # set flag which says if its primitive or not
-    isPrimitive = if ((listType? and models[listType]) or models[dataType]?) then false else true
+    isPrimitive = if ((listType? and models[listType]) or models[type]?) then false else true
 
-    val = if (isPrimitive) then undefined else (if listType? then models[listType].createJSONSample() else models[dataType].createJSONSample())
+    val = if (isPrimitive) then undefined else (if listType? then models[listType].createJSONSample() else models[type].createJSONSample())
 
     # pretty printing obtained JSON
     if val
@@ -623,7 +626,8 @@ class SwaggerRequest
     else
       # if any form params
       if (param for param in @operation.parameters when param.paramType is "form").length > 0
-        if (param for param in @operation.parameters when param.dataType.toLowerCase() is "file").length > 0
+        type = param.type || param.dataType
+        if (param for param in @operation.parameters when type.toLowerCase() is "file").length > 0
           requestContentType = "multipart/form-data"
         else
           requestContentType = "application/x-www-form-urlencoded"
@@ -639,13 +643,13 @@ class SwaggerRequest
 
     responseContentType = null
     # if get or post, set the content-type being sent, otherwise make it null
-    if (@type is "POST" or @type is "GET")
+    if (@type is "POST" or @type is "GET" or @type is "PATCH" or @type is "PUT")
       if @opts.responseContentType
-        responseContentType = @opts.responseContentType
+        requestContentType = @opts.requestContentType
       else
-        responseContentType = "application/json"
+        requestContentType = "application/json"
     else
-      responseContentType = null
+      requestContentType = null
 
     # verify the content type can be produced
     if responseContentType and @operation.produces
