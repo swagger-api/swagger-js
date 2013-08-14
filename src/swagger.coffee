@@ -52,7 +52,7 @@ class SwaggerApi
 
           @apis = {}
           @apisArray = []
-
+          @produces = response.produces
           @info = response.info if response.info?
 
           # if apis.operations exists, this is an api declaration as opposed to a resource listing
@@ -146,6 +146,8 @@ class SwaggerResource
 
     @path = if @api.resourcePath? then @api.resourcePath else resourceObj.path
 
+    console.log "we produce " + resourceObj.produces
+
     console.log 'using path ' + @path
     @description = resourceObj.description
 
@@ -220,7 +222,7 @@ class SwaggerResource
     # Instantiate SwaggerOperations and store them in the @operations map and @operationsArray
     if response.apis
       for endpoint in response.apis
-        @addOperations(endpoint.path, endpoint.operations)
+        @addOperations(endpoint.path, endpoint.operations, response.consumes, response.produces)
 
     # Store a named reference to this resource on the parent object
     @api[this.name] = this
@@ -242,11 +244,11 @@ class SwaggerResource
         model.setReferencedModels(@models)
 
 
-  addOperations: (resource_path, ops) ->
+  addOperations: (resource_path, ops, consumes, produces) ->
     if ops
       for o in ops
-        consumes = null
-        produces = null
+        consumes = @consumes
+        produces = @produces
 
         if o.consumes?
           consumes = o.consumes
@@ -257,6 +259,8 @@ class SwaggerResource
           produces = o.produces
         else
           produces = @produces
+
+        type = o.type || o.responseClass
 
         responseMessages = o.responseMessages
         method = o.method
@@ -276,7 +280,7 @@ class SwaggerResource
         # sanitize the nickname
         o.nickname = @sanitize o.nickname
 
-        op = new SwaggerOperation o.nickname, resource_path, method, o.parameters, o.summary, o.notes, o.responseClass, responseMessages, this, consumes, produces
+        op = new SwaggerOperation o.nickname, resource_path, method, o.parameters, o.summary, o.notes, type, responseMessages, this, consumes, produces
         @operations[op.nickname] = op
         @operationsArray.push op
 
@@ -395,7 +399,7 @@ class SwaggerModelProperty
 
 # SwaggerOperation converts an operation into a method which can be executed directly
 class SwaggerOperation
-  constructor: (@nickname, @path, @method, @parameters=[], @summary, @notes, @responseClass, @responseMessages, @resource, @consumes, @produces) ->
+  constructor: (@nickname, @path, @method, @parameters=[], @summary, @notes, @type, @responseMessages, @resource, @consumes, @produces) ->
     @resource.api.fail "SwaggerOperations must have a nickname." unless @nickname?
     @resource.api.fail "SwaggerOperation #{nickname} is missing path." unless @path?
     @resource.api.fail "SwaggerOperation #{nickname} is missing method." unless @method?
@@ -407,11 +411,11 @@ class SwaggerOperation
     @resourceName = @resource.name
 
     # if void clear it
-    if(@responseClass?.toLowerCase() is 'void') then @responseClass = undefined
-    if @responseClass?
+    if(@type?.toLowerCase() is 'void') then @type = undefined
+    if @type?
       # set the signature of response class
-      @responseClassSignature = @getSignature(@responseClass, @resource.models)
-      @responseSampleJSON = @getSampleJSON(@responseClass, @resource.models)
+      @responseClassSignature = @getSignature(@type, @resource.models)
+      @responseSampleJSON = @getSampleJSON(@type, @resource.models)
 
     @responseMessages = @responseMessages || []
 
@@ -620,11 +624,12 @@ class SwaggerRequest
 
     requestContentType = "application/json"
     # if post or put, set the content-type being sent, otherwise make it null
+    # some servers will die if content-type is set but there is no body
     if body and (@type is "POST" or @type is "PUT" or @type is "PATCH")
       if @opts.requestContentType
         requestContentType = @opts.requestContentType
     else
-      # if any form params
+      # if any form params, content-type must be set
       if (param for param in @operation.parameters when param.paramType is "form").length > 0
         type = param.type || param.dataType
         if (param for param in @operation.parameters when type.toLowerCase() is "file").length > 0
@@ -634,7 +639,7 @@ class SwaggerRequest
       else if @type isnt "DELETE"
         requestContentType = null
 
-    # verify the content type is acceptable
+    # verify the content type is acceptable from what it defines
     if requestContentType and @operation.consumes
       if @operation.consumes.indexOf(requestContentType) is -1
         console.log "server doesn't consume " + requestContentType + ", try " + JSON.stringify(@operation.consumes)
@@ -643,13 +648,13 @@ class SwaggerRequest
 
     responseContentType = null
     # if get or post, set the content-type being sent, otherwise make it null
-    if (@type is "POST" or @type is "GET" or @type is "PATCH" or @type is "PUT")
+    if (@type is "POST" or @type is "GET" or @type is "PATCH")
       if @opts.responseContentType
-        requestContentType = @opts.requestContentType
+        responseContentType = @opts.responseContentType
       else
-        requestContentType = "application/json"
+        responseContentType = "application/json"
     else
-      requestContentType = null
+      responseContentType = null
 
     # verify the content type can be produced
     if responseContentType and @operation.produces

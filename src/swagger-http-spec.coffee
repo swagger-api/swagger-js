@@ -3,8 +3,10 @@ window.api_key = 'special-key'
 describe 'SwaggerRequest', ->
   
   beforeEach ->
-    window.swagger = new SwaggerApi({url: 'http://localhost:8002/api/api-docs'})
-    swagger.build()
+    success =  ->
+      console.log "success"
+    window.authorizations.add "key", new ApiKeyAuthorization("api_key", "special-key", "header")
+    window.swagger = new SwaggerApi({url: 'http://localhost:8002/api/api-docs', success: success})
     waitsFor ->
       swagger.ready?
 
@@ -132,7 +134,7 @@ describe 'SwaggerRequest', ->
       window.error_callback = (data) ->
         window.error = data
 
-    it "verifies the http request object for a POST", ->
+    it "verifies the http request object for a PUT", ->
       params = {
         body: JSON.stringify({
           id: 100

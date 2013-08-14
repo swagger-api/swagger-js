@@ -3,8 +3,10 @@ window.api_key = 'special-key'
 describe 'SwaggerRequest', ->
   
   beforeEach ->
-    window.swagger = new SwaggerApi({url: 'http://localhost:8002/api/api-docs'})
-    swagger.build()
+    success =  ->
+      console.log "success"
+    window.authorizations.add "key", new ApiKeyAuthorization("api_key", "special-key", "header")
+    window.swagger = new SwaggerApi({url: 'http://localhost:8002/api/api-docs', success: success})
     waitsFor ->
       swagger.ready?
 
@@ -108,8 +110,8 @@ describe 'SwaggerRequest', ->
     it "handles redirects", ->
       params = {}
       opts = {
-        requestContentType: "application/json"
-        responseContentType: null
+        requestContentType: null
+        responseContentType: "application/json"
       }
 
       new SwaggerRequest("GET", "http://localhost:8002/api/pet.redirect/3", params, opts, success_callback, error_callback, operation)

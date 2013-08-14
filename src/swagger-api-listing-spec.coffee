@@ -3,8 +3,10 @@ window.api_key = 'special-key'
 describe 'Swagger Api Listing', ->
 
   beforeEach ->
-    window.swagger = new SwaggerApi({url: 'http://localhost:8002/api/api-docs/pet'})
-    swagger.build()
+    success =  ->
+      console.log "success"
+    window.authorizations.add "key", new ApiKeyAuthorization("api_key", "special-key", "header")
+    window.swagger = new SwaggerApi({url: 'http://localhost:8002/api/api-docs', success: success})
     waitsFor ->
       swagger.ready?
 

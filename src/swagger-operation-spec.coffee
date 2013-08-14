@@ -1,10 +1,12 @@
 window.api_key = 'special-key'
 
 describe 'SwaggerRequest', ->
-  
+
   beforeEach ->
-    window.swagger = new SwaggerApi({url: 'http://localhost:8002/api/api-docs?api_key=special-key'})
-    swagger.build()
+    success =  ->
+      console.log "success"
+    window.authorizations.add "key", new ApiKeyAuthorization("api_key", "special-key", "header")
+    window.swagger = new SwaggerApi({url: 'http://localhost:8002/api/api-docs', success: success})
     waitsFor ->
       swagger.ready?
 
@@ -28,6 +30,10 @@ describe 'SwaggerRequest', ->
     it "strips punctuation in the nickname", ->
       pet = window.swagger.apis.pet
       expect(pet.sanitize("get[something]")).toBe "get_something"
+
+    it "strips curlies in the nickname", ->
+      pet = window.swagger.apis.pet
+      expect(pet.sanitize("get{something}")).toBe "get_something"
 
     it "strips punctuation in the nickname", ->
       pet = window.swagger.apis.pet
