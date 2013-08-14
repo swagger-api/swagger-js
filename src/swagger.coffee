@@ -146,9 +146,6 @@ class SwaggerResource
 
     @path = if @api.resourcePath? then @api.resourcePath else resourceObj.path
 
-    console.log "we produce " + resourceObj.produces
-
-    console.log 'using path ' + @path
     @description = resourceObj.description
 
     # Extract name from path
