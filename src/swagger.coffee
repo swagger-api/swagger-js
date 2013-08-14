@@ -258,6 +258,11 @@ class SwaggerResource
           produces = @produces
 
         type = o.type || o.responseClass
+        if(type is "array")
+          ref = null
+          if o.items
+            ref = o.items["type"] || o.items["$ref"]
+          type = "array[" + ref + "]"
 
         responseMessages = o.responseMessages
         method = o.method
@@ -408,6 +413,7 @@ class SwaggerOperation
     @resourceName = @resource.name
 
     # if void clear it
+    console.log "model type: " + type
     if(@type?.toLowerCase() is 'void') then @type = undefined
     if @type?
       # set the signature of response class
