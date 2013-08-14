@@ -310,7 +310,13 @@ class SwaggerModel
     @name = if obj.id? then obj.id else modelName
     @properties = []
     for propertyName of obj.properties
+      if obj.enum?
+        for value of obj.enum
+          if propertyName is value
+            obj.properties[propertyName].required = true
       @properties.push new SwaggerModelProperty(propertyName, obj.properties[propertyName])
+    # support the 1.2 spec for required fields
+
 
   # Set models referenced  bu this model
   setReferencedModels: (allModels) ->
@@ -362,6 +368,7 @@ class SwaggerModelProperty
       @dataType.toLowerCase() is 'set');
     @descr = obj.description
     @required = obj.required
+    console.log this
 
     if obj.items?
       if obj.items.type? then @refDataType = obj.items.type
@@ -435,7 +442,18 @@ class SwaggerOperation
       parameter.signature = @getSignature(type, @resource.models)
       parameter.sampleJSON = @getSampleJSON(type, @resource.models)
 
-      # Set allowableValue attributes
+      if parameter.enum?
+        parameter.isList = true
+        # set the values
+        parameter.allowableValues = {}
+        parameter.allowableValues.descriptiveValues = []
+        for v in parameter.enum
+          if parameter.defaultValue? and parameter.defaultValue == v
+            parameter.allowableValues.descriptiveValues.push {value: v, isDefault: true}
+          else
+            parameter.allowableValues.descriptiveValues.push {value: v, isDefault: false}
+
+      # Set allowableValue attributes for 1.1 spec
       if parameter.allowableValues?
         # Set isRange and isList flags on param
         if parameter.allowableValues.valueType == "RANGE"
@@ -452,6 +470,7 @@ class SwaggerOperation
               parameter.allowableValues.descriptiveValues.push {value: v, isDefault: true}
             else
               parameter.allowableValues.descriptiveValues.push {value: v, isDefault: false}
+
 
     # Store a named reference to this operation on the parent resource
     # getDefinitions() maps to getDefinitionsData.do()
