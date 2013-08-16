@@ -539,11 +539,16 @@ class SwaggerOperation
     
     # params to pass into the request
     params = {}
+    params.headers = []
 
     # Pull headers out of args    
     if args.headers?
       params.headers = args.headers
       delete args.headers
+
+    for param in @parameters when (param.paramType is "header" )
+      if args[param.name]
+        params.headers[param.name] = args[param.name]
       
     # Pull body out of args
     if args.body?
@@ -699,7 +704,8 @@ class SwaggerRequest
           urlEncoded += "&"
         urlEncoded += encodeURIComponent(key) + '=' + encodeURIComponent(value)
       body = urlEncoded
-
+    for name of headers
+      myHeaders[name] = headers[name]
     if requestContentType
       myHeaders["Content-Type"] = requestContentType
     if responseContentType
