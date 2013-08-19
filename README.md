@@ -77,7 +77,7 @@ Download `swagger.js` and `shred.bundle.js` into your lib folder
 <script src='lib/swagger.js' type='text/javascript'></script>
 <script type="text/javascript">
   // initialize swagger, point to a resource listing
-  window.swagger = new SwaggerApi({discoveryUrl: "http://petstore.swagger.wordnik.com/api/api-docs.json"});
+  window.swagger = new SwaggerApi({url: "http://petstore.swagger.wordnik.com/api/api-docs.json"});
   swagger.build();
 
   // add a success handler to dump the raw json into a div element named `mydata`
