@@ -95,8 +95,6 @@ describe 'SwaggerRequest', ->
       expect(param.type).toBe "Pet"
       expect(param.paramType).toBe "body"
       expect(param.description).toBeDefined
-      expect(param.required).toBe true
-
 
     it "verifies the put pet operation", ->
       operation = swagger.pet.operations.updatePet
@@ -112,8 +110,6 @@ describe 'SwaggerRequest', ->
       expect(param.type).toBe "Pet"
       expect(param.paramType).toBe "body"
       expect(param.description).toBeDefined
-      expect(param.required).toBe true
-
     it "verifies the findByTags operation", ->
       operation = swagger.pet.operations.findPetsByTags
       expect(operation.method).toBe "get"
@@ -124,12 +120,11 @@ describe 'SwaggerRequest', ->
       expect(parameters.length).toBe 1
 
       param = parameters[0]
+      console.log param
       expect(param.name).toBe "tags"
       expect(param.type).toBe "string"
       expect(param.paramType).toBe "query"
       expect(param.description).toBeDefined
-      expect(param.required).toBe true
-      expect(param.allowMultiple).toBe true
 
     it "verifies the patch pet operation", ->
       operation = swagger.pet.operations.partialUpdate
@@ -155,9 +150,6 @@ describe 'SwaggerRequest', ->
       expect(param.type).toBe "Pet"
       expect(param.paramType).toBe "body"
       expect(param.description).toBeDefined
-      expect(param.allowMultiple).toBe false
-      expect(param.required).toBe true
-
 
     it "verifies the post pet operation with form", ->
       operation = swagger.pet.operations.updatePetWithForm
@@ -175,7 +167,6 @@ describe 'SwaggerRequest', ->
       expect(param.name).toBe "petId"
       expect(param.type).toBe "string"
       expect(param.paramType).toBe "path"
-      expect(param.required).toBe true
       expect(param.description).toBeDefined
 
       param = parameters[1]
@@ -183,7 +174,6 @@ describe 'SwaggerRequest', ->
       expect(param.type).toBe "string"
       expect(param.paramType).toBe "form"
       expect(param.description).toBeDefined
-      expect(param.allowMultiple).toBe false
       expect(param.required).toBe false
 
       param = parameters[2]
@@ -191,7 +181,6 @@ describe 'SwaggerRequest', ->
       expect(param.type).toBe "string"
       expect(param.paramType).toBe "form"
       expect(param.description).toBeDefined
-      expect(param.allowMultiple).toBe false
       expect(param.required).toBe false
 
     it "verifies a file upload", ->
@@ -218,7 +207,6 @@ describe 'SwaggerRequest', ->
       expect(param.type).toBe "File"
       expect(param.paramType).toBe "body"
       expect(param.description).toBeDefined
-      expect(param.allowMultiple).toBe false
       expect(param.required).toBe false
 
     it "gets help() from the file upload operation", ->

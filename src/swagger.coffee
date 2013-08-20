@@ -437,7 +437,7 @@ class SwaggerOperation
 
       if(type.toLowerCase() is 'boolean')
         parameter.allowableValues = {}
-        parameter.allowableValues.values = @resource.api.booleanValues
+        parameter.allowableValues.values = ["true", "false"]
 
       parameter.signature = @getSignature(type, @resource.models)
       parameter.sampleJSON = @getSampleJSON(type, @resource.models)
