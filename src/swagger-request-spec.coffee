@@ -6,7 +6,7 @@ describe 'SwaggerRequest', ->
     success =  ->
       console.log "success"
     window.authorizations.add "key", new ApiKeyAuthorization("api_key", "special-key", "header")
-    window.swagger = new SwaggerApi({url: 'http://localhost:8002/api/api-docs', success: success})
+    window.swagger = new SwaggerApi({url: 'http://petstore.swagger.wordnik.com/api/api-docs', success: success})
     waitsFor ->
       swagger.ready?
 
@@ -30,7 +30,7 @@ describe 'SwaggerRequest', ->
         responseContentType: "application/json"
       }
 
-      new SwaggerRequest("GET", "http://localhost:8002/api/pet/1", params, opts, window.success_callback, window.error_callback, operation)
+      new SwaggerRequest("GET", "http://petstore.swagger.wordnik.com/api/pet/1", params, opts, window.success_callback, window.error_callback, operation)
 
       window.args =
         petId: '1'
@@ -53,7 +53,7 @@ describe 'SwaggerRequest', ->
         responseContentType: null
       }
 
-      new SwaggerRequest("GET", "http://localhost:8002/api/pet/1", params, opts, success_callback, error_callback, operation)
+      new SwaggerRequest("GET", "http://petstore.swagger.wordnik.com/api/pet/1", params, opts, success_callback, error_callback, operation)
 
       window.args =
         petId: '1'
@@ -76,7 +76,7 @@ describe 'SwaggerRequest', ->
         responseContentType: "text/plain"
       }
 
-      new SwaggerRequest("GET", "http://localhost:8002/api/pet/1", params, opts, success_callback, error_callback, operation)
+      new SwaggerRequest("GET", "http://petstore.swagger.wordnik.com/api/pet/1", params, opts, success_callback, error_callback, operation)
 
       window.args =
         petId: '1'
@@ -95,7 +95,7 @@ describe 'SwaggerRequest', ->
         responseContentType: "text/html"
       }
 
-      new SwaggerRequest("GET", "http://localhost:8002/api/pet/1", params, opts, success_callback, error_callback, operation)
+      new SwaggerRequest("GET", "http://petstore.swagger.wordnik.com/api/pet/1", params, opts, success_callback, error_callback, operation)
 
       window.args =
         petId: '1'
@@ -114,7 +114,7 @@ describe 'SwaggerRequest', ->
         responseContentType: "application/json"
       }
 
-      new SwaggerRequest("GET", "http://localhost:8002/api/pet.redirect/3", params, opts, success_callback, error_callback, operation)
+      new SwaggerRequest("GET", "http://petstore.swagger.wordnik.com/api/pet.redirect/3", params, opts, success_callback, error_callback, operation)
 
       window.args =
         petId: '1'
@@ -150,7 +150,7 @@ describe 'SwaggerRequest', ->
         responseContentType: "application/json"
       }
 
-      new SwaggerRequest("POST", "http://localhost:8002/api/pet", params, opts, success_callback, error_callback, operation)
+      new SwaggerRequest("POST", "http://petstore.swagger.wordnik.com/api/pet", params, opts, success_callback, error_callback, operation)
 
      waitsFor ->
        window.response?
@@ -170,7 +170,7 @@ describe 'SwaggerRequest', ->
         responseContentType: "application/xml"    
       }
 
-      new SwaggerRequest("POST", "http://localhost:8002/api/pet", params, opts, success_callback, error_callback, operation)
+      new SwaggerRequest("POST", "http://petstore.swagger.wordnik.com/api/pet", params, opts, success_callback, error_callback, operation)
 
       waitsFor ->
         window.response?
@@ -202,7 +202,7 @@ describe 'SwaggerRequest', ->
         responseContentType: "application/json"
       }
 
-      new SwaggerRequest("PUT", "http://localhost:8002/api/pet", params, opts, success_callback, error_callback, operation)
+      new SwaggerRequest("PUT", "http://petstore.swagger.wordnik.com/api/pet", params, opts, success_callback, error_callback, operation)
 
      waitsFor ->
        window.response?
@@ -222,7 +222,7 @@ describe 'SwaggerRequest', ->
         responseContentType: "application/xml"
       }
 
-      new SwaggerRequest("PUT", "http://localhost:8002/api/pet", params, opts, success_callback, error_callback, operation)
+      new SwaggerRequest("PUT", "http://petstore.swagger.wordnik.com/api/pet", params, opts, success_callback, error_callback, operation)
 
      waitsFor ->
        window.response?
@@ -246,7 +246,7 @@ describe 'SwaggerRequest', ->
       window.success_callback = (data) ->
         window.response = "successfully deleted pet"
       params = {}
-      new SwaggerRequest("DELETE", "http://localhost:8002/api/pet/100", params, {}, success_callback, error_callback, operation)
+      new SwaggerRequest("DELETE", "http://petstore.swagger.wordnik.com/api/pet/100", params, {}, success_callback, error_callback, operation)
 
      waitsFor ->
        window.response?
@@ -270,7 +270,7 @@ describe 'SwaggerRequest', ->
       window.success_callback = (data) ->
         window.response = "successfully fetched options"
       params = {}
-      new SwaggerRequest("OPTIONS", "http://localhost:8002/api/pet", params, {}, success_callback, error_callback, operation)
+      new SwaggerRequest("OPTIONS", "http://petstore.swagger.wordnik.com/api/pet", params, {}, success_callback, error_callback, operation)
 
      waitsFor ->
        window.response?
@@ -301,7 +301,7 @@ describe 'SwaggerRequest', ->
         responseContentType: "application/json"
       }
 
-      new SwaggerRequest("PATCH", "http://localhost:8002/api/pet/3", params, opts, success_callback, error_callback, operation)
+      new SwaggerRequest("PATCH", "http://petstore.swagger.wordnik.com/api/pet/3", params, opts, success_callback, error_callback, operation)
 
       waitsFor ->
          window.response?
@@ -332,7 +332,7 @@ describe 'SwaggerRequest', ->
 
       window.authorizations.add "key", auth
 
-      new SwaggerRequest("GET", "http://localhost:8002/api/pet/1", params, opts, window.success_callback, window.error_callback, operation)
+      new SwaggerRequest("GET", "http://petstore.swagger.wordnik.com/api/pet/1", params, opts, window.success_callback, window.error_callback, operation)
 
       window.args =
         petId: '1'
@@ -359,7 +359,7 @@ describe 'SwaggerRequest', ->
 
       window.authorizations.add "key", auth
 
-      new SwaggerRequest("GET", "http://localhost:8002/api/pet/1", params, opts, window.success_callback, window.error_callback, operation)
+      new SwaggerRequest("GET", "http://petstore.swagger.wordnik.com/api/pet/1", params, opts, window.success_callback, window.error_callback, operation)
 
       window.args =
         petId: '1'
