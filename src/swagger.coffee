@@ -21,11 +21,9 @@ class SwaggerApi
       options = url
     @url = options.url if options.url?
 
-    @supportedSubmitMethods = if options.supportedSubmitMethods? then options.supportedSubmitMethods else ['get']
     @success = options.success if options.success?
     @failure = if options.failure? then options.failure else ->
     @progress = if options.progress? then options.progress else ->
-    @defaultHeaders = if options.headers? then options.headers else {}
 
     # Build right away if a callback was passed to the initializer
     @build() if options.success?
@@ -48,44 +46,12 @@ class SwaggerApi
             @fail error.status + ' : ' + error.statusText + ' ' + @url
         response: (rawResponse) =>
           response = JSON.parse(rawResponse.content.data)
-          @apiVersion = response.apiVersion if response.apiVersion?
+          @swaggerVersion = response.swaggerVersion
 
-          @apis = {}
-          @apisArray = []
-          @produces = response.produces
-          @info = response.info if response.info?
-
-          # if apis.operations exists, this is an api declaration as opposed to a resource listing
-          isApi = false
-          for api in response.apis
-            if api.operations
-              for operation in api.operations
-                isApi = true
-
-          if isApi
-            newName = response.resourcePath.replace(/\//g,'')
-            this.resourcePath = response.resourcePath
-
-            res = new SwaggerResource response, this
-            @apis[newName] = res
-            @apisArray.push res
+          if @swaggerVersion is "1.2"
+            @buildFromSpec response
           else
-            # The base path derived from url
-            if response.basePath
-              # support swagger 1.1, which has basePath
-              @basePath = response.basePath
-            else if @url.indexOf('?') > 0
-              @basePath = @url.substring(0, @url.lastIndexOf('?'))
-            else
-              @basePath = @url
-
-            for resource in response.apis
-              res = new SwaggerResource resource, this
-              @apis[res.name] = res
-              @apisArray.push res
-          if this.success
-            this.success()
-          this
+            @buildFrom1_1Spec response
           
     # apply authorizations
     e = {}
@@ -97,6 +63,87 @@ class SwaggerApi
 
     new SwaggerHttp().execute obj
     @
+
+  # build the spec
+  buildFromSpec: (response)->
+    @apiVersion = response.apiVersion if response.apiVersion?
+    @apis = {}
+    @apisArray = []
+    @produces = response.produces
+    @info = response.info if response.info?
+
+    # if apis.operations exists, this is an api declaration as opposed to a resource listing
+    isApi = false
+    for api in response.apis
+      if api.operations
+        for operation in api.operations
+          isApi = true
+
+    if isApi
+      newName = response.resourcePath.replace(/\//g,'')
+      this.resourcePath = response.resourcePath
+
+      res = new SwaggerResource response, this
+      @apis[newName] = res
+      @apisArray.push res
+    else
+      # The base path derived from url
+      if response.basePath
+        # support swagger 1.1, which has basePath
+        @basePath = response.basePath
+      else if @url.indexOf('?') > 0
+        @basePath = @url.substring(0, @url.lastIndexOf('?'))
+      else
+        @basePath = @url
+
+      for resource in response.apis
+        res = new SwaggerResource resource, this
+        @apis[res.name] = res
+        @apisArray.push res
+    if this.success
+      this.success()
+    this
+
+
+  buildFrom1_1Spec: (response)->
+    console.log "This API is using a deprecated version of Swagger!  Please see http://github.com/wordnik/swagger-core/wiki for more info"
+    @apiVersion = response.apiVersion if response.apiVersion?
+    @apis = {}
+    @apisArray = []
+    @produces = response.produces
+    @info = response.info if response.info?
+
+    # if apis.operations exists, this is an api declaration as opposed to a resource listing
+    isApi = false
+    for api in response.apis
+      if api.operations
+        for operation in api.operations
+          isApi = true
+
+    if isApi
+      newName = response.resourcePath.replace(/\//g,'')
+      this.resourcePath = response.resourcePath
+
+      res = new SwaggerResource response, this
+      @apis[newName] = res
+      @apisArray.push res
+    else
+      # The base path derived from url
+      if response.basePath
+        # support swagger 1.1, which has basePath
+        @basePath = response.basePath
+      else if @url.indexOf('?') > 0
+        @basePath = @url.substring(0, @url.lastIndexOf('?'))
+      else
+        @basePath = @url
+
+      for resource in response.apis
+        res = new SwaggerResource resource, this
+        @apis[res.name] = res
+        @apisArray.push res
+    if this.success
+      this.success()
+    this
 
   # This method is called each time a child resource finishes loading
   # 
@@ -354,16 +401,19 @@ class SwaggerModel
     returnVal
 
   createJSONSample: (modelsToIgnore) ->
+    console.log "creating json sample for " + @
     result = {}
     modelsToIgnore = modelsToIgnore || [];
     modelsToIgnore.push(@name);
     for prop in @properties
       result[prop.name] = prop.getSampleValue(modelsToIgnore)
+    modelsToIgnore.pop(@name);
     result
 
 class SwaggerModelProperty
   constructor: (@name, obj) ->
-    @dataType = obj.type
+    @dataType = obj.type || obj.dataType || obj["$ref"]
+    console.log @name + " has data type " + @dataType
     @isCollection  = @dataType && (@dataType.toLowerCase() is 'array' || @dataType.toLowerCase() is 'list' ||
       @dataType.toLowerCase() is 'set');
     @descr = obj.description

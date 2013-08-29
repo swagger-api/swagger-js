@@ -1,6 +1,6 @@
 window.api_key = 'special-key'
 
-describe 'SwaggerRequest', ->
+describe 'Operations for version 1.2 spec', ->
 
   beforeEach ->
     success =  ->

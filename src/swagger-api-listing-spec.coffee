@@ -1,6 +1,6 @@
 window.api_key = 'special-key'
 
-describe 'Swagger Api Listing', ->
+describe 'Swagger Api Listing for version 1.2 spec', ->
 
   beforeEach ->
     success =  ->
