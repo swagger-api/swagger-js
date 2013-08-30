@@ -429,6 +429,11 @@ class SwaggerModelProperty
       @values = obj.allowableValues.values
       if @values?
         @valuesString = "'" + @values.join("' or '") + "'"
+    if obj.enum?
+      @valueType = "string"
+      @values = obj.enum
+      if @values?
+        @valueString = "'" + @values.join("' or '") + "'"
 
   getSampleValue: (modelsToIgnore) ->
     if(@refModel? and (modelsToIgnore.indexOf(@refModel.name) is -1))
