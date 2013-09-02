@@ -209,6 +209,11 @@ describe 'Operations for version 1.2 spec', ->
       expect(param.description).toBeDefined
       expect(param.required).toBe false
 
+
+    it "gets operations for the pet api", ->
+      ops = swagger.pet.operations
+      expect(ops).toBeDefined
+
     it "gets help() from the file upload operation", ->
       operation = swagger.pet.operations.uploadFile
       expect(operation.help().trim()).toBe "* additionalMetadata - Additional data to pass to server\n* file - file to upload"

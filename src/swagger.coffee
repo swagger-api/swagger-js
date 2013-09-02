@@ -70,6 +70,7 @@ class SwaggerApi
     @apis = {}
     @apisArray = []
     @produces = response.produces
+    @authSchemes = response.authorizations
     @info = response.info if response.info?
 
     # if apis.operations exists, this is an api declaration as opposed to a resource listing
@@ -401,7 +402,6 @@ class SwaggerModel
     returnVal
 
   createJSONSample: (modelsToIgnore) ->
-    console.log "creating json sample for " + @
     result = {}
     modelsToIgnore = modelsToIgnore || [];
     modelsToIgnore.push(@name);
@@ -413,12 +413,10 @@ class SwaggerModel
 class SwaggerModelProperty
   constructor: (@name, obj) ->
     @dataType = obj.type || obj.dataType || obj["$ref"]
-    console.log @name + " has data type " + @dataType
     @isCollection  = @dataType && (@dataType.toLowerCase() is 'array' || @dataType.toLowerCase() is 'list' ||
       @dataType.toLowerCase() is 'set');
     @descr = obj.description
     @required = obj.required
-    console.log this
 
     if obj.items?
       if obj.items.type? then @refDataType = obj.items.type
@@ -475,7 +473,6 @@ class SwaggerOperation
     @resourceName = @resource.name
 
     # if void clear it
-    console.log "model type: " + type
     if(@type?.toLowerCase() is 'void') then @type = undefined
     if @type?
       # set the signature of response class
@@ -864,11 +861,25 @@ class ApiKeyAuthorization
     else if @type == "header"
       obj.headers[@name] = @value
 
+class PasswordAuthorization
+  name: null
+  username: null
+  password: null
+
+  constructor: (name, username, password) ->
+    @name = name
+    @username = username
+    @password = password
+
+  apply: (obj) ->
+    obj.headers["Authorization"] = "Basic " + btoa(@username + ":" + @password)
+
 @SwaggerApi = SwaggerApi
 @SwaggerResource = SwaggerResource
 @SwaggerOperation = SwaggerOperation
 @SwaggerRequest = SwaggerRequest
 @SwaggerModelProperty = SwaggerModelProperty
 @ApiKeyAuthorization = ApiKeyAuthorization
+@PasswordAuthorization = PasswordAuthorization
 
 @authorizations = new SwaggerAuthorizations()
