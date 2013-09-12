@@ -358,11 +358,12 @@ class SwaggerModel
     @name = if obj.id? then obj.id else modelName
     @properties = []
     for propertyName of obj.properties
-      if obj.enum?
-        for value of obj.enum
-          if propertyName is value
+      if obj.required?
+        for value of obj.required
+          if propertyName is obj.required[value]
             obj.properties[propertyName].required = true
-      @properties.push new SwaggerModelProperty(propertyName, obj.properties[propertyName])
+      prop = new SwaggerModelProperty(propertyName, obj.properties[propertyName])
+      @properties.push prop
     # support the 1.2 spec for required fields
 
 
