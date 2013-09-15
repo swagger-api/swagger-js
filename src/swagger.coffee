@@ -38,12 +38,12 @@ class SwaggerApi
         error: (response) =>
           if @url.substring(0, 4) isnt 'http'
             @fail 'Please specify the protocol for ' + @url
-          else if error.status == 0
+          else if response.status == 0
             @fail 'Can\'t read from server.  It may not have the appropriate access-control-origin settings.'
-          else if error.status == 404
+          else if response.status == 404
             @fail 'Can\'t read swagger JSON from '  + @url
           else
-            @fail error.status + ' : ' + error.statusText + ' ' + @url
+            @fail response.status + ' : ' + response.statusText + ' ' + @url
         response: (rawResponse) =>
           response = JSON.parse(rawResponse.content.data)
           @swaggerVersion = response.swaggerVersion
