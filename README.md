@@ -20,7 +20,7 @@ Then let swagger do the work!
 var swagger = require("swagger-client")
 
 var s = new swagger.SwaggerApi({
-  discoveryUrl: 'http://localhost:8002/api/api-docs'
+  url: 'http://localhost:8002/api/api-docs'
 });
 s.build();
 
