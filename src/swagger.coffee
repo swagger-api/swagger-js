@@ -260,7 +260,13 @@ class SwaggerResource
     # If there is a basePath in response, use that or else use
     # the one from the api object
     if response.basePath? and response.basePath.replace(/\s/g,'').length > 0
-      @basePath = response.basePath
+      if response.basePath[0] == '/'
+        if repsonse.basePath.length == 1
+          @basePath = window.location.protocol + '//' + window.location.host
+        else
+          @basePath = window.location.protocol + '//' + window.location.host + response.basePath
+      else
+        @basePath = response.basePath
 
     @addModels(response.models)
 
