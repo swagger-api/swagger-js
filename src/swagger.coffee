@@ -80,6 +80,15 @@ class SwaggerApi
         for operation in api.operations
           isApi = true
 
+    # The base path derived from url
+    if response.basePath
+      # support swagger 1.1, which has basePath
+      @basePath = response.basePath
+    else if @url.indexOf('?') > 0
+      @basePath = @url.substring(0, @url.lastIndexOf('?'))
+    else
+      @basePath = @url
+
     if isApi
       newName = response.resourcePath.replace(/\//g,'')
       this.resourcePath = response.resourcePath
@@ -88,15 +97,6 @@ class SwaggerApi
       @apis[newName] = res
       @apisArray.push res
     else
-      # The base path derived from url
-      if response.basePath
-        # support swagger 1.1, which has basePath
-        @basePath = response.basePath
-      else if @url.indexOf('?') > 0
-        @basePath = @url.substring(0, @url.lastIndexOf('?'))
-      else
-        @basePath = @url
-
       for resource in response.apis
         res = new SwaggerResource resource, this
         @apis[res.name] = res
@@ -121,6 +121,15 @@ class SwaggerApi
         for operation in api.operations
           isApi = true
 
+    # The base path derived from url
+    if response.basePath
+      # support swagger 1.1, which has basePath
+      @basePath = response.basePath
+    else if @url.indexOf('?') > 0
+      @basePath = @url.substring(0, @url.lastIndexOf('?'))
+    else
+      @basePath = @url
+
     if isApi
       newName = response.resourcePath.replace(/\//g,'')
       this.resourcePath = response.resourcePath
@@ -129,15 +138,6 @@ class SwaggerApi
       @apis[newName] = res
       @apisArray.push res
     else
-      # The base path derived from url
-      if response.basePath
-        # support swagger 1.1, which has basePath
-        @basePath = response.basePath
-      else if @url.indexOf('?') > 0
-        @basePath = @url.substring(0, @url.lastIndexOf('?'))
-      else
-        @basePath = @url
-
       for resource in response.apis
         res = new SwaggerResource resource, this
         @apis[res.name] = res
