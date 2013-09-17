@@ -51,6 +51,5 @@ task 'dev', "Open source files, run spec in browser, and watch for changes", ->
   exec "open http-spec.html"
   exec "open operation-spec.html"
   exec "open request-spec.html"
-  exec "open setup-spec.html"
   coffee = spawn 'coffee', ['-cw', '-o', 'lib', 'src']
   coffee.stdout.on 'data', (data) -> console.log data.toString().trim()

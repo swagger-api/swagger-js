@@ -191,4 +191,32 @@ describe 'SwaggerHttp for version 1.2 spec', ->
         expect(obj.headers["Content-Type"]).toBe "application/json"
         expect(obj.url).toBe ("http://petstore.swagger.wordnik.com/api/pet/100")
 
+  describe "query params should be single encoded", ->
 
+    beforeEach ->
+      window.body = null
+      window.response = null
+      window.callback = null
+      window.error = null
+      window.success_callback = (data) ->
+        window.response = data
+      window.error_callback = (data) ->
+        window.error = data
+
+    it "verifies the http request object for a DELETE", ->
+      params = {
+        status: "a b c d e"
+      }
+      opts = {
+        mock: true
+      }
+
+      window.response = swagger.pet.findPetsByStatus(params, opts, success_callback, error_callback)
+
+     waitsFor ->
+       window.response?
+
+      runs ->
+        obj = window.response
+        expect(obj.method).toBe "GET"
+        expect(obj.url).toBe ("http://petstore.swagger.wordnik.com/api/pet/findByStatus?status=a%20b%20c%20d%20e")
