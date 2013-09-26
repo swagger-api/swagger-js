@@ -236,7 +236,7 @@ class SwaggerResource
         headers: {}
         on:
           error: (response) =>
-            @api.fail "Unable to read api '" + @name + "' from path " + @url + " (server returned " + error.statusText + ")"
+            @api.fail "Unable to read api '" + @name + "' from path " + @url + " (server returned " + response.statusText + ")"
           response: (rawResponse) =>
             response = JSON.parse(rawResponse.content.data)
             @addApiDeclaration(response)
