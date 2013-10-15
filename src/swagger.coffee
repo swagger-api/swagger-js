@@ -624,6 +624,16 @@ class SwaggerOperation
   pathJson: -> @path.replace "{format}", "json"
 
   pathXml: -> @path.replace "{format}", "xml"
+  
+  # encodes the path parameters without encoding slashes
+  encodePathParam: (pathParam) ->
+  	if pathParam.indexOf("/") == -1
+  		encodeURIComponent(pathParam)
+  	else
+  		parts = pathParam.split("/")
+  		encParts = []
+  		encParts.push encodeURIComponent(part) for part in parts
+  		encParts.join "/"  	
 
   # converts the operation path into a real URL, and appends query params
   urlify: (args) ->
@@ -635,7 +645,7 @@ class SwaggerOperation
       if param.paramType == 'path'
         if args[param.name]
           reg = new RegExp '\{'+param.name+'[^\}]*\}', 'gi'
-          url = url.replace(reg, encodeURIComponent(args[param.name]))
+          url = url.replace(reg, @encodePathParam(args[param.name]))
           delete args[param.name]
         else
           throw "#{param.name} is a required path param."
