@@ -251,6 +251,27 @@ class SwaggerResource
 
       new SwaggerHttp().execute obj
 
+  # Constructs an absolute resource's basePath from relative one, using the @api basePath
+  # eg. if the @api.basePath = http://myhost.com:8090/mywebapp/v0/api-docs 
+  # and the resource response contains a relative basePath='v0'
+  # then the function will return 'http://myhost.com:8090/mywebapp/v0'
+  getAbsoluteBasePath: (relativeBasePath) ->
+    url = @api.basePath
+    # first check if the base is a part of given url
+    pos = url.lastIndexOf(relativeBasePath)
+    if pos is -1
+      # take the protocol, host and port parts only and glue the 'relativeBasePath'
+      parts = url.split("/")
+      url = parts[0] + "//" + parts[2]
+      if relativeBasePath.indexOf("/") is 0
+         url + relativeBasePath
+      else
+         url + "/" + relativeBasePath
+    else if (relativeBasePath is "/")
+      url.substring(0, pos)
+    else
+      url.substring(0, pos) + relativeBasePath
+
   addApiDeclaration: (response) ->
     if response.produces?
       @produces = response.produces
@@ -260,7 +281,7 @@ class SwaggerResource
     # If there is a basePath in response, use that or else use
     # the one from the api object
     if response.basePath? and response.basePath.replace(/\s/g,'').length > 0
-      @basePath = response.basePath
+      @basePath = if response.basePath.indexOf("http") is -1 then @getAbsoluteBasePath(response.basePath) else response.basePath
 
     @addModels(response.models)
 
