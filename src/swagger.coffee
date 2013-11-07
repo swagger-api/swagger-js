@@ -326,6 +326,9 @@ class SwaggerResource
         # support old error responses
         if o.errorResponses
           responseMessages = o.errorResponses
+          for r in responseMessages
+            r.message = r.reason
+            r.reason = null
 
         # sanitize the nickname
         o.nickname = @sanitize o.nickname
