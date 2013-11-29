@@ -283,7 +283,10 @@ class SwaggerResource
     if response.basePath? and response.basePath.replace(/\s/g,'').length > 0
       @basePath = if response.basePath.indexOf("http") is -1 then @getAbsoluteBasePath(response.basePath) else response.basePath
 
-    @addModels(response.models)
+    if SwaggerApi.modelLoader?
+        @addModels(SwaggerApi.modelLoader(response.models))
+    else
+        @addModels(response.models)
 
     # Instantiate SwaggerOperations and store them in the @operations map and @operationsArray
     if response.apis
