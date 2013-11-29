@@ -472,7 +472,12 @@ class SwaggerModelProperty
         result = @refDataType
       else
         result = @dataType
-    if @isCollection then [result] else result
+    if @isCollection
+        if @dataType is "map"
+            { "key": result }
+        else
+            [result]
+    else result
 
   toString: ->
     req = if @required then 'propReq' else 'propOpt'
@@ -564,31 +569,35 @@ class SwaggerOperation
     @resource[@nickname].help = =>
       @help()
 
-  isListType: (type) ->
-    if(type.indexOf('[') >= 0) then type.substring(type.indexOf('[') + 1, type.indexOf(']')) else undefined
+  isCollectionType: (type) ->
+    if(type.indexOf('[') >= 0) then type.substring(Math.max(type.indexOf('['), type.indexOf('>')) + 1, type.indexOf(']')) else undefined
 
   getSignature: (type, models) ->
     # set listType if it exists
-    listType = @isListType(type)
+    collectionType = @isCollectionType(type)
 
     # set flag which says if its primitive or not
-    isPrimitive = if ((listType? and models[listType]) or models[type]?) then false else true
+    isPrimitive = if ((collectionType? and models[collectionType]) or models[type]?) then false else true
 
-    if (isPrimitive) then type else (if listType? then models[listType].getMockSignature() else models[type].getMockSignature())
+    if (isPrimitive) then type else (if collectionType? then "<p class='stronger'>"+type+"</p>"+models[collectionType].getMockSignature() else models[type].getMockSignature())
 
   getSampleJSON: (type, models) ->
-    # set listType if it exists
-    listType = @isListType(type)
+    # set collectionType if it exists
+    collectionType = @isCollectionType(type)
 
     # set flag which says if its primitive or not
-    isPrimitive = if ((listType? and models[listType]) or models[type]?) then false else true
+    isPrimitive = if ((collectionType? and models[collectionType]) or models[type]?) then false else true
 
-    val = if (isPrimitive) then undefined else (if listType? then models[listType].createJSONSample() else models[type].createJSONSample())
+    val = if (isPrimitive) then undefined else (if collectionType? then models[collectionType].createJSONSample() else models[type].createJSONSample())
 
     # pretty printing obtained JSON
     if val
-      # if container is list wrap it
-      val = if listType then [val] else val
+      # if container is list or map wrap it
+      if collectionType? 
+        if type.indexOf("->") > -1
+            val = { "key": val } 
+        else 
+            val = [val]
       JSON.stringify(val, null, 2)
       
   do: (args={}, opts={}, callback, error) =>
