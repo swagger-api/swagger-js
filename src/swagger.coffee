@@ -327,11 +327,11 @@ class SwaggerResource
           produces = @produces
 
         type = o.type || o.responseClass
-        if(type is "array")
+        if(type is "array" || type is "map")
           ref = null
           if o.items
             ref = o.items["type"] || o.items["$ref"]
-          type = "array[" + ref + "]"
+          type = type+"[" + ref + "]"      
 
         responseMessages = o.responseMessages
         method = o.method
@@ -439,14 +439,20 @@ class SwaggerModelProperty
   constructor: (@name, obj) ->
     @dataType = obj.type || obj.dataType || obj["$ref"]
     @isCollection  = @dataType && (@dataType.toLowerCase() is 'array' || @dataType.toLowerCase() is 'list' ||
-      @dataType.toLowerCase() is 'set');
+      @dataType.toLowerCase() is 'set' || obj.additionalProperties?);
     @descr = obj.description
     @required = obj.required
 
     if obj.items?
       if obj.items.type? then @refDataType = obj.items.type
       if obj.items.$ref? then @refDataType = obj.items.$ref
-    @dataTypeWithRef = if @refDataType? then (@dataType + '[' + @refDataType + ']') else @dataType
+      @dataTypeWithRef = @dataType + '[' + @refDataType + ']'
+    if obj.additionalProperties?
+      @dataType = "map"
+      if obj.additionalProperties.type? then @refDataType = obj.additionalProperties.type
+      if obj.additionalProperties.$ref? then @refDataType = obj.additionalProperties.$ref        
+      @dataTypeWithRef = @dataType + '[string->' + @refDataType + ']'
+    @dataTypeWithRef ?= @dataType
     if obj.allowableValues?
       @valueType = obj.allowableValues.valueType
       @values = obj.allowableValues.values
