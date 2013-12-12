@@ -1,4 +1,3 @@
-
 class SwaggerApi
   
   # Defaults
@@ -860,6 +859,9 @@ class SwaggerAuthorizations
   add: (name, auth) ->
     @authz[name] = auth
     auth
+
+  remove: (name) ->
+    delete @authz[name]
 
   apply: (obj) ->
     for key, value of @authz
