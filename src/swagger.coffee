@@ -1,4 +1,3 @@
-
 class SwaggerApi
   
   # Defaults
@@ -876,6 +875,9 @@ class SwaggerAuthorizations
     @authz[name] = auth
     auth
 
+  remove: (name) ->
+    delete @authz[name]
+
   apply: (obj) ->
     for key, value of @authz
       # see if it applies
@@ -902,6 +904,7 @@ class ApiKeyAuthorization
       obj.headers[@name] = @value
 
 class PasswordAuthorization
+  @_btoa: null
   name: null
   username: null
   password: null
@@ -910,9 +913,16 @@ class PasswordAuthorization
     @name = name
     @username = username
     @password = password
+    PasswordAuthorization._ensureBtoa()
 
   apply: (obj) ->
-    obj.headers["Authorization"] = "Basic " + btoa(@username + ":" + @password)
+    obj.headers["Authorization"] = "Basic " + PasswordAuthorization._btoa(@username + ":" + @password)
+
+  @_ensureBtoa: ->
+    if typeof window != 'undefined'
+      @_btoa = btoa
+    else
+      @_btoa = require "btoa"
 
 @SwaggerApi = SwaggerApi
 @SwaggerResource = SwaggerResource
