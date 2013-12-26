@@ -282,24 +282,23 @@ class SwaggerResource
     if response.basePath? and response.basePath.replace(/\s/g,'').length > 0
       @basePath = if response.basePath.indexOf("http") is -1 then @getAbsoluteBasePath(response.basePath) else response.basePath
 
-    if SwaggerApi.modelLoader?
-        @addModels(SwaggerApi.modelLoader(response))
-    else
-        @addModels(response.models)
+    load = SwaggerApi.modelLoader || (response, next) -> next()
+    load response, () =>
+      @addModels(response.models)
 
-    # Instantiate SwaggerOperations and store them in the @operations map and @operationsArray
-    if response.apis
-      for endpoint in response.apis
-        @addOperations(endpoint.path, endpoint.operations, response.consumes, response.produces)
+      # Instantiate SwaggerOperations and store them in the @operations map and @operationsArray
+      if response.apis
+        for endpoint in response.apis
+          @addOperations(endpoint.path, endpoint.operations, response.consumes, response.produces)
 
-    # Store a named reference to this resource on the parent object
-    @api[this.name] = this
+      # Store a named reference to this resource on the parent object
+      @api[this.name] = this
 
-    # Mark as ready
-    @ready = true
+      # Mark as ready
+      @ready = true
 
-    # Now that this resource is loaded, tell the API to check in on itself
-    @api.selfReflect()
+      # Now that this resource is loaded, tell the API to check in on itself
+      @api.selfReflect()
 
   addModels: (models) ->
     if models?
