@@ -283,7 +283,7 @@ class SwaggerResource
       @basePath = if response.basePath.indexOf("http") is -1 then @getAbsoluteBasePath(response.basePath) else response.basePath
 
     if SwaggerApi.modelLoader?
-        @addModels(SwaggerApi.modelLoader(response.models))
+        @addModels(SwaggerApi.modelLoader(response))
     else
         @addModels(response.models)
 
