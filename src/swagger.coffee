@@ -326,11 +326,11 @@ class SwaggerResource
           produces = @produces
 
         type = o.type || o.responseClass
-        if(type is "array")
+        if(type is "array" || type is "map")
           ref = null
           if o.items
             ref = o.items["type"] || o.items["$ref"]
-          type = "array[" + ref + "]"
+          type = type+"[" + ref + "]"      
 
         responseMessages = o.responseMessages
         method = o.method
@@ -438,14 +438,20 @@ class SwaggerModelProperty
   constructor: (@name, obj) ->
     @dataType = obj.type || obj.dataType || obj["$ref"]
     @isCollection  = @dataType && (@dataType.toLowerCase() is 'array' || @dataType.toLowerCase() is 'list' ||
-      @dataType.toLowerCase() is 'set');
+      @dataType.toLowerCase() is 'set' || obj.additionalProperties?);
     @descr = obj.description
     @required = obj.required
 
     if obj.items?
       if obj.items.type? then @refDataType = obj.items.type
       if obj.items.$ref? then @refDataType = obj.items.$ref
-    @dataTypeWithRef = if @refDataType? then (@dataType + '[' + @refDataType + ']') else @dataType
+      @dataTypeWithRef = @dataType + '[' + @refDataType + ']'
+    if obj.additionalProperties?
+      @dataType = "map"
+      if obj.additionalProperties.type? then @refDataType = obj.additionalProperties.type
+      if obj.additionalProperties.$ref? then @refDataType = obj.additionalProperties.$ref        
+      @dataTypeWithRef = @dataType + '[string->' + @refDataType + ']'
+    @dataTypeWithRef ?= @dataType
     if obj.allowableValues?
       @valueType = obj.allowableValues.valueType
       @values = obj.allowableValues.values
@@ -465,7 +471,12 @@ class SwaggerModelProperty
         result = @refDataType
       else
         result = @dataType
-    if @isCollection then [result] else result
+    if @isCollection
+        if @dataType is "map"
+            { "key": result }
+        else
+            [result]
+    else result
 
   toString: ->
     req = if @required then 'propReq' else 'propOpt'
@@ -557,31 +568,35 @@ class SwaggerOperation
     @resource[@nickname].help = =>
       @help()
 
-  isListType: (type) ->
-    if(type.indexOf('[') >= 0) then type.substring(type.indexOf('[') + 1, type.indexOf(']')) else undefined
+  isCollectionType: (type) ->
+    if(type.indexOf('[') >= 0) then type.substring(Math.max(type.indexOf('['), type.indexOf('>')) + 1, type.indexOf(']')) else undefined
 
   getSignature: (type, models) ->
     # set listType if it exists
-    listType = @isListType(type)
+    collectionType = @isCollectionType(type)
 
     # set flag which says if its primitive or not
-    isPrimitive = if ((listType? and models[listType]) or models[type]?) then false else true
+    isPrimitive = if ((collectionType? and models[collectionType]) or models[type]?) then false else true
 
-    if (isPrimitive) then type else (if listType? then models[listType].getMockSignature() else models[type].getMockSignature())
+    if (isPrimitive) then type else (if collectionType? then "<p class='stronger'>"+type+"</p>"+models[collectionType].getMockSignature() else models[type].getMockSignature())
 
   getSampleJSON: (type, models) ->
-    # set listType if it exists
-    listType = @isListType(type)
+    # set collectionType if it exists
+    collectionType = @isCollectionType(type)
 
     # set flag which says if its primitive or not
-    isPrimitive = if ((listType? and models[listType]) or models[type]?) then false else true
+    isPrimitive = if ((collectionType? and models[collectionType]) or models[type]?) then false else true
 
-    val = if (isPrimitive) then undefined else (if listType? then models[listType].createJSONSample() else models[type].createJSONSample())
+    val = if (isPrimitive) then undefined else (if collectionType? then models[collectionType].createJSONSample() else models[type].createJSONSample())
 
     # pretty printing obtained JSON
     if val
-      # if container is list wrap it
-      val = if listType then [val] else val
+      # if container is list or map wrap it
+      if collectionType? 
+        if type.indexOf("->") > -1
+            val = { "key": val } 
+        else 
+            val = [val]
       JSON.stringify(val, null, 2)
       
   do: (args={}, opts={}, callback, error) =>
