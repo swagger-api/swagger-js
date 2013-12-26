@@ -24,7 +24,8 @@
     "node": ">= 0.6.6"
   },
   "dependencies": {
-    "shred": "0.8.9"
+    "shred": "0.8.9",
+    "btoa": "1.1.1"
   },
   "devDependencies": {
     "coffee-script": "~1.5.0"
