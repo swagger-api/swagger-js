@@ -17,14 +17,16 @@ npm install swagger-client
 
 Then let swagger do the work!
 ```js
-var swagger = require("swagger-client")
+var client = require("swagger-client")
 
-var s = new swagger.SwaggerApi({
-  url: 'http://localhost:8002/api/api-docs'
+var swagger = new client.SwaggerApi({
+  url: 'http://petstore.swagger.wordnik.com/api/api-docs',
+  success: function() {
+    if(swagger.ready === true) {
+      swagger.apis.pet.getPetById({petId:1});
+    }
+  }
 });
-s.build();
-
-s.apis.pet.getPetById({petId:1});
 
 ```
 
@@ -59,13 +61,13 @@ That's it!  You'll get a JSON response with the default callback handler:
 Need to pass an API key?  Configure one as a querystring:
 
 ```js
-swagger.authorizations.add("apiKey", new swagger.ApiKeyAuthorization("api_key","special-key","query"));
+client.authorizations.add("apiKey", new swagger.ApiKeyAuthorization("api_key","special-key","query"));
 ```
 
 ...or with a header:
 
 ```js
-swagger.authorizations.add("apiKey", new swagger.ApiKeyAuthorization("api_key","special-key","header"));
+client.authorizations.add("apiKey", new swagger.ApiKeyAuthorization("api_key","special-key","header"));
 ```
 
 ### Calling an API with swagger + the browser!
@@ -77,18 +79,18 @@ Download `swagger.js` and `shred.bundle.js` into your lib folder
 <script src='lib/swagger.js' type='text/javascript'></script>
 <script type="text/javascript">
   // initialize swagger, point to a resource listing
-  window.swagger = new SwaggerApi({url: "http://petstore.swagger.wordnik.com/api/api-docs.json"});
-  swagger.build();
+  window.swagger = new SwaggerApi({
+    url: "http://petstore.swagger.wordnik.com/api/api-docs.json",
+    success: function() {
+      if(swagger.ready === true) {
+        // upon connect, fetch a pet and set contents to element "mydata"
+        swagger.apis.pet.getPetById({petId:1}, function(data) {
+          document.getElementById("mydata").innerHTML = data.content.data;
+        });
+      }
+    }
+  });
 
-  // add a success handler to dump the raw json into a div element named `mydata`
-  success = function(data) {
-    document.getElementById("mydata").innerHTML = data.content.data;
-  }
-
-  // a function to fetch a pet
-  function getPet() {
-    swagger.apis.pet.getPetById({petId:1}, success);
-  }
 </script>
 ```
 
