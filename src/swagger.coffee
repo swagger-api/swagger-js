@@ -353,7 +353,7 @@ class SwaggerResource
         # sanitize the nickname
         o.nickname = @sanitize o.nickname
 
-        op = new SwaggerOperation o.nickname, resource_path, method, o.parameters, o.summary, o.notes, type, responseMessages, this, consumes, produces
+        op = new SwaggerOperation o.nickname, resource_path, method, o.parameters, o.summary, o.notes, type, responseMessages, this, consumes, produces, o.authorizations
         @operations[op.nickname] = op
         @operationsArray.push op
 
@@ -485,7 +485,7 @@ class SwaggerModelProperty
 
 # SwaggerOperation converts an operation into a method which can be executed directly
 class SwaggerOperation
-  constructor: (@nickname, @path, @method, @parameters=[], @summary, @notes, @type, @responseMessages, @resource, @consumes, @produces) ->
+  constructor: (@nickname, @path, @method, @parameters=[], @summary, @notes, @type, @responseMessages, @resource, @consumes, @produces, @authorizations) ->
     @resource.api.fail "SwaggerOperations must have a nickname." unless @nickname?
     @resource.api.fail "SwaggerOperation #{nickname} is missing path." unless @path?
     @resource.api.fail "SwaggerOperation #{nickname} is missing method." unless @method?
@@ -525,9 +525,9 @@ class SwaggerOperation
         parameter.allowableValues.descriptiveValues = []
         for v in parameter.enum
           if parameter.defaultValue? and parameter.defaultValue == v
-            parameter.allowableValues.descriptiveValues.push {value: v, isDefault: true}
+            parameter.allowableValues.descriptiveValues.push {value: String(v), isDefault: true}
           else
-            parameter.allowableValues.descriptiveValues.push {value: v, isDefault: false}
+            parameter.allowableValues.descriptiveValues.push {value: String(v), isDefault: false}
 
       # Set allowableValue attributes for 1.1 spec
       if parameter.allowableValues?
@@ -810,10 +810,13 @@ class SwaggerRequest
         e = window
       else
         e = exports
-      e.authorizations.apply obj
+      status = e.authorizations.apply obj, @operation.authorizations
 
       unless opts.mock?
-        new SwaggerHttp().execute obj
+        if status isnt false
+          new SwaggerHttp().execute obj
+        else
+          obj.canceled = true
       else
         console.log obj
         return obj
@@ -863,10 +866,16 @@ class SwaggerAuthorizations
   remove: (name) ->
     delete @authz[name]
 
-  apply: (obj) ->
+  apply: (obj, authorizations) ->
+    status = null
     for key, value of @authz
       # see if it applies
-      value.apply obj
+      result = value.apply obj, authorizations
+      if result is false
+        status = false
+      if result is true
+        status = true
+    status
 
 class ApiKeyAuthorization
   type: null
@@ -878,7 +887,7 @@ class ApiKeyAuthorization
     @value = value
     @type = type
 
-  apply: (obj) ->
+  apply: (obj, authorizations) ->
     if @type == "query"
       if obj.url.indexOf('?') > 0
         obj.url = obj.url + "&" + @name + "=" + @value
@@ -887,6 +896,7 @@ class ApiKeyAuthorization
       true
     else if @type == "header"
       obj.headers[@name] = @value
+      true
 
 class PasswordAuthorization
   @_btoa: null
@@ -900,8 +910,9 @@ class PasswordAuthorization
     @password = password
     PasswordAuthorization._ensureBtoa()
 
-  apply: (obj) ->
+  apply: (obj, authorizations) ->
     obj.headers["Authorization"] = "Basic " + PasswordAuthorization._btoa(@username + ":" + @password)
+    true
 
   @_ensureBtoa: ->
     if typeof window != 'undefined'
