@@ -7,6 +7,7 @@ class SwaggerApi
   authorizations: null
   authorizationScheme: null
   info: null
+  useJQuery: null 
 
   constructor: (url, options={}) ->
     # if url is a hash, assume only options were passed
@@ -30,6 +31,7 @@ class SwaggerApi
   build: ->
     @progress 'fetching resource list: ' + @url
     obj = 
+      useJQuery: @useJQuery
       url: @url
       method: "get"
       headers: {}
@@ -43,14 +45,14 @@ class SwaggerApi
             @fail 'Can\'t read swagger JSON from '  + @url
           else
             @fail response.status + ' : ' + response.statusText + ' ' + @url
-        response: (rawResponse) =>
-          response = JSON.parse(rawResponse.content.data)
-          @swaggerVersion = response.swaggerVersion
+        response: (response) =>
+          responseObj = JSON.parse(response.data)
+          @swaggerVersion = responseObj.swaggerVersion
 
           if @swaggerVersion is "1.2"
-            @buildFromSpec response
+            @buildFromSpec responseObj
           else
-            @buildFrom1_1Spec response
+            @buildFrom1_1Spec responseObj
           
     # apply authorizations
     e = {}
@@ -106,7 +108,7 @@ class SwaggerApi
 
 
   buildFrom1_1Spec: (response)->
-    console.log "This API is using a deprecated version of Swagger!  Please see http://github.com/wordnik/swagger-core/wiki for more info"
+    log "This API is using a deprecated version of Swagger!  Please see http://github.com/wordnik/swagger-core/wiki for more info"
     @apiVersion = response.apiVersion if response.apiVersion?
     @apis = {}
     @apisArray = []
@@ -174,11 +176,11 @@ class SwaggerApi
 
   help: ->
     for resource_name, resource of @apis
-      console.log resource_name
+      log resource_name
       for operation_name, operation of resource.operations
-        console.log "  #{operation.nickname}"
+        log "  #{operation.nickname}"
         for parameter in operation.parameters
-          console.log "    #{parameter.name}#{if parameter.required then ' (required)'  else ''} - #{parameter.description}"
+          log "    #{parameter.name}#{if parameter.required then ' (required)'  else ''} - #{parameter.description}"
     @
         
 class SwaggerResource
@@ -233,13 +235,14 @@ class SwaggerResource
       obj = 
         url: @url
         method: "get"
+        useJQuery: @useJQuery
         headers: {}
         on:
           error: (response) =>
             @api.fail "Unable to read api '" + @name + "' from path " + @url + " (server returned " + response.statusText + ")"
-          response: (rawResponse) =>
-            response = JSON.parse(rawResponse.content.data)
-            @addApiDeclaration(response)
+          response: (response) =>
+            responseObj = JSON.parse(response.data)
+            @addApiDeclaration(responseObj)
 
       # apply authorizations
       e = {}
@@ -422,7 +425,7 @@ class SwaggerModel
     # modelsToIgnore is used to ensure that recursive references do not lead to endless loop
     # and that the same model is not displayed multiple times
     for prop in @properties
-      if(prop.refModel? and (modelsToIgnore.indexOf(prop.refModel)) == -1)
+      if(prop.refModel? and (modelsToIgnore[prop.refModel] != 'undefined') == -1)
         returnVal = returnVal + ('<br>' + prop.refModel.getMockSignature(modelsToIgnore))
 
     returnVal
@@ -460,7 +463,7 @@ class SwaggerModelProperty
         @valueString = "'" + @values.join("' or '") + "'"
 
   getSampleValue: (modelsToIgnore) ->
-    if(@refModel? and (modelsToIgnore.indexOf(@refModel.name) is -1))
+    if(@refModel? and (modelsToIgnore[@refModel.name] is 'undefined'))
       result = @refModel.createJSONSample(modelsToIgnore)
     else
       if @isCollection
@@ -603,17 +606,18 @@ class SwaggerOperation
 
     # Define a default error handler
     unless error?
-      error = (xhr, textStatus, error) -> console.log xhr, textStatus, error
+      error = (xhr, textStatus, error) -> 
+        log xhr, textStatus, error
 
     # Define a default success handler
     unless callback?
-      callback = (data) ->
+      callback = (response) ->
         content = null
-        if data.content?
-          content = data.content.data
+        if response?
+          content = response.data
         else
           content = "no data"
-        console.log "default callback: " + content
+        log "default callback: " + content
     
     # params to pass into the request
     params = {}
@@ -746,8 +750,8 @@ class SwaggerRequest
 
     # verify the content type is acceptable from what it defines
     if requestContentType and @operation.consumes
-      if @operation.consumes.indexOf(requestContentType) is -1
-        console.log "server doesn't consume " + requestContentType + ", try " + JSON.stringify(@operation.consumes)
+      if @operation.consumes[requestContentType] is 'undefined'
+        log "server doesn't consume " + requestContentType + ", try " + JSON.stringify(@operation.consumes)
         if @requestContentType == null
           requestContentType = @operation.consumes[0]
 
@@ -763,8 +767,8 @@ class SwaggerRequest
 
     # verify the content type can be produced
     if responseContentType and @operation.produces
-      if @operation.produces.indexOf(responseContentType) is -1
-        console.log "server can't produce " + responseContentType
+      if @operation.produces[responseContentType] is 'undefined'
+        log "server can't produce " + responseContentType
 
     # prepare the body from params, if needed
     if requestContentType && requestContentType.indexOf("application/x-www-form-urlencoded") is 0
@@ -790,12 +794,12 @@ class SwaggerRequest
       myHeaders["Accept"] = responseContentType
 
     unless headers? and headers.mock?
-
       obj = 
         url: @url
         method: @type
         headers: myHeaders
         body: body
+        useJQuery: @useJQuery
         on:
           error: (response) =>
             @errorCallback response, @opts.parent
@@ -820,21 +824,18 @@ class SwaggerRequest
         else
           obj.canceled = true
       else
-        console.log obj
         return obj
 
   asCurl: ->
     header_args = ("--header \"#{k}: #{v}\"" for k,v of @headers)
     "curl #{header_args.join(" ")} #{@url}"
 
-
-# SwaggerHttp is a wrapper on top of Shred, which makes actual http requests
 class SwaggerHttp
   Shred: null
   shred: null
   content: null
 
-  constructor: ->    
+  initShred: ->
     if typeof window != 'undefined'
       @Shred = require "./shred"
     else
@@ -847,13 +848,109 @@ class SwaggerHttp
     if typeof window != 'undefined'
       @content = require "./shred/content"
       @content.registerProcessor(
-        ["application/json; charset=utf-8","application/json","json"], { parser: (identity), stringify: toString })
+        ["application/json; charset=utf-8","application/json","json"],
+        {
+          parser: (identity),
+          stringify: toString 
+        }
+      )
     else
       @Shred.registerProcessor(
-        ["application/json; charset=utf-8","application/json","json"], { parser: (identity), stringify: toString })
+        ["application/json; charset=utf-8","application/json","json"],
+        {
+          parser: (identity),
+          stringify: toString
+        }
+      )
 
   execute: (obj) ->
+    if @isIE() or obj.useJQuery
+      @executeWithJQuery obj
+    else
+      @executeWithShred obj
+
+  executeWithShred: (obj) ->
+    if !@Shred
+      @initShred()
+    cb = obj.on
+    res = {
+      error: (response) =>
+        if obj
+          cb.error response
+      redirect: (response) =>
+        if obj
+          cb.redirect response
+      307: (response) =>
+        if obj
+          cb.redirect response
+      response: (raw) =>
+        if obj
+          headers = raw._headers
+          out = {
+            headers: headers
+            url: raw.request.url
+            method: raw.request.method
+            status: raw.status
+            data: raw.content.data
+          }
+          cb.response out
+    }
+    if obj
+      obj.on = res
+
     @shred.request obj
+
+  executeWithJQuery: (obj) ->
+    cb = obj.on
+    request = obj
+    obj.type = obj.method
+    obj.cache = false
+
+    # set headers
+    beforeSend = (xhr) ->
+      if obj.headers
+        for key of obj.headers
+          if key.toLowerCase() is "content-type"
+            obj.contentType = obj.headers[key]
+          else if key.toLowerCase() is "accept"
+            obj.accepts = obj.headers[key]
+          else
+            xhr.setRequestHeader(key, obj.headers[key])
+
+    obj.beforeSend = beforeSend
+    obj.data = obj.body
+
+    obj.complete = (response, textStatus, opts) =>
+      headers = {}
+      headerArray = response.getAllResponseHeaders().split(":")
+      for i in [0..headerArray.length/2] by (2)
+        headers[headerArray[i]] = headerArray[i+1]
+
+      out = {
+        headers: headers
+        url: request.url
+        method: request.method
+        status: response.status
+        data: response.responseText
+        headers: headers
+      }
+      if response.status in [200..299]
+        cb.response out
+      if response.status in [400..599] or response.status is 0
+        cb.error out
+      cb.response out
+    $.support.cors = true
+    $.ajax(obj)
+
+  isIE:() ->
+    isIE: false
+    if typeof navigator isnt 'undefined' and navigator.userAgent
+      nav = navigator.userAgent.toLowerCase()
+      if nav.indexOf('msie') isnt -1
+        version = parseInt(nav.split('msie')[1])
+        if version <= 8
+          isIE = true
+    isIE
 
 class SwaggerAuthorizations
   authz: null
@@ -929,5 +1026,6 @@ class PasswordAuthorization
 @SwaggerModelProperty = SwaggerModelProperty
 @ApiKeyAuthorization = ApiKeyAuthorization
 @PasswordAuthorization = PasswordAuthorization
+@SwaggerHttp = SwaggerHttp
 
 @authorizations = new SwaggerAuthorizations()

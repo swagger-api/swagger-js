@@ -6,7 +6,7 @@ describe 'SwaggerHttp for version 1.2 spec', ->
     success =  ->
       console.log "success"
     window.authorizations.add "key", new ApiKeyAuthorization("api_key", "special-key", "header")
-    window.swagger = new SwaggerApi({url: 'http://petstore.swagger.wordnik.com/api/api-docs', success: success})
+    window.swagger = new SwaggerApi({url: 'http://localhost:8002/api/api-docs', success: success})
     waitsFor ->
       swagger.ready?
 
@@ -40,7 +40,7 @@ describe 'SwaggerHttp for version 1.2 spec', ->
         obj = window.response
         expect(obj.method).toBe "GET"
         expect(obj.headers["Accept"]).toBe "application/json"
-        expect(obj.url).toBe ("http://petstore.swagger.wordnik.com/api/pet/1")
+        expect(obj.url).toBe ("http://localhost:8002/api/pet/1")
 
     it "verifies the http request object for a GET with query params", ->
       params = {
@@ -60,7 +60,7 @@ describe 'SwaggerHttp for version 1.2 spec', ->
         obj = window.response
         expect(obj.method).toBe "GET"
         expect(obj.headers["Accept"]).toBe "application/json"
-        expect(obj.url).toBe ("http://petstore.swagger.wordnik.com/api/pet/findByStatus?status=available")
+        expect(obj.url).toBe ("http://localhost:8002/api/pet/findByStatus?status=available")
 
   describe "execute post operations", ->
 
@@ -96,7 +96,7 @@ describe 'SwaggerHttp for version 1.2 spec', ->
         expect(obj.method).toBe "POST"
         expect(obj.headers["Accept"]).toBe "application/json"
         expect(obj.headers["Content-Type"]).toBe "application/json"
-        expect(obj.url).toBe ("http://petstore.swagger.wordnik.com/api/pet")
+        expect(obj.url).toBe ("http://localhost:8002/api/pet")
 
     it "verifies the http request object for a POST with form params", ->
       params = {
@@ -120,7 +120,7 @@ describe 'SwaggerHttp for version 1.2 spec', ->
         expect(obj.body).toBe "name=dog&status=very%20happy"
         expect(obj.method).toBe "POST"
         expect(obj.headers["Accept"]).toBe "application/json"
-        expect(obj.url).toBe ("http://petstore.swagger.wordnik.com/api/pet/1")
+        expect(obj.url).toBe ("http://localhost:8002/api/pet/1")
 
   describe "execute put operations", ->
 
@@ -156,7 +156,7 @@ describe 'SwaggerHttp for version 1.2 spec', ->
         expect(obj.method).toBe "PUT"
         expect(obj.headers["Accept"]).toBe undefined
         expect(obj.headers["Content-Type"]).toBe "application/json"
-        expect(obj.url).toBe ("http://petstore.swagger.wordnik.com/api/pet")
+        expect(obj.url).toBe ("http://localhost:8002/api/pet")
 
 
   describe "execute delete operations", ->
@@ -189,7 +189,7 @@ describe 'SwaggerHttp for version 1.2 spec', ->
         expect(obj.method).toBe "DELETE"
         expect(obj.headers["Accept"]).toBe undefined
         expect(obj.headers["Content-Type"]).toBe "application/json"
-        expect(obj.url).toBe ("http://petstore.swagger.wordnik.com/api/pet/100")
+        expect(obj.url).toBe ("http://localhost:8002/api/pet/100")
 
   describe "query params should be single encoded", ->
 
@@ -219,4 +219,4 @@ describe 'SwaggerHttp for version 1.2 spec', ->
       runs ->
         obj = window.response
         expect(obj.method).toBe "GET"
-        expect(obj.url).toBe ("http://petstore.swagger.wordnik.com/api/pet/findByStatus?status=a%20b%20c%20d%20e")
+        expect(obj.url).toBe ("http://localhost:8002/api/pet/findByStatus?status=a%20b%20c%20d%20e")

@@ -6,7 +6,7 @@ describe 'SwaggerRequest for version 1.2 spec', ->
     success =  ->
       console.log "success"
     window.authorizations.add "key", new ApiKeyAuthorization("api_key", "special-key", "header")
-    window.swagger = new SwaggerApi({url: 'http://petstore.swagger.wordnik.com/api/api-docs', success: success})
+    window.swagger = new SwaggerApi({url: 'http://localhost:8002/api/api-docs', success: success})
     waitsFor ->
       swagger.ready?
 
@@ -30,7 +30,7 @@ describe 'SwaggerRequest for version 1.2 spec', ->
         responseContentType: "application/json"
       }
 
-      new SwaggerRequest("GET", "http://petstore.swagger.wordnik.com/api/pet/1", params, opts, window.success_callback, window.error_callback, operation)
+      new SwaggerRequest("GET", "http://localhost:8002/api/pet/1", params, opts, window.success_callback, window.error_callback, operation)
 
       window.args =
         petId: '1'
@@ -39,7 +39,7 @@ describe 'SwaggerRequest for version 1.2 spec', ->
        window.response?
 
       runs ->
-        data = window.response.content.data
+        data = window.response.data
         pet = JSON.parse(data)
 
         expect(pet).toBeDefined
@@ -53,7 +53,7 @@ describe 'SwaggerRequest for version 1.2 spec', ->
         responseContentType: null
       }
 
-      new SwaggerRequest("GET", "http://petstore.swagger.wordnik.com/api/pet/1", params, opts, success_callback, error_callback, operation)
+      new SwaggerRequest("GET", "http://localhost:8002/api/pet/1", params, opts, success_callback, error_callback, operation)
 
       window.args =
         petId: '1'
@@ -63,7 +63,7 @@ describe 'SwaggerRequest for version 1.2 spec', ->
 
       runs ->
         parser = new DOMParser()
-        data = window.response.content.data
+        data = window.response.data
         pet = parser.parseFromString( data, "text/xml" )
         #pet = window.response
         expect(pet).toBeDefined
@@ -76,7 +76,7 @@ describe 'SwaggerRequest for version 1.2 spec', ->
         responseContentType: "text/plain"
       }
 
-      new SwaggerRequest("GET", "http://petstore.swagger.wordnik.com/api/pet/1", params, opts, success_callback, error_callback, operation)
+      new SwaggerRequest("GET", "http://localhost:8002/api/pet/1", params, opts, success_callback, error_callback, operation)
 
       window.args =
         petId: '1'
@@ -85,7 +85,7 @@ describe 'SwaggerRequest for version 1.2 spec', ->
        window.response?
 
       runs ->
-        pet = window.response.content.data
+        pet = window.response.data
         expect(pet).toBe "Pet(id=1, category=Category(id=2, name=Cats), name=Cat 1, photoUrls=[url1, url2], tags=[Tag(id=1, name=tag1), Tag(id=2, name=tag2)], status=available)"
 
     it "fetches an object as html", ->
@@ -95,7 +95,7 @@ describe 'SwaggerRequest for version 1.2 spec', ->
         responseContentType: "text/html"
       }
 
-      new SwaggerRequest("GET", "http://petstore.swagger.wordnik.com/api/pet/1", params, opts, success_callback, error_callback, operation)
+      new SwaggerRequest("GET", "http://localhost:8002/api/pet/1", params, opts, success_callback, error_callback, operation)
 
       window.args =
         petId: '1'
@@ -104,17 +104,18 @@ describe 'SwaggerRequest for version 1.2 spec', ->
        window.response?
 
       runs ->
-        pet = window.response.content.data
+        pet = window.response.data
         console.log pet
 
     it "handles redirects", ->
       params = {}
       opts = {
+        useJQuery: true
         requestContentType: null
         responseContentType: "application/json"
       }
 
-      new SwaggerRequest("GET", "http://petstore.swagger.wordnik.com/api/pet.redirect/3", params, opts, success_callback, error_callback, operation)
+      new SwaggerRequest("GET", "http://localhost:8002/api/pet.redirect/3", params, opts, success_callback, error_callback, operation)
 
       window.args =
         petId: '1'
@@ -150,13 +151,13 @@ describe 'SwaggerRequest for version 1.2 spec', ->
         responseContentType: "application/json"
       }
 
-      new SwaggerRequest("POST", "http://petstore.swagger.wordnik.com/api/pet", params, opts, success_callback, error_callback, operation)
+      new SwaggerRequest("POST", "http://localhost:8002/api/pet", params, opts, success_callback, error_callback, operation)
 
      waitsFor ->
        window.response?
 
       runs ->
-        data = window.response.content.data
+        data = window.response.data
         resp = JSON.parse(data)
         expect(resp.code).toBe 200
 
@@ -170,7 +171,7 @@ describe 'SwaggerRequest for version 1.2 spec', ->
         responseContentType: "application/xml"    
       }
 
-      new SwaggerRequest("POST", "http://petstore.swagger.wordnik.com/api/pet", params, opts, success_callback, error_callback, operation)
+      new SwaggerRequest("POST", "http://localhost:8002/api/pet", params, opts, success_callback, error_callback, operation)
 
       waitsFor ->
         window.response?
@@ -202,13 +203,13 @@ describe 'SwaggerRequest for version 1.2 spec', ->
         responseContentType: "application/json"
       }
 
-      new SwaggerRequest("PUT", "http://petstore.swagger.wordnik.com/api/pet", params, opts, success_callback, error_callback, operation)
+      new SwaggerRequest("PUT", "http://localhost:8002/api/pet", params, opts, success_callback, error_callback, operation)
 
      waitsFor ->
        window.response?
 
       runs ->
-        data = window.response.content.data
+        data = window.response.data
         resp = JSON.parse(data)
         expect(resp.code).toBe 200
 
@@ -222,7 +223,7 @@ describe 'SwaggerRequest for version 1.2 spec', ->
         responseContentType: "application/xml"
       }
 
-      new SwaggerRequest("PUT", "http://petstore.swagger.wordnik.com/api/pet", params, opts, success_callback, error_callback, operation)
+      new SwaggerRequest("PUT", "http://localhost:8002/api/pet", params, opts, success_callback, error_callback, operation)
 
      waitsFor ->
        window.response?
@@ -246,7 +247,7 @@ describe 'SwaggerRequest for version 1.2 spec', ->
       window.success_callback = (data) ->
         window.response = "successfully deleted pet"
       params = {}
-      new SwaggerRequest("DELETE", "http://petstore.swagger.wordnik.com/api/pet/100", params, {}, success_callback, error_callback, operation)
+      new SwaggerRequest("DELETE", "http://localhost:8002/api/pet/100", params, {}, success_callback, error_callback, operation)
 
      waitsFor ->
        window.response?
@@ -270,7 +271,7 @@ describe 'SwaggerRequest for version 1.2 spec', ->
       window.success_callback = (data) ->
         window.response = "successfully fetched options"
       params = {}
-      new SwaggerRequest("OPTIONS", "http://petstore.swagger.wordnik.com/api/pet", params, {}, success_callback, error_callback, operation)
+      new SwaggerRequest("OPTIONS", "http://localhost:8002/api/pet", params, {}, success_callback, error_callback, operation)
 
      waitsFor ->
        window.response?
@@ -301,7 +302,7 @@ describe 'SwaggerRequest for version 1.2 spec', ->
         responseContentType: "application/json"
       }
 
-      new SwaggerRequest("PATCH", "http://petstore.swagger.wordnik.com/api/pet/3", params, opts, success_callback, error_callback, operation)
+      new SwaggerRequest("PATCH", "http://localhost:8002/api/pet/3", params, opts, success_callback, error_callback, operation)
 
       waitsFor ->
          window.response?
@@ -332,7 +333,7 @@ describe 'SwaggerRequest for version 1.2 spec', ->
 
       window.authorizations.add "key", auth
 
-      new SwaggerRequest("GET", "http://petstore.swagger.wordnik.com/api/pet/1", params, opts, window.success_callback, window.error_callback, operation)
+      new SwaggerRequest("GET", "http://localhost:8002/api/pet/1", params, opts, window.success_callback, window.error_callback, operation)
 
       window.args =
         petId: '1'
@@ -341,7 +342,7 @@ describe 'SwaggerRequest for version 1.2 spec', ->
        window.response?
 
       runs ->
-        data = window.response.content.data
+        data = window.response.data
         pet = JSON.parse(data)
 
         expect(pet).toBeDefined
@@ -359,7 +360,7 @@ describe 'SwaggerRequest for version 1.2 spec', ->
 
       window.authorizations.add "key", auth
 
-      new SwaggerRequest("GET", "http://petstore.swagger.wordnik.com/api/pet/1", params, opts, window.success_callback, window.error_callback, operation)
+      new SwaggerRequest("GET", "http://localhost:8002/api/pet/1", params, opts, window.success_callback, window.error_callback, operation)
 
       window.args =
         petId: '1'
@@ -368,7 +369,7 @@ describe 'SwaggerRequest for version 1.2 spec', ->
        window.response?
 
       runs ->
-        data = window.response.content.data
+        data = window.response.data
         pet = JSON.parse(data)
 
         expect(pet).toBeDefined

@@ -6,7 +6,7 @@ describe 'Swagger Api Listing for version 1.2 spec', ->
     success =  ->
       console.log "success"
     window.authorizations.add "key", new ApiKeyAuthorization("api_key", "special-key", "header")
-    window.swagger = new SwaggerApi({url: 'http://petstore.swagger.wordnik.com/api/api-docs', success: success})
+    window.swagger = new SwaggerApi({url: 'http://localhost:8002/api/api-docs', success: success})
     waitsFor ->
       swagger.ready?
 
@@ -41,6 +41,6 @@ describe 'Swagger Api Listing for version 1.2 spec', ->
         window.response?
 
       runs ->
-        pet = JSON.parse(window.response.content.data)
+        pet = JSON.parse(window.response.data)
         console.log(pet)
         expect(pet.code).toNotBe 400
