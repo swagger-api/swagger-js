@@ -874,15 +874,39 @@ class SwaggerHttp
       @initShred()
     cb = obj.on
     res = {
-      error: (response) =>
+      error: (raw) =>
         if obj
-          cb.error response
-      redirect: (response) =>
+          headers = raw._headers
+          out = {
+            headers: headers
+            url: raw.request.url
+            method: raw.request.method
+            status: raw.status
+            data: raw.content.data
+          }
+          cb.error out
+      redirect: (raw) =>
         if obj
-          cb.redirect response
-      307: (response) =>
+          headers = raw._headers
+          out = {
+            headers: headers
+            url: raw.request.url
+            method: raw.request.method
+            status: raw.status
+            data: raw.content.data
+          }
+          cb.redirect out
+      307: (raw) =>
         if obj
-          cb.redirect response
+          headers = raw._headers
+          out = {
+            headers: headers
+            url: raw.request.url
+            method: raw.request.method
+            status: raw.status
+            data: raw.content.data
+          }
+          cb.redirect out
       response: (raw) =>
         if obj
           headers = raw._headers
