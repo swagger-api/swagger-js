@@ -34,7 +34,9 @@ class SwaggerApi
       useJQuery: @useJQuery
       url: @url
       method: "get"
-      headers: {}
+      headers: {
+        accept:"application/json"
+      }
       on:
         error: (response) =>
           if @url.substring(0, 4) isnt 'http'
@@ -236,7 +238,9 @@ class SwaggerResource
         url: @url
         method: "get"
         useJQuery: @useJQuery
-        headers: {}
+        headers: {
+          accept:"application/json"
+        }
         on:
           error: (response) =>
             @api.fail "Unable to read api '" + @name + "' from path " + @url + " (server returned " + response.statusText + ")"
