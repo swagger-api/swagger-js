@@ -1,3 +1,6 @@
+log = ->
+  if window.console then console.log.apply console,arguments
+
 class SwaggerApi
   
   # Defaults
@@ -471,10 +474,23 @@ class SwaggerModelProperty
       result = @refModel.createJSONSample(modelsToIgnore)
     else
       if @isCollection
-        result = @refDataType
+        result = @toSampleValue @refDataType
       else
-        result = @dataType
+        result = @toSampleValue @dataType
     if @isCollection then [result] else result
+
+  toSampleValue: (value) ->
+    if value is "integer"
+      result = 0
+    else if value is "boolean"
+      result = false
+    else if value is "double"
+      result = 0.0
+    else if value is "string"
+      result = ""
+    else
+      result = value
+    result
 
   toString: ->
     req = if @required then 'propReq' else 'propOpt'
@@ -745,7 +761,7 @@ class SwaggerRequest
       # if any form params, content-type must be set
       if (param for param in @operation.parameters when param.paramType is "form").length > 0
         type = param.type || param.dataType
-        if (param for param in @operation.parameters when type.toLowerCase() is "file").length > 0
+        if (param for param in @operation.parameters when typeof type isnt 'undefined' and type.toLowerCase() is "file").length > 0
           requestContentType = "multipart/form-data"
         else
           requestContentType = "application/x-www-form-urlencoded"
