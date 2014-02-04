@@ -429,7 +429,7 @@ class SwaggerModel
     # modelsToIgnore is used to ensure that recursive references do not lead to endless loop
     # and that the same model is not displayed multiple times
     for prop in @properties
-      if(prop.refModel? and (modelsToIgnore[prop.refModel] != 'undefined') == -1)
+      if(prop.refModel? and modelsToIgnore.indexOf(prop.refModel) == -1)
         returnVal = returnVal + ('<br>' + prop.refModel.getMockSignature(modelsToIgnore))
 
     returnVal
