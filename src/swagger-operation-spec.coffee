@@ -216,4 +216,4 @@ describe 'Operations for version 1.2 spec', ->
 
     it "gets help() from the file upload operation", ->
       operation = swagger.pet.operations.uploadFile
-      expect(operation.help().trim()).toBe "* additionalMetadata - Additional data to pass to server\n* file - file to upload"
+      expect(operation.help()).toBe "* additionalMetadata - Additional data to pass to server\n* file - file to upload"
