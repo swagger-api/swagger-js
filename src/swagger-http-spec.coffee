@@ -4,7 +4,7 @@ describe 'SwaggerHttp for version 1.2 spec', ->
   
   beforeEach ->
     success =  ->
-      console.log "success"
+      log "success"
     window.authorizations.add "key", new ApiKeyAuthorization("api_key", "special-key", "header")
     window.swagger = new SwaggerApi({url: 'http://localhost:8002/api/api-docs', success: success})
     waitsFor ->
@@ -92,7 +92,7 @@ describe 'SwaggerHttp for version 1.2 spec', ->
 
       runs ->
         obj = window.response
-        console.log obj
+        log obj
         expect(obj.method).toBe "POST"
         expect(obj.headers["Accept"]).toBe "application/json"
         expect(obj.headers["Content-Type"]).toBe "application/json"
@@ -116,7 +116,7 @@ describe 'SwaggerHttp for version 1.2 spec', ->
 
       runs ->
         obj = window.response
-        console.log obj
+        log obj
         expect(obj.body).toBe "name=dog&status=very%20happy"
         expect(obj.method).toBe "POST"
         expect(obj.headers["Accept"]).toBe "application/json"

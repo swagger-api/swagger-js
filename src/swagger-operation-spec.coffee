@@ -4,7 +4,7 @@ describe 'Operations for version 1.2 spec', ->
 
   beforeEach ->
     success =  ->
-      console.log "success"
+      log "success"
     window.authorizations.add "key", new ApiKeyAuthorization("api_key", "special-key", "header")
     window.swagger = new SwaggerApi({url: 'http://localhost:8002/api/api-docs', success: success})
     waitsFor ->
@@ -54,7 +54,7 @@ describe 'Operations for version 1.2 spec', ->
     it "verifies the response messages from the get operation", ->
       operation = swagger.pet.operations.getPetById
 
-      console.log operation
+      log operation
 
       responseMessages = operation.responseMessages
       expect(responseMessages).toBeDefined
@@ -120,7 +120,7 @@ describe 'Operations for version 1.2 spec', ->
       expect(parameters.length).toBe 1
 
       param = parameters[0]
-      console.log param
+      log param
       expect(param.name).toBe "tags"
       expect(param.type).toBe "string"
       expect(param.paramType).toBe "query"
@@ -216,4 +216,4 @@ describe 'Operations for version 1.2 spec', ->
 
     it "gets help() from the file upload operation", ->
       operation = swagger.pet.operations.uploadFile
-      expect(operation.help().trim()).toBe "* additionalMetadata - Additional data to pass to server\n* file - file to upload"
+      expect(operation.help()).toBe "* additionalMetadata - Additional data to pass to server\n* file - file to upload"
