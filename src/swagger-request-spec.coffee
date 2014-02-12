@@ -62,21 +62,16 @@ describe 'SwaggerRequest for version 1.2 spec', ->
        window.response?
 
       runs ->
+        data = window.response.data
         if window.DOMParser
           parser = new window.DOMParser()
           pet = parser.parseFromString(data, "text/xml")
-
         else
           parser = new ActiveXObject("Microsoft.XMLDOM")
           parser.async = false
           pet = parser.loadXML(data)
 
-        parser = new DOMParser()
-        data = window.response.data
-        pet = parser.parseFromString( data, "text/xml" )
-        #pet = window.response
         expect(pet).toBeDefined
-        #expect(pet.id).toBe 1
 
     it "fetches an object with plain text", ->
       params = {}
