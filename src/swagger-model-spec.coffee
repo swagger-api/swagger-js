@@ -52,5 +52,5 @@ describe 'Swagger models version 1.2 spec', ->
     it "verifies the Pet sample JSON", ->
       pet = window.swagger.apis.pet.models["Pet"]
       sample = pet.createJSONSample()
-      console.log sample
-      console.log JSON.stringify sample
+      log sample
+      log JSON.stringify sample

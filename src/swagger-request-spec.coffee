@@ -4,7 +4,7 @@ describe 'SwaggerRequest for version 1.2 spec', ->
   
   beforeEach ->
     success =  ->
-      console.log "success"
+      log "success"
     window.authorizations.add "key", new ApiKeyAuthorization("api_key", "special-key", "header")
     window.swagger = new SwaggerApi({url: 'http://localhost:8002/api/api-docs', success: success})
     waitsFor ->
@@ -105,7 +105,7 @@ describe 'SwaggerRequest for version 1.2 spec', ->
 
       runs ->
         pet = window.response.data
-        console.log pet
+        log pet
 
     it "handles redirects", ->
       params = {}
