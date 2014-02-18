@@ -1,7 +1,7 @@
 This is the Wordnik Swagger javascript client for use with [swagger](http://swagger.wordnik.com) enabled APIs.
 It's written in CoffeeScript and tested with Jasmine, and is the fastest way to enable a javascript client to communicate with a swagger-enabled server.
 
-Find out more about the swagger project at [swagger.wordnik.com](http://swagger.wordnik.com), 
+Find out more about the swagger project at [swagger.wordnik.com](http://swagger.wordnik.com),
 and follow us on Twitter at [@swagger_doc](https://twitter.com/#!/swagger_doc).
 
 ## READ MORE about swagger!
@@ -61,13 +61,13 @@ That's it!  You'll get a JSON response with the default callback handler:
 Need to pass an API key?  Configure one as a querystring:
 
 ```js
-client.authorizations.add("apiKey", new swagger.ApiKeyAuthorization("api_key","special-key","query"));
+client.authorizations.add("apiKey", new client.ApiKeyAuthorization("api_key","special-key","query"));
 ```
 
 ...or with a header:
 
 ```js
-client.authorizations.add("apiKey", new swagger.ApiKeyAuthorization("api_key","special-key","header"));
+client.authorizations.add("apiKey", new client.ApiKeyAuthorization("api_key","special-key","header"));
 ```
 
 ### Calling an API with swagger + the browser!
@@ -129,11 +129,11 @@ The HTTP requests themselves are handled by the excellent [shred](https://github
 Development
 -----------
 
-Please [fork the code](https://github.com/wordnik/swagger-js) and help us improve 
+Please [fork the code](https://github.com/wordnik/swagger-js) and help us improve
 swagger.js. Send us a pull request and **we'll mail you a wordnik T-shirt!**
 
-Swagger.js is written in CoffeeScript, so you'll need Node.js and the 
-CoffeeScript compiler. For more detailed installation instructions, see 
+Swagger.js is written in CoffeeScript, so you'll need Node.js and the
+CoffeeScript compiler. For more detailed installation instructions, see
 [coffeescript.org/#installation](http://coffeescript.org/#installation).
 
 ```bash
@@ -161,7 +161,7 @@ Copyright 2011-2013 Wordnik, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
-You may obtain a copy of the License at 
+You may obtain a copy of the License at
 [apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
 Unless required by applicable law or agreed to in writing, software
