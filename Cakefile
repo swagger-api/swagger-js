@@ -5,7 +5,7 @@ mergeFiles =(inputFiles, outputFile, minify=false) ->
 
   # Add directories and extensions to filenames
   inputFiles = for f in inputFiles
-    "src/#{f}.coffee"
+    "src/coffee/#{f}.coffee"
   outputFile = "lib/#{outputFile}.coffee"
 
   remaining = inputFiles.length
@@ -32,7 +32,7 @@ mergeFiles =(inputFiles, outputFile, minify=false) ->
 
 task 'bake', 'Compile and concatenate CoffeeScript files to JavaScript', ->
   console.log '   : Compiling...'
-  coffee = spawn 'coffee', ['-c', '-o', 'lib', 'src']
+  coffee = spawn 'coffee', ['-c', '-o', 'lib/specs', 'src']
   coffee.stderr.on 'data', (data) ->
     process.stderr.write data.toString()
   coffee.stdout.on 'data', (data) ->
@@ -41,16 +41,17 @@ task 'bake', 'Compile and concatenate CoffeeScript files to JavaScript', ->
     callback?() if code is 0
 
 task 'watch', 'Automatically recompile CoffeeScript files to JavaScript', ->
-  coffee = spawn 'coffee', ['-cw', '-o', 'lib', 'src']
+  coffee = spawn 'coffee', ['-cw', '-o', 'lib/specs', 'src']
   coffee.stdout.on 'data', (data) -> console.log data.toString().trim()
 
 task 'dev', "Open source files, run spec in browser, and watch for changes", ->
   exec "$EDITOR ."
-  exec "open api-listing-spec.html"
-  exec "open execution-spec.html"
-  exec "open http-spec.html"
-  exec "open operation-spec.html"
-  exec "open request-spec.html"
-  exec "open model-spec.html"
+  exec "open ./src/html/api-listing-spec.html"
+  exec "open ./src/html/execution-spec.html"
+  exec "open ./src/html/http-spec.html"
+  exec "open ./src/html/operation-spec.html"
+  exec "open ./src/html/request-spec.html"
+  exec "open ./src/html/model-spec.html"
+  exec "open ./src/html/new.html"
   coffee = spawn 'coffee', ['-cw', '-o', 'lib', 'src']
   coffee.stdout.on 'data', (data) -> console.log data.toString().trim()
