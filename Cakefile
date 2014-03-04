@@ -32,7 +32,7 @@ mergeFiles =(inputFiles, outputFile, minify=false) ->
 
 task 'bake', 'Compile and concatenate CoffeeScript files to JavaScript', ->
   console.log '   : Compiling...'
-  coffee = spawn 'coffee', ['-c', '-o', 'lib/specs', 'src']
+  coffee = spawn 'coffee', ['-c', '-o', 'lib', 'src']
   coffee.stderr.on 'data', (data) ->
     process.stderr.write data.toString()
   coffee.stdout.on 'data', (data) ->
@@ -41,7 +41,7 @@ task 'bake', 'Compile and concatenate CoffeeScript files to JavaScript', ->
     callback?() if code is 0
 
 task 'watch', 'Automatically recompile CoffeeScript files to JavaScript', ->
-  coffee = spawn 'coffee', ['-cw', '-o', 'lib/specs', 'src']
+  coffee = spawn 'coffee', ['-cw', '-o', 'lib', 'src']
   coffee.stdout.on 'data', (data) -> console.log data.toString().trim()
 
 task 'dev', "Open source files, run spec in browser, and watch for changes", ->
@@ -53,5 +53,7 @@ task 'dev', "Open source files, run spec in browser, and watch for changes", ->
   exec "open ./src/html/request-spec.html"
   exec "open ./src/html/model-spec.html"
   exec "open ./src/html/file-config.html"
+  exec "open ./src/html/file-1.0-config.html"
+  exec "open ./src/html/url-config.html"
   coffee = spawn 'coffee', ['-cw', '-o', 'lib', 'src']
   coffee.stdout.on 'data', (data) -> console.log data.toString().trim()
