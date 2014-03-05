@@ -111,26 +111,6 @@ describe 'SwaggerRequest for version 1.2 spec', ->
         pet = window.response.data
         log pet
 
-    it "handles redirects", ->
-      params = {}
-      opts = {
-        useJQuery: true
-        requestContentType: null
-        responseContentType: "application/json"
-      }
-
-      new SwaggerRequest("GET", "http://localhost:8002/api/pet.redirect/3", params, opts, success_callback, error_callback, operation)
-
-      window.args =
-        petId: '1'
-
-     waitsFor ->
-       window.response?
-
-      runs ->
-        expect(window.response.status).toBe 200
-
-
   describe "execute post operations", ->
 
     beforeEach ->
