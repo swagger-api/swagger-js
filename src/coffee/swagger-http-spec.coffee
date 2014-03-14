@@ -74,7 +74,31 @@ describe 'SwaggerHttp for version 1.2 spec', ->
       window.error_callback = (data) ->
         window.error = data
 
-    it "verifies the http request object for a POST", ->
+    it "verifies the http request object for a POST with an object input", ->
+      params = {
+        body: {
+          id: 100
+          name: "monster"
+          status: "dead"
+        }
+      }
+      opts = {
+        mock: true
+      }
+      window.response = swagger.pet.addPet(params, opts, success_callback, error_callback)
+
+      waitsFor ->
+        window.response?
+
+      runs ->
+        obj = window.response
+        expect(obj.body).toBe '{"id":100,"name":"monster","status":"dead"}'
+        expect(obj.method).toBe "POST"
+        expect(obj.headers["Accept"]).toBe "application/json"
+        expect(obj.headers["Content-Type"]).toBe "application/json"
+        expect(obj.url).toBe ("http://localhost:8002/api/pet")
+
+    it "verifies the http request object for a POST with an string input", ->
       params = {
         body: JSON.stringify({
           id: 100
@@ -92,7 +116,7 @@ describe 'SwaggerHttp for version 1.2 spec', ->
 
       runs ->
         obj = window.response
-        log obj
+        expect(obj.body).toBe '{"id":100,"name":"monster","status":"dead"}'
         expect(obj.method).toBe "POST"
         expect(obj.headers["Accept"]).toBe "application/json"
         expect(obj.headers["Content-Type"]).toBe "application/json"
