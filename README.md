@@ -83,7 +83,7 @@ Download `swagger.js` and `shred.bundle.js` into your lib folder
 <script type="text/javascript">
   // initialize swagger, point to a resource listing
   window.swagger = new SwaggerApi({
-    url: "http://petstore.swagger.wordnik.com/api/api-docs.json",
+    url: "http://petstore.swagger.wordnik.com/api/api-docs",
     success: function() {
       if(swagger.ready === true) {
         // upon connect, fetch a pet and set contents to element "mydata"
