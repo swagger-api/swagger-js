@@ -1,12 +1,15 @@
+# Swagger JS library
+
 This is the Wordnik Swagger javascript client for use with [swagger](http://swagger.wordnik.com) enabled APIs.
 It's written in CoffeeScript and tested with Jasmine, and is the fastest way to enable a javascript client to communicate with a swagger-enabled server.
 
-Find out more about the swagger project at [swagger.wordnik.com](http://swagger.wordnik.com),
-and follow us on Twitter at [@swagger_doc](https://twitter.com/#!/swagger_doc).
+## What's Swagger?
 
-## READ MORE about swagger!
+The goal of Swagger™ is to define a standard, language-agnostic interface to REST APIs which allows both humans and computers to discover and understand the capabilities of the service without access to source code, documentation, or through network traffic inspection. When properly defined via Swagger, a consumer can understand and interact with the remote service with a minimal amount of implementation logic. Similar to what interfaces have done for lower-level programming, Swager removes the guesswork in calling the service.
 
-See the [swagger website](http://swagger.wordnik.com) or the [swagger-core wiki](https://github.com/wordnik/swagger-core/wiki), which contains information about the swagger json spec.
+
+Check out [Swagger-Spec](https://github.com/wordnik/swagger-spec) for additional information about the Swagger project, including additional libraries with support for other languages and more. 
+
 
 ### Calling an API with swagger + node.js!
 
@@ -80,7 +83,7 @@ Download `swagger.js` and `shred.bundle.js` into your lib folder
 <script type="text/javascript">
   // initialize swagger, point to a resource listing
   window.swagger = new SwaggerApi({
-    url: "http://petstore.swagger.wordnik.com/api/api-docs.json",
+    url: "http://petstore.swagger.wordnik.com/api/api-docs",
     success: function() {
       if(swagger.ready === true) {
         // upon connect, fetch a pet and set contents to element "mydata"
