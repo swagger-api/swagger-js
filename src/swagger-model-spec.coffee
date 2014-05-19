@@ -54,3 +54,7 @@ describe 'Swagger models version 1.2 spec', ->
       sample = pet.createJSONSample()
       log sample
       log JSON.stringify sample
+
+    it "verifies the getAbsoluteBasePath method for relativeBasePath '/'", ->
+      window.SwaggerResource.prototype.api = {basePath : "http://localhost:8000/api-docs/"}
+      expect(window.SwaggerResource.prototype.getAbsoluteBasePath("/")).toBe("http://localhost:8000")
