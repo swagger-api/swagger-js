@@ -21,3 +21,4 @@ capybara-*.html
 /spec/tmp/*
 **.orig
 *.idea
+node_modules
