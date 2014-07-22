@@ -5,9 +5,11 @@
     
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     <script type="text/javascript" src="./lib/swagger.js"></script>
+    <script type="text/javascript" src="./lib/shred.bundle.js"></script>
     <script type="text/javascript">
       $(function() { 
-        wordnik = new SwaggerApi({
+        wordnik = new SwaggerApi("http://api.wordnik.com/v4",
+        {
           api_key: 'YOUR_API_KEY', // sample wordnik API key
           verbose: true,
           success: function() {
