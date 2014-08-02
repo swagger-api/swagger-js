@@ -118,6 +118,27 @@ swagger.apis.pet.addPet({body: body},{requestContentType:"application/xml"});
 swagger.apis.pet.getPetById({petId:1},{responseContentType:"application/xml"});
 ```
 
+### Custom request signing
+You can easily write your own request signing code for Swagger.  For example:
+
+```js
+var CustomRequestSigner = function(name) {
+  this.name = name; 
+}; 
+
+CustomRequestSigner.prototype.apply = function(obj, authorizations) { 
+  var hashFunction = this._btoa; 
+  var hash = hashFunction(obj.url); 
+
+  obj.headers["signature"] = hash; 
+  return true; 
+}; 
+```
+
+In the above simple example, we're creating a new request signer that simply 
+base 64 encodes the URL.  Of course you'd do something more sophisticated, but
+after encoding it, a header called `signature` is set before sending the request.
+
 ### How does it work?
 The swagger javascript client reads the swagger api definition directly from the server.  As it does, it constructs a client based on the api definition, which means it is completely dynamic.  It even reads the api text descriptions (which are intended for humans!) and provides help if you need it:
 
