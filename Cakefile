@@ -1,21 +1,16 @@
 fs     = require 'fs'
 {spawn, exec} = require 'child_process'
 
-mergeFiles =(inputFiles, outputFile, minify=false) ->
+mergeFiles =(inputFolder, outputFile, minify=false) ->
 
   # Add directories and extensions to filenames
-  inputFiles = for f in inputFiles
-    "src/#{f}.coffee"
-  outputFile = "lib/#{outputFile}.coffee"
+  inputFiles  = fs.readdirSync(inputFolder)
+  outputFile = "lib/#{outputFile}.js"
 
-  remaining = inputFiles.length
   appContents = new Array
 
   for inputFile, index in inputFiles then do (inputFile, index) ->
-    fs.readFile inputFile, 'utf8', (err, fileContents) ->
-      throw err if err
-      appContents[index]= fileContents
-      process() if --remaining is 0
+    exec "cat #{inputFolder}/#{inputFile} >> #{outputFile}"
 
   process = ->
     
@@ -31,14 +26,27 @@ mergeFiles =(inputFiles, outputFile, minify=false) ->
           console.log js
 
 task 'bake', 'Compile and concatenate CoffeeScript files to JavaScript', ->
+  outputFile = 'swagger_2.0'
+
   console.log '   : Compiling...'
-  coffee = spawn 'coffee', ['-c', '-o', 'lib', 'src']
-  coffee.stderr.on 'data', (data) ->
-    process.stderr.write data.toString()
-  coffee.stdout.on 'data', (data) ->
-    print data.toString()
-  coffee.on 'exit', (code) ->
-    callback?() if code is 0
+
+  fs.readFile 'package.json', 'utf8', (err, fileContents) ->
+    obj = JSON.parse(fileContents)
+    exec "echo '// swagger-2.js' > lib/#{outputFile}.js"
+    exec "echo '// version #{obj.version}' >> lib/#{outputFile}.js"
+
+    # shared files
+    mergeFiles "src/main/javascript", "#{outputFile}", false
+
+  exec "cp lib/#{outputFile}.js dist/lib/"
+
+  #coffee = spawn 'coffee', ['-c', '-o', 'lib', 'src']
+  #coffee.stderr.on 'data', (data) ->
+  #  process.stderr.write data.toString()
+  #coffee.stdout.on 'data', (data) ->
+  #  print data.toString()
+  #coffee.on 'exit', (code) ->
+  #  callback?() if code is 0
 
 task 'watch', 'Automatically recompile CoffeeScript files to JavaScript', ->
   coffee = spawn 'coffee', ['-cw', '-o', 'lib', 'src']
