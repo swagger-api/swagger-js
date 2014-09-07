@@ -93,6 +93,7 @@ var Docs = {
 		switch (fragments.length) {
 			case 1:
 				// Expand all operations for the resource and scroll to it
+				log('shebang resource:' + fragments[0]);
 				var dom_id = 'resource_' + fragments[0];
 
 				Docs.expandEndpointListForResource(fragments[0]);
@@ -278,9 +279,9 @@ function program6(depth0,data) {
   
   var buffer = "", stack1;
   buffer += "<div class='info_license'><a href='"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.info),stack1 == null || stack1 === false ? stack1 : stack1.license)),stack1 == null || stack1 === false ? stack1 : stack1.url)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = depth0.info),stack1 == null || stack1 === false ? stack1 : stack1.licenseUrl)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "'>"
-    + escapeExpression(((stack1 = ((stack1 = ((stack1 = depth0.info),stack1 == null || stack1 === false ? stack1 : stack1.license)),stack1 == null || stack1 === false ? stack1 : stack1.name)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + escapeExpression(((stack1 = ((stack1 = depth0.info),stack1 == null || stack1 === false ? stack1 : stack1.license)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</a></div>";
   return buffer;
   }
@@ -306,7 +307,7 @@ function program8(depth0,data) {
     + "\n        ";
   stack1 = helpers['if'].call(depth0, depth0.apiVersion, {hash:{},inverse:self.noop,fn:self.program(8, program8, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "]\n        <span style=\"float: right\"><img height=\"30px\" src=\"http://petstore.swagger.wordnik.com/validator?url=http://petstore.swagger.wordnik.com/v2/swagger.json\"></span></h4>\n    </div>\n</div>\n";
+  buffer += "]</h4>\n    </div>\n</div>\n";
   return buffer;
   });
 })();
@@ -395,7 +396,7 @@ function program18(depth0,data) {
 function program20(depth0,data) {
   
   
-  return "\n          <div class='sandbox_header'>\n            <input class='submit' name='commit' type='button' value='Try it out!' />\n            <a href='#' class='response_hider' style='display:none'>Hide Response</a>\n            <img alt='Throbber' class='response_throbber' src='images/throbber.gif' style='display:none' />\n          </div>\n          ";
+  return "\n          <div class='sandbox_header'>\n            <input class='submit' name='commit' type='button' value='Try it out!' />\n            <a href='#' class='response_hider' style='display:none'>Hide Response</a>\n            <span class='response_throbber' style='display:none'></span>\n          </div>\n          ";
   }
 
   buffer += "\n  <ul class='operations' >\n    <li class='";
@@ -1073,7 +1074,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   
-  return " ";
+  return " : ";
   }
 
   buffer += "<div class='heading'>\n  <h2>\n    <a href='#!/";
@@ -1084,7 +1085,7 @@ function program1(depth0,data) {
   if (stack1 = helpers.id) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.id; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1)
-    + "');\">/";
+    + "');\">";
   if (stack1 = helpers.name) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.name; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1)
@@ -1181,15 +1182,15 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression;
 
 
-  buffer += "<div>\n<ul class=\"signature-nav\">\n  <li><a class=\"description-link\" href=\"#\">Model</a></li>\n  <li><a class=\"snippet-link\" href=\"#\">Model Schema</a></li>\n</ul>\n<div>\n\n<div class=\"signature-container\">\n  <div class=\"description\">\n    ";
+  buffer += "<div>\n<ul class=\"signature-nav\">\n    <li><a class=\"description-link\" href=\"#\">Model</a></li>\n    <li><a class=\"snippet-link\" href=\"#\">Model Schema</a></li>\n</ul>\n<div>\n\n<div class=\"signature-container\">\n    <div class=\"description\">\n        ";
   if (stack1 = helpers.signature) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.signature; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  </div>\n\n  <div class=\"snippet\">\n    <pre><code>";
+  buffer += "\n    </div>\n\n    <div class=\"snippet\">\n        <pre><code>";
   if (stack1 = helpers.sampleJSON) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.sampleJSON; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1)
-    + "</code></pre>\n    <small class=\"notice\"></small>\n  </div>\n</div>\n\n";
+    + "</code></pre>\n        <small class=\"notice\"></small>\n    </div>\n</div>\n\n";
   return buffer;
   });
 })();
@@ -1450,22 +1451,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     };
 
     MainView.prototype.initialize = function(opts) {
-      var info, license, route, sorter, sorterName, _i, _len, _ref3;
+      var route, sorter, sorterName, _i, _len, _ref3;
       if (opts == null) {
         opts = {};
-      }
-      if (this.model.info) {
-        info = this.model.info;
-        if (typeof info.license !== 'object') {
-          license = {};
-          if (info.license) {
-            license.type = info.license;
-          }
-          if (info.licenseUrl) {
-            license.url = info.licenseUrl;
-          }
-          info.license = license;
-        }
       }
       if (opts.swaggerOptions.sorter) {
         sorterName = opts.swaggerOptions.sorter;
@@ -1588,9 +1576,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       'mouseout .api-ic': 'mouseExit'
     };
 
-    OperationView.prototype.initialize = function() {
-      return this.model.type = 'operation';
-    };
+    OperationView.prototype.initialize = function() {};
 
     OperationView.prototype.mouseEnter = function(e) {
       var elem, hgh, pos, scMaxX, scMaxY, scX, scY, wd, x, y;
@@ -1627,7 +1613,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     };
 
     OperationView.prototype.render = function() {
-      var contentTypeModel, isMethodSubmissionSupported, k, o, param, responseContentTypeView, responseSignatureView, signatureModel, statusCode, type, v, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref5, _ref6, _ref7, _ref8;
+      var contentTypeModel, isMethodSubmissionSupported, k, o, param, ref, responseContentTypeView, responseSignatureView, schema, signatureModel, statusCode, type, v, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref5, _ref6, _ref7, _ref8;
       isMethodSubmissionSupported = true;
       if (!isMethodSubmissionSupported) {
         this.model.isReadOnly = true;
@@ -1652,6 +1638,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         }
       }
       $(this.el).html(Handlebars.templates.operation(this.model));
+      if (this.model.nickname === 'loginUser') {
+        log(this.model);
+      }
       if (this.model.responseClassSignature && this.model.responseClassSignature !== 'string') {
         signatureModel = {
           sampleJSON: this.model.responseSampleJSON,
@@ -1663,6 +1652,10 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           tagName: 'div'
         });
         $('.model-signature', $(this.el)).append(responseSignatureView.render().el);
+      } else {
+        log(this.model.type);
+        this.model.responseClassSignature = 'string';
+        $('.model-signature', $(this.el)).html(this.model.type);
       }
       contentTypeModel = {
         isParam: false
@@ -1673,11 +1666,23 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       for (_j = 0, _len1 = _ref6.length; _j < _len1; _j++) {
         param = _ref6[_j];
         type = param.type || param.dataType;
+        if (typeof type === 'undefined') {
+          schema = param.schema;
+          if (schema['$ref']) {
+            ref = schema['$ref'];
+            if (ref.indexOf('#/definitions/') === 0) {
+              type = ref.substring('#/definitions/'.length);
+            } else {
+              type = ref;
+            }
+          }
+        }
         if (type && type.toLowerCase() === 'file') {
           if (!contentTypeModel.consumes) {
             contentTypeModel.consumes = 'multipart/form-data';
           }
         }
+        param.type = type;
       }
       responseContentTypeView = new ResponseContentTypeView({
         model: contentTypeModel
@@ -1688,12 +1693,13 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         param = _ref7[_k];
         this.addParameter(param, contentTypeModel.consumes);
       }
-      if (this.model && this.model.responseMessages) {
-        _ref8 = this.model.responseMessages;
-        for (_l = 0, _len3 = _ref8.length; _l < _len3; _l++) {
-          statusCode = _ref8[_l];
-          this.addStatusCode(statusCode);
-        }
+      if (typeof this.model.responseMessages === 'undefined') {
+        this.model.responseMessages = [];
+      }
+      _ref8 = this.model.responseMessages;
+      for (_l = 0, _len3 = _ref8.length; _l < _len3; _l++) {
+        statusCode = _ref8[_l];
+        this.addStatusCode(statusCode);
       }
       return this;
     };
@@ -1822,7 +1828,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         }
       }
       this.invocationUrl = this.model.supportHeaderParams() ? (headerParams = this.model.getHeaderParams(map), this.model.urlify(map, false)) : this.model.urlify(map, true);
-      $(".request_url", $(this.el)).html("<pre>" + this.invocationUrl + "</pre>");
+      $(".request_url", $(this.el)).html("<pre></pre>");
+      $(".request_url pre", $(this.el)).text(this.invocationUrl);
       obj = {
         type: this.model.method,
         url: this.invocationUrl,
@@ -2018,7 +2025,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         pre = $('<pre class="json" />').append(code);
       }
       response_body = pre;
-      $(".request_url", $(this.el)).html("<pre>" + url + "</pre>");
+      $(".request_url", $(this.el)).html("<pre></pre>");
+      $(".request_url pre", $(this.el)).text(url);
       $(".response_code", $(this.el)).html("<pre>" + response.status + "</pre>");
       $(".response_body", $(this.el)).html(response_body);
       $(".response_headers", $(this.el)).html("<pre>" + _.escape(JSON.stringify(response.headers, null, "  ")).replace(/\n/g, "<br>") + "</pre>");
@@ -2096,7 +2104,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     }
 
     ParameterView.prototype.initialize = function() {
-      return Handlebars.registerHelper('isArray', this.model.paramType = this.model.paramType || this.model["in"], function(param, opts) {
+      return Handlebars.registerHelper('isArray', function(param, opts) {
         if (param.type.toLowerCase() === 'array' || param.allowMultiple) {
           return opts.fn(this);
         } else {
@@ -2106,8 +2114,21 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     };
 
     ParameterView.prototype.render = function() {
-      var contentTypeModel, isParam, parameterContentTypeView, responseContentTypeView, signatureModel, signatureView, template, type;
+      var contentTypeModel, isParam, parameterContentTypeView, ref, responseContentTypeView, schema, signatureModel, signatureView, template, type;
       type = this.model.type || this.model.dataType;
+      if (typeof type === 'undefined') {
+        schema = this.model.schema;
+        if (schema['$ref']) {
+          ref = schema['$ref'];
+          if (ref.indexOf('#/definitions/') === 0) {
+            type = ref.substring('#/definitions/'.length);
+          } else {
+            type = ref;
+          }
+        }
+      }
+      this.model.type = type;
+      this.model.paramType = this.model["in"];
       if (this.model.paramType === 'body') {
         this.model.isBody = true;
       }
@@ -2198,7 +2219,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       $(this.el).html(template(this.model));
       this.switchToSnippet();
       this.isParam = this.model.isParam;
-      log(this.model);
       if (this.isParam) {
         $('.notice', $(this.el)).text('Click to set as parameter value');
       }
