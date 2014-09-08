@@ -1,5 +1,5 @@
-// swagger-2.js
-// version 2.0.37
+// swagger-client.js
+// version 2.1.0
 
 /**
  * SwaggerAuthorizations applys the correct authorization to an operation being executed
@@ -178,8 +178,6 @@ Object.keys = Object.keys || (function () {
   };
 })();
 var SwaggerClient = function(url, options) {
-  this._url = url;
-  this._options = options;
   this.isBuilt = false;
   this.url = null;
   this.debug = false;
@@ -238,9 +236,6 @@ SwaggerClient.prototype.build = function() {
         if(responseObj.swagger && responseObj.swagger === 2.0) {
           self.swaggerVersion = responseObj.swagger;
           self.buildFromSpec(responseObj);
-        }
-        else if(responseObj) {
-          return new SwaggerApi(self._url, self._options);
         }
       }
     }
@@ -1106,23 +1101,11 @@ var sampleModels = {};
 var cookies = {};
 var models = {};
 
-// e.SampleModels = sampleModels;
-// e.SwaggerHttp = SwaggerHttp;
-// e.SwaggerRequest = SwaggerRequest;
 e.authorizations = new SwaggerAuthorizations();
 e.ApiKeyAuthorization = ApiKeyAuthorization;
 e.PasswordAuthorization = PasswordAuthorization;
 e.CookieAuthorization = CookieAuthorization;
-// e.JQueryHttpClient = JQueryHttpClient;
-// e.ShredHttpClient = ShredHttpClient;
-// e.Operation = Operation;
-// e.Model = Model;
-// e.Property = Property;
-// e.OperationGroup = OperationGroup;
-e.SwaggerClient = SwaggerClient;
-/**
- * SwaggerHttp is a wrapper for executing requests
- *//**
+e.SwaggerClient = SwaggerClient;/**
  * SwaggerHttp is a wrapper for executing requests
  */
 var SwaggerHttp = function() {};

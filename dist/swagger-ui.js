@@ -93,7 +93,6 @@ var Docs = {
 		switch (fragments.length) {
 			case 1:
 				// Expand all operations for the resource and scroll to it
-				log('shebang resource:' + fragments[0]);
 				var dom_id = 'resource_' + fragments[0];
 
 				Docs.expandEndpointListForResource(fragments[0]);
@@ -101,7 +100,6 @@ var Docs = {
 				break;
 			case 2:
 				// Refer to the endpoint DOM element, e.g. #words_get_search
-				log('shebang endpoint: ' + fragments.join('_'));
 
         // Expand Resource
         Docs.expandEndpointListForResource(fragments[0]);
@@ -111,8 +109,6 @@ var Docs = {
 				var li_dom_id = fragments.join('_');
 				var li_content_dom_id = li_dom_id + "_content";
 
-        log("li_dom_id " + li_dom_id);
-        log("li_content_dom_id " + li_content_dom_id);
 
 				Docs.expandOperation($('#'+li_content_dom_id));
 				$('#'+li_dom_id).slideto({highlight: false});
@@ -1085,7 +1081,7 @@ function program1(depth0,data) {
   if (stack1 = helpers.id) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.id; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1)
-    + "');\">";
+    + "');\">/";
   if (stack1 = helpers.name) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.name; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1)
@@ -1288,9 +1284,15 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       }
       this.options.url = url;
       this.headerView.update(url);
-      this.api = new SwaggerApi(this.options);
-      this.api.build();
-      return this.api;
+      if (url.indexOf('swagger.json') > 0) {
+        this.api = new SwaggerClient(this.options);
+        this.api.build();
+        return this.api;
+      } else {
+        this.api = new SwaggerApi(this.options);
+        this.api.build();
+        return this.api;
+      }
     };
 
     SwaggerUi.prototype.render = function() {
@@ -1458,13 +1460,15 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       if (opts.swaggerOptions.sorter) {
         sorterName = opts.swaggerOptions.sorter;
         sorter = sorters[sorterName];
-        _ref3 = this.model.apisArray;
-        for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
-          route = _ref3[_i];
-          route.operationsArray.sort(sorter);
-        }
-        if (sorterName === "alpha") {
-          return this.model.apisArray.sort(sorter);
+        if (this.model.apisArray) {
+          _ref3 = this.model.apisArray;
+          for (_i = 0, _len = _ref3.length; _i < _len; _i++) {
+            route = _ref3[_i];
+            route.operationsArray.sort(sorter);
+          }
+          if (sorterName === "alpha") {
+            return this.model.apisArray.sort(sorter);
+          }
         }
       }
     };
@@ -1517,7 +1521,11 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       return _ref3;
     }
 
-    ResourceView.prototype.initialize = function() {};
+    ResourceView.prototype.initialize = function() {
+      if ("" === this.model.description) {
+        return this.model.description = null;
+      }
+    };
 
     ResourceView.prototype.render = function() {
       var counter, id, methods, operation, _i, _len, _ref4;
@@ -1638,9 +1646,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         }
       }
       $(this.el).html(Handlebars.templates.operation(this.model));
-      if (this.model.nickname === 'loginUser') {
-        log(this.model);
-      }
       if (this.model.responseClassSignature && this.model.responseClassSignature !== 'string') {
         signatureModel = {
           sampleJSON: this.model.responseSampleJSON,
@@ -1653,7 +1658,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         });
         $('.model-signature', $(this.el)).append(responseSignatureView.render().el);
       } else {
-        log(this.model.type);
         this.model.responseClassSignature = 'string';
         $('.model-signature', $(this.el)).html(this.model.type);
       }
@@ -2128,7 +2132,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         }
       }
       this.model.type = type;
-      this.model.paramType = this.model["in"];
+      this.model.paramType = this.model["in"] || this.model.paramType;
       if (this.model.paramType === 'body') {
         this.model.isBody = true;
       }

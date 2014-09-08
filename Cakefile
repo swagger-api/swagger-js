@@ -26,13 +26,13 @@ mergeFiles =(inputFolder, outputFile, minify=false) ->
           console.log js
 
 task 'bake', 'Compile and concatenate CoffeeScript files to JavaScript', ->
-  outputFile = 'swagger_2.0'
+  outputFile = 'swagger-client'
 
   console.log '   : Compiling...'
 
   fs.readFile 'package.json', 'utf8', (err, fileContents) ->
     obj = JSON.parse(fileContents)
-    exec "echo '// swagger-2.js' > lib/#{outputFile}.js"
+    exec "echo '// #{outputFile}.js' > lib/#{outputFile}.js"
     exec "echo '// version #{obj.version}' >> lib/#{outputFile}.js"
 
     # shared files
