@@ -205,7 +205,7 @@ describe 'Operations for version 1.2 spec', ->
       param = parameters[1]
       expect(param.name).toBe "file"
       expect(param.type).toBe "File"
-      expect(param.paramType).toBe "form"
+      expect(param.paramType).toBe "body"
       expect(param.description).toBeDefined
       expect(param.required).toBe false
 
