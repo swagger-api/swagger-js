@@ -37,7 +37,7 @@ SwaggerClient.prototype.build = function() {
     url: this.url,
     method: "get",
     headers: {
-      accept: "application/json"
+      accept: "application/json, */*"
     },
     on: {
       error: function(response) {
