@@ -81,6 +81,11 @@ SwaggerClient.prototype.buildFromSpec = function(response) {
   this.produces = response.produces;
   this.authSchemes = response.authorizations;
 
+  if(typeof this.host === 'undefined' || this.host === '') {
+    var location = this.parseUri(this.url);
+    this.host = location.host;
+  }
+
   this.definitions = response.definitions;
   var key;
   for(key in this.definitions) {
@@ -149,6 +154,16 @@ SwaggerClient.prototype.buildFromSpec = function(response) {
   if (this.success)
     this.success();
   return this;
+}
+
+SwaggerClient.prototype.parseUri = function(uri) {
+  var urlParseRE = /^(((([^:\/#\?]+:)?(?:(\/\/)((?:(([^:@\/#\?]+)(?:\:([^:@\/#\?]+))?)@)?(([^:\/#\?\]\[]+|\[[^\/\]@#?]+\])(?:\:([0-9]+))?))?)?)?((\/?(?:[^\/\?#]+\/+)*)([^\?#]*)))?(\?[^#]+)?)(#.*)?/;
+  var parts = urlParseRE.exec(uri);
+  return {
+    scheme: parts[4].replace(':',''),
+    host: parts[11],
+    path: parts[15]
+  };
 }
 
 SwaggerClient.prototype.help = function() {
