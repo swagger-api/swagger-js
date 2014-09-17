@@ -184,6 +184,7 @@ var SwaggerClient = function(url, options) {
   this.basePath = null;
   this.authorizations = null;
   this.authorizationScheme = null;
+  this.isValid = false;
   this.info = null;
   this.useJQuery = false;
 
@@ -216,7 +217,7 @@ SwaggerClient.prototype.build = function() {
     url: this.url,
     method: "get",
     headers: {
-      accept: "application/json"
+      accept: "application/json, */*"
     },
     on: {
       error: function(response) {
@@ -236,7 +237,10 @@ SwaggerClient.prototype.build = function() {
         if(responseObj.swagger && responseObj.swagger === 2.0) {
           self.swaggerVersion = responseObj.swagger;
           self.buildFromSpec(responseObj);
+          this.isValid = true;
         }
+        else
+          this.isValid = false;
       }
     }
   };
@@ -259,6 +263,11 @@ SwaggerClient.prototype.buildFromSpec = function(response) {
   this.consumes = response.consumes;
   this.produces = response.produces;
   this.authSchemes = response.authorizations;
+
+  if(typeof this.host === 'undefined' || this.host === '') {
+    var location = this.parseUri(this.url);
+    this.host = location.host;
+  }
 
   this.definitions = response.definitions;
   var key;
@@ -328,6 +337,16 @@ SwaggerClient.prototype.buildFromSpec = function(response) {
   if (this.success)
     this.success();
   return this;
+}
+
+SwaggerClient.prototype.parseUri = function(uri) {
+  var urlParseRE = /^(((([^:\/#\?]+:)?(?:(\/\/)((?:(([^:@\/#\?]+)(?:\:([^:@\/#\?]+))?)@)?(([^:\/#\?\]\[]+|\[[^\/\]@#?]+\])(?:\:([0-9]+))?))?)?)?((\/?(?:[^\/\?#]+\/+)*)([^\?#]*)))?(\?[^#]+)?)(#.*)?/;
+  var parts = urlParseRE.exec(uri);
+  return {
+    scheme: parts[4].replace(':',''),
+    host: parts[11],
+    path: parts[15]
+  };
 }
 
 SwaggerClient.prototype.help = function() {
