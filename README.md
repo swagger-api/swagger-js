@@ -14,11 +14,11 @@ Check out [Swagger-Spec](https://github.com/wordnik/swagger-spec) for additional
 ## Compatability
 The Swagger Specification has undergone 3 revisions since initial creation in 2010.  The swagger-ui project has the following compatibilies with the swagger specification:
 
-Swagger UI Version      | Release Date | Swagger Spec compatability | Notes
+Swagger JS Version      | Release Date | Swagger Spec compatability | Notes
 ----------------------- | ------------ | -------------------------- | -----
 2.1.0 (in development)  | n/a          |      2.0      | [branch develop_2.0](https://github.com/wordnik/swagger-js/tree/develop_2.0)
-2.0.40                  | 2014-09-18   | 1.1, 1.2      | [tag v2.0.41](https://github.com/wordnik/swagger-js/tree/v2.0.41)
-1.0.13                  | 2013-03-08   | 1.0, 1.1, 1.2 | [tag v1.0.4](https://github.com/wordnik/swagger-js/tree/v1.0.4)
+2.0.41                  | 2014-09-18   | 1.1, 1.2      | [tag v2.0.41](https://github.com/wordnik/swagger-js/tree/v2.0.41)
+1.0.4                   | 2013-06-26   | 1.0, 1.1, 1.2 | [tag v1.0.4](https://github.com/wordnik/swagger-js/tree/v1.0.4)
 
 ### Calling an API with swagger + node.js!
 
