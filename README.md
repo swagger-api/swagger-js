@@ -12,7 +12,7 @@ Check out [Swagger-Spec](https://github.com/wordnik/swagger-spec) for additional
 
 
 ## Compatability
-The Swagger Specification has undergone 3 revisions since initial creation in 2010.  The swagger-ui project has the following compatibilies with the swagger specification:
+The Swagger Specification has undergone 3 revisions since initial creation in 2010.  The swagger-js project has the following compatibilies with the swagger specification:
 
 Swagger JS Version      | Release Date | Swagger Spec compatability | Notes
 ----------------------- | ------------ | -------------------------- | -----
