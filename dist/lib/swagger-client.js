@@ -659,7 +659,7 @@ Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
       }
     }
   };
-  var status = e.authorizations.apply(obj, this.operation.authorizations);
+  var status = e.authorizations.apply(obj, this.operation.security);
   new SwaggerHttp().execute(obj);
 }
 

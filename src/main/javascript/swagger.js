@@ -447,6 +447,8 @@ Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
       else if (param.in === 'query') {
         if(querystring === '')
           querystring += '?';
+        else
+          querystring += '&';
         if(typeof param.collectionFormat !== 'undefined') {
           var qp = args[param.name];
           if(Array.isArray(qp))
