@@ -8,6 +8,7 @@ var SwaggerClient = function(url, options) {
   this.isValid = false;
   this.info = null;
   this.useJQuery = false;
+  this.models = models;
 
   options = (options||{});
   if (url)
@@ -58,10 +59,12 @@ SwaggerClient.prototype.build = function() {
         if(responseObj.swagger && responseObj.swagger === 2.0) {
           self.swaggerVersion = responseObj.swagger;
           self.buildFromSpec(responseObj);
-          this.isValid = true;
+          self.isValid = true;
         }
-        else
-          this.isValid = false;
+        else {
+          self.isValid = false;
+          self.failure();
+        }
       }
     }
   };
@@ -239,16 +242,22 @@ var Operation = function(parent, operationId, httpMethod, path, args, definition
   var model;
   var responses = this.responses;
 
-  if(responses['200'])
+  if(responses['200']) {
     response = responses['200'];
-  else if(responses['default'])
+    defaultResponseCode = '200';
+  }
+  else if(responses['default']) {
     response = responses['default'];
+    defaultResponseCode = 'default';
+  }
+
   if(response && response.schema) {
     var resolvedModel = this.resolveModel(response.schema, definitions);
     if(resolvedModel) {
       this.type = resolvedModel.name;
       this.responseSampleJSON = JSON.stringify(resolvedModel.getSampleValue(), null, 2);
       this.responseClassSignature = resolvedModel.getMockSignature();
+      delete responses[defaultResponseCode];
     }
     else {
       this.type = response.schema.type;
