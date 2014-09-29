@@ -494,6 +494,7 @@ Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
   var obj = {
     url: url,
     method: this.method,
+    body: args.body,
     useJQuery: this.useJQuery,
     headers: headers,
     on: {

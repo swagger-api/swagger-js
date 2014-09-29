@@ -258,7 +258,7 @@ SwaggerClient.prototype.build = function() {
   else {
     var e = (typeof window !== 'undefined' ? window : exports);
     var status = e.authorizations.apply(obj);
-    new SwaggerHttp().execute(obj);    
+    new SwaggerHttp().execute(obj);
   }
 
   return this;
@@ -673,6 +673,7 @@ Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
   var obj = {
     url: url,
     method: this.method,
+    body: args.body,
     useJQuery: this.useJQuery,
     headers: headers,
     on: {
