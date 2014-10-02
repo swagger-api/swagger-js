@@ -1319,7 +1319,12 @@ ShredHttpClient.prototype.execute = function(obj) {
     if(contentType != null) {
       if(contentType.indexOf("application/json") == 0 || contentType.indexOf("+json") > 0) {
         if(response.content.data && response.content.data !== "")
-          out.obj = JSON.parse(response.content.data);
+          try{
+            out.obj = JSON.parse(response.content.data);
+          }
+          catch (e) {
+            // unable to parse
+          }
         else
           out.obj = {}
       }
