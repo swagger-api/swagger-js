@@ -132,7 +132,7 @@ var ShredHttpClient = function(options) {
   }
   else
     this.Shred = require("shred");
-  this.shred = new this.Shred();
+  this.shred = new this.Shred(options);
 }
 
 ShredHttpClient.prototype.initShred = function () {
