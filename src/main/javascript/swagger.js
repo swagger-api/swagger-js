@@ -58,7 +58,7 @@ SwaggerClient.prototype.build = function() {
         var responseObj = resp.obj || JSON.parse(resp.data);
         self.swaggerVersion = responseObj.swaggerVersion;
 
-        if(responseObj.swagger && responseObj.swagger === 2.0) {
+        if(responseObj.swagger && parseInt(responseObj.swagger) === 2) {
           self.swaggerVersion = responseObj.swagger;
           self.buildFromSpec(responseObj);
           self.isValid = true;
@@ -72,9 +72,7 @@ SwaggerClient.prototype.build = function() {
   };
   if(this.spec) {
     var self = this;
-    setTimeout(function() {
-      self.buildFromSpec(self.spec);
-    }, 10);
+    setTimeout(function() { self.buildFromSpec(self.spec); }, 10);
   }
   else {
     var e = (typeof window !== 'undefined' ? window : exports);
@@ -86,8 +84,8 @@ SwaggerClient.prototype.build = function() {
 };
 
 SwaggerClient.prototype.buildFromSpec = function(response) {
-  if(this.isBuilt)
-    return this;
+  if(this.isBuilt) return this;
+
   this.info = response.info || {};
   this.title = response.title || '';
   this.host = response.host || '';
@@ -154,7 +152,7 @@ SwaggerClient.prototype.buildFromSpec = function(response) {
 
           // legacy UI feature
           var j;
-          var api = null;
+          var api;
           for(j = 0; j < this.apisArray.length; j++) {
             if(this.apisArray[j].tag === tag) {
               api = this.apisArray[j];
@@ -246,10 +244,30 @@ var Operation = function(parent, operationId, httpMethod, path, args, definition
   var i;
   for(i = 0; i < this.parameters.length; i++) {
     var param = this.parameters[i];
-    type = this.getType(param);
-
-    param.signature = this.getSignature(type, models);
-    param.sampleJSON = this.getSampleJSON(type, models);
+    if(param.type === 'array') {
+      param.isList = true;
+      param.allowMultiple = true;
+    }
+    var innerType = this.getType(param);
+    if(innerType.toString().toLowerCase() === 'boolean') {
+      param.allowableValues = {};
+      param.isList = true;
+      param.enum = ["true", "false"];
+    }
+    if(typeof param.enum !== 'undefined') {
+      var id;
+      param.allowableValues = {};
+      param.allowableValues.values = [];
+      param.allowableValues.descriptiveValues = [];
+      for(id = 0; id < param.enum.length; id++) {
+        var value = param.enum[id];
+        var isDefault = (value === param.default) ? true : false;
+        param.allowableValues.values.push(value);
+        param.allowableValues.descriptiveValues.push({value : value, isDefault: isDefault});
+      }
+    }
+    param.signature = this.getSignature(innerType, models);
+    param.sampleJSON = this.getSampleJSON(innerType, models);
     param.responseClassSignature = param.signature;
   }
 
@@ -398,14 +416,16 @@ Operation.prototype.getSignature = function(type, models) {
   if (isPrimitive) {
     return type;
   } else {
-    if (listType != null) {
+    if (listType != null)
       return models[type].getMockSignature();
-    } else {
+    else
       return models[type].getMockSignature();
-    }
   }
 };
 
+/**
+ * gets sample response for a single operation
+ **/
 Operation.prototype.getSampleJSON = function(type, models) {
   var isPrimitive, listType, sampleJson;
 
@@ -434,11 +454,16 @@ Operation.prototype.getSampleJSON = function(type, models) {
   }
 };
 
-// legacy support
+/**
+ * legacy binding
+ **/
 Operation.prototype["do"] = function(args, opts, callback, error, parent) {
   return this.execute(args, opts, callback, error, parent);
 }
 
+/**
+ * executes an operation
+ **/
 Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
   var args = (arg1||{});
   var opts = {}, success, error;
@@ -461,8 +486,9 @@ Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
 
   var requiredParams = [];
   var missingParams = [];
-  // check required params
-  for(var i = 0; i < this.parameters.length; i++) {
+  // check required params, track the ones that are missing
+  var i;
+  for(i = 0; i < this.parameters.length; i++) {
     var param = this.parameters[i];
     if(param.required === true) {
       requiredParams.push(param.name);
@@ -653,10 +679,16 @@ Operation.prototype.encodeCollection = function(type, name, value) {
   return encoded;
 }
 
+/**
+ * TODO this encoding needs to be changed 
+ **/
 Operation.prototype.encodeQueryParam = function(arg) {
   return escape(arg);
 }
 
+/**
+ * TODO revisit, might not want to leave '/'
+ **/
 Operation.prototype.encodePathParam = function(pathParam) {
   var encParts, part, parts, _i, _len;
   pathParam = pathParam.toString();
@@ -671,127 +703,6 @@ Operation.prototype.encodePathParam = function(pathParam) {
     }
     return encParts.join('/');
   }
-};
-
-Operation.prototype.encodePathParam = function(pathParam) {
-  var encParts, part, parts, _i, _len;
-  pathParam = pathParam.toString();
-  if (pathParam.indexOf('/') === -1) {
-    return encodeURIComponent(pathParam);
-  } else {
-    parts = pathParam.split('/');
-    encParts = [];
-    for (_i = 0, _len = parts.length; _i < _len; _i++) {
-      part = parts[_i];
-      encParts.push(encodeURIComponent(part));
-    }
-    return encParts.join('/');
-  }
-};
-
-var ArrayModel = function(definition) {
-  this.name = "name";
-  this.definition = definition || {};
-  this.properties = [];
-  this.type;
-  this.ref;
-
-  var requiredFields = definition.enum || [];
-  var items = definition.items;
-  if(items) {
-    var type = items.type;
-    if(items.type) {
-      this.type = typeFromJsonSchema(type.type, type.format);
-    }
-    else {
-      this.ref = items['$ref'];
-    }
-  }
-}
-
-ArrayModel.prototype.createJSONSample = function(modelsToIgnore) {
-  var result;
-  var modelsToIgnore = (modelsToIgnore||[])
-  if(this.type) {
-    result = type;
-  }
-  else if (this.ref) {
-    var name = simpleRef(this.ref);
-    result = models[name].createJSONSample();
-  }
-  return [ result ];
-};
-
-ArrayModel.prototype.getSampleValue = function() {
-  var result;
-  var modelsToIgnore = (modelsToIgnore||[])
-  if(this.type) {
-    result = type;
-  }
-  else if (this.ref) {
-    var name = simpleRef(this.ref);
-    result = models[name].getSampleValue();
-  }
-  return [ result ];
-}
-
-ArrayModel.prototype.getMockSignature = function(modelsToIgnore) {
-  var propertiesStr = [];
-
-  if(this.ref) {
-    return models[simpleRef(this.ref)].getMockSignature();
-  }
-};
-
-
-var PrimitiveModel = function(definition) {
-  this.name = "name";
-  this.definition = definition || {};
-  this.properties = [];
-  this.type;
-
-  var requiredFields = definition.enum || [];
-  this.type = typeFromJsonSchema(definition.type, definition.format);
-}
-
-PrimitiveModel.prototype.createJSONSample = function(modelsToIgnore) {
-  var result = this.type;
-  return result;
-};
-
-PrimitiveModel.prototype.getSampleValue = function() {
-  var result = this.type;
-  return null;
-}
-
-PrimitiveModel.prototype.getMockSignature = function(modelsToIgnore) {
-  var propertiesStr = [];
-  var i;
-  for (i = 0; i < this.properties.length; i++) {
-    var prop = this.properties[i];
-    propertiesStr.push(prop.toString());
-  }
-
-  var strong = '<span class="strong">';
-  var stronger = '<span class="stronger">';
-  var strongClose = '</span>';
-  var classOpen = strong + this.name + ' {' + strongClose;
-  var classClose = strong + '}' + strongClose;
-  var returnVal = classOpen + '<div>' + propertiesStr.join(',</div><div>') + '</div>' + classClose;
-  if (!modelsToIgnore)
-    modelsToIgnore = [];
-
-  modelsToIgnore.push(this.name);
-  var i;
-  for (i = 0; i < this.properties.length; i++) {
-    var prop = this.properties[i];
-    var ref = prop['$ref'];
-    var model = models[ref];
-    if (model && modelsToIgnore.indexOf(ref) === -1) {
-      returnVal = returnVal + ('<br>' + model.getMockSignature(modelsToIgnore));
-    }
-  }
-  return returnVal;
 };
 
 var Model = function(name, definition) {
@@ -815,22 +726,23 @@ var Model = function(name, definition) {
 
 Model.prototype.createJSONSample = function(modelsToIgnore) {
   var result = {};
-  var modelsToIgnore = (modelsToIgnore||[])
-  modelsToIgnore.push(this.name);
-  for (var i = 0; i < this.properties.length; i++) {
+  modelsToIgnore = (modelsToIgnore||{})
+  modelsToIgnore[this.name] = this;
+  var i;
+  for (i = 0; i < this.properties.length; i++) {
     prop = this.properties[i];
     result[prop.name] = prop.getSampleValue(modelsToIgnore);
   }
-  modelsToIgnore.pop(this.name);
+  delete modelsToIgnore[this.name];
   return result;
 };
 
-Model.prototype.getSampleValue = function() {
+Model.prototype.getSampleValue = function(modelsToIgnore) {
   var i;
   var obj = {};
   for(i = 0; i < this.properties.length; i++ ) {
     var property = this.properties[i];
-    obj[property.name] = property.sampleValue();
+    obj[property.name] = property.sampleValue(false, modelsToIgnore);
   }
   return obj;
 }
@@ -850,15 +762,15 @@ Model.prototype.getMockSignature = function(modelsToIgnore) {
   var classClose = strong + '}' + strongClose;
   var returnVal = classOpen + '<div>' + propertiesStr.join(',</div><div>') + '</div>' + classClose;
   if (!modelsToIgnore)
-    modelsToIgnore = [];
+    modelsToIgnore = {};
 
-  modelsToIgnore.push(this.name);
+  modelsToIgnore[this.name] = this;
   var i;
   for (i = 0; i < this.properties.length; i++) {
     var prop = this.properties[i];
     var ref = prop['$ref'];
     var model = models[ref];
-    if (model && modelsToIgnore.indexOf(ref) === -1) {
+    if (model && typeof modelsToIgnore === 'undefined') {
       returnVal = returnVal + ('<br>' + model.getMockSignature(modelsToIgnore));
     }
   }
@@ -885,8 +797,8 @@ var Property = function(name, obj, required) {
   this.example = obj.example || null;
 }
 
-Property.prototype.getSampleValue = function () {
-  return this.sampleValue(false);
+Property.prototype.getSampleValue = function (modelsToIgnore) {
+  return this.sampleValue(false, modelsToIgnore);
 }
 
 Property.prototype.isArray = function () {
@@ -899,13 +811,14 @@ Property.prototype.isArray = function () {
 
 Property.prototype.sampleValue = function(isArray, ignoredModels) {
   isArray = (isArray || this.isArray());
-  ignoredModels = (ignoredModels || {})
+  ignoredModels = (ignoredModels || {});
   var type = getStringSignature(this.obj);
   var output;
 
   if(this['$ref']) {
     var refModel = models[this['$ref']];
-    if(refModel && typeof ignoredModels[refModel] === 'undefined') {
+    if(refModel && typeof ignoredModels[type] === 'undefined') {
+      ignoredModels[type] = this;
       output = refModel.getSampleValue(ignoredModels);
     }
     else
@@ -913,31 +826,27 @@ Property.prototype.sampleValue = function(isArray, ignoredModels) {
   }
   else if(this.example)
     output = this.example;
-  else if(type === 'date-time') {
+  else if(type === 'date-time')
     output = new Date().toISOString();
-  }
-  else if(type === 'string') {
+  else if(type === 'string')
     output = 'string';
-  }
-  else if(type === 'integer') {
+  else if(type === 'integer')
     output = 0;
-  }
-  else if(type === 'long') {
+  else if(type === 'long')
     output = 0;
-  }
-  else if(type === 'float') {
+  else if(type === 'float')
     output = 0.0;
-  }
-  else if(type === 'double') {
+  else if(type === 'double')
     output = 0.0;
-  }
-  else if(type === 'boolean') {
+  else if(type === 'boolean')
     output = true;
-  }
   else
     output = {};
-  if(isArray) return [output];
-  else return output;
+  ignoredModels[type] = output;
+  if(isArray)
+    return [output];
+  else
+    return output;
 }
 
 getStringSignature = function(obj) {
@@ -1018,3 +927,4 @@ e.ApiKeyAuthorization = ApiKeyAuthorization;
 e.PasswordAuthorization = PasswordAuthorization;
 e.CookieAuthorization = CookieAuthorization;
 e.SwaggerClient = SwaggerClient;
+
