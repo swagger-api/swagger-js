@@ -828,6 +828,8 @@ Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
         headers[param.name] = args[param.name];
       else if (param.in === 'formData')
         formParams[param.name] = args[param.name];
+      else if (param.in === 'body')
+        args.body = args[param.name];
     }
   }
   // handle form params
@@ -1191,6 +1193,8 @@ typeFromJsonSchema = function(type, format) {
     str = 'integer';
   else if(type === 'integer' && format === 'int64')
     str = 'long';
+  else if(type === 'integer' && typeof format === 'undefined')
+    str = 'long';
   else if(type === 'string' && format === 'date-time')
     str = 'date-time';
   else if(type === 'string' && format === 'date')
@@ -1198,6 +1202,8 @@ typeFromJsonSchema = function(type, format) {
   else if(type === 'number' && format === 'float')
     str = 'float';
   else if(type === 'number' && format === 'double')
+    str = 'double';
+  else if(type === 'number' && typeof format === 'undefined')
     str = 'double';
   else if(type === 'boolean')
     str = 'boolean';
