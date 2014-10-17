@@ -1,5 +1,5 @@
 // swagger-client.js
-// version 2.1.0-alpha.1
+// version 2.1.0-alpha.2
 /**
  * Array Model
  **/
@@ -593,7 +593,8 @@ SwaggerClient.prototype.buildFromSpec = function(response) {
   this.info = response.info || {};
   this.title = response.title || '';
   this.host = response.host || '';
-  this.schemes = response.schemes || [ 'http' ];
+  this.schemes = response.schemes || [];
+  this.scheme;
   this.basePath = response.basePath || '';
   this.apis = {};
   this.apisArray = [];
@@ -601,9 +602,19 @@ SwaggerClient.prototype.buildFromSpec = function(response) {
   this.produces = response.produces;
   this.authSchemes = response.authorizations;
 
+  var location = this.parseUri(this.url);
+  if(typeof this.schemes === 'undefined' || this.schemes.length === 0) {
+    this.scheme = location.scheme;
+  }
+  else {
+    this.scheme = this.schemes[0];
+  }
+
   if(typeof this.host === 'undefined' || this.host === '') {
-    var location = this.parseUri(this.url);
     this.host = location.host;
+    if (location.port) {
+      this.host = this.host + ':' + location.port;
+    }
   }
 
   this.definitions = response.definitions;
@@ -684,6 +695,7 @@ SwaggerClient.prototype.parseUri = function(uri) {
   return {
     scheme: parts[4].replace(':',''),
     host: parts[11],
+    port: parts[12],
     path: parts[15]
   };
 }
@@ -734,6 +746,7 @@ var Operation = function(parent, operationId, httpMethod, path, args, definition
   this.parent = parent;
   this.host = parent.host;
   this.schemes = parent.schemes;
+  this.scheme = parent.scheme || 'http';
   this.basePath = parent.basePath;
   this.nickname = (operationId||errors.push('Operations must have a nickname.'));
   this.method = (httpMethod||errors.push('Operation ' + operationId + ' is missing method.'));
@@ -1065,8 +1078,7 @@ Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
     // todo append?
     args.body = encoded;
   }
-  var scheme = this.schemes[0];
-  var url = scheme + '://' + this.host + this.basePath + requestUrl + querystring;
+  var url = this.scheme + '://' + this.host + this.basePath + requestUrl + querystring;
 
   var obj = {
     url: url,

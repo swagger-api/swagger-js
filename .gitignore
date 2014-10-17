@@ -21,3 +21,5 @@ capybara-*.html
 /spec/tmp/*
 **.orig
 *.idea
+*.iml
+npm-debug.log
