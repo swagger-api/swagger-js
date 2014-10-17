@@ -866,6 +866,8 @@ getStringSignature = function(obj) {
     str += 'integer';
   else if(obj.type === 'integer' && obj.format === 'int64')
     str += 'long';
+  else if(obj.type === 'integer' && typeof obj.format === 'undefined')
+    str += 'long';
   else if(obj.type === 'string' && obj.format === 'date-time')
     str += 'date-time';
   else if(obj.type === 'string' && obj.format === 'date')
@@ -873,6 +875,8 @@ getStringSignature = function(obj) {
   else if(obj.type === 'number' && obj.format === 'float')
     str += 'float';
   else if(obj.type === 'number' && obj.format === 'double')
+    str += 'double';
+  else if(obj.type === 'number' && typeof obj.format === 'undefined')
     str += 'double';
   else if(obj.type === 'boolean')
     str += 'boolean';
