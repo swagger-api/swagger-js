@@ -8,7 +8,7 @@
     }
   ],
   "description": "swagger.js is a javascript client for use with swaggering APIs.",
-  "version": "2.1.0-alpha.1",
+  "version": "2.1.0-alpha.2",
   "homepage": "http://swagger.io",
   "repository": {
     "type": "git",
