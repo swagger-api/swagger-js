@@ -716,7 +716,7 @@ var Model = function(name, definition) {
   this.name = name;
   this.definition = definition || {};
   this.properties = [];
-  var requiredFields = definition.enum || [];
+  var requiredFields = definition.required || [];
 
   var key;
   var props = definition.properties;
@@ -777,7 +777,7 @@ Model.prototype.getMockSignature = function(modelsToIgnore) {
     var prop = this.properties[i];
     var ref = prop['$ref'];
     var model = models[ref];
-    if (model && typeof modelsToIgnore === 'undefined') {
+    if (model && typeof modelsToIgnore[model.name] === 'undefined') {
       returnVal = returnVal + ('<br>' + model.getMockSignature(modelsToIgnore));
     }
   }
@@ -799,6 +799,7 @@ var Property = function(name, obj, required) {
       obj = obj.items;
   }
   this.name = name;
+  this.description = obj.description;
   this.obj = obj;
   this.optional = true;
   this.example = obj.example || null;
@@ -896,12 +897,17 @@ simpleRef = function(name) {
 
 Property.prototype.toString = function() {
   var str = getStringSignature(this.obj);
-  if(str !== '')
-    str = this.name + ' : ' + str;
+  if(str !== '') {
+    str = '<span class="propName ' + this.required + '">' + this.name + '</span> (<span class="propType">' + str + '</span>';
+    if(!this.required)
+      str += ', <span class="propOptKey">optional</span>';
+    str += ')';
+  }
   else 
-    str = this.name + ' : ' + JSON.stringify(this.obj);
-  if(!this.required)
-    str += ' (optional)';
+    str = this.name + ' (' + JSON.stringify(this.obj) + ')';
+
+  if(typeof this.description !== 'undefined')
+    str += ': ' + this.description;
   return str;
 }
 
