@@ -345,6 +345,8 @@ Operation.prototype.getType = function (param) {
     str = 'integer';
   else if(type === 'integer' && format === 'int64')
     str = 'long';
+  else if(type === 'integer' && typeof format === 'undefined')
+    str = 'long';
   else if(type === 'string' && format === 'date-time')
     str = 'date-time';
   else if(type === 'string' && format === 'date')
@@ -352,6 +354,8 @@ Operation.prototype.getType = function (param) {
   else if(type === 'number' && format === 'float')
     str = 'float';
   else if(type === 'number' && format === 'double')
+    str = 'double';
+  else if(type === 'number' && typeof format === 'undefined')
     str = 'double';
   else if(type === 'boolean')
     str = 'boolean';
