@@ -818,6 +818,7 @@ var Property = function(name, obj, required) {
   this.description = obj.description;
   this.obj = obj;
   this.optional = true;
+  this.default = obj.default || null;
   this.example = obj.example || null;
 }
 
@@ -850,6 +851,8 @@ Property.prototype.sampleValue = function(isArray, ignoredModels) {
   }
   else if(this.example)
     output = this.example;
+  else if(this.default)
+    output = this.default;
   else if(type === 'date-time')
     output = new Date().toISOString();
   else if(type === 'string')
