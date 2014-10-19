@@ -1,3 +1,5 @@
+# Note!  The swagger-js will be moving from the wordnik organization to swagger-api!
+
 # Swagger JavaScript library
 
 This is the Wordnik Swagger JavaScript client for use with [Swagger](http://swagger.wordnik.com)-enabled APIs. It's written in CoffeeScript and tested with Jasmine, and is the fastest way to enable a JavaScript client to communicate with a Swagger-enabled server.
