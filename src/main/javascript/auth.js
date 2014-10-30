@@ -29,15 +29,20 @@ SwaggerAuthorizations.prototype.apply = function(obj, authorizations) {
     }
   }
   else {
-    for(name in authorizations) {
-      for (key in this.authz) {
-        if(key == name) {
-          value = this.authz[key];
-          result = value.apply(obj, authorizations);
-          if (result === true)
-            status = true;
+    if(Array.isArray(authorizations)) {
+      var i;
+      for(i = 0; i < authorizations.length; i++) {
+        var auth = authorizations[i];
+        log(auth);
+        for (key in this.authz) {
+          var value = this.authz[key];
+          if(typeof value !== 'undefined') {
+            result = value.apply(obj, authorizations);
+            if (result === true)
+              status = true;
+          }
         }
-      }      
+      }
     }
   }
 

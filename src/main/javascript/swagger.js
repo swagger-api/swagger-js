@@ -96,7 +96,7 @@ SwaggerClient.prototype.buildFromSpec = function(response) {
   this.apisArray = [];
   this.consumes = response.consumes;
   this.produces = response.produces;
-  this.authSchemes = response.authorizations;
+  this.securityDefinitions = response.securityDefinitions;
 
   var location = this.parseUri(this.url);
   if(typeof this.schemes === 'undefined' || this.schemes.length === 0) {
