@@ -129,6 +129,9 @@ SwaggerClient.prototype.buildFromSpec = function(response) {
     if(typeof response.paths[path] === 'object') {
       var httpMethod;
       for(httpMethod in response.paths[path]) {
+        if(['delete', 'get', 'head', 'options', 'patch', 'post', 'put'].indexOf(httpMethod) === -1) {
+          continue;
+        }
         var operation = response.paths[path][httpMethod];
         var tags = operation.tags;
         if(typeof tags === 'undefined') {
@@ -254,6 +257,7 @@ var Operation = function(parent, operationId, httpMethod, path, args, definition
   this.responses = (args.responses||{});
   this.type = null;
   this.security = args.security;
+  this.authorizations = args.security;
   this.description = args.description;
 
   var i;
