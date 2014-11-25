@@ -549,7 +549,7 @@ Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
         var reg = new RegExp('\{' + param.name + '[^\}]*\}', 'gi');
         requestUrl = requestUrl.replace(reg, this.encodePathParam(args[param.name]));
       }
-      else if (param.in === 'query') {
+      else if (param.in === 'query' && typeof args[param.name] !== 'undefined') {
         if(querystring === '')
           querystring += '?';
         else
