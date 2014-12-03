@@ -367,8 +367,8 @@ Operation.prototype.getType = function (param) {
     str = 'integer';
   else if(type === 'integer' && format === 'int64')
     str = 'long';
-  else if(type === 'integer' && typeof format === 'undefined')
-    str = 'long';
+  else if(type === 'integer')
+    str = 'integer'
   else if(type === 'string' && format === 'date-time')
     str = 'date-time';
   else if(type === 'string' && format === 'date')
@@ -377,7 +377,7 @@ Operation.prototype.getType = function (param) {
     str = 'float';
   else if(type === 'number' && format === 'double')
     str = 'double';
-  else if(type === 'number' && typeof format === 'undefined')
+  else if(type === 'number')
     str = 'double';
   else if(type === 'boolean')
     str = 'boolean';
@@ -587,7 +587,12 @@ Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
     // todo append?
     args.body = encoded;
   }
-  var url = this.scheme + '://' + this.host + this.basePath + requestUrl + querystring;
+  var url = this.scheme + '://' + this.host;
+
+  if(this.basePath !== '/')
+    url += this.basePath;
+
+  url += requestUrl + querystring;
 
   var obj = {
     url: url,
