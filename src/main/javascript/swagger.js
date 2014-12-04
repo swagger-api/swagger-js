@@ -869,6 +869,8 @@ Property.prototype.sampleValue = function(isArray, ignoredModels) {
     output = this.example;
   else if(this.default)
     output = this.default;
+  else if(this.obj.enum)
+    output = this.obj.enum[0];
   else if(type === 'date-time')
     output = new Date().toISOString();
   else if(type === 'string')
@@ -938,6 +940,8 @@ Property.prototype.toString = function() {
   var str = getStringSignature(this.obj);
   if(str !== '') {
     str = '<span class="propName ' + this.required + '">' + this.name + '</span> (<span class="propType">' + str + '</span>';
+    if(this.obj.enum)
+      str +=',<span class ="propEnumValues">enum:[' + this.obj.enum + ']</span>';
     if(!this.required)
       str += ', <span class="propOptKey">optional</span>';
     str += ')';
