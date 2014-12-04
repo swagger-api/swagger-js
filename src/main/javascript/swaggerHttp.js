@@ -99,7 +99,14 @@ JQueryHttpClient.prototype.execute = function(obj) {
     if(contentType != null) {
       if(contentType.indexOf("application/json") == 0 || contentType.indexOf("+json") > 0) {
         if(response.responseText && response.responseText !== "")
-          out.obj = JSON.parse(response.responseText);
+          try {
+            out.obj = JSON.parse(response.content.data);
+          }
+          catch () {
+            // do not set out.obj
+            log ("unable to parse JSON content");
+          }
+        }
         else
           out.obj = {}
       }
