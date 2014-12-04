@@ -96,15 +96,16 @@ var swagger = new client.SwaggerApi({
     }
   },
   // Add an authorization for this specific swagger client
-  authorization: new client.SwaggerAuthorization(
+  authorizations: new client.SwaggerAuthorization(
                         "apiKey",
-                        new client.APiKeyAuthorization("api_key", "another-special-key", "header")
+                        new client.ApiKeyAuthorization("api_key", "another-special-key", "header")
   )
 });
 
 ```
 This adds a global default authorization to the client and then adds a different authorization to the specific swagger
-api client when it is created.
+api client when it is created.  You are able to pass in any number of new authorization headers by creating your
+SwaggerAuthorization and then using its add method to add new ApiKeyAuthorizations.
 
 ### Calling an API with Swagger + the browser!
 
