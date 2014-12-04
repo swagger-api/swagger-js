@@ -8,11 +8,11 @@
     }
   ],
   "description": "swagger.js is a javascript client for use with swaggering APIs.",
-  "version": "2.0.41",
-  "homepage": "http://swagger.wordnik.com",
+  "version": "2.0.46",
+  "homepage": "http://swagger.io",
   "repository": {
     "type": "git",
-    "url": "git://github.com/wordnik/swagger-js.git"
+    "url": "git://github.com/swagger-api/swagger-js.git"
   },
   "main": "lib/swagger.js",
   "scripts": {
