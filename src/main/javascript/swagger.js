@@ -645,7 +645,7 @@ Operation.prototype.setContentTypes = function(args, opts) {
   }
 
   // if there's a body, need to set the accepts header via requestContentType
-  if (body && (this.type === 'post' || this.type === 'put' || this.type === 'patch' || this.type === 'delete')) {
+  if (body && (this.method === 'post' || this.method === 'put' || this.method === 'patch' || this.method === 'delete')) {
     if (opts.requestContentType)
       consumes = opts.requestContentType;
   } else {

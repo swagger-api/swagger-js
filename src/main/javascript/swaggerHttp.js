@@ -69,7 +69,7 @@ JQueryHttpClient.prototype.execute = function(obj) {
   obj.data = obj.body;
   obj.complete = function(response, textStatus, opts) {
     var headers = {},
-        headerArray = response.getAllResponseHeaders().split("\n");
+      headerArray = response.getAllResponseHeaders().split("\n");
 
     for(var i = 0; i < headerArray.length; i++) {
       var toSplit = headerArray[i].trim();
@@ -82,7 +82,7 @@ JQueryHttpClient.prototype.execute = function(obj) {
         continue;
       }
       var name = toSplit.substring(0, separator).trim(),
-          value = toSplit.substring(separator + 1).trim();
+        value = toSplit.substring(separator + 1).trim();
       headers[name] = value;
     }
 
@@ -98,11 +98,11 @@ JQueryHttpClient.prototype.execute = function(obj) {
 
     if(contentType != null) {
       if(contentType.indexOf("application/json") == 0 || contentType.indexOf("+json") > 0) {
-        if(response.responseText && response.responseText !== "")
+        if(response.responseText && response.responseText !== "") {
           try {
             out.obj = JSON.parse(response.content.data);
           }
-          catch () {
+          catch (ex) {
             // do not set out.obj
             log ("unable to parse JSON content");
           }
