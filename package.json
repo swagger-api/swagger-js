@@ -12,7 +12,7 @@
   "scripts": {
     "build": "PATH=$PATH:./node_modules/.bin cake bake",
     "dev": "PATH=$PATH:./node_modules/.bin cake dev",
-    "test": "mocha test"
+    "test": "gulp test"
   },
   "engines": {
     "node": ">= 0.6.6"
@@ -22,9 +22,17 @@
     "btoa": "1.1.1"
   },
   "devDependencies": {
+    "del": "^1.1.1",
+    "gulp": "^3.8.10",
+    "gulp-concat": "^2.4.3",
+    "gulp-jshint": "^1.9.0",
+    "gulp-mocha": "^2.0.0",
+    "gulp-rename": "^1.2.0",
+    "gulp-uglify": "^1.0.2",
+    "gulp-util": "^3.0.1",
     "mocha": "^1.21.3",
-    "unit.js": "1.1.2",
-    "should": "4.4.2"
+    "should": "4.4.2",
+    "unit.js": "1.1.2"
   },
   "license": "apache 2.0"
 }
