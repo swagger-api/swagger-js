@@ -1,5 +1,7 @@
 # Swagger JS library
 
+[![Build Status](https://api.travis-ci.org/swagger-api/swagger-js.png?branch=feature/mocha)](https://travis-ci.org/swagger-api/swagger-js)
+
 This is the Wordnik Swagger javascript client for use with [swagger](http://swagger.wordnik.com) enabled APIs.
 It's written in CoffeeScript and tested with Jasmine, and is the fastest way to enable a javascript client to communicate with a swagger-enabled server.
 
