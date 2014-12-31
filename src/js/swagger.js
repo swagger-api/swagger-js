@@ -471,8 +471,22 @@ Operation.prototype.supportedSubmitMethods = function () {
   return this.resource.api.supportedSubmitMethods;
 };
 
-Operation.prototype.getHeaderParams = function (map) {
-
+Operation.prototype.getHeaderParams = function (args) {
+  var headers = this.setContentTypes(args, {});
+  for(var i = 0; i < this.parameters.length; i++) {
+    var param = this.parameters[i];
+    if(typeof args[param.name] !== 'undefined') {
+      if (param.in === 'header') {
+        var value = args[param.name];
+        if(Array.isArray(value))
+          value = this.encodePathCollection(param.collectionFormat, param.name, value);
+        else
+          value = this.encodePathParam(value);
+        headers[param.name] = value;
+      }
+    }
+  }
+  return headers;
 }
 
 Operation.prototype.urlify = function (args) {
@@ -532,18 +546,6 @@ Operation.prototype.getMissingParams = function(args) {
     }
   }
   return missingParams;
-}
-
-Operation.prototype.getHeaders = function(args) {
-  var headers = this.setContentTypes(args, {});
-  for(var i = 0; i < this.parameters.length; i++) {
-    var param = this.parameters[i];
-    if(typeof args[param.name] !== 'undefined') {
-      if (param.in === 'header')
-        headers[param.name] = args[param.name];
-    }
-  }
-  return headers;
 }
 
 Operation.prototype.getBody = function(headers, args) {
@@ -642,7 +644,7 @@ Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
     return;
   }
 
-  var headers = this.getHeaders(args);
+  var headers = this.getHeaderParams(args);
   var body = this.getBody(headers, args);
   var url = this.urlify(args)
 
@@ -746,30 +748,21 @@ Operation.prototype.setContentTypes = function(args, opts) {
 Operation.prototype.encodePathCollection = function(type, name, value) {
   var encoded = '';
   var i;
-  if(type === 'default' || type === 'multi') {
-    for(i = 0; i < value.length; i++) {
-      if(i > 0) encoded += '&'
-      encoded += this.encodePathParam(value[i]);
-    }
-  }
-  else {
-    var separator = '';
-    if(type === 'csv')
-      separator = ',';
-    else if(type === 'ssv')
-      separator = '%20';
-    else if(type === 'tsv')
-      separator = '\\t';
-    else if(type === 'pipes')
-      separator = '|';
-    if(separator !== '') {
-      for(i = 0; i < value.length; i++) {
-        if(i == 0)
-          encoded = this.encodeQueryParam(value[i]);
-        else
-          encoded += separator + this.encodeQueryParam(value[i]);
-      }
-    }
+  var separator = '';
+  if(type === 'ssv')
+    separator = '%20';
+  else if(type === 'tsv')
+    separator = '\\t';
+  else if(type === 'pipes')
+    separator = '|';
+  else
+    separator = ',';
+
+  for(i = 0; i < value.length; i++) {
+    if(i == 0)
+      encoded = this.encodeQueryParam(value[i]);
+    else
+      encoded += separator + this.encodeQueryParam(value[i]);
   }
   return encoded;
 }
