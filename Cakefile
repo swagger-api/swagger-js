@@ -10,7 +10,8 @@ mergeFiles =(inputFolder, outputFile, minify=false) ->
   appContents = new Array
 
   for inputFile, index in inputFiles then do (inputFile, index) ->
-    exec "cat #{inputFolder}/#{inputFile} >> #{outputFile}"
+    if inputFile.indexOf('.js') isnt -1
+      exec "cat #{inputFolder}/#{inputFile} >> #{outputFile}"
 
   process = ->
     
@@ -39,11 +40,6 @@ task 'bake', 'Compile and concatenate CoffeeScript files to JavaScript', ->
     mergeFiles "src/js", "#{outputFile}", false
 
   exec "cp lib/#{outputFile}.js dist/lib/"
-
-
-task 'watch', 'Automatically recompile CoffeeScript files to JavaScript', ->
-  coffee = spawn 'coffee', ['-cw', '-o', 'lib', 'src']
-  coffee.stdout.on 'data', (data) -> console.log data.toString().trim()
 
 task 'dev', "Open source files, run spec in browser, and watch for changes", ->
   exec "$EDITOR ."

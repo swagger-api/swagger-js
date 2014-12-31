@@ -255,10 +255,10 @@ var Operation = function(parent, operationId, httpMethod, path, args, definition
   this.consumes = args.consumes;
   this.produces = args.produces;
   this.parent = parent;
-  this.host = parent.host;
+  this.host = parent.host || 'localhost';
   this.schemes = parent.schemes;
   this.scheme = parent.scheme || 'http';
-  this.basePath = parent.basePath;
+  this.basePath = parent.basePath || '/';
   this.nickname = (operationId||errors.push('Operations must have a nickname.'));
   this.method = (httpMethod||errors.push('Operation ' + operationId + ' is missing method.'));
   this.path = (path||errors.push('Operation ' + this.nickname + ' is missing path.'));
@@ -512,8 +512,12 @@ Operation.prototype.urlify = function (args) {
         formParams[param.name] = args[param.name];
     }
   }
+  var url = this.scheme + '://' + this.host;
 
-  return requestUrl + querystring;
+  if(this.basePath !== '/')
+    url += this.basePath;
+
+  return url + requestUrl + querystring;
 }
 
 Operation.prototype.getMissingParams = function(args) {
@@ -544,6 +548,7 @@ Operation.prototype.getHeaders = function(args) {
 
 Operation.prototype.getBody = function(headers, args) {
   var formParams = {};
+  var body;
 
   for(var i = 0; i < this.parameters.length; i++) {
     var param = this.parameters[i];
@@ -639,13 +644,7 @@ Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
 
   var headers = this.getHeaders(args);
   var body = this.getBody(headers, args);
-  var path = this.urlify(args)
-  var url = this.scheme + '://' + this.host;
-
-  if(this.basePath !== '/')
-    url += this.basePath;
-
-  url += path;
+  var url = this.urlify(args)
 
   var obj = {
     url: url,
@@ -674,41 +673,48 @@ Operation.prototype.setContentTypes = function(args, opts) {
   var allDefinedParams = this.parameters;
   var definedFormParams = [];
   var definedFileParams = [];
-  var body = args.body;
+  var body;
   var headers = {};
 
   // get params from the operation and set them in definedFileParams, definedFormParams, headers
   var i;
   for(i = 0; i < allDefinedParams.length; i++) {
     var param = allDefinedParams[i];
-    if(param.in === 'formData')
-      definedFormParams.push(param);
-    else if(param.in === 'file')
-      definedFileParams.push(param);
+    if(param.in === 'formData') {
+      if(param.type === 'file')
+        definedFileParams.push(param);
+      else
+        definedFormParams.push(param);
+    }
     else if(param.in === 'header' && this.headers) {
       var key = param.name;
       var headerValue = this.headers[param.name];
       if(typeof this.headers[param.name] !== 'undefined')
         headers[key] = headerValue;
     }
+    else if(param.in === 'body' && typeof args[param.name] !== 'undefined') {
+      body = args[param.name];
+    }
   }
 
-  // if there's a body, need to set the accepts header via requestContentType
+  // if there's a body, need to set the consumes header via requestContentType
   if (body && (this.method === 'post' || this.method === 'put' || this.method === 'patch' || this.method === 'delete')) {
     if (opts.requestContentType)
       consumes = opts.requestContentType;
   } else {
     // if any form params, content type must be set
     if(definedFormParams.length > 0) {
-      if(definedFileParams.length > 0)
+      if(opts.requestContentType)           // override if set
+        consumes = opts.requestContentType;
+      else if(definedFileParams.length > 0) // if a file, must be multipart/form-data
         consumes = 'multipart/form-data';
-      else
+      else                                  // default to x-www-from-urlencoded
         consumes = 'application/x-www-form-urlencoded';
     }
     else if (this.type == 'DELETE')
       body = '{}';
     else if (this.type != 'DELETE')
-      accepts = null;
+      consumes = null;
   }
 
   if (consumes && this.consumes) {

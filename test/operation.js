@@ -3,61 +3,38 @@ var should = require('should')
 var swagger = require('../lib/swagger-client')
 
 describe('url generation', function() {
-  var quantityQP = {
-    in: 'query',
-    name: 'quantity',
-    type: 'integer',
-    format: 'int32'
-  };
-  var weightQP = {
-    in: 'query',
-    name: 'weight',
-    type: 'number',
-    format: 'double'
-  };
-  var intArrayQP = {
-    in: 'query',
-    name: 'intArray',
-    type: 'array',
-    items: {
-      type: 'integer',
-      format: 'int32'
-    },
-    collectionFormat: 'csv'
-  }
-
   it('should generate a url', function() {
     var parameters = [
       quantityQP
     ];
-    var op = new swagger.Operation({}, 'test', 'get', 'path', { parameters: parameters });
+    var op = new swagger.Operation({}, 'test', 'get', '/path', { parameters: parameters });
     var url = op.urlify({
       quantity: 3
     });
-    should(url).equal('path?quantity=3');
+    should(url).equal('http://localhost/path?quantity=3');
   })
 
   it('should generate a url with two params', function() {
     var parameters = [
       quantityQP, weightQP
     ];
-    var op = new swagger.Operation({}, 'test', 'get', 'path', { parameters: parameters });
+    var op = new swagger.Operation({}, 'test', 'get', '/path', { parameters: parameters });
     var url = op.urlify({
       quantity: 3,
       weight: 100.3
     });
-    should(url).equal('path?quantity=3&weight=100.3');
+    should(url).equal('http://localhost/path?quantity=3&weight=100.3');
   })
 
   it('should generate a url with queryparams array, multi', function() {
     var parameters = [
       intArrayQP
     ];
-    var op = new swagger.Operation({}, 'test', 'get', 'path', { parameters: parameters });
+    var op = new swagger.Operation({}, 'test', 'get', '/path', { parameters: parameters });
     var url = op.urlify({
       intArray: [3,4,5]
     });
-    should(url).equal('path?intArray=3,4,5');
+    should(url).equal('http://localhost/path?intArray=3,4,5');
   })
 
   it('should generate a url with queryparams array, pipes', function() {
@@ -73,11 +50,11 @@ describe('url generation', function() {
         collectionFormat: 'pipes'
       }
     ];
-    var op = new swagger.Operation({}, 'test', 'get', 'path', { parameters: parameters });
+    var op = new swagger.Operation({}, 'test', 'get', '/path', { parameters: parameters });
     var url = op.urlify({
       intArray: [3,4,5]
     });
-    should(url).equal('path?intArray=3|4|5');
+    should(url).equal('http://localhost/path?intArray=3|4|5');
   })
 
   it('should generate a url with queryparams array, tabs', function() {
@@ -93,11 +70,11 @@ describe('url generation', function() {
         collectionFormat: 'tsv'
       }
     ];
-    var op = new swagger.Operation({}, 'test', 'get', 'path', { parameters: parameters });
+    var op = new swagger.Operation({}, 'test', 'get', '/path', { parameters: parameters });
     var url = op.urlify({
       intArray: [3,4,5]
     });
-    should(url).equal('path?intArray=3\\t4\\t5');
+    should(url).equal('http://localhost/path?intArray=3\\t4\\t5');
   })
 
   it('should generate a url with queryparams array, spaces', function() {
@@ -113,11 +90,11 @@ describe('url generation', function() {
         collectionFormat: 'ssv'
       }
     ];
-    var op = new swagger.Operation({}, 'test', 'get', 'path', { parameters: parameters });
+    var op = new swagger.Operation({}, 'test', 'get', '/path', { parameters: parameters });
     var url = op.urlify({
       intArray: [3,4,5]
     });
-    should(url).equal('path?intArray=3%204%205');
+    should(url).equal('http://localhost/path?intArray=3%204%205');
   })
 
   it('should generate a url with queryparams array, brackets', function() {
@@ -133,11 +110,11 @@ describe('url generation', function() {
         collectionFormat: 'brackets'
       }
     ];
-    var op = new swagger.Operation({}, 'test', 'get', 'path', { parameters: parameters });
+    var op = new swagger.Operation({}, 'test', 'get', '/path', { parameters: parameters });
     var url = op.urlify({
       intArray: [3,4,5]
     });
-    should(url).equal('path?intArray[]=3&intArray[]=4&intArray[]=5');
+    should(url).equal('http://localhost/path?intArray[]=3&intArray[]=4&intArray[]=5');
   })
 
   it('should generate a url with path param at end of path', function() {
@@ -159,7 +136,7 @@ describe('url generation', function() {
       name: 'tony',
       age: 42
     });
-    should(url).equal('/foo/tony?age=42');
+    should(url).equal('http://localhost/foo/tony?age=42');
   })
 
   it('should generate a url with path param at middle of path', function() {
@@ -181,7 +158,7 @@ describe('url generation', function() {
       name: 'tony',
       age: 42
     });
-    should(url).equal('/foo/tony/bar?age=42');
+    should(url).equal('http://localhost/foo/tony/bar?age=42');
   })
 
   it('should generate a url with path param with proper escaping', function() {
@@ -196,7 +173,7 @@ describe('url generation', function() {
     var url = op.urlify({
       name: 'tony tam'
     });
-    should(url).equal('/foo/tony%20tam/bar');
+    should(url).equal('http://localhost/foo/tony%20tam/bar');
   })
 
   it('should generate a url with path param string array', function() {
@@ -215,6 +192,29 @@ describe('url generation', function() {
     var url = op.urlify({
       names: ['fred', 'bob', 'mary']
     });
-    should(url).equal('/foo/fred,bob,mary/bar');
+    should(url).equal('http://localhost/foo/fred,bob,mary/bar');
   })
 })
+
+var quantityQP = {
+  in: 'query',
+  name: 'quantity',
+  type: 'integer',
+  format: 'int32'
+};
+var weightQP = {
+  in: 'query',
+  name: 'weight',
+  type: 'number',
+  format: 'double'
+};
+var intArrayQP = {
+  in: 'query',
+  name: 'intArray',
+  type: 'array',
+  items: {
+    type: 'integer',
+    format: 'int32'
+  },
+  collectionFormat: 'csv'
+}
