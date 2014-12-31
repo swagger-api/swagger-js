@@ -247,6 +247,9 @@ var OperationGroup = function(tag, operation) {
 
 var Operation = function(parent, operationId, httpMethod, path, args, definitions) {
   var errors = [];
+  parent = parent||{};
+  args = args||{};
+
   this.operation = args;
   this.deprecated = args.deprecated;
   this.consumes = args.consumes;
@@ -258,7 +261,7 @@ var Operation = function(parent, operationId, httpMethod, path, args, definition
   this.basePath = parent.basePath;
   this.nickname = (operationId||errors.push('Operations must have a nickname.'));
   this.method = (httpMethod||errors.push('Operation ' + operationId + ' is missing method.'));
-  this.path = (path||errors.push('Operation ' + nickname + ' is missing path.'));
+  this.path = (path||errors.push('Operation ' + this.nickname + ' is missing path.'));
   this.parameters = args != null ? (args.parameters||[]) : {};
   this.summary = args.summary || '';
   this.responses = (args.responses||{});
@@ -352,8 +355,10 @@ var Operation = function(parent, operationId, httpMethod, path, args, definition
     }
   }
 
-  if (errors.length > 0)
-    this.resource.api.fail(errors);
+  if (errors.length > 0) {
+    if(this.resource && this.resource.api && this.resource.api.fail)
+      this.resource.api.fail(errors);
+  }
 
   return this;
 }
@@ -458,6 +463,114 @@ Operation.prototype.getSignature = function(type, models) {
   }
 };
 
+Operation.prototype.supportHeaderParams = function () {
+  return true;
+};
+
+Operation.prototype.supportedSubmitMethods = function () {
+  return this.resource.api.supportedSubmitMethods;
+};
+
+Operation.prototype.getHeaderParams = function (map) {
+
+}
+
+Operation.prototype.urlify = function (args) {
+  var formParams = {};
+  var requestUrl = this.path;
+
+  // grab params from the args, build the querystring along the way
+  var querystring = '';
+  for(var i = 0; i < this.parameters.length; i++) {
+    var param = this.parameters[i];
+    if(typeof args[param.name] !== 'undefined') {
+      if(param.in === 'path') {
+        var reg = new RegExp('\{' + param.name + '[^\}]*\}', 'gi');
+        var value = args[param.name];
+        if(Array.isArray(value))
+          value = this.encodePathCollection(param.collectionFormat, param.name, value);
+        else
+          value = this.encodePathParam(value);
+        requestUrl = requestUrl.replace(reg, value);
+      }
+      else if (param.in === 'query' && typeof args[param.name] !== 'undefined') {
+        if(querystring === '')
+          querystring += '?';
+        else
+          querystring += '&';
+        if(typeof param.collectionFormat !== 'undefined') {
+          var qp = args[param.name];
+          if(Array.isArray(qp))
+            querystring += this.encodeQueryCollection(param.collectionFormat, param.name, qp);
+          else
+            querystring += this.encodeQueryParam(param.name) + '=' + this.encodeQueryParam(args[param.name]);
+        }
+        else
+          querystring += this.encodeQueryParam(param.name) + '=' + this.encodeQueryParam(args[param.name]);
+      }
+      else if (param.in === 'formData')
+        formParams[param.name] = args[param.name];
+    }
+  }
+
+  return requestUrl + querystring;
+}
+
+Operation.prototype.getMissingParams = function(args) {
+  var missingParams = [];
+  // check required params, track the ones that are missing
+  var i;
+  for(i = 0; i < this.parameters.length; i++) {
+    var param = this.parameters[i];
+    if(param.required === true) {
+      if(typeof args[param.name] === 'undefined')
+        missingParams = param.name;
+    }
+  }
+  return missingParams;
+}
+
+Operation.prototype.getHeaders = function(args) {
+  var headers = this.setContentTypes(args, {});
+  for(var i = 0; i < this.parameters.length; i++) {
+    var param = this.parameters[i];
+    if(typeof args[param.name] !== 'undefined') {
+      if (param.in === 'header')
+        headers[param.name] = args[param.name];
+    }
+  }
+  return headers;
+}
+
+Operation.prototype.getBody = function(headers, args) {
+  var formParams = {};
+
+  for(var i = 0; i < this.parameters.length; i++) {
+    var param = this.parameters[i];
+    if(typeof args[param.name] !== 'undefined') {
+      if (param.in === 'body')
+        body = args[param.name];
+    }
+  }
+
+  // handle form params
+  if(headers['Content-Type'] === 'application/x-www-form-urlencoded') {
+    var encoded = "";
+    var key;
+    for(key in formParams) {
+      value = formParams[key];
+      if(typeof value !== 'undefined'){
+        if(encoded !== "")
+          encoded += "&";
+        encoded += encodeURIComponent(key) + '=' + encodeURIComponent(value);
+      }
+    }
+    body = encoded;
+  }
+
+  return body;
+}
+
 /**
  * gets sample response for a single operation
  **/
@@ -487,7 +600,7 @@ Operation.prototype.getSampleJSON = function(type, models) {
     else
       return sampleJson;
   }
-};
+}
 
 /**
  * legacy binding
@@ -496,112 +609,48 @@ Operation.prototype["do"] = function(args, opts, callback, error, parent) {
   return this.execute(args, opts, callback, error, parent);
 }
 
+
 /**
  * executes an operation
  **/
 Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
-  var args = (arg1||{});
+  var args = arg1 || {};
   var opts = {}, success, error;
   if(typeof arg2 === 'object') {
     opts = arg2;
     success = arg3;
     error = arg4;
   }
+
   if(typeof arg2 === 'function') {
     success = arg2;
     error = arg3;
   }
 
-  var formParams = {};
-  var headers = {};
-  var requestUrl = this.path;
-
   success = (success||log)
   error = (error||log)
 
-  var requiredParams = [];
-  var missingParams = [];
-  // check required params, track the ones that are missing
-  var i;
-  for(i = 0; i < this.parameters.length; i++) {
-    var param = this.parameters[i];
-    if(param.required === true) {
-      requiredParams.push(param.name);
-      if(typeof args[param.name] === 'undefined')
-        missingParams = param.name;
-    }
-  }
-
+  var missingParams = this.getMissingParams(args);
   if(missingParams.length > 0) {
     var message = 'missing required params: ' + missingParams;
     fail(message);
     return;
   }
 
-  // set content type negotiation
-  var consumes = this.consumes || this.parent.consumes || [ 'application/json' ];
-  var produces = this.produces || this.parent.produces || [ 'application/json' ];
-
-  headers = this.setContentTypes(args, opts);
-
-  // grab params from the args, build the querystring along the way
-  var querystring = "";
-  for(var i = 0; i < this.parameters.length; i++) {
-    var param = this.parameters[i];
-    if(typeof args[param.name] !== 'undefined') {
-      if(param.in === 'path') {
-        var reg = new RegExp('\{' + param.name + '[^\}]*\}', 'gi');
-        requestUrl = requestUrl.replace(reg, this.encodePathParam(args[param.name]));
-      }
-      else if (param.in === 'query' && typeof args[param.name] !== 'undefined') {
-        if(querystring === '')
-          querystring += '?';
-        else
-          querystring += '&';
-        if(typeof param.collectionFormat !== 'undefined') {
-          var qp = args[param.name];
-          if(Array.isArray(qp))
-            querystring += this.encodeCollection(param.collectionFormat, param.name, qp);
-          else
-            querystring += this.encodeQueryParam(param.name) + '=' + this.encodeQueryParam(args[param.name]);
-        }
-        else
-          querystring += this.encodeQueryParam(param.name) + '=' + this.encodeQueryParam(args[param.name]);
-      }
-      else if (param.in === 'header')
-        headers[param.name] = args[param.name];
-      else if (param.in === 'formData')
-        formParams[param.name] = args[param.name];
-      else if (param.in === 'body')
-        args.body = args[param.name];
-    }
-  }
-  // handle form params
-  if(headers['Content-Type'] === 'application/x-www-form-urlencoded') {
-    var encoded = "";
-    var key;
-    for(key in formParams) {
-      value = formParams[key];
-      if(typeof value !== 'undefined'){
-        if(encoded !== "")
-          encoded += "&";
-        encoded += encodeURIComponent(key) + '=' + encodeURIComponent(value);
-      }
-    }
-    // todo append?
-    args.body = encoded;
-  }
+  var headers = this.getHeaders(args);
+  var body = this.getBody(headers, args);
+  var path = this.urlify(args)
   var url = this.scheme + '://' + this.host;
 
   if(this.basePath !== '/')
     url += this.basePath;
 
-  url += requestUrl + querystring;
+  url += path;
 
   var obj = {
     url: url,
     method: this.method,
-    body: args.body,
+    body: body,
     useJQuery: this.useJQuery,
     headers: headers,
     on: {
@@ -620,7 +669,7 @@ Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
 Operation.prototype.setContentTypes = function(args, opts) {
   // default type
   var accepts = 'application/json';
-  var consumes = 'application/json';
+  var consumes = args.parameterContentType || 'application/json';
 
   var allDefinedParams = this.parameters;
   var definedFormParams = [];
@@ -688,7 +737,38 @@ Operation.prototype.setContentTypes = function(args, opts) {
   return headers;
 }
 
-Operation.prototype.encodeCollection = function(type, name, value) {
+Operation.prototype.encodePathCollection = function(type, name, value) {
+  var encoded = '';
+  var i;
+  if(type === 'default' || type === 'multi') {
+    for(i = 0; i < value.length; i++) {
+      if(i > 0) encoded += '&'
+      encoded += this.encodePathParam(value[i]);
+    }
+  }
+  else {
+    var separator = '';
+    if(type === 'csv')
+      separator = ',';
+    else if(type === 'ssv')
+      separator = '%20';
+    else if(type === 'tsv')
+      separator = '\\t';
+    else if(type === 'pipes')
+      separator = '|';
+    if(separator !== '') {
+      for(i = 0; i < value.length; i++) {
+        if(i == 0)
+          encoded = this.encodeQueryParam(value[i]);
+        else
+          encoded += separator + this.encodeQueryParam(value[i]);
+      }
+    }
+  }
+  return encoded;
+}
+
+Operation.prototype.encodeQueryCollection = function(type, name, value) {
   var encoded = '';
   var i;
   if(type === 'default' || type === 'multi') {
@@ -707,6 +787,13 @@ Operation.prototype.encodeCollection = function(type, name, value) {
       separator = '\\t';
     else if(type === 'pipes')
       separator = '|';
+    else if(type === 'brackets') {
+      for(i = 0; i < value.length; i++) {
+        if(i !== 0)
+          encoded += '&';
+        encoded += this.encodeQueryParam(name) + '[]=' + this.encodeQueryParam(value[i]);
+      }
+    }
     if(separator !== '') {
       for(i = 0; i < value.length; i++) {
         if(i == 0)
@@ -716,7 +803,6 @@ Operation.prototype.encodeCollection = function(type, name, value) {
       }
     }
   }
-  // TODO: support the different encoding schemes here
   return encoded;
 }
 
@@ -731,16 +817,15 @@ Operation.prototype.encodeQueryParam = function(arg) {
  * TODO revisit, might not want to leave '/'
  **/
 Operation.prototype.encodePathParam = function(pathParam) {
-  var encParts, part, parts, _i, _len;
+  var encParts, part, parts, i, len;
   pathParam = pathParam.toString();
   if (pathParam.indexOf('/') === -1) {
     return encodeURIComponent(pathParam);
   } else {
     parts = pathParam.split('/');
     encParts = [];
-    for (_i = 0, _len = parts.length; _i < _len; _i++) {
-      part = parts[_i];
-      encParts.push(encodeURIComponent(part));
+    for (i = 0, len = parts.length; i < len; i++) {
+      encParts.push(encodeURIComponent(parts[i]));
     }
     return encParts.join('/');
   }
@@ -987,4 +1072,4 @@ e.ApiKeyAuthorization = ApiKeyAuthorization;
 e.PasswordAuthorization = PasswordAuthorization;
 e.CookieAuthorization = CookieAuthorization;
 e.SwaggerClient = SwaggerClient;
-
+e.Operation = Operation;
