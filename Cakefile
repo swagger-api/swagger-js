@@ -36,17 +36,10 @@ task 'bake', 'Compile and concatenate CoffeeScript files to JavaScript', ->
     exec "echo '// version #{obj.version}' >> lib/#{outputFile}.js"
 
     # shared files
-    mergeFiles "src/main/javascript", "#{outputFile}", false
+    mergeFiles "src/js", "#{outputFile}", false
 
   exec "cp lib/#{outputFile}.js dist/lib/"
 
-  #coffee = spawn 'coffee', ['-c', '-o', 'lib', 'src']
-  #coffee.stderr.on 'data', (data) ->
-  #  process.stderr.write data.toString()
-  #coffee.stdout.on 'data', (data) ->
-  #  print data.toString()
-  #coffee.on 'exit', (code) ->
-  #  callback?() if code is 0
 
 task 'watch', 'Automatically recompile CoffeeScript files to JavaScript', ->
   coffee = spawn 'coffee', ['-cw', '-o', 'lib', 'src']
