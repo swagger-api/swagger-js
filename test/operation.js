@@ -1,179 +1,246 @@
 var test = require('unit.js')
 var should = require('should')
-var http = require('http'),
-    url = require('url'),
-    path = require('path'),
-    fs = require('fs');
-var swagger = require('../lib/swagger')
-var sample;
+var mock = require('../test/mock');
+var sample, instance;
 
-describe('operations', function() {
+describe('verifies the nickname is sanitized', function() {
   before(function(done) {
-    instance = http.createServer(function(req, res) {
-      var uri = url.parse(req.url).pathname;
-      var filename = path.join('test/spec', uri);
-
-      fs.exists(filename, function(exists) {
-        if(exists) {
-          res.setHeader("Access-Control-Allow-Origin", "*");
-          res.writeHead(200, "application/json");
-          var fileStream = fs.createReadStream(filename);
-          fileStream.pipe(res);
-        }
-        else {
-          res.writeHead(200, {'Content-Type': 'text/plain'});
-          res.write('404 Not Found\n');
-          res.end();
-        }
-      });
-    }).listen(8000);
-
-    instance.on("listening", function() {
-      var self = {}; self.stop = done;
-      console.log("started http server");
-
-      sample = new swagger.SwaggerApi('http://localhost:8000/api-docs.json');
-      sample.build();
-      var count = 0, isDone = false;
-      var f = function () {
-        if(!isDone) {
-          isDone = true;
-          self.stop();
-        }
-        return;
-      };
-      setTimeout(f, 50);
+    mock.petstore(done, function(petstore, server){
+      sample = petstore;
+      instance = server;
     });
   });
 
   after(function(done){
     instance.close();
-    console.log("stopped");
+    console.log('stopped');
     done();
   });
 
-  it('verify the help function', function() {
-    var petApi = sample.pet;
-    test.object(petApi);
-    var help = petApi.getPetById.help();
-    should(help).equal('* petId (required) - ID of pet that needs to be fetched');
+  it('returns the same nickname', function() {
+    pet = sample.pet;
+    should(pet.sanitize('getSomething')).equal('getSomething');
   })
 
-  it('generate a get request', function() {
-    var petApi = sample.pet;
-    var req = petApi.getPetById({petId: 1}, {mock: true});
-
-    test.object(req);
-    should(req.method).equal('GET');
-    should(req.headers['Accept']).equal('application/json');
-    should(req.url).equal('http://petstore.swagger.wordnik.com/api/pet/1');
+  it('strips spaces in the nickname', function() {
+    pet = sample.pet;
+    should(pet.sanitize('get something')).equal('get_something');
   })
 
-  it('verifies the http request object for a GET with query params', function() {
-    var petApi = sample.pet;
-    var params = {
-      headers: {},
-      status: 'available'
-    };
-    var opts = { mock: true };
-
-    var req = petApi.findPetsByStatus(params, opts);
-
-    should(req.method).equal("GET");
-    should(req.headers["Accept"]).equal("application/json");
-    should(req.url).equal("http://petstore.swagger.wordnik.com/api/pet/findByStatus?status=available");
+  it('strips dots in the nickname', function() {
+    pet = sample.pet;
+    should(pet.sanitize('get.something')).equal('get_something');
   })
 
-  it('verifies the http request object for a POST', function() {
-    var petApi = sample.pet;
-    var params = {
-      headers: {},
-      body: JSON.stringify({
-        id: 100,
-        name: 'monster',
-        status: 'dead'
-      })
-    };
-    var opts = { mock: true };
-
-    var req = petApi.addPet(params, opts);
-
-    should(req.method).equal("POST");
-    should(req.headers["Accept"]).equal("application/json");
-    should(req.headers["Content-Type"]).equal("application/json");
-    should(req.body).equal('{"id":100,"name":"monster","status":"dead"}');
-    should(req.url).equal("http://petstore.swagger.wordnik.com/api/pet");
+  it('strips $ in the nickname', function() {
+    pet = sample.pet;
+    should(pet.sanitize('get$something')).equal('get_something');
   })
 
-  it('verifies the http request object for a POST with form params', function() {
-    var petApi = sample.pet;
-    var params = {
-      headers: {},
-      petId: 1,
-      name: 'dog',
-      status: 'very happy'
-    };
-    var opts = { mock: true };
-
-    var req = petApi.updatePetWithForm(params, opts);
-
-    should(req.method).equal('POST');
-    should(req.headers['Accept']).equal('application/json');
-    should(req.headers['Content-Type']).equal('application/x-www-form-urlencoded');
-    should(req.body).equal('name=dog&status=very%20happy');
-    should(req.url).equal('http://petstore.swagger.wordnik.com/api/pet/1');
+  it('strips punctuation in the nickname', function() {
+    pet = sample.pet;
+    should(pet.sanitize('get[something]')).equal('get_something');
   })
 
-  it('execute put operations', function() {
-    var petApi = sample.pet;
-    var params = {
-      headers: {},
-      body: JSON.stringify({
-        id: 100,
-        name: 'monster',
-        status: 'dead'
-      })
-    };
-    var opts = { mock: true };
-
-    var req = petApi.updatePet(params, opts);
-
-    should(req.method).equal('PUT');
-    should(req.headers['Accept']).equal('application/json');
-    should(req.headers['Content-Type']).equal('application/json');
-    should(req.body).equal('{\"id\":100,\"name\":\"monster\",\"status\":\"dead\"}');
-    should(req.url).equal('http://petstore.swagger.wordnik.com/api/pet');
+  it('strips curlies in the nickname', function() {
+    pet = sample.pet;
+    should(pet.sanitize('get{something}')).equal('get_something');
   })
 
-  it('execute delete operations', function() {
-    var petApi = sample.pet;
-    var params = {
-      headers: {},
-      petId: 100
-    };
-    var opts = { mock: true };
+  it('strips punctuation in the nickname', function() {
+    pet = sample.pet;
+    should(pet.sanitize('  \\]}{Get$$_./\[something]')).equal('Get_something');
+  })
+})
 
-    var req = petApi.deletePet(params, opts);
+describe('verifies the get pet operation', function() {
+  before(function(done) {
+    mock.petstore(done, function(petstore, server){
+      sample = petstore;
+      instance = server;
+    });
+  });
 
-    should(req.method).equal('DELETE');
-    should(req.headers['Accept']).equal('application/json');
-    should(req.headers['Content-Type']).equal('application/json');
-    should(req.url).equal('http://petstore.swagger.wordnik.com/api/pet/100');
+  after(function(done){
+    instance.close();
+    console.log('stopped');
+    done();
+  });
+
+  it('verifies the response messages from the get operation', function() {
+    operation = sample.pet.operations.getPetById;
+
+    responseMessages = operation.responseMessages;
+    test.object(responseMessages);
+    should(responseMessages.length).equal(2);
+    should(responseMessages[0].code).equal(400);
+    should(responseMessages[1].code).equal(404);
   })
 
-  it('query params should be single encoded', function() {
-    var petApi = sample.pet;
-    var params = {
-      headers: {},
-      status: "a b c d e"
-    };
-    var opts = { mock: true };
+  it('gets help() from the get pet operation', function() {
+    operation = sample.pet.operations.getPetById;
+    should(operation.help()).equal('* petId (required) - ID of pet that needs to be fetched');
+  })
 
-    var req = petApi.findPetsByStatus(params, opts);
+////////
+  it('verifies the get pet operation', function() {
+    operation = sample.pet.operations.getPetById
+    should(operation.method).equal('get');
 
-    should(req.method).equal('GET');
-    should(req.headers['Accept']).equal('application/json');
-    test.value(req.headers['Content-Type']).isUndefined();
-    should(req.url).equal('http://petstore.swagger.wordnik.com/api/pet/findByStatus?status=a%20b%20c%20d%20e');
+    parameters = operation.parameters;
+
+    test.object(parameters);
+    should(parameters.length).equal(1);
+
+    param = parameters[0]
+    should(param.name).equal('petId');
+    should(param.type).equal('integer');
+    should(param.paramType).equal('path');
+    test.value(param.description);
+  })
+
+  it('verifies the post pet operation', function() {
+    operation = sample.pet.operations.addPet
+    should(operation.method).equal('post');
+
+    parameters = operation.parameters
+
+    test.object(parameters);
+    should(parameters.length).equal(1);
+
+    param = parameters[0]
+    should(param.name).equal('body');
+    should(param.type).equal('Pet');
+    should(param.paramType).equal('body');
+    test.value(param.description);
+  })
+
+  it('verifies the put pet operation', function() {
+    operation = sample.pet.operations.updatePet
+    should(operation.method).equal('put');
+
+    parameters = operation.parameters
+
+    test.object(parameters);
+    should(parameters.length).equal(1);
+
+    param = parameters[0]
+    should(param.name).equal('body');
+    should(param.type).equal('Pet');
+    should(param.paramType).equal('body');
+    test.value(param.description);
+  })
+
+  it('verifies the findByTags operation', function() {
+    operation = sample.pet.operations.findPetsByTags
+    should(operation.method).equal('get');
+
+    parameters = operation.parameters
+
+    test.object(parameters);
+    should(parameters.length).equal(1);
+
+    param = parameters[0]
+
+    should(param.name).equal('tags');
+    should(param.type).equal('string');
+    should(param.paramType).equal('query');
+    test.value(param.description);
+  })
+
+  it('verifies the patch pet operation', function() {
+    operation = sample.pet.operations.partialUpdate
+    should(operation.method).equal('patch');
+
+    produces = operation.produces
+    should(produces.length).equal(2);
+    should(produces[0]).equal('application/json');
+    should(produces[1]).equal('application/xml');
+
+    parameters = operation.parameters
+    test.object(parameters);
+    should(parameters.length).equal(2);
+
+    param = parameters[0]
+    should(param.name).equal('petId');
+    should(param.type).equal('string');
+    should(param.paramType).equal('path');
+    test.value(param.description);
+
+    param = parameters[1]
+    should(param.name).equal('body');
+    should(param.type).equal('Pet');
+    should(param.paramType).equal('body');
+    test.value(param.description);
+  })
+
+  it('verifies the post pet operation with form', function() {
+    operation = sample.pet.operations.updatePetWithForm
+    should(operation.method).equal('post');
+
+    consumes = operation.consumes
+    should(consumes.length).equal(1);
+    should(consumes[0]).equal('application/x-www-form-urlencoded');
+
+    parameters = operation.parameters
+    test.object(parameters);
+    should(parameters.length).equal(3);
+
+    param = parameters[0]
+    should(param.name).equal('petId');
+    should(param.type).equal('string');
+    should(param.paramType).equal('path');
+    test.value(param.description);
+
+    param = parameters[1]
+    should(param.name).equal('name');
+    should(param.type).equal('string');
+    should(param.paramType).equal('form');
+    test.value(param.description);
+    should(param.required).equal(false);
+
+    param = parameters[2]
+    should(param.name).equal('status');
+    should(param.type).equal('string');
+    should(param.paramType).equal('form');
+    test.value(param.description);
+    should(param.required).equal(false);
+  })
+
+  it('verifies a file upload', function() {
+    operation = sample.pet.operations.uploadFile
+    should(operation.method).equal('post');
+
+    consumes = operation.consumes
+    should(consumes.length).equal(1);
+    should(consumes[0]).equal('multipart/form-data');
+
+    parameters = operation.parameters
+    test.object(parameters);
+    should(parameters.length).equal(2);
+
+    param = parameters[0]
+    should(param.name).equal('additionalMetadata');
+    should(param.type).equal('string');
+    should(param.paramType).equal('form');
+    should(param.required).equal(false);
+    test.value(param.description);
+
+    param = parameters[1]
+    should(param.name).equal('file');
+    should(param.type).equal('File');
+    should(param.paramType).equal('body');
+    test.value(param.description);
+    should(param.required).equal(false);
+  })
+
+  it('gets operations for the pet api', function() {
+    ops = sample.pet.operations
+    test.object(ops);
+  })
+
+  it('gets help() from the file upload operation', function() {
+    operation = sample.pet.operations.uploadFile
+    should(operation.help()).equal('* additionalMetadata - Additional data to pass to server\n* file - file to upload');
   })
 })
