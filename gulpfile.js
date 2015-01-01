@@ -10,7 +10,7 @@ var del = require('del');
 
 var basename = 'swagger-client';
 var paths = {
-  sources: ['src/main/javascript/*.js'],
+  sources: ['src/js/*.js'],
   tests: ['test/*.js'],
   dist: 'dist'
 };
