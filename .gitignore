@@ -25,3 +25,5 @@ capybara-*.html
 npm-debug.log
 /node_modules/
 /dist/
+/coverage/
+.coverrun

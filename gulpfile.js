@@ -5,6 +5,7 @@ var jshint = require('gulp-jshint');
 var mocha  = require('gulp-mocha');
 var concat = require('gulp-concat');
 var rename = require('gulp-rename');
+var istanbul = require('gulp-istanbul');
 var del = require('del');
 
 var basename = 'swagger-client';
@@ -36,6 +37,17 @@ gulp.task('test', function() {
     .pipe(mocha());
 });
 
+gulp.task('cover', function (cb) {
+  gulp.src(paths.sources)
+    .pipe(istanbul({includeUntested: true}))
+    .pipe(istanbul.hookRequire())
+    .on('finish', function () {
+      gulp.src(paths.tests)
+        .pipe(mocha())
+        .pipe(istanbul.writeReports())
+        .on('end', cb);
+    });
+});
 
 gulp.task('build', function() {
   return gulp.src(paths.sources)
