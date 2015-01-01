@@ -18,7 +18,7 @@
   "scripts": {
     "build": "PATH=$PATH:./node_modules/.bin cake bake",
     "dev": "PATH=$PATH:./node_modules/.bin cake dev",
-    "test": "open spec.html"
+    "test": "mocha"
   },
   "engines": {
     "node": ">= 0.6.6"
@@ -28,6 +28,9 @@
     "btoa": "1.1.1"
   },
   "devDependencies": {
+    "mocha": "^1.21.3",
+    "unit.js": "1.1.2",
+    "should": "4.4.2",
     "coffee-script": "~1.5.0"
   },
   "license": "apache 2.0"
