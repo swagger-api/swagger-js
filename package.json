@@ -8,10 +8,10 @@
     "type": "git",
     "url": "git://github.com/swagger-api/swagger-js.git"
   },
-  "main": "lib/swagger.js",
+  "main": "dist/swagger.js",
   "scripts": {
-    "build": "PATH=$PATH:./node_modules/.bin cake bake",
-    "dev": "PATH=$PATH:./node_modules/.bin cake dev",
+    "build": "gulp build",
+    "dev": "gulp watch",
     "test": "gulp test"
   },
   "engines": {
