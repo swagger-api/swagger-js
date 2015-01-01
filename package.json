@@ -18,7 +18,7 @@
   "scripts": {
     "build": "PATH=$PATH:./node_modules/.bin cake bake",
     "dev": "PATH=$PATH:./node_modules/.bin cake dev",
-    "test": "open spec.html"
+    "test": "mocha"
   },
   "engines": {
     "node": ">= 0.6.6"
