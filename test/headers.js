@@ -1,6 +1,6 @@
-var test = require('unit.js')
-var should = require('should')
-var swagger = require('../lib/swagger-client')
+var test = require('unit.js');
+var should = require('should');
+var swagger = require('../lib/swagger-client');
 
 describe('header extraction', function() {
   it('should extract header params', function() {
@@ -20,8 +20,8 @@ describe('header extraction', function() {
     var headers = op.getHeaderParams(args);
 
     should(url).equal('http://localhost/path');
-    should(headers['myHeader']).equal('tony');
-  })
+    should(headers['myHeader']).equal('tony');  // jshint ignore:line
+  });
 
   it('should extract header params with string array with default collectionFormat', function() {
     var parameters = [
@@ -43,6 +43,6 @@ describe('header extraction', function() {
     var headers = op.getHeaderParams(args);
 
     should(url).equal('http://localhost/path');
-    should(headers['myHeader']).equal('tony,tam');
-  })
-})
+    should(headers['myHeader']).equal('tony,tam');  // jshint ignore:line
+  });
+});

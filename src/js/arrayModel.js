@@ -5,8 +5,7 @@ var ArrayModel = function(definition) {
   this.name = "name";
   this.definition = definition || {};
   this.properties = [];
-  this.type;
-  this.ref;
+  this.type = this.ref = undefined;
 
   var requiredFields = definition.enum || [];
   var items = definition.items;
@@ -16,15 +15,15 @@ var ArrayModel = function(definition) {
       this.type = typeFromJsonSchema(type.type, type.format);
     }
     else {
-      this.ref = items['$ref'];
+      this.ref = items.$ref;
     }
   }
-}
+};
 
 ArrayModel.prototype.createJSONSample = function(modelsToIgnore) {
   var result;
-  modelsToIgnore = (modelsToIgnore||{})
-  if(this.type) {
+  modelsToIgnore = (modelsToIgnore||{});
+  if (this.type) {
     result = type;
   }
   else if (this.ref) {
@@ -36,8 +35,8 @@ ArrayModel.prototype.createJSONSample = function(modelsToIgnore) {
 
 ArrayModel.prototype.getSampleValue = function(modelsToIgnore) {
   var result;
-  modelsToIgnore = (modelsToIgnore || {})
-  if(this.type) {
+  modelsToIgnore = (modelsToIgnore || {});
+  if (this.type) {
     result = type;
   }
   else if (this.ref) {
@@ -45,7 +44,7 @@ ArrayModel.prototype.getSampleValue = function(modelsToIgnore) {
     result = models[name].getSampleValue(modelsToIgnore);
   }
   return [ result ];
-}
+};
 
 ArrayModel.prototype.getMockSignature = function(modelsToIgnore) {
   var propertiesStr = [];

@@ -13,7 +13,7 @@ SwaggerHttp.prototype.execute = function(obj) {
     return new JQueryHttpClient().execute(obj);
   else
     return new ShredHttpClient().execute(obj);
-}
+};
 
 SwaggerHttp.prototype.isIE8 = function() {
   var detectedIE = false;
@@ -39,7 +39,7 @@ var JQueryHttpClient = function(options) {
   if(!jQuery){
     var jQuery = window.jQuery;
   }
-}
+};
 
 JQueryHttpClient.prototype.execute = function(obj) {
   var cb = obj.on;
@@ -52,7 +52,6 @@ JQueryHttpClient.prototype.execute = function(obj) {
     var key, results;
     if (obj.headers) {
       results = [];
-      var key;
       for (key in obj.headers) {
         if (key.toLowerCase() === "content-type") {
           results.push(obj.contentType = obj.headers[key]);
@@ -94,10 +93,10 @@ JQueryHttpClient.prototype.execute = function(obj) {
       headers: headers
     };
 
-    var contentType = (headers["content-type"]||headers["Content-Type"]||null)
+    var contentType = (headers["content-type"]||headers["Content-Type"]||null);
 
-    if(contentType != null) {
-      if(contentType.indexOf("application/json") == 0 || contentType.indexOf("+json") > 0) {
+    if(contentType !== null) {
+      if(contentType.indexOf("application/json") === 0 || contentType.indexOf("+json") > 0) {
         if(response.responseText && response.responseText !== "") {
           try {
             out.obj = JSON.parse(response.content.data);
@@ -108,7 +107,7 @@ JQueryHttpClient.prototype.execute = function(obj) {
           }
         }
         else
-          out.obj = {}
+          out.obj = {};
       }
     }
 
@@ -122,7 +121,7 @@ JQueryHttpClient.prototype.execute = function(obj) {
 
   jQuery.support.cors = true;
   return jQuery.ajax(obj);
-}
+};
 
 /*
  * ShredHttpClient is a light-weight, node or browser HTTP client
@@ -140,12 +139,12 @@ var ShredHttpClient = function(options) {
   else
     this.Shred = require("shred");
   this.shred = new this.Shred(options);
-}
+};
 
 ShredHttpClient.prototype.initShred = function () {
   this.isInitialized = true;
   this.registerProcessors(this.shred);
-}
+};
 
 ShredHttpClient.prototype.registerProcessors = function(shred) {
   var identity = function(x) {
@@ -166,7 +165,7 @@ ShredHttpClient.prototype.registerProcessors = function(shred) {
       stringify: toString
     });
   }
-}
+};
 
 ShredHttpClient.prototype.execute = function(obj) {
   if(!this.isInitialized)
@@ -183,10 +182,10 @@ ShredHttpClient.prototype.execute = function(obj) {
       data: response.content.data
     };
 
-    var contentType = (response._headers["content-type"]||response._headers["Content-Type"]||null)
+    var contentType = (response._headers["content-type"]||response._headers["Content-Type"]||null);
 
-    if(contentType != null) {
-      if(contentType.indexOf("application/json") == 0 || contentType.indexOf("+json") > 0) {
+    if(contentType !== null) {
+      if(contentType.indexOf("application/json") === 0 || contentType.indexOf("+json") > 0) {
         if(response.content.data && response.content.data !== "")
           try{
             out.obj = JSON.parse(response.content.data);
@@ -195,7 +194,7 @@ ShredHttpClient.prototype.execute = function(obj) {
             // unable to parse
           }
         else
-          out.obj = {}
+          out.obj = {};
       }
     }
     return out;
