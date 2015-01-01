@@ -24,6 +24,13 @@ describe('request operations', function() {
     should(help).equal('* petId (required) - ID of pet that needs to be fetched');
   })
 
+  it('shows curl syntax', function() {
+    var help = sample.pet.getPetById.help();
+    console.log(help);
+    var curl = sample.pet.getPetById.asCurl({petId: 1});
+    should(curl).equal('curl --header "Accept: application/json" http://localhost:8000/api/pet/1');
+  })
+
   it('generate a get request', function() {
     var petApi = sample.pet;
     var req = petApi.getPetById({petId: 1}, {mock: true});
