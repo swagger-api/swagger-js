@@ -5,7 +5,7 @@ var http = require('http'),
 var swagger = require('../lib/swagger');
 var sample;
 
-exports.petstore = function(done, callback) {
+exports.petstore = function(done, callback, macros) {
   var instance = http.createServer(function(req, res) {
     var uri = url.parse(req.url).pathname;
     var filename = path.join('test/spec', uri);
@@ -34,6 +34,17 @@ exports.petstore = function(done, callback) {
   instance.on("listening", function() {
     var self = {}; self.stop = done;
     console.log("started http server");
+
+    if(macros) {
+      if(macros.parameter) {
+        console.log('set parameter macro');
+        swagger.parameterMacro = macros.parameter;
+      }
+      if(macros.modelProperty) {
+        console.log('set model property macro');
+        swagger.modelPropertyMacro = macros.modelProperty;
+      }
+    }
 
     var sample = new swagger.SwaggerApi('http://localhost:8000/api-docs.json');
     sample.build();

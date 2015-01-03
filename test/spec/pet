@@ -29,6 +29,7 @@
               "format": "int64",
               "paramType": "path",
               "minimum": "1.0",
+              "defaultValue": 1,
               "maximum": "100000.0"
             }
           ],
