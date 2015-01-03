@@ -148,4 +148,12 @@ describe('request operations', function() {
     test.value(req.headers['Content-Type']).isUndefined();
     should(req.url).equal('http://localhost:8000/api/pet/findByStatus?status=a%20b%20c%20d%20e');
   })
+
+  it('tests the urlify function', function() {
+    var op = sample.apis['pet'].operations.getPetById
+    op.pathJson = function() {
+      return "/entities/{id:([a-z0-9-]{36})}"
+    }
+    console.log(op.urlify({petId: 1, 'id:\(\[a\-z0\-9\-\]\{36\}\)': 'ok'}));
+  })
 })

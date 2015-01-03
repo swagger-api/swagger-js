@@ -352,6 +352,19 @@
           ]
         }
       ]
+    },
+    {
+      "path": "/redirect",
+      "operations": [
+        {
+          "method": "GET",
+          "summary": "redirects",
+          "notes": "",
+          "type": "Pet",
+          "nickname": "redirect",
+          "parameters": []
+        }
+      ]
     }
   ],
   "models": {
