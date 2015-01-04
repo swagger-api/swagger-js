@@ -10,7 +10,7 @@ It's written in CoffeeScript and tested with Jasmine, and is the fastest way to 
 The goal of Swagger™ is to define a standard, language-agnostic interface to REST APIs which allows both humans and computers to discover and understand the capabilities of the service without access to source code, documentation, or through network traffic inspection. When properly defined via Swagger, a consumer can understand and interact with the remote service with a minimal amount of implementation logic. Similar to what interfaces have done for lower-level programming, Swager removes the guesswork in calling the service.
 
 
-Check out [Swagger-Spec](https://github.com/wordnik/swagger-spec) for additional information about the Swagger project, including additional libraries with support for other languages and more. 
+Check out [Swagger-Spec](https://github.com/wordnik/swagger-spec) for additional information about the Swagger project, including additional libraries with support for other languages and more.
 
 
 ### Calling an API with swagger + node.js!
@@ -125,19 +125,19 @@ You can easily write your own request signing code for Swagger.  For example:
 
 ```js
 var CustomRequestSigner = function(name) {
-  this.name = name; 
-}; 
+  this.name = name;
+};
 
-CustomRequestSigner.prototype.apply = function(obj, authorizations) { 
-  var hashFunction = this._btoa; 
-  var hash = hashFunction(obj.url); 
+CustomRequestSigner.prototype.apply = function(obj, authorizations) {
+  var hashFunction = this._btoa;
+  var hash = hashFunction(obj.url);
 
-  obj.headers["signature"] = hash; 
-  return true; 
-}; 
+  obj.headers["signature"] = hash;
+  return true;
+};
 ```
 
-In the above simple example, we're creating a new request signer that simply 
+In the above simple example, we're creating a new request signer that simply
 base 64 encodes the URL.  Of course you'd do something more sophisticated, but
 after encoding it, a header called `signature` is set before sending the request.
 
@@ -155,29 +155,37 @@ The HTTP requests themselves are handled by the excellent [shred](https://github
 Development
 -----------
 
-Please [fork the code](https://github.com/wordnik/swagger-js) and help us improve
+Please [fork the code](https://github.com/swagger-api/swagger-js) and help us improve
 swagger.js. Send us a pull request and **we'll mail you a wordnik T-shirt!**
 
-Swagger.js is written in CoffeeScript, so you'll need Node.js and the
-CoffeeScript compiler. For more detailed installation instructions, see
-[coffeescript.org/#installation](http://coffeescript.org/#installation).
+Swagger.js use gulp for Node.js.
 
 ```bash
-# generate the javascript libraries and put them in the `lib` folder
+# Install the gulp client on the path
+npm install -g gulp
 
-npm run-script build
+# Install all project dependencies
+npm install
 ```
 
 ```bash
-# The 'dev' task will:
-# 1. Open source files in your $EDITOR
-# 2. Open and run the Jasmine specs in your browser.
-# 3. Watch for changes to CoffeeScript files and auto-compile them to Javascript.
+# List all tasks.
+gulp -T
 
-npm run-script dev
+# Run the test suite
+gulp test
 
-# List all cake tasks:
-cake
+# Build the library (minified and unminified) in the dist folder
+gulp build
+
+# continuously run the test suite:
+gulp watch
+
+# run jshint report
+gulp lint
+
+# run a coverage report
+gulp cover
 ```
 
 License
