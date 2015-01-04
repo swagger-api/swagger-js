@@ -32,10 +32,8 @@ describe('http', function() {
     var petApi = sample.pet;
     petApi.redirect({}, function(data) {
       var pet = data.obj;
-      console.log('redirect~~~~~~~~~~~~');
-      console.log(data);
-      // test.object(pet);
-      // should(pet.id).equal(1);
+      test.object(pet);
+      should(pet.id).equal(1);
       done();
     });
   })
