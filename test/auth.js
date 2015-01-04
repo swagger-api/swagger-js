@@ -14,7 +14,7 @@ describe('api key authorizations', function() {
 
   after(function(done){
     instance.close();
-    console.log("stopped");
+
     swagger.authorizations.authz = {};
     done();
   });
@@ -53,6 +53,25 @@ describe('api key authorizations', function() {
     var req = petApi.getPetById(params, opts);
     should(req.url).equal('http://localhost:8000/api/pet/1');
     should(req.headers['api_key']).equal('abc123');
+    swagger.authorizations.authz = {};
+  })
+
+  it('doesn\'t encode a header key name and value', function() {
+    params = { petId: 1 };
+    opts = {
+      requestContentType: null,
+      responseContentType: "application/json",
+      mock: true
+    };
+
+    var auth = new swagger.ApiKeyAuthorization("Authorization: Bearer", "a b c d e", "header");
+    swagger.authorizations.add("key", auth);
+
+    var petApi = sample.pet;
+
+    var req = petApi.getPetById(params, opts);
+    should(req.url).equal('http://localhost:8000/api/pet/1');
+    should(req.headers['Authorization: Bearer']).equal('a b c d e');
     swagger.authorizations.authz = {};
   })
 })

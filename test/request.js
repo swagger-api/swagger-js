@@ -13,7 +13,7 @@ describe('request operations', function() {
 
   after(function(done){
     instance.close();
-    console.log("stopped");
+
     done();
   });
 
@@ -170,6 +170,6 @@ describe('request operations', function() {
     op.pathJson = function() {
       return "/entities/{id:([a-z0-9-]{36})}"
     }
-    console.log(op.urlify({petId: 1, 'id:\(\[a\-z0\-9\-\]\{36\}\)': 'ok'}));
+    // console.log(op.urlify({petId: 1, 'id:\(\[a\-z0\-9\-\]\{36\}\)': 'ok'}));
   })
 })

@@ -41,15 +41,14 @@ exports.petstore = function(done, callback, macros) {
 
   instance.on("listening", function() {
     var self = {}; self.stop = done;
-    console.log("started http server");
 
     if(macros) {
       if(macros.parameter) {
-        console.log('set parameter macro');
+        console.log('    warn: set parameter macro');
         swagger.parameterMacro = macros.parameter;
       }
       if(macros.modelProperty) {
-        console.log('set model property macro');
+        console.log('    warn: set model property macro');
         swagger.modelPropertyMacro = macros.modelProperty;
       }
     }

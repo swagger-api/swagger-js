@@ -13,7 +13,7 @@ describe('http', function() {
 
   after(function(done){
     instance.close();
-    console.log("stopped");
+
     done();
   });
 

@@ -23,7 +23,7 @@ describe('macro overrides', function() {
 
   after(function(done){
     instance.close();
-    console.log("stopped");
+
     done();
   });
 

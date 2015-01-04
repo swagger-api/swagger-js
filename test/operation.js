@@ -13,7 +13,7 @@ describe('verifies the nickname is sanitized', function() {
 
   after(function(done){
     instance.close();
-    console.log('stopped');
+
     done();
   });
 
@@ -63,7 +63,7 @@ describe('verifies the get pet operation', function() {
 
   after(function(done){
     instance.close();
-    console.log('stopped');
+
     done();
   });
 

@@ -14,7 +14,7 @@ describe('get model operations', function() {
 
   after(function(done){
     instance.close();
-    console.log("stopped");
+
     done();
   });
 
