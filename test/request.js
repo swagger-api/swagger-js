@@ -149,6 +149,22 @@ describe('request operations', function() {
     should(req.url).equal('http://localhost:8000/api/pet/findByStatus?status=a%20b%20c%20d%20e');
   })
 
+  it('path params should be properly checked', function() {
+    var petApi = sample.pet;
+    var params = {
+      headers: {},
+      petId: false
+    };
+    var opts = { mock: true };
+
+    var req = petApi.getPetById(params, opts);
+
+    should(req.method).equal('GET');
+    should(req.headers['Accept']).equal('application/json');
+    test.value(req.headers['Content-Type']).isUndefined();
+    should(req.url).equal('http://localhost:8000/api/pet/false');
+  })
+
   it('tests the urlify function', function() {
     var op = sample.apis['pet'].operations.getPetById
     op.pathJson = function() {
