@@ -83,6 +83,32 @@ client.authorizations.add("apiKey", new client.ApiKeyAuthorization("api_key","sp
 ```js
 client.authorizations.add("apiKey", new client.ApiKeyAuthorization("api_key","special-key","header"));
 ```
+####What if you need to call two APIs with the Swagger Client?
+Add a Swagger Authorization when you create the api client.
+
+```js
+var client = require("swagger-client")
+// Add the default authorization to the global client.
+client.authorizations.add("apiKey", new client.ApiKeyAuthorization("api_key","special-key","header"));
+
+var swagger = new client.SwaggerApi({
+  url: 'http://petstore.swagger.wordnik.com/api/api-docs',
+  success: function() {
+    if(swagger.ready === true) {
+      swagger.apis.pet.getPetById({petId:1});
+    }
+  },
+  // Add an authorization for this specific swagger client
+  authorizations: new client.SwaggerAuthorization(
+                        "apiKey",
+                        new client.ApiKeyAuthorization("api_key", "another-special-key", "header")
+  )
+});
+
+```
+This adds a global default authorization to the client and then adds a different authorization to the specific swagger
+api client when it is created.  You are able to pass in any number of new authorization headers by creating your
+SwaggerAuthorization and then using its add method to add new ApiKeyAuthorizations.
 
 ### Calling an API with Swagger + the browser!
 
