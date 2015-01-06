@@ -37,4 +37,22 @@ describe('http', function() {
       done();
     });
   })
+
+  it('verifies the callback function', function(done) {
+    var petApi = sample.pet;
+    petApi.redirect({}, function(data) {
+      var pet = data.obj;
+      test.object(pet);
+      done();
+    });
+  })
+
+  it('verifies the callback function with opts, per #101', function(done) {
+    var petApi = sample.pet;
+    petApi.redirect({}, {}, function(data) {
+      var pet = data.obj;
+      test.object(pet);
+      done();
+    });
+  })
 })
