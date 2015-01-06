@@ -1,6 +1,7 @@
 var test = require('unit.js')
 var should = require('should')
 var mock = require('../test/mock');
+var swagger = require('../lib/swagger');
 var sample, instance;
 
 describe('request operations', function() {
@@ -194,5 +195,20 @@ describe('request operations', function() {
     var req = sample.pet.addPet(params, opts);
     test.object(req.body);
     should(req.body.id).equal(1);
+  })
+
+  it('verifies headers when fetching the swagger specification', function() {
+    var sample = new swagger.SwaggerApi('http://localhost:8000/api-docs.json');
+    var req = sample.build(true);
+    should(req.headers['accept']).equal('application/json,application/json;charset=utf-8,*/*');
+  })
+
+  it('allows override of headers when fetching the swagger specification', function() {
+    var opts = {
+      swaggerRequstHeaders: 'foo/bar'
+    };
+    var sample = new swagger.SwaggerApi('http://localhost:8000/api-docs.json', opts);
+    var req = sample.build(true);
+    should(req.headers['accept']).equal('foo/bar');
   })
 })
