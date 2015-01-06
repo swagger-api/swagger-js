@@ -5,7 +5,13 @@ var http = require('http'),
 var swagger = require('../lib/swagger');
 var sample;
 
-exports.petstore = function(done, callback, macros) {
+exports.petstore = function(arg1, arg2, arg3, arg4) {
+  var done = arg1, opts = arg2, callback = arg3, macros = arg4;
+  if(typeof arg2 === 'function') {
+    opts = null;
+    callback = arg2;
+    macros = arg3;
+  }
   var instance = http.createServer(function(req, res) {
     var uri = url.parse(req.url).pathname;
     var filename = path.join('test/spec', uri);
@@ -21,6 +27,11 @@ exports.petstore = function(done, callback, macros) {
         if(exists) {
           var accept = req.headers['accept'];
           if(typeof accept !== 'undefined') {
+            if(accept === 'invalid') {
+              res.writeHead(500);
+              res.end();
+              return;
+            }
             if(accept.indexOf('application/json') !== -1) {
               res.setHeader("Content-Type", "application/json");
             }
@@ -52,8 +63,7 @@ exports.petstore = function(done, callback, macros) {
         swagger.modelPropertyMacro = macros.modelProperty;
       }
     }
-
-    var sample = new swagger.SwaggerApi('http://localhost:8000/api-docs.json');
+    var sample = new swagger.SwaggerApi('http://localhost:8000/api-docs.json', opts);
     sample.build();
     var count = 0, isDone = false;
     var f = function () {

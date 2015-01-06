@@ -40,7 +40,7 @@ describe('http', function() {
 
   it('verifies the callback function', function(done) {
     var petApi = sample.pet;
-    petApi.redirect({}, function(data) {
+    petApi.getPetById({petId: 1}, {}, function(data) {
       var pet = data.obj;
       test.object(pet);
       done();
@@ -49,7 +49,7 @@ describe('http', function() {
 
   it('verifies the callback function with opts, per #101', function(done) {
     var petApi = sample.pet;
-    petApi.redirect({}, {}, function(data) {
+    petApi.getPetById({petId: 1}, {}, function(data) {
       var pet = data.obj;
       test.object(pet);
       done();
