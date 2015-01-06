@@ -172,4 +172,27 @@ describe('request operations', function() {
     }
     // console.log(op.urlify({petId: 1, 'id:\(\[a\-z0\-9\-\]\{36\}\)': 'ok'}));
   })
+
+  it('tests the body param', function() {
+    var params = {
+      body: {id: 1}
+    };
+    var opts = { mock: true };
+    var req = sample.pet.addPet(params, opts);
+    test.object(req.body);
+    should(req.body.id).equal(1);
+  })
+
+  it('tests the body param when name is not `body`, per #168', function() {
+    var op = sample.apis['pet'].operations.addPet
+    op.parameters[0].name = 'pet';
+
+    var params = {
+      body: {id: 1}
+    };
+    var opts = { mock: true };
+    var req = sample.pet.addPet(params, opts);
+    test.object(req.body);
+    should(req.body.id).equal(1);
+  })
 })
