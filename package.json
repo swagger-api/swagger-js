@@ -8,7 +8,7 @@
     }
   ],
   "description": "swagger.js is a javascript client for use with swaggering APIs.",
-  "version": "2.0.46",
+  "version": "2.0.48",
   "homepage": "http://swagger.io",
   "repository": {
     "type": "git",
@@ -16,8 +16,7 @@
   },
   "main": "lib/swagger.js",
   "scripts": {
-    "build": "PATH=$PATH:./node_modules/.bin cake bake",
-    "dev": "PATH=$PATH:./node_modules/.bin cake dev",
+    "build": "uglifyjs lib/swagger.js -o lib/swagger.min.js",
     "test": "mocha"
   },
   "engines": {
@@ -31,7 +30,7 @@
     "mocha": "^1.21.3",
     "unit.js": "1.1.2",
     "should": "4.4.2",
-    "coffee-script": "~1.5.0"
+    "uglify-js": "1.3.x"
   },
   "license": "apache 2.0"
 }
