@@ -434,6 +434,20 @@
           "type": "string"
         }
       }
+    },
+    "Animals": {
+      "id": "Animals",
+      "properties": {
+        "cat": {
+          "type": "Pet"
+        },
+        "dog": {
+          "type": "Pet"
+        },
+        "mouse": {
+          "type": "Pet"
+        }
+      }
     }
   }
 }

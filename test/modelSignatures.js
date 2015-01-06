@@ -13,19 +13,21 @@ describe('model signatures', function() {
 
   after(function(done){
     instance.close();
-
     done();
   });
 
-  it('returns the json representation of a pet', function() {
-    var pet = sample.models['Pet'];
+  it('returns the json representation of a pet with repeating models', function() {
+    var pet = sample.models['Animals'];
     test.object(pet);
-    
-    var properties = pet.properties;
-    test.array(properties);
 
-    var id = properties[0];
-    var sampleValue = id.getSampleValue();
-    should(sampleValue).equal(0);
-  })
+    // verify that each instance of `Pet` is represented
+    var petModel = '{"id":0,"category":{"id":0,"name":""},"name":"","photoUrls":[""],"tags":[{"id":0,"name":""}],"status":""}'
+    var model = '';
+
+    model += '{' + '"cat":' + petModel + ',';
+    model += '"dog":' + petModel + ',';
+    model += '"mouse":' + petModel + '}';
+
+    should(JSON.stringify(pet.createJSONSample())).equal(model);
+  })  
 })
