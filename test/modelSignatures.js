@@ -21,7 +21,7 @@ describe('model signatures', function() {
     test.object(pet);
 
     // verify that each instance of `Pet` is represented
-    var petModel = '{"id":0,"category":{"id":0,"name":""},"name":"","photoUrls":[""],"tags":[{"id":0,"name":""}],"status":""}'
+    var petModel = '{"id":0,"category":{"id":0,"name":""},"name":"","photoUrls":[""],"tags":[{"id":0,"name":""}],"status":"","phone":{"code":"","number":""},"owner":{"name":"","phone":{"code":"","number":""}}}';
     var model = '';
 
     model += '{' + '"cat":' + petModel + ',';

@@ -11,6 +11,42 @@
   ],
   "apis": [
     {
+      "path": "/animals",
+      "operations": [
+        {
+          "method": "GET",
+          "summary": "Find pet by ID",
+          "notes": "Returns a pet based on ID",
+          "type": "Animals",
+          "nickname": "getPetById",
+          "authorizations": {},
+          "parameters": [
+            {
+              "name": "petId",
+              "description": "ID of pet that needs to be fetched",
+              "required": true,
+              "type": "integer",
+              "format": "int64",
+              "paramType": "path",
+              "minimum": "1.0",
+              "defaultValue": 1,
+              "maximum": "100000.0"
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": 400,
+              "message": "Invalid ID supplied"
+            },
+            {
+              "code": 404,
+              "message": "Pet not found"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "path": "/pet/{petId}",
       "operations": [
         {
@@ -420,6 +456,12 @@
             "pending",
             "sold"
           ]
+        },
+        "phone": {
+          "$ref": "Phone"
+        },
+        "owner": {
+          "$ref": "Owner"
         }
       }
     },
@@ -446,6 +488,27 @@
         },
         "mouse": {
           "type": "Pet"
+        }
+      }
+    },
+    "Phone": {
+      "id": "Phone",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "number": {
+          "type": "string"
+        }
+      }
+    },
+    "Owner": {
+      "properties": {
+        "name":{
+          "type": "string"
+        },
+        "phone": {
+          "$ref": "Phone"
         }
       }
     }
