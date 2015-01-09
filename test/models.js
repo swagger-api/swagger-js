@@ -51,4 +51,14 @@ describe('get model operations', function() {
     should(sample.pet.getAbsoluteBasePath("/")).equal("http://localhost:8000");
     done();
   })
+
+  it('doesn\'t add double slashes per #202', function(done) {
+    sample.basePath = 'http://localhost:8000/api-docs/';
+    
+    var petApi = sample.pet;
+    var req = petApi.getPetById({petId: 1}, {mock: true});
+
+    console.log(req);
+    done();
+  })
 })
