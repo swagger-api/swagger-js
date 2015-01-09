@@ -211,4 +211,19 @@ describe('request operations', function() {
     var req = sample.build(true);
     should(req.headers['accept']).equal('foo/bar');
   })
+
+  it('verifies the http request object for a GET with email address query params per https://github.com/swagger-api/swagger-ui/issues/814', function() {
+    var petApi = sample.pet;
+    var params = {
+      headers: {},
+      status: 'fehguy@gmail.com'
+    };
+    var opts = { mock: true };
+
+    var req = petApi.findPetsByStatus(params, opts);
+
+    should(req.method).equal("GET");
+    should(req.headers["Accept"]).equal("application/json");
+    should(req.url).equal("http://localhost:8000/api/pet/findByStatus?status=fehguy%40gmail.com");
+  })
 })
