@@ -3,7 +3,7 @@
 [![Build Status](https://api.travis-ci.org/swagger-api/swagger-js.png?branch=master)](https://travis-ci.org/swagger-api/swagger-js)
 
 
-This is the Wordnik Swagger JavaScript client for use with [Swagger](http://swagger.io)-enabled APIs. It's written in CoffeeScript and tested with Jasmine, and is the fastest way to enable a JavaScript client to communicate with a Swagger-enabled server.
+This is the Wordnik Swagger JavaScript client for use with [Swagger](http://swagger.io)-enabled APIs. It's written in pure javascript and tested with mocha, and is the fastest way to enable a JavaScript client to communicate with a Swagger-enabled server.
 
 ## What's Swagger?
 
@@ -189,28 +189,14 @@ Development
 -----------
 
 Please [fork the code](https://github.com/swagger-api/swagger-js) and help us improve
-swagger.js. Send us a pull request and **we'll mail you a wordnik T-shirt!**
+swagger.js.
 
-Swagger.js is written in CoffeeScript, so you'll need Node.js and the
-CoffeeScript compiler. For more detailed installation instructions, see
-[coffeescript.org/#installation](http://coffeescript.org/#installation).
-
+Running the tests
 ```bash
-# generate the JavaScript libraries and put them in the `lib` folder
+npm test
 
-npm run-script build
-```
-
-```bash
-# The 'dev' task will:
-# 1. Open source files in your $EDITOR
-# 2. Open and run the Jasmine specs in your browser.
-# 3. Watch for changes to CoffeeScript files and auto-compile them to Javascript.
-
-npm run-script dev
-
-# List all cake tasks:
-cake
+# or
+mocha test
 ```
 
 License
