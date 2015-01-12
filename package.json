@@ -8,7 +8,7 @@
     "type": "git",
     "url": "git://github.com/swagger-api/swagger-js.git"
   },
-  "main": "dist/swagger.js",
+  "main": "lib/swagger-client.js",
   "scripts": {
     "build": "gulp build",
     "dev": "gulp watch",
