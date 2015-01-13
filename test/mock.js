@@ -24,7 +24,6 @@ exports.petstore = function(arg1, arg2, arg3, arg4) {
     }
     else {
       fs.exists(filename, function(exists) {
-        console.log(filename);
         if(exists) {
           var accept = req.headers['accept'];
           if(typeof accept !== 'undefined') {
