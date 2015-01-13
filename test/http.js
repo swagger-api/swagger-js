@@ -55,4 +55,26 @@ describe('http', function() {
       done();
     });
   })
+
+  it('verifies the error callback with all params, per #203', function(done) {
+    var petApi = sample.pet;
+    var success = function(data) {
+      fail();
+    }
+    var failure = function(data) {
+      done();
+    }
+    var req = petApi.getPetById({petId: 0}, {responseContentType: 'invalid'}, success, failure);
+  })
+
+  it('verifies the error callback with three params, per #203', function(done) {
+    var petApi = sample.pet;
+    var success = function(data) {
+      fail();
+    }
+    var failure = function(data) {
+      done();
+    }
+    var req = petApi.getPetById({petId: 0}, success, failure);
+  })
 })

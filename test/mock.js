@@ -24,6 +24,7 @@ exports.petstore = function(arg1, arg2, arg3, arg4) {
     }
     else {
       fs.exists(filename, function(exists) {
+        console.log(filename);
         if(exists) {
           var accept = req.headers['accept'];
           if(typeof accept !== 'undefined') {
@@ -40,6 +41,11 @@ exports.petstore = function(arg1, arg2, arg3, arg4) {
           res.writeHead(200, "application/json");
           var fileStream = fs.createReadStream(filename);
           fileStream.pipe(res);
+        }
+        else if(filename === 'test/spec/api/pet/0') {
+          res.writeHead(500);
+          res.end();
+          return;          
         }
         else {
           res.writeHead(200, {'Content-Type': 'text/plain'});
