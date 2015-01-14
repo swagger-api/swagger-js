@@ -6,7 +6,7 @@ var __bind = function(fn, me){
 
 fail = function(message) {
   log(message);
-}
+};
 
 log = function(){
   log.history = log.history || [];
@@ -22,7 +22,7 @@ if (!Array.prototype.indexOf) {
       if (this[i] === obj) { return i; }
     }
     return -1;
-  }
+  };
 }
 
 if (!('filter' in Array.prototype)) {

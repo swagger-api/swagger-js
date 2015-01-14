@@ -1,6 +1,6 @@
-var test = require('unit.js')
-var should = require('should')
-var swagger = require('../lib/swagger-client')
+var test = require('unit.js');
+var should = require('should');
+var swagger = require('../lib/swagger-client');
 
 describe('url generation', function() {
   it('should generate a url', function() {
@@ -12,7 +12,7 @@ describe('url generation', function() {
       quantity: 3
     });
     should(url).equal('http://localhost/path?quantity=3');
-  })
+  });
 
   it('should generate a url with two params', function() {
     var parameters = [
@@ -24,7 +24,7 @@ describe('url generation', function() {
       weight: 100.3
     });
     should(url).equal('http://localhost/path?quantity=3&weight=100.3');
-  })
+  });
 
   it('should generate a url with queryparams array, multi', function() {
     var parameters = [
@@ -35,7 +35,7 @@ describe('url generation', function() {
       intArray: [3,4,5]
     });
     should(url).equal('http://localhost/path?intArray=3,4,5');
-  })
+  });
 
   it('should generate a url with queryparams array, pipes', function() {
     var parameters = [
@@ -55,7 +55,7 @@ describe('url generation', function() {
       intArray: [3,4,5]
     });
     should(url).equal('http://localhost/path?intArray=3|4|5');
-  })
+  });
 
   it('should generate a url with queryparams array, tabs', function() {
     var parameters = [
@@ -75,7 +75,7 @@ describe('url generation', function() {
       intArray: [3,4,5]
     });
     should(url).equal('http://localhost/path?intArray=3\\t4\\t5');
-  })
+  });
 
   it('should generate a url with queryparams array, spaces', function() {
     var parameters = [
@@ -95,7 +95,7 @@ describe('url generation', function() {
       intArray: [3,4,5]
     });
     should(url).equal('http://localhost/path?intArray=3%204%205');
-  })
+  });
 
   it('should generate a url with queryparams array, brackets', function() {
     var parameters = [
@@ -115,7 +115,7 @@ describe('url generation', function() {
       intArray: [3,4,5]
     });
     should(url).equal('http://localhost/path?intArray[]=3&intArray[]=4&intArray[]=5');
-  })
+  });
 
   it('should generate a url with path param at end of path', function() {
     var parameters = [
@@ -137,7 +137,7 @@ describe('url generation', function() {
       age: 42
     });
     should(url).equal('http://localhost/foo/tony?age=42');
-  })
+  });
 
   it('should generate a url with path param at middle of path', function() {
     var parameters = [
@@ -159,7 +159,7 @@ describe('url generation', function() {
       age: 42
     });
     should(url).equal('http://localhost/foo/tony/bar?age=42');
-  })
+  });
 
   it('should generate a url with path param with proper escaping', function() {
     var parameters = [
@@ -174,7 +174,7 @@ describe('url generation', function() {
       name: 'tony tam'
     });
     should(url).equal('http://localhost/foo/tony%20tam/bar');
-  })
+  });
 
   it('should generate a url with path param string array', function() {
     var parameters = [
@@ -193,8 +193,8 @@ describe('url generation', function() {
       names: ['fred', 'bob', 'mary']
     });
     should(url).equal('http://localhost/foo/fred,bob,mary/bar');
-  })
-})
+  });
+});
 
 var quantityQP = {
   in: 'query',
@@ -217,4 +217,4 @@ var intArrayQP = {
     format: 'int32'
   },
   collectionFormat: 'csv'
-}
+};

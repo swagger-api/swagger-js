@@ -16,22 +16,22 @@ var SwaggerClient = function(url, options) {
     else this.url = url;
   else options = url;
 
-  if (options.url != null)
+  if (options.url !== null)
     this.url = options.url;
 
-  if (options.success != null)
+  if (options.success !== null)
     this.success = options.success;
 
   if (typeof options.useJQuery === 'boolean')
     this.useJQuery = options.useJQuery;
 
-  this.failure = options.failure != null ? options.failure : function() {};
-  this.progress = options.progress != null ? options.progress : function() {};
+  this.failure = options.failure !== null ? options.failure : function() {};
+  this.progress = options.progress !== null ? options.progress : function() {};
   this.spec = options.spec;
 
-  if (options.success != null)
+  if (options.success !== null)
     this.build();
-}
+};
 
 SwaggerClient.prototype.build = function() {
   var self = this;
@@ -71,7 +71,6 @@ SwaggerClient.prototype.build = function() {
     }
   };
   if(this.spec) {
-    var self = this;
     setTimeout(function() { self.buildFromSpec(self.spec); }, 10);
   }
   else {
@@ -90,7 +89,7 @@ SwaggerClient.prototype.buildFromSpec = function(response) {
   this.title = response.title || '';
   this.host = response.host || '';
   this.schemes = response.schemes || [];
-  this.scheme;
+  this.scheme = undefined;
   this.basePath = response.basePath || '';
   this.apis = {};
   this.apisArray = [];
@@ -191,7 +190,7 @@ SwaggerClient.prototype.buildFromSpec = function(response) {
   if (this.success)
     this.success();
   return this;
-}
+};
 
 SwaggerClient.prototype.parseUri = function(uri) {
   var urlParseRE = /^(((([^:\/#\?]+:)?(?:(\/\/)((?:(([^:@\/#\?]+)(?:\:([^:@\/#\?]+))?)@)?(([^:\/#\?\]\[]+|\[[^\/\]@#?]+\])(?:\:([0-9]+))?))?)?)?((\/?(?:[^\/\?#]+\/+)*)([^\?#]*)))?(\?[^#]+)?)(#.*)?/;
@@ -202,7 +201,7 @@ SwaggerClient.prototype.parseUri = function(uri) {
     port: parts[12],
     path: parts[15]
   };
-}
+};
 
 SwaggerClient.prototype.help = function() {
   var i;
@@ -211,11 +210,11 @@ SwaggerClient.prototype.help = function() {
     var api = this.apis[i];
     log('  * ' + api.nickname + ': ' + api.operation.summary);
   }
-}
+};
 
 SwaggerClient.prototype.tagFromLabel = function(label) {
   return label;
-}
+};
 
 SwaggerClient.prototype.idFromOp = function(path, httpMethod, op) {
   if(typeof op.operationId !== 'undefined') {
@@ -228,7 +227,7 @@ SwaggerClient.prototype.idFromOp = function(path, httpMethod, op) {
       .replace(/\}/g, "")
       .replace(/\./g, "_") + "_" + httpMethod;
   }
-}
+};
 
 SwaggerClient.prototype.fail = function(message) {
   this.failure(message);
@@ -243,7 +242,7 @@ var OperationGroup = function(tag, operation) {
   this.operationsArray = [];
 
   this.description = operation.description || "";
-}
+};
 
 var Operation = function(parent, operationId, httpMethod, path, args, definitions) {
   var errors = [];
@@ -262,7 +261,7 @@ var Operation = function(parent, operationId, httpMethod, path, args, definition
   this.nickname = (operationId||errors.push('Operations must have a nickname.'));
   this.method = (httpMethod||errors.push('Operation ' + operationId + ' is missing method.'));
   this.path = (path||errors.push('Operation ' + this.nickname + ' is missing path.'));
-  this.parameters = args != null ? (args.parameters||[]) : {};
+  this.parameters = args !== null ? (args.parameters||[]) : {};
   this.summary = args.summary || '';
   this.responses = (args.responses||{});
   this.type = null;
@@ -361,11 +360,11 @@ var Operation = function(parent, operationId, httpMethod, path, args, definition
   }
 
   return this;
-}
+};
 
 OperationGroup.prototype.sort = function(sorter) {
 
-}
+};
 
 Operation.prototype.getType = function (param) {
   var type = param.type;
@@ -377,7 +376,7 @@ Operation.prototype.getType = function (param) {
   else if(type === 'integer' && format === 'int64')
     str = 'long';
   else if(type === 'integer')
-    str = 'integer'
+    str = 'integer';
   else if(type === 'string' && format === 'date-time')
     str = 'date-time';
   else if(type === 'string' && format === 'date')
@@ -397,12 +396,12 @@ Operation.prototype.getType = function (param) {
     if(param.items)
       str = this.getType(param.items);
   }
-  if(param['$ref'])
-    str = param['$ref'];
+  if(param.$ref)
+    str = param.$ref;
 
   var schema = param.schema;
   if(schema) {
-    var ref = schema['$ref'];
+    var ref = schema.$ref;
     if(ref) {
       ref = simpleRef(ref);
       if(isArray)
@@ -417,12 +416,12 @@ Operation.prototype.getType = function (param) {
     return [ str ];
   else
     return str;
-}
+};
 
 Operation.prototype.resolveModel = function (schema, definitions) {
-  if(typeof schema['$ref'] !== 'undefined') {
-    var ref = schema['$ref'];
-    if(ref.indexOf('#/definitions/') == 0)
+  if(typeof schema.$ref !== 'undefined') {
+    var ref = schema.$ref;
+    if(ref.indexOf('#/definitions/') === 0)
       ref = ref.substring('#/definitions/'.length);
     if(definitions[ref])
       return new Model(ref, definitions[ref]);
@@ -431,7 +430,7 @@ Operation.prototype.resolveModel = function (schema, definitions) {
     return new ArrayModel(schema);
   else
     return null;
-}
+};
 
 Operation.prototype.help = function(dontPrint) {
   var out = this.nickname + ': ' + this.summary + '\n';
@@ -443,7 +442,7 @@ Operation.prototype.help = function(dontPrint) {
   if(typeof dontPrint === 'undefined')
     log(out);
   return out;
-}
+};
 
 Operation.prototype.getSignature = function(type, models) {
   var isPrimitive, listType;
@@ -454,13 +453,13 @@ Operation.prototype.getSignature = function(type, models) {
   }
 
   if(type === 'string')
-    isPrimitive = true
+    isPrimitive = true;
   else
-    isPrimitive = ((listType != null) && models[listType]) || (models[type] != null) ? false : true;
+    isPrimitive = ((listType !== null) && models[listType]) || (models[type] !== null) ? false : true;
   if (isPrimitive) {
     return type;
   } else {
-    if (listType != null)
+    if (listType !== null)
       return models[type].getMockSignature();
     else
       return models[type].getMockSignature();
@@ -491,7 +490,7 @@ Operation.prototype.getHeaderParams = function (args) {
     }
   }
   return headers;
-}
+};
 
 Operation.prototype.urlify = function (args) {
   var formParams = {};
@@ -536,7 +535,7 @@ Operation.prototype.urlify = function (args) {
     url += this.basePath;
 
   return url + requestUrl + querystring;
-}
+};
 
 Operation.prototype.getMissingParams = function(args) {
   var missingParams = [];
@@ -550,7 +549,7 @@ Operation.prototype.getMissingParams = function(args) {
     }
   }
   return missingParams;
-}
+};
 
 Operation.prototype.getBody = function(headers, args) {
   var formParams = {};
@@ -580,7 +579,7 @@ Operation.prototype.getBody = function(headers, args) {
   }
 
   return body;
-}
+};
 
 /**
  * gets sample response for a single operation
@@ -589,7 +588,7 @@ Operation.prototype.getSampleJSON = function(type, models) {
   var isPrimitive, listType, sampleJson;
 
   listType = (type instanceof Array);
-  isPrimitive = (models[type] != null) ? false : true;
+  isPrimitive = (models[type] !== null) ? false : true;
   sampleJson = isPrimitive ? void 0 : models[type].createJSONSample();
 
   if (sampleJson) {
@@ -611,14 +610,14 @@ Operation.prototype.getSampleJSON = function(type, models) {
     else
       return sampleJson;
   }
-}
+};
 
 /**
  * legacy binding
  **/
 Operation.prototype["do"] = function(args, opts, callback, error, parent) {
   return this.execute(args, opts, callback, error, parent);
-}
+};
 
 
 /**
@@ -638,8 +637,8 @@ Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
     error = arg3;
   }
 
-  success = (success||log)
-  error = (error||log)
+  success = (success||log);
+  error = (error||log);
 
   var missingParams = this.getMissingParams(args);
   if(missingParams.length > 0) {
@@ -650,7 +649,7 @@ Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
 
   var headers = this.getHeaderParams(args);
   var body = this.getBody(headers, args);
-  var url = this.urlify(args)
+  var url = this.urlify(args);
 
   var obj = {
     url: url,
@@ -669,7 +668,7 @@ Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
   };
   var status = e.authorizations.apply(obj, this.operation.security);
   new SwaggerHttp().execute(obj);
-}
+};
 
 Operation.prototype.setContentTypes = function(args, opts) {
   // default type
@@ -745,9 +744,9 @@ Operation.prototype.setContentTypes = function(args, opts) {
   if ((consumes && body !== '') || (consumes === 'application/x-www-form-urlencoded'))
     headers['Content-Type'] = consumes;
   if (accepts)
-    headers['Accept'] = accepts;
+    headers['Accept'] = accepts;  // jshint ignore:line
   return headers;
-}
+};
 
 Operation.prototype.asCurl = function (args) {
   var results = [];
@@ -758,7 +757,7 @@ Operation.prototype.asCurl = function (args) {
       results.push("--header \"" + key + ": " + headers[key] + "\"");
   }
   return "curl " + (results.join(" ")) + " " + this.urlify(args);
-}
+};
 
 Operation.prototype.encodePathCollection = function(type, name, value) {
   var encoded = '';
@@ -774,20 +773,20 @@ Operation.prototype.encodePathCollection = function(type, name, value) {
     separator = ',';
 
   for(i = 0; i < value.length; i++) {
-    if(i == 0)
+    if(i === 0)
       encoded = this.encodeQueryParam(value[i]);
     else
       encoded += separator + this.encodeQueryParam(value[i]);
   }
   return encoded;
-}
+};
 
 Operation.prototype.encodeQueryCollection = function(type, name, value) {
   var encoded = '';
   var i;
   if(type === 'default' || type === 'multi') {
     for(i = 0; i < value.length; i++) {
-      if(i > 0) encoded += '&'
+      if(i > 0) encoded += '&';
       encoded += this.encodeQueryParam(name) + '=' + this.encodeQueryParam(value[i]);
     }
   }
@@ -810,7 +809,7 @@ Operation.prototype.encodeQueryCollection = function(type, name, value) {
     }
     if(separator !== '') {
       for(i = 0; i < value.length; i++) {
-        if(i == 0)
+        if(i === 0)
           encoded = this.encodeQueryParam(name) + '=' + this.encodeQueryParam(value[i]);
         else
           encoded += separator + this.encodeQueryParam(value[i]);
@@ -818,14 +817,14 @@ Operation.prototype.encodeQueryCollection = function(type, name, value) {
     }
   }
   return encoded;
-}
+};
 
 /**
- * TODO this encoding needs to be changed 
+ * TODO this encoding needs to be changed
  **/
 Operation.prototype.encodeQueryParam = function(arg) {
   return escape(arg);
-}
+};
 
 /**
  * TODO revisit, might not want to leave '/'
@@ -860,13 +859,13 @@ var Model = function(name, definition) {
       if(requiredFields.indexOf(key) >= 0)
         required = true;
       this.properties.push(new Property(key, property, required));
-    }    
+    }
   }
-}
+};
 
 Model.prototype.createJSONSample = function(modelsToIgnore) {
   var result = {};
-  modelsToIgnore = (modelsToIgnore||{})
+  modelsToIgnore = (modelsToIgnore||{});
   modelsToIgnore[this.name] = this;
   var i;
   for (i = 0; i < this.properties.length; i++) {
@@ -885,13 +884,13 @@ Model.prototype.getSampleValue = function(modelsToIgnore) {
     obj[property.name] = property.sampleValue(false, modelsToIgnore);
   }
   return obj;
-}
+};
 
 Model.prototype.getMockSignature = function(modelsToIgnore) {
   var propertiesStr = [];
-  var i;
+  var i, prop;
   for (i = 0; i < this.properties.length; i++) {
-    var prop = this.properties[i];
+    prop = this.properties[i];
     propertiesStr.push(prop.toString());
   }
 
@@ -905,10 +904,9 @@ Model.prototype.getMockSignature = function(modelsToIgnore) {
     modelsToIgnore = {};
 
   modelsToIgnore[this.name] = this;
-  var i;
   for (i = 0; i < this.properties.length; i++) {
-    var prop = this.properties[i];
-    var ref = prop['$ref'];
+    prop = this.properties[i];
+    var ref = prop.$ref;
     var model = models[ref];
     if (model && typeof modelsToIgnore[model.name] === 'undefined') {
       returnVal = returnVal + ('<br>' + model.getMockSignature(modelsToIgnore));
@@ -920,11 +918,11 @@ Model.prototype.getMockSignature = function(modelsToIgnore) {
 var Property = function(name, obj, required) {
   this.schema = obj;
   this.required = required;
-  if(obj['$ref'])
-    this['$ref'] = simpleRef(obj['$ref']);
+  if(obj.$ref)
+    this.$ref = simpleRef(obj.$ref);
   else if (obj.type === 'array') {
-    if(obj.items['$ref'])
-      this['$ref'] = simpleRef(obj.items['$ref']);
+    if(obj.items.$ref)
+      this.$ref = simpleRef(obj.items.$ref);
     else
       obj = obj.items;
   }
@@ -934,11 +932,11 @@ var Property = function(name, obj, required) {
   this.optional = true;
   this.default = obj.default || null;
   this.example = obj.example || null;
-}
+};
 
 Property.prototype.getSampleValue = function (modelsToIgnore) {
   return this.sampleValue(false, modelsToIgnore);
-}
+};
 
 Property.prototype.isArray = function () {
   var schema = this.schema;
@@ -946,7 +944,7 @@ Property.prototype.isArray = function () {
     return true;
   else
     return false;
-}
+};
 
 Property.prototype.sampleValue = function(isArray, ignoredModels) {
   isArray = (isArray || this.isArray());
@@ -954,8 +952,8 @@ Property.prototype.sampleValue = function(isArray, ignoredModels) {
   var type = getStringSignature(this.obj);
   var output;
 
-  if(this['$ref']) {
-    var refModelName = simpleRef(this['$ref']);
+  if(this.$ref) {
+    var refModelName = simpleRef(this.$ref);
     var refModel = models[refModelName];
     if(refModel && typeof ignoredModels[type] === 'undefined') {
       ignoredModels[type] = this;
@@ -989,12 +987,12 @@ Property.prototype.sampleValue = function(isArray, ignoredModels) {
     return [output];
   else
     return output;
-}
+};
 
 getStringSignature = function(obj) {
   var str = '';
   if(obj.type === 'array') {
-    obj = (obj.items || obj['$ref'] || {});
+    obj = (obj.items || obj.$ref || {});
     str += 'Array[';
   }
   if(obj.type === 'integer' && obj.format === 'int32')
@@ -1015,23 +1013,23 @@ getStringSignature = function(obj) {
     str += 'double';
   else if(obj.type === 'boolean')
     str += 'boolean';
-  else if(obj['$ref'])
-    str += simpleRef(obj['$ref']);
+  else if(obj.$ref)
+    str += simpleRef(obj.$ref);
   else
     str += obj.type;
   if(obj.type === 'array')
     str += ']';
   return str;
-}
+};
 
 simpleRef = function(name) {
   if(typeof name === 'undefined')
     return null;
   if(name.indexOf("#/definitions/") === 0)
-    return name.substring('#/definitions/'.length)
+    return name.substring('#/definitions/'.length);
   else
     return name;
-}
+};
 
 Property.prototype.toString = function() {
   var str = getStringSignature(this.obj);
@@ -1041,13 +1039,13 @@ Property.prototype.toString = function() {
       str += ', <span class="propOptKey">optional</span>';
     str += ')';
   }
-  else 
+  else
     str = this.name + ' (' + JSON.stringify(this.obj) + ')';
 
   if(typeof this.description !== 'undefined')
     str += ': ' + this.description;
   return str;
-}
+};
 
 typeFromJsonSchema = function(type, format) {
   var str;
@@ -1073,7 +1071,7 @@ typeFromJsonSchema = function(type, format) {
     str = 'string';
 
   return str;
-}
+};
 
 var e = (typeof window !== 'undefined' ? window : exports);
 
