@@ -25,6 +25,7 @@ var SwaggerClient = function(url, options) {
   if (typeof options.useJQuery === 'boolean')
     this.useJQuery = options.useJQuery;
 
+  this.supportedSubmitMethods = options.supportedSubmitMethods || [];
   this.failure = options.failure != null ? options.failure : function() {};
   this.progress = options.progress != null ? options.progress : function() {};
   this.spec = options.spec;
@@ -472,7 +473,7 @@ Operation.prototype.supportHeaderParams = function () {
 };
 
 Operation.prototype.supportedSubmitMethods = function () {
-  return this.resource.api.supportedSubmitMethods;
+  return this.parent.supportedSubmitMethods;
 };
 
 Operation.prototype.getHeaderParams = function (args) {
