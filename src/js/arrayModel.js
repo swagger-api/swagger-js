@@ -1,6 +1,3 @@
-/**
- * Array Model
- **/
 var ArrayModel = function(definition) {
   this.name = "name";
   this.definition = definition || {};

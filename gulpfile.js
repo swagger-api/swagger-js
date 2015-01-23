@@ -7,6 +7,15 @@ var concat = require('gulp-concat');
 var rename = require('gulp-rename');
 var istanbul = require('gulp-istanbul');
 var del = require('del');
+var header = require('gulp-header');
+var pkg = require('./package.json');
+var banner = ['/**',
+  ' * <%= pkg.name %> - <%= pkg.description %>',
+  ' * @version v<%= pkg.version %>',
+  ' * @link <%= pkg.homepage %>',
+  ' * @license <%= pkg.license %>',
+  ' */',
+  ''].join('\n');
 
 var basename = 'swagger-client';
 var paths = {
@@ -20,7 +29,7 @@ paths.all = paths.sources.concat(paths.tests).concat(['gulpfile.js']);
 
 gulp.task('clean', function (cb) {
   del([
-    paths.dist + '/**',
+    paths.dist + '/' + basename + ".*",
   ], cb);
 });
 
@@ -52,6 +61,7 @@ gulp.task('cover', function (cb) {
 gulp.task('build', function() {
   return gulp.src(paths.sources)
     .pipe(concat(basename + '.js'))
+    .pipe(header(banner, { pkg: pkg } ))
     .pipe(gulp.dest(paths.dist))
     .pipe(uglify())
     .pipe(rename(basename + '.min.js'))
