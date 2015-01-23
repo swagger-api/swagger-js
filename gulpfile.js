@@ -12,7 +12,7 @@ var basename = 'swagger-client';
 var paths = {
   sources: ['src/js/*.js'],
   tests: ['test/*.js'],
-  dist: 'dist'
+  dist: 'lib'
 };
 
 paths.all = paths.sources.concat(paths.tests).concat(['gulpfile.js']);
