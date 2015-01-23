@@ -9,6 +9,10 @@ SwaggerHttp.prototype.execute = function(obj) {
   else
     this.useJQuery = this.isIE8();
 
+  if(obj && typeof obj.body === 'object') {
+    obj.body = JSON.stringify(obj.body);
+  }
+
   if(this.useJQuery)
     return new JQueryHttpClient().execute(obj);
   else
@@ -183,7 +187,8 @@ ShredHttpClient.prototype.execute = function(obj) {
       data: response.content.data
     };
 
-    var contentType = (response._headers["content-type"]||response._headers["Content-Type"]||null)
+    var headers = response._headers.normalized || response._headers;
+    var contentType = (headers["content-type"]||headers["Content-Type"]||null)
 
     if(contentType != null) {
       if(contentType.indexOf("application/json") == 0 || contentType.indexOf("+json") > 0) {
