@@ -199,6 +199,13 @@ npm test
 mocha test
 ```
 
+To compile a standalone:
+
+```bash
+browserify lib/swagger.js -o swagger.standalone.js -s swagger
+uglify swagger.standalone.js > swagger.standalone.min.js
+```
+
 License
 -------
 
