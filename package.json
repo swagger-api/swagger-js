@@ -1,7 +1,7 @@
 {
   "name": "swagger-client",
   "author": "Zeke Sikelianos <zeke@sikelianos.com>",
-  "contributors": [ 
+  "contributors": [
     {
       "name": "Tony Tam",
       "email": "fehguy@gmail.com"
@@ -23,8 +23,12 @@
     "node": ">= 0.6.6"
   },
   "dependencies": {
+    "ax": "^0.2.2",
+    "btoa": "1.1.1",
+    "cookiejar": "^2.0.1",
+    "iconv-lite": "^0.4.6",
     "shred": "0.8.10",
-    "btoa": "1.1.1"
+    "sprintf": "^0.1.5"
   },
   "devDependencies": {
     "mocha": "^1.21.3",
