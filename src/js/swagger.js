@@ -560,8 +560,11 @@ Operation.prototype.getBody = function(headers, args) {
   for(var i = 0; i < this.parameters.length; i++) {
     var param = this.parameters[i];
     if(typeof args[param.name] !== 'undefined') {
-      if (param.in === 'body')
+      if (param.in === 'body') {
         body = args[param.name];
+      } else if(param.in === 'formData') {
+        formParams[param.name] = args[param.name];
+      }
     }
   }
 
@@ -858,7 +861,7 @@ var Model = function(name, definition) {
       if(requiredFields.indexOf(key) >= 0)
         required = true;
       this.properties.push(new Property(key, property, required));
-    }    
+    }
   }
 }
 
@@ -1039,7 +1042,7 @@ Property.prototype.toString = function() {
       str += ', <span class="propOptKey">optional</span>';
     str += ')';
   }
-  else 
+  else
     str = this.name + ' (' + JSON.stringify(this.obj) + ')';
 
   if(typeof this.description !== 'undefined')
