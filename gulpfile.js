@@ -5,6 +5,7 @@ var jshint = require('gulp-jshint');
 var mocha  = require('gulp-mocha');
 var concat = require('gulp-concat');
 var rename = require('gulp-rename');
+var wrap = require("gulp-wrap");
 var istanbul = require('gulp-istanbul');
 var del = require('del');
 var header = require('gulp-header');
@@ -61,6 +62,7 @@ gulp.task('cover', function (cb) {
 gulp.task('build', function() {
   return gulp.src(paths.sources)
     .pipe(concat(basename + '.js'))
+    .pipe(wrap('(function(){\n<%= contents %>\n})();'))
     .pipe(header(banner, { pkg: pkg } ))
     .pipe(gulp.dest(paths.dist))
     .pipe(uglify())

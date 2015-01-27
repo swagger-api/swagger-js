@@ -1073,15 +1073,6 @@ typeFromJsonSchema = function(type, format) {
   return str;
 }
 
-var e = (typeof window !== 'undefined' ? window : exports);
-
 var sampleModels = {};
 var cookies = {};
 var models = {};
-
-e.authorizations = new SwaggerAuthorizations();
-e.ApiKeyAuthorization = ApiKeyAuthorization;
-e.PasswordAuthorization = PasswordAuthorization;
-e.CookieAuthorization = CookieAuthorization;
-e.SwaggerClient = SwaggerClient;
-e.Operation = Operation;
