@@ -727,7 +727,6 @@ Operation.prototype.setContentTypes = function(args, opts) {
   if (consumes && this.consumes) {
     if (this.consumes.indexOf(consumes) === -1) {
       log('server doesn\'t consume ' + consumes + ', try ' + JSON.stringify(this.consumes));
-      consumes = this.operation.consumes[0];
     }
   }
 
@@ -739,7 +738,6 @@ Operation.prototype.setContentTypes = function(args, opts) {
   if (accepts && this.produces) {
     if (this.produces.indexOf(accepts) === -1) {
       log('server can\'t produce ' + accepts);
-      accepts = this.produces[0];
     }
   }
 

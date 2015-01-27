@@ -99,7 +99,6 @@ JQueryHttpClient.prototype.execute = function(obj) {
     };
 
     var contentType = (headers["content-type"]||headers["Content-Type"]||null)
-
     if(contentType != null) {
       if(contentType.indexOf("application/json") == 0 || contentType.indexOf("+json") > 0) {
         if(response.responseText && response.responseText !== "") {
@@ -206,20 +205,36 @@ ShredHttpClient.prototype.execute = function(obj) {
     return out;
   };
 
-  res = {
-    error: function(response) {
+  // Transform an error into a usable response-like object
+  var transformError = function (error) {
+    var out = {
+      // Default to a status of 0 - The client will treat this as a generic permissions sort of error
+      status: 0,
+      data: error.message || error
+    };
+
+    if (error.code) {
+      out.obj = error;
+
+      if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED') {
+        // We can tell the client that this should be treated as a missing resource and not as a permissions thing
+        out.status = 404;
+      }
+    }
+    return out;
+  };
+
+  var res = {
+    error: function (response) {
       if (obj)
         return cb.error(transform(response));
     },
-    redirect: function(response) {
+    // Catch the Shred error raised when the request errors as it is made (i.e. No Response is coming)
+    request_error: function (err) {
       if (obj)
-        return cb.redirect(transform(response));
+        return cb.error(transformError(err));
     },
-    307: function(response) {
-      if (obj)
-        return cb.redirect(transform(response));
-    },
-    response: function(response) {
+    response: function (response) {
       if (obj)
         return cb.response(transform(response));
     }

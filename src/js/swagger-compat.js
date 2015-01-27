@@ -22,7 +22,7 @@ var SwaggerApi = function (url, options) {
   if (options.url != null)
     this.url = options.url;
 
-  this.swaggerRequstHeaders = options.swaggerRequstHeaders || 'application/json,application/json;charset=utf-8,*/*';
+  this.swaggerRequstHeaders = options.swaggerRequstHeaders || 'application/json;charset=utf-8,*/*';
   this.defaultSuccessCallback = options.defaultSuccessCallback || null;
   this.defaultErrorCallback = options.defaultErrorCallback || null;
 
@@ -704,17 +704,17 @@ var SwaggerOperation = function (nickname, path, method, parameters, summary, no
   var defaultErrorCallback = this.resource.api.defaultErrorCallback || null;
 
   this.resource[this.nickname] = function (args, opts, callback, error) {
-    var arg1 = args,
-      arg2 = opts,
-      arg3 = callback || defaultSuccessCallback,
-      arg4 = error || defaultErrorCallback;
-    if(typeof opts === 'function') {
-      arg2 = {};
-      arg3 = opts;
-      arg4 = error;
-    }
-    return _this['do'](arg1, arg2, arg3, arg4);
+    var arg1, arg2, arg3, arg4;
+    if(typeof args === 'function') // right shift 3
+      arg1 = {}, arg2 = {}, arg3 = args, arg4 = opts;
+    else if(typeof args === 'object' && typeof opts === 'function') // right shift 2
+      arg1 = args, arg2 = {}, arg3 = opts, arg4 = callback;
+    else
+      arg1 = args, arg2 = opts, arg3 = callback, arg4 = error;
+
+    return _this['do'](arg1 || {}, arg2 || {}, arg3 || defaultSuccessCallback, arg4 || defaultErrorCallback);
   };
+
   this.resource[this.nickname].help = function () {
     return _this.help();
   };
@@ -774,23 +774,13 @@ SwaggerOperation.prototype.getSampleJSON = function (type, models) {
 
 SwaggerOperation.prototype['do'] = function (args, opts, callback, error) {
   var key, param, params, possibleParams, req, value;
-  args = args || {};
-  opts = opts || {};
 
-  if ((typeof args) === 'function') {
-    error = opts;
-    callback = args;
-    args = {};
-  }
-  if ((typeof opts) === 'function') {
-    error = callback;
-    callback = opts;
-  }
   if (error == null) {
     error = function (xhr, textStatus, error) {
       return log(xhr, textStatus, error);
     };
   }
+
   if (callback == null) {
     callback = function (response) {
       var content;
