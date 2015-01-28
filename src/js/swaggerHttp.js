@@ -101,17 +101,12 @@ JQueryHttpClient.prototype.execute = function(obj) {
     var contentType = (headers["content-type"]||headers["Content-Type"]||null);
     if(contentType != null) {
       if(contentType.indexOf("application/json") == 0 || contentType.indexOf("+json") > 0) {
-        if(response.responseText && response.responseText !== "") {
-          try {
-            out.obj = JSON.parse(response.content.data);
-          }
-          catch (ex) {
-            // do not set out.obj
-            log ("unable to parse JSON content");
-          }
+        try {
+          out.obj = response.responseJSON || {};
+        } catch (ex) {
+          // do not set out.obj
+          log("unable to parse JSON content");
         }
-        else
-          out.obj = {};
       }
     }
 

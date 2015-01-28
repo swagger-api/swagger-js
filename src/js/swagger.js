@@ -265,6 +265,7 @@ var Operation = function(parent, operationId, httpMethod, path, args, definition
   this.security = args.security;
   this.authorizations = args.security;
   this.description = args.description;
+  this.useJQuery = parent.useJQuery;
 
   var i;
   for(i = 0; i < this.parameters.length; i++) {
@@ -857,7 +858,7 @@ var Model = function(name, definition) {
       if(requiredFields.indexOf(key) >= 0)
         required = true;
       this.properties.push(new Property(key, property, required));
-    }    
+    }
   }
 };
 
@@ -1038,7 +1039,7 @@ Property.prototype.toString = function() {
       str += ', <span class="propOptKey">optional</span>';
     str += ')';
   }
-  else 
+  else
     str = this.name + ' (' + JSON.stringify(this.obj) + ')';
 
   if(typeof this.description !== 'undefined')
