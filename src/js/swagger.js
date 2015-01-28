@@ -560,8 +560,11 @@ Operation.prototype.getBody = function(headers, args) {
   for(var i = 0; i < this.parameters.length; i++) {
     var param = this.parameters[i];
     if(typeof args[param.name] !== 'undefined') {
-      if (param.in === 'body')
+      if (param.in === 'body') {
         body = args[param.name];
+      } else if(param.in === 'formData') {
+        formParams[param.name] = args[param.name];
+      }
     }
   }
 
