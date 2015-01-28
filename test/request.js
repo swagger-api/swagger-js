@@ -113,4 +113,28 @@ describe('api key authorizations', function() {
     var storeApi = sample.store.get_inventory_1;
     expect(typeof storeApi).toEqual('function');
   });
+
+  it('escape an operation id', function() {
+    var json = sample.pet.operations.findPetsByStatus.responseSampleJSON;
+    expect(JSON.parse(json)).toEqual([
+      {
+        "id": 0,
+        "category": {
+          "id": 0,
+          "name": "string"
+        },
+        "name": "doggie",
+        "photoUrls": [
+          "string"
+        ],
+        "tags": [
+          {
+            "id": 0,
+            "name": "string"
+          }
+        ],
+        "status": "string"
+      }
+    ]);
+  });
 });

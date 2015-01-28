@@ -160,6 +160,7 @@ SwaggerClient.prototype.buildFromSpec = function(response) {
             if(typeof operationGroup === 'undefined') {
               this[tag] = [];
               operationGroup = this[tag];
+              operationGroup.operations = {};
               operationGroup.label = tag;
               operationGroup.apis = [];
               this[tag].help = this.help.bind(operationGroup);
@@ -168,6 +169,7 @@ SwaggerClient.prototype.buildFromSpec = function(response) {
             operationGroup[operationId] = operationObject.execute.bind(operationObject);
             operationGroup[operationId].help = operationObject.help.bind(operationObject);
             operationGroup.apis.push(operationObject);
+            operationGroup.operations[operationId] = operationObject;
 
             // legacy UI feature
             var j;
@@ -243,6 +245,7 @@ var Operation = function(parent, operationId, httpMethod, path, args, definition
   parent = parent||{};
   args = args||{};
 
+  this.operations = {};
   this.operation = args;
   this.deprecated = args.deprecated;
   this.consumes = args.consumes;
