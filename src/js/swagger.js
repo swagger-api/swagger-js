@@ -16,10 +16,10 @@ var SwaggerClient = function(url, options) {
     else this.url = url;
   else options = url;
 
-  if (options.url != null)
+  if (options.url !== null)
     this.url = options.url;
 
-  if (options.success != null)
+  if (options.success !== null)
     this.success = options.success;
 
   if (typeof options.useJQuery === 'boolean')
@@ -30,7 +30,7 @@ var SwaggerClient = function(url, options) {
   this.progress = options.progress != null ? options.progress : function() {};
   this.spec = options.spec;
 
-  if (options.success != null)
+  if (options.success !== null)
     this.build();
 };
 
@@ -457,11 +457,11 @@ Operation.prototype.getSignature = function(type, models) {
   if(type === 'string')
     isPrimitive = true;
   else
-    isPrimitive = ((listType != null) && models[listType]) || (models[type] != null) ? false : true;
+    isPrimitive = ((listType !== null) && models[listType]) || (models[type] != null) ? false : true;
   if (isPrimitive) {
     return type;
   } else {
-    if (listType != null)
+    if (listType !== null)
       return models[type].getMockSignature();
     else
       return models[type].getMockSignature();
