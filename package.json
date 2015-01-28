@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "del": "^1.1.1",
+    "expect": "1.4.0",
     "gulp": "^3.8.10",
     "gulp-header": "1.2.2",
     "gulp-concat": "^2.4.3",
