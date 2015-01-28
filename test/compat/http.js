@@ -26,7 +26,7 @@ describe('http', function() {
       should(pet.id).equal(1);
       done();
     });
-  })
+  });
 
   it('tests the redirect', function(done) {
     var petApi = sample.pet;
@@ -36,7 +36,7 @@ describe('http', function() {
       should(pet.id).equal(1);
       done();
     });
-  })
+  });
 
   it('verifies the callback function', function(done) {
     var petApi = sample.pet;
@@ -45,7 +45,7 @@ describe('http', function() {
       test.object(pet);
       done();
     });
-  })
+  });
 
   it('verifies the callback function with opts, per #101', function(done) {
     var petApi = sample.pet;
@@ -54,7 +54,7 @@ describe('http', function() {
       test.object(pet);
       done();
     });
-  })
+  });
 
   it('verifies the error callback with all params, per #203', function(done) {
     var petApi = sample.pet;
@@ -65,7 +65,7 @@ describe('http', function() {
       done();
     }
     var req = petApi.getPetById({petId: 0}, {responseContentType: 'invalid'}, success, failure);
-  })
+  });
 
   it('verifies the error callback with three params, per #203', function(done) {
     var petApi = sample.pet;
@@ -76,5 +76,5 @@ describe('http', function() {
       done();
     }
     var req = petApi.getPetById({petId: 0}, success, failure);
-  })
-})
+  });
+});

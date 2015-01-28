@@ -311,7 +311,7 @@ var SwaggerResource = function (resourceObj, api) {
     e.authorizations.apply(obj);
     new SwaggerHttp().execute(obj);
   }
-}
+};
 
 SwaggerResource.prototype.getAbsoluteBasePath = function (relativeBasePath) {
   var pos, url;
@@ -452,7 +452,7 @@ var SwaggerModel = function (modelName, obj) {
     var prop = new SwaggerModelProperty(propertyName, obj.properties[propertyName], this);
     this.properties.push(prop);
   }
-}
+};
 
 SwaggerModel.prototype.setReferencedModels = function (allModels) {
   var results = [];
@@ -500,7 +500,7 @@ SwaggerModel.prototype.createJSONSample = function (modelsToIgnore) {
   }
   else {
     var result = {};
-    var modelsToIgnore = (modelsToIgnore || [])
+    var modelsToIgnore = (modelsToIgnore || []);
     modelsToIgnore.push(this.name);
     for (var i = 0; i < this.properties.length; i++) {
       var prop = this.properties[i];
@@ -541,7 +541,7 @@ var SwaggerModelProperty = function (name, obj, model) {
       this.valueString = '\'' + this.values.join('\' or \'') + '\'';
     }
   }
-}
+};
 
 SwaggerModelProperty.prototype.getSampleValue = function (modelsToIgnore) {
   var result;

@@ -32,5 +32,5 @@ describe('macro overrides', function() {
     test.object(params);
 
     should(params[0].defaultValue).equal('testing');
-  })
-})
+  });
+});

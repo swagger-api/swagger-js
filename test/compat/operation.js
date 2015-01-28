@@ -20,38 +20,38 @@ describe('verifies the nickname is sanitized', function() {
   it('returns the same nickname', function() {
     pet = sample.pet;
     should(pet.sanitize('getSomething')).equal('getSomething');
-  })
+  });
 
   it('strips spaces in the nickname', function() {
     pet = sample.pet;
     should(pet.sanitize('get something')).equal('get_something');
-  })
+  });
 
   it('strips dots in the nickname', function() {
     pet = sample.pet;
     should(pet.sanitize('get.something')).equal('get_something');
-  })
+  });
 
   it('strips $ in the nickname', function() {
     pet = sample.pet;
     should(pet.sanitize('get$something')).equal('get_something');
-  })
+  });
 
   it('strips punctuation in the nickname', function() {
     pet = sample.pet;
     should(pet.sanitize('get[something]')).equal('get_something');
-  })
+  });
 
   it('strips curlies in the nickname', function() {
     pet = sample.pet;
     should(pet.sanitize('get{something}')).equal('get_something');
-  })
+  });
 
   it('strips punctuation in the nickname', function() {
     pet = sample.pet;
     should(pet.sanitize('  \\]}{Get$$_./\[something]')).equal('Get_something');
-  })
-})
+  });
+});
 
 describe('verifies the get pet operation', function() {
   before(function(done) {
@@ -75,12 +75,12 @@ describe('verifies the get pet operation', function() {
     should(responseMessages.length).equal(2);
     should(responseMessages[0].code).equal(400);
     should(responseMessages[1].code).equal(404);
-  })
+  });
 
   it('gets help() from the get pet operation', function() {
     operation = sample.pet.operations.getPetById;
     should(operation.help()).equal('* petId (required) - ID of pet that needs to be fetched');
-  })
+  });
 
 ////////
   it('verifies the get pet operation', function() {
@@ -97,7 +97,7 @@ describe('verifies the get pet operation', function() {
     should(param.type).equal('integer');
     should(param.paramType).equal('path');
     test.value(param.description);
-  })
+  });
 
   it('verifies the post pet operation', function() {
     operation = sample.pet.operations.addPet
@@ -113,7 +113,7 @@ describe('verifies the get pet operation', function() {
     should(param.type).equal('Pet');
     should(param.paramType).equal('body');
     test.value(param.description);
-  })
+  });
 
   it('verifies the put pet operation', function() {
     operation = sample.pet.operations.updatePet
@@ -129,7 +129,7 @@ describe('verifies the get pet operation', function() {
     should(param.type).equal('Pet');
     should(param.paramType).equal('body');
     test.value(param.description);
-  })
+  });
 
   it('verifies the findByTags operation', function() {
     operation = sample.pet.operations.findPetsByTags
@@ -146,7 +146,7 @@ describe('verifies the get pet operation', function() {
     should(param.type).equal('string');
     should(param.paramType).equal('query');
     test.value(param.description);
-  })
+  });
 
   it('verifies the patch pet operation', function() {
     operation = sample.pet.operations.partialUpdate
@@ -172,7 +172,7 @@ describe('verifies the get pet operation', function() {
     should(param.type).equal('Pet');
     should(param.paramType).equal('body');
     test.value(param.description);
-  })
+  });
 
   it('verifies the post pet operation with form', function() {
     operation = sample.pet.operations.updatePetWithForm
@@ -205,7 +205,7 @@ describe('verifies the get pet operation', function() {
     should(param.paramType).equal('form');
     test.value(param.description);
     should(param.required).equal(false);
-  })
+  });
 
   it('verifies a file upload', function() {
     operation = sample.pet.operations.uploadFile
@@ -232,15 +232,15 @@ describe('verifies the get pet operation', function() {
     should(param.paramType).equal('body');
     test.value(param.description);
     should(param.required).equal(false);
-  })
+  });
 
   it('gets operations for the pet api', function() {
     ops = sample.pet.operations
     test.object(ops);
-  })
+  });
 
   it('gets help() from the file upload operation', function() {
     operation = sample.pet.operations.uploadFile
     should(operation.help()).equal('* additionalMetadata - Additional data to pass to server\n* file - file to upload');
-  })
+  });
 })

@@ -28,7 +28,7 @@ describe('default success callback', function() {
     finished = done;
     var petApi = sample.pet;
     var req = petApi.getPetById({petId: 1});
-  })
+  });
 });
 
 describe('default error callback', function() {
@@ -54,5 +54,5 @@ describe('default error callback', function() {
     finished = done;
     var petApi = sample.pet;
     var req = petApi.getPetById({petId: 1}, {responseContentType: 'invalid'});
-  })
+  });
 });

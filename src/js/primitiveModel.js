@@ -9,7 +9,7 @@ var PrimitiveModel = function(definition) {
 
   var requiredFields = definition.enum || [];
   this.type = typeFromJsonSchema(definition.type, definition.format);
-}
+};
 
 PrimitiveModel.prototype.createJSONSample = function(modelsToIgnore) {
   var result = this.type;
@@ -19,7 +19,7 @@ PrimitiveModel.prototype.createJSONSample = function(modelsToIgnore) {
 PrimitiveModel.prototype.getSampleValue = function() {
   var result = this.type;
   return null;
-}
+};
 
 PrimitiveModel.prototype.getMockSignature = function(modelsToIgnore) {
   var propertiesStr = [];

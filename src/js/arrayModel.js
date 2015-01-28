@@ -16,11 +16,11 @@ var ArrayModel = function(definition) {
       this.ref = items['$ref'];
     }
   }
-}
+};
 
 ArrayModel.prototype.createJSONSample = function(modelsToIgnore) {
   var result;
-  modelsToIgnore = (modelsToIgnore||{})
+  modelsToIgnore = (modelsToIgnore||{});
   if(this.type) {
     result = type;
   }
@@ -33,7 +33,7 @@ ArrayModel.prototype.createJSONSample = function(modelsToIgnore) {
 
 ArrayModel.prototype.getSampleValue = function(modelsToIgnore) {
   var result;
-  modelsToIgnore = (modelsToIgnore || {})
+  modelsToIgnore = (modelsToIgnore || {});
   if(this.type) {
     result = type;
   }
@@ -42,7 +42,7 @@ ArrayModel.prototype.getSampleValue = function(modelsToIgnore) {
     result = models[name].getSampleValue(modelsToIgnore);
   }
   return [ result ];
-}
+};
 
 ArrayModel.prototype.getMockSignature = function(modelsToIgnore) {
   var propertiesStr = [];

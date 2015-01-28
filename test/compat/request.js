@@ -23,14 +23,14 @@ describe('request operations', function() {
     test.object(petApi);
     var help = petApi.getPetById.help();
     should(help).equal('* petId (required) - ID of pet that needs to be fetched');
-  })
+  });
 
   it('shows curl syntax', function() {
     var help = sample.pet.getPetById.help();
     console.log(help);
     var curl = sample.pet.getPetById.asCurl({petId: 1});
     should(curl).equal('curl --header "Accept: application/json" http://localhost:8000/api/pet/1');
-  })
+  });
 
   it('generate a get request', function() {
     var petApi = sample.pet;
@@ -40,7 +40,7 @@ describe('request operations', function() {
     should(req.method).equal('GET');
     should(req.headers['Accept']).equal('application/json');
     should(req.url).equal('http://localhost:8000/api/pet/1');
-  })
+  });
 
   it('verifies the http request object for a GET with query params', function() {
     var petApi = sample.pet;
@@ -55,7 +55,7 @@ describe('request operations', function() {
     should(req.method).equal("GET");
     should(req.headers["Accept"]).equal("application/json");
     should(req.url).equal("http://localhost:8000/api/pet/findByStatus?status=available");
-  })
+  });
 
   it('verifies the http request object for a POST', function() {
     var petApi = sample.pet;
@@ -76,7 +76,7 @@ describe('request operations', function() {
     should(req.headers["Content-Type"]).equal("application/json");
     should(req.body).equal('{"id":100,"name":"monster","status":"dead"}');
     should(req.url).equal("http://localhost:8000/api/pet");
-  })
+  });
 
   it('verifies the http request object for a POST with form params', function() {
     var petApi = sample.pet;
@@ -95,7 +95,7 @@ describe('request operations', function() {
     should(req.headers['Content-Type']).equal('application/x-www-form-urlencoded');
     should(req.body).equal('name=dog&status=very%20happy');
     should(req.url).equal('http://localhost:8000/api/pet/1');
-  })
+  });
 
   it('execute put operations', function() {
     var petApi = sample.pet;
@@ -116,7 +116,7 @@ describe('request operations', function() {
     should(req.headers['Content-Type']).equal('application/json');
     should(req.body).equal('{\"id\":100,\"name\":\"monster\",\"status\":\"dead\"}');
     should(req.url).equal('http://localhost:8000/api/pet');
-  })
+  });
 
   it('execute delete operations', function() {
     var petApi = sample.pet;
@@ -132,7 +132,7 @@ describe('request operations', function() {
     should(req.headers['Accept']).equal('application/json');
     should(req.headers['Content-Type']).equal('application/json');
     should(req.url).equal('http://localhost:8000/api/pet/100');
-  })
+  });
 
   it('query params should be single encoded', function() {
     var petApi = sample.pet;
@@ -148,7 +148,7 @@ describe('request operations', function() {
     should(req.headers['Accept']).equal('application/json');
     test.value(req.headers['Content-Type']).isUndefined();
     should(req.url).equal('http://localhost:8000/api/pet/findByStatus?status=a%20b%20c%20d%20e');
-  })
+  });
 
   it('path params should be properly checked', function() {
     var petApi = sample.pet;
@@ -164,7 +164,7 @@ describe('request operations', function() {
     should(req.headers['Accept']).equal('application/json');
     test.value(req.headers['Content-Type']).isUndefined();
     should(req.url).equal('http://localhost:8000/api/pet/false');
-  })
+  });
 
   it('tests the urlify function', function() {
     var op = sample.apis['pet'].operations.getPetById
@@ -172,7 +172,7 @@ describe('request operations', function() {
       return "/entities/{id:([a-z0-9-]{36})}"
     }
     // console.log(op.urlify({petId: 1, 'id:\(\[a\-z0\-9\-\]\{36\}\)': 'ok'}));
-  })
+  });
 
   it('tests the body param', function() {
     var params = {
@@ -182,7 +182,7 @@ describe('request operations', function() {
     var req = sample.pet.addPet(params, opts);
     test.object(req.body);
     should(req.body.id).equal(1);
-  })
+  });
 
   it('tests the body param when name is not `body`, per #168', function() {
     var op = sample.apis['pet'].operations.addPet
@@ -195,13 +195,13 @@ describe('request operations', function() {
     var req = sample.pet.addPet(params, opts);
     test.object(req.body);
     should(req.body.id).equal(1);
-  })
+  });
 
   it('verifies headers when fetching the swagger specification', function() {
     var sample = new swagger.SwaggerApi('http://localhost:8000/api-docs.json');
     var req = sample.build(true);
     should(req.headers['accept']).equal('application/json;charset=utf-8,*/*');
-  })
+  });
 
   it('allows override of headers when fetching the swagger specification', function() {
     var opts = {
@@ -210,7 +210,7 @@ describe('request operations', function() {
     var sample = new swagger.SwaggerApi('http://localhost:8000/api-docs.json', opts);
     var req = sample.build(true);
     should(req.headers['accept']).equal('foo/bar');
-  })
+  });
 
   it('verifies the http request object for a GET with email address query params per https://github.com/swagger-api/swagger-ui/issues/814', function() {
     var petApi = sample.pet;
@@ -225,5 +225,5 @@ describe('request operations', function() {
     should(req.method).equal("GET");
     should(req.headers["Accept"]).equal("application/json");
     should(req.url).equal("http://localhost:8000/api/pet/findByStatus?status=fehguy%40gmail.com");
-  })
+  });
 })

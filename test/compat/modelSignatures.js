@@ -30,4 +30,4 @@ describe('model signatures', function() {
 
     should(JSON.stringify(pet.createJSONSample())).equal(model);
   })  
-})
+});

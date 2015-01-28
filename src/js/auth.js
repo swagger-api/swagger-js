@@ -20,7 +20,7 @@ SwaggerAuthorizations.prototype.apply = function(obj, authorizations) {
   var key;
 
   // if the "authorizations" key is undefined, or has an empty array, add all keys
-  if(typeof authorizations === 'undefined' || Object.keys(authorizations).length == 0) {
+  if(typeof authorizations === 'undefined' || Object.keys(authorizations).length === 0) {
     for (key in this.authz) {
       value = this.authz[key];
       result = value.apply(obj, authorizations);
@@ -72,13 +72,13 @@ ApiKeyAuthorization.prototype.apply = function(obj, authorizations) {
 
 var CookieAuthorization = function(cookie) {
   this.cookie = cookie;
-}
+};
 
 CookieAuthorization.prototype.apply = function(obj, authorizations) {
   obj.cookieJar = obj.cookieJar || CookieJar();
   obj.cookieJar.setCookie(this.cookie);
   return true;
-}
+};
 
 /**
  * Password Authorization is a basic auth implementation

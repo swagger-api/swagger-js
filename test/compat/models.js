@@ -44,13 +44,13 @@ describe('get model operations', function() {
     should(props[5].name).equal('status')
     should(props[5].dataType).equal('string')
     done();
-  })
+  });
 
   it('verifies the getAbsoluteBasePath method for relativeBasePath "/"', function(done) {
     sample.basePath = 'http://localhost:8000/api-docs/';
     should(sample.pet.getAbsoluteBasePath("/")).equal("http://localhost:8000");
     done();
-  })
+  });
 
   it('doesn\'t add double slashes per #202', function(done) {
     sample.basePath = 'http://localhost:8000/api-docs/';
@@ -59,5 +59,5 @@ describe('get model operations', function() {
     var req = petApi.getPetById({petId: 1}, {mock: true});
 
     done();
-  })
+  });
 })

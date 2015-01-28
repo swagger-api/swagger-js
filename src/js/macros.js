@@ -8,7 +8,7 @@ var applyParameterMacro = function (model, parameter) {
     return e.parameterMacro(model, parameter);
   else
     return parameter.defaultValue;
-}
+};
 
 /**
  * allows overriding the default value of an operation
@@ -19,4 +19,4 @@ var applyModelPropertyMacro = function (operation, property) {
     return e.modelPropertyMacro(operation, property);
   else
     return property.defaultValue;
-}
+};
