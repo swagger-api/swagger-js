@@ -1,5 +1,5 @@
 var test = require('unit.js');
-var should = require('should');
+var expect = require('expect')
 var swagger = require('../lib/swagger-client');
 
 describe('url generation', function() {
@@ -11,7 +11,7 @@ describe('url generation', function() {
     var url = op.urlify({
       quantity: 3
     });
-    should(url).equal('http://localhost/path?quantity=3');
+    expect(url).toBe('http://localhost/path?quantity=3');
   });
 
   it('should generate a url with two params', function() {
@@ -23,7 +23,7 @@ describe('url generation', function() {
       quantity: 3,
       weight: 100.3
     });
-    should(url).equal('http://localhost/path?quantity=3&weight=100.3');
+    expect(url).toBe('http://localhost/path?quantity=3&weight=100.3');
   });
 
   it('should generate a url with queryparams array, multi', function() {
@@ -34,7 +34,7 @@ describe('url generation', function() {
     var url = op.urlify({
       intArray: [3,4,5]
     });
-    should(url).equal('http://localhost/path?intArray=3,4,5');
+    expect(url).toBe('http://localhost/path?intArray=3,4,5');
   });
 
   it('should generate a url with queryparams array, pipes', function() {
@@ -54,7 +54,7 @@ describe('url generation', function() {
     var url = op.urlify({
       intArray: [3,4,5]
     });
-    should(url).equal('http://localhost/path?intArray=3|4|5');
+    expect(url).toBe('http://localhost/path?intArray=3|4|5');
   });
 
   it('should generate a url with queryparams array, tabs', function() {
@@ -74,7 +74,7 @@ describe('url generation', function() {
     var url = op.urlify({
       intArray: [3,4,5]
     });
-    should(url).equal('http://localhost/path?intArray=3\\t4\\t5');
+    expect(url).toBe('http://localhost/path?intArray=3\\t4\\t5');
   });
 
   it('should generate a url with queryparams array, spaces', function() {
@@ -94,7 +94,7 @@ describe('url generation', function() {
     var url = op.urlify({
       intArray: [3,4,5]
     });
-    should(url).equal('http://localhost/path?intArray=3%204%205');
+    expect(url).toBe('http://localhost/path?intArray=3%204%205');
   });
 
   it('should generate a url with queryparams array, brackets', function() {
@@ -114,7 +114,7 @@ describe('url generation', function() {
     var url = op.urlify({
       intArray: [3,4,5]
     });
-    should(url).equal('http://localhost/path?intArray[]=3&intArray[]=4&intArray[]=5');
+    expect(url).toBe('http://localhost/path?intArray[]=3&intArray[]=4&intArray[]=5');
   });
 
   it('should generate a url with path param at end of path', function() {
@@ -136,7 +136,7 @@ describe('url generation', function() {
       name: 'tony',
       age: 42
     });
-    should(url).equal('http://localhost/foo/tony?age=42');
+    expect(url).toBe('http://localhost/foo/tony?age=42');
   });
 
   it('should generate a url with path param at middle of path', function() {
@@ -158,7 +158,7 @@ describe('url generation', function() {
       name: 'tony',
       age: 42
     });
-    should(url).equal('http://localhost/foo/tony/bar?age=42');
+    expect(url).toBe('http://localhost/foo/tony/bar?age=42');
   });
 
   it('should generate a url with path param with proper escaping', function() {
@@ -173,7 +173,7 @@ describe('url generation', function() {
     var url = op.urlify({
       name: 'tony tam'
     });
-    should(url).equal('http://localhost/foo/tony%20tam/bar');
+    expect(url).toBe('http://localhost/foo/tony%20tam/bar');
   });
 
   it('should generate a url with path param string array', function() {
@@ -192,7 +192,7 @@ describe('url generation', function() {
     var url = op.urlify({
       names: ['fred', 'bob', 'mary']
     });
-    should(url).equal('http://localhost/foo/fred,bob,mary/bar');
+    expect(url).toBe('http://localhost/foo/fred,bob,mary/bar');
   });
 });
 

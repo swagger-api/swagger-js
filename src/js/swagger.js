@@ -219,16 +219,8 @@ SwaggerClient.prototype.tagFromLabel = function(label) {
 };
 
 SwaggerClient.prototype.idFromOp = function(path, httpMethod, op) {
-  if(typeof op.operationId !== 'undefined') {
-    return (op.operationId);
-  }
-  else {
-    return path.substring(1)
-      .replace(/\//g, "_")
-      .replace(/\{/g, "")
-      .replace(/\}/g, "")
-      .replace(/\./g, "_") + "_" + httpMethod;
-  }
+  var opId = op.operationId || (path.substring(1) + '_' + httpMethod);
+  return opId.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()\+\s]/g,'_');
 };
 
 SwaggerClient.prototype.fail = function(message) {

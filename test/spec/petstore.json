@@ -355,7 +355,7 @@
         ],
         "summary": "Returns pet inventories by status",
         "description": "Returns a map of status codes to quantities",
-        "operationId": "getInventory",
+        "operationId": "get inventory+1",
         "produces": [
           "application/json",
           "application/xml"

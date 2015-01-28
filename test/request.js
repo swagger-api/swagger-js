@@ -1,6 +1,5 @@
 var test = require('unit.js')
 var expect = require('expect')
-var should = require('should')
 var mock = require('../test/mock');
 var swagger = require('../lib/swagger-client');
 var sample, instance;
@@ -108,5 +107,10 @@ describe('api key authorizations', function() {
     expect(req.headers['Content-Type']).toBeUndefined;
     expect(req.url).toBe('http://localhost:8000/api/pet/100');
     expect(req.body).toBeUndefined;
+  });
+
+  it('escape an operation id', function() {
+    var storeApi = sample.store.get_inventory_1;
+    expect(typeof storeApi).toEqual('function');
   });
 });
