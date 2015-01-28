@@ -641,6 +641,10 @@ Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
   success = (success||log);
   error = (error||log);
 
+  if(typeof opts.useJQuery === 'boolean') {
+    this.useJQuery = opts.useJQuery;
+  }
+
   var missingParams = this.getMissingParams(args);
   if(missingParams.length > 0) {
     var message = 'missing required params: ' + missingParams;

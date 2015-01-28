@@ -114,7 +114,7 @@ describe('api key authorizations', function() {
     expect(typeof storeApi).toEqual('function');
   });
 
-  it('escape an operation id', function() {
+  it('return a json sample in array', function() {
     var json = sample.pet.operations.findPetsByStatus.responseSampleJSON;
     expect(JSON.parse(json)).toEqual([
       {
@@ -136,5 +136,16 @@ describe('api key authorizations', function() {
         "status": "string"
       }
     ]);
+  });
+
+  it('verifies useJQuery is set', function() {
+    var petApi = sample.pet;
+    var req = petApi.getPetById({petId: 1}, {useJQuery: true, mock: true});
+
+    test.object(req);
+    expect(req.method).toBe('GET');
+    expect(req.headers.Accept).toBe('application/json');
+    expect(req.url).toBe('http://localhost:8000/api/pet/1');
+    expect(req.useJQuery).toBe(true);
   });
 });
