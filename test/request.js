@@ -97,4 +97,16 @@ describe('api key authorizations', function() {
     expect(req.url).toBe('http://localhost:8000/api/pet/100');
     expect(req.body).toEqual('name=monster&status=miserable%20dog');
   });
+
+  it('generate a DELETE request', function() {
+    var petApi = sample.pet;
+    var req = petApi.deletePet({petId: 100}, {mock: true});
+
+    test.object(req);
+    expect(req.method).toBe('DELETE');
+    expect(req.headers.Accept).toBe('application/json');
+    expect(req.headers['Content-Type']).toBeUndefined;
+    expect(req.url).toBe('http://localhost:8000/api/pet/100');
+    expect(req.body).toBeUndefined;
+  });
 });
