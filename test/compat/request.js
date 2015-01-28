@@ -226,4 +226,30 @@ describe('request operations', function() {
     should(req.headers["Accept"]).equal("application/json");
     should(req.url).equal("http://localhost:8000/api/pet/findByStatus?status=fehguy%40gmail.com");
   });
+
+  it('does not add a query param if not set', function() {
+    var petApi = sample.pet;
+    var params = {};
+    var opts = { mock: true };
+
+    var req = petApi.findPetsByTags(params, opts);
+
+    should(req.method).equal('GET');
+    should(req.headers['Accept']).equal('application/json');
+    test.value(req.headers['Content-Type']).isUndefined();
+    should(req.url).equal('http://localhost:8000/api/pet/findByTags');
+  });
+
+  it('does not add a query param if undefined', function() {
+    var petApi = sample.pet;
+    var params = {status: undefined};
+    var opts = { mock: true };
+
+    var req = petApi.findPetsByTags(params, opts);
+
+    should(req.method).equal('GET');
+    should(req.headers['Accept']).equal('application/json');
+    test.value(req.headers['Content-Type']).isUndefined();
+    should(req.url).equal('http://localhost:8000/api/pet/findByTags');
+  });
 })

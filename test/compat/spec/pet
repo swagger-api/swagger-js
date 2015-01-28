@@ -331,7 +331,7 @@
             {
               "name": "tags",
               "description": "Tags to filter by",
-              "required": true,
+              "required": false,
               "type": "string",
               "paramType": "query"
             }

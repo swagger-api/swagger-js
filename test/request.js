@@ -148,4 +148,24 @@ describe('api key authorizations', function() {
     expect(req.url).toBe('http://localhost:8000/api/pet/1');
     expect(req.useJQuery).toBe(true);
   });
+
+  it('does not add a query param if not set', function() {
+    var petApi = sample.pet;
+    var req = petApi.findPetsByStatus({}, {mock: true});
+
+    test.object(req);
+    expect(req.method).toBe('GET');
+    expect(req.headers.Accept).toBe('application/json');
+    expect(req.url).toBe('http://localhost:8000/api/pet/findByStatus');
+  });
+
+  it('does not add a query param if undefined', function() {
+    var petApi = sample.pet;
+    var req = petApi.findPetsByStatus({status: undefined}, {mock: true});
+
+    test.object(req);
+    expect(req.method).toBe('GET');
+    expect(req.headers.Accept).toBe('application/json');
+    expect(req.url).toBe('http://localhost:8000/api/pet/findByStatus');
+  });
 });
