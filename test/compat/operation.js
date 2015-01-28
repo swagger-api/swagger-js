@@ -82,7 +82,6 @@ describe('verifies the get pet operation', function() {
     should(operation.help()).equal('* petId (required) - ID of pet that needs to be fetched');
   });
 
-////////
   it('verifies the get pet operation', function() {
     operation = sample.pet.operations.getPetById
     should(operation.method).equal('get');

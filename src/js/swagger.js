@@ -655,7 +655,7 @@ Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
 
   var obj = {
     url: url,
-    method: this.method,
+    method: this.method.toUpperCase(),
     body: body,
     useJQuery: this.useJQuery,
     headers: headers,
@@ -669,7 +669,10 @@ Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
     }
   };
   var status = e.authorizations.apply(obj, this.operation.security);
-  new SwaggerHttp().execute(obj);
+  if(opts.mock === true)
+    return obj;
+  else
+    new SwaggerHttp().execute(obj);
 };
 
 Operation.prototype.setContentTypes = function(args, opts) {

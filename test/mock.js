@@ -2,7 +2,7 @@ var http = require('http'),
     url = require('url'),
     path = require('path'),
     fs = require('fs');
-var swagger = require('../../lib/swagger-client');
+var swagger = require('../lib/swagger-client');
 var sample;
 
 exports.petstore = function(arg1, arg2, arg3, arg4) {
@@ -14,9 +14,10 @@ exports.petstore = function(arg1, arg2, arg3, arg4) {
   }
   var instance = http.createServer(function(req, res) {
     var uri = url.parse(req.url).pathname;
-    var filename = path.join('test/compat/spec', uri);
+    var filename = path.join('test/spec', uri);
     // for testing redirects
-    if(filename === 'test/compat/spec/api/redirect') {
+    
+    if(filename === 'test/spec/api/redirect') {
       res.writeHead(302, {
         'Location': 'http://localhost:8000/api/pet/1'
       });
@@ -68,7 +69,7 @@ exports.petstore = function(arg1, arg2, arg3, arg4) {
         swagger.modelPropertyMacro = macros.modelProperty;
       }
     }
-    var sample = new swagger.SwaggerApi('http://localhost:8000/api-docs.json', opts);
+    var sample = new swagger.SwaggerClient({url: 'http://localhost:8000/petstore.json', opts: opts});
     sample.build();
     var count = 0, isDone = false;
     var f = function () {
