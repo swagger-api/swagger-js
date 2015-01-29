@@ -27,7 +27,6 @@ var paths = {
 
 paths.all = paths.sources.concat(paths.tests).concat(['gulpfile.js']);
 
-
 gulp.task('clean', function (cb) {
   del([
     paths.dist + '/' + basename + ".*",
@@ -48,7 +47,7 @@ gulp.task('test', function() {
 });
 
 gulp.task('cover', function (cb) {
-  gulp.src(paths.sources)
+  gulp.src(paths.dist + '/' + basename + '.js')
     .pipe(istanbul({includeUntested: true}))
     .pipe(istanbul.hookRequire())
     .on('finish', function () {
