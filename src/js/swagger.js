@@ -394,12 +394,12 @@ Operation.prototype.getType = function (param) {
     if(param.items)
       str = this.getType(param.items);
   }
-  if(param['$ref'])
-    str = param['$ref'];
+  if(param.$ref)
+    str = param.$ref;
 
   var schema = param.schema;
   if(schema) {
-    var ref = schema['$ref'];
+    var ref = schema.$ref;
     if(ref) {
       ref = simpleRef(ref);
       if(isArray)
@@ -417,12 +417,13 @@ Operation.prototype.getType = function (param) {
 };
 
 Operation.prototype.resolveModel = function (schema, definitions) {
-  if(typeof schema['$ref'] !== 'undefined') {
-    var ref = schema['$ref'];
+  if(typeof schema.$ref !== 'undefined') {
+    var ref = schema.$ref;
     if(ref.indexOf('#/definitions/') == 0)
       ref = ref.substring('#/definitions/'.length);
-    if(definitions[ref])
+    if(definitions[ref]) {
       return new Model(ref, definitions[ref]);
+    }
   }
   if(schema.type === 'array')
     return new ArrayModel(schema);
@@ -852,7 +853,10 @@ var Model = function(name, definition) {
   this.definition = definition || {};
   this.properties = [];
   var requiredFields = definition.required || [];
-
+  if(definition.type === 'array') {
+    var out = new ArrayModel(definition);
+    return out;
+  }
   var key;
   var props = definition.properties;
   if(props) {
@@ -910,7 +914,7 @@ Model.prototype.getMockSignature = function(modelsToIgnore) {
   var i;
   for (i = 0; i < this.properties.length; i++) {
     var prop = this.properties[i];
-    var ref = prop['$ref'];
+    var ref = prop.$ref;
     var model = models[ref];
     if (model && typeof modelsToIgnore[model.name] === 'undefined') {
       returnVal = returnVal + ('<br>' + model.getMockSignature(modelsToIgnore));
@@ -922,11 +926,11 @@ Model.prototype.getMockSignature = function(modelsToIgnore) {
 var Property = function(name, obj, required) {
   this.schema = obj;
   this.required = required;
-  if(obj['$ref'])
-    this['$ref'] = simpleRef(obj['$ref']);
+  if(obj.$ref)
+    this.$ref = simpleRef(obj.$ref);
   else if (obj.type === 'array') {
-    if(obj.items['$ref'])
-      this['$ref'] = simpleRef(obj.items['$ref']);
+    if(obj.items.$ref)
+      this.$ref = simpleRef(obj.items.$ref);
     else
       obj = obj.items;
   }
@@ -956,8 +960,8 @@ Property.prototype.sampleValue = function(isArray, ignoredModels) {
   var type = getStringSignature(this.obj);
   var output;
 
-  if(this['$ref']) {
-    var refModelName = simpleRef(this['$ref']);
+  if(this.$ref) {
+    var refModelName = simpleRef(this.$ref);
     var refModel = models[refModelName];
     if(refModel && typeof ignoredModels[type] === 'undefined') {
       ignoredModels[type] = this;
@@ -996,7 +1000,7 @@ Property.prototype.sampleValue = function(isArray, ignoredModels) {
 getStringSignature = function(obj) {
   var str = '';
   if(obj.type === 'array') {
-    obj = (obj.items || obj['$ref'] || {});
+    obj = (obj.items || obj.$ref || {});
     str += 'Array[';
   }
   if(obj.type === 'integer' && obj.format === 'int32')
@@ -1017,8 +1021,8 @@ getStringSignature = function(obj) {
     str += 'double';
   else if(obj.type === 'boolean')
     str += 'boolean';
-  else if(obj['$ref'])
-    str += simpleRef(obj['$ref']);
+  else if(obj.$ref)
+    str += simpleRef(obj.$ref);
   else
     str += obj.type;
   if(obj.type === 'array')
