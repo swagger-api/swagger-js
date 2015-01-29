@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>swagger.js example</title>
+    
+    <script type="text/javascript" src="swagger.standalone.js"></script>
+    <script type="text/javascript">
+
+      var specUrl = "http://localhost:8081/explorer/resources";
+      var client = new swagger.SwaggerApi(specUrl, { success: function() {
+            window.document.body.innerText = "You now have a functioning swagger.js client. Use the 'client' object in the console"
+          } 
+        });
+      
+    </script>
+  </head>
+  <body>
+    If you're seeing this, you need to edit this example with a spec you can get via http.
+    The client is not ready yet.
+
+  </body>
+</html>
