@@ -1,5 +1,5 @@
-var test = require('unit.js')
-var should = require('should')
+var test = require('unit.js');
+var expect = require('expect');
 var mock = require('../../test/compat/mock');
 var swagger = require('../../lib/swagger-client');
 var sample, instance;
@@ -20,35 +20,34 @@ describe('get model operations', function() {
 
   it('verifies the Pet model', function(done) {
     var pet = sample.pet.models['Pet'];
-    
-    should(pet.name).equal('Pet');
+    expect(pet.name).toBe('Pet');
     var props = pet.properties;
 
-    should(props[0].name).equal('id');
-    should(props[0].dataType).equal('integer');
+    expect(props[0].name).toBe('id');
+    expect(props[0].dataType).toBe('integer');
 
-    should(props[1].name).equal('category')
-    should(props[1].dataType).equal('Category')
+    expect(props[1].name).toBe('category')
+    expect(props[1].dataType).toBe('Category')
 
-    should(props[2].name).equal('name')
-    should(props[2].dataType).equal('string')
+    expect(props[2].name).toBe('name')
+    expect(props[2].dataType).toBe('string')
 
-    should(props[3].name).equal('photoUrls')
-    should(props[3].dataType).equal('array')
-    should(props[3].refDataType).equal('string')
+    expect(props[3].name).toBe('photoUrls')
+    expect(props[3].dataType).toBe('array')
+    expect(props[3].refDataType).toBe('string')
 
-    should(props[4].name).equal('tags')
-    should(props[4].dataType).equal('array')
-    should(props[4].refDataType).equal('Tag')
+    expect(props[4].name).toBe('tags')
+    expect(props[4].dataType).toBe('array')
+    expect(props[4].refDataType).toBe('Tag')
 
-    should(props[5].name).equal('status')
-    should(props[5].dataType).equal('string')
+    expect(props[5].name).toBe('status')
+    expect(props[5].dataType).toBe('string')
     done();
   });
 
   it('verifies the getAbsoluteBasePath method for relativeBasePath "/"', function(done) {
     sample.basePath = 'http://localhost:8000/api-docs/';
-    should(sample.pet.getAbsoluteBasePath("/")).equal("http://localhost:8000");
+    expect(sample.pet.getAbsoluteBasePath("/")).toBe("http://localhost:8000");
     done();
   });
 

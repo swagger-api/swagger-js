@@ -8,7 +8,7 @@ var SwaggerClient = function(url, options) {
   this.isValid = false;
   this.info = null;
   this.useJQuery = false;
-  this.models = models;
+  this.models = {};
 
   options = (options||{});
   if (url)
@@ -16,21 +16,21 @@ var SwaggerClient = function(url, options) {
     else this.url = url;
   else options = url;
 
-  if (options.url !== null)
+  if (typeof options.url === 'string')
     this.url = options.url;
 
-  if (options.success !== null)
+  if (typeof options.success === 'function')
     this.success = options.success;
 
-  if (typeof options.useJQuery === 'boolean')
+  if (options.useJQuery)
     this.useJQuery = options.useJQuery;
 
   this.supportedSubmitMethods = options.supportedSubmitMethods || [];
-  this.failure = options.failure !== null ? options.failure : function() {};
-  this.progress = options.progress !== null ? options.progress : function() {};
+  this.failure = options.failure || function() {};
+  this.progress = options.progress || function() {};
   this.spec = options.spec;
 
-  if (options.success !== null)
+  if (typeof options.success === 'function')
     this.build();
 };
 
@@ -452,11 +452,11 @@ Operation.prototype.getSignature = function(type, models) {
   if(type === 'string')
     isPrimitive = true;
   else
-    isPrimitive = ((listType !== null) && models[listType]) || (models[type] !== null) ? false : true;
+    isPrimitive = (listType && models[listType]) || (models[type]) ? false : true;
   if (isPrimitive) {
     return type;
   } else {
-    if (listType !== null)
+    if (listType)
       return models[type].getMockSignature();
     else
       return models[type].getMockSignature();
@@ -588,9 +588,8 @@ Operation.prototype.getSampleJSON = function(type, models) {
   var isPrimitive, listType, sampleJson;
 
   listType = (type instanceof Array);
-  isPrimitive = (models[type] !== null) ? false : true;
+  isPrimitive = models[type] ? false : true;
   sampleJson = isPrimitive ? void 0 : models[type].createJSONSample();
-
   if (sampleJson) {
     sampleJson = listType ? [sampleJson] : sampleJson;
     if(typeof sampleJson == 'string')

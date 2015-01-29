@@ -98,7 +98,7 @@ JQueryHttpClient.prototype.execute = function(obj) {
     };
 
     var contentType = (headers["content-type"]||headers["Content-Type"]||null);
-    if(contentType !== null) {
+    if(contentType) {
       if(contentType.indexOf("application/json") === 0 || contentType.indexOf("+json") > 0) {
         try {
           out.obj = response.responseJSON || {};
@@ -170,7 +170,6 @@ ShredHttpClient.prototype.execute = function(obj) {
     this.initShred();
 
   var cb = obj.on, res;
-
   var transform = function(response) {
     var out = {
       headers: response._headers,
@@ -183,7 +182,7 @@ ShredHttpClient.prototype.execute = function(obj) {
     var headers = response._headers.normalized || response._headers;
     var contentType = (headers["content-type"]||headers["Content-Type"]||null);
 
-    if(contentType !== null) {
+    if(contentType) {
       if(contentType.indexOf("application/json") === 0 || contentType.indexOf("+json") > 0) {
         if(response.content.data && response.content.data !== "")
           try{
@@ -229,8 +228,9 @@ ShredHttpClient.prototype.execute = function(obj) {
         return cb.error(transformError(err));
     },
     response: function (response) {
-      if (obj)
+      if (obj) {
         return cb.response(transform(response));
+      }
     }
   };
   if (obj) {

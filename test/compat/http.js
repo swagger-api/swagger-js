@@ -1,5 +1,5 @@
-var test = require('unit.js')
-var should = require('should')
+var test = require('unit.js');
+var should = require('should');
 var mock = require('../../test/compat/mock');
 var sample, instance;
 
@@ -25,6 +25,8 @@ describe('http', function() {
       test.object(pet);
       should(pet.id).equal(1);
       done();
+    }, function(data) {
+      console.log('error');
     });
   });
 

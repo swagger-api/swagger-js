@@ -8,7 +8,6 @@ describe('default success callback', function() {
   var opts = {};
   var finished;
   opts.defaultSuccessCallback = function(data) {
-    console.log('calling defaultSuccessCallback');
     finished();
   };
 
