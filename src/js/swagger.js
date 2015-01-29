@@ -995,11 +995,14 @@ Property.prototype.sampleValue = function(isArray, ignoredModels) {
 
 getStringSignature = function(obj) {
   var str = '';
-  if(obj.type === 'array') {
-    obj = (obj.items || obj['$ref'] || {});
+  if(typeof obj.type === 'undefined')
+    str += obj;
+  else if(obj.type === 'array') {
     str += 'Array[';
+    str += getStringSignature((obj.items || obj['$ref'] || {}))
+    str += ']';
   }
-  if(obj.type === 'integer' && obj.format === 'int32')
+  else if(obj.type === 'integer' && obj.format === 'int32')
     str += 'integer';
   else if(obj.type === 'integer' && obj.format === 'int64')
     str += 'long';
@@ -1009,6 +1012,8 @@ getStringSignature = function(obj) {
     str += 'date-time';
   else if(obj.type === 'string' && obj.format === 'date')
     str += 'date';
+  else if(obj.type === 'string' && typeof obj.format === 'undefined')
+    str += 'string';
   else if(obj.type === 'number' && obj.format === 'float')
     str += 'float';
   else if(obj.type === 'number' && obj.format === 'double')
@@ -1021,8 +1026,6 @@ getStringSignature = function(obj) {
     str += simpleRef(obj['$ref']);
   else
     str += obj.type;
-  if(obj.type === 'array')
-    str += ']';
   return str;
 };
 
