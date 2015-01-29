@@ -26,7 +26,7 @@ exports.petstore = function(arg1, arg2, arg3, arg4) {
     else {
       fs.exists(filename, function(exists) {
         if(exists) {
-          var accept = req.headers['accept'];
+          var accept = req.headers.accept;
           if(typeof accept !== 'undefined') {
             if(accept === 'invalid') {
               res.writeHead(500);
@@ -82,4 +82,4 @@ exports.petstore = function(arg1, arg2, arg3, arg4) {
     };
     setTimeout(f, 50);
   });
-}
+};

@@ -56,7 +56,6 @@ JQueryHttpClient.prototype.execute = function(obj) {
     var key, results;
     if (obj.headers) {
       results = [];
-      var key;
       for (key in obj.headers) {
         if (key.toLowerCase() === "content-type") {
           results.push(obj.contentType = obj.headers[key]);
@@ -99,8 +98,8 @@ JQueryHttpClient.prototype.execute = function(obj) {
     };
 
     var contentType = (headers["content-type"]||headers["Content-Type"]||null);
-    if(contentType != null) {
-      if(contentType.indexOf("application/json") == 0 || contentType.indexOf("+json") > 0) {
+    if(contentType !== null) {
+      if(contentType.indexOf("application/json") === 0 || contentType.indexOf("+json") > 0) {
         try {
           out.obj = response.responseJSON || {};
         } catch (ex) {
@@ -184,8 +183,8 @@ ShredHttpClient.prototype.execute = function(obj) {
     var headers = response._headers.normalized || response._headers;
     var contentType = (headers["content-type"]||headers["Content-Type"]||null);
 
-    if(contentType != null) {
-      if(contentType.indexOf("application/json") == 0 || contentType.indexOf("+json") > 0) {
+    if(contentType !== null) {
+      if(contentType.indexOf("application/json") === 0 || contentType.indexOf("+json") > 0) {
         if(response.content.data && response.content.data !== "")
           try{
             out.obj = JSON.parse(response.content.data);
@@ -219,7 +218,7 @@ ShredHttpClient.prototype.execute = function(obj) {
     return out;
   };
 
-  var res = {
+  res = {
     error: function (response) {
       if (obj)
         return cb.error(transform(response));

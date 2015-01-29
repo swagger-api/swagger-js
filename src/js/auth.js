@@ -96,6 +96,6 @@ var PasswordAuthorization = function(name, username, password) {
 
 PasswordAuthorization.prototype.apply = function(obj, authorizations) {
   var base64encoder = this._btoa;
-  obj.headers["Authorization"] = "Basic " + base64encoder(this.username + ":" + this.password);
+  obj.headers.Authorization = "Basic " + base64encoder(this.username + ":" + this.password);
   return true;
 };

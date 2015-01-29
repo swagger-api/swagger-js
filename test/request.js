@@ -1,10 +1,10 @@
-var test = require('unit.js')
-var expect = require('expect')
+var test = require('unit.js');
+var expect = require('expect');
 var mock = require('../test/mock');
 var swagger = require('../lib/swagger-client');
 var sample, instance;
 
-describe('api key authorizations', function() {
+describe('swagger request functions', function() {
   before(function(done) {
     mock.petstore(done, function(petstore, server){
       sample = petstore;
@@ -68,9 +68,9 @@ describe('api key authorizations', function() {
     test.object(req);
     expect(req.method).toBe('POST');
     expect(req.headers.Accept).toBe('application/json');
-    expect(req.headers['Content-Type']).toBeUndefined;
+    expect(req.headers['Content-Type']).toBe(undefined);
     expect(req.url).toBe('http://localhost:8000/api/pet');
-    expect(req.body).toBeUndefined;
+    expect(req.body).toBe(undefined);
   });
 
   it('generate a POST request with an empty body', function() {
@@ -104,9 +104,9 @@ describe('api key authorizations', function() {
     test.object(req);
     expect(req.method).toBe('DELETE');
     expect(req.headers.Accept).toBe('application/json');
-    expect(req.headers['Content-Type']).toBeUndefined;
+    expect(req.headers['Content-Type']).toBe(undefined);
     expect(req.url).toBe('http://localhost:8000/api/pet/100');
-    expect(req.body).toBeUndefined;
+    expect(req.body).toBe(undefined);
   });
 
   it('escape an operation id', function() {
@@ -115,6 +115,30 @@ describe('api key authorizations', function() {
   });
 
   it('return a json sample in array', function() {
+    var json = sample.pet.operations.findPetsByTags.responseSampleJSON;
+    expect(JSON.parse(json)).toEqual([
+      {
+        "id": 0,
+        "category": {
+          "id": 0,
+          "name": "string"
+        },
+        "name": "doggie",
+        "photoUrls": [
+          "string"
+        ],
+        "tags": [
+          {
+            "id": 0,
+            "name": "string"
+          }
+        ],
+        "status": "string"
+      }
+    ]);
+  });
+
+  it('return a json sample from an array model', function() {
     var json = sample.pet.operations.findPetsByStatus.responseSampleJSON;
     expect(JSON.parse(json)).toEqual([
       {
@@ -137,6 +161,7 @@ describe('api key authorizations', function() {
       }
     ]);
   });
+
 
   it('verifies useJQuery is set', function() {
     var petApi = sample.pet;

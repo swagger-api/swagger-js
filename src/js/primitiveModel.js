@@ -5,7 +5,6 @@ var PrimitiveModel = function(definition) {
   this.name = "name";
   this.definition = definition || {};
   this.properties = [];
-  this.type;
 
   var requiredFields = definition.enum || [];
   this.type = typeFromJsonSchema(definition.type, definition.format);
@@ -23,9 +22,9 @@ PrimitiveModel.prototype.getSampleValue = function() {
 
 PrimitiveModel.prototype.getMockSignature = function(modelsToIgnore) {
   var propertiesStr = [];
-  var i;
+  var i, prop;
   for (i = 0; i < this.properties.length; i++) {
-    var prop = this.properties[i];
+    prop = this.properties[i];
     propertiesStr.push(prop.toString());
   }
 
@@ -39,10 +38,9 @@ PrimitiveModel.prototype.getMockSignature = function(modelsToIgnore) {
   if (!modelsToIgnore)
     modelsToIgnore = {};
   modelsToIgnore[this.name] = this;
-  var i;
   for (i = 0; i < this.properties.length; i++) {
-    var prop = this.properties[i];
-    var ref = prop['$ref'];
+    prop = this.properties[i];
+    var ref = prop.$ref;
     var model = models[ref];
     if (model && typeof modelsToIgnore[ref] === 'undefined') {
       returnVal = returnVal + ('<br>' + model.getMockSignature(modelsToIgnore));

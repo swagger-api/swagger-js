@@ -1,5 +1,5 @@
 var test = require('unit.js');
-var expect = require('expect')
+var expect = require('expect');
 var swagger = require('../lib/swagger-client');
 
 describe('url generation', function() {

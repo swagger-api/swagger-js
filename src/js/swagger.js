@@ -26,8 +26,8 @@ var SwaggerClient = function(url, options) {
     this.useJQuery = options.useJQuery;
 
   this.supportedSubmitMethods = options.supportedSubmitMethods || [];
-  this.failure = options.failure != null ? options.failure : function() {};
-  this.progress = options.progress != null ? options.progress : function() {};
+  this.failure = options.failure !== null ? options.failure : function() {};
+  this.progress = options.progress !== null ? options.progress : function() {};
   this.spec = options.spec;
 
   if (options.success !== null)
@@ -72,7 +72,6 @@ SwaggerClient.prototype.build = function() {
     }
   };
   if(this.spec) {
-    var self = this;
     setTimeout(function() { self.buildFromSpec(self.spec); }, 10);
   }
   else {
@@ -91,7 +90,6 @@ SwaggerClient.prototype.buildFromSpec = function(response) {
   this.title = response.title || '';
   this.host = response.host || '';
   this.schemes = response.schemes || [];
-  this.scheme;
   this.basePath = response.basePath || '';
   this.apis = {};
   this.apisArray = [];
@@ -258,7 +256,7 @@ var Operation = function(parent, operationId, httpMethod, path, args, definition
   this.nickname = (operationId||errors.push('Operations must have a nickname.'));
   this.method = (httpMethod||errors.push('Operation ' + operationId + ' is missing method.'));
   this.path = (path||errors.push('Operation ' + this.nickname + ' is missing path.'));
-  this.parameters = args != null ? (args.parameters||[]) : {};
+  this.parameters = args !== null ? (args.parameters||[]) : {};
   this.summary = args.summary || '';
   this.responses = (args.responses||{});
   this.type = null;
@@ -419,7 +417,7 @@ Operation.prototype.getType = function (param) {
 Operation.prototype.resolveModel = function (schema, definitions) {
   if(typeof schema.$ref !== 'undefined') {
     var ref = schema.$ref;
-    if(ref.indexOf('#/definitions/') == 0)
+    if(ref.indexOf('#/definitions/') === 0)
       ref = ref.substring('#/definitions/'.length);
     if(definitions[ref]) {
       return new Model(ref, definitions[ref]);
@@ -454,7 +452,7 @@ Operation.prototype.getSignature = function(type, models) {
   if(type === 'string')
     isPrimitive = true;
   else
-    isPrimitive = ((listType !== null) && models[listType]) || (models[type] != null) ? false : true;
+    isPrimitive = ((listType !== null) && models[listType]) || (models[type] !== null) ? false : true;
   if (isPrimitive) {
     return type;
   } else {
@@ -590,7 +588,7 @@ Operation.prototype.getSampleJSON = function(type, models) {
   var isPrimitive, listType, sampleJson;
 
   listType = (type instanceof Array);
-  isPrimitive = (models[type] != null) ? false : true;
+  isPrimitive = (models[type] !== null) ? false : true;
   sampleJson = isPrimitive ? void 0 : models[type].createJSONSample();
 
   if (sampleJson) {
@@ -751,7 +749,7 @@ Operation.prototype.setContentTypes = function(args, opts) {
   if ((consumes && body !== '') || (consumes === 'application/x-www-form-urlencoded'))
     headers['Content-Type'] = consumes;
   if (accepts)
-    headers['Accept'] = accepts;
+    headers.Accept = accepts;
   return headers;
 };
 
@@ -780,7 +778,7 @@ Operation.prototype.encodePathCollection = function(type, name, value) {
     separator = ',';
 
   for(i = 0; i < value.length; i++) {
-    if(i == 0)
+    if(i === 0)
       encoded = this.encodeQueryParam(value[i]);
     else
       encoded += separator + this.encodeQueryParam(value[i]);
@@ -816,7 +814,7 @@ Operation.prototype.encodeQueryCollection = function(type, name, value) {
     }
     if(separator !== '') {
       for(i = 0; i < value.length; i++) {
-        if(i == 0)
+        if(i === 0)
           encoded = this.encodeQueryParam(name) + '=' + this.encodeQueryParam(value[i]);
         else
           encoded += separator + this.encodeQueryParam(value[i]);
@@ -895,9 +893,9 @@ Model.prototype.getSampleValue = function(modelsToIgnore) {
 
 Model.prototype.getMockSignature = function(modelsToIgnore) {
   var propertiesStr = [];
-  var i;
+  var i, prop;
   for (i = 0; i < this.properties.length; i++) {
-    var prop = this.properties[i];
+    prop = this.properties[i];
     propertiesStr.push(prop.toString());
   }
 
@@ -911,9 +909,8 @@ Model.prototype.getMockSignature = function(modelsToIgnore) {
     modelsToIgnore = {};
 
   modelsToIgnore[this.name] = this;
-  var i;
   for (i = 0; i < this.properties.length; i++) {
-    var prop = this.properties[i];
+    prop = this.properties[i];
     var ref = prop.$ref;
     var model = models[ref];
     if (model && typeof modelsToIgnore[model.name] === 'undefined') {
@@ -1003,7 +1000,7 @@ getStringSignature = function(obj) {
     str += obj;
   else if(obj.type === 'array') {
     str += 'Array[';
-    str += getStringSignature((obj.items || obj['$ref'] || {}))
+    str += getStringSignature((obj.items || obj.$ref || {}));
     str += ']';
   }
   else if(obj.type === 'integer' && obj.format === 'int32')

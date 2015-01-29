@@ -2,9 +2,7 @@ var ArrayModel = function(definition) {
   this.name = "name";
   this.definition = definition || {};
   this.properties = [];
-  this.type;
-  this.ref;
-
+  
   var requiredFields = definition.enum || [];
   var items = definition.items;
   if(items) {
@@ -13,7 +11,7 @@ var ArrayModel = function(definition) {
       this.type = typeFromJsonSchema(type.type, type.format);
     }
     else {
-      this.ref = items['$ref'];
+      this.ref = items.$ref;
     }
   }
 };

@@ -137,10 +137,7 @@
           "200": {
             "description": "successful operation",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Pet"
-              }
+              "$ref": "#/definitions/PetArray"
             }
           },
           "400": {
@@ -895,6 +892,12 @@
       },
       "xml": {
         "name": "Order"
+      }
+    },
+    "PetArray": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Pet"
       }
     }
   }
