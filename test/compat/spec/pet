@@ -49,6 +49,7 @@
       "path": "/pet/{petId}",
       "operations": [
         {
+          "deprecated": "true",
           "method": "GET",
           "summary": "Find pet by ID",
           "notes": "Returns a pet based on ID",

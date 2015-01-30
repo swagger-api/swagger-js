@@ -42,6 +42,13 @@ describe('request operations', function() {
     expect(req.url).toBe('http://localhost:8000/api/pet/1');
   });
 
+  it('generate a get request', function() {
+    var petApi = sample.pet;
+    var req = petApi.getPetById({petId: 1}, {mock: true});
+
+    expect(petApi.operations.getPetById.deprecated).toBe(true);
+  });
+
   it('verifies the http request object for a GET with query params', function() {
     var petApi = sample.pet;
     var params = {
