@@ -1,5 +1,5 @@
 var test = require('unit.js')
-var should = require('should')
+var expect = require('expect')
 var mock = require('../../test/compat/mock');
 var sample, instance;
 
@@ -28,6 +28,6 @@ describe('model signatures', function() {
     model += '"dog":' + petModel + ',';
     model += '"mouse":' + petModel + '}';
 
-    should(JSON.stringify(pet.createJSONSample())).equal(model);
+    expect(JSON.stringify(pet.createJSONSample())).toBe(model);
   })  
 });

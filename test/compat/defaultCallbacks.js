@@ -1,5 +1,5 @@
-var test = require('unit.js')
-var should = require('should')
+var test = require('unit.js');
+var expect = require('expect');
 var mock = require('../../test/compat/mock');
 var swagger = require('../../lib/swagger-client');
 var sample, instance;

@@ -1,17 +1,18 @@
-var test = require('unit.js')
-var should = require('should')
+var test = require('unit.js');
+var expect = require('expect');
 var mock = require('../../test/compat/mock');
 var sample, instance;
 
 describe('macro overrides', function() {
   before(function(done) {
     var macros = {
-      parameter: function(parameter, operation) {
-        if(parameter.defaultValue === 1)
+      parameter: function(operation, parameter) {
+        if(parameter.defaultValue === 3) {
           return 'testing';
+        }
         return parameter.defaultValue;
       },
-      modelProperty: function(property, model) {
+      modelProperty: function(model, property) {
         return property.defaultValue;
       }
     }
@@ -23,14 +24,14 @@ describe('macro overrides', function() {
 
   after(function(done){
     instance.close();
-
+    mock.swagger.parameterMacro = null;
+    mock.swagger.modelProperty = null;
     done();
   });
 
   it('set a parameter default value macro', function() {
     var params = sample.pet.operations.getPetById.parameters;
     test.object(params);
-
-    should(params[0].defaultValue).equal('testing');
+    expect(params[0].defaultValue).toBe('testing');
   });
 });

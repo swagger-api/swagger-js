@@ -1,5 +1,5 @@
 var test = require('unit.js');
-var should = require('should');
+var expect = require('expect');
 var mock = require('../../test/compat/mock');
 var sample, instance;
 
@@ -23,7 +23,7 @@ describe('http', function() {
     var req = petApi.getPetById({petId: 1}, function(data) {
       var pet = data.obj;
       test.object(pet);
-      should(pet.id).equal(1);
+      expect(pet.id).toBe(1);
       done();
     }, function(data) {
       console.log('error');
@@ -35,7 +35,7 @@ describe('http', function() {
     petApi.redirect({}, function(data) {
       var pet = data.obj;
       test.object(pet);
-      should(pet.id).equal(1);
+      expect(pet.id).toBe(1);
       done();
     });
   });

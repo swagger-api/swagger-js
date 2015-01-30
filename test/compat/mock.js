@@ -5,6 +5,8 @@ var http = require('http'),
 var swagger = require('../../lib/swagger-client');
 var sample;
 
+exports.swagger = swagger;
+
 exports.petstore = function(arg1, arg2, arg3, arg4) {
   var done = arg1, opts = arg2, callback = arg3, macros = arg4;
   if(typeof arg2 === 'function') {

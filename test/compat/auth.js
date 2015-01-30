@@ -1,5 +1,5 @@
 var test = require('unit.js')
-var should = require('should')
+var expect = require('expect')
 var mock = require('../../test/compat/mock');
 var swagger = require('../../lib/swagger-client');
 var sample, instance;
@@ -33,7 +33,7 @@ describe('api key authorizations', function() {
     var petApi = sample.pet;
 
     var req = petApi.getPetById(params, opts);
-    should(req.url).equal('http://localhost:8000/api/pet/1?api_key=abc123');
+    expect(req.url).toBe('http://localhost:8000/api/pet/1?api_key=abc123');
     swagger.authorizations.authz = {};
   });
 
@@ -51,8 +51,8 @@ describe('api key authorizations', function() {
     var petApi = sample.pet;
 
     var req = petApi.getPetById(params, opts);
-    should(req.url).equal('http://localhost:8000/api/pet/1');
-    should(req.headers['api_key']).equal('abc123');
+    expect(req.url).toBe('http://localhost:8000/api/pet/1');
+    expect(req.headers['api_key']).toBe('abc123');
     swagger.authorizations.authz = {};
   });
 
@@ -70,8 +70,8 @@ describe('api key authorizations', function() {
     var petApi = sample.pet;
 
     var req = petApi.getPetById(params, opts);
-    should(req.url).equal('http://localhost:8000/api/pet/1');
-    should(req.headers['Authorization: Bearer']).equal('a b c d e');
+    expect(req.url).toBe('http://localhost:8000/api/pet/1');
+    expect(req.headers['Authorization: Bearer']).toBe('a b c d e');
     swagger.authorizations.authz = {};
   });
 });
