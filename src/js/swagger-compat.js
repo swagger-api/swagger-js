@@ -638,7 +638,6 @@ var SwaggerOperation = function (nickname, path, method, parameters, summary, no
     var param = this.parameters[i];
     // might take this away
     param.name = param.name || param.type || param.dataType;
-
     // for 1.1 compatibility
     type = param.type || param.dataType;
     if (type === 'array') {
@@ -701,7 +700,7 @@ var SwaggerOperation = function (nickname, path, method, parameters, summary, no
         }
       }
     }
-    param.defaultValue = applyParameterMacro(param, this);
+    param.defaultValue = applyParameterMacro(this, param);
   }
   var defaultSuccessCallback = this.resource.api.defaultSuccessCallback || null;
   var defaultErrorCallback = this.resource.api.defaultErrorCallback || null;

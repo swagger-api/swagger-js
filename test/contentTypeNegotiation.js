@@ -1,5 +1,5 @@
 var test = require('unit.js');
-var should = require('should');
+var expect = require('expect');
 var swagger = require('../lib/swagger-client');
 
 describe('content type negotiation', function() {
@@ -7,7 +7,7 @@ describe('content type negotiation', function() {
     var parameters = [];
     var op = new swagger.Operation({}, 'test', 'get', '/foo/{names}/bar', { parameters: parameters });
     var headers = op.setContentTypes({},{});
-    should(headers.Accept).equal('application/json');
+    expect(headers.Accept).toBe('application/json');
     test.value(headers['Content-Type']).isUndefined();
   });
 
@@ -15,7 +15,7 @@ describe('content type negotiation', function() {
     var parameters = [];
     var op = new swagger.Operation({}, 'test', 'post', '/foo/{names}/bar', { parameters: parameters });
     var headers = op.setContentTypes({},{});
-    should(headers.Accept).equal('application/json');
+    expect(headers.Accept).toBe('application/json');
     test.value(headers['Content-Type']).isUndefined();
   });
 
@@ -32,7 +32,7 @@ describe('content type negotiation', function() {
     }];
     var op = new swagger.Operation({}, 'test', 'post', '/foo/{names}/bar', { parameters: parameters });
     var headers = op.setContentTypes({},{});
-    should(headers.Accept).equal('application/json');
+    expect(headers.Accept).toBe('application/json');
     test.value(headers['Content-Type']).isUndefined();
   });
 
@@ -49,8 +49,8 @@ describe('content type negotiation', function() {
     }];
     var op = new swagger.Operation({}, 'test', 'post', '/foo/{names}/bar', { parameters: parameters });
     var headers = op.setContentTypes({theBody: { name: 'tony'}},{});
-    should(headers.Accept).equal('application/json');
-    should(headers['Content-Type']).equal('application/json');
+    expect(headers.Accept).toBe('application/json');
+    expect(headers['Content-Type']).toBe('application/json');
   });
 
   it('honors the accept media type requested', function () {
@@ -69,8 +69,8 @@ describe('content type negotiation', function() {
       { theBody: { name: 'tony'} },
       { requestContentType: 'application/xml' }
     );
-    should(headers.Accept).equal('application/json');
-    should(headers['Content-Type']).equal('application/xml');
+    expect(headers.Accept).toBe('application/json');
+    expect(headers['Content-Type']).toBe('application/xml');
   });
 
   it('honors the accept media type and response content type requested', function () {
@@ -91,8 +91,8 @@ describe('content type negotiation', function() {
         responseContentType: 'application/xml'
       }
     );
-    should(headers.Accept).equal('application/xml');
-    should(headers['Content-Type']).equal('application/xml');
+    expect(headers.Accept).toBe('application/xml');
+    expect(headers['Content-Type']).toBe('application/xml');
   });
 
   it('sets the content type for form of x-www-form-urlencoded', function () {
@@ -106,8 +106,8 @@ describe('content type negotiation', function() {
       { theBody: { name: 'tony'} },
       { }
     );
-    should(headers.Accept).equal('application/json');
-    should(headers['Content-Type']).equal('application/x-www-form-urlencoded');
+    expect(headers.Accept).toBe('application/json');
+    expect(headers['Content-Type']).toBe('application/x-www-form-urlencoded');
   });
 
   it('sets the content type for form of multipart/form-data when specified', function () {
@@ -121,8 +121,8 @@ describe('content type negotiation', function() {
       { theBody: { name: 'tony'} },
       { requestContentType: 'multipart/form-data'}
     );
-    should(headers.Accept).equal('application/json');
-    should(headers['Content-Type']).equal('multipart/form-data');
+    expect(headers.Accept).toBe('application/json');
+    expect(headers['Content-Type']).toBe('multipart/form-data');
   });
 
   it('sets the content type for multipart/form-data with a file parameter', function () {
@@ -140,7 +140,7 @@ describe('content type negotiation', function() {
       { theBody: { name: 'tony'} },
       {}
     );
-    should(headers.Accept).equal('application/json');
-    should(headers['Content-Type']).equal('multipart/form-data');    
+    expect(headers.Accept).toBe('application/json');
+    expect(headers['Content-Type']).toBe('multipart/form-data');    
   });
 });
