@@ -11,7 +11,7 @@ describe('header extraction', function() {
         type: 'string'
       }
     ];
-    var op = new swagger.Operation({}, 'test', 'get', '/path', { parameters: parameters });
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/path', { parameters: parameters });
     var args = {
       myHeader: 'tony'
     };
@@ -34,7 +34,7 @@ describe('header extraction', function() {
         }
       }
     ];
-    var op = new swagger.Operation({}, 'test', 'get', '/path', { parameters: parameters });
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/path', { parameters: parameters });
     var args = {
       myHeader: ['tony', 'tam']
     };

@@ -7,7 +7,7 @@ describe('url generation', function() {
     var parameters = [
       quantityQP
     ];
-    var op = new swagger.Operation({}, 'test', 'get', '/path', { parameters: parameters });
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/path', { parameters: parameters });
     var url = op.urlify({
       quantity: 3
     });
@@ -18,7 +18,7 @@ describe('url generation', function() {
     var parameters = [
       quantityQP, weightQP
     ];
-    var op = new swagger.Operation({}, 'test', 'get', '/path', { parameters: parameters });
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/path', { parameters: parameters });
     var url = op.urlify({
       quantity: 3,
       weight: 100.3
@@ -30,7 +30,7 @@ describe('url generation', function() {
     var parameters = [
       intArrayQP
     ];
-    var op = new swagger.Operation({}, 'test', 'get', '/path', { parameters: parameters });
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/path', { parameters: parameters });
     var url = op.urlify({
       intArray: [3,4,5]
     });
@@ -50,7 +50,7 @@ describe('url generation', function() {
         collectionFormat: 'pipes'
       }
     ];
-    var op = new swagger.Operation({}, 'test', 'get', '/path', { parameters: parameters });
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/path', { parameters: parameters });
     var url = op.urlify({
       intArray: [3,4,5]
     });
@@ -70,7 +70,7 @@ describe('url generation', function() {
         collectionFormat: 'tsv'
       }
     ];
-    var op = new swagger.Operation({}, 'test', 'get', '/path', { parameters: parameters });
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/path', { parameters: parameters });
     var url = op.urlify({
       intArray: [3,4,5]
     });
@@ -90,7 +90,7 @@ describe('url generation', function() {
         collectionFormat: 'ssv'
       }
     ];
-    var op = new swagger.Operation({}, 'test', 'get', '/path', { parameters: parameters });
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/path', { parameters: parameters });
     var url = op.urlify({
       intArray: [3,4,5]
     });
@@ -110,7 +110,7 @@ describe('url generation', function() {
         collectionFormat: 'brackets'
       }
     ];
-    var op = new swagger.Operation({}, 'test', 'get', '/path', { parameters: parameters });
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/path', { parameters: parameters });
     var url = op.urlify({
       intArray: [3,4,5]
     });
@@ -131,7 +131,7 @@ describe('url generation', function() {
         format: 'int32'
       }
     ];
-    var op = new swagger.Operation({}, 'test', 'get', '/foo/{name}', { parameters: parameters });
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/foo/{name}', { parameters: parameters });
     var url = op.urlify({
       name: 'tony',
       age: 42
@@ -153,7 +153,7 @@ describe('url generation', function() {
         format: 'int32'
       }
     ];
-    var op = new swagger.Operation({}, 'test', 'get', '/foo/{name}/bar', { parameters: parameters });
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/foo/{name}/bar', { parameters: parameters });
     var url = op.urlify({
       name: 'tony',
       age: 42
@@ -169,7 +169,7 @@ describe('url generation', function() {
         type: 'string'
       }
     ];
-    var op = new swagger.Operation({}, 'test', 'get', '/foo/{name}/bar', { parameters: parameters });
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/foo/{name}/bar', { parameters: parameters });
     var url = op.urlify({
       name: 'tony tam'
     });
@@ -188,7 +188,7 @@ describe('url generation', function() {
         collectionFormat: 'csv'
       }
     ];
-    var op = new swagger.Operation({}, 'test', 'get', '/foo/{names}/bar', { parameters: parameters });
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/foo/{names}/bar', { parameters: parameters });
     var url = op.urlify({
       names: ['fred', 'bob', 'mary']
     });
@@ -202,7 +202,7 @@ describe('url generation', function() {
       { in: 'path', name: 'a02', type: 'string' },
       { in: 'path', name: 'a03', type: 'string' }
     ];
-    var op = new swagger.Operation({}, 'test', 'get', '/path/{a0}/{a01}/{a02}/{a03}', { parameters: parameters });
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/path/{a0}/{a01}/{a02}/{a03}', { parameters: parameters });
     var url = op.urlify(
       {a0: 'foo', a01: 'bar', a02: 'bat', a03: 'baz'}
     );
@@ -213,13 +213,12 @@ describe('url generation', function() {
     var parameters = [
       { in: 'path', name: 'a-0', type: 'string' }
     ];
-    var op = new swagger.Operation({}, 'test', 'get', '/path/{a-0}/', { parameters: parameters });
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/path/{a-0}/', { parameters: parameters });
     var url = op.urlify(
       {'a-0': 'foo'}
     );
     expect(url).toBe('http://localhost/path/foo/');
   });
-
 
   it('should correctly replace path params with hyphens', function() {
     var parameters = [
@@ -227,14 +226,13 @@ describe('url generation', function() {
       { in: 'path', name: 'month', type: 'string' },
       { in: 'path', name: 'day', type: 'string' }
     ];
-    var op = new swagger.Operation({}, 'test', 'get', '/{year}-{month}-{day}', { parameters: parameters });
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/{year}-{month}-{day}', { parameters: parameters });
     var url = op.urlify(
       { year: 2015, month: '01', day: '30'}
     );
     console.log(url);
     expect(url).toBe('http://localhost/2015-01-30');
   });
-  
 });
 
 var quantityQP = {

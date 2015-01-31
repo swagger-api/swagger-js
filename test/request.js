@@ -194,7 +194,6 @@ describe('swagger request functions', function() {
     expect(req.url).toBe('http://localhost:8000/api/pet/findByStatus');
   });
 
-
   it('should set the correct accept type', function() {
     var petApi = sample.pet;
     var req = petApi.findPetsByStatus({status: undefined}, {mock: true, responseContentType: 'application/xml'});
@@ -202,5 +201,12 @@ describe('swagger request functions', function() {
     expect(req.method).toBe('GET');
     expect(req.headers.Accept).toBe('application/xml');
     expect(req.url).toBe('http://localhost:8000/api/pet/findByStatus');
+  });
+
+  it('should set the correct scheme', function() {
+    var userApi = sample.user;
+    var req = userApi.loginUser({username: 'fred', password: 'meyer'}, {mock: true});
+    test.object(req);
+    expect(req.url).toBe('https://localhost:8000/api/user/login?username=fred&password=meyer');
   });
 });

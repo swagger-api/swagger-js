@@ -5,7 +5,7 @@ var swagger = require('../lib/swagger-client');
 describe('help options', function() {
   it('verify help options with no parameters', function() {
     var parameters = [];
-    var op = new swagger.Operation({}, 'test', 'get', '/path', {summary: 'test operation'});
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/path', {summary: 'test operation'});
     var help = op.help(true);
     expect(help).toBe('test: test operation\n');
   });
@@ -17,7 +17,7 @@ describe('help options', function() {
       type: 'string',
       description: 'the name of the person to look up'
     }];
-    var op = new swagger.Operation({}, 'test', 'get', '/path', {
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/path', {
       summary: 'test operation',
       parameters: parameters
     });
@@ -27,7 +27,7 @@ describe('help options', function() {
 
   it('prints a simple curl statement', function() {
     var parameters = [];
-    var op = new swagger.Operation({}, 'test', 'get', '/path', {summary: 'test operation'});
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/path', {summary: 'test operation'});
     var curl = op.asCurl({});
     expect(curl).toBe('curl --header "Accept: application/json" http://localhost/path');
   });
@@ -43,7 +43,7 @@ describe('help options', function() {
       type: 'integer',
       format: 'int32'
     }];
-    var op = new swagger.Operation({}, 'test', 'get', '/path', {
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/path', {
       summary: 'test operation',
       parameters: parameters
     });

@@ -148,6 +148,7 @@ SwaggerClient.prototype.buildFromSpec = function(response) {
         var operationId = this.idFromOp(path, httpMethod, operation);
         var operationObject = new Operation (
           this,
+          operation.scheme,
           operationId,
           httpMethod,
           path,
@@ -243,7 +244,7 @@ var OperationGroup = function(tag, operation) {
   this.description = operation.description || "";
 };
 
-var Operation = function(parent, operationId, httpMethod, path, args, definitions) {
+var Operation = function(parent, scheme, operationId, httpMethod, path, args, definitions) {
   var errors = [];
   parent = parent||{};
   args = args||{};
@@ -256,7 +257,7 @@ var Operation = function(parent, operationId, httpMethod, path, args, definition
   this.parent = parent;
   this.host = parent.host || 'localhost';
   this.schemes = parent.schemes;
-  this.scheme = parent.scheme || 'http';
+  this.scheme = scheme || parent.scheme || 'http';
   this.basePath = parent.basePath || '/';
   this.nickname = (operationId||errors.push('Operations must have a nickname.'));
   this.method = (httpMethod||errors.push('Operation ' + operationId + ' is missing method.'));

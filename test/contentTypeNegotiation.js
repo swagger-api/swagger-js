@@ -5,7 +5,7 @@ var swagger = require('../lib/swagger-client');
 describe('content type negotiation', function() {
   it('set default accept as application/json for a GET operation', function() {
     var parameters = [];
-    var op = new swagger.Operation({}, 'test', 'get', '/foo/{names}/bar', { parameters: parameters });
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/foo/{names}/bar', { parameters: parameters });
     var headers = op.setContentTypes({},{});
     expect(headers.Accept).toBe('application/json');
     test.value(headers['Content-Type']).isUndefined();
@@ -13,7 +13,7 @@ describe('content type negotiation', function() {
 
   it('set accept as application/json, content-type as undefined for a POST operation with no body param or data', function() {
     var parameters = [];
-    var op = new swagger.Operation({}, 'test', 'post', '/foo/{names}/bar', { parameters: parameters });
+    var op = new swagger.Operation({}, 'http', 'test', 'post', '/foo/{names}/bar', { parameters: parameters });
     var headers = op.setContentTypes({},{});
     expect(headers.Accept).toBe('application/json');
     test.value(headers['Content-Type']).isUndefined();
@@ -30,7 +30,7 @@ describe('content type negotiation', function() {
         }
       }
     }];
-    var op = new swagger.Operation({}, 'test', 'post', '/foo/{names}/bar', { parameters: parameters });
+    var op = new swagger.Operation({}, 'http', 'test', 'post', '/foo/{names}/bar', { parameters: parameters });
     var headers = op.setContentTypes({},{});
     expect(headers.Accept).toBe('application/json');
     test.value(headers['Content-Type']).isUndefined();
@@ -47,7 +47,7 @@ describe('content type negotiation', function() {
         }
       }
     }];
-    var op = new swagger.Operation({}, 'test', 'post', '/foo/{names}/bar', { parameters: parameters });
+    var op = new swagger.Operation({}, 'http', 'test', 'post', '/foo/{names}/bar', { parameters: parameters });
     var headers = op.setContentTypes({theBody: { name: 'tony'}},{});
     expect(headers.Accept).toBe('application/json');
     expect(headers['Content-Type']).toBe('application/json');
@@ -64,7 +64,7 @@ describe('content type negotiation', function() {
         }
       }
     }];
-    var op = new swagger.Operation({}, 'test', 'post', '/foo/{names}/bar', { parameters: parameters });
+    var op = new swagger.Operation({}, 'http', 'test', 'post', '/foo/{names}/bar', { parameters: parameters });
     var headers = op.setContentTypes(
       { theBody: { name: 'tony'} },
       { requestContentType: 'application/xml' }
@@ -84,7 +84,7 @@ describe('content type negotiation', function() {
         }
       }
     }];
-    var op = new swagger.Operation({}, 'test', 'post', '/foo/{names}/bar', { parameters: parameters });
+    var op = new swagger.Operation({}, 'http', 'test', 'post', '/foo/{names}/bar', { parameters: parameters });
     var headers = op.setContentTypes(
       { theBody: { name: 'tony'} },
       { requestContentType: 'application/xml',
@@ -101,7 +101,7 @@ describe('content type negotiation', function() {
       name: 'name',
       type: 'string'
     }];
-    var op = new swagger.Operation({}, 'test', 'post', '/foo/{names}/bar', { parameters: parameters });
+    var op = new swagger.Operation({}, 'http', 'test', 'post', '/foo/{names}/bar', { parameters: parameters });
     var headers = op.setContentTypes(
       { theBody: { name: 'tony'} },
       { }
@@ -116,7 +116,7 @@ describe('content type negotiation', function() {
       name: 'name',
       type: 'string'
     }];
-    var op = new swagger.Operation({}, 'test', 'post', '/foo/{names}/bar', { parameters: parameters });
+    var op = new swagger.Operation({}, 'http', 'test', 'post', '/foo/{names}/bar', { parameters: parameters });
     var headers = op.setContentTypes(
       { theBody: { name: 'tony'} },
       { requestContentType: 'multipart/form-data'}
@@ -135,7 +135,7 @@ describe('content type negotiation', function() {
       name: 'theFile',
       type: 'file'
     }];
-    var op = new swagger.Operation({}, 'test', 'post', '/foo/{names}/bar', { parameters: parameters });
+    var op = new swagger.Operation({}, 'http', 'test', 'post', '/foo/{names}/bar', { parameters: parameters });
     var headers = op.setContentTypes(
       { theBody: { name: 'tony'} },
       {}
