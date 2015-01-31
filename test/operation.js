@@ -194,6 +194,31 @@ describe('url generation', function() {
     });
     expect(url).toBe('http://localhost/foo/fred,bob,mary/bar');
   });
+
+  it('should correctly replace path params', function() {
+    var parameters = [
+      { in: 'path', name: 'a0', type: 'string' },
+      { in: 'path', name: 'a01', type: 'string' },
+      { in: 'path', name: 'a02', type: 'string' },
+      { in: 'path', name: 'a03', type: 'string' }
+    ];
+    var op = new swagger.Operation({}, 'test', 'get', '/path/{a0}/{a01}/{a02}/{a03}', { parameters: parameters });
+    var url = op.urlify(
+      {a0: 'foo', a01: 'bar', a02: 'bat', a03: 'baz'}
+    );
+    expect(url).toBe('http://localhost/path/foo/bar/bat/baz');
+  });
+
+  it('should correctly replace path params with hyphens', function() {
+    var parameters = [
+      { in: 'path', name: 'a-0', type: 'string' }
+    ];
+    var op = new swagger.Operation({}, 'test', 'get', '/path/{a-0}/', { parameters: parameters });
+    var url = op.urlify(
+      {'a-0': 'foo'}
+    );
+    expect(url).toBe('http://localhost/path/foo/');
+  });
 });
 
 var quantityQP = {
