@@ -220,18 +220,18 @@ describe('verifies the get pet operation', function() {
   });
 
   it('verifies a file upload', function() {
-    operation = sample.pet.operations.uploadFile
+    var operation = sample.pet.operations.uploadFile
     expect(operation.method).toBe('post');
 
-    consumes = operation.consumes
+    var consumes = operation.consumes
     expect(consumes.length).toBe(1);
     expect(consumes[0]).toBe('multipart/form-data');
 
-    parameters = operation.parameters
+    var parameters = operation.parameters
     test.object(parameters);
     expect(parameters.length).toBe(2);
 
-    param = parameters[0]
+    var param = parameters[0]
     expect(param.name).toBe('additionalMetadata');
     expect(param.type).toBe('string');
     expect(param.paramType).toBe('form');
@@ -246,8 +246,13 @@ describe('verifies the get pet operation', function() {
     expect(param.required).toBe(false);
   });
 
+  it('gets the contact info', function() {
+    var info = sample.info;
+    expect(info.title).toBe('Swagger Sample App');
+  });
+
   it('gets operations for the pet api', function() {
-    ops = sample.pet.operations
+    var ops = sample.pet.operations
     test.object(ops);
   });
 

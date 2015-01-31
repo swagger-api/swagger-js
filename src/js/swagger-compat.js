@@ -104,9 +104,8 @@ SwaggerApi.prototype.buildFromSpec = function (response) {
   this.consumes = response.consumes;
   this.produces = response.produces;
   this.authSchemes = response.authorizations;
-  if (response.info != null) {
-    this.info = response.info;
-  }
+  this.info = this.convertInfo(response.info);
+
   var isApi = false, i, res;
   for (i = 0; i < response.apis.length; i++) {
     var api = response.apis[i];
@@ -154,9 +153,7 @@ SwaggerApi.prototype.buildFrom1_1Spec = function (response) {
   this.apis = {};
   this.apisArray = [];
   this.produces = response.produces;
-  if (response.info != null) {
-    this.info = response.info;
-  }
+  this.info = this.convertInfo(response.info);
   var isApi = false, res;
   for (var i = 0; i < response.apis.length; i++) {
     var api = response.apis[i];
@@ -193,6 +190,23 @@ SwaggerApi.prototype.buildFrom1_1Spec = function (response) {
     this.success();
   }
   return this;
+};
+
+SwaggerApi.prototype.convertInfo = function (resp) {
+  if(typeof resp == 'object') {
+    var info = {}
+
+    info.title = resp.title;
+    info.description = resp.description;
+    info.termsOfService = resp.termsOfServiceUrl;
+    info.contact = {};
+    info.contact.name = resp.contact;
+    info.license = {};
+    info.license.name = resp.license;
+    info.license.url = resp.licenseUrl;
+
+    return info;
+  }
 };
 
 SwaggerApi.prototype.selfReflect = function () {
