@@ -2,7 +2,7 @@ var test = require('unit.js');
 var expect = require('expect');
 var swagger = require('../lib/swagger-client');
 
-describe('url generation', function() {
+describe('operations', function() {
   it('should generate a url', function() {
     var parameters = [
       quantityQP
@@ -230,7 +230,6 @@ describe('url generation', function() {
     var url = op.urlify(
       { year: 2015, month: '01', day: '30'}
     );
-    console.log(url);
     expect(url).toBe('http://localhost/2015-01-30');
   });
 });
