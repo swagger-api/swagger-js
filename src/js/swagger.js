@@ -930,7 +930,7 @@ var Property = function(name, obj, required) {
   this.required = required;
   if(obj.$ref)
     this.$ref = simpleRef(obj.$ref);
-  else if (obj.type === 'array') {
+  else if (obj.type === 'array' && obj.items) {
     if(obj.items.$ref)
       this.$ref = simpleRef(obj.items.$ref);
     else

@@ -29,4 +29,24 @@ describe('models', function() {
     var model = new swagger.Model('Tag', definition);
     expect(model.createJSONSample()).toEqual(['string']);
   });
+
+  it('should not fail to load an underspecified array', function() {
+    var definition = {
+      type: "object",
+      properties: {
+        id: {
+          type: 'integer',
+          format: 'int32'
+        },
+        name: {
+          type: 'string'
+        },
+        photos: {
+          type: 'array'
+        }
+      }
+    }
+    var model = new swagger.Model('Sample', definition);
+    expect(model.createJSONSample()).toEqual({ id: 0, name: 'string', photos: [ {} ] });
+  });
 });
