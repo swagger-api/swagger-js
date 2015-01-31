@@ -219,6 +219,22 @@ describe('url generation', function() {
     );
     expect(url).toBe('http://localhost/path/foo/');
   });
+
+
+  it('should correctly replace path params with hyphens', function() {
+    var parameters = [
+      { in: 'path', name: 'year', type: 'string' },
+      { in: 'path', name: 'month', type: 'string' },
+      { in: 'path', name: 'day', type: 'string' }
+    ];
+    var op = new swagger.Operation({}, 'test', 'get', '/{year}-{month}-{day}', { parameters: parameters });
+    var url = op.urlify(
+      { year: 2015, month: '01', day: '30'}
+    );
+    console.log(url);
+    expect(url).toBe('http://localhost/2015-01-30');
+  });
+  
 });
 
 var quantityQP = {
