@@ -1,26 +1,26 @@
 var ArrayModel = function(definition) {
-  this.name = "name";
+  this.name = "arrayModel";
   this.definition = definition || {};
   this.properties = [];
   
   var requiredFields = definition.enum || [];
-  var items = definition.items;
-  if(items) {
-    var type = items.type;
-    if(items.type) {
-      this.type = typeFromJsonSchema(type.type, type.format);
+  var innerType = definition.items;
+  if(innerType) {
+    if(innerType.type) {
+      this.type = typeFromJsonSchema(innerType.type, innerType.format);
     }
     else {
-      this.ref = items.$ref;
+      this.ref = innerType.$ref;
     }
   }
+  return this;
 };
 
 ArrayModel.prototype.createJSONSample = function(modelsToIgnore) {
   var result;
   modelsToIgnore = (modelsToIgnore||{});
   if(this.type) {
-    result = type;
+    result = this.type;
   }
   else if (this.ref) {
     var name = simpleRef(this.ref);
