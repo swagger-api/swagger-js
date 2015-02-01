@@ -26,7 +26,7 @@ describe('swagger request functions', function() {
     test.object(req);
     expect(req.method).toBe('GET');
     expect(req.headers.Accept).toBe('application/json');
-    expect(req.url).toBe('http://localhost:8000/api/pet/1');
+    expect(req.url).toBe('http://localhost:8000/v2/api/pet/1');
   });
 
   it('generate a get request with query params', function() {
@@ -36,7 +36,7 @@ describe('swagger request functions', function() {
     test.object(req);
     expect(req.method).toBe('GET');
     expect(req.headers.Accept).toBe('application/json');
-    expect(req.url).toBe('http://localhost:8000/api/pet/findByTags?tags=tag%201&tags=tag%202');
+    expect(req.url).toBe('http://localhost:8000/v2/api/pet/findByTags?tags=tag%201&tags=tag%202');
   });
 
   it('generate a get request with email query param array', function() {
@@ -46,7 +46,7 @@ describe('swagger request functions', function() {
     test.object(req);
     expect(req.method).toBe('GET');
     expect(req.headers.Accept).toBe('application/json');
-    expect(req.url).toBe('http://localhost:8000/api/pet/findByStatus?status=fehguy%40gmail.com|nada');
+    expect(req.url).toBe('http://localhost:8000/v2/api/pet/findByStatus?status=fehguy%40gmail.com|nada');
   });
 
   it('generate a POST request with body', function() {
@@ -57,7 +57,7 @@ describe('swagger request functions', function() {
     expect(req.method).toBe('POST');
     expect(req.headers.Accept).toBe('application/json');
     expect(req.headers['Content-Type']).toBe('application/json');
-    expect(req.url).toBe('http://localhost:8000/api/pet');
+    expect(req.url).toBe('http://localhost:8000/v2/api/pet');
     expect(req.body).toEqual({ id: 100, name: 'gorilla' });
   });
 
@@ -69,7 +69,7 @@ describe('swagger request functions', function() {
     expect(req.method).toBe('POST');
     expect(req.headers.Accept).toBe('application/json');
     expect(req.headers['Content-Type']).toBe(undefined);
-    expect(req.url).toBe('http://localhost:8000/api/pet');
+    expect(req.url).toBe('http://localhost:8000/v2/api/pet');
     expect(req.body).toBe(undefined);
   });
 
@@ -81,7 +81,7 @@ describe('swagger request functions', function() {
     expect(req.method).toBe('POST');
     expect(req.headers.Accept).toBe('application/json');
     expect(req.headers['Content-Type']).toBe('application/json');
-    expect(req.url).toBe('http://localhost:8000/api/pet');
+    expect(req.url).toBe('http://localhost:8000/v2/api/pet');
     expect(req.body).toEqual({});
   });
 
@@ -93,7 +93,7 @@ describe('swagger request functions', function() {
     expect(req.method).toBe('POST');
     expect(req.headers.Accept).toBe('application/json');
     expect(req.headers['Content-Type']).toBe('application/x-www-form-urlencoded');
-    expect(req.url).toBe('http://localhost:8000/api/pet/100');
+    expect(req.url).toBe('http://localhost:8000/v2/api/pet/100');
     expect(req.body).toEqual('name=monster&status=miserable%20dog');
   });
 
@@ -105,7 +105,7 @@ describe('swagger request functions', function() {
     expect(req.method).toBe('DELETE');
     expect(req.headers.Accept).toBe('application/json');
     expect(req.headers['Content-Type']).toBe(undefined);
-    expect(req.url).toBe('http://localhost:8000/api/pet/100');
+    expect(req.url).toBe('http://localhost:8000/v2/api/pet/100');
     expect(req.body).toBe(undefined);
   });
 
@@ -172,7 +172,7 @@ describe('swagger request functions', function() {
     test.object(req);
     expect(req.method).toBe('GET');
     expect(req.headers.Accept).toBe('application/json');
-    expect(req.url).toBe('http://localhost:8000/api/pet/1');
+    expect(req.url).toBe('http://localhost:8000/v2/api/pet/1');
     expect(req.useJQuery).toBe(true);
   });
 
@@ -183,7 +183,7 @@ describe('swagger request functions', function() {
     test.object(req);
     expect(req.method).toBe('GET');
     expect(req.headers.Accept).toBe('application/json');
-    expect(req.url).toBe('http://localhost:8000/api/pet/findByStatus');
+    expect(req.url).toBe('http://localhost:8000/v2/api/pet/findByStatus');
   });
 
   it('does not add a query param if undefined', function() {
@@ -193,7 +193,7 @@ describe('swagger request functions', function() {
     test.object(req);
     expect(req.method).toBe('GET');
     expect(req.headers.Accept).toBe('application/json');
-    expect(req.url).toBe('http://localhost:8000/api/pet/findByStatus');
+    expect(req.url).toBe('http://localhost:8000/v2/api/pet/findByStatus');
   });
 
   it('should set the correct accept type', function() {
@@ -202,13 +202,13 @@ describe('swagger request functions', function() {
     test.object(req);
     expect(req.method).toBe('GET');
     expect(req.headers.Accept).toBe('application/xml');
-    expect(req.url).toBe('http://localhost:8000/api/pet/findByStatus');
+    expect(req.url).toBe('http://localhost:8000/v2/api/pet/findByStatus');
   });
 
   it('should set the correct scheme', function() {
     var userApi = sample.user;
     var req = userApi.loginUser({username: 'fred', password: 'meyer'}, {mock: true});
     test.object(req);
-    expect(req.url).toBe('https://localhost:8000/api/user/login?username=fred&password=meyer');
+    expect(req.url).toBe('https://localhost:8000/v2/api/user/login?username=fred&password=meyer');
   });
 });

@@ -69,7 +69,7 @@ exports.petstore = function(arg1, arg2, arg3, arg4) {
         swagger.modelPropertyMacro = macros.modelProperty;
       }
     }
-    var sample = new swagger.SwaggerClient({url: 'http://localhost:8000/petstore.json', opts: opts});
+    var sample = new swagger.SwaggerClient({url: 'http://localhost:8000/v2/petstore.json', opts: opts});
     sample.build();
     var count = 0, isDone = false;
     var f = function () {

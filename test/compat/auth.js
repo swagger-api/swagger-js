@@ -14,7 +14,6 @@ describe('api key authorizations', function() {
 
   after(function(done){
     instance.close();
-
     swagger.authorizations.authz = {};
     done();
   });
@@ -33,7 +32,7 @@ describe('api key authorizations', function() {
     var petApi = sample.pet;
 
     var req = petApi.getPetById(params, opts);
-    expect(req.url).toBe('http://localhost:8000/api/pet/1?api_key=abc123');
+    expect(req.url).toBe('http://localhost:8000/v1/api/pet/1?api_key=abc123');
     swagger.authorizations.authz = {};
   });
 
@@ -51,7 +50,7 @@ describe('api key authorizations', function() {
     var petApi = sample.pet;
 
     var req = petApi.getPetById(params, opts);
-    expect(req.url).toBe('http://localhost:8000/api/pet/1');
+    expect(req.url).toBe('http://localhost:8000/v1/api/pet/1');
     expect(req.headers['api_key']).toBe('abc123');
     swagger.authorizations.authz = {};
   });
@@ -70,7 +69,7 @@ describe('api key authorizations', function() {
     var petApi = sample.pet;
 
     var req = petApi.getPetById(params, opts);
-    expect(req.url).toBe('http://localhost:8000/api/pet/1');
+    expect(req.url).toBe('http://localhost:8000/v1/api/pet/1');
     expect(req.headers['Authorization: Bearer']).toBe('a b c d e');
     swagger.authorizations.authz = {};
   });

@@ -16,11 +16,12 @@ exports.petstore = function(arg1, arg2, arg3, arg4) {
   }
   var instance = http.createServer(function(req, res) {
     var uri = url.parse(req.url).pathname;
-    var filename = path.join('test/compat/spec', uri);
+    var filename = path.join('test/spec', uri);
     // for testing redirects
-    if(filename === 'test/compat/spec/api/redirect') {
+    if(filename === 'test/spec/v1/api/redirect') {
+      console.log('redirect');
       res.writeHead(302, {
-        'Location': 'http://localhost:8000/api/pet/1'
+        'Location': 'http://localhost:8000/v1/api/pet/1'
       });
       res.end();
     }
@@ -43,7 +44,7 @@ exports.petstore = function(arg1, arg2, arg3, arg4) {
           var fileStream = fs.createReadStream(filename);
           fileStream.pipe(res);
         }
-        else if(filename === 'test/compat/spec/api/pet/0') {
+        else if(filename === 'test/spec/v1/api/pet/0') {
           res.writeHead(500);
           res.end();
           return;          
@@ -70,7 +71,7 @@ exports.petstore = function(arg1, arg2, arg3, arg4) {
         swagger.modelPropertyMacro = macros.modelProperty;
       }
     }
-    var sample = new swagger.SwaggerApi('http://localhost:8000/api-docs.json', opts);
+    var sample = new swagger.SwaggerClient('http://localhost:8000/v1/api-docs.json', opts);
     sample.build();
     var count = 0, isDone = false;
     var f = function () {

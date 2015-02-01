@@ -1,101 +1,4 @@
-/**
- * Provides support for 1.x versions of swagger
- */
-var SwaggerApi = function (url, options) {
-  this.isBuilt = false;
-  this.url = null;
-  this.debug = false;
-  this.basePath = null;
-  this.authorizations = null;
-  this.authorizationScheme = null;
-  this.info = null;
-  this.useJQuery = false;
-  this.modelsArray = [];
-  this.isValid = false;
-
-  options = (options || {});
-  if (url)
-    if (url.url)
-      options = url;
-    else
-      this.url = url;
-  else
-    options = url;
-
-  if (typeof options.url === 'string')
-    this.url = options.url;
-
-  this.swaggerRequstHeaders = options.swaggerRequstHeaders || 'application/json;charset=utf-8,*/*';
-  this.defaultSuccessCallback = options.defaultSuccessCallback || null;
-  this.defaultErrorCallback = options.defaultErrorCallback || null;
-
-  if (typeof options.success === 'function')
-    this.success = options.success;
-
-  if (typeof options.useJQuery === 'boolean')
-    this.useJQuery = options.useJQuery;
-
-  if (options.authorizations) {
-    this.clientAuthorizations = options.authorizations;
-  } else {
-    var e = (typeof window !== 'undefined' ? window : exports);
-    this.clientAuthorizations = e.authorizations;
-  }
-
-  this.supportedSubmitMethods = options.supportedSubmitMethods || [];
-  this.failure = typeof options.failure === 'function' ? options.failure : function () { };
-  this.progress = typeof options.progress === 'function' ? options.progress : function () { };
-  if (typeof options.success === 'function') {
-    this.build();
-    this.isBuilt = true;
-  }
-};
-
-SwaggerApi.prototype.build = function (mock) {
-  if (this.isBuilt)
-    return this;
-  var _this = this;
-  this.progress('fetching resource list: ' + this.url);
-  var obj = {
-    useJQuery: this.useJQuery,
-    url: this.url,
-    method: 'GET',
-    headers: {
-      accept: _this.swaggerRequstHeaders
-    },
-    on: {
-      error: function (response) {
-        if (_this.url.substring(0, 4) !== 'http') {
-          return _this.fail('Please specify the protocol for ' + _this.url);
-        } else if (response.status === 0) {
-          return _this.fail('Can\'t read from server.  It may not have the appropriate access-control-origin settings.');
-        } else if (response.status === 404) {
-          return _this.fail('Can\'t read swagger JSON from ' + _this.url);
-        } else {
-          return _this.fail(response.status + ' : ' + response.statusText + ' ' + _this.url);
-        }
-      },
-      response: function (resp) {
-        var responseObj = resp.obj || JSON.parse(resp.data);
-        _this.swaggerVersion = responseObj.swaggerVersion;
-        if (_this.swaggerVersion === '1.2') {
-          return _this.buildFromSpec(responseObj);
-        } else {
-          return _this.buildFrom1_1Spec(responseObj);
-        }
-      }
-    }
-  };
-  var e = (typeof window !== 'undefined' ? window : exports);
-  e.authorizations.apply(obj);
-  if (mock === true)
-    return obj;
-
-  new SwaggerHttp().execute(obj);
-  return this;
-};
-
-SwaggerApi.prototype.buildFromSpec = function (response) {
+SwaggerClient.prototype.buildFrom1_2Spec = function (response) {
   if (response.apiVersion != null) {
     this.apiVersion = response.apiVersion;
   }
@@ -146,7 +49,7 @@ SwaggerApi.prototype.buildFromSpec = function (response) {
   return this;
 };
 
-SwaggerApi.prototype.buildFrom1_1Spec = function (response) {
+SwaggerClient.prototype.buildFrom1_1Spec = function (response) {
   log('This API is using a deprecated version of Swagger!  Please see http://github.com/wordnik/swagger-core/wiki for more info');
   if (response.apiVersion != null)
     this.apiVersion = response.apiVersion;
@@ -192,7 +95,7 @@ SwaggerApi.prototype.buildFrom1_1Spec = function (response) {
   return this;
 };
 
-SwaggerApi.prototype.convertInfo = function (resp) {
+SwaggerClient.prototype.convertInfo = function (resp) {
   if(typeof resp == 'object') {
     var info = {}
 
@@ -209,7 +112,7 @@ SwaggerApi.prototype.convertInfo = function (resp) {
   }
 };
 
-SwaggerApi.prototype.selfReflect = function () {
+SwaggerClient.prototype.selfReflect = function () {
   var resource, resource_name, ref;
   if (this.apis === null) {
     return false;
@@ -228,17 +131,12 @@ SwaggerApi.prototype.selfReflect = function () {
   }
 };
 
-SwaggerApi.prototype.fail = function (message) {
-  this.failure(message);
-  throw message;
-};
-
-SwaggerApi.prototype.setConsolidatedModels = function () {
-  var model, modelName, resource, resource_name, _i, _len, _ref, _ref1, _results;
+SwaggerClient.prototype.setConsolidatedModels = function () {
+  var model, modelName, resource, resource_name, i, apis, models, results;
   this.models = {};
-  _ref = this.apis;
-  for (resource_name in _ref) {
-    resource = _ref[resource_name];
+  apis = this.apis;
+  for (resource_name in apis) {
+    resource = apis[resource_name];
     for (modelName in resource.models) {
       if (typeof this.models[modelName] === 'undefined') {
         this.models[modelName] = resource.models[modelName];
@@ -246,33 +144,13 @@ SwaggerApi.prototype.setConsolidatedModels = function () {
       }
     }
   }
-  _ref1 = this.modelsArray;
-  _results = [];
-  for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-    model = _ref1[_i];
-    _results.push(model.setReferencedModels(this.models));
+  models = this.modelsArray;
+  results = [];
+  for (i = 0; i < models.length; i++) {
+    model = models[i];
+    results.push(model.setReferencedModels(this.models));
   }
-  return _results;
-};
-
-SwaggerApi.prototype.help = function () {
-  var operation, operation_name, parameter, resource, resource_name, _i, _len, _ref, _ref1, _ref2;
-  _ref = this.apis;
-  for (resource_name in _ref) {
-    resource = _ref[resource_name];
-    log(resource_name);
-    _ref1 = resource.operations;
-    for (operation_name in _ref1) {
-      operation = _ref1[operation_name];
-      log('  ' + operation.nickname);
-      _ref2 = operation.parameters;
-      for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
-        parameter = _ref2[_i];
-        log('  ' + parameter.name + (parameter.required ? ' (required)' : '') + ' - ' + parameter.description);
-      }
-    }
-  }
-  return this;
+  return results;
 };
 
 var SwaggerResource = function (resourceObj, api) {

@@ -29,7 +29,7 @@ describe('request operations', function() {
     var help = sample.pet.getPetById.help();
     console.log(help);
     var curl = sample.pet.getPetById.asCurl({petId: 1});
-    expect(curl).toBe('curl --header "Accept: application/json" http://localhost:8000/api/pet/1');
+    expect(curl).toBe('curl --header "Accept: application/json" http://localhost:8000/v1/api/pet/1');
   });
 
   it('generate a get request', function() {
@@ -39,7 +39,7 @@ describe('request operations', function() {
     test.object(req);
     expect(req.method).toBe('GET');
     expect(req.headers['Accept']).toBe('application/json');
-    expect(req.url).toBe('http://localhost:8000/api/pet/1');
+    expect(req.url).toBe('http://localhost:8000/v1/api/pet/1');
   });
 
   it('generate a get request', function() {
@@ -61,7 +61,7 @@ describe('request operations', function() {
 
     expect(req.method).toBe("GET");
     expect(req.headers["Accept"]).toBe("application/json");
-    expect(req.url).toBe("http://localhost:8000/api/pet/findByStatus?status=available");
+    expect(req.url).toBe("http://localhost:8000/v1/api/pet/findByStatus?status=available");
   });
 
   it('verifies the http request object for a POST', function() {
@@ -82,7 +82,7 @@ describe('request operations', function() {
     expect(req.headers["Accept"]).toBe("application/json");
     expect(req.headers["Content-Type"]).toBe("application/json");
     expect(req.body).toBe('{"id":100,"name":"monster","status":"dead"}');
-    expect(req.url).toBe("http://localhost:8000/api/pet");
+    expect(req.url).toBe("http://localhost:8000/v1/api/pet");
   });
 
   it('verifies the http request object for a POST with form params', function() {
@@ -101,7 +101,7 @@ describe('request operations', function() {
     expect(req.headers['Accept']).toBe('application/json');
     expect(req.headers['Content-Type']).toBe('application/x-www-form-urlencoded');
     expect(req.body).toBe('name=dog&status=very%20happy');
-    expect(req.url).toBe('http://localhost:8000/api/pet/1');
+    expect(req.url).toBe('http://localhost:8000/v1/api/pet/1');
   });
 
   it('execute put operations', function() {
@@ -122,7 +122,7 @@ describe('request operations', function() {
     expect(req.headers['Accept']).toBe('application/json');
     expect(req.headers['Content-Type']).toBe('application/json');
     expect(req.body).toBe('{\"id\":100,\"name\":\"monster\",\"status\":\"dead\"}');
-    expect(req.url).toBe('http://localhost:8000/api/pet');
+    expect(req.url).toBe('http://localhost:8000/v1/api/pet');
   });
 
   it('execute delete operations', function() {
@@ -138,7 +138,7 @@ describe('request operations', function() {
     expect(req.method).toBe('DELETE');
     expect(req.headers['Accept']).toBe('application/json');
     expect(req.headers['Content-Type']).toBe('application/json');
-    expect(req.url).toBe('http://localhost:8000/api/pet/100');
+    expect(req.url).toBe('http://localhost:8000/v1/api/pet/100');
   });
 
   it('query params expect be single encoded', function() {
@@ -154,7 +154,7 @@ describe('request operations', function() {
     expect(req.method).toBe('GET');
     expect(req.headers['Accept']).toBe('application/json');
     test.value(req.headers['Content-Type']).isUndefined();
-    expect(req.url).toBe('http://localhost:8000/api/pet/findByStatus?status=a%20b%20c%20d%20e');
+    expect(req.url).toBe('http://localhost:8000/v1/api/pet/findByStatus?status=a%20b%20c%20d%20e');
   });
 
   it('path params expect be properly checked', function() {
@@ -170,7 +170,7 @@ describe('request operations', function() {
     expect(req.method).toBe('GET');
     expect(req.headers['Accept']).toBe('application/json');
     test.value(req.headers['Content-Type']).isUndefined();
-    expect(req.url).toBe('http://localhost:8000/api/pet/false');
+    expect(req.url).toBe('http://localhost:8000/v1/api/pet/false');
   });
 
   it('tests the urlify function', function() {
@@ -205,7 +205,7 @@ describe('request operations', function() {
   });
 
   it('verifies headers when fetching the swagger specification', function() {
-    var sample = new swagger.SwaggerApi('http://localhost:8000/api-docs.json');
+    var sample = new swagger.SwaggerClient('http://localhost:8000/api-docs.json');
     var req = sample.build(true);
     expect(req.headers['accept']).toBe('application/json;charset=utf-8,*/*');
   });
@@ -214,7 +214,7 @@ describe('request operations', function() {
     var opts = {
       swaggerRequstHeaders: 'foo/bar'
     };
-    var sample = new swagger.SwaggerApi('http://localhost:8000/api-docs.json', opts);
+    var sample = new swagger.SwaggerClient('http://localhost:8000/api-docs.json', opts);
     var req = sample.build(true);
     expect(req.headers['accept']).toBe('foo/bar');
   });
@@ -231,7 +231,7 @@ describe('request operations', function() {
 
     expect(req.method).toBe("GET");
     expect(req.headers["Accept"]).toBe("application/json");
-    expect(req.url).toBe("http://localhost:8000/api/pet/findByStatus?status=fehguy%40gmail.com");
+    expect(req.url).toBe("http://localhost:8000/v1/api/pet/findByStatus?status=fehguy%40gmail.com");
   });
 
   it('does not add a query param if not set', function() {
@@ -244,7 +244,7 @@ describe('request operations', function() {
     expect(req.method).toBe('GET');
     expect(req.headers['Accept']).toBe('application/json');
     test.value(req.headers['Content-Type']).isUndefined();
-    expect(req.url).toBe('http://localhost:8000/api/pet/findByTags');
+    expect(req.url).toBe('http://localhost:8000/v1/api/pet/findByTags');
   });
 
   it('does not add a query param if undefined', function() {
@@ -257,6 +257,6 @@ describe('request operations', function() {
     expect(req.method).toBe('GET');
     expect(req.headers['Accept']).toBe('application/json');
     test.value(req.headers['Content-Type']).isUndefined();
-    expect(req.url).toBe('http://localhost:8000/api/pet/findByTags');
+    expect(req.url).toBe('http://localhost:8000/v1/api/pet/findByTags');
   });
 })

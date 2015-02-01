@@ -3,12 +3,18 @@ var SwaggerClient = function(url, options) {
   this.url = null;
   this.debug = false;
   this.basePath = null;
+  this.modelsArray = [];
   this.authorizations = null;
   this.authorizationScheme = null;
   this.isValid = false;
   this.info = null;
   this.useJQuery = false;
 
+  if(typeof url !== 'undefined')
+    return this.initialize(url, options);
+};
+
+SwaggerClient.prototype.initialize = function (url, options) {
   this.models = models;
 
   options = (options||{});
@@ -19,6 +25,9 @@ var SwaggerClient = function(url, options) {
     options = url;
     this.url = options.url;
   }
+  this.swaggerRequstHeaders = options.swaggerRequstHeaders || 'application/json;charset=utf-8,*/*';
+  this.defaultSuccessCallback = options.defaultSuccessCallback || null;
+  this.defaultErrorCallback = options.defaultErrorCallback || null;
 
   if (typeof options.success === 'function')
     this.success = options.success;
@@ -26,16 +35,27 @@ var SwaggerClient = function(url, options) {
   if (options.useJQuery)
     this.useJQuery = options.useJQuery;
 
+  if (options.authorizations) {
+    this.clientAuthorizations = options.authorizations;
+  } else {
+    var e = (typeof window !== 'undefined' ? window : exports);
+    this.clientAuthorizations = e.authorizations;
+  }
+
   this.supportedSubmitMethods = options.supportedSubmitMethods || [];
   this.failure = options.failure || function() {};
   this.progress = options.progress || function() {};
   this.spec = options.spec;
+  this.options = options;
 
-  if (typeof options.success === 'function')
+  if (typeof options.success === 'function') {
     this.build();
+    // this.isBuilt = true;
+  }
 };
 
-SwaggerClient.prototype.build = function() {
+SwaggerClient.prototype.build = function(mock) {
+  if (this.isBuilt) return this;
   var self = this;
   this.progress('fetching resource list: ' + this.url);
   var obj = {
@@ -43,7 +63,7 @@ SwaggerClient.prototype.build = function() {
     url: this.url,
     method: "get",
     headers: {
-      accept: "application/json, */*"
+      accept: this.swaggerRequstHeaders
     },
     on: {
       error: function(response) {
@@ -66,8 +86,11 @@ SwaggerClient.prototype.build = function() {
           self.isValid = true;
         }
         else {
-          self.isValid = false;
-          self.failure();
+          if (self.swaggerVersion === '1.2') {
+            return self.buildFrom1_2Spec(responseObj);
+          } else {
+            return self.buildFrom1_1Spec(responseObj);
+          }
         }
       }
     }
@@ -78,6 +101,8 @@ SwaggerClient.prototype.build = function() {
   else {
     var e = (typeof window !== 'undefined' ? window : exports);
     var status = e.authorizations.apply(obj);
+    if(mock)
+      return obj;
     new SwaggerHttp().execute(obj);
   }
 
@@ -355,16 +380,6 @@ var Operation = function(parent, scheme, operationId, httpMethod, path, args, de
 
   if(response && response.schema) {
     var resolvedModel = this.resolveModel(response.schema, definitions);
-    /*
-    if(resolvedModel) {
-      this.type = resolvedModel.name;
-      this.responseSampleJSON = JSON.stringify(resolvedModel.getSampleValue(), null, 2);
-      this.responseClassSignature = resolvedModel.getMockSignature();
-      
-    }
-    else {
-      this.type = response.schema.type;
-    }*/
     delete responses[defaultResponseCode];
     if(resolvedModel) {
       this.successResponse = {};

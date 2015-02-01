@@ -14,7 +14,7 @@
     }
   },
   "host": "localhost:8000",
-  "basePath": "/api",
+  "basePath": "/v2/api",
   "schemes": [
     "http"
   ],
