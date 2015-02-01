@@ -50,7 +50,6 @@ SwaggerClient.prototype.initialize = function (url, options) {
 
   if (typeof options.success === 'function') {
     this.build();
-    // this.isBuilt = true;
   }
 };
 
@@ -939,7 +938,6 @@ Model.prototype.getMockSignature = function(modelsToIgnore) {
     prop = this.properties[i];
     propertiesStr.push(prop.toString());
   }
-
   var strong = '<span class="strong">';
   var stronger = '<span class="stronger">';
   var strongClose = '</span>';
@@ -1051,8 +1049,10 @@ Property.prototype.sampleValue = function(isArray, ignoredModels) {
 
 getStringSignature = function(obj) {
   var str = '';
-  if(typeof obj.type === 'undefined')
-    str += obj;
+  if(typeof obj.$ref !== 'undefined')
+    str += simpleRef(obj.$ref);
+  else if(typeof obj.type === 'undefined')
+    str += 'object';
   else if(obj.type === 'array') {
     str += 'Array[';
     str += getStringSignature((obj.items || obj.$ref || {}));
@@ -1110,7 +1110,17 @@ Property.prototype.toString = function() {
 
   var options = ''; 
   var isArray = this.schema.type === 'array';
-  var type = isArray ? this.schema.items.type : this.schema.type;
+  var type;
+
+  if(isArray) {
+    if(this.schema.items)
+      type = this.schema.items.type;
+    else
+      type = '';
+  }
+  else {
+    this.schema.type;
+  }
 
   if (this.default)
     options += optionHtml('Default', this.default);

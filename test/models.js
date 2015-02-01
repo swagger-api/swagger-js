@@ -49,4 +49,24 @@ describe('models', function() {
     var model = new swagger.Model('Sample', definition);
     expect(model.createJSONSample()).toEqual({ id: 0, name: 'string', photos: [ {} ] });
   });
+
+  it('should build a model signature', function() {
+    var definition = {
+      type: "object",
+      properties: {
+        id: {
+          type: 'integer',
+          format: 'int32'
+        },
+        name: {
+          type: 'string'
+        },
+        photos: {
+          type: 'array'
+        }
+      }
+    }
+    var model = new swagger.Model('Sample', definition);
+    expect(model.getMockSignature()).toEqual('<span class="strong">Sample {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">photos</span> (<span class="propType">Array[object]</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span>');
+  });
 });
