@@ -494,7 +494,7 @@ SwaggerModelProperty.prototype.toString = function () {
   }
   str += ')';
   if (this.values) {
-    str += ' = <span class="propVals">["' + this.values.join('\' or \'') + '\']</span>';
+    str += ' = <span class="propVals">[\'' + this.values.join('\' or \'') + '\']</span>';
   }
   if (this.descr) {
     str += ': <span class="propDesc">' + this.descr + '</span>';
