@@ -1108,6 +1108,14 @@ Property.prototype.toString = function() {
   if(typeof this.description !== 'undefined')
     str += ': ' + this.description;
 
+  if (this['enum']) {
+    str += ' = <span class="propVals">[\'' + this['enum'].join('\' or \'') + '\']</span>';
+  }
+  if (this.descr) {
+    str += ': <span class="propDesc">' + this.descr + '</span>';
+  }
+
+
   var options = ''; 
   var isArray = this.schema.type === 'array';
   var type;
