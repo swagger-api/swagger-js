@@ -2,7 +2,7 @@
 
 [![Build Status](https://api.travis-ci.org/swagger-api/swagger-js.png?branch=develop_2.0)](https://travis-ci.org/swagger-api/swagger-js)
 
-This is the Wordnik Swagger javascript client for use with [swagger](http://swagger.wordnik.com) enabled APIs.
+This is the Wordnik Swagger javascript client for use with [swagger](http://swagger.io) enabled APIs.
 It's written in CoffeeScript and tested with Jasmine, and is the fastest way to enable a javascript client to communicate with a swagger-enabled server.
 
 ## What's Swagger?
@@ -10,7 +10,7 @@ It's written in CoffeeScript and tested with Jasmine, and is the fastest way to 
 The goal of Swagger™ is to define a standard, language-agnostic interface to REST APIs which allows both humans and computers to discover and understand the capabilities of the service without access to source code, documentation, or through network traffic inspection. When properly defined via Swagger, a consumer can understand and interact with the remote service with a minimal amount of implementation logic. Similar to what interfaces have done for lower-level programming, Swager removes the guesswork in calling the service.
 
 
-Check out [Swagger-Spec](https://github.com/wordnik/swagger-spec) for additional information about the Swagger project, including additional libraries with support for other languages and more.
+Check out [Swagger-Spec](https://github.com/swagger-api/swagger-spec) for additional information about the Swagger project, including additional libraries with support for other languages and more.
 
 
 ### Calling an API with swagger + node.js!
@@ -24,8 +24,8 @@ Then let swagger do the work!
 ```js
 var client = require("swagger-client")
 
-var swagger = new client.SwaggerApi({
-  url: 'http://petstore.swagger.wordnik.com/api/api-docs',
+var swagger = new client.SwaggerClient({
+  url: 'http://petstore.swagger.wordnik.com/v2/swagger.json',
   success: function() {
     if(swagger.ready === true) {
       swagger.apis.pet.getPetById({petId:1});
@@ -77,14 +77,14 @@ client.authorizations.add("apiKey", new client.ApiKeyAuthorization("api_key","sp
 
 ### Calling an API with swagger + the browser!
 
-Download `swagger.js` and `shred.bundle.js` into your lib folder
+Download `swagger-client.js` and `shred.bundle.js` into your lib folder
 
 ```js
 <script src='lib/shred.bundle.js' type='text/javascript'></script>
-<script src='lib/swagger.js' type='text/javascript'></script>
+<script src='lib/swagger-client.js' type='text/javascript'></script>
 <script type="text/javascript">
   // initialize swagger, point to a resource listing
-  window.swagger = new SwaggerApi({
+  window.swagger = new SwaggerClient({
     url: "http://petstore.swagger.wordnik.com/api/api-docs",
     success: function() {
       if(swagger.ready === true) {
@@ -101,23 +101,23 @@ Download `swagger.js` and `shred.bundle.js` into your lib folder
 
 ### Need to send an object to your API via POST or PUT?
 ```js
-var body = {
+var pet = {
   id: 100,
   name: "dog"};
 
-swagger.apis.pet.addPet({body: JSON.stringify(body)});
+swagger.apis.pet.addPet({body: pet});
 ```
 
 ### Sending XML in as a payload to your API?
 ```js
 var body = "<Pet><id>2</id><name>monster</name></Pet>";
 
-swagger.apis.pet.addPet({body: body},{requestContentType:"application/xml"});
+swagger.apis.pet.addPet({body: pet}, {requestContentType:"application/xml"});
 ```
 
 ### Need XML response?
 ```js
-swagger.apis.pet.getPetById({petId:1},{responseContentType:"application/xml"});
+swagger.apis.pet.getPetById({petId:1}, {responseContentType:"application/xml"});
 ```
 
 ### Custom request signing
@@ -156,9 +156,9 @@ Development
 -----------
 
 Please [fork the code](https://github.com/swagger-api/swagger-js) and help us improve
-swagger.js. Send us a pull request and **we'll mail you a wordnik T-shirt!**
+swagger-client.js. Send us a pull request and **we'll mail you a wordnik T-shirt!**
 
-Swagger.js use gulp for Node.js.
+swagger-js use gulp for Node.js.
 
 ```bash
 # Install the gulp client on the path
@@ -191,7 +191,7 @@ gulp cover
 License
 -------
 
-Copyright 2011-2014 Wordnik, Inc.
+Copyright 2011-2015 Reverb Technologies, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
