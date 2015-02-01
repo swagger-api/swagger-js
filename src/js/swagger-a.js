@@ -1026,6 +1026,8 @@ Property.prototype.sampleValue = function(isArray, ignoredModels) {
     output = this.default;
   else if(type === 'date-time')
     output = new Date().toISOString();
+  else if(type === 'date')
+    output = new Date().toISOString().split("T")[0];
   else if(type === 'string')
     output = 'string';
   else if(type === 'integer')

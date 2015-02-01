@@ -69,4 +69,22 @@ describe('models', function() {
     var model = new swagger.Model('Sample', definition);
     expect(model.getMockSignature()).toEqual('<span class="strong">Sample {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">photos</span> (<span class="propType">Array[object]</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span>');
   });
+
+  it('should build a model with an array and enum values', function() {
+    var definition = {
+      type: "object",
+      properties: {
+        name: {
+          type: "array",
+          items: {
+            type: "string",
+            "enum": [ "value1", "value2", "value3", "value4"]
+          }
+        }
+      }
+    }
+    var model = new swagger.Model('Sample', definition);
+    console.log(model);
+    console.log(model.createJSONSample());
+  });
 });
