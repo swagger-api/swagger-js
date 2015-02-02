@@ -1,246 +1,258 @@
-var test = require('unit.js')
-var should = require('should')
-var mock = require('../test/mock');
-var sample, instance;
+var test = require('unit.js');
+var expect = require('expect');
+var swagger = require('../lib/swagger-client');
 
-describe('verifies the nickname is sanitized', function() {
-  before(function(done) {
-    mock.petstore(done, function(petstore, server){
-      sample = petstore;
-      instance = server;
+describe('operations', function() {
+  it('should generate a url', function() {
+    var parameters = [
+      quantityQP
+    ];
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/path', { parameters: parameters });
+    var url = op.urlify({
+      quantity: 3
     });
+    expect(url).toBe('http://localhost/path?quantity=3');
   });
 
-  after(function(done){
-    instance.close();
-
-    done();
-  });
-
-  it('returns the same nickname', function() {
-    pet = sample.pet;
-    should(pet.sanitize('getSomething')).equal('getSomething');
-  })
-
-  it('strips spaces in the nickname', function() {
-    pet = sample.pet;
-    should(pet.sanitize('get something')).equal('get_something');
-  })
-
-  it('strips dots in the nickname', function() {
-    pet = sample.pet;
-    should(pet.sanitize('get.something')).equal('get_something');
-  })
-
-  it('strips $ in the nickname', function() {
-    pet = sample.pet;
-    should(pet.sanitize('get$something')).equal('get_something');
-  })
-
-  it('strips punctuation in the nickname', function() {
-    pet = sample.pet;
-    should(pet.sanitize('get[something]')).equal('get_something');
-  })
-
-  it('strips curlies in the nickname', function() {
-    pet = sample.pet;
-    should(pet.sanitize('get{something}')).equal('get_something');
-  })
-
-  it('strips punctuation in the nickname', function() {
-    pet = sample.pet;
-    should(pet.sanitize('  \\]}{Get$$_./\[something]')).equal('Get_something');
-  })
-})
-
-describe('verifies the get pet operation', function() {
-  before(function(done) {
-    mock.petstore(done, function(petstore, server){
-      sample = petstore;
-      instance = server;
+  it('should generate a url with two params', function() {
+    var parameters = [
+      quantityQP, weightQP
+    ];
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/path', { parameters: parameters });
+    var url = op.urlify({
+      quantity: 3,
+      weight: 100.3
     });
+    expect(url).toBe('http://localhost/path?quantity=3&weight=100.3');
   });
 
-  after(function(done){
-    instance.close();
-
-    done();
+  it('should generate a url with queryparams array, multi', function() {
+    var parameters = [
+      intArrayQP
+    ];
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/path', { parameters: parameters });
+    var url = op.urlify({
+      intArray: [3,4,5]
+    });
+    expect(url).toBe('http://localhost/path?intArray=3,4,5');
   });
 
-  it('verifies the response messages from the get operation', function() {
-    operation = sample.pet.operations.getPetById;
+  it('should generate a url with queryparams array, pipes', function() {
+    var parameters = [
+      {
+        in: 'query',
+        name: 'intArray',
+        type: 'array',
+        items: {
+          type: 'integer',
+          format: 'int32'
+        },
+        collectionFormat: 'pipes'
+      }
+    ];
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/path', { parameters: parameters });
+    var url = op.urlify({
+      intArray: [3,4,5]
+    });
+    expect(url).toBe('http://localhost/path?intArray=3|4|5');
+  });
 
-    responseMessages = operation.responseMessages;
-    test.object(responseMessages);
-    should(responseMessages.length).equal(2);
-    should(responseMessages[0].code).equal(400);
-    should(responseMessages[1].code).equal(404);
-  })
+  it('should generate a url with queryparams array, tabs', function() {
+    var parameters = [
+      {
+        in: 'query',
+        name: 'intArray',
+        type: 'array',
+        items: {
+          type: 'integer',
+          format: 'int32'
+        },
+        collectionFormat: 'tsv'
+      }
+    ];
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/path', { parameters: parameters });
+    var url = op.urlify({
+      intArray: [3,4,5]
+    });
+    expect(url).toBe('http://localhost/path?intArray=3\\t4\\t5');
+  });
 
-  it('gets help() from the get pet operation', function() {
-    operation = sample.pet.operations.getPetById;
-    should(operation.help()).equal('* petId (required) - ID of pet that needs to be fetched');
-  })
+  it('should generate a url with queryparams array, spaces', function() {
+    var parameters = [
+      {
+        in: 'query',
+        name: 'intArray',
+        type: 'array',
+        items: {
+          type: 'integer',
+          format: 'int32'
+        },
+        collectionFormat: 'ssv'
+      }
+    ];
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/path', { parameters: parameters });
+    var url = op.urlify({
+      intArray: [3,4,5]
+    });
+    expect(url).toBe('http://localhost/path?intArray=3%204%205');
+  });
 
-////////
-  it('verifies the get pet operation', function() {
-    operation = sample.pet.operations.getPetById
-    should(operation.method).equal('get');
+  it('should generate a url with queryparams array, brackets', function() {
+    var parameters = [
+      {
+        in: 'query',
+        name: 'intArray',
+        type: 'array',
+        items: {
+          type: 'integer',
+          format: 'int32'
+        },
+        collectionFormat: 'brackets'
+      }
+    ];
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/path', { parameters: parameters });
+    var url = op.urlify({
+      intArray: [3,4,5]
+    });
+    expect(url).toBe('http://localhost/path?intArray[]=3&intArray[]=4&intArray[]=5');
+  });
 
-    parameters = operation.parameters;
+  it('should generate a url with path param at end of path', function() {
+    var parameters = [
+      {
+        in: 'path',
+        name: 'name',
+        type: 'string'
+      },
+      {
+        in: 'query',
+        name: 'age',
+        type: 'integer',
+        format: 'int32'
+      }
+    ];
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/foo/{name}', { parameters: parameters });
+    var url = op.urlify({
+      name: 'tony',
+      age: 42
+    });
+    expect(url).toBe('http://localhost/foo/tony?age=42');
+  });
 
-    test.object(parameters);
-    should(parameters.length).equal(1);
+  it('should generate a url with path param at middle of path', function() {
+    var parameters = [
+      {
+        in: 'path',
+        name: 'name',
+        type: 'string'
+      },
+      {
+        in: 'query',
+        name: 'age',
+        type: 'integer',
+        format: 'int32'
+      }
+    ];
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/foo/{name}/bar', { parameters: parameters });
+    var url = op.urlify({
+      name: 'tony',
+      age: 42
+    });
+    expect(url).toBe('http://localhost/foo/tony/bar?age=42');
+  });
 
-    param = parameters[0]
-    should(param.name).equal('petId');
-    should(param.type).equal('integer');
-    should(param.paramType).equal('path');
-    test.value(param.description);
-  })
+  it('should generate a url with path param with proper escaping', function() {
+    var parameters = [
+      {
+        in: 'path',
+        name: 'name',
+        type: 'string'
+      }
+    ];
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/foo/{name}/bar', { parameters: parameters });
+    var url = op.urlify({
+      name: 'tony tam'
+    });
+    expect(url).toBe('http://localhost/foo/tony%20tam/bar');
+  });
 
-  it('verifies the post pet operation', function() {
-    operation = sample.pet.operations.addPet
-    should(operation.method).equal('post');
+  it('should generate a url with path param string array', function() {
+    var parameters = [
+      {
+        in: 'path',
+        name: 'names',
+        type: 'array',
+        items: {
+          type: 'string'
+        },
+        collectionFormat: 'csv'
+      }
+    ];
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/foo/{names}/bar', { parameters: parameters });
+    var url = op.urlify({
+      names: ['fred', 'bob', 'mary']
+    });
+    expect(url).toBe('http://localhost/foo/fred,bob,mary/bar');
+  });
 
-    parameters = operation.parameters
+  it('should correctly replace path params', function() {
+    var parameters = [
+      { in: 'path', name: 'a0', type: 'string' },
+      { in: 'path', name: 'a01', type: 'string' },
+      { in: 'path', name: 'a02', type: 'string' },
+      { in: 'path', name: 'a03', type: 'string' }
+    ];
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/path/{a0}/{a01}/{a02}/{a03}', { parameters: parameters });
+    var url = op.urlify(
+      {a0: 'foo', a01: 'bar', a02: 'bat', a03: 'baz'}
+    );
+    expect(url).toBe('http://localhost/path/foo/bar/bat/baz');
+  });
 
-    test.object(parameters);
-    should(parameters.length).equal(1);
+  it('should correctly replace path params with hyphens', function() {
+    var parameters = [
+      { in: 'path', name: 'a-0', type: 'string' }
+    ];
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/path/{a-0}/', { parameters: parameters });
+    var url = op.urlify(
+      {'a-0': 'foo'}
+    );
+    expect(url).toBe('http://localhost/path/foo/');
+  });
 
-    param = parameters[0]
-    should(param.name).equal('body');
-    should(param.type).equal('Pet');
-    should(param.paramType).equal('body');
-    test.value(param.description);
-  })
+  it('should correctly replace path params with hyphens', function() {
+    var parameters = [
+      { in: 'path', name: 'year', type: 'string' },
+      { in: 'path', name: 'month', type: 'string' },
+      { in: 'path', name: 'day', type: 'string' }
+    ];
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/{year}-{month}-{day}', { parameters: parameters });
+    var url = op.urlify(
+      { year: 2015, month: '01', day: '30'}
+    );
+    expect(url).toBe('http://localhost/2015-01-30');
+  });
+});
 
-  it('verifies the put pet operation', function() {
-    operation = sample.pet.operations.updatePet
-    should(operation.method).equal('put');
-
-    parameters = operation.parameters
-
-    test.object(parameters);
-    should(parameters.length).equal(1);
-
-    param = parameters[0]
-    should(param.name).equal('body');
-    should(param.type).equal('Pet');
-    should(param.paramType).equal('body');
-    test.value(param.description);
-  })
-
-  it('verifies the findByTags operation', function() {
-    operation = sample.pet.operations.findPetsByTags
-    should(operation.method).equal('get');
-
-    parameters = operation.parameters
-
-    test.object(parameters);
-    should(parameters.length).equal(1);
-
-    param = parameters[0]
-
-    should(param.name).equal('tags');
-    should(param.type).equal('string');
-    should(param.paramType).equal('query');
-    test.value(param.description);
-  })
-
-  it('verifies the patch pet operation', function() {
-    operation = sample.pet.operations.partialUpdate
-    should(operation.method).equal('patch');
-
-    produces = operation.produces
-    should(produces.length).equal(2);
-    should(produces[0]).equal('application/json');
-    should(produces[1]).equal('application/xml');
-
-    parameters = operation.parameters
-    test.object(parameters);
-    should(parameters.length).equal(2);
-
-    param = parameters[0]
-    should(param.name).equal('petId');
-    should(param.type).equal('string');
-    should(param.paramType).equal('path');
-    test.value(param.description);
-
-    param = parameters[1]
-    should(param.name).equal('body');
-    should(param.type).equal('Pet');
-    should(param.paramType).equal('body');
-    test.value(param.description);
-  })
-
-  it('verifies the post pet operation with form', function() {
-    operation = sample.pet.operations.updatePetWithForm
-    should(operation.method).equal('post');
-
-    consumes = operation.consumes
-    should(consumes.length).equal(1);
-    should(consumes[0]).equal('application/x-www-form-urlencoded');
-
-    parameters = operation.parameters
-    test.object(parameters);
-    should(parameters.length).equal(3);
-
-    param = parameters[0]
-    should(param.name).equal('petId');
-    should(param.type).equal('string');
-    should(param.paramType).equal('path');
-    test.value(param.description);
-
-    param = parameters[1]
-    should(param.name).equal('name');
-    should(param.type).equal('string');
-    should(param.paramType).equal('form');
-    test.value(param.description);
-    should(param.required).equal(false);
-
-    param = parameters[2]
-    should(param.name).equal('status');
-    should(param.type).equal('string');
-    should(param.paramType).equal('form');
-    test.value(param.description);
-    should(param.required).equal(false);
-  })
-
-  it('verifies a file upload', function() {
-    operation = sample.pet.operations.uploadFile
-    should(operation.method).equal('post');
-
-    consumes = operation.consumes
-    should(consumes.length).equal(1);
-    should(consumes[0]).equal('multipart/form-data');
-
-    parameters = operation.parameters
-    test.object(parameters);
-    should(parameters.length).equal(2);
-
-    param = parameters[0]
-    should(param.name).equal('additionalMetadata');
-    should(param.type).equal('string');
-    should(param.paramType).equal('form');
-    should(param.required).equal(false);
-    test.value(param.description);
-
-    param = parameters[1]
-    should(param.name).equal('file');
-    should(param.type).equal('File');
-    should(param.paramType).equal('body');
-    test.value(param.description);
-    should(param.required).equal(false);
-  })
-
-  it('gets operations for the pet api', function() {
-    ops = sample.pet.operations
-    test.object(ops);
-  })
-
-  it('gets help() from the file upload operation', function() {
-    operation = sample.pet.operations.uploadFile
-    should(operation.help()).equal('* additionalMetadata - Additional data to pass to server\n* file - file to upload');
-  })
-})
+var quantityQP = {
+  in: 'query',
+  name: 'quantity',
+  type: 'integer',
+  format: 'int32'
+};
+var weightQP = {
+  in: 'query',
+  name: 'weight',
+  type: 'number',
+  format: 'double'
+};
+var intArrayQP = {
+  in: 'query',
+  name: 'intArray',
+  type: 'array',
+  items: {
+    type: 'integer',
+    format: 'int32'
+  },
+  collectionFormat: 'csv'
+};

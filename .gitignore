@@ -21,3 +21,9 @@ capybara-*.html
 /spec/tmp/*
 **.orig
 *.idea
+*.iml
+npm-debug.log
+/node_modules/
+/dist/
+/coverage/
+.coverrun

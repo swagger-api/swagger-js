@@ -6,3 +6,5 @@
 .npmignore
 lib/swagger-*spec.js
 src/swagger-*-spec.js
+*.iml
+npm-debug.log

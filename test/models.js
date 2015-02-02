@@ -1,64 +1,90 @@
-var test = require('unit.js')
-var should = require('should')
-var mock = require('../test/mock');
-var swagger = require('../lib/swagger');
-var sample, instance;
+var test = require('unit.js');
+var expect = require('expect');
+var swagger = require('../lib/swagger-client');
 
-describe('get model operations', function() {
-  before(function(done) {
-    mock.petstore(done, function(petstore, server){
-      sample = petstore;
-      instance = server;
-    });
+describe('models', function() {
+  it('should verify the JSON sample for a simple object model', function() {
+    var definition = {
+      properties: {
+        id: {
+          type: "integer",
+          format: "int64"
+        },
+        name: {
+          type: "string"
+        }
+      }
+    }
+    var model = new swagger.Model('Tag', definition);
+    expect(model.createJSONSample()).toEqual({ id: 0, name: 'string' })
   });
 
-  after(function(done){
-    instance.close();
-
-    done();
+  it('should verify the JSON sample for a primitive array', function() {
+    var definition = {
+      type: "array",
+      items: {
+        type: "string"
+      }
+    }
+    var model = new swagger.Model('Tag', definition);
+    expect(model.createJSONSample()).toEqual(['string']);
   });
 
-  it('verifies the Pet model', function(done) {
-    var pet = sample.pet.models['Pet'];
-    
-    should(pet.name).equal('Pet');
-    var props = pet.properties;
+  it('should not fail to load an underspecified array', function() {
+    var definition = {
+      type: "object",
+      properties: {
+        id: {
+          type: 'integer',
+          format: 'int32'
+        },
+        name: {
+          type: 'string'
+        },
+        photos: {
+          type: 'array'
+        }
+      }
+    }
+    var model = new swagger.Model('Sample', definition);
+    expect(model.createJSONSample()).toEqual({ id: 0, name: 'string', photos: [ {} ] });
+  });
 
-    should(props[0].name).equal('id');
-    should(props[0].dataType).equal('integer');
+  it('should build a model signature', function() {
+    var definition = {
+      type: "object",
+      properties: {
+        id: {
+          type: 'integer',
+          format: 'int32'
+        },
+        name: {
+          type: 'string'
+        },
+        photos: {
+          type: 'array'
+        }
+      }
+    }
+    var model = new swagger.Model('Sample', definition);
+    expect(model.getMockSignature()).toEqual('<span class="strong">Sample {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">photos</span> (<span class="propType">Array[object]</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span>');
+  });
 
-    should(props[1].name).equal('category')
-    should(props[1].dataType).equal('Category')
-
-    should(props[2].name).equal('name')
-    should(props[2].dataType).equal('string')
-
-    should(props[3].name).equal('photoUrls')
-    should(props[3].dataType).equal('array')
-    should(props[3].refDataType).equal('string')
-
-    should(props[4].name).equal('tags')
-    should(props[4].dataType).equal('array')
-    should(props[4].refDataType).equal('Tag')
-
-    should(props[5].name).equal('status')
-    should(props[5].dataType).equal('string')
-    done();
-  })
-
-  it('verifies the getAbsoluteBasePath method for relativeBasePath "/"', function(done) {
-    sample.basePath = 'http://localhost:8000/api-docs/';
-    should(sample.pet.getAbsoluteBasePath("/")).equal("http://localhost:8000");
-    done();
-  })
-
-  it('doesn\'t add double slashes per #202', function(done) {
-    sample.basePath = 'http://localhost:8000/api-docs/';
-    
-    var petApi = sample.pet;
-    var req = petApi.getPetById({petId: 1}, {mock: true});
-
-    console.log(req);
-    done();
-  })
-})
+  it('should build a model with an array and enum values', function() {
+    var definition = {
+      type: "object",
+      properties: {
+        name: {
+          type: "array",
+          items: {
+            type: "string",
+            "enum": [ "value1", "value2", "value3", "value4"]
+          }
+        }
+      }
+    }
+    var model = new swagger.Model('Sample', definition);
+    console.log(model);
+    console.log(model.createJSONSample());
+  });
+});

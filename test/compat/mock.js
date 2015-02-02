@@ -2,8 +2,10 @@ var http = require('http'),
     url = require('url'),
     path = require('path'),
     fs = require('fs');
-var swagger = require('../lib/swagger-client');
+var swagger = require('../../lib/swagger-client');
 var sample;
+
+exports.swagger = swagger;
 
 exports.petstore = function(arg1, arg2, arg3, arg4) {
   var done = arg1, opts = arg2, callback = arg3, macros = arg4;
@@ -16,17 +18,17 @@ exports.petstore = function(arg1, arg2, arg3, arg4) {
     var uri = url.parse(req.url).pathname;
     var filename = path.join('test/spec', uri);
     // for testing redirects
-    
-    if(filename === 'test/spec/api/redirect') {
+    if(filename === 'test/spec/v1/api/redirect') {
+      console.log('redirect');
       res.writeHead(302, {
-        'Location': 'http://localhost:8000/api/pet/1'
+        'Location': 'http://localhost:8000/v1/api/pet/1'
       });
       res.end();
     }
     else {
       fs.exists(filename, function(exists) {
         if(exists) {
-          var accept = req.headers.accept;
+          var accept = req.headers['accept'];
           if(typeof accept !== 'undefined') {
             if(accept === 'invalid') {
               res.writeHead(500);
@@ -42,7 +44,7 @@ exports.petstore = function(arg1, arg2, arg3, arg4) {
           var fileStream = fs.createReadStream(filename);
           fileStream.pipe(res);
         }
-        else if(filename === 'test/compat/spec/api/pet/0') {
+        else if(filename === 'test/spec/v1/api/pet/0') {
           res.writeHead(500);
           res.end();
           return;          
@@ -69,7 +71,7 @@ exports.petstore = function(arg1, arg2, arg3, arg4) {
         swagger.modelPropertyMacro = macros.modelProperty;
       }
     }
-    var sample = new swagger.SwaggerClient({url: 'http://localhost:8000/v2/petstore.json', opts: opts});
+    var sample = new swagger.SwaggerClient('http://localhost:8000/v1/api-docs.json', opts);
     sample.build();
     var count = 0, isDone = false;
     var f = function () {
@@ -82,4 +84,4 @@ exports.petstore = function(arg1, arg2, arg3, arg4) {
     };
     setTimeout(f, 50);
   });
-};
+}
