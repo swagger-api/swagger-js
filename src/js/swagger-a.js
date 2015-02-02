@@ -690,8 +690,13 @@ Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
     fail(message);
     return;
   }
-  var headers = this.getHeaderParams(args);
-  headers = this.setContentTypes(args, opts);
+  var allHeaders = this.getHeaderParams(args);
+  var contentTypeHeaders = this.setContentTypes(args, opts);
+
+  var headers = {};
+  for (var attrname in allHeaders) { headers[attrname] = allHeaders[attrname]; }
+  for (var attrname in contentTypeHeaders) { headers[attrname] = contentTypeHeaders[attrname]; }
+
   var body = this.getBody(headers, args);
   var url = this.urlify(args);
 
@@ -738,10 +743,10 @@ Operation.prototype.setContentTypes = function(args, opts) {
       else
         definedFormParams.push(param);
     }
-    else if(param.in === 'header' && this.headers) {
+    else if(param.in === 'header' && opts) {
       var key = param.name;
-      var headerValue = this.headers[param.name];
-      if(typeof this.headers[param.name] !== 'undefined')
+      var headerValue = opts[param.name];
+      if(typeof opts[param.name] !== 'undefined')
         headers[key] = headerValue;
     }
     else if(param.in === 'body' && typeof args[param.name] !== 'undefined') {
