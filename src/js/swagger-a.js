@@ -332,13 +332,15 @@ var Operation = function(parent, scheme, operationId, httpMethod, path, args, de
         param.allowableValues.descriptiveValues.push({value : value, isDefault: isDefault});
       }
     }
-    if(param.type === 'array' && typeof param.allowableValues === 'undefined') {
-      // can't show as a list if no values to select from
-      delete param.isList;
-      delete param.allowMultiple;
+    if(param.type === 'array') {
       innerType = [innerType];
+      if(typeof param.allowableValues === 'undefined') {
+        // can't show as a list if no values to select from
+        delete param.isList;
+        delete param.allowMultiple;
+      }
     }
-    param.signature = this.getModelSignature(innerType, models);
+    param.signature = this.getModelSignature(innerType, models).toString();
     param.sampleJSON = this.getModelSampleJSON(innerType, models);
     param.responseClassSignature = param.signature;
   }
@@ -490,16 +492,21 @@ Operation.prototype.getModelSignature = function(type, definitions) {
     listType = true;
     type = type[0];
   }
+  else if(typeof type === 'undefined')
+    type = 'undefined';
 
   if(type === 'string')
     isPrimitive = true;
   else
     isPrimitive = (listType && definitions[listType]) || (definitions[type]) ? false : true;
   if (isPrimitive) {
-    return type;
+    if(listType)
+      return 'Array[' + type + ']';
+    else
+      return type.toString();
   } else {
     if (listType)
-      return definitions[type].getMockSignature();
+      return 'Array[' + definitions[type].getMockSignature() + ']';
     else
       return definitions[type].getMockSignature();
   }

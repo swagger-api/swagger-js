@@ -238,7 +238,7 @@ describe('operations', function() {
       { in: 'query', name: 'year', type: 'array', items: {type: 'string'} }
     ];
     var op = new swagger.Operation({}, 'http', 'test', 'get', '/fantastic', { parameters: parameters });
-    expect(op.parameters[0].signature).toEqual(['string']);
+    expect(op.parameters[0].signature).toEqual('Array[string]');
   });
 
   it('should get a date array signature', function() {
@@ -246,7 +246,7 @@ describe('operations', function() {
       { in: 'query', name: 'year', type: 'array', items: {type: 'string', format: 'date-time'} }
     ];
     var op = new swagger.Operation({}, 'http', 'test', 'get', '/fantastic', { parameters: parameters });
-    expect(op.parameters[0].signature).toEqual(['date-time']);
+    expect(op.parameters[0].signature).toEqual('Array[date-time]');
   });
 });
 
