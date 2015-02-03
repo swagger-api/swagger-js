@@ -232,6 +232,22 @@ describe('operations', function() {
     );
     expect(url).toBe('http://localhost/2015-01-30');
   });
+
+  it('should get a string array signature', function() {
+    var parameters = [
+      { in: 'query', name: 'year', type: 'array', items: {type: 'string'} }
+    ];
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/fantastic', { parameters: parameters });
+    expect(op.parameters[0].signature).toEqual(['string']);
+  });
+
+  it('should get a date array signature', function() {
+    var parameters = [
+      { in: 'query', name: 'year', type: 'array', items: {type: 'string', format: 'date-time'} }
+    ];
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/fantastic', { parameters: parameters });
+    expect(op.parameters[0].signature).toEqual(['date-time']);
+  });
 });
 
 var quantityQP = {
