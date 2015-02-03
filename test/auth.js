@@ -54,4 +54,18 @@ describe('2.0 authorizations', function() {
     swagger.authorizations.authz = {};
   });
 
+  it('does not apply security where it is explicitly not required', function () {
+    params = { username: 'Johnny', password: 'Walker' };
+    opts = {
+      responseContentType: "application/json",
+      mock: true
+    };
+    var auth = new swagger.ApiKeyAuthorization("api_key", "abc123", "header");
+    swagger.authorizations.add("api_key", auth);
+
+    var userApi = sample.user;
+    var req = userApi.loginUser(params, opts);
+    expect(req.headers.api_key).toEqual('abc123');
+  });
+
 });

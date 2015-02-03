@@ -211,4 +211,14 @@ describe('swagger request functions', function() {
     test.object(req);
     expect(req.url).toBe('https://localhost:8000/v2/api/user/login?username=fred&password=meyer');
   });
+
+  it('should process a delete request with headers', function () {
+    var petApi = sample.pet;
+    var req = petApi.deletePet({petId: 1, api_key: 'abc123'}, {mock: true});
+
+    test.object(req);
+    expect(req.method).toEqual('DELETE');
+    expect(req.url).toEqual('http://localhost:8000/v2/api/pet/1');
+    expect(req.headers.api_key).toEqual('abc123');
+  });
 });
