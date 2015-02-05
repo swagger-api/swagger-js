@@ -24,7 +24,13 @@ ArrayModel.prototype.createJSONSample = function(modelsToIgnore) {
   }
   else if (this.ref) {
     var name = simpleRef(this.ref);
-    result = models[name].createJSONSample();
+    if(typeof modelsToIgnore[name] === 'undefined') {
+      modelsToIgnore[name] = this;
+      result = models[name].createJSONSample(modelsToIgnore);
+    }
+    else {
+      return name;
+    }
   }
   return [ result ];
 };

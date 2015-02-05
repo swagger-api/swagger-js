@@ -110,7 +110,7 @@ swagger.apis.pet.addPet({body: pet});
 
 ### Sending XML in as a payload to your API?
 ```js
-var body = "<Pet><id>2</id><name>monster</name></Pet>";
+var pet = "<Pet><id>2</id><name>monster</name></Pet>";
 
 swagger.apis.pet.addPet({body: pet}, {requestContentType:"application/xml"});
 ```

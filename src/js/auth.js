@@ -31,6 +31,7 @@ SwaggerAuthorizations.prototype.apply = function (obj, authorizations) {
   else {
     // 2.0 support
     if (Array.isArray(authorizations)) {
+
       for (var i = 0; i < authorizations.length; i++) {
         var auth = authorizations[i];
         for (name in auth) {
