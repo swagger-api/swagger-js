@@ -296,6 +296,20 @@ var Operation = function(parent, scheme, operationId, httpMethod, path, args, de
   this.description = args.description;
   this.useJQuery = parent.useJQuery;
 
+  if(typeof this.deprecated === 'string') {
+    switch(this.deprecated.toLowerCase()) {
+      case 'true': case 'yes': case '1': {
+        this.deprecated = true;
+        break;
+      }
+      case 'false': case 'no': case '0': case null: {
+        this.deprecated = false;
+        break;
+      }
+      default: this.deprecated = Boolean(this.deprecated);
+    }
+  }
+
   if(definitions) {
     // add to global models
     var key;
@@ -528,9 +542,7 @@ Operation.prototype.getHeaderParams = function (args) {
       if (param.in === 'header') {
         var value = args[param.name];
         if(Array.isArray(value))
-          value = this.encodePathCollection(param.collectionFormat, param.name, value);
-        else
-          value = this.encodePathParam(value);
+          value = value.toString();
         headers[param.name] = value;
       }
     }
