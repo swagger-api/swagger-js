@@ -296,6 +296,20 @@ var Operation = function(parent, scheme, operationId, httpMethod, path, args, de
   this.description = args.description;
   this.useJQuery = parent.useJQuery;
 
+  if(typeof this.deprecated === 'string') {
+    switch(this.deprecated.toLowerCase()) {
+      case 'true': case 'yes': case '1': {
+        this.deprecated = true;
+        break;
+      }
+      case 'false': case 'no': case '0': case null: {
+        this.deprecated = false;
+        break;
+      }
+      default: this.deprecated = Boolean(this.deprecated);
+    }
+  }
+
   if(definitions) {
     // add to global models
     var key;

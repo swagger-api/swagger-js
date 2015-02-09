@@ -248,6 +248,38 @@ describe('operations', function() {
     var op = new swagger.Operation({}, 'http', 'test', 'get', '/fantastic', { parameters: parameters });
     expect(op.parameters[0].signature).toEqual('Array[date-time]');
   });
+
+  it('should process the deprecated flag as boolean true', function() {
+    var parameters = [
+      { in: 'query', name: 'year', type: 'array', items: {type: 'string', format: 'date-time'} }
+    ];
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/fantastic', { parameters: parameters, deprecated: true });
+    expect(op.deprecated).toEqual(true);
+  });
+
+  it('should process the deprecated flag as boolean false', function() {
+    var parameters = [
+      { in: 'query', name: 'year', type: 'array', items: {type: 'string', format: 'date-time'} }
+    ];
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/fantastic', { parameters: parameters, deprecated: false });
+    expect(op.deprecated).toEqual(false);
+  });
+
+  it('should process the deprecated flag as string true', function() {
+    var parameters = [
+      { in: 'query', name: 'year', type: 'array', items: {type: 'string', format: 'date-time'} }
+    ];
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/fantastic', { parameters: parameters, deprecated: 'true' });
+    expect(op.deprecated).toEqual(true);
+  });
+
+  it('should process the deprecated flag as string false', function() {
+    var parameters = [
+      { in: 'query', name: 'year', type: 'array', items: {type: 'string', format: 'date-time'} }
+    ];
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/fantastic', { parameters: parameters, deprecated: 'false' });
+    expect(op.deprecated).toEqual(false);
+  });
 });
 
 var quantityQP = {
