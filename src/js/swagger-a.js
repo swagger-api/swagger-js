@@ -296,6 +296,20 @@ var Operation = function(parent, scheme, operationId, httpMethod, path, args, de
   this.description = args.description;
   this.useJQuery = parent.useJQuery;
 
+  if(typeof this.deprecated === 'string') {
+    switch(this.deprecated.toLowerCase()) {
+      case 'true': case 'yes': case '1': {
+        this.deprecated = true;
+        break;
+      }
+      case 'false': case 'no': case '0': case null: {
+        this.deprecated = false;
+        break;
+      }
+      default: this.deprecated = Boolean(this.deprecated);
+    }
+  }
+
   if(definitions) {
     // add to global models
     var key;
@@ -332,12 +346,15 @@ var Operation = function(parent, scheme, operationId, httpMethod, path, args, de
         param.allowableValues.descriptiveValues.push({value : value, isDefault: isDefault});
       }
     }
-    if(param.type === 'array' && typeof param.allowableValues === 'undefined') {
-      // can't show as a list if no values to select from
-      delete param.isList;
-      delete param.allowMultiple;
+    if(param.type === 'array') {
+      innerType = [innerType];
+      if(typeof param.allowableValues === 'undefined') {
+        // can't show as a list if no values to select from
+        delete param.isList;
+        delete param.allowMultiple;
+      }
     }
-    param.signature = this.getModelSignature(innerType, models);
+    param.signature = this.getModelSignature(innerType, models).toString();
     param.sampleJSON = this.getModelSampleJSON(innerType, models);
     param.responseClassSignature = param.signature;
   }
@@ -489,16 +506,21 @@ Operation.prototype.getModelSignature = function(type, definitions) {
     listType = true;
     type = type[0];
   }
+  else if(typeof type === 'undefined')
+    type = 'undefined';
 
   if(type === 'string')
     isPrimitive = true;
   else
     isPrimitive = (listType && definitions[listType]) || (definitions[type]) ? false : true;
   if (isPrimitive) {
-    return type;
+    if(listType)
+      return 'Array[' + type + ']';
+    else
+      return type.toString();
   } else {
     if (listType)
-      return definitions[type].getMockSignature();
+      return 'Array[' + definitions[type].getMockSignature() + ']';
     else
       return definitions[type].getMockSignature();
   }
@@ -688,8 +710,13 @@ Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
     fail(message);
     return;
   }
-  var headers = this.getHeaderParams(args);
-  headers = this.setContentTypes(args, opts);
+  var allHeaders = this.getHeaderParams(args);
+  var contentTypeHeaders = this.setContentTypes(args, opts);
+
+  var headers = {};
+  for (var attrname in allHeaders) { headers[attrname] = allHeaders[attrname]; }
+  for (var attrname in contentTypeHeaders) { headers[attrname] = contentTypeHeaders[attrname]; }
+
   var body = this.getBody(headers, args);
   var url = this.urlify(args);
 
@@ -736,10 +763,10 @@ Operation.prototype.setContentTypes = function(args, opts) {
       else
         definedFormParams.push(param);
     }
-    else if(param.in === 'header' && this.headers) {
+    else if(param.in === 'header' && opts) {
       var key = param.name;
-      var headerValue = this.headers[param.name];
-      if(typeof this.headers[param.name] !== 'undefined')
+      var headerValue = opts[param.name];
+      if(typeof opts[param.name] !== 'undefined')
         headers[key] = headerValue;
     }
     else if(param.in === 'body' && typeof args[param.name] !== 'undefined') {
@@ -907,21 +934,20 @@ var Model = function(name, definition) {
 };
 
 Model.prototype.createJSONSample = function(modelsToIgnore) {
-  var result = {};
+  var i, result = {};
   modelsToIgnore = (modelsToIgnore||{});
   modelsToIgnore[this.name] = this;
-  var i;
   for (i = 0; i < this.properties.length; i++) {
     prop = this.properties[i];
-    result[prop.name] = prop.getSampleValue(modelsToIgnore);
+    var sample = prop.getSampleValue(modelsToIgnore);
+    result[prop.name] = sample;
   }
   delete modelsToIgnore[this.name];
   return result;
 };
 
 Model.prototype.getSampleValue = function(modelsToIgnore) {
-  var i;
-  var obj = {};
+  var i, obj = {};
   for(i = 0; i < this.properties.length; i++ ) {
     var property = this.properties[i];
     obj[property.name] = property.sampleValue(false, modelsToIgnore);
@@ -930,8 +956,7 @@ Model.prototype.getSampleValue = function(modelsToIgnore) {
 };
 
 Model.prototype.getMockSignature = function(modelsToIgnore) {
-  var propertiesStr = [];
-  var i, prop;
+  var i, prop, propertiesStr = [];
   for (i = 0; i < this.properties.length; i++) {
     prop = this.properties[i];
     propertiesStr.push(prop.toString());
@@ -1005,7 +1030,7 @@ Property.prototype.isArray = function () {
 Property.prototype.sampleValue = function(isArray, ignoredModels) {
   isArray = (isArray || this.isArray());
   ignoredModels = (ignoredModels || {});
-  var type = getStringSignature(this.obj);
+  var type = getStringSignature(this.obj, true);
   var output;
 
   if(this.$ref) {
@@ -1015,8 +1040,9 @@ Property.prototype.sampleValue = function(isArray, ignoredModels) {
       ignoredModels[type] = this;
       output = refModel.getSampleValue(ignoredModels);
     }
-    else
-      type = refModel;
+    else {
+      output = refModelName;
+    }
   }
   else if(this.example)
     output = this.example;
@@ -1047,16 +1073,20 @@ Property.prototype.sampleValue = function(isArray, ignoredModels) {
     return output;
 };
 
-getStringSignature = function(obj) {
+getStringSignature = function(obj, baseComponent) {
   var str = '';
   if(typeof obj.$ref !== 'undefined')
     str += simpleRef(obj.$ref);
   else if(typeof obj.type === 'undefined')
     str += 'object';
   else if(obj.type === 'array') {
-    str += 'Array[';
-    str += getStringSignature((obj.items || obj.$ref || {}));
-    str += ']';
+    if(baseComponent)
+      str += getStringSignature((obj.items || obj.$ref || {}));
+    else {
+      str += 'Array[';
+      str += getStringSignature((obj.items || obj.$ref || {}));
+      str += ']';
+    }
   }
   else if(obj.type === 'integer' && obj.format === 'int32')
     str += 'integer';

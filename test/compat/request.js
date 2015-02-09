@@ -45,7 +45,6 @@ describe('request operations', function() {
   it('generate a get request', function() {
     var petApi = sample.pet;
     var req = petApi.getPetById({petId: 1}, {mock: true});
-
     expect(petApi.operations.getPetById.deprecated).toBe(true);
   });
 
