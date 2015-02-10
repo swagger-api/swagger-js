@@ -9,13 +9,14 @@ var SwaggerClient = function(url, options) {
   this.isValid = false;
   this.info = null;
   this.useJQuery = false;
+  this.resourceCount = 0;
 
   if(typeof url !== 'undefined')
     return this.initialize(url, options);
 };
 
 SwaggerClient.prototype.initialize = function (url, options) {
-  this.models = models;
+  this.models = models = {};
 
   options = (options||{});
 
