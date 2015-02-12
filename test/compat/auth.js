@@ -4,7 +4,7 @@ var mock = require('../../test/compat/mock');
 var swagger = require('../../lib/swagger-client');
 var sample, instance;
 
-describe('api key authorizations', function() {
+describe('1.2 api key authorizations', function() {
   before(function(done) {
     mock.petstore(done, function(petstore, server){
       sample = petstore;

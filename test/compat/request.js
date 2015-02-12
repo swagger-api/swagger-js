@@ -4,7 +4,7 @@ var mock = require('../../test/compat/mock');
 var swagger = require('../../lib/swagger-client');
 var sample, instance;
 
-describe('request operations', function() {
+describe('1.2 request operations', function() {
   before(function(done) {
     mock.petstore(done, function(petstore, server){
       sample = petstore;
@@ -14,7 +14,6 @@ describe('request operations', function() {
 
   after(function(done){
     instance.close();
-
     done();
   });
 

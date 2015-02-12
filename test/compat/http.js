@@ -3,7 +3,7 @@ var expect = require('expect');
 var mock = require('../../test/compat/mock');
 var sample, instance;
 
-describe('http', function() {
+describe('1.2 http', function() {
   before(function(done) {
     mock.petstore(done, function(petstore, server){
       sample = petstore;

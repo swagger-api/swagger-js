@@ -3,7 +3,7 @@ var expect = require('expect');
 var mock = require('../../test/compat/mock');
 var sample, instance;
 
-describe('model signatures', function() {
+describe('1.2 model signatures', function() {
   before(function(done) {
     mock.petstore(done, function(petstore, server){
       sample = petstore;

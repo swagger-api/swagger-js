@@ -109,7 +109,6 @@ SwaggerClient.prototype.build = function(mock) {
       return obj;
     new SwaggerHttp().execute(obj);
   }
-
   return this;
 };
 
@@ -225,8 +224,11 @@ SwaggerClient.prototype.buildFromSpec = function(response) {
     }
   }
   this.isBuilt = true;
-  if (this.success)
+  if (this.success) {
+    this.isValid = true;
+    this.isBuilt = true;
     this.success();
+  }
   return this;
 };
 

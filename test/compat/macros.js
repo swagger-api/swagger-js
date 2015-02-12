@@ -3,7 +3,7 @@ var expect = require('expect');
 var mock = require('../../test/compat/mock');
 var sample, instance;
 
-describe('macro overrides', function() {
+describe('1.2 macro overrides', function() {
   before(function(done) {
     var macros = {
       parameter: function(operation, parameter) {
