@@ -17,10 +17,10 @@ SwaggerAuthorizations.prototype.remove = function(name) {
 
 SwaggerAuthorizations.prototype.apply = function (obj, authorizations) {
   var status = null;
-  var key, value, result;
+  var key, name, value, result;
 
   // if the "authorizations" key is undefined, or has an empty array, add all keys
-  if (typeof authorizations === 'undefined' || Object.keys(authorizations).length == 0) {
+  if (typeof authorizations === 'undefined' || Object.keys(authorizations).length === 0) {
     for (key in this.authz) {
       value = this.authz[key];
       result = value.apply(obj, authorizations);
