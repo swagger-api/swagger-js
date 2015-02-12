@@ -14,7 +14,6 @@ describe('2.0 authorizations', function() {
 
   after(function(done){
     instance.close();
-
     swagger.authorizations.authz = {};
     done();
   });
@@ -50,7 +49,7 @@ describe('2.0 authorizations', function() {
 
     var req = petApi.getPetById(params, opts);
     expect(req.url).toBe('http://localhost:8000/v2/api/pet/1');
-    expect(req.headers['api_key']).toBe('abc123');
+    expect(req.headers.api_key).toBe('abc123');
     swagger.authorizations.authz = {};
   });
 

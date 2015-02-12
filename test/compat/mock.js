@@ -8,9 +8,9 @@ var sample;
 exports.swagger = swagger;
 
 exports.petstore = function(arg1, arg2, arg3, arg4) {
-  var done = arg1, opts = arg2, callback = arg3, macros = arg4;
+  var done = arg1, opts = arg2 || {}, callback = arg3, macros = arg4;
   if(typeof arg2 === 'function') {
-    opts = null;
+    opts = {};
     callback = arg2;
     macros = arg3;
   }
@@ -28,7 +28,7 @@ exports.petstore = function(arg1, arg2, arg3, arg4) {
     else {
       fs.exists(filename, function(exists) {
         if(exists) {
-          var accept = req.headers['accept'];
+          var accept = req.headers.accept;
           if(typeof accept !== 'undefined') {
             if(accept === 'invalid') {
               res.writeHead(500);
@@ -59,8 +59,6 @@ exports.petstore = function(arg1, arg2, arg3, arg4) {
   }).listen(8000);
 
   instance.on("listening", function() {
-    var self = {}; self.stop = done;
-
     if(macros) {
       if(macros.parameter) {
         console.log('    warn: set parameter macro');
@@ -71,17 +69,12 @@ exports.petstore = function(arg1, arg2, arg3, arg4) {
         swagger.modelPropertyMacro = macros.modelProperty;
       }
     }
-    var sample = new swagger.SwaggerClient('http://localhost:8000/v1/api-docs.json', opts);
-    sample.build();
-    var count = 0, isDone = false;
-    var f = function () {
-      if(!isDone) {
-        isDone = true;
-        self.stop();
-      }
+    opts.success = function() {
+      done();
       callback(sample, instance);
       return;
     };
-    setTimeout(f, 50);
+    opts.url = 'http://localhost:8000/v1/api-docs.json';
+    var sample = new swagger.SwaggerClient(opts);
   });
-}
+};

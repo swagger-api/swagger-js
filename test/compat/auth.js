@@ -1,10 +1,10 @@
-var test = require('unit.js')
-var expect = require('expect')
+var test = require('unit.js');
+var expect = require('expect');
 var mock = require('../../test/compat/mock');
 var swagger = require('../../lib/swagger-client');
 var sample, instance;
 
-describe('api key authorizations', function() {
+describe('1.2 api key authorizations', function() {
   before(function(done) {
     mock.petstore(done, function(petstore, server){
       sample = petstore;
@@ -51,7 +51,7 @@ describe('api key authorizations', function() {
 
     var req = petApi.getPetById(params, opts);
     expect(req.url).toBe('http://localhost:8000/v1/api/pet/1');
-    expect(req.headers['api_key']).toBe('abc123');
+    expect(req.headers.api_key).toBe('abc123');
     swagger.authorizations.authz = {};
   });
 

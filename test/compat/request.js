@@ -1,10 +1,10 @@
-var test = require('unit.js')
-var expect = require('expect')
+var test = require('unit.js');
+var expect = require('expect');
 var mock = require('../../test/compat/mock');
 var swagger = require('../../lib/swagger-client');
 var sample, instance;
 
-describe('request operations', function() {
+describe('1.2 request operations', function() {
   before(function(done) {
     mock.petstore(done, function(petstore, server){
       sample = petstore;
@@ -14,7 +14,6 @@ describe('request operations', function() {
 
   after(function(done){
     instance.close();
-
     done();
   });
 
@@ -38,7 +37,7 @@ describe('request operations', function() {
 
     test.object(req);
     expect(req.method).toBe('GET');
-    expect(req.headers['Accept']).toBe('application/json');
+    expect(req.headers.Accept).toBe('application/json');
     expect(req.url).toBe('http://localhost:8000/v1/api/pet/1');
   });
 
@@ -59,7 +58,7 @@ describe('request operations', function() {
     var req = petApi.findPetsByStatus(params, opts);
 
     expect(req.method).toBe("GET");
-    expect(req.headers["Accept"]).toBe("application/json");
+    expect(req.headers.Accept).toBe("application/json");
     expect(req.url).toBe("http://localhost:8000/v1/api/pet/findByStatus?status=available");
   });
 
@@ -78,7 +77,7 @@ describe('request operations', function() {
     var req = petApi.addPet(params, opts);
 
     expect(req.method).toBe("POST");
-    expect(req.headers["Accept"]).toBe("application/json");
+    expect(req.headers.Accept).toBe("application/json");
     expect(req.headers["Content-Type"]).toBe("application/json");
     expect(req.body).toBe('{"id":100,"name":"monster","status":"dead"}');
     expect(req.url).toBe("http://localhost:8000/v1/api/pet");
@@ -97,7 +96,7 @@ describe('request operations', function() {
     var req = petApi.updatePetWithForm(params, opts);
 
     expect(req.method).toBe('POST');
-    expect(req.headers['Accept']).toBe('application/json');
+    expect(req.headers.Accept).toBe('application/json');
     expect(req.headers['Content-Type']).toBe('application/x-www-form-urlencoded');
     expect(req.body).toBe('name=dog&status=very%20happy');
     expect(req.url).toBe('http://localhost:8000/v1/api/pet/1');
@@ -118,7 +117,7 @@ describe('request operations', function() {
     var req = petApi.updatePet(params, opts);
 
     expect(req.method).toBe('PUT');
-    expect(req.headers['Accept']).toBe('application/json');
+    expect(req.headers.Accept).toBe('application/json');
     expect(req.headers['Content-Type']).toBe('application/json');
     expect(req.body).toBe('{\"id\":100,\"name\":\"monster\",\"status\":\"dead\"}');
     expect(req.url).toBe('http://localhost:8000/v1/api/pet');
@@ -135,7 +134,7 @@ describe('request operations', function() {
     var req = petApi.deletePet(params, opts);
 
     expect(req.method).toBe('DELETE');
-    expect(req.headers['Accept']).toBe('application/json');
+    expect(req.headers.Accept).toBe('application/json');
     expect(req.headers['Content-Type']).toBe('application/json');
     expect(req.url).toBe('http://localhost:8000/v1/api/pet/100');
   });
@@ -151,7 +150,7 @@ describe('request operations', function() {
     var req = petApi.findPetsByStatus(params, opts);
 
     expect(req.method).toBe('GET');
-    expect(req.headers['Accept']).toBe('application/json');
+    expect(req.headers.Accept).toBe('application/json');
     test.value(req.headers['Content-Type']).isUndefined();
     expect(req.url).toBe('http://localhost:8000/v1/api/pet/findByStatus?status=a%20b%20c%20d%20e');
   });
@@ -167,16 +166,16 @@ describe('request operations', function() {
     var req = petApi.getPetById(params, opts);
 
     expect(req.method).toBe('GET');
-    expect(req.headers['Accept']).toBe('application/json');
+    expect(req.headers.Accept).toBe('application/json');
     test.value(req.headers['Content-Type']).isUndefined();
     expect(req.url).toBe('http://localhost:8000/v1/api/pet/false');
   });
 
   it('tests the urlify function', function() {
-    var op = sample.apis['pet'].operations.getPetById
+    var op = sample.apis.pet.operations.getPetById;
     op.pathJson = function() {
-      return "/entities/{id:([a-z0-9-]{36})}"
-    }
+      return "/entities/{id:([a-z0-9-]{36})}";
+    };
     // console.log(op.urlify({petId: 1, 'id:\(\[a\-z0\-9\-\]\{36\}\)': 'ok'}));
   });
 
@@ -191,7 +190,7 @@ describe('request operations', function() {
   });
 
   it('tests the body param when name is not `body`, per #168', function() {
-    var op = sample.apis['pet'].operations.addPet
+    var op = sample.apis.pet.operations.addPet;
     op.parameters[0].name = 'pet';
 
     var params = {
@@ -206,7 +205,7 @@ describe('request operations', function() {
   it('verifies headers when fetching the swagger specification', function() {
     var sample = new swagger.SwaggerClient('http://localhost:8000/api-docs.json');
     var req = sample.build(true);
-    expect(req.headers['accept']).toBe('application/json;charset=utf-8,*/*');
+    expect(req.headers.accept).toBe('application/json;charset=utf-8,*/*');
   });
 
   it('allows override of headers when fetching the swagger specification', function() {
@@ -215,7 +214,7 @@ describe('request operations', function() {
     };
     var sample = new swagger.SwaggerClient('http://localhost:8000/api-docs.json', opts);
     var req = sample.build(true);
-    expect(req.headers['accept']).toBe('foo/bar');
+    expect(req.headers.accept).toBe('foo/bar');
   });
 
   it('verifies the http request object for a GET with email address query params per https://github.com/swagger-api/swagger-ui/issues/814', function() {
@@ -229,7 +228,7 @@ describe('request operations', function() {
     var req = petApi.findPetsByStatus(params, opts);
 
     expect(req.method).toBe("GET");
-    expect(req.headers["Accept"]).toBe("application/json");
+    expect(req.headers.Accept).toBe("application/json");
     expect(req.url).toBe("http://localhost:8000/v1/api/pet/findByStatus?status=fehguy%40gmail.com");
   });
 
@@ -241,7 +240,7 @@ describe('request operations', function() {
     var req = petApi.findPetsByTags(params, opts);
 
     expect(req.method).toBe('GET');
-    expect(req.headers['Accept']).toBe('application/json');
+    expect(req.headers.Accept).toBe('application/json');
     test.value(req.headers['Content-Type']).isUndefined();
     expect(req.url).toBe('http://localhost:8000/v1/api/pet/findByTags');
   });
@@ -254,8 +253,8 @@ describe('request operations', function() {
     var req = petApi.findPetsByTags(params, opts);
 
     expect(req.method).toBe('GET');
-    expect(req.headers['Accept']).toBe('application/json');
+    expect(req.headers.Accept).toBe('application/json');
     test.value(req.headers['Content-Type']).isUndefined();
     expect(req.url).toBe('http://localhost:8000/v1/api/pet/findByTags');
   });
-})
+});
