@@ -14,9 +14,9 @@ describe('models', function() {
           type: "string"
         }
       }
-    }
+    };
     var model = new swagger.Model('Tag', definition);
-    expect(model.createJSONSample()).toEqual({ id: 0, name: 'string' })
+    expect(model.createJSONSample()).toEqual({ id: 0, name: 'string' });
   });
 
   it('should verify the JSON sample for a primitive array', function() {
@@ -25,7 +25,7 @@ describe('models', function() {
       items: {
         type: "string"
       }
-    }
+    };
     var model = new swagger.Model('Tag', definition);
     expect(model.createJSONSample()).toEqual(['string']);
   });
@@ -45,7 +45,7 @@ describe('models', function() {
           type: 'array'
         }
       }
-    }
+    };
     var model = new swagger.Model('Sample', definition);
     expect(model.createJSONSample()).toEqual({ id: 0, name: 'string', photos: [ {} ] });
   });
@@ -65,7 +65,7 @@ describe('models', function() {
           type: 'array'
         }
       }
-    }
+    };
     var model = new swagger.Model('Sample', definition);
     expect(model.getMockSignature()).toEqual('<span class="strong">Sample {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">photos</span> (<span class="propType">Array[object]</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span>');
   });
@@ -82,11 +82,11 @@ describe('models', function() {
           }
         }
       }
-    }
+    };
     var model = new swagger.Model('Sample', definition);
     var property = model.properties[0];
     // TODO: verify that enums are represented in the mock signature
-    console.log(model.createJSONSample());
+    // console.log(model.createJSONSample());
   });
 
   it('should not get infinite recursion', function() {
@@ -112,9 +112,9 @@ describe('models', function() {
           }
         }
       }
-    }
+    };
     var model = new swagger.Model('Component', definition);
-    swagger.models['Component'] = model;
+    swagger.addModel('Component', model);
     expect(model.createJSONSample()).toEqual(
       {
         pendingComponents: [
@@ -138,7 +138,7 @@ describe('models', function() {
       }
     };
     var model = new swagger.Model('ListOfSelf', definition);
-    swagger.models['ListOfSelf'] = model;
+    swagger.addModel('ListOfSelf', model);
     expect(model.createJSONSample()).toEqual(
       [ 'ListOfSelf' ]
     );
@@ -151,8 +151,9 @@ describe('models', function() {
         $ref: 'DictionaryOfSelf'
       }
     };
+
     var model = new swagger.Model('DictionaryOfSelf', definition);
-    swagger.models['DictionaryOfSelf'] = model;
+    swagger.addModel.DictionaryOfSelf = model;
     // console.log(model.createJSONSample());
     // TODO add support for this
   });

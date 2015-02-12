@@ -62,10 +62,10 @@ describe('http', function() {
     var petApi = sample.pet;
     var success = function(data) {
       done();
-    }
+    };
     var failure = function(data) {
       done();
-    }
+    };
     var req = petApi.getPetById({petId: 0}, {responseContentType: 'invalid'}, success, failure);
   });
 
@@ -73,10 +73,10 @@ describe('http', function() {
     var petApi = sample.pet;
     var success = function(data) {
       fail();
-    }
+    };
     var failure = function(data) {
       done();
-    }
+    };
     var req = petApi.getPetById({petId: 0}, success, failure);
   });
 });

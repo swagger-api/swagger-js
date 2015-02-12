@@ -116,7 +116,7 @@ describe('swagger request functions', function() {
 
   it('return a json sample in array', function() {
     var successResponse = sample.pet.operations.findPetsByTags.successResponse;
-    expect(typeof successResponse['200']).toBe('object')
+    expect(typeof successResponse['200']).toBe('object');
     expect(successResponse['200'].createJSONSample()).toEqual([
       {
         "id": 0,
@@ -141,7 +141,7 @@ describe('swagger request functions', function() {
 
   it('return a json sample from an array model', function() {
     var successResponse = sample.pet.operations.findPetsByStatus.successResponse;
-    expect(typeof successResponse['200']).toBe('object')
+    expect(typeof successResponse['200']).toBe('object');
     expect(successResponse['200'].createJSONSample()).toEqual([
       {
         "id": 0,

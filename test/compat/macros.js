@@ -15,7 +15,7 @@ describe('macro overrides', function() {
       modelProperty: function(model, property) {
         return property.defaultValue;
       }
-    }
+    };
     mock.petstore(done, function(petstore, server){
       sample = petstore;
       instance = server;
