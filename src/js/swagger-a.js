@@ -1,3 +1,7 @@
+var addModel = function(name, model) {
+  models[name] = model;
+};
+
 var SwaggerClient = function(url, options) {
   this.isBuilt = false;
   this.url = null;
@@ -311,18 +315,18 @@ var Operation = function(parent, scheme, operationId, httpMethod, path, args, de
     }
   }
 
+  var i, model;
+
   if(definitions) {
     // add to global models
     var key;
     for(key in this.definitions) {
-      var model = new Model(key, definitions[key]);
+      model = new Model(key, definitions[key]);
       if(model) {
         models[key] = model;
       }
     }
   }
-
-  var i;
   for(i = 0; i < this.parameters.length; i++) {
     var param = this.parameters[i];
     if(param.type === 'array') {
@@ -360,7 +364,7 @@ var Operation = function(parent, scheme, operationId, httpMethod, path, args, de
     param.responseClassSignature = param.signature;
   }
 
-  var defaultResponseCode, response, model, responses = this.responses;
+  var defaultResponseCode, response, responses = this.responses;
 
   if(responses['200']) {
     response = responses['200'];
@@ -714,9 +718,9 @@ Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
   var allHeaders = this.getHeaderParams(args);
   var contentTypeHeaders = this.setContentTypes(args, opts);
 
-  var headers = {};
-  for (var attrname in allHeaders) { headers[attrname] = allHeaders[attrname]; }
-  for (var attrname in contentTypeHeaders) { headers[attrname] = contentTypeHeaders[attrname]; }
+  var headers = {}, attrname;
+  for (attrname in allHeaders) { headers[attrname] = allHeaders[attrname]; }
+  for (attrname in contentTypeHeaders) { headers[attrname] = contentTypeHeaders[attrname]; }
 
   var body = this.getBody(headers, args);
   var url = this.urlify(args);
@@ -1158,7 +1162,7 @@ Property.prototype.toString = function() {
       type = '';
   }
   else {
-    this.schema.type;
+    type = this.schema.type;
   }
 
   if (this.default)
@@ -1219,7 +1223,7 @@ Property.prototype.toString = function() {
 
 optionHtml = function(label, value) {
   return '<tr><td class="optionName">' + label + ':</td><td>' + value + '</td></tr>';
-}
+};
 
 typeFromJsonSchema = function(type, format) {
   var str;
