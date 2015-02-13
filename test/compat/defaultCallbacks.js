@@ -4,7 +4,7 @@ var mock = require('../../test/compat/mock');
 var swagger = require('../../lib/swagger-client');
 var sample, instance;
 
-describe('default success callback', function() {
+describe('1.2 default success callback', function() {
   var opts = {};
   var finished;
   opts.defaultSuccessCallback = function(data) {

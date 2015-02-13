@@ -587,6 +587,7 @@
           "application/json",
           "application/xml"
         ],
+        "security" : [],
         "parameters": [
           {
             "name": "username",

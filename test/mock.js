@@ -8,7 +8,7 @@ var sample;
 exports.petstore = function(arg1, arg2, arg3, arg4) {
   var done = arg1, opts = arg2, callback = arg3, macros = arg4;
   if(typeof arg2 === 'function') {
-    opts = null;
+    opts = {};
     callback = arg2;
     macros = arg3;
   }
@@ -57,8 +57,6 @@ exports.petstore = function(arg1, arg2, arg3, arg4) {
   }).listen(8000);
 
   instance.on("listening", function() {
-    var self = {}; self.stop = done;
-
     if(macros) {
       if(macros.parameter) {
         console.log('    warn: set parameter macro');
@@ -69,17 +67,12 @@ exports.petstore = function(arg1, arg2, arg3, arg4) {
         swagger.modelPropertyMacro = macros.modelProperty;
       }
     }
-    var sample = new swagger.SwaggerClient({url: 'http://localhost:8000/v2/petstore.json', opts: opts});
-    sample.build();
-    var count = 0, isDone = false;
-    var f = function () {
-      if(!isDone) {
-        isDone = true;
-        self.stop();
-      }
+    opts.url = 'http://localhost:8000/v2/petstore.json';
+    opts.success = function() {
+      done();
       callback(sample, instance);
       return;
     };
-    setTimeout(f, 50);
+    var sample = new swagger.SwaggerClient(opts);
   });
 };

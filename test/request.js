@@ -116,7 +116,7 @@ describe('swagger request functions', function() {
 
   it('return a json sample in array', function() {
     var successResponse = sample.pet.operations.findPetsByTags.successResponse;
-    expect(typeof successResponse['200']).toBe('object')
+    expect(typeof successResponse['200']).toBe('object');
     expect(successResponse['200'].createJSONSample()).toEqual([
       {
         "id": 0,
@@ -141,7 +141,7 @@ describe('swagger request functions', function() {
 
   it('return a json sample from an array model', function() {
     var successResponse = sample.pet.operations.findPetsByStatus.successResponse;
-    expect(typeof successResponse['200']).toBe('object')
+    expect(typeof successResponse['200']).toBe('object');
     expect(successResponse['200'].createJSONSample()).toEqual([
       {
         "id": 0,
@@ -210,5 +210,15 @@ describe('swagger request functions', function() {
     var req = userApi.loginUser({username: 'fred', password: 'meyer'}, {mock: true});
     test.object(req);
     expect(req.url).toBe('https://localhost:8000/v2/api/user/login?username=fred&password=meyer');
+  });
+
+  it('should process a delete request with headers', function () {
+    var petApi = sample.pet;
+    var req = petApi.deletePet({petId: 1, api_key: 'abc123'}, {mock: true});
+
+    test.object(req);
+    expect(req.method).toEqual('DELETE');
+    expect(req.url).toEqual('http://localhost:8000/v2/api/pet/1');
+    expect(req.headers.api_key).toEqual('abc123');
   });
 });

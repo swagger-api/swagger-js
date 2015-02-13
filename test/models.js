@@ -14,9 +14,9 @@ describe('models', function() {
           type: "string"
         }
       }
-    }
+    };
     var model = new swagger.Model('Tag', definition);
-    expect(model.createJSONSample()).toEqual({ id: 0, name: 'string' })
+    expect(model.createJSONSample()).toEqual({ id: 0, name: 'string' });
   });
 
   it('should verify the JSON sample for a primitive array', function() {
@@ -25,7 +25,7 @@ describe('models', function() {
       items: {
         type: "string"
       }
-    }
+    };
     var model = new swagger.Model('Tag', definition);
     expect(model.createJSONSample()).toEqual(['string']);
   });
@@ -45,7 +45,7 @@ describe('models', function() {
           type: 'array'
         }
       }
-    }
+    };
     var model = new swagger.Model('Sample', definition);
     expect(model.createJSONSample()).toEqual({ id: 0, name: 'string', photos: [ {} ] });
   });
@@ -65,26 +65,96 @@ describe('models', function() {
           type: 'array'
         }
       }
-    }
+    };
     var model = new swagger.Model('Sample', definition);
     expect(model.getMockSignature()).toEqual('<span class="strong">Sample {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">photos</span> (<span class="propType">Array[object]</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span>');
   });
 
   it('should build a model with an array and enum values', function() {
     var definition = {
-      type: "object",
+      type: 'object',
       properties: {
         name: {
-          type: "array",
+          type: 'array',
           items: {
-            type: "string",
-            "enum": [ "value1", "value2", "value3", "value4"]
+            type: 'string',
+            enum: [ 'value1', 'value2', 'value3', 'value4']
           }
         }
       }
-    }
+    };
     var model = new swagger.Model('Sample', definition);
-    console.log(model);
-    console.log(model.createJSONSample());
+    var property = model.properties[0];
+    // TODO: verify that enums are represented in the mock signature
+    // console.log(model.createJSONSample());
+  });
+
+  it('should not get infinite recursion', function() {
+    var definition = {
+      type: 'object',
+      properties: {
+        pendingComponents: {
+          type: 'array',
+          items: {
+            $ref: 'Component'
+          }
+        },
+        receivedComponents: {
+          type: 'array',
+          items: {
+            $ref: 'Component'
+          }
+        },
+        rejectedComponents: {
+          type: 'array',
+          items: {
+            $ref: 'Component'
+          }
+        }
+      }
+    };
+    var model = new swagger.Model('Component', definition);
+    swagger.addModel('Component', model);
+    expect(model.createJSONSample()).toEqual(
+      {
+        pendingComponents: [
+          'Component'
+        ],
+        receivedComponents: [
+          'Component'
+        ],
+        rejectedComponents: [
+          'Component'
+        ]
+      }
+    );
+  });
+
+  it('should not get infinite recursion case 2', function() {
+    var definition = {
+      type: "array",
+      items: {
+        $ref: "ListOfSelf"
+      }
+    };
+    var model = new swagger.Model('ListOfSelf', definition);
+    swagger.addModel('ListOfSelf', model);
+    expect(model.createJSONSample()).toEqual(
+      [ 'ListOfSelf' ]
+    );
+  });
+
+  it('should not get infinite recursion case 3', function() {
+    definition = {
+      type: 'object',
+      additionalProperties: {
+        $ref: 'DictionaryOfSelf'
+      }
+    };
+
+    var model = new swagger.Model('DictionaryOfSelf', definition);
+    swagger.addModel.DictionaryOfSelf = model;
+    // console.log(model.createJSONSample());
+    // TODO add support for this
   });
 });

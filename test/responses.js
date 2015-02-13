@@ -25,11 +25,11 @@ describe('response types', function() {
       200:       MonsterResponse,
       201:       StringResponse,
       'default': BasicResponseModel
-    }
+    };
     var definitions = {
       Monster: MonsterModel,
       ResponseModel: ResponseModel
-    }
+    };
 
     var op = new swagger.Operation(
       {},
@@ -44,7 +44,7 @@ describe('response types', function() {
     var responseModel = op.successResponse['200'];
     expect(op.successResponse['200'].createJSONSample()).toEqual({ id: 0, name: 'string' });
 
-    var responses = op.responses;
+    responses = op.responses;
     expect(typeof responses['201']).toBe('object');
     expect(typeof responses['default']).toBe('object');
   });

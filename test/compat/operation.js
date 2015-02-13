@@ -1,9 +1,9 @@
-var test = require('unit.js')
-var expect = require('expect')
+var test = require('unit.js');
+var expect = require('expect');
 var mock = require('../../test/compat/mock');
 var sample, instance;
 
-describe('verifies the nickname is sanitized', function() {
+describe('1.2 verifies the nickname is sanitized', function() {
   before(function(done) {
     mock.petstore(done, function(petstore, server){
       sample = petstore;
@@ -13,7 +13,6 @@ describe('verifies the nickname is sanitized', function() {
 
   after(function(done){
     instance.close();
-
     done();
   });
 
@@ -63,7 +62,6 @@ describe('verifies the get pet operation', function() {
 
   after(function(done){
     instance.close();
-
     done();
   });
 
@@ -81,7 +79,7 @@ describe('verifies the get pet operation', function() {
     operation = sample.pet.operations.getPetById;
     operation.resource.basePath = 'http://foo.bar/api/';
     var url = operation.urlify({petId: 129298});
-    expect(url).toBe('http://foo.bar/api/pet/129298')
+    expect(url).toBe('http://foo.bar/api/pet/129298');
   });
 
   it('verifies the default value from the get operation', function() {
@@ -96,7 +94,7 @@ describe('verifies the get pet operation', function() {
   });
 
   it('verifies the get pet operation', function() {
-    operation = sample.pet.operations.getPetById
+    operation = sample.pet.operations.getPetById;
     expect(operation.method).toBe('get');
 
     parameters = operation.parameters;
@@ -104,7 +102,7 @@ describe('verifies the get pet operation', function() {
     test.object(parameters);
     expect(parameters.length).toBe(1);
 
-    param = parameters[0]
+    param = parameters[0];
     expect(param.name).toBe('petId');
     expect(param.type).toBe('integer');
     expect(param.paramType).toBe('path');
@@ -112,15 +110,15 @@ describe('verifies the get pet operation', function() {
   });
 
   it('verifies the post pet operation', function() {
-    operation = sample.pet.operations.addPet
+    operation = sample.pet.operations.addPet;
     expect(operation.method).toBe('post');
 
-    parameters = operation.parameters
+    parameters = operation.parameters;
 
     test.object(parameters);
     expect(parameters.length).toBe(1);
 
-    param = parameters[0]
+    param = parameters[0];
     expect(param.name).toBe('body');
     expect(param.type).toBe('Pet');
     expect(param.paramType).toBe('body');
@@ -128,15 +126,15 @@ describe('verifies the get pet operation', function() {
   });
 
   it('verifies the put pet operation', function() {
-    operation = sample.pet.operations.updatePet
+    operation = sample.pet.operations.updatePet;
     expect(operation.method).toBe('put');
 
-    parameters = operation.parameters
+    parameters = operation.parameters;
 
     test.object(parameters);
     expect(parameters.length).toBe(1);
 
-    param = parameters[0]
+    param = parameters[0];
     expect(param.name).toBe('body');
     expect(param.type).toBe('Pet');
     expect(param.paramType).toBe('body');
@@ -144,15 +142,15 @@ describe('verifies the get pet operation', function() {
   });
 
   it('verifies the findByTags operation', function() {
-    operation = sample.pet.operations.findPetsByTags
+    operation = sample.pet.operations.findPetsByTags;
     expect(operation.method).toBe('get');
 
-    parameters = operation.parameters
+    parameters = operation.parameters;
 
     test.object(parameters);
     expect(parameters.length).toBe(1);
 
-    param = parameters[0]
+    param = parameters[0];
 
     expect(param.name).toBe('tags');
     expect(param.type).toBe('string');
@@ -161,25 +159,25 @@ describe('verifies the get pet operation', function() {
   });
 
   it('verifies the patch pet operation', function() {
-    operation = sample.pet.operations.partialUpdate
+    operation = sample.pet.operations.partialUpdate;
     expect(operation.method).toBe('patch');
 
-    produces = operation.produces
+    produces = operation.produces;
     expect(produces.length).toBe(2);
     expect(produces[0]).toBe('application/json');
     expect(produces[1]).toBe('application/xml');
 
-    parameters = operation.parameters
+    parameters = operation.parameters;
     test.object(parameters);
     expect(parameters.length).toBe(2);
 
-    param = parameters[0]
+    param = parameters[0];
     expect(param.name).toBe('petId');
     expect(param.type).toBe('string');
     expect(param.paramType).toBe('path');
     test.value(param.description);
 
-    param = parameters[1]
+    param = parameters[1];
     expect(param.name).toBe('body');
     expect(param.type).toBe('Pet');
     expect(param.paramType).toBe('body');
@@ -187,31 +185,31 @@ describe('verifies the get pet operation', function() {
   });
 
   it('verifies the post pet operation with form', function() {
-    operation = sample.pet.operations.updatePetWithForm
+    operation = sample.pet.operations.updatePetWithForm;
     expect(operation.method).toBe('post');
 
-    consumes = operation.consumes
+    consumes = operation.consumes;
     expect(consumes.length).toBe(1);
     expect(consumes[0]).toBe('application/x-www-form-urlencoded');
 
-    parameters = operation.parameters
+    parameters = operation.parameters;
     test.object(parameters);
     expect(parameters.length).toBe(3);
 
-    param = parameters[0]
+    param = parameters[0];
     expect(param.name).toBe('petId');
     expect(param.type).toBe('string');
     expect(param.paramType).toBe('path');
     test.value(param.description);
 
-    param = parameters[1]
+    param = parameters[1];
     expect(param.name).toBe('name');
     expect(param.type).toBe('string');
     expect(param.paramType).toBe('form');
     test.value(param.description);
     expect(param.required).toBe(false);
 
-    param = parameters[2]
+    param = parameters[2];
     expect(param.name).toBe('status');
     expect(param.type).toBe('string');
     expect(param.paramType).toBe('form');
@@ -220,25 +218,25 @@ describe('verifies the get pet operation', function() {
   });
 
   it('verifies a file upload', function() {
-    var operation = sample.pet.operations.uploadFile
+    var operation = sample.pet.operations.uploadFile;
     expect(operation.method).toBe('post');
 
-    var consumes = operation.consumes
+    var consumes = operation.consumes;
     expect(consumes.length).toBe(1);
     expect(consumes[0]).toBe('multipart/form-data');
 
-    var parameters = operation.parameters
+    var parameters = operation.parameters;
     test.object(parameters);
     expect(parameters.length).toBe(2);
 
-    var param = parameters[0]
+    var param = parameters[0];
     expect(param.name).toBe('additionalMetadata');
     expect(param.type).toBe('string');
     expect(param.paramType).toBe('form');
     expect(param.required).toBe(false);
     test.value(param.description);
 
-    param = parameters[1]
+    param = parameters[1];
     expect(param.name).toBe('file');
     expect(param.type).toBe('File');
     expect(param.paramType).toBe('body');
@@ -252,12 +250,12 @@ describe('verifies the get pet operation', function() {
   });
 
   it('gets operations for the pet api', function() {
-    var ops = sample.pet.operations
+    var ops = sample.pet.operations;
     test.object(ops);
   });
 
   it('gets help() from the file upload operation', function() {
-    operation = sample.pet.operations.uploadFile
+    operation = sample.pet.operations.uploadFile;
     expect(operation.help()).toBe('* additionalMetadata - Additional data to pass to server\n* file - file to upload');
   });
-})
+});
