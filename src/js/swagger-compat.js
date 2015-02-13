@@ -160,7 +160,7 @@ SwaggerClient.prototype.setConsolidatedModels = function () {
 var SwaggerResource = function (resourceObj, api) {
   var _this = this;
   this.api = api;
-  this.swaggerRequstHeaders = api.swaggerRequstHeaders;
+  this.swaggerRequestHeaders = api.swaggerRequestHeaders;
   this.path = (typeof this.api.resourcePath === 'string') ? this.api.resourcePath : resourceObj.path;
   this.description = resourceObj.description;
   this.authorizations = (resourceObj.authorizations || {});
@@ -193,7 +193,7 @@ var SwaggerResource = function (resourceObj, api) {
       method: 'GET',
       useJQuery: this.useJQuery,
       headers: {
-        accept: this.swaggerRequstHeaders
+        accept: this.swaggerRequestHeaders
       },
       on: {
         response: function (resp) {
