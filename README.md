@@ -27,9 +27,7 @@ var client = require("swagger-client")
 var swagger = new client.SwaggerClient({
   url: 'http://petstore.swagger.wordnik.com/v2/swagger.json',
   success: function() {
-    if(swagger.ready === true) {
-      swagger.apis.pet.getPetById({petId:1});
-    }
+    swagger.apis.pet.getPetById({petId:1});
   }
 });
 
@@ -87,12 +85,10 @@ Download `swagger-client.js` and `shred.bundle.js` into your lib folder
   window.swagger = new SwaggerClient({
     url: "http://petstore.swagger.wordnik.com/api/api-docs",
     success: function() {
-      if(swagger.ready === true) {
-        // upon connect, fetch a pet and set contents to element "mydata"
-        swagger.apis.pet.getPetById({petId:1}, function(data) {
-          document.getElementById("mydata").innerHTML = data.content.data;
-        });
-      }
+      // upon connect, fetch a pet and set contents to element "mydata"
+      swagger.apis.pet.getPetById({petId:1}, function(data) {
+        document.getElementById("mydata").innerHTML = data.content.data;
+      });
     }
   });
 
