@@ -50,6 +50,7 @@ SwaggerClient.prototype.buildFrom1_2Spec = function (response) {
 SwaggerClient.prototype.finish = function() {
   if (typeof this.success === 'function') {
     this.isValid = true;
+    this.ready = true;
     this.isBuilt = true;
     this.selfReflect();
     this.success();
@@ -815,7 +816,7 @@ SwaggerOperation.prototype.urlify = function (args) {
     if (param.paramType === 'path') {
       if (typeof args[param.name] !== 'undefined') {
         // apply path params and remove from args
-        var reg = new RegExp('\\{\\s*?' + param.name + '.*?\\}(?=\\s*?(\\/?|$))', 'gi');
+        var reg = new RegExp('\\{\\s*?' + param.name + '[^\\{\\}\\/]*(?:\\{.*?\\}[^\\{\\}\\/]*)*\\}(?=(\\/?|$))', 'gi');
         url = url.replace(reg, this.encodePathParam(args[param.name]));
         delete args[param.name];
       }
