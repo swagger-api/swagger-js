@@ -17,7 +17,6 @@ describe('1.2 request operations', function() {
     done();
   });
 
-
   it('loads a single file resource', function() {
     var petApi = sample.pet;
     test.object(petApi);
