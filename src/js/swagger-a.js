@@ -1007,7 +1007,7 @@ var Property = function(name, obj, required) {
   this.optional = true;
   this.optional = !required;
   this.default = obj.default || null;
-  this.example = obj.example || null;
+  this.example = obj.example !== undefined ? obj.example : null;
   this.collectionFormat = obj.collectionFormat || null;
   this.maximum = obj.maximum || null;
   this.exclusiveMaximum = obj.exclusiveMaximum || null;
