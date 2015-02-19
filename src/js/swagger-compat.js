@@ -33,6 +33,7 @@ SwaggerClient.prototype.buildFrom1_2Spec = function (response) {
     res = new SwaggerResource(response, this);
     this.apis[newName] = res;
     this.apisArray.push(res);
+    this.finish();
   } else {
     var k;
     this.expectedResourceCount = response.apis.length;
