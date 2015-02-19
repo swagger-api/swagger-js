@@ -747,7 +747,7 @@ Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
   if(opts.mock === true)
     return obj;
   else
-    new SwaggerHttp().execute(obj);
+    new SwaggerHttp().execute(obj, opts);
 };
 
 Operation.prototype.setContentTypes = function(args, opts) {
