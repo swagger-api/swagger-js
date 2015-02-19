@@ -20,10 +20,14 @@ describe('swagger request functions', function() {
   });
 
   it('gets the resource description', function() {
-    var storeApi = sample.apisArray[1];
-    var req = storeApi.description;
+    var userApi = sample.user;
+    expect(userApi.description).toEqual('All about the Users');
+  });
 
-    expect(req).toBe.undefined;
+  it('gets the resource external docs', function() {
+    var petApi = sample.pet;
+    expect(petApi.description).toEqual('Pet Operations');
+    expect(petApi.externalDocs).toEqual('http://swagger.io');
   });
 
   it('generate a get request', function() {

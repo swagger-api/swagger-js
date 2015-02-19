@@ -18,6 +18,16 @@
   "schemes": [
     "http"
   ],
+  "tags" : [
+    {
+      "name": "pet",
+      "description": "Pet Operations",
+      "externalDocs": "http://swagger.io"
+    }, {
+      "name": "user",
+      "description": "All about the Users"
+    }
+  ],
   "paths": {
     "/pet": {
       "post": {
