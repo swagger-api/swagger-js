@@ -54,6 +54,7 @@ SwaggerClient.prototype.initialize = function (url, options) {
   this.options = options;
 
   if (typeof options.success === 'function') {
+    this.ready = true;
     this.build();
   }
 };
@@ -129,8 +130,16 @@ SwaggerClient.prototype.buildFromSpec = function(response) {
   // legacy support
   this.authSchemes = response.securityDefinitions;
 
-  var location;
+  var definedTags = {};
+  if(Array.isArray(response.tags)) {
+    definedTags = {};
+    for(k = 0; k < response.tags.length; k++) {
+      var t = response.tags[k];
+      definedTags[t.name] = t;
+    }
+  }
 
+  var location;
   if(typeof this.url === 'string') {
     location = this.parseUri(this.url);
   }
@@ -196,8 +205,13 @@ SwaggerClient.prototype.buildFromSpec = function(response) {
               operationGroup.operations = {};
               operationGroup.label = tag;
               operationGroup.apis = [];
+              var tagObject = definedTags[tag];
+              if(typeof tagObject === 'object') {
+                operationGroup.description = tagObject.description;
+                operationGroup.externalDocs = tagObject.externalDocs;
+              }
               this[tag].help = this.help.bind(operationGroup);
-              this.apisArray.push(new OperationGroup(tag, operationObject));
+              this.apisArray.push(new OperationGroup(tag, operationGroup.description, operationGroup.externalDocs, operationObject));
             }
             operationGroup[operationId] = operationObject.execute.bind(operationObject);
             operationGroup[operationId].help = operationObject.help.bind(operationObject);
@@ -266,14 +280,14 @@ SwaggerClient.prototype.fail = function(message) {
   throw message;
 };
 
-var OperationGroup = function(tag, operation) {
+var OperationGroup = function(tag, description, externalDocs, operation) {
   this.tag = tag;
   this.path = tag;
+  this.description = description;
+  this.externalDocs = externalDocs;
   this.name = tag;
   this.operation = operation;
   this.operationsArray = [];
-
-  this.description = operation.description || "";
 };
 
 var Operation = function(parent, scheme, operationId, httpMethod, path, args, definitions) {
@@ -438,10 +452,14 @@ Operation.prototype.getType = function (param) {
     str = 'long';
   else if(type === 'integer')
     str = 'integer';
-  else if(type === 'string' && format === 'date-time')
-    str = 'date-time';
-  else if(type === 'string' && format === 'date')
-    str = 'date';
+  else if(type === 'string') {
+    if(format === 'date-time')
+      str = 'date-time';
+    else if(format === 'date')
+      str = 'date';
+    else
+      str = 'string';
+  }
   else if(type === 'number' && format === 'float')
     str = 'float';
   else if(type === 'number' && format === 'double')
@@ -450,8 +468,6 @@ Operation.prototype.getType = function (param) {
     str = 'double';
   else if(type === 'boolean')
     str = 'boolean';
-  else if(type === 'string')
-    str = 'string';
   else if(type === 'array') {
     isArray = true;
     if(param.items)
@@ -746,14 +762,13 @@ Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
   if(opts.mock === true)
     return obj;
   else
-    new SwaggerHttp().execute(obj);
+    new SwaggerHttp().execute(obj, opts);
 };
 
 Operation.prototype.setContentTypes = function(args, opts) {
   // default type
   var accepts = 'application/json';
   var consumes = args.parameterContentType || 'application/json';
-
   var allDefinedParams = this.parameters;
   var definedFormParams = [];
   var definedFileParams = [];
@@ -1006,7 +1021,7 @@ var Property = function(name, obj, required) {
   this.optional = true;
   this.optional = !required;
   this.default = obj.default || null;
-  this.example = obj.example || null;
+  this.example = obj.example !== undefined ? obj.example : null;
   this.collectionFormat = obj.collectionFormat || null;
   this.maximum = obj.maximum || null;
   this.exclusiveMaximum = obj.exclusiveMaximum || null;

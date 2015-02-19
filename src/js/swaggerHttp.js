@@ -3,7 +3,7 @@
  */
 var SwaggerHttp = function() {};
 
-SwaggerHttp.prototype.execute = function(obj) {
+SwaggerHttp.prototype.execute = function(obj, opts) {
   if(obj && (typeof obj.useJQuery === 'boolean'))
     this.useJQuery = obj.useJQuery;
   else
@@ -14,9 +14,9 @@ SwaggerHttp.prototype.execute = function(obj) {
   }
 
   if(this.useJQuery)
-    return new JQueryHttpClient().execute(obj);
+    return new JQueryHttpClient(opts).execute(obj);
   else
-    return new ShredHttpClient().execute(obj);
+    return new ShredHttpClient(opts).execute(obj);
 };
 
 SwaggerHttp.prototype.isIE8 = function() {
@@ -93,6 +93,7 @@ JQueryHttpClient.prototype.execute = function(obj) {
       url: request.url,
       method: request.method,
       status: response.status,
+      statusText: response.statusText,
       data: response.responseText,
       headers: headers
     };
@@ -124,8 +125,8 @@ JQueryHttpClient.prototype.execute = function(obj) {
 /*
  * ShredHttpClient is a light-weight, node or browser HTTP client
  */
-var ShredHttpClient = function(options) {
-  this.options = (options||{});
+var ShredHttpClient = function(opts) {
+  this.opts = (opts||{});
   this.isInitialized = false;
 
   var identity, toString;
@@ -136,7 +137,7 @@ var ShredHttpClient = function(options) {
   }
   else
     this.Shred = require("shred");
-  this.shred = new this.Shred(options);
+  this.shred = new this.Shred(opts);
 };
 
 ShredHttpClient.prototype.initShred = function () {

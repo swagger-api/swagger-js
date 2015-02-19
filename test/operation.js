@@ -280,6 +280,18 @@ describe('operations', function() {
     var op = new swagger.Operation({}, 'http', 'test', 'get', '/fantastic', { parameters: parameters, deprecated: 'false' });
     expect(op.deprecated).toEqual(false);
   });
+
+  it('should not encode parameters of type header', function() {
+    var parameters = [
+      { in: 'header', name: 'user name', type: 'string' }
+    ];
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/fantastic', { parameters: parameters, deprecated: 'false' });
+    var args = {'user name': 'Tony Tam'};
+    var opts = {mock: true};
+    var obj = op.execute(args, opts);
+    expect(typeof obj.headers['user name'] === 'string').toBe(true);
+    expect(obj.headers['user name']).toEqual('Tony Tam');
+  });
 });
 
 var quantityQP = {
