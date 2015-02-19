@@ -89,7 +89,7 @@ describe('models', function() {
     // console.log(model.createJSONSample());
   });
 
-  it('should not get infinite recursion', function() {
+  it('should not get infinite for sample JSON recursion', function() {
     var definition = {
       type: 'object',
       properties: {
@@ -130,7 +130,7 @@ describe('models', function() {
     );
   });
 
-  it('should not get infinite recursion case 2', function() {
+  it('should not get infinite recursion for sample JSON case 2', function() {
     var definition = {
       type: "array",
       items: {
@@ -144,7 +144,7 @@ describe('models', function() {
     );
   });
 
-  it('should not get infinite recursion case 3', function() {
+  it('should not get infinite recursion for sample JSON case 3', function() {
     definition = {
       type: 'object',
       additionalProperties: {
@@ -156,5 +156,48 @@ describe('models', function() {
     swagger.addModel.DictionaryOfSelf = model;
     // console.log(model.createJSONSample());
     // TODO add support for this
+  });
+
+
+  it('should not get infinite for mock signature recursion', function() {
+    var definition = {
+      type: 'object',
+      properties: {
+        pendingComponents: {
+          type: 'array',
+          items: {
+            $ref: 'Component'
+          }
+        },
+        receivedComponents: {
+          type: 'array',
+          items: {
+            $ref: 'Component'
+          }
+        },
+        rejectedComponents: {
+          type: 'array',
+          items: {
+            $ref: 'Component'
+          }
+        }
+      }
+    };
+    var model = new swagger.Model('Component', definition);
+    swagger.addModel('Component', model);
+    var sig = model.getMockSignature();
+  });
+
+  it('should not get infinite recursion for mock signature case 2', function() {
+    var definition = {
+      type: "array",
+      items: {
+        $ref: "ListOfSelf"
+      }
+    };
+    var model = new swagger.Model('ListOfSelf', definition);
+    swagger.addModel('ListOfSelf', model);
+    var sig = model.getMockSignature();
+    expect(sig).toEqual('<span class="strong">array {</span><div></div><span class="strong">}</span>');
   });
 });
