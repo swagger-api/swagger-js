@@ -19,6 +19,13 @@ describe('swagger request functions', function() {
     done();
   });
 
+  it('gets the resource description', function() {
+    var storeApi = sample.apisArray[1];
+    var req = storeApi.description;
+
+    expect(req).toBe.undefined;
+  });
+
   it('generate a get request', function() {
     var petApi = sample.pet;
     var req = petApi.getPetById({petId: 1}, {mock: true});

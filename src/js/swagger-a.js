@@ -273,8 +273,6 @@ var OperationGroup = function(tag, operation) {
   this.name = tag;
   this.operation = operation;
   this.operationsArray = [];
-
-  this.description = operation.description || "";
 };
 
 var Operation = function(parent, scheme, operationId, httpMethod, path, args, definitions) {
@@ -439,10 +437,14 @@ Operation.prototype.getType = function (param) {
     str = 'long';
   else if(type === 'integer')
     str = 'integer';
-  else if(type === 'string' && format === 'date-time')
-    str = 'date-time';
-  else if(type === 'string' && format === 'date')
-    str = 'date';
+  else if(type === 'string') {
+    if(format === 'date-time')
+      str = 'date-time';
+    else if(format === 'date')
+      str = 'date';
+    else
+      str = 'string';
+  }
   else if(type === 'number' && format === 'float')
     str = 'float';
   else if(type === 'number' && format === 'double')
@@ -451,8 +453,6 @@ Operation.prototype.getType = function (param) {
     str = 'double';
   else if(type === 'boolean')
     str = 'boolean';
-  else if(type === 'string')
-    str = 'string';
   else if(type === 'array') {
     isArray = true;
     if(param.items)
@@ -754,7 +754,6 @@ Operation.prototype.setContentTypes = function(args, opts) {
   // default type
   var accepts = 'application/json';
   var consumes = args.parameterContentType || 'application/json';
-
   var allDefinedParams = this.parameters;
   var definedFormParams = [];
   var definedFileParams = [];
