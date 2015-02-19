@@ -50,6 +50,7 @@ SwaggerClient.prototype.buildFrom1_2Spec = function (response) {
 SwaggerClient.prototype.finish = function() {
   if (typeof this.success === 'function') {
     this.isValid = true;
+    this.ready = true;
     this.isBuilt = true;
     this.selfReflect();
     this.success();

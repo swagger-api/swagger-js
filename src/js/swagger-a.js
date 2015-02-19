@@ -54,6 +54,7 @@ SwaggerClient.prototype.initialize = function (url, options) {
   this.options = options;
 
   if (typeof options.success === 'function') {
+    this.ready = true;
     this.build();
   }
 };
