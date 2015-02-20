@@ -87,7 +87,7 @@ Download `swagger-client.js` and `shred.bundle.js` into your lib folder
     success: function() {
       // upon connect, fetch a pet and set contents to element "mydata"
       swagger.apis.pet.getPetById({petId:1}, function(data) {
-        document.getElementById("mydata").innerHTML = data.content.data;
+        document.getElementById("mydata").innerHTML = JSON.stringify(data.obj);
       });
     }
   });
