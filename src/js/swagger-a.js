@@ -972,12 +972,12 @@ var Model = function(name, definition) {
 };
 
 Model.prototype.createJSONSample = function(modelsToIgnore) {
-  var i, result = {};
+  var i, result = {}, representations = {};
   modelsToIgnore = (modelsToIgnore||{});
   modelsToIgnore[this.name] = this;
   for (i = 0; i < this.properties.length; i++) {
     prop = this.properties[i];
-    var sample = prop.getSampleValue(modelsToIgnore);
+    var sample = prop.getSampleValue(modelsToIgnore, representations);
     result[prop.name] = sample;
   }
   delete modelsToIgnore[this.name];
@@ -985,10 +985,10 @@ Model.prototype.createJSONSample = function(modelsToIgnore) {
 };
 
 Model.prototype.getSampleValue = function(modelsToIgnore) {
-  var i, obj = {};
+  var i, obj = {}, representations = {};
   for(i = 0; i < this.properties.length; i++ ) {
     var property = this.properties[i];
-    obj[property.name] = property.sampleValue(false, modelsToIgnore);
+    obj[property.name] = property.sampleValue(false, modelsToIgnore, representations);
   }
   return obj;
 };
@@ -1053,8 +1053,8 @@ var Property = function(name, obj, required) {
   this.multipleOf = obj.multipleOf || null;
 };
 
-Property.prototype.getSampleValue = function (modelsToIgnore) {
-  return this.sampleValue(false, modelsToIgnore);
+Property.prototype.getSampleValue = function (modelsToIgnore, representations) {
+  return this.sampleValue(false, modelsToIgnore, representations);
 };
 
 Property.prototype.isArray = function () {
@@ -1065,21 +1065,29 @@ Property.prototype.isArray = function () {
     return false;
 };
 
-Property.prototype.sampleValue = function(isArray, ignoredModels) {
+Property.prototype.sampleValue = function(isArray, ignoredModels, representations) {
   isArray = (isArray || this.isArray());
   ignoredModels = (ignoredModels || {});
+  // representations = (representations || {});
+
   var type = getStringSignature(this.obj, true);
   var output;
 
   if(this.$ref) {
     var refModelName = simpleRef(this.$ref);
     var refModel = models[refModelName];
+    if(typeof representations[type] !== 'undefined') {
+      return representations[type];
+    }
+    else
+
     if(refModel && typeof ignoredModels[type] === 'undefined') {
       ignoredModels[type] = this;
-      output = refModel.getSampleValue(ignoredModels);
+      output = refModel.getSampleValue(ignoredModels, representations);
+      representations[type] = output;
     }
     else {
-      output = refModelName;
+      output = (representations[type] || refModelName);
     }
   }
   else if(this.example)
