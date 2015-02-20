@@ -200,4 +200,39 @@ describe('models', function() {
     var sig = model.getMockSignature();
     expect(sig).toEqual('<span class="strong">array {</span><div></div><span class="strong">}</span>');
   });
+
+  it('should show the correct models', function() {
+    var test1 = {
+      "required": [ "test1" ],
+      "properties": {
+        "test1": {
+          "$ref": "#/definitions/badgerfishstring"
+        },
+        "test2": {
+          "$ref": "#/definitions/badgerfishstring"
+        },
+        "test3": {
+          "$ref": "#/definitions/badgerfishstring"
+        }
+      }
+    };
+
+    var badgerfishstring = {
+      "required": [ "$" ],
+      "properties": {
+        "$": { "type": "string" }
+      }
+    }
+
+    var test1Model = new swagger.Model('test1', test1);
+    swagger.addModel('test1', test1Model);
+    var badgerfishstringModel = new swagger.Model('badgerfishstring', badgerfishstring);
+    swagger.addModel('badgerfishstring', badgerfishstringModel);
+
+    expect(test1Model.createJSONSample()).toEqual({
+      test1: { '$': 'string' },
+      test2: { '$': 'string' },
+      test3: { '$': 'string' }
+    });
+  });
 });
