@@ -20,7 +20,7 @@ describe('1.2 request operations', function() {
   it('loads a single file resource', function() {
     var petApi = sample.pet;
     test.object(petApi);
-    var help = petApi.getPetById.help();
-    expect(help).toBe('* petId (required) - ID of pet that needs to be fetched');
+    var help = petApi.getPetById.help(true);
+    expect(help.indexOf('getPetById: Find pet by ID')).toBe(0);
   });
 });

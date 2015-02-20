@@ -20,13 +20,12 @@ describe('1.2 request operations', function() {
   it('verify the help function', function() {
     var petApi = sample.pet;
     test.object(petApi);
-    var help = petApi.getPetById.help();
-    expect(help).toBe('* petId (required) - ID of pet that needs to be fetched');
+    var help = petApi.getPetById.help(true);
+    expect(help.indexOf('getPetById: Find pet by ID')).toBe(0);
   });
 
   it('shows curl syntax', function() {
-    var help = sample.pet.getPetById.help();
-    console.log(help);
+    var help = sample.pet.getPetById.help(true);
     var curl = sample.pet.getPetById.asCurl({petId: 1});
     expect(curl).toBe('curl --header "Accept: application/json" http://localhost:8000/v1/api/pet/1');
   });

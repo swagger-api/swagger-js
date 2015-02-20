@@ -121,16 +121,18 @@ SwaggerClient.prototype.convertInfo = function (resp) {
 };
 
 SwaggerClient.prototype.selfReflect = function () {
-  var resource, resource_name, ref;
+  var resource, tag, ref;
   if (this.apis === null) {
     return false;
   }
   ref = this.apis;
-  for (resource_name in ref) {
-    resource = ref[resource_name];
-    if (resource.ready === null) {
+  for (tag in ref) {
+    api = ref[tag];
+    if (api.ready === null) {
       return false;
     }
+    this[tag] = api;
+    this[tag].help = __bind(api.help, api);
   }
   this.setConsolidatedModels();
   this.ready = true;
@@ -211,6 +213,21 @@ var SwaggerResource = function (resourceObj, api) {
     var e = typeof window !== 'undefined' ? window : exports;
     e.authorizations.apply(obj);
     new SwaggerHttp().execute(obj);
+  }
+};
+
+SwaggerResource.prototype.help = function (dontPrint) {
+  var i;
+  var output = 'operations for the "' + this.name + '" tag';
+  for(i = 0; i < this.operationsArray.length; i++) {
+    var api = this.operationsArray[i];
+    output += '\n  * ' + api.nickname + ': ' + api.description;
+  }
+  if(dontPrint)
+    return output;
+  else {
+    log(output);
+    return output;
   }
 };
 
@@ -530,6 +547,7 @@ var SwaggerOperation = function (nickname, path, method, parameters, summary, no
   this.deprecated = deprecated;
   this['do'] = __bind(this['do'], this);
 
+
   if(typeof this.deprecated === 'string') {
     switch(this.deprecated.toLowerCase()) {
       case 'true': case 'yes': case '1': {
@@ -647,8 +665,8 @@ var SwaggerOperation = function (nickname, path, method, parameters, summary, no
     return _this['do'](arg1 || {}, arg2 || {}, arg3 || defaultSuccessCallback, arg4 || defaultErrorCallback);
   };
 
-  this.resource[this.nickname].help = function () {
-    return _this.help();
+  this.resource[this.nickname].help = function (dontPrint) {
+    return _this.help(dontPrint);
   };
   this.resource[this.nickname].asCurl = function (args) {
     return _this.asCurl(args);
@@ -887,16 +905,19 @@ SwaggerOperation.prototype.getMatchingParams = function (paramTypes, args) {
   return matchingParams;
 };
 
-SwaggerOperation.prototype.help = function () {
-  var msg = '';
+SwaggerOperation.prototype.help = function (dontPrint) {
+  var msg = this.nickname + ': ' + this.summary;
   var params = this.parameters;
   for (var i = 0; i < params.length; i++) {
     var param = params[i];
-    if (msg !== '')
-      msg += '\n';
-    msg += '* ' + param.name + (param.required ? ' (required)' : '') + " - " + param.description;
+    msg += '\n* ' + param.name + (param.required ? ' (required)' : '') + " - " + param.description;
   }
-  return msg;
+  if(dontPrint)
+    return msg;
+  else {
+    console.log(msg);
+    return msg;
+  }
 };
 
 SwaggerOperation.prototype.asCurl = function (args) {
