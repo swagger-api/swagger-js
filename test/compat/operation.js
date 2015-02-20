@@ -90,7 +90,7 @@ describe('verifies the get pet operation', function() {
 
   it('gets help() from the get pet operation', function() {
     operation = sample.pet.operations.getPetById;
-    expect(operation.help()).toBe('* petId (required) - ID of pet that needs to be fetched');
+    expect(operation.help(true).indexOf('getPetById: Find pet by ID')).toBe(0);
   });
 
   it('verifies the get pet operation', function() {
@@ -256,6 +256,6 @@ describe('verifies the get pet operation', function() {
 
   it('gets help() from the file upload operation', function() {
     operation = sample.pet.operations.uploadFile;
-    expect(operation.help()).toBe('* additionalMetadata - Additional data to pass to server\n* file - file to upload');
+    expect(operation.help(true).indexOf('uploadFile: uploads an image')).toBe(0);
   });
 });

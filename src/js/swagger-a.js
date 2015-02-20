@@ -199,6 +199,8 @@ SwaggerClient.prototype.buildFromSpec = function(response) {
           for(i = 0; i < tags.length; i++) {
             var tag = this.tagFromLabel(tags[i]);
             var operationGroup = this[tag];
+            if(typeof this.apis[tag] === 'undefined')
+              this.apis[tag] = {};
             if(typeof operationGroup === 'undefined') {
               this[tag] = [];
               operationGroup = this[tag];
@@ -213,8 +215,16 @@ SwaggerClient.prototype.buildFromSpec = function(response) {
               this[tag].help = this.help.bind(operationGroup);
               this.apisArray.push(new OperationGroup(tag, operationGroup.description, operationGroup.externalDocs, operationObject));
             }
+            if(typeof this.apis[tag].help !== 'function')
+              this.apis[tag].help = this.help.bind(operationGroup);
+            // bind to the apis object
+            this.apis[tag][operationId] = operationObject.execute.bind(operationObject);
+            this.apis[tag][operationId].help = operationObject.help.bind(operationObject);
+            this.apis[tag][operationId].asCurl = operationObject.asCurl.bind(operationObject);
             operationGroup[operationId] = operationObject.execute.bind(operationObject);
             operationGroup[operationId].help = operationObject.help.bind(operationObject);
+            operationGroup[operationId].asCurl = operationObject.asCurl.bind(operationObject);
+
             operationGroup.apis.push(operationObject);
             operationGroup.operations[operationId] = operationObject;
 
@@ -257,12 +267,18 @@ SwaggerClient.prototype.parseUri = function(uri) {
   };
 };
 
-SwaggerClient.prototype.help = function() {
+SwaggerClient.prototype.help = function(dontPrint) {
   var i;
-  log('operations for the "' + this.label + '" tag');
+  var output = 'operations for the "' + this.label + '" tag';
   for(i = 0; i < this.apis.length; i++) {
     var api = this.apis[i];
-    log('  * ' + api.nickname + ': ' + api.operation.summary);
+    output += '\n  * ' + api.nickname + ': ' + api.operation.summary;
+  }
+  if(dontPrint)
+    return output;
+  else {
+    log(output);
+    return output;
   }
 };
 
