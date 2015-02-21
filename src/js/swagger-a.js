@@ -43,8 +43,7 @@ SwaggerClient.prototype.initialize = function (url, options) {
   if (options.authorizations) {
     this.clientAuthorizations = options.authorizations;
   } else {
-    var e = (typeof window !== 'undefined' ? window : exports);
-    this.clientAuthorizations = e.authorizations;
+    this.clientAuthorizations = authorizations;
   }
 
   this.supportedSubmitMethods = options.supportedSubmitMethods || [];
@@ -104,8 +103,7 @@ SwaggerClient.prototype.build = function(mock) {
     setTimeout(function() { self.buildFromSpec(self.spec); }, 10);
   }
   else {
-    var e = (typeof window !== 'undefined' ? window : exports);
-    var status = e.authorizations.apply(obj);
+    authorizations.apply(obj);
     if(mock)
       return obj;
     new SwaggerHttp().execute(obj);
@@ -530,7 +528,7 @@ Operation.prototype.help = function(dontPrint) {
   var out = this.nickname + ': ' + this.summary + '\n';
   for(var i = 0; i < this.parameters.length; i++) {
     var param = this.parameters[i];
-    var typeInfo = typeFromJsonSchema(param.type, param.format);
+    var typeInfo = param.signature;
     out += '\n  * ' + param.name + ' (' + typeInfo + '): ' + param.description;
   }
   if(typeof dontPrint === 'undefined')
@@ -648,9 +646,8 @@ Operation.prototype.getMissingParams = function(args) {
   return missingParams;
 };
 
-Operation.prototype.getBody = function(headers, args) {
-  var formParams = {};
-  var body;
+Operation.prototype.getBody = function(headers, args, opts) {
+  var formParams = {}, body, key;
 
   for(var i = 0; i < this.parameters.length; i++) {
     var param = this.parameters[i];
@@ -666,7 +663,6 @@ Operation.prototype.getBody = function(headers, args) {
   // handle form params
   if(headers['Content-Type'] === 'application/x-www-form-urlencoded') {
     var encoded = "";
-    var key;
     for(key in formParams) {
       value = formParams[key];
       if(typeof value !== 'undefined'){
@@ -676,6 +672,25 @@ Operation.prototype.getBody = function(headers, args) {
       }
     }
     body = encoded;
+  }
+  else if (headers['Content-Type'] && headers['Content-Type'].indexOf('multipart/form-data') >= 0) {
+    if(opts.useJQuery) {
+      var bodyParam = new FormData();
+      bodyParam.type = 'formData';
+      for (key in formParams) {
+        value = args[key];
+        if (typeof value !== 'undefined') {
+          // required for jquery file upload
+          if(value.type === 'file' && value.value) {
+            delete headers['Content-Type'];
+            bodyParam.append(key, value.value);
+          }
+          else
+            bodyParam.append(key, value);
+        }
+      }
+      body = bodyParam;
+    }
   }
 
   return body;
@@ -739,9 +754,8 @@ Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
   success = (success||log);
   error = (error||log);
 
-  if(typeof opts.useJQuery === 'boolean') {
+  if(opts.useJQuery)
     this.useJQuery = opts.useJQuery;
-  }
 
   var missingParams = this.getMissingParams(args);
   if(missingParams.length > 0) {
@@ -756,7 +770,7 @@ Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
   for (attrname in allHeaders) { headers[attrname] = allHeaders[attrname]; }
   for (attrname in contentTypeHeaders) { headers[attrname] = contentTypeHeaders[attrname]; }
 
-  var body = this.getBody(headers, args);
+  var body = this.getBody(headers, args, opts);
   var url = this.urlify(args);
 
   var obj = {
@@ -774,7 +788,7 @@ Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
       }
     }
   };
-  var status = e.authorizations.apply(obj, this.operation.security);
+  var status = authorizations.apply(obj, this.operation.security);
   if(opts.mock === true)
     return obj;
   else
@@ -857,14 +871,24 @@ Operation.prototype.setContentTypes = function(args, opts) {
 };
 
 Operation.prototype.asCurl = function (args) {
+  var obj = this.execute(args, {mock: true});
+  authorizations.apply(obj);
   var results = [];
-  var headers = this.getHeaderParams(args);
-  if (headers) {
+  results.push('-X ' + this.method.toUpperCase());
+  if (obj.headers) {
     var key;
-    for (key in headers)
-      results.push("--header \"" + key + ": " + headers[key] + "\"");
+    for (key in obj.headers)
+      results.push('--header "' + key + ': ' + obj.headers[key] + '"');
   }
-  return "curl " + (results.join(" ")) + " " + this.urlify(args);
+  if(obj.body) {
+    var body;
+    if(typeof obj.body === 'object')
+      body = JSON.stringify(obj.body);
+    else
+      body = obj.body;
+    results.push('-d "' + body.replace(/"/g, '\\"') + '"');
+  }
+  return 'curl ' + (results.join(' ')) + ' "' + obj.url + '"';
 };
 
 Operation.prototype.encodePathCollection = function(type, name, value) {

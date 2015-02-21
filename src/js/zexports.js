@@ -1,7 +1,7 @@
 
 var e = (typeof window !== 'undefined' ? window : exports);
 
-e.authorizations = new SwaggerAuthorizations();
+e.authorizations = authorizations = new SwaggerAuthorizations();
 e.ApiKeyAuthorization = ApiKeyAuthorization;
 e.PasswordAuthorization = PasswordAuthorization;
 e.CookieAuthorization = CookieAuthorization;

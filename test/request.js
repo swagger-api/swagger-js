@@ -232,4 +232,16 @@ describe('swagger request functions', function() {
     expect(req.url).toEqual('http://localhost:8000/v2/api/pet/1');
     expect(req.headers.api_key).toEqual('abc123');
   });
+
+  it('prints a curl post statement from an object', function() {
+    var petApi = sample.pet;
+    var curl = petApi.addPet.asCurl({body: {id:10101}});
+    expect(curl).toBe('curl -X POST --header "Content-Type: application/json" --header "Accept: application/json" -d "{\\"id\\":10101}" "http://localhost:8000/v2/api/pet"');
+  });
+
+  it('prints a curl post statement from a string', function() {
+    var petApi = sample.pet;
+    var curl = petApi.addPet.asCurl({body: '{"id":10101}'});
+    expect(curl).toBe('curl -X POST --header "Content-Type: application/json" --header "Accept: application/json" -d "{\\"id\\":10101}" "http://localhost:8000/v2/api/pet"');
+  });
 });

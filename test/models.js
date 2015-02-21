@@ -222,7 +222,7 @@ describe('models', function() {
       "properties": {
         "$": { "type": "string" }
       }
-    }
+    };
 
     var test1Model = new swagger.Model('test1', test1);
     swagger.addModel('test1', test1Model);

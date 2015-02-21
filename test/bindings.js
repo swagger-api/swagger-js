@@ -29,6 +29,12 @@ describe('help and bindings', function() {
     expect(help.indexOf('getPetById: Find pet by ID')).toBe(0);
   });
 
+  it('verifies the direct help operation function 2', function() {
+    var petApi = sample.pet;
+    var help = petApi.findPetsByStatus.help(true);
+    expect(help.indexOf('status (Array[string]): Status values')).toBeGreaterThan(0);
+  });
+
   it('verifies the direct asCurl function', function() {
     var petApi = sample.pet;
     var curl = petApi.getPetById.asCurl;
