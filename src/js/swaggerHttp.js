@@ -10,7 +10,14 @@ SwaggerHttp.prototype.execute = function(obj, opts) {
     this.useJQuery = this.isIE8();
 
   if(obj && typeof obj.body === 'object') {
-    obj.body = JSON.stringify(obj.body);
+    if(obj.body.type && obj.body.type !== 'formData')
+      obj.body = JSON.stringify(obj.body);
+    else {
+      obj.contentType = false;
+      obj.processData = false;
+      // delete obj.cache;
+      delete obj.headers['Content-Type'];
+    }
   }
 
   if(this.useJQuery)
@@ -51,7 +58,9 @@ JQueryHttpClient.prototype.execute = function(obj) {
 
   obj.type = obj.method;
   obj.cache = false;
+  delete obj.useJQuery;
 
+  /*
   obj.beforeSend = function(xhr) {
     var key, results;
     if (obj.headers) {
@@ -67,9 +76,10 @@ JQueryHttpClient.prototype.execute = function(obj) {
       }
       return results;
     }
-  };
+  };*/
 
   obj.data = obj.body;
+  delete obj.body;
   obj.complete = function(response, textStatus, opts) {
     var headers = {},
       headerArray = response.getAllResponseHeaders().split("\n");

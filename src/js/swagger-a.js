@@ -646,9 +646,8 @@ Operation.prototype.getMissingParams = function(args) {
   return missingParams;
 };
 
-Operation.prototype.getBody = function(headers, args) {
-  var formParams = {};
-  var body;
+Operation.prototype.getBody = function(headers, args, opts) {
+  var formParams = {}, body, key;
 
   for(var i = 0; i < this.parameters.length; i++) {
     var param = this.parameters[i];
@@ -664,7 +663,6 @@ Operation.prototype.getBody = function(headers, args) {
   // handle form params
   if(headers['Content-Type'] === 'application/x-www-form-urlencoded') {
     var encoded = "";
-    var key;
     for(key in formParams) {
       value = formParams[key];
       if(typeof value !== 'undefined'){
@@ -674,6 +672,25 @@ Operation.prototype.getBody = function(headers, args) {
       }
     }
     body = encoded;
+  }
+  else if (headers['Content-Type'] && headers['Content-Type'].indexOf('multipart/form-data') >= 0) {
+    if(opts.useJQuery) {
+      var bodyParam = new FormData();
+      bodyParam.type = 'formData';
+      for (key in formParams) {
+        value = args[key];
+        if (typeof value !== 'undefined') {
+          // required for jquery file upload
+          if(value.type === 'file' && value.value) {
+            delete headers['Content-Type'];
+            bodyParam.append(key, value.value);
+          }
+          else
+            bodyParam.append(key, value);
+        }
+      }
+      body = bodyParam;
+    }
   }
 
   return body;
@@ -737,9 +754,8 @@ Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
   success = (success||log);
   error = (error||log);
 
-  if(typeof opts.useJQuery === 'boolean') {
+  if(opts.useJQuery)
     this.useJQuery = opts.useJQuery;
-  }
 
   var missingParams = this.getMissingParams(args);
   if(missingParams.length > 0) {
@@ -754,7 +770,7 @@ Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
   for (attrname in allHeaders) { headers[attrname] = allHeaders[attrname]; }
   for (attrname in contentTypeHeaders) { headers[attrname] = contentTypeHeaders[attrname]; }
 
-  var body = this.getBody(headers, args);
+  var body = this.getBody(headers, args, opts);
   var url = this.urlify(args);
 
   var obj = {
