@@ -43,8 +43,7 @@ SwaggerClient.prototype.initialize = function (url, options) {
   if (options.authorizations) {
     this.clientAuthorizations = options.authorizations;
   } else {
-    var e = (typeof window !== 'undefined' ? window : exports);
-    this.clientAuthorizations = e.authorizations;
+    this.clientAuthorizations = authorizations;
   }
 
   this.supportedSubmitMethods = options.supportedSubmitMethods || [];
@@ -104,8 +103,7 @@ SwaggerClient.prototype.build = function(mock) {
     setTimeout(function() { self.buildFromSpec(self.spec); }, 10);
   }
   else {
-    var e = (typeof window !== 'undefined' ? window : exports);
-    var status = e.authorizations.apply(obj);
+    authorizations.apply(obj);
     if(mock)
       return obj;
     new SwaggerHttp().execute(obj);
@@ -774,7 +772,7 @@ Operation.prototype.execute = function(arg1, arg2, arg3, arg4, parent) {
       }
     }
   };
-  var status = e.authorizations.apply(obj, this.operation.security);
+  var status = authorizations.apply(obj, this.operation.security);
   if(opts.mock === true)
     return obj;
   else
@@ -857,14 +855,24 @@ Operation.prototype.setContentTypes = function(args, opts) {
 };
 
 Operation.prototype.asCurl = function (args) {
+  var obj = this.execute(args, {mock: true});
+  authorizations.apply(obj);
   var results = [];
-  var headers = this.getHeaderParams(args);
-  if (headers) {
+  results.push('-X ' + this.method.toUpperCase());
+  if (obj.headers) {
     var key;
-    for (key in headers)
-      results.push("--header \"" + key + ": " + headers[key] + "\"");
+    for (key in obj.headers)
+      results.push('--header "' + key + ': ' + obj.headers[key] + '"');
   }
-  return "curl " + (results.join(" ")) + " " + this.urlify(args);
+  if(obj.body) {
+    var body;
+    if(typeof obj.body === 'object')
+      body = JSON.stringify(obj.body);
+    else
+      body = obj.body;
+    results.push('-d "' + body.replace(/"/g, '\\"') + '"');
+  }
+  return 'curl ' + (results.join(' ')) + ' "' + obj.url + '"';
 };
 
 Operation.prototype.encodePathCollection = function(type, name, value) {
