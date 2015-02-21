@@ -530,7 +530,7 @@ Operation.prototype.help = function(dontPrint) {
   var out = this.nickname + ': ' + this.summary + '\n';
   for(var i = 0; i < this.parameters.length; i++) {
     var param = this.parameters[i];
-    var typeInfo = typeFromJsonSchema(param.type, param.format);
+    var typeInfo = param.signature;
     out += '\n  * ' + param.name + ' (' + typeInfo + '): ' + param.description;
   }
   if(typeof dontPrint === 'undefined')
