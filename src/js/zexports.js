@@ -10,3 +10,4 @@ e.SwaggerApi = SwaggerClient;
 e.Operation = Operation;
 e.Model = Model;
 e.addModel = addModel;
+e.Resolver = Resolver;

@@ -831,7 +831,7 @@ exports.spec = {
           "format": "int64"
         },
         "category": {
-          "$ref": "http://petstore.swagger.io/v2/swagger.json#definitions/Category"
+          "$ref": "http://petstore.swagger.io/v2/swagger.json#/definitions/Category"
         },
         "name": {
           "type": "string",
@@ -854,7 +854,7 @@ exports.spec = {
             "wrapped": true
           },
           "items": {
-            "$ref": "http://petstore.swagger.io/v2/swagger.json#definitions/Tag"
+            "$ref": "http://petstore.swagger.io/v2/swagger.json#/definitions/Tag"
           }
         },
         "status": {
