@@ -86,7 +86,7 @@ SwaggerClient.prototype.build = function(mock) {
 
         if(responseObj.swagger && parseInt(responseObj.swagger) === 2) {
           self.swaggerVersion = responseObj.swagger;
-          self.buildFromSpec(responseObj);
+          new Resolver().resolve(responseObj, self.buildFromSpec, self);
           self.isValid = true;
         }
         else {
@@ -100,7 +100,9 @@ SwaggerClient.prototype.build = function(mock) {
     }
   };
   if(this.spec) {
-    setTimeout(function() { self.buildFromSpec(self.spec); }, 10);
+    setTimeout(function() {
+      new Resolver().resolve(self.spec, self.buildFromSpec, self);
+   }, 10);
   }
   else {
     authorizations.apply(obj);
