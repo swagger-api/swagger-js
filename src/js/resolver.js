@@ -1,12 +1,12 @@
-var Resolver = function () {
-
-}
+var Resolver = function (){};
 
 /** 
  * Resolves a spec's remote references
  */
-Resolver.prototype.resolve = function(spec, callback) {
-  var name, property, propertyName, type;
+Resolver.prototype.resolve = function(spec, callback, scope) {
+  this.scope = (scope || this);
+
+  var host, name, path, property, propertyName, type;
   // store objects for dereferencing
   var resolutionTable = {};
 
@@ -14,15 +14,16 @@ Resolver.prototype.resolve = function(spec, callback) {
   for(name in spec.definitions) {
     var model = spec.definitions[name];
     for(propertyName in model.properties) {
-      var property = model.properties[propertyName];
+      property = model.properties[propertyName];
       this.resolveTo(property, resolutionTable);
     }
   }
   // operations
   for(name in spec.paths) {
-    var operation, path = spec.paths[name];
+    var method, operation;
+    path = spec.paths[name];
     for(method in path){
-      var operation = path[method];
+      operation = path[method];
       var parameters = operation.parameters;
       var i;
       for(i in parameters) {
@@ -45,8 +46,8 @@ Resolver.prototype.resolve = function(spec, callback) {
   for(name in resolutionTable) {
     var parts = name.split('#');
     if(parts.length == 2) {
-      var host = parts[0];
-      var path = parts[1];
+      host = parts[0];
+      path = parts[1];
       if(!Array.isArray(opts[host])) {
         opts[host] = [];
         expectedCalls += 1;
@@ -58,7 +59,8 @@ Resolver.prototype.resolve = function(spec, callback) {
   var processedCalls = 0, resolvedRefs = {}, unresolvedRefs = {};
 
   for(name in opts) {
-    var host = name, self = this, opt = opts[name];
+    var self = this, opt = opts[name];
+    host = name;
 
     var obj = {
       useJQuery: false,  // TODO
@@ -108,13 +110,13 @@ Resolver.prototype.resolve = function(spec, callback) {
             self.finish(spec, resolutionTable, resolvedRefs, unresolvedRefs, callback);
         }
       }
-    }
+    };
     authorizations.apply(obj);
     new SwaggerHttp().execute(obj);
   }
   if(Object.keys(opts).length === 0)
-    callback(spec, {});
-}
+    callback.call(this.scope, spec, {});
+};
 
 Resolver.prototype.finish = function(spec, resolutionTable, resolvedRefs, unresolvedRefs, callback) {
   // walk resolution table and replace with resolved refs
@@ -132,8 +134,8 @@ Resolver.prototype.finish = function(spec, resolutionTable, resolvedRefs, unreso
       }
     }
   }
-  callback(spec, unresolvedRefs);
-}
+  callback.call(this.scope, spec, unresolvedRefs);
+};
 
 Resolver.prototype.resolveTo = function (property, objs) {
   var ref = property.$ref;
@@ -151,4 +153,4 @@ Resolver.prototype.resolveTo = function (property, objs) {
     var items = property.items;
     this.resolveTo(items, objs);
   }
-}
+};
