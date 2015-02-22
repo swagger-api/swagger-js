@@ -1,4 +1,4 @@
-{
+exports.spec = {
   "swagger": "2.0",
   "info": {
     "description": "This is a sample server Petstore server.  You can find out more about Swagger at <a href=\"http://swagger.io\">http://swagger.io</a> or on irc.freenode.net, #swagger.  For this sample, you can use the api key \"special-key\" to test the authorization filters",
@@ -28,6 +28,9 @@
       "description": "All about the Users"
     }
   ],
+  "parameters": {
+
+  },
   "paths": {
     "/pet": {
       "post": {
@@ -147,7 +150,7 @@
           "200": {
             "description": "successful operation",
             "schema": {
-              "$ref": "#/definitions/PetArray"
+              "$ref": "http://petstore.swagger.io/v2/swagger.json#/definitions/PetArray"
             }
           },
           "400": {
@@ -828,7 +831,7 @@
           "format": "int64"
         },
         "category": {
-          "$ref": "#/definitions/Category"
+          "$ref": "http://petstore.swagger.io/v2/swagger.json#/definitions/Category"
         },
         "name": {
           "type": "string",
@@ -851,7 +854,7 @@
             "wrapped": true
           },
           "items": {
-            "$ref": "#/definitions/Tag"
+            "$ref": "http://petstore.swagger.io/v2/swagger.json#/definitions/Tag"
           }
         },
         "status": {
@@ -912,16 +915,6 @@
       "items": {
         "$ref": "#/definitions/Pet"
       }
-    }
-  },
-  "parameters": {
-    "sharedSkip": {
-      "name": "skip",
-      "in": "query",
-      "description": "Results to skip",
-      "required": false,
-      "type": "integer",
-      "format": "int32"
     }
   }
 }
