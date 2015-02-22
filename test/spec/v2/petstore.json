@@ -913,5 +913,15 @@
         "$ref": "#/definitions/Pet"
       }
     }
+  },
+  "parameters": {
+    "sharedSkip": {
+      "name": "skip",
+      "in": "query",
+      "description": "Results to skip",
+      "required": false,
+      "type": "integer",
+      "format": "int32"
+    }
   }
 }
