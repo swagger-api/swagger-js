@@ -23,6 +23,10 @@ Resolver.prototype.resolve = function(spec, callback, scope) {
   for(name in spec.paths) {
     var method, operation, responseCode;
     path = spec.paths[name];
+    if (path.$ref) {
+      this.resolveInline(spec, path, resolutionTable, unresolvedRefs);
+      continue;
+    }
     for(method in path) {
       operation = path[method];
       var i, parameters = operation.parameters;
@@ -55,8 +59,15 @@ Resolver.prototype.resolve = function(spec, callback, scope) {
       }
       opts[host].push(path);
     }
+    else {
+      host = name; path = '';
+      if(!Array.isArray(opts[host])) {
+        opts[host] = [];
+        expectedCalls += 1;
+      }
+      opts[host].push(path);
+    }
   }
-
   for(name in opts) {
     var self = this, opt = opts[name];
     host = name;
@@ -92,7 +103,7 @@ Resolver.prototype.resolve = function(spec, callback, scope) {
               if(segment.length > 0)
                 location = location[segment];
             }
-            var resolved = host + '#' + path, resolvedName = parts[j-1];
+            var resolved = host + (path?'#' + path:''), resolvedName = parts[j-1];
             if(typeof location !== 'undefined') {
               resolvedRefs[resolved] = {
                 name: resolvedName,
@@ -145,18 +156,10 @@ Resolver.prototype.finish = function(spec, resolutionTable, resolvedRefs, unreso
  * immediately in-lines local refs, queues remote refs
  * for inline resolution
  */
-Resolver.prototype.resolveInline = function (spec, property, objs, unresolvedRefs) {
+Resolver.prototype.resolveInline = function (spec, property, resolutionTable, unresolvedRefs) {
   var ref = property.$ref;
   if(ref) {
-    if(ref.indexOf('http') === 0) {
-      if(Array.isArray(objs[ref])) {
-        objs[ref].push({obj: property, resolveAs: 'inline'});
-      }
-      else {
-        objs[ref] = [{obj: property, resolveAs: 'inline'}];
-      }
-    }
-    else if (ref.indexOf('#') === 0) {
+    if (ref.indexOf('#') === 0) {
       // local resolve
       var shortenedRef = ref.substring(1);
       var i, parts = shortenedRef.split('/'), location = spec;
@@ -175,9 +178,25 @@ Resolver.prototype.resolveInline = function (spec, property, objs, unresolvedRef
       }
       else unresolvedRefs[ref] = null;
     }
+    else {
+      /*
+       * at this point we have to assume that the ref is external -> it could
+       * be a relative of absoulte path
+       */
+      if (!ref.match(/^http/)) {
+        ref = document.location.href + ref;
+        property.$ref = ref;
+      }
+      if(Array.isArray(resolutionTable[ref])) {
+        resolutionTable[ref].push({obj: property, resolveAs: 'inline'});
+      }
+      else {
+        resolutionTable[ref] = [{obj: property, resolveAs: 'inline'}];
+      }
+    }
   }
   else if(property.type === 'array') {
-    this.resolveTo(property.items, objs);
+    this.resolveTo(property.items, resolutionTable);
   }
 };
 
