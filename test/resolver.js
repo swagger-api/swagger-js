@@ -279,4 +279,38 @@ describe('swagger resolver', function() {
       done();
     });
   });
+
+  it('resolves a remote defined path $ref', function(done) {
+    var api = new swagger.Resolver();
+    var spec = {
+      paths: {
+        '/pet/{id}': {
+          $ref: 'http://localhost:8000/v2/linkedPath.json'
+        }
+      }
+    };
+    api.resolve(spec, function(spec, unresolvedRefs) {
+      expect(spec.paths['/pet/{id}'].get).toExist();
+      done();
+    });
+  });
+
+  it('resolves multipe remotes defined path $ref', function(done) {
+    var api = new swagger.Resolver();
+    var spec = {
+      paths: {
+        '/pet/{id}': {
+          $ref: 'http://localhost:8000/v2/linkedPath.json'
+        },
+        '/pet/test': {
+          $ref: 'http://localhost:8000/v2/linkedPath2.json'
+        }
+      }
+    };
+    api.resolve(spec, function(spec, unresolvedRefs) {
+      expect(spec.paths['/pet/{id}'].get).toExist();
+      expect(spec.paths['/pet/test'].get).toExist();
+      done();
+    });
+  });
 });
