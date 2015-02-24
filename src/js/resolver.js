@@ -1,4 +1,4 @@
-/** 
+/**
  * Resolves a spec's remote references
  */
 var Resolver = function (){};
@@ -184,7 +184,10 @@ Resolver.prototype.resolveInline = function (spec, property, resolutionTable, un
        * be a relative of absoulte path
        */
       if (!ref.match(/^http/)) {
-        ref = document.location.href + ref;
+        if (document.location.href.indexOf('#')!==-1) {
+          ref = document.location.href.split('#')[0] + ref;
+        }
+        else ref = document.location.href + ref;
         property.$ref = ref;
       }
       if(Array.isArray(resolutionTable[ref])) {
