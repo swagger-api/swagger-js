@@ -847,8 +847,7 @@ SwaggerOperation.prototype.urlify = function (args) {
     param = params[i];
     if(param.paramType === 'query') {
       var addition = '';
-      if (Array.isArray(param)) {
-        var j;   
+      if (Array.isArray(param)) { 
         var output = '';   
         for(j = 0; j < param.length; j++) {    
           if(j > 0)    
@@ -865,7 +864,7 @@ SwaggerOperation.prototype.urlify = function (args) {
             throw '' + param.name + ' is a required query param.';
         }
       }
-      if (addition != '' && queryParams.length > 0) {
+      if (addition !== '' && queryParams.length > 0) {
         queryParams += '&';
       }
       queryParams += addition;
