@@ -15,7 +15,6 @@ SwaggerHttp.prototype.execute = function(obj, opts) {
     else {
       obj.contentType = false;
       obj.processData = false;
-      // delete obj.cache;
       delete obj.headers['Content-Type'];
     }
   }

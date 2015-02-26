@@ -82,6 +82,14 @@ describe('verifies the get pet operation', function() {
     expect(url).toBe('http://foo.bar/api/pet/129298');
   });
 
+
+  it('does not add excessive &', function() {
+    operation = sample.pet.operations.testGetOperation;
+    operation.resource.basePath = 'http://foo.bar/api/';
+    var url = operation.urlify({petId: 129298});
+    expect(url).toBe('http://foo.bar/api/testOp?petId=129298');
+  });
+
   it('verifies the default value from the get operation', function() {
     operation = sample.pet.operations.getPetById;
     var param = operation.parameters[0];

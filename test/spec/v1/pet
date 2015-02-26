@@ -45,6 +45,44 @@
         }
       ]
     },
+        {
+      "path": "/testOp",
+      "operations": [
+        {
+          "method": "GET", 
+          "summary": "Find pet by ID",
+          "notes": "Returns a pet based on ID",
+          "type": "Animals",
+          "nickname": "testGetOperation",
+          "authorizations": {},
+          "parameters": [
+            {
+              "name": "petId",
+              "description": "ID of pet that needs to be fetched",
+              "type": "integer",
+              "format": "int64",
+              "paramType": "query"
+            },
+            {
+              "name": "petName",
+              "description": "Name of pet that needs to be fetched",
+              "type": "string",
+              "paramType": "query"
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": 400,
+              "message": "Invalid ID supplied"
+            },
+            {
+              "code": 404,
+              "message": "Pet not found"
+            }
+          ]
+        }
+      ]
+    },
     {
       "path": "/pet/{petId}",
       "operations": [

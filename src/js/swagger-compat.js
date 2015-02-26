@@ -262,7 +262,7 @@ SwaggerResource.prototype.addApiDeclaration = function (response) {
   if (typeof response.consumes === 'string')
     this.consumes = response.consumes;
   if ((typeof response.basePath === 'string') && response.basePath.replace(/\s/g, '').length > 0)
-    this.basePath = response.basePath.indexOf('http') === -1 ? this.getAbsoluteBasePath(response.basePath) : response.basePath;
+    this.basePath = response.basePath.indexOf('http') !== 0 ? this.getAbsoluteBasePath(response.basePath) : response.basePath;
   this.resourcePath = response.resourcePath;
   this.addModels(response.models);
   if (response.apis) {
@@ -846,25 +846,28 @@ SwaggerOperation.prototype.urlify = function (args) {
   for (i = 0; i < params.length; i++) {
     param = params[i];
     if(param.paramType === 'query') {
-      if (queryParams !== '')
-        queryParams += '&';    
-      if (Array.isArray(param)) {
+      var addition = '';
+      if (Array.isArray(param)) { 
         var output = '';   
         for(j = 0; j < param.length; j++) {    
           if(j > 0)    
             output += ',';   
           output += encodeURIComponent(param[j]);    
         }    
-        queryParams += encodeURIComponent(param.name) + '=' + output;    
+        addition += encodeURIComponent(param.name) + '=' + output;
       }
       else {
-        if (typeof args[param.name] !== 'undefined') {
-          queryParams += encodeURIComponent(param.name) + '=' + encodeURIComponent(args[param.name]);
+        if (args[param.name]) {
+          addition += encodeURIComponent(param.name) + '=' + encodeURIComponent(args[param.name]);
         } else {
           if (param.required)
             throw '' + param.name + ' is a required query param.';
         }
       }
+      if (addition !== '' && queryParams.length > 0) {
+        queryParams += '&';
+      }
+      queryParams += addition;
     }
   }
   if ((queryParams) && queryParams.length > 0)
