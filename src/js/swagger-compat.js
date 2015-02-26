@@ -862,7 +862,7 @@ SwaggerOperation.prototype.urlify = function (args) {
           addition += encodeURIComponent(param.name) + '=' + encodeURIComponent(args[param.name]);
         } else {
           if (param.required)
-            throw "" + param.name + " is a required query param.";
+            throw '' + param.name + ' is a required query param.';
         }
       }
       if (addition != '' && queryParams.length > 0) {
