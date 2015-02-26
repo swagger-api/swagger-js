@@ -235,4 +235,48 @@ describe('models', function() {
       test3: { '$': 'string' }
     });
   });
+
+  it('should handle object properties (Issue 230)', function () {
+    var definition = {
+      type: 'object',
+      properties: {
+        details: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string'
+            },
+            age: {
+              type: 'integer'
+            },
+            social: {
+              type: 'object',
+              properties: {
+                github: {
+                  type: 'string'
+                },
+                twitter: {
+                  type: 'string'
+                }
+              }
+            }
+          }
+        }
+      }
+    };
+    var model = new swagger.Model('Person', definition);
+
+    expect(model.createJSONSample()).toEqual({
+      details: {
+        age: 0,
+        name: 'string',
+        social: {
+          github: 'string',
+          twitter: 'string'
+        }
+      }
+    });
+
+    expect(model.getMockSignature()).toEqual('<span class="strong">Person {</span><div><span class="strong">details {</span><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">age</span> (<span class="propType">long</span>, <span class="propOptKey">optional</span>),</div><div><span class="strong">social {</span><div><span class="propName false">github</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">twitter</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span></div><span class="strong">}</span></div><span class="strong">}</span>');
+  });
 });
