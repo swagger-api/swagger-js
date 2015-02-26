@@ -30,7 +30,7 @@ SwaggerClient.prototype.initialize = function (url, options) {
     options = url;
     this.url = options.url;
   }
-  this.swaggerRequstHeaders = options.swaggerRequstHeaders || 'application/json;charset=utf-8,*/*';
+  this.swaggerRequestHeaders = options.swaggerRequestHeaders || 'application/json;charset=utf-8,*/*';
   this.defaultSuccessCallback = options.defaultSuccessCallback || null;
   this.defaultErrorCallback = options.defaultErrorCallback || null;
 
@@ -67,7 +67,7 @@ SwaggerClient.prototype.build = function(mock) {
     url: this.url,
     method: "get",
     headers: {
-      accept: this.swaggerRequstHeaders
+      accept: this.swaggerRequestHeaders
     },
     on: {
       error: function(response) {
