@@ -865,10 +865,10 @@ SwaggerOperation.prototype.urlify = function (args) {
             throw "" + param.name + " is a required query param.";
         }
       }
-      if (addition !== '') {
+      if (addition != '' && queryParams.length > 0) {
         queryParams += '&';
-        queryParams += addition;
       }
+      queryParams += addition;
     }
   }
   if ((queryParams) && queryParams.length > 0)
