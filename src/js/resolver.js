@@ -5,7 +5,7 @@ var Resolver = function (){};
 
 Resolver.prototype.resolve = function(spec, callback, scope) {
   this.scope = (scope || this);
-  var host, name, path, property, propertyName, type;
+  var host, name, path, property, propertyName, type, mergeName, merge;
   var processedCalls = 0, resolvedRefs = {}, unresolvedRefs = {};
 
   // store objects for dereferencing
@@ -14,9 +14,28 @@ Resolver.prototype.resolve = function(spec, callback, scope) {
   // models
   for(name in spec.definitions) {
     var model = spec.definitions[name];
-    for(propertyName in model.properties) {
-      property = model.properties[propertyName];
-      this.resolveTo(property, resolutionTable);
+    if (!model.properties) {
+      model.properties = {};
+    }
+    if (model.allOf) {
+      for(mergeName in model.allOf){
+        merge = model.allOf[mergeName];
+        if(merge.$ref){
+          model.$ref = merge.$ref;
+          this.resolveInline(spec, model, resolutionTable, unresolvedRefs);
+        }else{
+          for(propertyName in merge.properties) {
+            model.properties[propertyName] = property = merge.properties[propertyName];
+            console.log(property);
+            this.resolveTo(property, resolutionTable);
+          }
+        }
+      }
+    }else {
+      for (propertyName in model.properties) {
+        property = model.properties[propertyName];
+        this.resolveTo(property, resolutionTable);
+      }
     }
   }
   // operations
