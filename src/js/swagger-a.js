@@ -85,6 +85,10 @@ SwaggerClient.prototype.build = function(mock) {
         self.swaggerVersion = responseObj.swaggerVersion;
 
         if(responseObj.swagger && parseInt(responseObj.swagger) === 2) {
+          if (typeof self.options.preResolve === 'function') {
+            // augment the response object if required
+            self.options.preResolve(responseObj);
+          }
           self.swaggerVersion = responseObj.swagger;
           new Resolver().resolve(responseObj, self.buildFromSpec, self);
           self.isValid = true;
