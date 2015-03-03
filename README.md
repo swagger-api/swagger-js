@@ -25,7 +25,7 @@ Then let swagger do the work!
 var client = require("swagger-client")
 
 var swagger = new client.SwaggerClient({
-  url: 'http://petstore.swagger.wordnik.com/v2/swagger.json',
+  url: 'http://petstore.swagger.io/v2/swagger.json',
   success: function() {
     swagger.apis.pet.getPetById({petId:1});
   }
@@ -83,7 +83,7 @@ Download `swagger-client.js` and `shred.bundle.js` into your lib folder
 <script type="text/javascript">
   // initialize swagger, point to a resource listing
   window.swagger = new SwaggerClient({
-    url: "http://petstore.swagger.wordnik.com/api/api-docs",
+    url: "http://petstore.swagger.io/api/api-docs",
     success: function() {
       // upon connect, fetch a pet and set contents to element "mydata"
       swagger.apis.pet.getPetById({petId:1}, function(data) {

@@ -292,6 +292,13 @@ describe('operations', function() {
     expect(typeof obj.headers['user name'] === 'string').toBe(true);
     expect(obj.headers['user name']).toEqual('Tony Tam');
   });
+
+  it('should handle a path with @ sign', function() {
+    var op = new swagger.Operation({}, 'http', 'test', 'get', '/fantastic/@me', { parameters: {}, deprecated: 'false' });
+    var opts = {mock: true};
+    var obj = op.execute({}, opts);
+    console.log(obj);
+  });
 });
 
 var quantityQP = {
