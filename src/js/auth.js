@@ -1,4 +1,3 @@
-
 /**
  * SwaggerAuthorizations applys the correct authorization to an operation being executed
  */
@@ -16,17 +15,10 @@ SwaggerAuthorizations.prototype.remove = function(name) {
 };
 
 SwaggerAuthorizations.prototype.apply = function (obj, authorizations) {
-  var status = null;
-  var key, name, value, result;
 
   // if the "authorizations" key is undefined, or has an empty array, add all keys
   if (typeof authorizations === 'undefined' || Object.keys(authorizations).length === 0) {
-    for (key in this.authz) {
-      value = this.authz[key];
-      result = value.apply(obj, authorizations);
-      if (result === true)
-        status = true;
-    }
+    return this._checkAllKeys(obj);
   }
   else {
     // 2.0 support
@@ -34,34 +26,46 @@ SwaggerAuthorizations.prototype.apply = function (obj, authorizations) {
 
       for (var i = 0; i < authorizations.length; i++) {
         var auth = authorizations[i];
-        for (name in auth) {
-          for (key in this.authz) {
-            if (key == name) {
-              value = this.authz[key];
-              result = value.apply(obj, authorizations);
-              if (result === true)
-                status = true;
-            }
-          }
-        }
+        var result = this._checkAuth(obj, auth);
+
+        if(result !== true)
+          return false;
       }
     }
     else {
       // 1.2 support
-      for (name in authorizations) {
-        for (key in this.authz) {
-          if (key == name) {
-            value = this.authz[key];
-            result = value.apply(obj, authorizations);
-            if (result === true)
-              status = true;
-          }
-        }
-      }
+      return this._checkAuth(obj, authorizations);
     }
   }
 
-  return status;
+  return true;
+};
+
+SwaggerAuthorizations.prototype._checkAuth = function (obj, authorization) {
+  for (var name in authorization) {
+    var value = this.authz[name];
+
+    if(typeof value !== "undefined") {
+      var result = value.apply(obj);
+
+      if(result !== true)
+        return false;
+    }
+  }
+
+  return true;
+};
+
+SwaggerAuthorizations.prototype._checkAllKeys = function(obj) {
+  for (var key in this.authz) {
+    var value  = this.authz[key];
+    var result = value.apply(obj);
+
+    if (result !== true)
+      return false;
+  }
+
+  return true;
 };
 
 /**
@@ -73,7 +77,7 @@ var ApiKeyAuthorization = function(name, value, type) {
   this.type = type;
 };
 
-ApiKeyAuthorization.prototype.apply = function(obj, authorizations) {
+ApiKeyAuthorization.prototype.apply = function(obj) {
   if (this.type === "query") {
     if (obj.url.indexOf('?') > 0)
       obj.url = obj.url + "&" + this.name + "=" + this.value;
@@ -90,7 +94,7 @@ var CookieAuthorization = function(cookie) {
   this.cookie = cookie;
 };
 
-CookieAuthorization.prototype.apply = function(obj, authorizations) {
+CookieAuthorization.prototype.apply = function(obj) {
   obj.cookieJar = obj.cookieJar || CookieJar();
   obj.cookieJar.setCookie(this.cookie);
   return true;
@@ -110,7 +114,7 @@ var PasswordAuthorization = function(name, username, password) {
     this._btoa = require("btoa");
 };
 
-PasswordAuthorization.prototype.apply = function(obj, authorizations) {
+PasswordAuthorization.prototype.apply = function(obj) {
   var base64encoder = this._btoa;
   obj.headers.Authorization = "Basic " + base64encoder(this.username + ":" + this.password);
   return true;
