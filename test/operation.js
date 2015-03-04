@@ -3,6 +3,7 @@ var expect = require('expect');
 var swagger = require('../lib/swagger-client');
 
 describe('operations', function() {
+
   it('should generate a url', function() {
     var parameters = [
       quantityQP
@@ -298,6 +299,19 @@ describe('operations', function() {
     var opts = {mock: true};
     var obj = op.execute({}, opts);
     console.log(obj);
+  });
+  
+  it('should not fail when http operations are null', function() {
+    // Load the v2 spec
+    var spec = require('../test/spec/v2/petstore.json');
+    // Add some null operations to /pet
+    spec.paths['/pet'].get = null;
+    spec.paths['/pet'].delete = null;
+
+    var client = new swagger.SwaggerClient();
+    var result = client.buildFromSpec(spec);
+
+    expect(result.isBuilt).toBe(true);
   });
 });
 
