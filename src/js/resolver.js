@@ -25,6 +25,7 @@ Resolver.prototype.resolve = function(spec, callback, scope) {
     path = spec.paths[name];
     for(method in path) {
       operation = path[method];
+      if (operation === null) continue;
       var i, parameters = operation.parameters;
       for(i in parameters) {
         var parameter = parameters[i];
