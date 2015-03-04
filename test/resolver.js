@@ -279,4 +279,28 @@ describe('swagger resolver', function() {
       done();
     });
   });
+
+  it('should not fail when http operations are null', function(done) {
+    var api = new swagger.Resolver();
+    var spec = {
+      paths: {
+        '/pet': {
+          get: null,
+          post: {
+            parameters: [{
+              in: 'body',
+              name: 'body',
+              required: false,
+              schema: { $ref: 'http://localhost:8000/v2/petstore.json#/definitions/Pet' }
+            }]
+          },
+          delete: null
+        }
+      }
+    };
+    api.resolve(spec, function(spec, unresolvedRefs) {
+      expect(spec.definitions.Pet).toExist();
+      done();
+    });
+  });
 });

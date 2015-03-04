@@ -178,6 +178,7 @@ SwaggerClient.prototype.buildFromSpec = function(response) {
           continue;
         }
         var operation = response.paths[path][httpMethod];
+        if (operation === null) continue;
         var tags = operation.tags;
         if(typeof tags === 'undefined') {
           operation.tags = [ 'default' ];
