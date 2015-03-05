@@ -19,6 +19,24 @@ describe('swagger request functions', function() {
     done();
   });
 
+  it('posts an object', function (done) {
+    var petApi = sample.pet;
+    var req = petApi.createPet({body: {id: 100, name: 'gorilla'}}, function(resp) {
+      expect(resp.obj.id).toBe(100);
+      expect(resp.obj.name).toBe('gorilla');
+      done();
+    });
+  });
+
+  it('posts a string value', function (done) {
+    var petApi = sample.pet;
+    var req = petApi.createPet({body: '{"id": 100, "name": "gorilla"}'}, function(resp) {
+      expect(resp.obj.id).toBe(100);
+      expect(resp.obj.name).toBe('gorilla');
+      done();
+    });
+  });
+
   it('gets the resource description', function() {
     var userApi = sample.user;
     expect(userApi.description).toEqual('All about the Users');
