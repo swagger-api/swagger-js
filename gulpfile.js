@@ -40,7 +40,7 @@ gulp.task('lint', function() {
     .pipe(jshint.reporter('default'));
 });
 
-gulp.task('test', function() {
+gulp.task('test', ['build'], function() {
   return gulp
     .src(paths.tests)
     .pipe(mocha());
@@ -74,4 +74,4 @@ gulp.task('watch', ['test'], function() {
   gulp.watch(paths.all, ['test']);
 });
 
-gulp.task('default', ['clean', 'lint', 'test', 'build']);
+gulp.task('default', ['clean', 'lint', 'test']);
