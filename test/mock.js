@@ -26,6 +26,18 @@ exports.petstore = function(arg1, arg2, arg3, arg4) {
     else {
       fs.exists(filename, function(exists) {
         if(exists) {
+          if(req.method === 'POST') {
+            var body = '';
+            req.on('data', function (data) {
+              body += data.toString();
+            });
+            res.setHeader("Access-Control-Allow-Origin", "*");
+            res.setHeader("Content-Type", "application/json");
+            res.writeHead(200, "application/json");
+            res.write(body);
+            res.end();
+            return;
+          }
           var accept = req.headers.accept;
           if(typeof accept !== 'undefined') {
             if(accept === 'invalid') {

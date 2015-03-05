@@ -10,15 +10,15 @@ SwaggerHttp.prototype.execute = function(obj, opts) {
     this.useJQuery = this.isIE8();
 
   if(obj && typeof obj.body === 'object') {
-    if(obj.body.type && obj.body.type !== 'formData')
-      obj.body = JSON.stringify(obj.body);
-    else {
+    // special processing for file uploads via jquery
+    if (obj.body.type && obj.body.type === 'formData'){
       obj.contentType = false;
       obj.processData = false;
       delete obj.headers['Content-Type'];
     }
+    else
+      obj.body = JSON.stringify(obj.body);
   }
-
   if(this.useJQuery)
     return new JQueryHttpClient(opts).execute(obj);
   else
