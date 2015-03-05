@@ -31,11 +31,13 @@ exports.petstore = function(arg1, arg2, arg3, arg4) {
             req.on('data', function (data) {
               body += data.toString();
             });
-            res.setHeader("Access-Control-Allow-Origin", "*");
-            res.setHeader("Content-Type", "application/json");
-            res.writeHead(200, "application/json");
-            res.write(body);
-            res.end();
+            req.on('end', function () {
+              res.setHeader("Access-Control-Allow-Origin", "*");
+              res.setHeader("Content-Type", "application/json");
+              res.writeHead(200, "application/json");
+              res.write(body);
+              res.end();
+            });
             return;
           }
           var accept = req.headers.accept;
