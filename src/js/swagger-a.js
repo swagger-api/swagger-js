@@ -1096,14 +1096,13 @@ Property.prototype.sampleValue = function(isArray, ignoredModels, representation
   ignoredModels = (ignoredModels || {});
   // representations = (representations || {});
 
-  var type = getStringSignature(this.obj, true);
-  var output;
-
-  if(this.$ref) {
-    var refModelName = simpleRef(this.$ref);
+  var getRefValue = function (ref) {
+    var refModelName = simpleRef(ref);
     var refModel = models[refModelName];
+    var output;
+
     if(typeof representations[type] !== 'undefined') {
-      return representations[type];
+      output = representations[type];
     }
     else
 
@@ -1115,7 +1114,14 @@ Property.prototype.sampleValue = function(isArray, ignoredModels, representation
     else {
       output = (representations[type] || refModelName);
     }
-  }
+
+    return output;
+  };
+  var type = getStringSignature(this.obj, true);
+  var output;
+
+  if(this.$ref)
+    output = getRefValue(this.$ref);
   else if(this.example)
     output = this.example;
   else if(this.default)
@@ -1136,8 +1142,13 @@ Property.prototype.sampleValue = function(isArray, ignoredModels, representation
     output = 0.0;
   else if(type === 'boolean')
     output = true;
+  else if(this.schema.$ref)
+    output = getRefValue(this.schema.$ref);
+  else if(this.schema.properties)
+    output = new Model('InlineModel-' + new Date(), this.schema).getSampleValue();
   else
     output = {};
+
   ignoredModels[type] = output;
   if(isArray)
     return [output];
@@ -1198,7 +1209,22 @@ simpleRef = function(name) {
 
 Property.prototype.toString = function() {
   var str = getStringSignature(this.obj);
-  if(str !== '') {
+  var strong ='<span class="strong">';
+  var stronger = '<span class="stronger">';
+  var strongClose = '</span>';
+  var propertiesStr = [];
+  var prop;
+
+  if(str === 'object') {
+    for (var name in this.schema.properties) {
+      if (this.schema.properties.hasOwnProperty(name)) {
+        prop = new Property(name, this.schema.properties[name], (this.schema.required || []).indexOf(name) > -1);
+        propertiesStr.push(prop.toString());
+      }
+    }
+
+    str = strong + this.name + ' {' + strongClose + '<div>' + propertiesStr.join(',</div><div>') + '</div>' + strong + '}' + strongClose;
+  } else if(str !== '') {
     str = '<span class="propName ' + this.required + '">' + this.name + '</span> (<span class="propType">' + str + '</span>';
     if(!this.required)
       str += ', <span class="propOptKey">optional</span>';
