@@ -450,7 +450,7 @@ var SwaggerModelProperty = function (name, obj, model) {
   this.isCollection = this.dataType && (this.dataType.toLowerCase() === 'array' || this.dataType.toLowerCase() === 'list' || this.dataType.toLowerCase() === 'set');
   this.descr = obj.description;
   this.required = obj.required;
-  this.defaultValue = applyModelPropertyMacro(obj, model);
+  this.defaultValue = applyModelPropertyMacro(model, obj);
   if (obj.items) {
     if (obj.items.type) {
       this.refDataType = obj.items.type;
