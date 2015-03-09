@@ -1,11 +1,13 @@
-var test = require('unit.js');
+/* global describe, it */
+
+'use strict';
+
 var expect = require('expect');
-var swagger = require('../lib/swagger-client');
+var Operation = require('../lib/types/operation');
 
 var MonsterResponse = { schema: { $ref: '#/definitions/Monster' }};
 var StringResponse = { schema: { type: 'string'} };
 var BasicResponseModel = { schema: { $ref: '#/definitions/ResponseModel'}};
-
 var MonsterModel = {
   properties: {
     id: { type: 'integer', format: 'int64' },
@@ -19,8 +21,8 @@ var ResponseModel = {
   }
 };
 
-describe('response types', function() {
-  it('should return a 200 response definition', function() {
+describe('response types', function () {
+  it('should return a 200 response definition', function () {
     var responses = {
       200:       MonsterResponse,
       201:       StringResponse,
@@ -30,8 +32,7 @@ describe('response types', function() {
       Monster: MonsterModel,
       ResponseModel: ResponseModel
     };
-
-    var op = new swagger.Operation(
+    var op = new Operation(
       {},
       'http',
       'operationId',
@@ -41,10 +42,10 @@ describe('response types', function() {
       definitions); // definitions
 
     expect(typeof op.successResponse).toBe('object');
-    var responseModel = op.successResponse['200'];
     expect(op.successResponse['200'].createJSONSample()).toEqual({ id: 0, name: 'string' });
 
     responses = op.responses;
+
     expect(typeof responses['201']).toBe('object');
     expect(typeof responses['default']).toBe('object');
   });
