@@ -43,7 +43,7 @@ gulp.task('lint', function () {
     .pipe(jshint.reporter('jshint-stylish'));
 });
 
-gulp.task('test', function () {
+gulp.task('coverage', function () {
   return gulp
     .src(paths.sources)
     .pipe(istanbul({includeUntested: true}))
@@ -90,8 +90,14 @@ gulp.task('build', function (cb) {
   });
 });
 
+gulp.task('test', function () {
+  return gulp
+    .src(paths.tests)
+    .pipe(mocha({reporter: 'spec'}));
+});
+
 gulp.task('watch', ['test'], function () {
   gulp.watch(paths.all, ['test']);
 });
 
-gulp.task('default', ['clean', 'lint', 'test']);
+gulp.task('default', ['clean', 'lint', 'test', 'build']);
