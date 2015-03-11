@@ -16,7 +16,7 @@ exports.petstore = function(arg1, arg2, arg3, arg4) {
     var uri = url.parse(req.url).pathname;
     var filename = path.join('test/spec', uri);
     // for testing redirects
-    
+
     if(filename === 'test/spec/api/redirect') {
       res.writeHead(302, {
         'Location': 'http://localhost:8000/api/pet/1'
@@ -30,12 +30,12 @@ exports.petstore = function(arg1, arg2, arg3, arg4) {
             var body = '';
             req.on('data', function (data) {
               body += data.toString();
+              res.setHeader("Access-Control-Allow-Origin", "*");
+              res.setHeader("Content-Type", "application/json");
+              res.writeHead(200, "application/json");
+              res.write(body);
+              res.end();
             });
-            res.setHeader("Access-Control-Allow-Origin", "*");
-            res.setHeader("Content-Type", "application/json");
-            res.writeHead(200, "application/json");
-            res.write(body);
-            res.end();
             return;
           }
           var accept = req.headers.accept;
@@ -57,7 +57,7 @@ exports.petstore = function(arg1, arg2, arg3, arg4) {
         else if(filename === 'test/compat/spec/api/pet/0') {
           res.writeHead(500);
           res.end();
-          return;          
+          return;
         }
         else {
           res.writeHead(200, {'Content-Type': 'text/plain'});
