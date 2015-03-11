@@ -168,20 +168,23 @@ npm install
 # List all tasks.
 gulp -T
 
-# Run the test suite
+# Run lint (will not fail if there are errors/warnings), tests (without coverage) and builds the browser binaries
+gulp
+
+# Run the test suite (without coverage)
 gulp test
 
-# Build the library (minified and unminified) in the dist folder
+# Build the browser binaries (One for development with source maps and one that is minified and without source maps) in the browser directory
 gulp build
 
-# continuously run the test suite:
+# Continuously run the test suite:
 gulp watch
 
-# run jshint report
+# Run jshint report
 gulp lint
 
-# run a coverage report
-gulp cover
+# Run a coverage report based on running the unit tests
+gulp coverage
 ```
 
 License
