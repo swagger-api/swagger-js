@@ -1,0 +1,30 @@
+{
+  "name": "swagger-js",
+  "version": "2.1.11-M1",
+  "homepage": "http://swagger.io",
+  "authors": [
+    "Tony Tam <fehguy@gmail.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/swagger-api/swagger-js.git"
+  },
+  "description": "swagger.js is a javascript client for use with swaggering APIs.",
+  "main": "lib/swagger-client.js",
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "swagger",
+    "swagger-js",
+    "swaggerjs"
+  ],
+  "license": "apache 2.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
