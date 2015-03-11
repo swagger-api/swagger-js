@@ -13,6 +13,10 @@
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     }
   },
+  "externalDocs": {
+    "description": "Find more info here",
+    "url": "https://swagger.io"
+  },
   "host": "localhost:8000",
   "basePath": "/v2/api",
   "schemes": [
