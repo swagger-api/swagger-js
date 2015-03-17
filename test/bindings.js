@@ -23,7 +23,7 @@ describe('help and bindings', function () {
     var petApi = sample.pet;
     var help = petApi.help(true);
 
-    expect(help.indexOf('operations for the "pet" tag')).toBe(0);
+    expect(help.indexOf('operations for the \'pet\' tag')).toBe(0);
   });
 
   it('verifies the direct help operation function', function () {
@@ -58,7 +58,7 @@ describe('help and bindings', function () {
     var petApi = sample.apis.pet;
     var help = petApi.help(true);
 
-    expect(help.indexOf('operations for the "pet" tag')).toBe(0);
+    expect(help.indexOf('operations for the \'pet\' tag')).toBe(0);
   });
 
   it('verifies the apis help operation function', function () {
