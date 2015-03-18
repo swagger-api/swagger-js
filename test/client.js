@@ -68,4 +68,17 @@ describe('SwaggerClient', function () {
     expect(client.pet.help(true).indexOf('_help')).toBeMoreThan(-1);
     expect(client.pet._help.help(true).indexOf('_help')).toBeMoreThan(-1);
   });
+
+  it('should handle empty tags (Issue 291)', function () {
+    var cPetStore = _.cloneDeep(petstoreRaw);
+
+    cPetStore.paths['/pet/add'].post.tags = [];
+
+    client = new SwaggerClient({
+      spec: cPetStore
+    });
+
+    expect(client.default.help).toBeA('function');
+    expect(client.default.createPet).toBeA('function');
+  });
 });
