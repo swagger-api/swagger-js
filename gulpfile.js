@@ -44,6 +44,8 @@ gulp.task('lint', function () {
 });
 
 gulp.task('coverage', function () {
+  process.env.NODE_ENV = 'test';
+
   return gulp
     .src(paths.sources)
     .pipe(istanbul({includeUntested: true}))
@@ -91,6 +93,8 @@ gulp.task('build', function (cb) {
 });
 
 gulp.task('test', function () {
+  process.env.NODE_ENV = 'test';
+
   return gulp
     .src(paths.tests)
     .pipe(mocha({reporter: 'spec'}));

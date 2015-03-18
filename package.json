@@ -25,6 +25,7 @@
     "btoa": "^1.1.2",
     "cookiejar": "^2.0.1",
     "jquery": "^2.1.3",
+    "lodash-compat": "^3.5.0",
     "superagent": "^0.21.0"
   },
   "devDependencies": {
