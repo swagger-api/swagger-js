@@ -2,8 +2,11 @@
 
 'use strict';
 
+var _ = require('lodash-compat');
 var expect = require('expect');
 var Operation = require('../lib/types/operation');
+var petstore = require('./spec/v2/petstore.json');
+var SwaggerClient = require('..');
 
 var MonsterResponse = { schema: { $ref: '#/definitions/Monster' }};
 var StringResponse = { schema: { type: 'string'} };
@@ -117,5 +120,43 @@ describe('response types', function () {
     expect(op.responses['default'].examples).toEqual(responses['default'].examples);
     expect(op.responses['default'].headers).toEqual(responses['default'].headers);
     expect(op.responses['default'].schema).toEqual(responses['default'].schema);
+  });
+
+  it('should return JSON example when provided as Object (Issue 300)', function () {
+    var cPetStore = _.cloneDeep(petstore);
+    var testPet = {
+      id: 1,
+      name: 'Test Pet'
+    };
+
+    cPetStore.paths['/pet/{petId}'].get.responses['200'].examples = {
+      'application/json': testPet
+    };
+
+    var client = new SwaggerClient({
+      spec: cPetStore
+    });
+
+
+    expect(client.pet.operations.getPetById.successResponse['200'].createJSONSample()).toEqual(testPet);
+  });
+
+  it('should return JSON example when provided as String (Issue 300)', function () {
+    var cPetStore = _.cloneDeep(petstore);
+    var testPet = {
+      id: 1,
+      name: 'Test Pet'
+    };
+
+    cPetStore.paths['/pet/{petId}'].get.responses['200'].examples = {
+      'application/json': JSON.stringify(testPet)
+    };
+
+    var client = new SwaggerClient({
+      spec: cPetStore
+    });
+
+
+    expect(client.pet.operations.getPetById.successResponse['200'].createJSONSample()).toEqual(testPet);
   });
 });
