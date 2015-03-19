@@ -122,7 +122,7 @@ describe('response types', function () {
     expect(op.responses['default'].schema).toEqual(responses['default'].schema);
   });
 
-  it('should return JSON example when provided as Object (Issue 300)', function () {
+  it('should return JSON example when provided as Object (Issue 300)', function (done) {
     var cPetStore = _.cloneDeep(petstore);
     var testPet = {
       id: 1,
@@ -134,14 +134,16 @@ describe('response types', function () {
     };
 
     var client = new SwaggerClient({
-      spec: cPetStore
+      spec: cPetStore,
+      success: function () {
+        expect(client.pet.operations.getPetById.successResponse['200'].createJSONSample()).toEqual(testPet);
+
+        done();
+      }
     });
-
-
-    expect(client.pet.operations.getPetById.successResponse['200'].createJSONSample()).toEqual(testPet);
   });
 
-  it('should return JSON example when provided as String (Issue 300)', function () {
+  it('should return JSON example when provided as String (Issue 300)', function (done) {
     var cPetStore = _.cloneDeep(petstore);
     var testPet = {
       id: 1,
@@ -153,10 +155,12 @@ describe('response types', function () {
     };
 
     var client = new SwaggerClient({
-      spec: cPetStore
+      spec: cPetStore,
+      success: function () {
+        expect(client.pet.operations.getPetById.successResponse['200'].createJSONSample()).toEqual(testPet);
+
+        done();
+      }
     });
-
-
-    expect(client.pet.operations.getPetById.successResponse['200'].createJSONSample()).toEqual(testPet);
   });
 });
