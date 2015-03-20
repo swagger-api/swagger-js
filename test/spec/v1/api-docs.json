@@ -15,7 +15,12 @@
       "description": "Operations about store"
     }
   ],
-    "authorizations": {
+  "authorizations": {
+    "privateKey": {
+      "type": "apiKey",
+      "passAs": "header",
+      "name": "privateKey"
+    },
     "oauth2": {
       "type": "oauth2",
       "scopes": [
