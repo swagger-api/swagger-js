@@ -40,6 +40,7 @@ describe('converts specs', function () {
     };
     obj.on.response = function(data) {
       var converter = new SwaggerSpecConverter();
+      converter.setDocumentationLocation('http://localhost:8000/v1/api-docs');
       converter.convert(data.obj, function(swagger) {
         console.log(JSON.stringify(swagger, null, 2));
         done();
