@@ -42,7 +42,6 @@ describe('converts specs', function () {
       var converter = new SwaggerSpecConverter();
       converter.setDocumentationLocation('http://localhost:8000/v1/api-docs');
       converter.convert(data.obj, function(swagger) {
-        console.log(JSON.stringify(swagger, null, 2));
         done();
       });
     };
@@ -50,4 +49,41 @@ describe('converts specs', function () {
     var resource = new SwaggerHttp().execute(obj);
   });
 
+  it('converts a single file 1.2 spec', function (done) {
+    var obj = {
+      url: 'http://localhost:8000/v1/single.json',
+      method: 'get',
+      headers: {accept: 'application/json'},
+      on: {}
+    };
+    obj.on.response = function(data) {
+      var converter = new SwaggerSpecConverter();
+      converter.setDocumentationLocation('http://localhost:8000/v1/api-docs');
+      converter.convert(data.obj, function(swagger) {
+        // console.log(JSON.stringify(swagger.definitions, null, 2));
+        done();
+      });
+    };
+
+    var resource = new SwaggerHttp().execute(obj);
+  });
+
+  it('converts a single file 1.0 spec', function (done) {
+    var obj = {
+      url: 'http://localhost:8000/v1/word.json',
+      method: 'get',
+      headers: {accept: 'application/json'},
+      on: {}
+    };
+    obj.on.response = function(data) {
+      var converter = new SwaggerSpecConverter();
+      converter.setDocumentationLocation('http://localhost:8000/v1/word.json');
+      converter.convert(data.obj, function(swagger) {
+        // console.log(JSON.stringify(swagger, null, 2));
+        done();
+      });
+    };
+
+    var resource = new SwaggerHttp().execute(obj);
+  });
 });
