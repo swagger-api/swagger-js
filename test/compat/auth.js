@@ -21,6 +21,11 @@ describe('1.2 api key authorizations', function() {
     done();
   });
 
+  it('tests', function(done) {
+    // console.log(sample);
+    done();
+  })
+
   it('applies an api key to the query string', function() {
     var params = { petId: 1 };
     var opts = {

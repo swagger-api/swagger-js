@@ -64,17 +64,13 @@ exports.petstore = function (arg1, arg2, arg3, arg4) {
 
   instance.on('listening', function () {
     var sample;
-
     opts.success = function () {
       done();
-
       callback(sample, instance);
-
       return;
     };
 
     opts.url = 'http://localhost:8000/v1/api-docs.json';
-
     sample = new SwaggerClient(opts);
 
     if (macros) {
