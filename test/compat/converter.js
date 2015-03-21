@@ -105,7 +105,6 @@ describe('converts specs', function () {
       var converter = new SwaggerSpecConverter();
       converter.setDocumentationLocation('http://localhost:8000/v1/api-docs');
       converter.convert(data.obj, function(swagger) {
-
         // metadata tests
         expect(swagger.swagger).toBe('2.0');
         test.object(swagger.info);

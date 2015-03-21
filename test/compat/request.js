@@ -34,7 +34,7 @@ describe('1.2 request operations', function () {
   it('shows curl syntax', function () {
     var curl = sample.pet.getPetById.asCurl({petId: 1});
 
-    expect(curl).toBe('curl --header "Accept: application/json" http://localhost:8000/v1/api/pet/1');
+    expect(curl).toBe('curl -X GET --header "Accept: application/json" "http://localhost:8000/v1/api/pet/1"');
   });
 
   it('generate a get request', function () {
@@ -52,7 +52,6 @@ describe('1.2 request operations', function () {
     var petApi = sample.pet;
 
     petApi.getPetById({petId: 1}, {mock: true});
-
     expect(petApi.operations.getPetById.deprecated).toBe(true);
   });
 
@@ -100,7 +99,6 @@ describe('1.2 request operations', function () {
     };
     var opts = { mock: true };
     var req = petApi.updatePetWithForm(params, opts);
-
     expect(req.method).toBe('POST');
     expect(req.headers.Accept).toBe('application/json');
     expect(req.headers['Content-Type']).toBe('application/x-www-form-urlencoded');
