@@ -60,7 +60,7 @@ describe('converts specs', function () {
       var converter = new SwaggerSpecConverter();
       converter.setDocumentationLocation('http://localhost:8000/v1/api-docs');
       converter.convert(data.obj, function(swagger) {
-        // console.log(JSON.stringify(swagger.definitions, null, 2));
+        console.log(JSON.stringify(swagger.paths["/pet/{petId}"].get, null, 2));
         done();
       });
     };
