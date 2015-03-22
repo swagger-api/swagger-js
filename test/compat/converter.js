@@ -65,8 +65,8 @@ describe('converts specs', function () {
         expect(param.name).toBe('petId');
         expect(param.description).toBe('ID of pet that needs to be fetched');
         expect(param.in).toBe('path');
-        expect(param.minimum).toBe("1.0");
-        expect(param.maximum).toBe("100000.0");
+        expect(param.minimum).toBe('1.0');
+        expect(param.maximum).toBe('100000.0');
         expect(param.type).toBe('integer');
         expect(param.format).toBe('int64');
 

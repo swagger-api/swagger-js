@@ -199,10 +199,10 @@ describe('1.2 request operations', function () {
 
     op.parameters[0].name = 'pet';
 
-    var params = {
-      body: {id: 666}
-    };
-    var opts = { mock: true };
+    // var params = {
+    //   body: {id: 666}
+    // };
+    // var opts = { mock: true };
 
     // var req = sample.pet.addPet(params, opts);
     // test.object(req.body);

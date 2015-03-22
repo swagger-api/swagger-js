@@ -77,7 +77,7 @@ describe('verifies the get pet operation', function() {
     var operation = sample.pet.operations.getPetById;
 
     operation.host = 'foo.bar/api';
-    operation.basePath = "/";
+    operation.basePath = '/';
 
     var url = operation.urlify({petId: 129298});
 
@@ -88,7 +88,7 @@ describe('verifies the get pet operation', function() {
   it('does not add excessive &', function() {
     var operation = sample.pet.operations.testGetOperation;
     operation.host = 'foo.bar/api';
-    operation.basePath = "/";
+    operation.basePath = '/';
 
     var url = operation.urlify({petId: 129298});
 
