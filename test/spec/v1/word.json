@@ -1,0 +1,1713 @@
+{
+  "resourcePath": "/word",
+  "swaggerVersion": "1.0",
+  "models": {
+    "Syllable": {
+      "required": false,
+      "uniqueItems": false,
+      "properties": {
+        "text": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "seq": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "int"
+        },
+        "type": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        }
+      },
+      "id": "syllable",
+      "type": "any"
+    },
+    "AudioType": {
+      "required": false,
+      "uniqueItems": false,
+      "properties": {
+        "id": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "int"
+        },
+        "name": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        }
+      },
+      "id": "audioType",
+      "type": "any"
+    },
+    "Facet": {
+      "required": false,
+      "uniqueItems": false,
+      "properties": {
+        "facetValues": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "$ref": "facetValue",
+            "required": false,
+            "uniqueItems": false,
+            "type": "any"
+          }
+        },
+        "name": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        }
+      },
+      "id": "facet",
+      "type": "any"
+    },
+    "WordObject": {
+      "required": false,
+      "uniqueItems": false,
+      "properties": {
+        "id": {
+          "required": true,
+          "uniqueItems": false,
+          "type": "long"
+        },
+        "word": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "originalWord": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "suggestions": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "required": false,
+            "uniqueItems": false,
+            "type": "string"
+          }
+        },
+        "canonicalForm": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "vulgar": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        }
+      },
+      "id": "wordObject",
+      "type": "any"
+    },
+    "ExampleSearchResults": {
+      "required": false,
+      "uniqueItems": false,
+      "properties": {
+        "facets": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "$ref": "facet",
+            "required": false,
+            "uniqueItems": false,
+            "type": "any"
+          }
+        },
+        "examples": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "$ref": "example",
+            "required": false,
+            "uniqueItems": false,
+            "type": "any"
+          }
+        }
+      },
+      "id": "exampleSearchResults",
+      "type": "any"
+    },
+    "Example": {
+      "required": false,
+      "uniqueItems": false,
+      "properties": {
+        "id": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "long"
+        },
+        "exampleId": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "long"
+        },
+        "title": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "text": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "score": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "scoredWord"
+        },
+        "sentence": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "sentence"
+        },
+        "word": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "provider": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "contentProvider"
+        },
+        "year": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "integer"
+        },
+        "rating": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "float"
+        },
+        "documentId": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "long"
+        },
+        "url": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        }
+      },
+      "id": "example",
+      "type": "any"
+    },
+    "AudioFile": {
+      "required": false,
+      "uniqueItems": false,
+      "properties": {
+        "attributionUrl": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "commentCount": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "int"
+        },
+        "voteCount": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "integer"
+        },
+        "fileUrl": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "audioType": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "id": {
+          "required": true,
+          "uniqueItems": false,
+          "type": "long"
+        },
+        "duration": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "double"
+        },
+        "attributionText": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "createdBy": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "description": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "createdAt": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "Date"
+        },
+        "voteWeightedAverage": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "float"
+        },
+        "voteAverage": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "float"
+        },
+        "word": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        }
+      },
+      "id": "audioFile",
+      "type": "any"
+    },
+    "ExampleUsage": {
+      "required": false,
+      "uniqueItems": false,
+      "properties": {
+        "text": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        }
+      },
+      "id": "ExampleUsage",
+      "type": "any"
+    },
+    "Bigram": {
+      "required": false,
+      "uniqueItems": false,
+      "properties": {
+        "count": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "long"
+        },
+        "gram2": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "gram1": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "wlmi": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "double"
+        },
+        "mi": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "double"
+        }
+      },
+      "id": "bigram",
+      "type": "any"
+    },
+    "Frequency": {
+      "required": false,
+      "uniqueItems": false,
+      "properties": {
+        "count": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "long"
+        },
+        "year": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "int"
+        }
+      },
+      "id": "frequency",
+      "type": "any"
+    },
+    "TextPron": {
+      "required": false,
+      "uniqueItems": false,
+      "properties": {
+        "raw": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "seq": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "int"
+        },
+        "rawType": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        }
+      },
+      "id": "textPron",
+      "type": "any"
+    },
+    "Long": {
+      "required": false,
+      "uniqueItems": false,
+      "properties": {
+        "value": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "long"
+        }
+      },
+      "id": "long",
+      "type": "any"
+    },
+    "Note": {
+      "required": false,
+      "uniqueItems": false,
+      "properties": {
+        "noteType": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "appliesTo": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "required": false,
+            "uniqueItems": false,
+            "type": "string"
+          }
+        },
+        "value": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "pos": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "int"
+        }
+      },
+      "id": "note",
+      "type": "any"
+    },
+    "FacetValue": {
+      "required": false,
+      "uniqueItems": false,
+      "properties": {
+        "count": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "long"
+        },
+        "value": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        }
+      },
+      "id": "facetValue",
+      "type": "any"
+    },
+    "Related": {
+      "required": false,
+      "uniqueItems": false,
+      "properties": {
+        "label1": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "relationshipType": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "label2": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "label3": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "words": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "required": false,
+            "uniqueItems": false,
+            "type": "string"
+          }
+        },
+        "gram": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "label4": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        }
+      },
+      "id": "related",
+      "type": "any"
+    },
+    "ScoredWord": {
+      "required": false,
+      "uniqueItems": false,
+      "properties": {
+        "position": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "int"
+        },
+        "id": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "long"
+        },
+        "docTermCount": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "int"
+        },
+        "lemma": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "wordType": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "score": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "float"
+        },
+        "word": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "sentenceId": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "long"
+        },
+        "stopword": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "boolean"
+        },
+        "baseWordScore": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "double"
+        },
+        "partOfSpeech": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        }
+      },
+      "id": "scoredWord",
+      "type": "any"
+    },
+    "Citation": {
+      "required": false,
+      "uniqueItems": false,
+      "properties": {
+        "cite": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "source": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        }
+      },
+      "id": "citation",
+      "type": "any"
+    },
+    "Category": {
+      "required": false,
+      "uniqueItems": false,
+      "properties": {
+        "id": {
+          "required": true,
+          "uniqueItems": false,
+          "type": "long"
+        },
+        "name": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        }
+      },
+      "id": "category",
+      "type": "any"
+    },
+    "Sentence": {
+      "required": false,
+      "uniqueItems": false,
+      "properties": {
+        "hasScoredWords": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "boolean"
+        },
+        "id": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "long"
+        },
+        "scoredWords": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "$ref": "scoredWord",
+            "required": false,
+            "uniqueItems": false,
+            "type": "any"
+          }
+        },
+        "display": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "rating": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "int"
+        },
+        "documentMetadataId": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "long"
+        }
+      },
+      "id": "sentence",
+      "type": "any"
+    },
+    "Root": {
+      "required": false,
+      "uniqueItems": false,
+      "properties": {
+        "id": {
+          "required": true,
+          "uniqueItems": false,
+          "type": "long"
+        },
+        "name": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "categories": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "$ref": "category",
+            "required": false,
+            "uniqueItems": false,
+            "type": "any"
+          }
+        }
+      },
+      "id": "root",
+      "type": "any"
+    },
+    "ContentProvider": {
+      "required": false,
+      "uniqueItems": false,
+      "properties": {
+        "id": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "int"
+        },
+        "name": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        }
+      },
+      "id": "contentProvider",
+      "type": "any"
+    },
+    "Label": {
+      "required": false,
+      "uniqueItems": false,
+      "properties": {
+        "text": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "type": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        }
+      },
+      "id": "Label",
+      "type": "any"
+    },
+    "PartOfSpeech": {
+      "required": false,
+      "uniqueItems": false,
+      "properties": {
+        "roots": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "$ref": "root",
+            "required": false,
+            "uniqueItems": false,
+            "type": "any"
+          }
+        },
+        "storageAbbr": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "required": false,
+            "uniqueItems": false,
+            "type": "string"
+          }
+        },
+        "allCategories": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "$ref": "category",
+            "required": false,
+            "uniqueItems": false,
+            "type": "any"
+          }
+        }
+      },
+      "id": "partOfSpeech",
+      "type": "any"
+    },
+    "Definition": {
+      "required": false,
+      "uniqueItems": false,
+      "properties": {
+        "extendedText": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "text": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "sourceDictionary": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "citations": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "$ref": "citation",
+            "required": false,
+            "uniqueItems": false,
+            "type": "any"
+          }
+        },
+        "labels": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "$ref": "Label",
+            "required": false,
+            "uniqueItems": false,
+            "type": "any"
+          }
+        },
+        "score": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "float"
+        },
+        "exampleUses": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "$ref": "ExampleUsage",
+            "required": false,
+            "uniqueItems": false,
+            "type": "any"
+          }
+        },
+        "attributionUrl": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "seqString": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "attributionText": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "relatedWords": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "$ref": "related",
+            "required": false,
+            "uniqueItems": false,
+            "type": "any"
+          }
+        },
+        "sequence": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "word": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "notes": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "$ref": "note",
+            "required": false,
+            "uniqueItems": false,
+            "type": "any"
+          }
+        },
+        "textProns": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "$ref": "textPron",
+            "required": false,
+            "uniqueItems": false,
+            "type": "any"
+          }
+        },
+        "partOfSpeech": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        }
+      },
+      "id": "definition",
+      "type": "any"
+    },
+    "FrequencySummary": {
+      "required": false,
+      "uniqueItems": false,
+      "properties": {
+        "unknownYearCount": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "int"
+        },
+        "totalCount": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "long"
+        },
+        "frequencyString": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "word": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "string"
+        },
+        "frequency": {
+          "required": false,
+          "uniqueItems": false,
+          "type": "array",
+          "items": {
+            "$ref": "frequency",
+            "required": false,
+            "uniqueItems": false,
+            "type": "any"
+          }
+        }
+      },
+      "id": "frequencySummary",
+      "type": "any"
+    }
+  },
+  "apiVersion": "4.0",
+  "basePath": "http://api.wordnik.com/v4",
+  "apis": [
+    {
+      "operations": [
+        {
+          "nickname": "getRelatedWords",
+          "httpMethod": "GET",
+          "errorResponses": [
+            {
+              "reason": "Invalid word supplied.",
+              "code": 400
+            }
+          ],
+          "responseClass": "List[related]",
+          "parameters": [
+            {
+              "required": true,
+              "dataType": "string",
+              "name": "word",
+              "paramType": "path",
+              "allowMultiple": false,
+              "description": "Word to fetch relationships for"
+            },
+            {
+              "required": false,
+              "dataType": "string",
+              "name": "useCanonical",
+              "defaultValue": "false",
+              "allowableValues": {
+                "values": [
+                  "false",
+                  "true"
+                ],
+                "valueType": "LIST"
+              },
+              "paramType": "query",
+              "allowMultiple": false,
+              "description": "If true will try to return the correct word root ('cats' -> 'cat'). If false returns exactly what was requested."
+            },
+            {
+              "required": false,
+              "dataType": "string",
+              "name": "relationshipTypes",
+              "allowableValues": {
+                "values": [
+                  "synonym",
+                  "antonym",
+                  "variant",
+                  "equivalent",
+                  "cross-reference",
+                  "related-word",
+                  "rhyme",
+                  "form",
+                  "etymologically-related-term",
+                  "hypernym",
+                  "hyponym",
+                  "inflected-form",
+                  "primary",
+                  "same-context",
+                  "verb-form",
+                  "verb-stem",
+                  "has_topic"
+                ],
+                "valueType": "LIST"
+              },
+              "paramType": "query",
+              "allowMultiple": false,
+              "description": "Limits the total results per type of relationship type"
+            },
+            {
+              "required": false,
+              "dataType": "int",
+              "name": "limitPerRelationshipType",
+              "defaultValue": "10",
+              "allowableValues": {
+                "min": 1.0,
+                "max": "Infinity",
+                "valueType": "RANGE"
+              },
+              "paramType": "query",
+              "allowMultiple": false,
+              "description": "Restrict to the supplied relatinship types"
+            }
+          ],
+          "summary": "Given a word as a string, returns relationships from the Word Graph"
+        }
+      ],
+      "path": "/word.{format}/{word}/relatedWords",
+      "description": ""
+    },
+    {
+      "operations": [
+        {
+          "nickname": "getTextPronunciations",
+          "httpMethod": "GET",
+          "errorResponses": [
+            {
+              "reason": "Invalid word supplied.",
+              "code": 400
+            }
+          ],
+          "responseClass": "List[textPron]",
+          "parameters": [
+            {
+              "required": true,
+              "dataType": "string",
+              "name": "word",
+              "paramType": "path",
+              "allowMultiple": false,
+              "description": "Word to get pronunciations for"
+            },
+            {
+              "required": false,
+              "dataType": "string",
+              "name": "useCanonical",
+              "defaultValue": "false",
+              "allowableValues": {
+                "values": [
+                  "false",
+                  "true"
+                ],
+                "valueType": "LIST"
+              },
+              "paramType": "query",
+              "allowMultiple": false,
+              "description": "If true will try to return a correct word root ('cats' -> 'cat'). If false returns exactly what was requested."
+            },
+            {
+              "required": false,
+              "dataType": "string",
+              "name": "sourceDictionary",
+              "allowableValues": {
+                "values": [
+                  "ahd",
+                  "century",
+                  "cmu",
+                  "macmillan",
+                  "wiktionary",
+                  "webster",
+                  "wordnet"
+                ],
+                "valueType": "LIST"
+              },
+              "paramType": "query",
+              "allowMultiple": false,
+              "description": "Get from a single dictionary"
+            },
+            {
+              "required": false,
+              "dataType": "string",
+              "name": "typeFormat",
+              "allowableValues": {
+                "values": [
+                  "ahd",
+                  "arpabet",
+                  "gcide-diacritical",
+                  "IPA"
+                ],
+                "valueType": "LIST"
+              },
+              "paramType": "query",
+              "allowMultiple": false,
+              "description": "Text pronunciation type"
+            },
+            {
+              "required": false,
+              "dataType": "int",
+              "name": "limit",
+              "defaultValue": "50",
+              "paramType": "query",
+              "allowMultiple": false,
+              "description": "Maximum number of results to return"
+            }
+          ],
+          "summary": "Returns text pronunciations for a given word"
+        }
+      ],
+      "path": "/word.{format}/{word}/pronunciations",
+      "description": ""
+    },
+    {
+      "operations": [
+        {
+          "nickname": "getScrabbleScore",
+          "httpMethod": "GET",
+          "errorResponses": [
+            {
+              "reason": "Invalid word supplied.",
+              "code": 400
+            },
+            {
+              "reason": "No scrabble score found.",
+              "code": 404
+            }
+          ],
+          "responseClass": "long",
+          "parameters": [
+            {
+              "required": true,
+              "dataType": "string",
+              "name": "word",
+              "paramType": "path",
+              "allowMultiple": false,
+              "description": "Word to get scrabble score for."
+            }
+          ],
+          "summary": "Returns the Scrabble score for a word"
+        }
+      ],
+      "path": "/word.{format}/{word}/scrabbleScore",
+      "description": ""
+    },
+    {
+      "operations": [
+        {
+          "nickname": "getHyphenation",
+          "httpMethod": "GET",
+          "errorResponses": [
+            {
+              "reason": "Invalid word supplied.",
+              "code": 400
+            }
+          ],
+          "responseClass": "List[syllable]",
+          "parameters": [
+            {
+              "required": true,
+              "dataType": "string",
+              "name": "word",
+              "paramType": "path",
+              "allowMultiple": false,
+              "description": "Word to get syllables for"
+            },
+            {
+              "required": false,
+              "dataType": "string",
+              "name": "useCanonical",
+              "defaultValue": "false",
+              "paramType": "query",
+              "allowMultiple": false,
+              "description": "If true will try to return a correct word root ('cats' -> 'cat'). If false returns exactly what was requested."
+            },
+            {
+              "required": false,
+              "dataType": "string",
+              "name": "sourceDictionary",
+              "paramType": "query",
+              "allowMultiple": false,
+              "description": "Get from a single dictionary. Valid options: ahd, century, wiktionary, webster, and wordnet."
+            },
+            {
+              "required": false,
+              "dataType": "int",
+              "name": "limit",
+              "defaultValue": "50",
+              "paramType": "query",
+              "allowMultiple": false,
+              "description": "Maximum number of results to return"
+            }
+          ],
+          "summary": "Returns syllable information for a word"
+        }
+      ],
+      "path": "/word.{format}/{word}/hyphenation",
+      "description": ""
+    },
+    {
+      "operations": [
+        {
+          "nickname": "getWordFrequency",
+          "httpMethod": "GET",
+          "errorResponses": [
+            {
+              "reason": "Invalid word supplied.",
+              "code": 400
+            },
+            {
+              "reason": "No results.",
+              "code": 404
+            }
+          ],
+          "responseClass": "frequencySummary",
+          "parameters": [
+            {
+              "required": true,
+              "dataType": "string",
+              "name": "word",
+              "paramType": "path",
+              "allowMultiple": false,
+              "description": "Word to return"
+            },
+            {
+              "required": false,
+              "dataType": "string",
+              "name": "useCanonical",
+              "defaultValue": "false",
+              "paramType": "query",
+              "allowMultiple": false,
+              "description": "If true will try to return the correct word root ('cats' -> 'cat'). If false returns exactly what was requested."
+            },
+            {
+              "required": false,
+              "dataType": "int",
+              "name": "startYear",
+              "defaultValue": "1800",
+              "paramType": "query",
+              "allowMultiple": false,
+              "description": "Starting Year"
+            },
+            {
+              "required": false,
+              "dataType": "int",
+              "name": "endYear",
+              "defaultValue": "2012",
+              "paramType": "query",
+              "allowMultiple": false,
+              "description": "Ending Year"
+            }
+          ],
+          "summary": "Returns word usage over time"
+        }
+      ],
+      "path": "/word.{format}/{word}/frequency",
+      "description": ""
+    },
+    {
+      "operations": [
+        {
+          "nickname": "getExamples",
+          "httpMethod": "GET",
+          "errorResponses": [
+            {
+              "reason": "Invalid word supplied.",
+              "code": 400
+            }
+          ],
+          "responseClass": "exampleSearchResults",
+          "parameters": [
+            {
+              "required": true,
+              "dataType": "string",
+              "name": "word",
+              "paramType": "path",
+              "allowMultiple": false,
+              "description": "Word to return examples for"
+            },
+            {
+              "required": false,
+              "dataType": "string",
+              "name": "includeDuplicates",
+              "defaultValue": "false",
+              "allowableValues": {
+                "values": [
+                  "false",
+                  "true"
+                ],
+                "valueType": "LIST"
+              },
+              "paramType": "query",
+              "allowMultiple": false,
+              "description": "Show duplicate examples from different sources"
+            },
+            {
+              "required": false,
+              "dataType": "string",
+              "name": "useCanonical",
+              "defaultValue": "false",
+              "allowableValues": {
+                "values": [
+                  "false",
+                  "true"
+                ],
+                "valueType": "LIST"
+              },
+              "paramType": "query",
+              "allowMultiple": false,
+              "description": "If true will try to return the correct word root ('cats' -> 'cat'). If false returns exactly what was requested."
+            },
+            {
+              "required": false,
+              "dataType": "int",
+              "name": "skip",
+              "defaultValue": "0",
+              "paramType": "query",
+              "allowMultiple": false,
+              "description": "Results to skip"
+            },
+            {
+              "required": false,
+              "dataType": "int",
+              "name": "limit",
+              "defaultValue": "5",
+              "paramType": "query",
+              "allowMultiple": false,
+              "description": "Maximum number of results to return"
+            }
+          ],
+          "summary": "Returns examples for a word"
+        }
+      ],
+      "path": "/word.{format}/{word}/examples",
+      "description": ""
+    },
+    {
+      "operations": [
+        {
+          "nickname": "getPhrases",
+          "httpMethod": "GET",
+          "errorResponses": [
+            {
+              "reason": "Invalid word supplied.",
+              "code": 400
+            }
+          ],
+          "responseClass": "List[bigram]",
+          "parameters": [
+            {
+              "required": true,
+              "dataType": "string",
+              "name": "word",
+              "paramType": "path",
+              "allowMultiple": false,
+              "description": "Word to fetch phrases for"
+            },
+            {
+              "required": false,
+              "dataType": "int",
+              "name": "limit",
+              "defaultValue": "5",
+              "paramType": "query",
+              "allowMultiple": false,
+              "description": "Maximum number of results to return"
+            },
+            {
+              "required": false,
+              "dataType": "int",
+              "name": "wlmi",
+              "defaultValue": "0",
+              "paramType": "query",
+              "allowMultiple": false,
+              "description": "Minimum WLMI for the phrase"
+            },
+            {
+              "required": false,
+              "dataType": "string",
+              "name": "useCanonical",
+              "defaultValue": "false",
+              "allowableValues": {
+                "values": [
+                  "false",
+                  "true"
+                ],
+                "valueType": "LIST"
+              },
+              "paramType": "query",
+              "allowMultiple": false,
+              "description": "If true will try to return the correct word root ('cats' -> 'cat'). If false returns exactly what was requested."
+            }
+          ],
+          "summary": "Fetches bi-gram phrases for a word"
+        }
+      ],
+      "path": "/word.{format}/{word}/phrases",
+      "description": ""
+    },
+    {
+      "operations": [
+        {
+          "nickname": "getAudio",
+          "notes": "The metadata includes a time-expiring fileUrl which allows reading the audio file directly from the API.  Currently only audio pronunciations from the American Heritage Dictionary in mp3 format are supported.",
+          "httpMethod": "GET",
+          "errorResponses": [
+            {
+              "reason": "Invalid word supplied.",
+              "code": 400
+            }
+          ],
+          "responseClass": "List[audioFile]",
+          "parameters": [
+            {
+              "required": true,
+              "dataType": "string",
+              "name": "word",
+              "paramType": "path",
+              "allowMultiple": false,
+              "description": "Word to get audio for."
+            },
+            {
+              "required": false,
+              "dataType": "string",
+              "name": "useCanonical",
+              "defaultValue": "false",
+              "paramType": "query",
+              "allowMultiple": false,
+              "description": "Use the canonical form of the word"
+            },
+            {
+              "required": false,
+              "dataType": "int",
+              "name": "limit",
+              "defaultValue": "50",
+              "paramType": "query",
+              "allowMultiple": false,
+              "description": "Maximum number of results to return"
+            }
+          ],
+          "summary": "Fetches audio metadata for a word."
+        }
+      ],
+      "path": "/word.{format}/{word}/audio",
+      "description": ""
+    },
+    {
+      "operations": [
+        {
+          "nickname": "getEtymologies",
+          "httpMethod": "GET",
+          "errorResponses": [
+            {
+              "reason": "Invalid word supplied.",
+              "code": 400
+            },
+            {
+              "reason": "No definitions found.",
+              "code": 404
+            }
+          ],
+          "responseClass": "List[String]",
+          "parameters": [
+            {
+              "required": true,
+              "dataType": "string",
+              "name": "word",
+              "paramType": "path",
+              "allowMultiple": false,
+              "description": "Word to return"
+            },
+            {
+              "required": false,
+              "dataType": "string",
+              "name": "useCanonical",
+              "allowableValues": {
+                "values": [
+                  "false",
+                  "true"
+                ],
+                "valueType": "LIST"
+              },
+              "paramType": "query",
+              "allowMultiple": false,
+              "description": "If true will try to return the correct word root ('cats' -> 'cat'). If false returns exactly what was requested."
+            }
+          ],
+          "summary": "Fetches etymology data"
+        }
+      ],
+      "path": "/word.{format}/{word}/etymologies",
+      "description": ""
+    },
+    {
+      "operations": [
+        {
+          "nickname": "getWord",
+          "httpMethod": "GET",
+          "errorResponses": [
+            {
+              "reason": "Invalid word supplied.",
+              "code": 400
+            }
+          ],
+          "responseClass": "wordObject",
+          "parameters": [
+            {
+              "required": true,
+              "dataType": "string",
+              "name": "word",
+              "paramType": "path",
+              "allowMultiple": false,
+              "description": "String value of WordObject to return"
+            },
+            {
+              "required": false,
+              "dataType": "string",
+              "name": "useCanonical",
+              "defaultValue": "false",
+              "allowableValues": {
+                "values": [
+                  "false",
+                  "true"
+                ],
+                "valueType": "LIST"
+              },
+              "paramType": "query",
+              "allowMultiple": false,
+              "description": "If true will try to return the correct word root ('cats' -> 'cat'). If false returns exactly what was requested."
+            },
+            {
+              "required": false,
+              "dataType": "string",
+              "name": "includeSuggestions",
+              "defaultValue": "true",
+              "allowableValues": {
+                "values": [
+                  "false",
+                  "true"
+                ],
+                "valueType": "LIST"
+              },
+              "paramType": "query",
+              "allowMultiple": false,
+              "description": "Return suggestions (for correct spelling, case variants, etc.)"
+            }
+          ],
+          "summary": "Given a word as a string, returns the WordObject that represents it"
+        }
+      ],
+      "path": "/word.{format}/{word}",
+      "description": ""
+    },
+    {
+      "operations": [
+        {
+          "nickname": "getDefinitions",
+          "httpMethod": "GET",
+          "errorResponses": [
+            {
+              "reason": "Invalid word supplied.",
+              "code": 400
+            },
+            {
+              "reason": "No definitions found.",
+              "code": 404
+            }
+          ],
+          "responseClass": "List[definition]",
+          "parameters": [
+            {
+              "required": true,
+              "dataType": "string",
+              "name": "word",
+              "paramType": "path",
+              "allowMultiple": false,
+              "description": "Word to return definitions for"
+            },
+            {
+              "required": false,
+              "dataType": "int",
+              "name": "limit",
+              "defaultValue": "200",
+              "paramType": "query",
+              "allowMultiple": false,
+              "description": "Maximum number of results to return"
+            },
+            {
+              "required": false,
+              "dataType": "string",
+              "name": "partOfSpeech",
+              "allowableValues": {
+                "values": [
+                  "noun",
+                  "adjective",
+                  "verb",
+                  "adverb",
+                  "interjection",
+                  "pronoun",
+                  "preposition",
+                  "abbreviation",
+                  "affix",
+                  "article",
+                  "auxiliary-verb",
+                  "conjunction",
+                  "definite-article",
+                  "family-name",
+                  "given-name",
+                  "idiom",
+                  "imperative",
+                  "noun-plural",
+                  "noun-posessive",
+                  "past-participle",
+                  "phrasal-prefix",
+                  "proper-noun",
+                  "proper-noun-plural",
+                  "proper-noun-posessive",
+                  "suffix",
+                  "verb-intransitive",
+                  "verb-transitive"
+                ],
+                "valueType": "LIST"
+              },
+              "paramType": "query",
+              "allowMultiple": false,
+              "description": "CSV list of part-of-speech types"
+            },
+            {
+              "required": false,
+              "dataType": "string",
+              "name": "includeRelated",
+              "defaultValue": "false",
+              "allowableValues": {
+                "values": [
+                  "true",
+                  "false"
+                ],
+                "valueType": "LIST"
+              },
+              "paramType": "query",
+              "allowMultiple": false,
+              "description": "Return related words with definitions"
+            },
+            {
+              "required": false,
+              "dataType": "string",
+              "name": "sourceDictionaries",
+              "allowableValues": {
+                "values": [
+                  "all",
+                  "ahd",
+                  "century",
+                  "wiktionary",
+                  "webster",
+                  "wordnet"
+                ],
+                "valueType": "LIST"
+              },
+              "paramType": "query",
+              "allowMultiple": true,
+              "description": "Source dictionary to return definitions from.  If 'all' is received, results are returned from all sources. If multiple values are received (e.g. 'century,wiktionary'), results are returned from the first specified dictionary that has definitions. If left blank, results are returned from the first dictionary that has definitions. By default, dictionaries are searched in this order: ahd, wiktionary, webster, century, wordnet"
+            },
+            {
+              "required": false,
+              "dataType": "string",
+              "name": "useCanonical",
+              "defaultValue": "false",
+              "allowableValues": {
+                "values": [
+                  "false",
+                  "true"
+                ],
+                "valueType": "LIST"
+              },
+              "paramType": "query",
+              "allowMultiple": false,
+              "description": "If true will try to return the correct word root ('cats' -> 'cat'). If false returns exactly what was requested."
+            },
+            {
+              "required": false,
+              "dataType": "string",
+              "name": "includeTags",
+              "defaultValue": "false",
+              "allowableValues": {
+                "values": [
+                  "false",
+                  "true"
+                ],
+                "valueType": "LIST"
+              },
+              "paramType": "query",
+              "allowMultiple": false,
+              "description": "Return a closed set of XML tags in response"
+            }
+          ],
+          "summary": "Return definitions for a word"
+        }
+      ],
+      "path": "/word.{format}/{word}/definitions",
+      "description": ""
+    },
+    {
+      "operations": [
+        {
+          "nickname": "getTopExample",
+          "httpMethod": "GET",
+          "errorResponses": [
+            {
+              "reason": "Invalid word supplied.",
+              "code": 400
+            }
+          ],
+          "responseClass": "example",
+          "parameters": [
+            {
+              "required": true,
+              "dataType": "string",
+              "name": "word",
+              "paramType": "path",
+              "allowMultiple": false,
+              "description": "Word to fetch examples for"
+            },
+            {
+              "required": false,
+              "dataType": "string",
+              "name": "useCanonical",
+              "defaultValue": "false",
+              "allowableValues": {
+                "values": [
+                  "false",
+                  "true"
+                ],
+                "valueType": "LIST"
+              },
+              "paramType": "query",
+              "allowMultiple": false,
+              "description": "If true will try to return the correct word root ('cats' -> 'cat'). If false returns exactly what was requested."
+            }
+          ],
+          "summary": "Returns a top example for a word"
+        }
+      ],
+      "path": "/word.{format}/{word}/topExample",
+      "description": ""
+    }
+  ]
+}

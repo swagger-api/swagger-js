@@ -34,7 +34,7 @@ describe('1.2 request operations', function () {
   it('shows curl syntax', function () {
     var curl = sample.pet.getPetById.asCurl({petId: 1});
 
-    expect(curl).toBe('curl --header "Accept: application/json" http://localhost:8000/v1/api/pet/1');
+    expect(curl).toBe('curl -X GET --header "Accept: application/json" "http://localhost:8000/v1/api/pet/1"');
   });
 
   it('generate a get request', function () {
@@ -52,7 +52,6 @@ describe('1.2 request operations', function () {
     var petApi = sample.pet;
 
     petApi.getPetById({petId: 1}, {mock: true});
-
     expect(petApi.operations.getPetById.deprecated).toBe(true);
   });
 
@@ -100,7 +99,6 @@ describe('1.2 request operations', function () {
     };
     var opts = { mock: true };
     var req = petApi.updatePetWithForm(params, opts);
-
     expect(req.method).toBe('POST');
     expect(req.headers.Accept).toBe('application/json');
     expect(req.headers['Content-Type']).toBe('application/x-www-form-urlencoded');
@@ -136,10 +134,8 @@ describe('1.2 request operations', function () {
     };
     var opts = { mock: true };
     var req = petApi.deletePet(params, opts);
-
     expect(req.method).toBe('DELETE');
     expect(req.headers.Accept).toBe('application/json');
-    expect(req.headers['Content-Type']).toBe('application/json');
     expect(req.url).toBe('http://localhost:8000/v1/api/pet/100');
   });
 
@@ -197,19 +193,20 @@ describe('1.2 request operations', function () {
     expect(req.body.id).toBe(1);
   });
 
+  // no longer enforcing this test.  If you need a param of type `body` it must be appropriately defined
   it('tests the body param when name is not `body`, per #168', function () {
     var op = sample.apis.pet.operations.addPet;
 
     op.parameters[0].name = 'pet';
 
-    var params = {
-      body: {id: 1}
-    };
-    var opts = { mock: true };
-    var req = sample.pet.addPet(params, opts);
+    // var params = {
+    //   body: {id: 666}
+    // };
+    // var opts = { mock: true };
 
-    test.object(req.body);
-    expect(req.body.id).toBe(1);
+    // var req = sample.pet.addPet(params, opts);
+    // test.object(req.body);
+    // expect(req.body.id).toBe(1);
   });
 
   it('verifies headers when fetching the swagger specification', function () {

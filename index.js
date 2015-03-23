@@ -2,7 +2,7 @@
 
 var auth = require('./lib/auth');
 var helpers = require('./lib/helpers');
-var SwaggerClient = require('./lib/client-compat');
+var SwaggerClient = require('./lib/client');
 var deprecationWrapper = function (url, options) {
   helpers.log('This is deprecated, use "new SwaggerClient" instead.');
 

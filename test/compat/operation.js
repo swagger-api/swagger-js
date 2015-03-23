@@ -21,45 +21,31 @@ describe('1.2 verifies the nickname is sanitized', function() {
   });
 
   it('returns the same nickname', function() {
-    var pet = sample.pet;
-
-    expect(pet.sanitize('getSomething')).toBe('getSomething');
+    expect(sample.idFromOp('', '', { operationId: 'getSomething' })).toBe('getSomething');
   });
 
   it('strips spaces in the nickname', function() {
-    var pet = sample.pet;
-
-    expect(pet.sanitize('get something')).toBe('get_something');
+    expect(sample.idFromOp('', '', { operationId: 'get something' })).toBe('get_something');
   });
 
   it('strips dots in the nickname', function() {
-    var pet = sample.pet;
-
-    expect(pet.sanitize('get.something')).toBe('get_something');
+    expect(sample.idFromOp('', '', { operationId: 'get.something' })).toBe('get_something');
   });
 
   it('strips $ in the nickname', function() {
-    var pet = sample.pet;
-
-    expect(pet.sanitize('get$something')).toBe('get_something');
+    expect(sample.idFromOp('', '', { operationId: 'get$something' })).toBe('get_something');
   });
 
   it('strips punctuation in the nickname', function() {
-    var pet = sample.pet;
-
-    expect(pet.sanitize('get[something]')).toBe('get_something');
+    expect(sample.idFromOp('', '', { operationId: 'get[something]' })).toBe('get_something');
   });
 
   it('strips curlies in the nickname', function() {
-    var pet = sample.pet;
-
-    expect(pet.sanitize('get{something}')).toBe('get_something');
+    expect(sample.idFromOp('', '', { operationId: 'get{something}' })).toBe('get_something');
   });
 
   it('strips punctuation in the nickname', function() {
-    var pet = sample.pet;
-
-    expect(pet.sanitize('  \\]}{Get$$_./\[something]')).toBe('Get_something');
+    expect(sample.idFromOp('', '', { operationId: '  \\]}{Get$$_./\[something]' })).toBe('Get_something');
   });
 });
 
@@ -78,19 +64,20 @@ describe('verifies the get pet operation', function() {
 
   it('verifies the response messages from the get operation', function() {
     var operation = sample.pet.operations.getPetById;
-    var responseMessages = operation.responseMessages;
+    var responses = operation.responses;
 
-    test.object(responseMessages);
+    test.object(responses);
 
-    expect(responseMessages.length).toBe(2);
-    expect(responseMessages[0].code).toBe(400);
-    expect(responseMessages[1].code).toBe(404);
+    expect(Object.keys(responses).length).toBe(2);
+    test.object(responses['400']);
+    test.object(responses['404']);
   });
 
   it('verifies slashes', function() {
     var operation = sample.pet.operations.getPetById;
 
-    operation.resource.basePath = 'http://foo.bar/api/';
+    operation.host = 'foo.bar/api';
+    operation.basePath = '/';
 
     var url = operation.urlify({petId: 129298});
 
@@ -100,8 +87,8 @@ describe('verifies the get pet operation', function() {
 
   it('does not add excessive &', function() {
     var operation = sample.pet.operations.testGetOperation;
-
-    operation.resource.basePath = 'http://foo.bar/api/';
+    operation.host = 'foo.bar/api';
+    operation.basePath = '/';
 
     var url = operation.urlify({petId: 129298});
 
@@ -112,7 +99,7 @@ describe('verifies the get pet operation', function() {
     var operation = sample.pet.operations.getPetById;
     var param = operation.parameters[0];
 
-    expect(param.defaultValue).toBe(3);
+    expect(param.default).toBe(3);
   });
 
   it('gets help() from the get pet operation', function() {
@@ -136,7 +123,7 @@ describe('verifies the get pet operation', function() {
 
     expect(param.name).toBe('petId');
     expect(param.type).toBe('integer');
-    expect(param.paramType).toBe('path');
+    expect(param.in).toBe('path');
 
     test.value(param.description);
   });
@@ -155,8 +142,8 @@ describe('verifies the get pet operation', function() {
     var param = parameters[0];
 
     expect(param.name).toBe('body');
-    expect(param.type).toBe('Pet');
-    expect(param.paramType).toBe('body');
+    expect(param.schema.$ref).toBe('#/definitions/Pet');
+    expect(param.in).toBe('body');
 
     test.value(param.description);
   });
@@ -175,8 +162,8 @@ describe('verifies the get pet operation', function() {
     var param = parameters[0];
 
     expect(param.name).toBe('body');
-    expect(param.type).toBe('Pet');
-    expect(param.paramType).toBe('body');
+    expect(param.schema.$ref).toBe('#/definitions/Pet');
+    expect(param.in).toBe('body');
 
     test.value(param.description);
   });
@@ -196,7 +183,7 @@ describe('verifies the get pet operation', function() {
 
     expect(param.name).toBe('tags');
     expect(param.type).toBe('string');
-    expect(param.paramType).toBe('query');
+    expect(param.in).toBe('query');
 
     test.value(param.description);
   });
@@ -222,15 +209,14 @@ describe('verifies the get pet operation', function() {
 
     expect(param.name).toBe('petId');
     expect(param.type).toBe('string');
-    expect(param.paramType).toBe('path');
+    expect(param.in).toBe('path');
 
     test.value(param.description);
 
     param = parameters[1];
-
     expect(param.name).toBe('body');
-    expect(param.type).toBe('Pet');
-    expect(param.paramType).toBe('body');
+    expect(param.schema.$ref).toBe('#/definitions/Pet');
+    expect(param.in).toBe('body');
 
     test.value(param.description);
   });
@@ -255,7 +241,7 @@ describe('verifies the get pet operation', function() {
 
     expect(param.name).toBe('petId');
     expect(param.type).toBe('string');
-    expect(param.paramType).toBe('path');
+    expect(param.in).toBe('path');
 
     test.value(param.description);
 
@@ -263,7 +249,7 @@ describe('verifies the get pet operation', function() {
 
     expect(param.name).toBe('name');
     expect(param.type).toBe('string');
-    expect(param.paramType).toBe('form');
+    expect(param.in).toBe('formData');
 
     test.value(param.description);
 
@@ -273,7 +259,7 @@ describe('verifies the get pet operation', function() {
 
     expect(param.name).toBe('status');
     expect(param.type).toBe('string');
-    expect(param.paramType).toBe('form');
+    expect(param.in).toBe('formData');
 
     test.value(param.description);
 
@@ -300,16 +286,15 @@ describe('verifies the get pet operation', function() {
 
     expect(param.name).toBe('additionalMetadata');
     expect(param.type).toBe('string');
-    expect(param.paramType).toBe('form');
+    expect(param.in).toBe('formData');
     expect(param.required).toBe(false);
 
     test.value(param.description);
 
     param = parameters[1];
 
-    expect(param.name).toBe('file');
-    expect(param.type).toBe('File');
-    expect(param.paramType).toBe('body');
+    expect(param.name).toBe('body');
+    expect(param.type).toBe('file');
 
     test.value(param.description);
 
