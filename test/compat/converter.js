@@ -7,6 +7,7 @@ var expect = require('expect');
 var mock = require('./mock');
 var SwaggerSpecConverter = require('../../lib/spec-converter');
 var SwaggerHttp = require('../../lib/http');
+var SwaggerClient = require('../..');
 
 var sample, instance;
 
@@ -189,5 +190,17 @@ describe('converts specs', function () {
     };
 
     var resource = new SwaggerHttp().execute(obj);
+  });
+
+  it('creates a request for 1.0 resource', function(done) {
+    var client = new SwaggerClient();
+    client.initialize('http://localhost:8000/v1/word.json', {success: function () {
+      var args = { word: 'cat' };
+      var opts = { mock: true };
+
+      var obj = client.word.getRelatedWords(args, opts);
+      expect(obj.url).toBe('http://api.wordnik.com/v4/word.json/cat/relatedWords');
+      done();
+    }});        
   });
 });
