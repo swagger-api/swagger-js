@@ -45,11 +45,11 @@
         }
       ]
     },
-        {
+    {
       "path": "/testOp",
       "operations": [
         {
-          "method": "GET", 
+          "method": "GET",
           "summary": "Find pet by ID",
           "notes": "Returns a pet based on ID",
           "type": "Animals",
@@ -542,7 +542,7 @@
     },
     "Owner": {
       "properties": {
-        "name":{
+        "name": {
           "type": "string"
         },
         "phone": {

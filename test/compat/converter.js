@@ -133,6 +133,16 @@ describe('converts specs', function () {
         expect(param.type).toBe('integer');
         expect(param.format).toBe('int64');
 
+        // addPet
+        var addPet = swagger.paths['/pet/{petId}'].post;
+        var security = addPet.security;
+        test.array(security);
+        expect(security.length).toBe(1);
+        var scopes = security[0].oauth2;
+        test.array(scopes);
+        expect(scopes.length).toBe(1);
+        expect(scopes[0]).toBe('test:anything');
+
         // responses
         var responses = getPet.responses;
         expect(Object.keys(responses).length).toBe(3);
