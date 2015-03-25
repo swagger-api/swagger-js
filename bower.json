@@ -10,7 +10,7 @@
     "url": "git@github.com:eburi/swagger-js.git"
   },
   "description": "swagger.js is a javascript client for use with swaggering APIs.",
-  "main": "lib/swagger-client.min.js",
+  "main": "browser/swagger-client.min.js",
   "moduleType": [
     "globals"
   ],
