@@ -16,7 +16,8 @@
   },
   "files": [
     "LICENSE",
-    "lib"
+    "lib",
+	"index.js"
   ],
   "engines": {
     "node": ">= 0.6.6"
