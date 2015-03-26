@@ -77,7 +77,7 @@ describe('models', function () {
     };
     var model = new Model('Sample', definition);
 
-    expect(model.getMockSignature()).toEqual('<span class="strong">Sample {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">photos</span> (<span class="propType">Array[Inline Model 1]</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span><br /><span class="strong">Inline Model 1 {</span><div></div><span class="strong">}</span>');
+    expect(model.getMockSignature()).toEqual('<span class="strong">Sample {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">photos</span> (<span class="propType">Array[object]</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span>');
   });
 
   it('should not get infinite for sample JSON recursion', function () {
@@ -436,6 +436,25 @@ describe('models', function () {
         expect(response.createJSONSample()).toEqual(['string']);
         expect(response.getSampleValue()).toEqual(['string']);
         expect(response.getMockSignature()).toEqual('<span class="strong">Statuses [</span><div>string</div><span class="strong">]</span>');
+
+        done();
+      }
+    });
+  });
+
+  it('should handle arrays that are missing its items property (Issue 190)', function (done) {
+    var cPetStore = _.cloneDeep(petstore);
+
+    delete cPetStore.definitions.PetArray.items;
+
+    var client = new SwaggerClient({
+      spec: cPetStore,
+      success: function () {
+        var response = client.pet.operations.findPetsByStatus.successResponse['200'];
+
+        expect(response.createJSONSample()).toEqual([{}]);
+        expect(response.getSampleValue()).toEqual([{}]);
+        expect(response.getMockSignature()).toEqual('<span class="strong">PetArray [</span><div>object</div><span class="strong">]</span>');
 
         done();
       }
