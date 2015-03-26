@@ -329,4 +329,22 @@ describe('swagger resolver', function () {
       done();
     });
   });
+
+  it('resolves path references', function(done) {
+    var api = new Resolver();
+    var spec = {
+      paths: {
+        '/myUsername': {
+          $ref: 'https://raw.githubusercontent.com/reverb/swagger-spec/master/fixtures/v2.0/json/resources/resourceWithLinkedDefinitions_part1.json'
+        }
+      }
+    };
+
+    api.resolve(spec, function (spec, unresolvedRefs) {
+      var path = spec.paths['/myUsername'];
+      test.object(path);
+      test.object(path.get);
+      done();
+    });
+  });
 });
