@@ -60,7 +60,6 @@ describe('converts specs', function () {
         var info = swagger.info;
         test.object(info);
         test.object(info.contact);
-        console.log(info.contact);
         test.string(info.description);
         test.string(info.title);
         test.string(info.termsOfService);
@@ -135,6 +134,8 @@ describe('converts specs', function () {
 
         // getPet
         var getPet = swagger.paths['/pet/{petId}'].get;
+
+        expect(getPet.description).toBe('Returns a pet based on ID');
         expect(getPet.parameters.length).toBe(1);
         
         var param = getPet.parameters[0];
@@ -195,7 +196,7 @@ describe('converts specs', function () {
 
         var getDefinitions = swagger.paths['/word.{format}/{word}/definitions'].get;
 
-        // console.log(JSON.stringify(getDefinitions, null, 2));
+        expect(getDefinitions.summary).toBe('Return definitions for a word');
         expect(getDefinitions.parameters.length).toBe(7);
         var sourceDictionaries = getDefinitions.parameters[4];
         expect(sourceDictionaries.in).toBe('query');
@@ -207,6 +208,10 @@ describe('converts specs', function () {
         var response200 = getDefinitions.responses['200'];
         expect(response200.schema.type).toBe('array');
         expect(response200.schema.items.$ref).toBe('#/definitions/Definition');
+
+        var getAudio = swagger.paths['/word.{format}/{word}/audio'].get;
+        expect(getAudio.summary).toBe('Fetches audio metadata for a word.');
+        expect(getAudio.description).toBe('The metadata includes a time-expiring fileUrl which allows reading the audio file directly from the API.  Currently only audio pronunciations from the American Heritage Dictionary in mp3 format are supported.');
 
         done();
       });
