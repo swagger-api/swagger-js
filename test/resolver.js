@@ -3,6 +3,7 @@
 'use strict';
 
 var expect = require('expect');
+var test = require('unit.js');
 var mock = require('./mock');
 var Resolver = require('../lib/resolver');
 var instance;
@@ -99,7 +100,6 @@ describe('swagger resolver', function () {
 
     api.resolve(spec, function (spec, unresolvedRefs) {
       expect(unresolvedRefs['http://localhost:8000/v2/petstore.json#/definition/Categoryzzz']).toBe(null);
-
       done();
     });
   });
@@ -306,6 +306,26 @@ describe('swagger resolver', function () {
     api.resolve(spec, function (spec, unresolvedRefs) {
       expect(unresolvedRefs['http://localhost:8000/v2/petstore.json#/parameters/sharedSkipz']).toBe(null);
 
+      done();
+    });
+  });
+
+  it('resolves path references', function(done) {
+    var api = new Resolver();
+    var spec = {
+      paths: {
+        '/myUsername': {
+          $ref: 'http://localhost:8000/v2/petstore.json#paths/user~1{username}'
+        }
+      }
+    };
+
+    api.resolve(spec, function (spec, unresolvedRefs) {
+      var path = spec.paths['/myUsername'];
+      test.object(path);
+      test.object(path.get);
+      test.object(path.put);
+      test.object(path.delete);
       done();
     });
   });
