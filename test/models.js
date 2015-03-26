@@ -4,6 +4,8 @@
 
 var expect = require('expect');
 var Model = require('../lib/types/model');
+var petstore = require('./spec/v2/petstore.json');
+var SwaggerClient = require('..');
 
 describe('models', function () {
   it('should verify the JSON sample for a simple object model', function () {
@@ -74,7 +76,7 @@ describe('models', function () {
     };
     var model = new Model('Sample', definition);
 
-    expect(model.getMockSignature()).toEqual('<span class="strong">Sample {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">photos</span> (<span class="propType">Array[object]</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span>');
+    expect(model.getMockSignature()).toEqual('<span class="strong">Sample {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">photos</span> (<span class="propType">Array[Inline Model 1]</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span><br /><span class="strong">Inline Model 1 {</span><div></div><span class="strong">}</span>');
   });
 
   it('should build a model with an array and enum values', function () {
@@ -132,13 +134,13 @@ describe('models', function () {
     expect(model.createJSONSample()).toEqual(
       {
         pendingComponents: [
-          'Component'
+          {}
         ],
         receivedComponents: [
-          'Component'
+          {}
         ],
         rejectedComponents: [
-          'Component'
+          {}
         ]
       }
     );
@@ -157,9 +159,7 @@ describe('models', function () {
       ListOfSelf: model
     };
 
-    expect(model.createJSONSample()).toEqual(
-      [ 'ListOfSelf' ]
-    );
+    expect(model.createJSONSample()).toEqual([[]]);
   });
 
   it('should not get infinite recursion for sample JSON case 3', function () {
@@ -228,7 +228,7 @@ describe('models', function () {
 
     var sig = model.getMockSignature();
 
-    expect(sig).toEqual('<span class="strong">array {</span><div></div><span class="strong">}</span>');
+    expect(sig).toEqual('<span class="strong">ListOfSelf [</span><div>ListOfSelf</div><span class="strong">]</span>');
   });
 
   it('should show the correct models', function () {
@@ -308,6 +308,42 @@ describe('models', function () {
       }
     });
 
-    expect(model.getMockSignature()).toEqual('<span class="strong">Person {</span><div><span class="strong">details {</span><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">age</span> (<span class="propType">long</span>, <span class="propOptKey">optional</span>),</div><div><span class="strong">social {</span><div><span class="propName false">github</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">twitter</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span></div><span class="strong">}</span></div><span class="strong">}</span>');
+    expect(model.getMockSignature()).toEqual('<span class="strong">Person {</span><div><span class="propName false">details</span> (<span class="propType">Inline Model 1</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span><br /><span class="strong">Inline Model 1 {</span><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">age</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">social</span> (<span class="propType">Inline Model 2</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span><br /><span class="strong">Inline Model 2 {</span><div><span class="propName false">github</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">twitter</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span>');
+  });
+
+  it('should properly render an array of models (Issue 270)', function (done) {
+    var client = new SwaggerClient({
+      spec: petstore,
+      success: function () {
+        var expectedJson = [
+          {
+            id: 0,
+            category: {
+              id: 0,
+              name: 'string'
+            },
+            name: 'doggie',
+            photoUrls: [
+              'string'
+            ],
+            tags: [
+              {
+                id: 0,
+                name: 'string'
+              }
+            ],
+            status: 'string'
+          }
+        ];
+        var response = client.pet.operations.findPetsByStatus.successResponse['200'];
+        var expected = '<span class="strong">PetArray [</span><div>Pet</div><span class="strong">]</span><br /><span class="strong">Pet {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">category</span> (<span class="propType">Category</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName true">name</span> (<span class="propType">string</span>),</div><div><span class="propName true">photoUrls</span> (<span class="propType">Array[string]</span>),</div><div><span class="propName false">tags</span> (<span class="propType">Array[Tag]</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">status</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>): pet status in the store</div><span class="strong">}</span><br /><span class="strong">Category {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span><br /><span class="strong">Tag {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span>';
+
+        expect(response.createJSONSample()).toEqual(expectedJson);
+        expect(response.getSampleValue()).toEqual(expectedJson);
+        expect(response.getMockSignature()).toEqual(expected);
+
+        done();
+      }
+    });
   });
 });
