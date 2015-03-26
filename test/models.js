@@ -2,6 +2,7 @@
 
 'use strict';
 
+var _ = require('lodash-compat');
 var expect = require('expect');
 var Model = require('../lib/types/model');
 var petstore = require('./spec/v2/petstore.json');
@@ -76,29 +77,7 @@ describe('models', function () {
     };
     var model = new Model('Sample', definition);
 
-    expect(model.getMockSignature()).toEqual('<span class="strong">Sample {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">photos</span> (<span class="propType">Array[Inline Model 1]</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span><br /><span class="strong">Inline Model 1 {</span><div></div><span class="strong">}</span>');
-  });
-
-  it('should build a model with an array and enum values', function () {
-    var definition = {
-      type: 'object',
-      properties: {
-        name: {
-          type: 'array',
-          items: {
-            type: 'string',
-            enum: [ 'value1', 'value2', 'value3', 'value4']
-          }
-        }
-      }
-    };
-    // var model = new Model('Sample', definition);
-    // var property = model.properties[0];
-
-    new Model('Sample', definition);
-
-    // TODO: verify that enums are represented in the mock signature
-    // console.log(model.createJSONSample());
+    expect(model.getMockSignature()).toEqual('<span class="strong">Sample {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">photos</span> (<span class="propType">Array[object]</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span>');
   });
 
   it('should not get infinite for sample JSON recursion', function () {
@@ -336,11 +315,146 @@ describe('models', function () {
           }
         ];
         var response = client.pet.operations.findPetsByStatus.successResponse['200'];
-        var expected = '<span class="strong">PetArray [</span><div>Pet</div><span class="strong">]</span><br /><span class="strong">Pet {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">category</span> (<span class="propType">Category</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName true">name</span> (<span class="propType">string</span>),</div><div><span class="propName true">photoUrls</span> (<span class="propType">Array[string]</span>),</div><div><span class="propName false">tags</span> (<span class="propType">Array[Tag]</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">status</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>): pet status in the store</div><span class="strong">}</span><br /><span class="strong">Category {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span><br /><span class="strong">Tag {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span>';
 
         expect(response.createJSONSample()).toEqual(expectedJson);
         expect(response.getSampleValue()).toEqual(expectedJson);
-        expect(response.getMockSignature()).toEqual(expected);
+        expect(response.getMockSignature()).toEqual('<span class="strong">PetArray [</span><div>Pet</div><span class="strong">]</span><br /><span class="strong">Pet {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">category</span> (<span class="propType">Category</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName true">name</span> (<span class="propType">string</span>),</div><div><span class="propName true">photoUrls</span> (<span class="propType">Array[string]</span>),</div><div><span class="propName false">tags</span> (<span class="propType">Array[Tag]</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">status</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>): pet status in the store</div><span class="strong">}</span><br /><span class="strong">Category {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span><br /><span class="strong">Tag {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span>');
+
+        done();
+      }
+    });
+  });
+
+  it('should properly handle enum', function (done) {
+    var cPetStore = _.cloneDeep(petstore);
+
+    cPetStore.definitions.Pet.properties.status.enum = [
+      'available',
+      'pending',
+      'sold'
+    ];
+
+    var client = new SwaggerClient({
+      spec: cPetStore,
+      success: function () {
+        var expectedJson = [
+          {
+            id: 0,
+            category: {
+              id: 0,
+              name: 'string'
+            },
+            name: 'doggie',
+            photoUrls: [
+              'string'
+            ],
+            tags: [
+              {
+                id: 0,
+                name: 'string'
+              }
+            ],
+            status: 'available'
+          }
+        ];
+        var response = client.pet.operations.findPetsByStatus.successResponse['200'];
+        
+        expect(response.createJSONSample()).toEqual(expectedJson);
+        expect(response.getSampleValue()).toEqual(expectedJson);
+        expect(response.getMockSignature()).toEqual('<span class="strong">PetArray [</span><div>Pet</div><span class="strong">]</span><br /><span class="strong">Pet {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">category</span> (<span class="propType">Category</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName true">name</span> (<span class="propType">string</span>),</div><div><span class="propName true">photoUrls</span> (<span class="propType">Array[string]</span>),</div><div><span class="propName false">tags</span> (<span class="propType">Array[Tag]</span>, <span class="propOptKey">optional</span>),</div><div><span class="propWrap"><span class="propName false">status</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>): pet status in the store = <span class="propVals">[\'available\' or \'pending\' or \'sold\']</span><table class="optionsWrapper"><tr><th colspan="2">string</th></tr><tr><td class="optionName">Enum:</td><td>"available", "pending", "sold"</td></tr></table></span></div><span class="strong">}</span><br /><span class="strong">Category {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span><br /><span class="strong">Tag {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span>');
+
+        done();
+      }
+    });
+  });
+
+  it('should support an array of items with an enum (Issue 198)', function (done) {
+    var cPetStore = _.cloneDeep(petstore);
+
+    cPetStore.definitions.Statuses = {
+      type: 'array',
+      items: {
+        type: 'string',
+        enum: [
+          'available',
+          'pending',
+          'sold'
+        ]
+      }
+    };
+
+    var path = cPetStore.paths['/pet/statuses'] = _.cloneDeep(cPetStore.paths['/pet/findByStatus']);
+
+    path.get.operationId = 'listPetStatuses';
+    path.get.parameters = [];
+    path.get.responses['200'].schema = {
+      $ref: '#/definitions/Statuses'
+    };
+
+    var client = new SwaggerClient({
+      spec: cPetStore,
+      success: function () {
+        var response = client.pet.operations.listPetStatuses.successResponse['200'];
+
+        expect(response.createJSONSample()).toEqual(['available']);
+        expect(response.getSampleValue()).toEqual(['available']);
+        expect(response.getMockSignature()).toEqual('<span class="strong">Statuses [</span><div><span class="propWrap">string<table class="optionsWrapper"><tr><th colspan="2">string</th></tr><tr><td class="optionName">Enum:</td><td>"available", "pending", "sold"</td></tr></table></span></div><span class="strong">]</span>');
+
+        done();
+      }
+    });
+  });
+
+  it('should support an array of items with an enum in the wrong place (Issue 198)', function (done) {
+    var cPetStore = _.cloneDeep(petstore);
+
+    cPetStore.definitions.Statuses = {
+      type: 'array',
+      items: {
+        type: 'string'
+      },
+      enum: [
+        'available',
+        'pending',
+        'sold'
+      ]
+    };
+
+    var path = cPetStore.paths['/pet/statuses'] = _.cloneDeep(cPetStore.paths['/pet/findByStatus']);
+
+    path.get.operationId = 'listPetStatuses';
+    path.get.parameters = [];
+    path.get.responses['200'].schema = {
+      $ref: '#/definitions/Statuses'
+    };
+
+    var client = new SwaggerClient({
+      spec: cPetStore,
+      success: function () {
+        var response = client.pet.operations.listPetStatuses.successResponse['200'];
+
+        expect(response.createJSONSample()).toEqual(['string']);
+        expect(response.getSampleValue()).toEqual(['string']);
+        expect(response.getMockSignature()).toEqual('<span class="strong">Statuses [</span><div>string</div><span class="strong">]</span>');
+
+        done();
+      }
+    });
+  });
+
+  it('should handle arrays that are missing its items property (Issue 190)', function (done) {
+    var cPetStore = _.cloneDeep(petstore);
+
+    delete cPetStore.definitions.PetArray.items;
+
+    var client = new SwaggerClient({
+      spec: cPetStore,
+      success: function () {
+        var response = client.pet.operations.findPetsByStatus.successResponse['200'];
+
+        expect(response.createJSONSample()).toEqual([{}]);
+        expect(response.getSampleValue()).toEqual([{}]);
+        expect(response.getMockSignature()).toEqual('<span class="strong">PetArray [</span><div>object</div><span class="strong">]</span>');
 
         done();
       }
