@@ -43,6 +43,16 @@ describe('converts specs', function () {
       var converter = new SwaggerSpecConverter();
       converter.setDocumentationLocation('http://localhost:8000/v1/api-docs');
       converter.convert(data.obj, function(swagger) {
+        var tags = swagger.tags;
+
+        test.array(swagger.tags);
+        var petTag = swagger.tags[0];
+        var userTag = swagger.tags[1];
+        var storeTag = swagger.tags[2];
+        
+        expect(petTag.name).toBe('pet');
+        expect(userTag.name).toBe('user');
+        expect(storeTag.name).toBe('store');
 
         // metadata tests
         expect(swagger.swagger).toBe('2.0');
