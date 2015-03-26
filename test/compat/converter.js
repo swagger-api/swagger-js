@@ -46,8 +46,11 @@ describe('converts specs', function () {
 
         // metadata tests
         expect(swagger.swagger).toBe('2.0');
-        test.object(swagger.info);
+
         var info = swagger.info;
+        test.object(info);
+        test.object(info.contact);
+        console.log(info.contact);
         test.string(info.description);
         test.string(info.title);
         test.string(info.termsOfService);
