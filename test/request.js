@@ -292,4 +292,18 @@ describe('swagger request functions', function () {
 
     expect(curl).toBe('curl -X POST --header "Content-Type: application/json" --header "Accept: application/json" -d "{\\"id\\":10101}" "http://localhost:8000/v2/api/pet"');
   });
+
+  it('gets an server side 404, and verifies that the content-type in the response is correct, and different than one in the request', function (done) {
+    var petApi = sample.pet;
+    var req = petApi.findPetsByStatus({status: undefined}, {responseContentType: 'application/json'});
+
+    // This test will actually hit the 404 path of mock server, which we use to test the content-type is correct
+    petApi.findPetsByStatus({status: undefined}, function (resp) {
+	expect(resp.headers).toNotBe(undefined);
+	expect(resp.headers['content-type']).toNotBe(undefined);
+	expect(resp.headers['content-type']).toBe('text/plain');
+
+	done();
+    });
+  });
 });
