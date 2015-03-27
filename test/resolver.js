@@ -347,4 +347,27 @@ describe('swagger resolver', function () {
       done();
     });
   });
+
+  it('should handle response references (swagger-ui/issues/1078)', function (done) {
+    var api = new Resolver();
+    var spec = {
+      paths: {
+        '/myUsername': {
+          get: {
+            responses: {
+              '400': {
+                $ref: 'http://localhost:8000/v2/petstore.json#/responses/veryBad'
+              }
+            }
+          }
+        }
+      }
+    };
+    api.resolve(spec, function (spec, unresolvedRefs) {
+      var get = spec.paths['/myUsername'].get;
+      var response = get.responses['400'];
+      expect(response.description).toBe('failed');
+      done();
+    });
+  });
 });

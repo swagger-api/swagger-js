@@ -967,5 +967,10 @@
       "type": "integer",
       "format": "int32"
     }
+  },
+  "responses": {
+    "veryBad": {
+      "description": "failed"
+    }
   }
 }
