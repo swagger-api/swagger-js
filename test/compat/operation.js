@@ -20,6 +20,10 @@ describe('1.2 verifies the nickname is sanitized', function() {
     done();
   });
 
+  it('generates an operation id', function() {
+    expect(sample.idFromOp('/foo/bar', 'GET', {})).toBe('GET_foo_bar');
+  });
+
   it('returns the same nickname', function() {
     expect(sample.idFromOp('', '', { operationId: 'getSomething' })).toBe('getSomething');
   });
