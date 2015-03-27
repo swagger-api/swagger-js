@@ -163,4 +163,52 @@ describe('response types', function () {
       }
     });
   });
+
+  it('should handle response references (swagger-ui/issues/1078)', function (done) {
+    var cPetStore = _.cloneDeep(petstore);
+
+    cPetStore.responses = {
+      '200': {
+        description: 'successful operation',
+        schema: {
+          $ref: '#/definitions/PetArray'
+        }
+      }
+    };
+
+    cPetStore.paths['/pet/findByStatus'].get.responses['200'] = {
+      $ref: '#/responses/200'
+    };
+
+    var client = new SwaggerClient({
+      spec: cPetStore,
+      success: function () {
+        var expectedJson = [{
+          id: 0,
+          category: {
+              id: 0,
+              name: 'string'
+            },
+          name: 'doggie',
+          photoUrls: [
+              'string'
+            ],
+          tags: [
+              {
+                id: 0,
+                name: 'string'
+              }
+            ],
+          status: 'string'
+        }];
+        var response = client.pet.operations.findPetsByStatus.successResponse['200'];
+
+        expect(response.createJSONSample()).toEqual(expectedJson);
+        expect(response.getSampleValue()).toEqual(expectedJson);
+        expect(response.getMockSignature()).toEqual('<span class="strong">PetArray [</span><div>Pet</div><span class="strong">]</span><br /><span class="strong">Pet {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">category</span> (<span class="propType">Category</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName true">name</span> (<span class="propType">string</span>),</div><div><span class="propName true">photoUrls</span> (<span class="propType">Array[string]</span>),</div><div><span class="propName false">tags</span> (<span class="propType">Array[Tag]</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">status</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>): pet status in the store</div><span class="strong">}</span><br /><span class="strong">Category {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span><br /><span class="strong">Tag {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span>');
+
+        done();
+      }
+    });
+  });
 });
