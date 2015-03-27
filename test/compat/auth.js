@@ -84,4 +84,23 @@ describe('1.2 api key authorizations', function() {
 
     sample.clientAuthorizations.authz = {};
   });
+
+  it('propigates authorization from the resource', function() {
+    var params = { orderId: 1 };
+    var opts = {
+      requestContentType: null,
+      responseContentType: 'application/json',
+      mock: true
+    };
+    var auth = new swagger.ApiKeyAuthorization('privateKey', 'a b c d e', 'header');
+
+    sample.clientAuthorizations.add('privateKey', auth);
+
+    var storeApi = sample.store;
+
+    var req = storeApi.getOrderById(params, opts);
+
+    expect(req.url).toBe('http://localhost:8000/v1/api/store/order/1');
+    expect(req.headers['privateKey']).toBe('a b c d e');
+  });
 });

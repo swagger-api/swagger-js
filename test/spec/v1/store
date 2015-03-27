@@ -6,6 +6,9 @@
   "produces": [
     "application/json"
   ],
+  "authorizations": {
+    "privateKey": []
+  },
   "apis": [
     {
       "path": "/store/order/{orderId}",
