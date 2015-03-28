@@ -218,7 +218,7 @@ describe('1.2 request operations', function () {
 
   it('allows override of headers when fetching the swagger specification', function () {
     var opts = {
-      swaggerRequstHeaders: 'foo/bar'
+      swaggerRequestHeaders: 'foo/bar'
     };
     var sample = new SwaggerClient('http://localhost:8000/api-docs.json', opts);
     var req = sample.build(true);
