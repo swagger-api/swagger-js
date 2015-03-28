@@ -1,7 +1,10 @@
+/* global after, before, describe, it */
+
+'use strict';
+
 var test = require('unit.js');
 var expect = require('expect');
-var mock = require('../../test/compat/single');
-var swagger = require('../../lib/swagger-client');
+var mock = require('./single');
 var sample, instance;
 
 describe('1.2 request operations', function() {
@@ -19,8 +22,11 @@ describe('1.2 request operations', function() {
 
   it('loads a single file resource', function() {
     var petApi = sample.pet;
+
     test.object(petApi);
+
     var help = petApi.getPetById.help(true);
+
     expect(help.indexOf('getPetById: Find pet by ID')).toBe(0);
   });
 });

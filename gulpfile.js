@@ -1,15 +1,17 @@
-var gulp   = require('gulp');
-var gutil  = require('gulp-util');
-var uglify = require('gulp-uglify');
+'use strict';
+
+var async = require('async');
+var browserify = require('browserify');
+var buffer = require('gulp-buffer');
+var del = require('del');
+var gulp = require('gulp');
+var header = require('gulp-header');
+var istanbul = require('gulp-istanbul');
 var jshint = require('gulp-jshint');
 var mocha  = require('gulp-mocha');
-var concat = require('gulp-concat');
-var rename = require('gulp-rename');
-var wrap = require("gulp-wrap");
-var istanbul = require('gulp-istanbul');
-var del = require('del');
-var header = require('gulp-header');
-var pkg = require('./package.json');
+var pkg = require('./package');
+var source = require('vinyl-source-stream');
+
 var banner = ['/**',
   ' * <%= pkg.name %> - <%= pkg.description %>',
   ' * @version v<%= pkg.version %>',
@@ -17,60 +19,88 @@ var banner = ['/**',
   ' * @license <%= pkg.license %>',
   ' */',
   ''].join('\n');
-
 var basename = 'swagger-client';
 var paths = {
-  sources: ['src/js/*.js'],
-  tests: ['test/*.js', 'test/compat/*.js'],
-  dist: 'lib'
+  sources: ['index.js', 'lib/**/*.js'],
+  tests: ['test/*.js', 'test/compat/*.js', '!test/browser/*.js'],
+  dist: 'browser'
 };
 
 paths.all = paths.sources.concat(paths.tests).concat(['gulpfile.js']);
 
 gulp.task('clean', function (cb) {
   del([
-    paths.dist + '/' + basename + ".*",
+    paths.dist + '/' + basename + '.*',
+    'coverage',
+    'test/browser/' + basename + '-browser-tests.js'
   ], cb);
 });
 
-gulp.task('lint', function() {
+gulp.task('lint', function () {
   return gulp
     .src(paths.all)
     .pipe(jshint())
-    .pipe(jshint.reporter('default'));
+    .pipe(jshint.reporter('jshint-stylish'));
 });
 
-gulp.task('test', function() {
+gulp.task('coverage', function () {
+  process.env.NODE_ENV = 'test';
+
   return gulp
-    .src(paths.tests)
-    .pipe(mocha());
-});
-
-gulp.task('cover', function (cb) {
-  gulp.src(paths.dist + '/' + basename + '.js')
+    .src(paths.sources)
     .pipe(istanbul({includeUntested: true}))
-    .pipe(istanbul.hookRequire())
+    .pipe(istanbul.hookRequire()) // Force `require` to return covered files
     .on('finish', function () {
-      gulp.src(paths.tests)
-        .pipe(mocha())
-        .pipe(istanbul.writeReports())
-        .on('end', cb);
+      gulp
+        .src(paths.tests)
+        .pipe(mocha({reporter: 'spec'}))
+        .pipe(istanbul.writeReports());
     });
 });
 
-gulp.task('build', function() {
-  return gulp.src(paths.sources)
-    .pipe(concat(basename + '.js'))
-    .pipe(wrap('(function(){\n<%= contents %>\n})();'))
-    .pipe(header(banner, { pkg: pkg } ))
-    .pipe(gulp.dest(paths.dist))
-    .pipe(uglify())
-    .pipe(rename(basename + '.min.js'))
-    .pipe(gulp.dest(paths.dist))
-    .on('error', gutil.log);
+gulp.task('build', function (cb) {
+  // Builds  browser binaries:
+  //
+  // 1 (swagger-client.js): Standalone build without uglification and including source maps
+  // 2 (swagger-client.min.js): Standalone build uglified and without source maps
+
+  async.map([0,1], function (n, callback) {
+    var useDebug = n % 2 === 0;
+    var b = browserify('./index.js', {
+      debug: useDebug,
+      standalone: 'SwaggerClient'
+    });
+
+    if (!useDebug) {
+      b.transform({global: true}, 'uglifyify');
+    }
+
+    b.transform('brfs')
+      .bundle()
+      .pipe(source(basename + (!useDebug ? '.min' : '') + '.js'))
+      .pipe(buffer())
+      .pipe(header(banner, {pkg: pkg}))
+      .pipe(gulp.dest('./browser/'))
+      .on('error', function (err) {
+        callback(err);
+      })
+      .on('end', function () {
+        callback();
+      });
+  }, function (err) {
+    cb(err);
+  });
 });
 
-gulp.task('watch', ['test'], function() {
+gulp.task('test', function () {
+  process.env.NODE_ENV = 'test';
+
+  return gulp
+    .src(paths.tests)
+    .pipe(mocha({reporter: 'spec'}));
+});
+
+gulp.task('watch', ['test'], function () {
   gulp.watch(paths.all, ['test']);
 });
 
