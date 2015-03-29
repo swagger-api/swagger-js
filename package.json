@@ -1,12 +1,16 @@
 {
   "name": "swagger-client",
   "author": "Tony Tam <fehguy@gmail.com>",
-  "description": "swagger.js is a javascript client for use with swaggering APIs.",
-  "version": "2.1.0-M2",
+  "contributors": [{
+    "name": "Jeremy Whitlock",
+    "email": "jcscoobyrs@gmail.com"
+  }],
+  "description": "swagger-client is a javascript client for use with swaggering APIs.",
+  "version": "2.1.0",
   "homepage": "http://swagger.io",
   "repository": {
     "type": "git",
-    "url": "git://github.com/swagger-api/swagger-js.git"
+    "url": "git://github.com/swagger-api/swagger-client.git"
   },
   "main": "index.js",
   "scripts": {
