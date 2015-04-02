@@ -80,6 +80,29 @@ describe('models', function () {
     expect(model.getMockSignature()).toEqual('<span class="strong">Sample {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">photos</span> (<span class="propType">Array[object]</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span>');
   });
 
+  it('should build a model signature using inline title (Issue 1104)', function () {
+    var definition = {
+      type: 'object',
+      title: 'Rad Object',
+      properties: {
+        id: {
+          type: 'integer',
+          format: 'int32'
+        },
+        name: {
+          type: 'string'
+        },
+        photos: {
+          type: 'array'
+        }
+      }
+    };
+    var model = new Model('Sample', definition);
+
+    expect(model.getMockSignature()).toEqual('<span class="strong">Rad Object {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">photos</span> (<span class="propType">Array[object]</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span>');
+  });
+
+
   it('should not get infinite for sample JSON recursion', function () {
     var definition = {
       type: 'object',
