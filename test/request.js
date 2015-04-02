@@ -213,8 +213,7 @@ describe('swagger request functions', function () {
     ]);
   });
 
-
-  it('verifies useJQuery is set', function () {
+  /*it('verifies useJQuery is set', function () {
     var petApi = sample.pet;
     var req = petApi.getPetById({petId: 1}, {useJQuery: true, mock: true});
 
@@ -224,7 +223,7 @@ describe('swagger request functions', function () {
     expect(req.headers.Accept).toBe('application/json');
     expect(req.url).toBe('http://localhost:8000/v2/api/pet/1');
     expect(req.useJQuery).toBe(true);
-  });
+  });*/
 
   it('does not add a query param if not set', function () {
     var petApi = sample.pet;
