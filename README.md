@@ -24,7 +24,7 @@ Then let swagger do the work!
 ```js
 var client = require("swagger-client")
 
-var swagger = new client.SwaggerClient({
+var swagger = new client({
   url: 'http://petstore.swagger.io/v2/swagger.json',
   success: function() {
     swagger.apis.pet.getPetById({petId:1});
@@ -64,13 +64,13 @@ That's it!  You'll get a JSON response with the default callback handler:
 Need to pass an API key?  Configure one as a querystring:
 
 ```js
-client.authorizations.add("apiKey", new client.ApiKeyAuthorization("api_key","special-key","query"));
+client.clientAuthorizations.add("apiKey", new client.ApiKeyAuthorization("api_key","special-key","query"));
 ```
 
 ...or with a header:
 
 ```js
-client.authorizations.add("apiKey", new client.ApiKeyAuthorization("api_key","special-key","header"));
+client.clientAuthorizations.add("apiKey", new client.ApiKeyAuthorization("api_key","special-key","header"));
 ```
 
 ### Calling an API with swagger + the browser!
