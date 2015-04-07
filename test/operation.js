@@ -158,6 +158,28 @@ describe('operations', function () {
     expect(url).toBe('http://localhost/path?intArray[]=3&intArray[]=4&intArray[]=5');
   });
 
+  it('should generate a url with queryparams array, brackets when param is csv string', function () {
+    var parameters = [
+      {
+        in: 'query',
+        name: 'intArray',
+        type: 'array',
+        items: {
+          type: 'integer',
+          format: 'int32'
+        },
+        collectionFormat: 'brackets'
+      }
+    ];
+    var op = new Operation({}, 'http', 'test', 'get', '/path', { parameters: parameters },
+        {}, {}, new auth.SwaggerAuthorizations());
+    var url = op.urlify({
+      intArray: "3,4,5"
+    });
+
+    expect(url).toBe('http://localhost/path?intArray[]=3&intArray[]=4&intArray[]=5');
+  });
+
   it('should generate a url with path param at end of path', function () {
     var parameters = [
       {
