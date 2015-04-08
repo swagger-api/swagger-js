@@ -17,7 +17,14 @@ if (!Array.prototype.indexOf) {
     }
     return -1;
   };
-}
+};
+
+/* Here for node 10.x support */
+if (!String.prototype.endsWith) {
+  String.prototype.endsWith = function(suffix) {
+    return this.indexOf(suffix, this.length - suffix.length) !== -1;
+  };
+};
 
 module.exports = SwaggerClient;
 

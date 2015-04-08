@@ -24,7 +24,7 @@ Then let swagger do the work!
 ```js
 var client = require("swagger-client")
 
-var swagger = new client.SwaggerClient({
+var swagger = new client({
   url: 'http://petstore.swagger.io/v2/swagger.json',
   success: function() {
     swagger.apis.pet.getPetById({petId:1});
@@ -64,25 +64,24 @@ That's it!  You'll get a JSON response with the default callback handler:
 Need to pass an API key?  Configure one as a querystring:
 
 ```js
-client.authorizations.add("apiKey", new client.ApiKeyAuthorization("api_key","special-key","query"));
+client.clientAuthorizations.add("apiKey", new client.ApiKeyAuthorization("api_key","special-key","query"));
 ```
 
 ...or with a header:
 
 ```js
-client.authorizations.add("apiKey", new client.ApiKeyAuthorization("api_key","special-key","header"));
+client.clientAuthorizations.add("apiKey", new client.ApiKeyAuthorization("api_key","special-key","header"));
 ```
 
 ### Calling an API with swagger + the browser!
 
-Download `swagger-client.js` and `shred.bundle.js` into your lib folder
+Download `browser/swagger-client.js` into your lib folder
 
 ```js
-<script src='lib/shred.bundle.js' type='text/javascript'></script>
 <script src='lib/swagger-client.js' type='text/javascript'></script>
 <script type="text/javascript">
   // initialize swagger, point to a resource listing
-  window.swagger = new SwaggerClient({
+  window.swagger = new client.SwaggerClient({
     url: "http://petstore.swagger.io/api/api-docs",
     success: function() {
       // upon connect, fetch a pet and set contents to element "mydata"
@@ -101,19 +100,19 @@ var pet = {
   id: 100,
   name: "dog"};
 
-swagger.apis.pet.addPet({body: pet});
+swagger.pet.addPet({body: pet});
 ```
 
 ### Sending XML in as a payload to your API?
 ```js
 var pet = "<Pet><id>2</id><name>monster</name></Pet>";
 
-swagger.apis.pet.addPet({body: pet}, {requestContentType:"application/xml"});
+swagger.pet.addPet({body: pet}, {requestContentType:"application/xml"});
 ```
 
 ### Need XML response?
 ```js
-swagger.apis.pet.getPetById({petId:1}, {responseContentType:"application/xml"});
+swagger.pet.getPetById({petId:1}, {responseContentType:"application/xml"});
 ```
 
 ### Custom request signing
@@ -152,7 +151,7 @@ Development
 -----------
 
 Please [fork the code](https://github.com/swagger-api/swagger-js) and help us improve
-swagger-client.js. Send us a pull request and **we'll mail you a wordnik T-shirt!**
+swagger-client.js. Send us a pull request to the `develop_2.0` branch!  Tests make merges get accepted more quickly.
 
 swagger-js use gulp for Node.js.
 
