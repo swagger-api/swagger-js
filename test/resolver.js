@@ -335,7 +335,7 @@ describe('swagger resolver', function () {
     var spec = {
       paths: {
         '/myUsername': {
-          $ref: 'https://raw.githubusercontent.com/reverb/swagger-spec/master/fixtures/v2.0/json/resources/resourceWithLinkedDefinitions_part1.json'
+          $ref: 'http://localhost:8000/v2/resourceWithLinkedDefinitions_part1.json'
         }
       }
     };
@@ -344,6 +344,25 @@ describe('swagger resolver', function () {
       var path = spec.paths['/myUsername'];
       test.object(path);
       test.object(path.get);
+      done();
+    });
+  });
+
+  it('resolves nested operations with referenced models', function(done) {
+    var api = new Resolver();
+    var spec = {
+      paths: {
+        '/health': {
+          $ref: 'http://localhost:8000/v2/operations.json#health'
+        }
+      }
+    };
+
+    api.resolve(spec, function (spec, unresolvedRefs) {
+      var health = spec.paths['/health'].get;
+      test.object(health);
+      test.object(spec.definitions.Health);
+      test.object(spec.definitions.JVMMemory);
       done();
     });
   });
