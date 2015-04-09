@@ -22,7 +22,7 @@
   },
   "Health": {
     "description": "An object representing the health of a server",
-    "requited": [
+    "required": [
       "liveThreadCount",
       "peakThreadCount",
       "startedThreadCount",
