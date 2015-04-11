@@ -44,7 +44,8 @@ describe('models', function () {
       properties: {
         id: {
           type: 'integer',
-          format: 'int32'
+          format: 'int32',
+          default: 0
         },
         name: {
           type: 'string'
@@ -55,7 +56,6 @@ describe('models', function () {
       }
     };
     var model = new Model('Sample', definition);
-
     expect(model.createJSONSample()).toEqual({ id: 0, name: 'string', photos: [ {} ] });
   });
 
