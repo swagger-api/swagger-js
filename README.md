@@ -75,13 +75,13 @@ client.clientAuthorizations.add("apiKey", new client.ApiKeyAuthorization("api_ke
 
 ### Calling an API with swagger + the browser!
 
-Download `browser/swagger-client.js` into your lib folder
+This example assumes you've downloaded `browser/swagger-client.js` into your lib folder.
 
 ```js
 <script src='lib/swagger-client.js' type='text/javascript'></script>
 <script type="text/javascript">
   // initialize swagger, point to a resource listing
-  window.swagger = new client.SwaggerClient({
+  var swagger = new SwaggerClient({
     url: "http://petstore.swagger.io/api/api-docs",
     success: function() {
       // upon connect, fetch a pet and set contents to element "mydata"
@@ -90,7 +90,6 @@ Download `browser/swagger-client.js` into your lib folder
       });
     }
   });
-
 </script>
 ```
 
