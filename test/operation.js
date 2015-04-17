@@ -298,6 +298,71 @@ describe('operations', function () {
     expect(op.parameters[0].signature).toEqual('Array[string]');
   });
 
+  it('should get the $ref schema signature, as model name', function () {
+    var parameters = [{
+      name: 'test',
+      in: 'body',
+      schema: {
+        '$ref': '#/definitions/testModel'
+      }
+    }];
+    var definitions = {
+      testModel: {
+        type: 'object',
+        properties: {
+          foo:  {
+            type: 'string'
+          }
+        }
+      }
+    };
+
+    var op = new Operation({}, 'http', 'test', 'get', '/fantastic',
+                           { parameters: parameters }, definitions,{}, new auth.SwaggerAuthorizations());
+
+    expect(op.parameters[0].signature).toEqual('testModel');
+  });
+
+  it('should get the inline schema signature, as "inline#0"', function () {
+    var parameters = [{
+      name: 'test',
+      in: 'body',
+      schema: {
+        type: 'object',
+        properties: { foo:  { type: 'string' }
+        }
+      }
+    }];
+
+    var op = new Operation({}, 'http', 'test', 'get', '/fantastic',
+                           { parameters: parameters }, {},{}, new auth.SwaggerAuthorizations());
+
+    expect(op.parameters[0].signature).toEqual('inline#0');
+  });
+
+  // only testing for swagger-ui#1133...pending more logic clarification
+  it('should return some object like string for inline objects.',function() {
+
+    var parameters = [{
+      name: 'test',
+      in: 'body',
+      schema: {
+        type: 'object',
+        properties: {
+          josh: {
+            type: 'string'
+          }
+        }
+      }
+    }];
+
+    var op = new Operation({}, 'http', 'test', 'get', '/fantastic',
+                           { parameters: parameters }, {},{}, new auth.SwaggerAuthorizations());
+    var param = op.parameters[0];
+
+    expect(param.sampleJSON).toEqual('{\n  \"josh\": \"string\"\n}');
+  });
+
   it('should get a date array signature', function () {
     var parameters = [
       { in: 'query', name: 'year', type: 'array', items: {type: 'string', format: 'date-time'} }
