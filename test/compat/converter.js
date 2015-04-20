@@ -83,6 +83,10 @@ describe('converts specs', function () {
         expect(param.type).toBe('integer');
         expect(param.format).toBe('int64');
 
+        // enums
+        var getPetsByStatus = swagger.paths['/pet/findByStatus'].get;
+        expect(getPetsByStatus.parameters[0].enum).toEqual([ 'available', 'pending', 'sold' ]);
+
         // responses
         var responses = getPet.responses;
         expect(Object.keys(responses).length).toBe(3);
