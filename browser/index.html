@@ -2,5 +2,12 @@
   <head>
     <title>Test Swagger Client</title>
     <script src="swagger-client.js"></script>
+    <script type="text/javascript">
+      // initialize swagger
+      var swagger = new SwaggerClient({
+        url: "http://petstore.swagger.io/api/api-docs",
+        success: function() {}
+      });
+    </script>
   </head>
 </html>
