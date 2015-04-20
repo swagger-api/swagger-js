@@ -298,31 +298,6 @@ describe('operations', function () {
     expect(op.parameters[0].signature).toEqual('Array[string]');
   });
 
-  it('should get the $ref schema signature, as model name', function () {
-    var parameters = [{
-      name: 'test',
-      in: 'body',
-      schema: {
-        '$ref': '#/definitions/testModel'
-      }
-    }];
-    var definitions = {
-      testModel: {
-        type: 'object',
-        properties: {
-          foo:  {
-            type: 'string'
-          }
-        }
-      }
-    };
-
-    var op = new Operation({}, 'http', 'test', 'get', '/fantastic',
-                           { parameters: parameters }, definitions,{}, new auth.SwaggerAuthorizations());
-
-    expect(op.parameters[0].signature).toEqual('testModel');
-  });
-
   it('should get the inline schema signature, as "inline#0"', function () {
     var parameters = [{
       name: 'test',
@@ -361,6 +336,38 @@ describe('operations', function () {
     var param = op.parameters[0];
 
     expect(param.sampleJSON).toEqual('{\n  \"josh\": \"string\"\n}');
+  });
+
+  // only testing for swagger-ui#1037, should correctly render parameter models wrapped with Array
+  it('parameters models wrapped in Array, should have #sampleJSON',function() {
+
+    var parameters = [{
+      name: 'test',
+      in: 'body',
+      schema: {
+        type: 'array',
+        items: {
+          '$ref': '#/definitions/TestModel'
+        }
+      }
+    }];
+
+    var definitions = {
+      TestModel: {
+        type: 'object',
+        properties: {
+          foo:  {
+            type: 'string'
+          }
+        }
+      }
+    };
+
+    var op = new Operation({}, 'http', 'test', 'get', '/fantastic',
+                           { parameters: parameters }, definitions, {}, new auth.SwaggerAuthorizations());
+    var param = op.parameters[0];
+
+    expect(param.sampleJSON).toEqual('[\n  {\n    \"foo\": \"string\"\n  }\n]');
   });
 
   it('should get a date array signature', function () {
