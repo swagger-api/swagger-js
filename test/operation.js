@@ -369,5 +369,43 @@ describe('operations', function () {
 
     op.execute({}, opts);
   });
+
+  it('should set the content-accept header, from opts#responseContentType in operation#execute',function() {
+    var mimeTest = 'application/test';
+    var opts = {
+      mock: true,
+      responseContentType: mimeTest
+    };
+
+    var op = new Operation({}, 'http', 'test', 'get', '/path', {},
+                                   {}, {}, new auth.SwaggerAuthorizations());
+    var obj = op.execute({}, opts);
+
+    expect(obj.headers.Accept).toBe(mimeTest);
+  });
+
+  // issue#1166
+  it('should default the content-accept header to one found in operation#produces',function() {
+    var mimeTest = 'application/test';
+
+    var args = {
+      produces: [mimeTest]
+    };
+
+    var op = new Operation({}, 'http', 'test', 'get', '/path', args,
+                                   {}, {}, new auth.SwaggerAuthorizations());
+
+    var obj = op.execute({}, {mock: true});
+
+    expect(obj.headers.Accept).toBe(mimeTest);
+  });
+
+  it('should default the content-accept header to application/json, as last resort',function() {
+    var op = new Operation({}, 'http', 'test', 'get', '/path', {},
+                                   {}, {}, new auth.SwaggerAuthorizations());
+    var obj = op.execute({}, {mock: true});
+    expect(obj.headers.Accept).toBe('application/json');
+  });
+
 });
 
