@@ -78,10 +78,10 @@ client.clientAuthorizations.add("apiKey", new client.ApiKeyAuthorization("api_ke
 Download `browser/swagger-client.js` into your lib folder
 
 ```js
-<script src='lib/swagger-client.js' type='text/javascript'></script>
+<script src='browser/swagger-client.js' type='text/javascript'></script>
 <script type="text/javascript">
   // initialize swagger, point to a resource listing
-  window.swagger = new client.SwaggerClient({
+  window.swagger = new SwaggerClient({
     url: "http://petstore.swagger.io/api/api-docs",
     success: function() {
       // upon connect, fetch a pet and set contents to element "mydata"
@@ -90,8 +90,11 @@ Download `browser/swagger-client.js` into your lib folder
       });
     }
   });
-
 </script>
+
+<body>
+  <div id="mydata"></div>
+</body>
 ```
 
 ### Need to send an object to your API via POST or PUT?
