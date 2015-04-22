@@ -2,7 +2,6 @@
 
 'use strict';
 
-var test = require('unit.js');
 var expect = require('expect');
 var mock = require('./mock');
 var sample, instance;
@@ -21,19 +20,13 @@ describe('1.2 model signatures', function () {
   });
 
   it('returns the json representation of a pet with repeating models', function () {
-    var pet = sample.models.Animals;
+    var animals = sample.models.Animals;
+    var pet = sample.models.Pet;
 
-    test.object(pet);
-
-    // verify that each instance of `Pet` is represented
-    var petModel = '{"id":0,"category":{"id":0,"name":""},"name":"","photoUrls":[""],"tags":[{"id":0,"name":""}],"status":"","phone":{"code":"","number":""},"owner":{"name":"","phone":{"code":"","number":""}}}';
-    var model = '';
-
-    model += '{' + '"cat":' + petModel + ',';
-    model += '"dog":' + petModel + ',';
-    model += '"mouse":' + petModel + '}';
-
-    // TODO: enable with issue https://github.com/swagger-api/swagger-js/issues/306
-    // expect(JSON.stringify(pet.createJSONSample())).toBe(model);
+    expect(animals.createJSONSample()).toEqual({
+      cat: pet.createJSONSample(),
+      dog: pet.createJSONSample(),
+      mouse: pet.createJSONSample()
+    });
   });
 });
