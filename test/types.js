@@ -38,8 +38,8 @@ describe('type conversions', function () {
       }
     });
 
-    expect(type).toBe('inline#0');
-    expect(type1).toBe('inline#1');
+    expect(type).toBe('Inline Model 0');
+    expect(type1).toBe('Inline Model 1');
 
   });
 });

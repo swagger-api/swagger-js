@@ -298,7 +298,7 @@ describe('operations', function () {
     expect(op.parameters[0].signature).toEqual('Array[string]');
   });
 
-  it('should get the inline schema signature, as "inline#0"', function () {
+  it('should get the inline schema signature, as "Inline Model 0"', function () {
     var parameters = [{
       name: 'test',
       in: 'body',
@@ -312,7 +312,7 @@ describe('operations', function () {
     var op = new Operation({}, 'http', 'test', 'get', '/fantastic',
                            { parameters: parameters }, {},{}, new auth.SwaggerAuthorizations());
 
-    expect(op.parameters[0].signature).toEqual('inline#0');
+    expect(op.parameters[0].signature).toEqual("Inline Model 0");
   });
 
   // only testing for swagger-ui#1133...pending more logic clarification
