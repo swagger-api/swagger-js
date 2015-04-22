@@ -298,6 +298,78 @@ describe('operations', function () {
     expect(op.parameters[0].signature).toEqual('Array[string]');
   });
 
+  it('should get the inline schema signature, as "Inline Model 0"', function () {
+    var parameters = [{
+      name: 'test',
+      in: 'body',
+      schema: {
+        type: 'object',
+        properties: { foo:  { type: 'string' }
+        }
+      }
+    }];
+
+    var op = new Operation({}, 'http', 'test', 'get', '/fantastic',
+                           { parameters: parameters }, {},{}, new auth.SwaggerAuthorizations());
+
+    expect(op.parameters[0].signature).toEqual("Inline Model 0");
+  });
+
+  // only testing for swagger-ui#1133...pending more logic clarification
+  it('should return some object like string for inline objects.',function() {
+
+    var parameters = [{
+      name: 'test',
+      in: 'body',
+      schema: {
+        type: 'object',
+        properties: {
+          josh: {
+            type: 'string'
+          }
+        }
+      }
+    }];
+
+    var op = new Operation({}, 'http', 'test', 'get', '/fantastic',
+                           { parameters: parameters }, {},{}, new auth.SwaggerAuthorizations());
+    var param = op.parameters[0];
+
+    expect(param.sampleJSON).toEqual('{\n  \"josh\": \"string\"\n}');
+  });
+
+  // only testing for swagger-ui#1037, should correctly render parameter models wrapped with Array
+  it('parameters models wrapped in Array, should have #sampleJSON',function() {
+
+    var parameters = [{
+      name: 'test',
+      in: 'body',
+      schema: {
+        type: 'array',
+        items: {
+          '$ref': '#/definitions/TestModel'
+        }
+      }
+    }];
+
+    var definitions = {
+      TestModel: {
+        type: 'object',
+        properties: {
+          foo:  {
+            type: 'string'
+          }
+        }
+      }
+    };
+
+    var op = new Operation({}, 'http', 'test', 'get', '/fantastic',
+                           { parameters: parameters }, definitions, {}, new auth.SwaggerAuthorizations());
+    var param = op.parameters[0];
+
+    expect(param.sampleJSON).toEqual('[\n  {\n    \"foo\": \"string\"\n  }\n]');
+  });
+
   it('should get a date array signature', function () {
     var parameters = [
       { in: 'query', name: 'year', type: 'array', items: {type: 'string', format: 'date-time'} }
