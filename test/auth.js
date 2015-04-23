@@ -71,7 +71,7 @@ describe('2.0 authorizations', function () {
     var userApi = sample.user;
     var req = userApi.loginUser(params, opts);
 
-    expect(req.headers.api_key).toEqual('abc123'); // jshint ignore:line
+    expect(req.headers.api_key).toBe(undefined); // jshint ignore:line
   });
 
 });
