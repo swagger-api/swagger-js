@@ -19,6 +19,33 @@ describe('SwaggerClient', function () {
     });
   });
 
+  describe('Runtime Support', function() {
+
+    describe('IE 8', function() {
+
+      it('String#trim', function() {
+        expect(typeof String.prototype.trim).toBe('function');
+        expect('  hi  '.trim()).toBe('hi');
+      });
+
+      it('Array#indexOf', function() {
+        expect(typeof Array.prototype.indexOf).toBe('function');
+        expect(['1', '2'].indexOf('2')).toBe(1);
+        expect(['1', '2'].indexOf('3')).toBe(-1);
+      });
+
+    });
+
+    describe('Node 0.10.x', function() {
+      it('String#endsWith', function() {
+        expect(typeof String.prototype.endsWith).toBe('function');
+        expect('hello'.endsWith('lo')).toBe(true);
+        expect('hello'.endsWith('he')).toBe(false);
+      });
+    })
+
+  })
+
   it('ensure reserved tag names are handled properly (Issue 209)', function (done) {
     var cPetStore = _.cloneDeep(petstoreRaw);
 
