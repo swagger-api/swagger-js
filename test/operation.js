@@ -472,6 +472,41 @@ describe('operations', function () {
     expect(obj.headers.Accept).toBe(mimeTest);
   });
 
+  it('should default to a global "consumes/produces" if none found in the "operation"', function() {
+
+    var parent = {
+      produces: [
+        'application/produces'
+      ],
+      consumes: [
+        'application/consumes'
+      ]
+    };
+
+    // I need a body for Content-Type header to be set (which is how I know that 'consumes' is working)
+    var parameters = [
+      { in: 'body', name: 'josh', type: 'string' }
+    ];
+    // No produces/consumes on operation...
+    var args = {
+      'parameters': parameters
+    };
+
+    // make sure we have method that has a body payload
+    var op = new Operation(parent, 'http', 'test', 'post', '/path', args,
+                                   {}, {}, new auth.SwaggerAuthorizations());
+
+    // my happy payload...
+    var args = {'josh': 'hello'};
+    var opts = {mock: true};
+    var obj = op.execute(args, opts);
+
+    // Check end result of "produces"/"consumes"
+    expect(obj.headers.Accept).toBe('application/produces');
+    expect(obj.headers['Content-Type']).toBe('application/consumes');
+
+  });
+
   it('should default the content-accept header to application/json, as last resort',function() {
     var op = new Operation({}, 'http', 'test', 'get', '/path', {},
                                    {}, {}, new auth.SwaggerAuthorizations());
