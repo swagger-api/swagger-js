@@ -100,7 +100,7 @@ describe('response types', function () {
     responses['default'].schema = {
       $ref: '#/definitions/Monster'
     };
-    
+
     var op = new Operation(
       {},
       'http',
@@ -205,7 +205,12 @@ describe('response types', function () {
 
         expect(response.createJSONSample()).toEqual(expectedJson);
         expect(response.getSampleValue()).toEqual(expectedJson);
-        expect(response.getMockSignature()).toEqual('<span class="strong">PetArray [</span><div>Pet</div><span class="strong">]</span><br /><span class="strong">Pet {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">category</span> (<span class="propType">Category</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName true">name</span> (<span class="propType">string</span>),</div><div><span class="propName true">photoUrls</span> (<span class="propType">Array[string]</span>),</div><div><span class="propName false">tags</span> (<span class="propType">Array[Tag]</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">status</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>): pet status in the store</div><span class="strong">}</span><br /><span class="strong">Category {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span><br /><span class="strong">Tag {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span>');
+
+        // A way of testing 'html'-ish , just a bunch of regexes
+        // ... TODO: extract HTML generation from swagger-js
+        var htmlish = response.getMockSignature();
+        // match PetArray [
+        expect(/PetArray *\[/.test(htmlish)).toBe(true);
 
         done();
       }
