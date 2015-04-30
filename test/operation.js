@@ -517,5 +517,44 @@ describe('operations', function () {
     expect(obj.headers.Accept).toBe('application/json');
   });
 
+  it('booleans can have a flexible default value, "false" or false are valid', function() {
+
+    var parameters = [
+      { in: 'query', name: 'strTrue', type: 'boolean', default: 'true' },
+      { in: 'query', name: 'True', type: 'boolean', default: true },
+      { in: 'query', name: 'strFalse', type: 'boolean', default: 'false' },
+      { in: 'query', name: 'False', type: 'boolean', default: false },
+      { in: 'query', name: 'None', type: 'boolean'},
+    ];
+    // No produces/consumes on operation...
+    var args = {
+      'parameters': parameters
+    };
+
+    // make sure we have method that has a body payload
+    var op = new Operation({}, 'http', 'test', 'post', '/path', {parameters: parameters}, {}, {}, new auth.SwaggerAuthorizations());
+
+    // default = 'true'
+    var p = op.parameters[0];
+    expect(p.allowableValues.descriptiveValues[0].value).toBe('true'); // make sure we have the right order
+    expect(p.allowableValues.descriptiveValues[0].isDefault).toBe(true);  // true is the default
+    expect(p.allowableValues.descriptiveValues[1].isDefault).toBe(false);
+
+    // default = true
+    var p = op.parameters[1];
+    expect(p.allowableValues.descriptiveValues[0].isDefault).toBe(true);  // true is the default
+    expect(p.allowableValues.descriptiveValues[1].isDefault).toBe(false);
+
+    // default = 'false'
+    var p = op.parameters[2];
+    expect(p.allowableValues.descriptiveValues[0].isDefault).toBe(false);
+    expect(p.allowableValues.descriptiveValues[1].isDefault).toBe(true); // false is the default
+
+    // default = false
+    var p = op.parameters[3];
+    expect(p.allowableValues.descriptiveValues[0].isDefault).toBe(false);
+    expect(p.allowableValues.descriptiveValues[1].isDefault).toBe(true); // false is the default
+  });
+
 });
 
