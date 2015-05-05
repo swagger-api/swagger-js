@@ -76,13 +76,7 @@ describe('models', function () {
       }
     };
     var model = new Model('Sample', definition);
-
-    var htmlish = model.getMockSignature();
-    // should start with a '<'... at least its got an angle bracket :)
-    expect((/^</.test(htmlish))).toBe(true);
-    // math 'Sample {'
-    expect((/Sample *\{/.test(htmlish))).toBe(true);
-
+    expect(model.getMockSignature()).toBe('<span class=\"strong\">Sample {</span><div><span class=\"propName \">id</span> (<span class=\"propType\">integer</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">name</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">photos</span> (<span class=\"propType\">Array[object]</span>, <span class=\"propOptKey\">optional</span>)</div><span class=\"strong\">}</span>');
   });
 
   it('should build a model signature using inline title (Issue 1104)', function () {
@@ -104,11 +98,8 @@ describe('models', function () {
     };
     var model = new Model('Sample', definition);
 
-    var htmlish = model.getMockSignature();
-    // should start with a '<'... at least its got an angle bracket :)
-    expect((/^</.test(htmlish))).toBe(true);
-    // math 'Rad Object {'
-    expect((/Rad Object *\{/.test(htmlish))).toBe(true);
+    expect(model.getMockSignature()).toBe('<span class=\"strong\">Rad Object {</span><div><span class=\"propName \">id</span> (<span class=\"propType\">integer</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">name</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">photos</span> (<span class=\"propType\">Array[object]</span>, <span class=\"propOptKey\">optional</span>)</div><span class=\"strong\">}</span>');
+
   });
 
 
@@ -319,14 +310,7 @@ describe('models', function () {
       }
     });
 
-    var htmlish = model.getMockSignature();
-    // should start with a '<'... at least its got an angle bracket :)
-    expect((/^</.test(htmlish))).toBe(true);
-    // math 'Person {'
-    expect((/Person *\{/.test(htmlish))).toBe(true);
-    // should have object
-    expect((/github/.test(htmlish))).toBe(true);
-    expect((/twitter/.test(htmlish))).toBe(true);
+    expect(model.getMockSignature()).toBe('<span class=\"strong\">Person {</span><div><span class=\"propName \">details</span> (<span class=\"propType\">Inline Model 1</span>, <span class=\"propOptKey\">optional</span>)</div><span class=\"strong\">}</span><br /><span class=\"strong\">Inline Model 1 {</span><div><span class=\"propName \">name</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">age</span> (<span class=\"propType\">integer</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">social</span> (<span class=\"propType\">Inline Model 2</span>, <span class=\"propOptKey\">optional</span>)</div><span class=\"strong\">}</span><br /><span class=\"strong\">Inline Model 2 {</span><div><span class=\"propName \">github</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">twitter</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>)</div><span class=\"strong\">}</span>');
 
   });
 
@@ -359,15 +343,7 @@ describe('models', function () {
         expect(response.createJSONSample()).toEqual(expectedJson);
         expect(response.getSampleValue()).toEqual(expectedJson);
 
-        // A way of testing 'html'-ish , just a bunch of regexes
-        // ... TODO: extract HTML generation from swagger-js
-        var htmlish = response.getMockSignature();
-        // match PetArray [
-        expect(/PetArray *\[/.test(htmlish)).toBe(true);
-        var opening = (htmlish.match(/</) || []).length;
-        var closing = (htmlish.match(/>/) || []).length;
-        expect(opening).toBe(closing) // same number of opening as closing brackets?
-
+        expect(response.getMockSignature()).toBe('<span class=\"strong\">PetArray [</span><div>Pet</div><span class=\"strong\">]</span><br /><span class=\"strong\">Pet {</span><div><span class=\"propName \">id</span> (<span class=\"propType\">integer</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">category</span> (<span class=\"propType\">Category</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">name</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">photoUrls</span> (<span class=\"propType\">Array[string]</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">tags</span> (<span class=\"propType\">Array[Tag]</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">status</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>): pet status in the store</div><span class=\"strong\">}</span><br /><span class=\"strong\">Category {</span><div><span class=\"propName \">id</span> (<span class=\"propType\">integer</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">name</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>)</div><span class=\"strong\">}</span><br /><span class=\"strong\">Tag {</span><div><span class=\"propName \">id</span> (<span class=\"propType\">integer</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">name</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>)</div><span class=\"strong\">}</span>');
         done();
       }
     });
@@ -410,13 +386,7 @@ describe('models', function () {
         expect(response.createJSONSample()).toEqual(expectedJson);
         expect(response.getSampleValue()).toEqual(expectedJson);
 
-        // A way of testing 'html'-ish , just a bunch of regexes
-        // ... TODO: extract HTML generation from swagger-js
-        var htmlish = response.getMockSignature();
-        // match PetArray [
-        expect(/PetArray *\[/.test(htmlish)).toBe(true);
-        var enums = /\['available' or 'pending' or 'sold'\]/;
-        expect(enums.test(htmlish)).toBe(true);
+        expect(response.getMockSignature()).toBe('<span class=\"strong\">PetArray [</span><div>Pet</div><span class=\"strong\">]</span><br /><span class=\"strong\">Pet {</span><div><span class=\"propName \">id</span> (<span class=\"propType\">integer</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">category</span> (<span class=\"propType\">Category</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">name</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">photoUrls</span> (<span class=\"propType\">Array[string]</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">tags</span> (<span class=\"propType\">Array[Tag]</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propWrap\"><span class=\"propName \">status</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>): pet status in the store = <span class=\"propVals\">[\'available\' or \'pending\' or \'sold\']</span><table class=\"optionsWrapper\"><tr><th colspan=\"2\">string</th></tr><tr><td class=\"optionName\">Enum:</td><td>\"available\", \"pending\", \"sold\"</td></tr></table></span></div><span class=\"strong\">}</span><br /><span class=\"strong\">Category {</span><div><span class=\"propName \">id</span> (<span class=\"propType\">integer</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">name</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>)</div><span class=\"strong\">}</span><br /><span class=\"strong\">Tag {</span><div><span class=\"propName \">id</span> (<span class=\"propType\">integer</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">name</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>)</div><span class=\"strong\">}</span>');
 
         done();
       }
@@ -547,12 +517,7 @@ describe('models', function () {
         expect(response.createJSONSample()).toEqual({variantManagement: 'Enabled'});
         expect(response.getSampleValue()).toEqual({variantManagement: 'Enabled'});
 
-        var htmlish = response.getMockSignature();
-        expect(/^</.test(htmlish)).toBe(true); // Start with '<'
-        expect(/ApplicationConfigPatch *\{/.test(htmlish)).toBe(true); // Model name
-        expect(/variantManagement/.test(htmlish)).toBe(true); // ref'd prop
-        var enums = /\['Enabled' or 'Disabled'\]/;
-        expect(enums.test(htmlish)).toBe(true); // enums
+        expect(response.getMockSignature()).toBe('<span class=\"strong\">ApplicationConfigPatch {</span><div><span class=\"propWrap\"><span class=\"propName \">variantManagement</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>) = <span class=\"propVals\">[\'Enabled\' or \'Disabled\']</span><table class=\"optionsWrapper\"><tr><th colspan=\"2\">string</th></tr><tr><td class=\"optionName\">Enum:</td><td>\"Enabled\", \"Disabled\"</td></tr></table></span></div><span class=\"strong\">}</span>');
 
         done();
       }

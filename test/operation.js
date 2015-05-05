@@ -314,7 +314,7 @@ describe('operations', function () {
                            { parameters: parameters }, {},{}, new auth.SwaggerAuthorizations());
 
     // Test raw html string
-    expect(op.parameters[0].signature).toBe('<span class="strong">Inline Model {</span><div><span class="propName false">foo</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span>')
+    expect(op.parameters[0].signature).toBe('<span class=\"strong\">Inline Model {</span><div><span class=\"propName \">foo</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>)</div><span class=\"strong\">}</span>')
 
   });
 

@@ -206,11 +206,7 @@ describe('response types', function () {
         expect(response.createJSONSample()).toEqual(expectedJson);
         expect(response.getSampleValue()).toEqual(expectedJson);
 
-        // A way of testing 'html'-ish , just a bunch of regexes
-        // ... TODO: extract HTML generation from swagger-js
-        var htmlish = response.getMockSignature();
-        // match PetArray [
-        expect(/PetArray *\[/.test(htmlish)).toBe(true);
+        expect(response.getMockSignature()).toBe('<span class=\"strong\">PetArray [</span><div>Pet</div><span class=\"strong\">]</span><br /><span class=\"strong\">Pet {</span><div><span class=\"propName \">id</span> (<span class=\"propType\">integer</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">category</span> (<span class=\"propType\">Category</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">name</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">photoUrls</span> (<span class=\"propType\">Array[string]</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">tags</span> (<span class=\"propType\">Array[Tag]</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">status</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>): pet status in the store</div><span class=\"strong\">}</span><br /><span class=\"strong\">Category {</span><div><span class=\"propName \">id</span> (<span class=\"propType\">integer</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">name</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>)</div><span class=\"strong\">}</span><br /><span class=\"strong\">Tag {</span><div><span class=\"propName \">id</span> (<span class=\"propType\">integer</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">name</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>)</div><span class=\"strong\">}</span>');
 
         done();
       }
