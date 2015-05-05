@@ -90,4 +90,25 @@ describe('SwaggerClient', function () {
       }
     });
   });
+
+  it('should handle \'/apis\' path (Issue 291)', function (done) {
+    var cPetStore = _.cloneDeep(petstoreRaw);
+
+    cPetStore.paths['/apis'] = _.cloneDeep(petstoreRaw.paths['/pet']);
+
+    _.forEach(cPetStore.paths['/pet'], function (operation) {
+      operation.tags = ['apis'];
+    });
+
+    var client = new SwaggerClient({
+      spec: cPetStore,
+      success: function () {
+        expect(client.apis._apis.help).toBeA('function');
+        expect(client.apis._apis.addPet).toBeA('function');
+        expect(client.apis._apis.updatePet).toBeA('function');
+
+        done();
+      }
+    });
+  });
 });
