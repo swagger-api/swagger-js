@@ -26,6 +26,24 @@ describe('models', function () {
     expect(model.createJSONSample()).toEqual({ id: 0, name: 'string' });
   });
 
+  it('should use the JSON sample on the object level', function () {
+    var definition = {
+      example: '// Manual example',
+      properties: {
+        id: {
+          type: 'integer',
+          format: 'int64'
+        },
+        name: {
+          type: 'string'
+        }
+      }
+    };
+    var model = new Model('Tag', definition);
+
+    expect(model.createJSONSample()).toEqual('// Manual example');
+  });
+
   it('should verify the JSON sample for a primitive array', function () {
     var definition = {
       type: 'array',
