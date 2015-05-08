@@ -18484,7 +18484,7 @@ Response.prototype.setHeaderProperties = function(header){
 
 Response.prototype.parseBody = function(str){
   var parse = request.parse[this.type];
-  return parse && str && jQuery.trim(str).length
+  return parse && str && str.trim().length
     ? parse(str)
     : null;
 };
