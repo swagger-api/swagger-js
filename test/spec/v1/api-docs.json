@@ -7,7 +7,7 @@
       "description": "Operations about pets"
     },
     {
-      "path": "http://localhost:8000/v1/user",
+      "path": "http://localhost:8000/v1/user.json",
       "description": "Operations about user"
     },
     {
