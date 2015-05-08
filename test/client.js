@@ -20,7 +20,6 @@ describe('SwaggerClient', function () {
   });
 
   describe('Runtime Support', function() {
-
     describe('IE 8', function() {
 
       it('String#trim', function() {
@@ -134,6 +133,109 @@ describe('SwaggerClient', function () {
         expect(client.apis._apis.addPet).toBeA('function');
         expect(client.apis._apis.updatePet).toBeA('function');
 
+        done();
+      }
+    });
+  });
+
+  it('should read an object from #404 and include the URL', function(done) {
+    var spec = {
+      swagger : '2.0',
+      info : {
+        description : '...',
+        title : 'API',
+        version : '1'
+      },
+      'scheme': ['http'],
+      'host': 'localhost:8080',
+      basePath : '/x',
+      paths : {
+        '/test' : {
+          post : {
+            responses : {
+              200 : {
+                description : 'Success',
+                schema : {
+                  $ref : '#/definitions/Object'
+                }
+              }
+            }
+          }
+        }
+      },
+      definitions : {
+        Object : {
+          properties : {
+            link : {
+              title : 'Links',
+              'schema': {
+                $ref : 'TODO'
+              },
+              type : 'object'
+            }
+          },
+          type : 'object'
+        }
+      }
+    };
+
+    var client = new SwaggerClient({
+      spec: spec,
+      success: function () {
+        expect(client.host).toBe('localhost:8080');
+        done();
+      }
+    });
+  });
+
+  it('should read an object from #404', function(done) {
+    var spec = {
+      swagger : '2.0',
+      info : {
+        description : '...',
+        title : 'API',
+        version : '1'
+      },
+      'scheme': ['http'],
+      'host': 'localhost:8080',
+      basePath : '/x',
+      paths : {
+        '/test' : {
+          post : {
+            tags: [ 'fun' ],
+            operationId: 'tryIt',
+            summary: 'it is just a test',
+            responses : {
+              200 : {
+                description : 'Success',
+                schema : {
+                  $ref : '#/definitions/Object'
+                }
+              }
+            }
+          }
+        }
+      },
+      definitions : {
+        Object : {
+          properties : {
+            link : {
+              title : 'Links',
+              'schema': {
+                $ref : 'TODO'
+              },
+              type : 'object'
+            }
+          },
+          type : 'object'
+        }
+      }
+    };
+
+    var client = new SwaggerClient({
+      spec: spec,
+      success: function () {
+        client.fun.tryIt.help();
         done();
       }
     });
