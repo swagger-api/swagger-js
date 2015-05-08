@@ -19,6 +19,13 @@ if (!Array.prototype.indexOf) {
   };
 };
 
+/* Here for IE8 Support */
+if (!String.prototype.trim) {
+  String.prototype.trim = function () {
+    return this.replace(/^\s+|\s+$/g, '');
+  };
+}
+
 /* Here for node 10.x support */
 if (!String.prototype.endsWith) {
   String.prototype.endsWith = function(suffix) {

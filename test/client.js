@@ -19,6 +19,32 @@ describe('SwaggerClient', function () {
     });
   });
 
+  describe('Runtime Support', function() {
+    describe('IE 8', function() {
+
+      it('String#trim', function() {
+        expect(typeof String.prototype.trim).toBe('function');
+        expect('  hi  '.trim()).toBe('hi');
+      });
+
+      it('Array#indexOf', function() {
+        expect(typeof Array.prototype.indexOf).toBe('function');
+        expect(['1', '2'].indexOf('2')).toBe(1);
+        expect(['1', '2'].indexOf('3')).toBe(-1);
+      });
+
+    });
+
+    describe('Node 0.10.x', function() {
+      it('String#endsWith', function() {
+        expect(typeof String.prototype.endsWith).toBe('function');
+        expect('hello'.endsWith('lo')).toBe(true);
+        expect('hello'.endsWith('he')).toBe(false);
+      });
+    })
+
+  })
+
   it('ensure reserved tag names are handled properly (Issue 209)', function (done) {
     var cPetStore = _.cloneDeep(petstoreRaw);
 
@@ -86,6 +112,130 @@ describe('SwaggerClient', function () {
         expect(client.default.help).toBeA('function');
         expect(client.default.createPet).toBeA('function');
 
+        done();
+      }
+    });
+  });
+
+  it('should handle \'/apis\' path (Issue 291)', function (done) {
+    var cPetStore = _.cloneDeep(petstoreRaw);
+
+    cPetStore.paths['/apis'] = _.cloneDeep(petstoreRaw.paths['/pet']);
+
+    _.forEach(cPetStore.paths['/pet'], function (operation) {
+      operation.tags = ['apis'];
+    });
+
+    var client = new SwaggerClient({
+      spec: cPetStore,
+      success: function () {
+        expect(client.apis._apis.help).toBeA('function');
+        expect(client.apis._apis.addPet).toBeA('function');
+        expect(client.apis._apis.updatePet).toBeA('function');
+
+        done();
+      }
+    });
+  });
+
+  it('should read an object from #404 and include the URL', function(done) {
+    var spec = {
+      swagger : '2.0',
+      info : {
+        description : '...',
+        title : 'API',
+        version : '1'
+      },
+      'scheme': ['http'],
+      'host': 'localhost:8080',
+      basePath : '/x',
+      paths : {
+        '/test' : {
+          post : {
+            responses : {
+              200 : {
+                description : 'Success',
+                schema : {
+                  $ref : '#/definitions/Object'
+                }
+              }
+            }
+          }
+        }
+      },
+      definitions : {
+        Object : {
+          properties : {
+            link : {
+              title : 'Links',
+              'schema': {
+                $ref : 'TODO'
+              },
+              type : 'object'
+            }
+          },
+          type : 'object'
+        }
+      }
+    };
+
+    var client = new SwaggerClient({
+      spec: spec,
+      success: function () {
+        expect(client.host).toBe('localhost:8080');
+        done();
+      }
+    });
+  });
+
+  it('should read an object from #404', function(done) {
+    var spec = {
+      swagger : '2.0',
+      info : {
+        description : '...',
+        title : 'API',
+        version : '1'
+      },
+      'scheme': ['http'],
+      'host': 'localhost:8080',
+      basePath : '/x',
+      paths : {
+        '/test' : {
+          post : {
+            tags: [ 'fun' ],
+            operationId: 'tryIt',
+            summary: 'it is just a test',
+            responses : {
+              200 : {
+                description : 'Success',
+                schema : {
+                  $ref : '#/definitions/Object'
+                }
+              }
+            }
+          }
+        }
+      },
+      definitions : {
+        Object : {
+          properties : {
+            link : {
+              title : 'Links',
+              'schema': {
+                $ref : 'TODO'
+              },
+              type : 'object'
+            }
+          },
+          type : 'object'
+        }
+      }
+    };
+
+    var client = new SwaggerClient({
+      spec: spec,
+      success: function () {
+        client.fun.tryIt.help();
         done();
       }
     });

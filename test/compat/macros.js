@@ -10,15 +10,15 @@ var sample, instance;
 describe('1.2 macro overrides', function () {
   before(function (done) {
     var macros = {
-      parameter: function (operation, parameter) {
-        if (parameter.defaultValue === 3) {
+      parameter: function (parameter) {
+        if (parameter.default === 3) {
           return 'testing';
         }
 
-        return parameter.defaultValue;
+        return parameter.default;
       },
-      modelProperty: function (model, property) {
-        return property.defaultValue;
+      modelProperty: function (property) {
+        return property.default;
       }
     };
 
@@ -39,7 +39,6 @@ describe('1.2 macro overrides', function () {
 
     test.object(params);
 
-    // TODO: enable when macro support is back https://github.com/swagger-api/swagger-js/issues/307
-    // expect(params[0].defaultValue).toBe('testing');
+    expect(params[0].default).toBe('testing');
   });
 });

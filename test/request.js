@@ -33,6 +33,14 @@ describe('swagger request functions', function () {
     });
   });
 
+  it('posts an empty object', function (done) {
+    var petApi = sample.pet;
+
+    var obj = petApi.createPet({}, {mock: true});
+    expect(obj.body).toBe('{}');
+    done();
+  });
+
   it('posts a string value', function (done) {
     var petApi = sample.pet;
 
@@ -111,9 +119,9 @@ describe('swagger request functions', function () {
 
     expect(req.method).toBe('POST');
     expect(req.headers.Accept).toBe('application/json');
-    expect(req.headers['Content-Type']).toBe(undefined);
+    expect(req.headers['Content-Type']).toBe('application/json');
     expect(req.url).toBe('http://localhost:8000/v2/api/pet');
-    expect(req.body).toBe(undefined);
+    expect(req.body).toBe('{}');
   });
 
   it('generate a POST request with an empty body', function () {
@@ -213,7 +221,6 @@ describe('swagger request functions', function () {
     ]);
   });
 
-
   it('verifies useJQuery is set', function () {
     var petApi = sample.pet;
     var req = petApi.getPetById({petId: 1}, {useJQuery: true, mock: true});
@@ -299,11 +306,20 @@ describe('swagger request functions', function () {
 
     // This test will actually hit the 404 path of mock server, which we use to test the content-type is correct
     petApi.findPetsByStatus({status: undefined}, function (resp) {
-	expect(resp.headers).toNotBe(undefined);
-	expect(resp.headers['content-type']).toNotBe(undefined);
-	expect(resp.headers['content-type']).toBe('text/plain');
+      expect(resp.headers).toNotBe(undefined);
+      expect(resp.headers['content-type']).toNotBe(undefined);
+      expect(resp.headers['content-type']).toBe('text/plain');
 
-	done();
+      done();
+    });
+  });
+
+  it('calls the error handler with missing params per #375', function(done) {
+    var petApi = sample.pet;
+    var req = petApi.getPetById({}, function(data){
+      console.log('shoulda failed!');
+    }, function(error) {
+      done();
     });
   });
 });

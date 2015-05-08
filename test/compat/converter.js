@@ -29,7 +29,7 @@ describe('converts specs', function () {
       converter.convert({}, function(result) {
         expect(result).toBe(null);
         done();
-      });    
+      });
   });
 
   it('converts the petstore 1.2 spec', function (done) {
@@ -49,7 +49,7 @@ describe('converts specs', function () {
         var petTag = swagger.tags[0];
         var userTag = swagger.tags[1];
         var storeTag = swagger.tags[2];
-        
+
         expect(petTag.name).toBe('pet');
         expect(userTag.name).toBe('user');
         expect(storeTag.name).toBe('store');
@@ -73,7 +73,7 @@ describe('converts specs', function () {
         // getPet
         var getPet = swagger.paths['/pet/{petId}'].get;
         expect(getPet.parameters.length).toBe(1);
-        
+
         var param = getPet.parameters[0];
         expect(param.name).toBe('petId');
         expect(param.description).toBe('ID of pet that needs to be fetched');
@@ -82,6 +82,15 @@ describe('converts specs', function () {
         expect(param.maximum).toBe('100000.0');
         expect(param.type).toBe('integer');
         expect(param.format).toBe('int64');
+
+        // enums
+        var getPetsByStatus = swagger.paths['/pet/findByStatus'].get;
+        expect(getPetsByStatus.parameters[0].enum).toEqual([ 'available', 'pending', 'sold' ]);
+
+        // type = void, '', or undefined
+        // If no type, should have no schema
+        var postPet = swagger.paths['/pet'].post;
+        expect(postPet.responses['200']).toEqual({});
 
         // responses
         var responses = getPet.responses;
@@ -137,7 +146,7 @@ describe('converts specs', function () {
 
         expect(getPet.description).toBe('Returns a pet based on ID');
         expect(getPet.parameters.length).toBe(1);
-        
+
         var param = getPet.parameters[0];
         expect(param.name).toBe('petId');
         expect(param.description).toBe('ID of pet that needs to be fetched');
@@ -229,6 +238,6 @@ describe('converts specs', function () {
       var obj = client.word.getRelatedWords(args, opts);
       expect(obj.url).toBe('http://api.wordnik.com/v4/word.json/cat/relatedWords');
       done();
-    }});        
+    }});
   });
 });

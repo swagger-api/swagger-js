@@ -23,8 +23,7 @@ describe('content type negotiation', function () {
     var headers = op.setContentTypes({},{});
 
     expect(headers.Accept).toBe('application/json');
-
-    test.value(headers['Content-Type']).isUndefined();
+    expect(headers['Content-Type']).toBe('application/json');
   });
 
   it('set accept as application/json, content-type as undefined for a POST operation with no data', function () {
@@ -42,8 +41,7 @@ describe('content type negotiation', function () {
     var headers = op.setContentTypes({},{});
 
     expect(headers.Accept).toBe('application/json');
-
-    test.value(headers['Content-Type']).isUndefined();
+    expect(headers['Content-Type']).toBe('application/json');
   });
 
   it('set accept as application/json, content-type as application/json for a POST operation with data', function () {

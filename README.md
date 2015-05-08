@@ -70,7 +70,7 @@ client.clientAuthorizations.add("apiKey", new client.ApiKeyAuthorization("api_ke
 
 ### Calling an API with swagger + the browser!
 
-Download `browser/swagger-client.js` into your lib folder
+Download `browser/swagger-client.js` into your webapp:
 
 ```js
 <script src='browser/swagger-client.js' type='text/javascript'></script>

@@ -26,6 +26,24 @@ describe('models', function () {
     expect(model.createJSONSample()).toEqual({ id: 0, name: 'string' });
   });
 
+  it('should use the JSON sample on the object level', function () {
+    var definition = {
+      example: '// Manual example',
+      properties: {
+        id: {
+          type: 'integer',
+          format: 'int64'
+        },
+        name: {
+          type: 'string'
+        }
+      }
+    };
+    var model = new Model('Tag', definition);
+
+    expect(model.createJSONSample()).toEqual('// Manual example');
+  });
+
   it('should verify the JSON sample for a primitive array', function () {
     var definition = {
       type: 'array',
@@ -76,8 +94,7 @@ describe('models', function () {
       }
     };
     var model = new Model('Sample', definition);
-
-    expect(model.getMockSignature()).toEqual('<span class="strong">Sample {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">photos</span> (<span class="propType">Array[object]</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span>');
+    expect(model.getMockSignature()).toBe('<span class=\"strong\">Sample {</span><div><span class=\"propName \">id</span> (<span class=\"propType\">integer</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">name</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">photos</span> (<span class=\"propType\">Array[object]</span>, <span class=\"propOptKey\">optional</span>)</div><span class=\"strong\">}</span>');
   });
 
   it('should build a model signature using inline title (Issue 1104)', function () {
@@ -99,7 +116,8 @@ describe('models', function () {
     };
     var model = new Model('Sample', definition);
 
-    expect(model.getMockSignature()).toEqual('<span class="strong">Rad Object {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">photos</span> (<span class="propType">Array[object]</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span>');
+    expect(model.getMockSignature()).toBe('<span class=\"strong\">Rad Object {</span><div><span class=\"propName \">id</span> (<span class=\"propType\">integer</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">name</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">photos</span> (<span class=\"propType\">Array[object]</span>, <span class=\"propOptKey\">optional</span>)</div><span class=\"strong\">}</span>');
+
   });
 
 
@@ -310,7 +328,8 @@ describe('models', function () {
       }
     });
 
-    expect(model.getMockSignature()).toEqual('<span class="strong">Person {</span><div><span class="propName false">details</span> (<span class="propType">Inline Model 1</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span><br /><span class="strong">Inline Model 1 {</span><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">age</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">social</span> (<span class="propType">Inline Model 2</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span><br /><span class="strong">Inline Model 2 {</span><div><span class="propName false">github</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">twitter</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span>');
+    expect(model.getMockSignature()).toBe('<span class=\"strong\">Person {</span><div><span class=\"propName \">details</span> (<span class=\"propType\">Inline Model 1</span>, <span class=\"propOptKey\">optional</span>)</div><span class=\"strong\">}</span><br /><span class=\"strong\">Inline Model 1 {</span><div><span class=\"propName \">name</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">age</span> (<span class=\"propType\">integer</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">social</span> (<span class=\"propType\">Inline Model 2</span>, <span class=\"propOptKey\">optional</span>)</div><span class=\"strong\">}</span><br /><span class=\"strong\">Inline Model 2 {</span><div><span class=\"propName \">github</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">twitter</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>)</div><span class=\"strong\">}</span>');
+
   });
 
   it('should properly render an array of models (Issue 270)', function (done) {
@@ -341,8 +360,8 @@ describe('models', function () {
 
         expect(response.createJSONSample()).toEqual(expectedJson);
         expect(response.getSampleValue()).toEqual(expectedJson);
-        expect(response.getMockSignature()).toEqual('<span class="strong">PetArray [</span><div>Pet</div><span class="strong">]</span><br /><span class="strong">Pet {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">category</span> (<span class="propType">Category</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName true">name</span> (<span class="propType">string</span>),</div><div><span class="propName true">photoUrls</span> (<span class="propType">Array[string]</span>),</div><div><span class="propName false">tags</span> (<span class="propType">Array[Tag]</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">status</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>): pet status in the store</div><span class="strong">}</span><br /><span class="strong">Category {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span><br /><span class="strong">Tag {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span>');
 
+        expect(response.getMockSignature()).toBe('<span class=\"strong\">PetArray [</span><div>Pet</div><span class=\"strong\">]</span><br /><span class=\"strong\">Pet {</span><div><span class=\"propName \">id</span> (<span class=\"propType\">integer</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">category</span> (<span class=\"propType\">Category</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">name</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">photoUrls</span> (<span class=\"propType\">Array[string]</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">tags</span> (<span class=\"propType\">Array[Tag]</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">status</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>): pet status in the store</div><span class=\"strong\">}</span><br /><span class=\"strong\">Category {</span><div><span class=\"propName \">id</span> (<span class=\"propType\">integer</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">name</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>)</div><span class=\"strong\">}</span><br /><span class=\"strong\">Tag {</span><div><span class=\"propName \">id</span> (<span class=\"propType\">integer</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">name</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>)</div><span class=\"strong\">}</span>');
         done();
       }
     });
@@ -381,10 +400,11 @@ describe('models', function () {
           }
         ];
         var response = client.pet.operations.findPetsByStatus.successResponse['200'];
-        
+
         expect(response.createJSONSample()).toEqual(expectedJson);
         expect(response.getSampleValue()).toEqual(expectedJson);
-        expect(response.getMockSignature()).toEqual('<span class="strong">PetArray [</span><div>Pet</div><span class="strong">]</span><br /><span class="strong">Pet {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">category</span> (<span class="propType">Category</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName true">name</span> (<span class="propType">string</span>),</div><div><span class="propName true">photoUrls</span> (<span class="propType">Array[string]</span>),</div><div><span class="propName false">tags</span> (<span class="propType">Array[Tag]</span>, <span class="propOptKey">optional</span>),</div><div><span class="propWrap"><span class="propName false">status</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>): pet status in the store = <span class="propVals">[\'available\' or \'pending\' or \'sold\']</span><table class="optionsWrapper"><tr><th colspan="2">string</th></tr><tr><td class="optionName">Enum:</td><td>"available", "pending", "sold"</td></tr></table></span></div><span class="strong">}</span><br /><span class="strong">Category {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span><br /><span class="strong">Tag {</span><div><span class="propName false">id</span> (<span class="propType">integer</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName false">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span>');
+
+        expect(response.getMockSignature()).toBe('<span class=\"strong\">PetArray [</span><div>Pet</div><span class=\"strong\">]</span><br /><span class=\"strong\">Pet {</span><div><span class=\"propName \">id</span> (<span class=\"propType\">integer</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">category</span> (<span class=\"propType\">Category</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">name</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">photoUrls</span> (<span class=\"propType\">Array[string]</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">tags</span> (<span class=\"propType\">Array[Tag]</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propWrap\"><span class=\"propName \">status</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>): pet status in the store = <span class=\"propVals\">[\'available\' or \'pending\' or \'sold\']</span><table class=\"optionsWrapper\"><tr><th colspan=\"2\">string</th></tr><tr><td class=\"optionName\">Enum:</td><td>\"available\", \"pending\", \"sold\"</td></tr></table></span></div><span class=\"strong\">}</span><br /><span class=\"strong\">Category {</span><div><span class=\"propName \">id</span> (<span class=\"propType\">integer</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">name</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>)</div><span class=\"strong\">}</span><br /><span class=\"strong\">Tag {</span><div><span class=\"propName \">id</span> (<span class=\"propType\">integer</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">name</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>)</div><span class=\"strong\">}</span>');
 
         done();
       }
@@ -478,6 +498,44 @@ describe('models', function () {
         expect(response.createJSONSample()).toEqual([{}]);
         expect(response.getSampleValue()).toEqual([{}]);
         expect(response.getMockSignature()).toEqual('<span class="strong">PetArray [</span><div>object</div><span class="strong">]</span>');
+
+        done();
+      }
+    });
+  });
+
+  it('should handle references to inline primitive definitions (Issue 339)', function (done) {
+    var cPetStore = _.cloneDeep(petstore);
+
+    cPetStore.definitions.ApplicationConfigPatch = {
+      type : 'object',
+      properties : {
+        variantManagement : {
+          $ref : '#/definitions/OperationalState'
+        }
+      }
+    };
+    cPetStore.definitions.OperationalState = {
+      type : 'string',
+      enum : [
+        'Enabled',
+        'Disabled'
+      ]
+    };
+
+    cPetStore.paths['/pet/findByStatus'].get.responses['200'].schema = {
+      $ref: '#/definitions/ApplicationConfigPatch'
+    };
+
+    var client = new SwaggerClient({
+      spec: cPetStore,
+      success: function () {
+        var response = client.pet.operations.findPetsByStatus.successResponse['200'];
+
+        expect(response.createJSONSample()).toEqual({variantManagement: 'Enabled'});
+        expect(response.getSampleValue()).toEqual({variantManagement: 'Enabled'});
+
+        expect(response.getMockSignature()).toBe('<span class=\"strong\">ApplicationConfigPatch {</span><div><span class=\"propWrap\"><span class=\"propName \">variantManagement</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>) = <span class=\"propVals\">[\'Enabled\' or \'Disabled\']</span><table class=\"optionsWrapper\"><tr><th colspan=\"2\">string</th></tr><tr><td class=\"optionName\">Enum:</td><td>\"Enabled\", \"Disabled\"</td></tr></table></span></div><span class=\"strong\">}</span>');
 
         done();
       }

@@ -298,6 +298,81 @@ describe('operations', function () {
     expect(op.parameters[0].signature).toEqual('Array[string]');
   });
 
+  it('should get the inline schema signature, as a rendered model', function () {
+    var parameters = [{
+      name: 'test',
+      in: 'body',
+      schema: {
+        type: 'object',
+        properties: { foo:  { type: 'string' }
+        }
+      }
+    }];
+
+
+    var op = new Operation({}, 'http', 'test', 'get', '/fantastic',
+                           { parameters: parameters }, {},{}, new auth.SwaggerAuthorizations());
+
+    // Test raw html string
+    expect(op.parameters[0].signature).toBe('<span class=\"strong\">Inline Model {</span><div><span class=\"propName \">foo</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>)</div><span class=\"strong\">}</span>')
+
+  });
+
+  // only testing for swagger-ui#1133...pending more logic clarification
+  it('should return some object like string for inline objects.',function() {
+
+    var parameters = [{
+      name: 'test',
+      in: 'body',
+      schema: {
+        type: 'object',
+        properties: {
+          josh: {
+            type: 'string'
+          }
+        }
+      }
+    }];
+
+    var op = new Operation({}, 'http', 'test', 'get', '/fantastic',
+                           { parameters: parameters }, {},{}, new auth.SwaggerAuthorizations());
+    var param = op.parameters[0];
+
+    expect(param.sampleJSON).toEqual('{\n  \"josh\": \"string\"\n}');
+  });
+
+  // only testing for swagger-ui#1037, should correctly render parameter models wrapped with Array
+  it('parameters models wrapped in Array, should have #sampleJSON',function() {
+
+    var parameters = [{
+      name: 'test',
+      in: 'body',
+      schema: {
+        type: 'array',
+        items: {
+          '$ref': '#/definitions/TestModel'
+        }
+      }
+    }];
+
+    var definitions = {
+      TestModel: {
+        type: 'object',
+        properties: {
+          foo:  {
+            type: 'string'
+          }
+        }
+      }
+    };
+
+    var op = new Operation({}, 'http', 'test', 'get', '/fantastic',
+                           { parameters: parameters }, definitions, {}, new auth.SwaggerAuthorizations());
+    var param = op.parameters[0];
+
+    expect(param.sampleJSON).toEqual('[\n  {\n    \"foo\": \"string\"\n  }\n]');
+  });
+
   it('should get a date array signature', function () {
     var parameters = [
       { in: 'query', name: 'year', type: 'array', items: {type: 'string', format: 'date-time'} }
@@ -369,5 +444,117 @@ describe('operations', function () {
 
     op.execute({}, opts);
   });
+
+  it('should set the content-accept header, from opts#responseContentType in operation#execute',function() {
+    var mimeTest = 'application/test';
+    var opts = {
+      mock: true,
+      responseContentType: mimeTest
+    };
+
+    var op = new Operation({}, 'http', 'test', 'get', '/path', {},
+                                   {}, {}, new auth.SwaggerAuthorizations());
+    var obj = op.execute({}, opts);
+
+    expect(obj.headers.Accept).toBe(mimeTest);
+  });
+
+  // issue#1166
+  it('should default the content-accept header to one found in operation#produces',function() {
+    var mimeTest = 'application/test';
+
+    var args = {
+      produces: [mimeTest]
+    };
+
+    var op = new Operation({}, 'http', 'test', 'get', '/path', args,
+                                   {}, {}, new auth.SwaggerAuthorizations());
+
+    var obj = op.execute({}, {mock: true});
+
+    expect(obj.headers.Accept).toBe(mimeTest);
+  });
+
+  it('should default to a global "consumes/produces" if none found in the "operation"', function() {
+
+    var parent = {
+      produces: [
+        'application/produces'
+      ],
+      consumes: [
+        'application/consumes'
+      ]
+    };
+
+    // I need a body for Content-Type header to be set (which is how I know that 'consumes' is working)
+    var parameters = [
+      { in: 'body', name: 'josh', type: 'string' }
+    ];
+    // No produces/consumes on operation...
+    var args = {
+      'parameters': parameters
+    };
+
+    // make sure we have method that has a body payload
+    var op = new Operation(parent, 'http', 'test', 'post', '/path', args,
+                                   {}, {}, new auth.SwaggerAuthorizations());
+
+    // my happy payload...
+    var args = {'josh': 'hello'};
+    var opts = {mock: true};
+    var obj = op.execute(args, opts);
+
+    // Check end result of "produces"/"consumes"
+    expect(obj.headers.Accept).toBe('application/produces');
+    expect(obj.headers['Content-Type']).toBe('application/consumes');
+
+  });
+
+  it('should default the content-accept header to application/json, as last resort',function() {
+    var op = new Operation({}, 'http', 'test', 'get', '/path', {},
+                                   {}, {}, new auth.SwaggerAuthorizations());
+    var obj = op.execute({}, {mock: true});
+    expect(obj.headers.Accept).toBe('application/json');
+  });
+
+  it('booleans can have a flexible default value, "false" or false are valid', function() {
+
+    var parameters = [
+      { in: 'query', name: 'strTrue', type: 'boolean', default: 'true' },
+      { in: 'query', name: 'True', type: 'boolean', default: true },
+      { in: 'query', name: 'strFalse', type: 'boolean', default: 'false' },
+      { in: 'query', name: 'False', type: 'boolean', default: false },
+      { in: 'query', name: 'None', type: 'boolean'},
+    ];
+    // No produces/consumes on operation...
+    var args = {
+      'parameters': parameters
+    };
+
+    // make sure we have method that has a body payload
+    var op = new Operation({}, 'http', 'test', 'post', '/path', {parameters: parameters}, {}, {}, new auth.SwaggerAuthorizations());
+
+    // default = 'true'
+    var p = op.parameters[0];
+    expect(p.allowableValues.descriptiveValues[0].value).toBe('true'); // make sure we have the right order
+    expect(p.allowableValues.descriptiveValues[0].isDefault).toBe(true);  // true is the default
+    expect(p.allowableValues.descriptiveValues[1].isDefault).toBe(false);
+
+    // default = true
+    var p = op.parameters[1];
+    expect(p.allowableValues.descriptiveValues[0].isDefault).toBe(true);  // true is the default
+    expect(p.allowableValues.descriptiveValues[1].isDefault).toBe(false);
+
+    // default = 'false'
+    var p = op.parameters[2];
+    expect(p.allowableValues.descriptiveValues[0].isDefault).toBe(false);
+    expect(p.allowableValues.descriptiveValues[1].isDefault).toBe(true); // false is the default
+
+    // default = false
+    var p = op.parameters[3];
+    expect(p.allowableValues.descriptiveValues[0].isDefault).toBe(false);
+    expect(p.allowableValues.descriptiveValues[1].isDefault).toBe(true); // false is the default
+  });
+
 });
 

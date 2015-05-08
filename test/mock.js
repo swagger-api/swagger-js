@@ -19,7 +19,7 @@ exports.petstore = function (arg1, arg2, arg3, arg4) {
     var uri = url.parse(req.url).pathname;
     var filename = path.join('test/spec', uri);
     // for testing redirects
-    
+
     if (filename === 'test/spec/api/redirect') {
       res.writeHead(302, {
         'Location': 'http://localhost:8000/api/pet/1'
