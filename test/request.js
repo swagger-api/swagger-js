@@ -33,7 +33,6 @@ describe('swagger request functions', function () {
     });
   });
 
-
   it('posts an empty object', function (done) {
     var petApi = sample.pet;
 
@@ -222,7 +221,6 @@ describe('swagger request functions', function () {
     ]);
   });
 
-
   it('verifies useJQuery is set', function () {
     var petApi = sample.pet;
     var req = petApi.getPetById({petId: 1}, {useJQuery: true, mock: true});
@@ -312,6 +310,15 @@ describe('swagger request functions', function () {
       expect(resp.headers['content-type']).toNotBe(undefined);
       expect(resp.headers['content-type']).toBe('text/plain');
 
+      done();
+    });
+  });
+
+  it('calls the error handler with missing params per #375', function(done) {
+    var petApi = sample.pet;
+    var req = petApi.getPetById({}, function(data){
+      console.log('shoulda failed!');
+    }, function(error) {
       done();
     });
   });
