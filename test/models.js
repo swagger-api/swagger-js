@@ -541,4 +541,38 @@ describe('models', function () {
       }
     });
   });
+
+  it('should not fail on missing references (Issue 419)', function (done) {
+    var cPetStore = _.cloneDeep(petstore);
+
+    cPetStore.definitions.DefinitionWithMissingModel = {
+      type : 'object',
+      required: ['variantManagement'],
+      properties : {
+        variantManagement : {
+          $ref : '#/definitions/YouWontFindThis'
+        }
+      }
+    };
+    cPetStore.definitions.OperationalState = {
+      type : 'string',
+      enum : [
+        'Enabled',
+        'Disabled'
+      ]
+    };
+
+    cPetStore.paths['/pet/findByStatus'].get.responses['200'].schema = {
+      $ref: '#/definitions/DefinitionWithMissingModel'
+    };
+
+    var client = new SwaggerClient({
+      spec: cPetStore,
+      success: function () {
+        client.models.DefinitionWithMissingModel.getMockSignature();
+        client.models.DefinitionWithMissingModel.createJSONSample();
+        done();
+      }
+    });
+  });
 });
