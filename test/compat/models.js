@@ -2,7 +2,6 @@
 
 'use strict';
 
-var expect = require('expect');
 var mock = require('./mock');
 var sample, instance;
 

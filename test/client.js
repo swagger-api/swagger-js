@@ -32,7 +32,6 @@ describe('SwaggerClient', function () {
         expect(['1', '2'].indexOf('2')).toBe(1);
         expect(['1', '2'].indexOf('3')).toBe(-1);
       });
-
     });
 
     describe('Node 0.10.x', function() {
@@ -41,9 +40,8 @@ describe('SwaggerClient', function () {
         expect('hello'.endsWith('lo')).toBe(true);
         expect('hello'.endsWith('he')).toBe(false);
       });
-    })
-
-  })
+    });
+  });
 
   it('ensure reserved tag names are handled properly (Issue 209)', function (done) {
     var cPetStore = _.cloneDeep(petstoreRaw);
