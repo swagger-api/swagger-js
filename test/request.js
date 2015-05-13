@@ -302,7 +302,6 @@ describe('swagger request functions', function () {
 
   it('gets an server side 404, and verifies that the content-type in the response is correct, and different than one in the request', function (done) {
     var petApi = sample.pet;
-    var req = petApi.findPetsByStatus({status: undefined}, {responseContentType: 'application/json'});
 
     // This test will actually hit the 404 path of mock server, which we use to test the content-type is correct
     petApi.findPetsByStatus({status: undefined}, function (resp) {
