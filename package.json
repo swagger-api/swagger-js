@@ -6,7 +6,7 @@
     "email": "jcscoobyrs@gmail.com"
   }],
   "description": "swagger-client is a javascript client for use with swaggering APIs.",
-  "version": "2.1.4-M2",
+  "version": "2.1.5-M2",
   "homepage": "http://swagger.io",
   "repository": {
     "type": "git",
