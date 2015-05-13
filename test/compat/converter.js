@@ -26,7 +26,7 @@ describe('converts specs', function () {
 
   it('ignores an empty spec', function(done) {
       var converter = new SwaggerSpecConverter();
-      converter.convert({}, function(result) {
+      converter.convert({}, {}, function(result) {
         expect(result).toBe(null);
         done();
       });
@@ -42,7 +42,7 @@ describe('converts specs', function () {
     obj.on.response = function(data) {
       var converter = new SwaggerSpecConverter();
       converter.setDocumentationLocation('http://localhost:8000/v1/api-docs');
-      converter.convert(data.obj, function(swagger) {
+      converter.convert(data.obj, {}, function(swagger) {
         var tags = swagger.tags;
 
         test.array(swagger.tags);
@@ -126,7 +126,7 @@ describe('converts specs', function () {
     obj.on.response = function(data) {
       var converter = new SwaggerSpecConverter();
       converter.setDocumentationLocation('http://localhost:8000/v1/api-docs');
-      converter.convert(data.obj, function(swagger) {
+      converter.convert(data.obj, {}, function(swagger) {
         // metadata tests
         expect(swagger.swagger).toBe('2.0');
         test.object(swagger.info);
@@ -200,7 +200,7 @@ describe('converts specs', function () {
     obj.on.response = function(data) {
       var converter = new SwaggerSpecConverter();
       converter.setDocumentationLocation('http://localhost:8000/v1/word.json');
-      converter.convert(data.obj, function(swagger) {
+      converter.convert(data.obj, {}, function(swagger) {
         expect(Object.keys(swagger.paths).length).toBe(12);
 
         var getDefinitions = swagger.paths['/word.{format}/{word}/definitions'].get;
