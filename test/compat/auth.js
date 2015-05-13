@@ -24,7 +24,7 @@ describe('1.2 api key authorizations', function() {
   it('tests', function(done) {
     // console.log(sample);
     done();
-  })
+  });
 
   it('applies an api key to the query string', function() {
     var params = { petId: 1 };
@@ -101,6 +101,6 @@ describe('1.2 api key authorizations', function() {
     var req = storeApi.getOrderById(params, opts);
 
     expect(req.url).toBe('http://localhost:8000/v1/api/store/order/1');
-    expect(req.headers['privateKey']).toBe('a b c d e');
+    expect(req.headers.privateKey).toBe('a b c d e');
   });
 });

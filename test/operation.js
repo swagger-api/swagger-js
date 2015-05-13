@@ -314,7 +314,7 @@ describe('operations', function () {
                            { parameters: parameters }, {},{}, new auth.SwaggerAuthorizations());
 
     // Test raw html string
-    expect(op.parameters[0].signature).toBe('<span class=\"strong\">Inline Model {</span><div><span class=\"propName \">foo</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>)</div><span class=\"strong\">}</span>')
+    expect(op.parameters[0].signature).toBe('<span class=\"strong\">Inline Model {</span><div><span class=\"propName \">foo</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>)</div><span class=\"strong\">}</span>');
 
   });
 
@@ -500,7 +500,7 @@ describe('operations', function () {
                                    {}, {}, new auth.SwaggerAuthorizations());
 
     // my happy payload...
-    var args = {'josh': 'hello'};
+    args = {'josh': 'hello'};
     var opts = {mock: true};
     var obj = op.execute(args, opts);
 
@@ -541,17 +541,17 @@ describe('operations', function () {
     expect(p.allowableValues.descriptiveValues[1].isDefault).toBe(false);
 
     // default = true
-    var p = op.parameters[1];
+    p = op.parameters[1];
     expect(p.allowableValues.descriptiveValues[0].isDefault).toBe(true);  // true is the default
     expect(p.allowableValues.descriptiveValues[1].isDefault).toBe(false);
 
     // default = 'false'
-    var p = op.parameters[2];
+    p = op.parameters[2];
     expect(p.allowableValues.descriptiveValues[0].isDefault).toBe(false);
     expect(p.allowableValues.descriptiveValues[1].isDefault).toBe(true); // false is the default
 
     // default = false
-    var p = op.parameters[3];
+    p = op.parameters[3];
     expect(p.allowableValues.descriptiveValues[0].isDefault).toBe(false);
     expect(p.allowableValues.descriptiveValues[1].isDefault).toBe(true); // false is the default
   });
