@@ -22,7 +22,7 @@ exports.petstore = function (arg1, arg2, arg3, arg4) {
     // for testing redirects
     if (filename === 'test/spec/v1/api/redirect') {
       res.writeHead(302, {
-        'Location': 'http://localhost:8000/v1/api/pet/1'
+        'Location': 'http://localhost:8001/v1/api/pet/1'
       });
       res.end();
     } else {
@@ -60,7 +60,7 @@ exports.petstore = function (arg1, arg2, arg3, arg4) {
         }
       });
     }
-  }).listen(8000);
+  }).listen(8001);
 
   instance.on('listening', function () {
     var sample;
@@ -70,7 +70,7 @@ exports.petstore = function (arg1, arg2, arg3, arg4) {
       return;
     };
 
-    opts.url = 'http://localhost:8000/v1/api-docs.json';
+    opts.url = 'http://localhost:8001/v1/api-docs.json';
     sample = new SwaggerClient(opts);
 
     if (macros) {

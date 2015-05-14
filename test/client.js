@@ -7,7 +7,24 @@ var expect = require('expect');
 var petstoreRaw = require('./spec/v2/petstore.json');
 var SwaggerClient = require('..');
 
+/* jshint ignore:start */
+var mock = require('./mock');
+var instance;
+/* jshint ignore:end */
+
 describe('SwaggerClient', function () {
+  /* jshint ignore:start */
+  before(function (done) {
+    mock.petstore(done, function (petstore, server){
+      instance = server;
+    });
+  });
+
+  after(function (done){
+    instance.close();
+    done();
+  });
+  /* jshint ignore:end */
   it('ensure externalDocs is attached to the client when available (Issue 276)', function (done) {
     var client = new SwaggerClient({
       spec: petstoreRaw,
@@ -235,6 +252,57 @@ describe('SwaggerClient', function () {
       success: function () {
         client.fun.tryIt.help();
         done();
+      }
+    });
+  });
+
+  it('should use jQuery', function(done) {
+    var client = new SwaggerClient({
+      spec: petstoreRaw,
+      useJQuery: true,
+      success: function () {
+        var result = client.pet.getPetById({petId: 3}, { mock: true });
+        expect(result.useJQuery).toBe(true);
+        done();
+      }
+    });
+  });
+
+  it('should should use a custom http client', function(done) {
+    var myHttpClient = {
+      execute: function(obj) {
+        obj.on.response('ok');
+      }
+    };
+
+    var client = new SwaggerClient({
+      spec: petstoreRaw,
+      client: myHttpClient,
+      success: function () {
+        client.pet.getPetById({petId: 3}, function(data){
+          expect(data).toBe('ok');
+          done();
+        });
+      }
+    });
+  });
+
+  it('should should use a responseInterceptor', function(done) {
+    var responseInterceptor = {
+      apply: function(data) {
+        data.url = 'foo/bar';
+        return data;
+      }
+    };
+
+    var client = new SwaggerClient({
+      spec: petstoreRaw,
+      responseInterceptor: responseInterceptor,
+      success: function () {
+        client.pet.getPetById({petId: 1}, function(data){
+          expect(data.url).toBe('foo/bar');
+          done();
+        });
       }
     });
   });

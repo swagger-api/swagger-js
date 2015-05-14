@@ -79,6 +79,7 @@ exports.petstore = function (arg1, arg2, arg3, arg4) {
   instance.on('listening', function () {
     var sample;
 
+    opts = opts || {};
     opts.url = 'http://localhost:8000/v2/petstore.json';
     opts.success = function () {
       done();

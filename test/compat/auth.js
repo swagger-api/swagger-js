@@ -21,11 +21,6 @@ describe('1.2 api key authorizations', function() {
     done();
   });
 
-  it('tests', function(done) {
-    // console.log(sample);
-    done();
-  });
-
   it('applies an api key to the query string', function() {
     var params = { petId: 1 };
     var opts = {
@@ -40,7 +35,7 @@ describe('1.2 api key authorizations', function() {
     var petApi = sample.pet;
     var req = petApi.getPetById(params, opts);
 
-    expect(req.url).toBe('http://localhost:8000/v1/api/pet/1?api_key=abc123');
+    expect(req.url).toBe('http://localhost:8001/v1/api/pet/1?api_key=abc123');
 
     sample.clientAuthorizations.authz = {};
   });
@@ -59,7 +54,7 @@ describe('1.2 api key authorizations', function() {
     var petApi = sample.pet;
     var req = petApi.getPetById(params, opts);
 
-    expect(req.url).toBe('http://localhost:8000/v1/api/pet/1');
+    expect(req.url).toBe('http://localhost:8001/v1/api/pet/1');
     expect(req.headers.api_key).toBe('abc123'); // jshint ignore:line
 
     sample.clientAuthorizations.authz = {};
@@ -79,7 +74,7 @@ describe('1.2 api key authorizations', function() {
     var petApi = sample.pet;
     var req = petApi.getPetById(params, opts);
 
-    expect(req.url).toBe('http://localhost:8000/v1/api/pet/1');
+    expect(req.url).toBe('http://localhost:8001/v1/api/pet/1');
     expect(req.headers['Authorization: Bearer']).toBe('a b c d e');
 
     sample.clientAuthorizations.authz = {};
@@ -100,7 +95,7 @@ describe('1.2 api key authorizations', function() {
 
     var req = storeApi.getOrderById(params, opts);
 
-    expect(req.url).toBe('http://localhost:8000/v1/api/store/order/1');
+    expect(req.url).toBe('http://localhost:8001/v1/api/store/order/1');
     expect(req.headers.privateKey).toBe('a b c d e');
   });
 });
