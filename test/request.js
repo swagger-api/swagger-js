@@ -315,9 +315,9 @@ describe('swagger request functions', function () {
 
   it('calls the error handler with missing params per #375', function(done) {
     var petApi = sample.pet;
-    var req = petApi.getPetById({}, function(data){
-      console.log('shoulda failed!');
-    }, function(error) {
+    petApi.getPetById({}, function(data){
+      console.log('shoulda failed!' + data);
+    }, function() {
       done();
     });
   });

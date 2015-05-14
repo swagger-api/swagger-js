@@ -526,10 +526,6 @@ describe('operations', function () {
       { in: 'query', name: 'False', type: 'boolean', default: false },
       { in: 'query', name: 'None', type: 'boolean'},
     ];
-    // No produces/consumes on operation...
-    var args = {
-      'parameters': parameters
-    };
 
     // make sure we have method that has a body payload
     var op = new Operation({}, 'http', 'test', 'post', '/path', {parameters: parameters}, {}, {}, new auth.SwaggerAuthorizations());
