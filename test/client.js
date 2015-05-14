@@ -238,4 +238,35 @@ describe('SwaggerClient', function () {
       }
     });
   });
+
+  it('should use jQuery', function(done) {
+    var client = new SwaggerClient({
+      spec: petstoreRaw,
+      useJQuery: true,
+      success: function () {
+        var result = client.pet.getPetById({petId: 3}, { mock: true });
+        expect(result.useJQuery).toBe(true);
+        done();
+      }
+    });
+  });
+
+  it('should should use a custom http client', function(done) {
+    var myHttpClient = {
+      execute: function(obj, opts) {
+        obj.on.response('ok');
+      }
+    };
+
+    var client = new SwaggerClient({
+      spec: petstoreRaw,
+      client: myHttpClient,
+      success: function () {
+        var result = client.pet.getPetById({petId: 3}, function(data){
+          expect(data).toBe('ok');
+          done();
+        });
+      }
+    });
+  });
 });

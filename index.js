@@ -17,7 +17,7 @@ if (!Array.prototype.indexOf) {
     }
     return -1;
   };
-};
+}
 
 /* Here for IE8 Support */
 if (!String.prototype.trim) {
@@ -31,7 +31,7 @@ if (!String.prototype.endsWith) {
   String.prototype.endsWith = function(suffix) {
     return this.indexOf(suffix, this.length - suffix.length) !== -1;
   };
-};
+}
 
 module.exports = SwaggerClient;
 
