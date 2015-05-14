@@ -320,7 +320,7 @@ describe('swagger resolver', function () {
       }
     };
 
-    api.resolve(spec, function (spec, unresolvedRefs) {
+    api.resolve(spec, function (spec) {
       var path = spec.paths['/myUsername'];
       test.object(path);
       test.object(path.get);
@@ -340,7 +340,7 @@ describe('swagger resolver', function () {
       }
     };
 
-    api.resolve(spec, function (spec, unresolvedRefs) {
+    api.resolve(spec, function (spec) {
       var path = spec.paths['/myUsername'];
       test.object(path);
       test.object(path.get);
@@ -358,7 +358,7 @@ describe('swagger resolver', function () {
       }
     };
 
-    api.resolve(spec, function (spec, unresolvedRefs) {
+    api.resolve(spec, function (spec) {
       var health = spec.paths['/health'].get;
       test.object(health);
       test.object(spec.definitions.Health);
@@ -382,7 +382,7 @@ describe('swagger resolver', function () {
         }
       }
     };
-    api.resolve(spec, function (spec, unresolvedRefs) {
+    api.resolve(spec, function (spec) {
       var get = spec.paths['/myUsername'].get;
       var response = get.responses['400'];
       expect(response.description).toBe('failed');

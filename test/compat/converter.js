@@ -34,17 +34,15 @@ describe('converts specs', function () {
 
   it('converts the petstore 1.2 spec', function (done) {
     var obj = {
-      url: 'http://localhost:8000/v1/api-docs.json',
+      url: 'http://localhost:8001/v1/api-docs.json',
       method: 'get',
       headers: {accept: 'application/json'},
       on: {}
     };
     obj.on.response = function(data) {
       var converter = new SwaggerSpecConverter();
-      converter.setDocumentationLocation('http://localhost:8000/v1/api-docs');
+      converter.setDocumentationLocation('http://localhost:8001/v1/api-docs');
       converter.convert(data.obj, {}, function(swagger) {
-        var tags = swagger.tags;
-
         test.array(swagger.tags);
         var petTag = swagger.tags[0];
         var userTag = swagger.tags[1];
@@ -102,10 +100,10 @@ describe('converts specs', function () {
 
         // models
         var definitions = swagger.definitions;
-        expect(Object.keys(definitions).length).toBe(8)
+        expect(Object.keys(definitions).length).toBe(8);
         var pet = definitions.Pet;
         expect(Object.keys(pet.properties).length).toBe(8);
-        var photos = pet.properties['photoUrls'];
+        var photos = pet.properties.photoUrls;
         expect(photos.type).toBe('array');
         test.object(photos.items);
         expect(photos.items.type).toBe('string');
@@ -113,19 +111,19 @@ describe('converts specs', function () {
       });
     };
 
-    var resource = new SwaggerHttp().execute(obj);
+    new SwaggerHttp().execute(obj);
   });
 
   it('converts a single file 1.2 spec', function (done) {
     var obj = {
-      url: 'http://localhost:8000/v1/single.json',
+      url: 'http://localhost:8001/v1/single.json',
       method: 'get',
       headers: {accept: 'application/json'},
       on: {}
     };
     obj.on.response = function(data) {
       var converter = new SwaggerSpecConverter();
-      converter.setDocumentationLocation('http://localhost:8000/v1/api-docs');
+      converter.setDocumentationLocation('http://localhost:8001/v1/api-docs');
       converter.convert(data.obj, {}, function(swagger) {
         // metadata tests
         expect(swagger.swagger).toBe('2.0');
@@ -151,8 +149,8 @@ describe('converts specs', function () {
         expect(param.name).toBe('petId');
         expect(param.description).toBe('ID of pet that needs to be fetched');
         expect(param.in).toBe('path');
-        expect(param.minimum).toBe("1.0");
-        expect(param.maximum).toBe("100000.0");
+        expect(param.minimum).toBe('1.0');
+        expect(param.maximum).toBe('100000.0');
         expect(param.type).toBe('integer');
         expect(param.format).toBe('int64');
 
@@ -179,7 +177,7 @@ describe('converts specs', function () {
         expect(Object.keys(definitions).length).toBe(3);
         var pet = definitions.Pet;
         expect(Object.keys(pet.properties).length).toBe(6);
-        var photos = pet.properties['photoUrls'];
+        var photos = pet.properties.photoUrls;
         expect(photos.type).toBe('array');
         test.object(photos.items);
         expect(photos.items.type).toBe('string');
@@ -187,19 +185,19 @@ describe('converts specs', function () {
       });
     };
 
-    var resource = new SwaggerHttp().execute(obj);
+    new SwaggerHttp().execute(obj);
   });
 
   it('converts a single file 1.0 spec', function (done) {
     var obj = {
-      url: 'http://localhost:8000/v1/word.json',
+      url: 'http://localhost:8001/v1/word.json',
       method: 'get',
       headers: {accept: 'application/json'},
       on: {}
     };
     obj.on.response = function(data) {
       var converter = new SwaggerSpecConverter();
-      converter.setDocumentationLocation('http://localhost:8000/v1/word.json');
+      converter.setDocumentationLocation('http://localhost:8001/v1/word.json');
       converter.convert(data.obj, {}, function(swagger) {
         expect(Object.keys(swagger.paths).length).toBe(12);
 
@@ -226,12 +224,12 @@ describe('converts specs', function () {
       });
     };
 
-    var resource = new SwaggerHttp().execute(obj);
+    new SwaggerHttp().execute(obj);
   });
 
   it('creates a request for 1.0 resource', function(done) {
     var client = new SwaggerClient();
-    client.initialize('http://localhost:8000/v1/word.json', {success: function () {
+    client.initialize('http://localhost:8001/v1/word.json', {success: function () {
       var args = { word: 'cat' };
       var opts = { mock: true };
 

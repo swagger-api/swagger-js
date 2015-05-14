@@ -33,7 +33,6 @@ describe('1.2 get model operations', function () {
   it('verifies enum values in a model property', function(done) {
     var user = sample.models.User;
     expect(user.definition.properties.userStatus['enum']).toEqual([ '1-registered', '2-active', '3-closed' ]);
-    console.log(user.definition['enum']);
     done();
   });
 });
