@@ -287,8 +287,8 @@ describe('SwaggerClient', function () {
     });
   });
 
-  it('should should use an interceptor', function(done) {
-    var interceptor = {
+  it('should should use a responseInterceptor', function(done) {
+    var responseInterceptor = {
       apply: function(data) {
         data.url = 'foo/bar';
         return data;
@@ -297,7 +297,7 @@ describe('SwaggerClient', function () {
 
     var client = new SwaggerClient({
       spec: petstoreRaw,
-      interceptor: interceptor,
+      responseInterceptor: responseInterceptor,
       success: function () {
         client.pet.getPetById({petId: 1}, function(data){
           expect(data.url).toBe('foo/bar');
