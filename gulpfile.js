@@ -23,6 +23,7 @@ var basename = 'swagger-client';
 var paths = {
   sources: ['index.js', 'lib/**/*.js'],
   tests: ['test/*.js', 'test/compat/*.js', '!test/browser/*.js'],
+  browserTests: ['test/browser/*.js'],
   dist: 'browser'
 };
 
@@ -98,6 +99,20 @@ gulp.task('test', function () {
   return gulp
     .src(paths.tests)
     .pipe(mocha({reporter: 'spec'}));
+});
+
+gulp.task('browsertest', function () {
+  process.env.NODE_ENV = 'test';
+
+  return gulp
+    .src(paths.browserTests)
+    .pipe(mocha({reporter: 'spec'}))
+    .once('error', function () {
+      process.exit(1);
+    })
+    .once('end', function () {
+      process.exit();
+    });;
 });
 
 gulp.task('watch', ['test'], function () {
