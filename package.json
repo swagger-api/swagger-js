@@ -1,10 +1,12 @@
 {
   "name": "swagger-client",
   "author": "Tony Tam <fehguy@gmail.com>",
-  "contributors": [{
-    "name": "Jeremy Whitlock",
-    "email": "jcscoobyrs@gmail.com"
-  }],
+  "contributors": [
+    {
+      "name": "Jeremy Whitlock",
+      "email": "jcscoobyrs@gmail.com"
+    }
+  ],
   "description": "swagger-client is a javascript client for use with swaggering APIs.",
   "version": "2.1.6-M2",
   "homepage": "http://swagger.io",
@@ -32,6 +34,7 @@
     "btoa": "^1.1.2",
     "cookiejar": "^2.0.1",
     "jquery": "^2.1.3",
+    "js-yaml": "^3.3.0",
     "lodash-compat": "^3.5.0",
     "superagent": "^0.21.0"
   },
@@ -50,6 +53,7 @@
     "http-server": "git://github.com/nodeapps/http-server.git",
     "jshint-stylish": "^1.0.1",
     "mocha": "^1.21.3",
+    "nock": "^2.0.1",
     "selenium-webdriver": "^2.45.1",
     "uglifyify": "^3.0.1",
     "unit.js": "1.1.2",
