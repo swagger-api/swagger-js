@@ -112,7 +112,7 @@ gulp.task('browsertest', function () {
     })
     .once('end', function () {
       process.exit();
-    });;
+    });
 });
 
 gulp.task('watch', ['test'], function () {

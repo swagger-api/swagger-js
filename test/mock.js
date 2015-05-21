@@ -45,6 +45,8 @@ exports.petstore = function (arg1, arg2, arg3, arg4) {
             return;
           }
           var accept = req.headers.accept;
+          var contentType = 'application/json';
+
           if (typeof accept !== 'undefined') {
             if (accept === 'invalid') {
               res.writeHead(500);
@@ -52,21 +54,21 @@ exports.petstore = function (arg1, arg2, arg3, arg4) {
               return;
             }
 
-            if (accept.indexOf('application/json') !== -1) {
-              res.setHeader('Content-Type', 'application/json');
+            if (accept.indexOf('application/json') >= 0 || accept.indexOf('application/yaml') >= 0) {
+              contentType = accept;
+              res.setHeader('Content-Type', contentType);
             }
           }
           res.setHeader('Access-Control-Allow-Origin', '*');
-          res.writeHead(200, 'application/json');
+          res.writeHead(200, contentType);
 
           var fileStream = fs.createReadStream(filename);
-
           fileStream.pipe(res);
         } else if (filename === 'test/compat/spec/api/pet/0') {
           res.writeHead(500);
           res.end();
 
-          return;          
+          return;
         } else {
           res.writeHead(200, {'Content-Type': 'text/plain'});
           res.write('404 Not Found\n');
@@ -80,7 +82,7 @@ exports.petstore = function (arg1, arg2, arg3, arg4) {
     var sample;
 
     opts = opts || {};
-    opts.url = 'http://localhost:8000/v2/petstore.json';
+    opts.url = opts.url || 'http://localhost:8000/v2/petstore.json';
     opts.success = function () {
       done();
       callback(sample, instance);

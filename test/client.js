@@ -26,6 +26,7 @@ describe('SwaggerClient', function () {
   });
   /* jshint ignore:end */
   it('ensure externalDocs is attached to the client when available (Issue 276)', function (done) {
+    this.timeout(5 * 1000);
     var client = new SwaggerClient({
       spec: petstoreRaw,
       success: function () {
