@@ -330,7 +330,7 @@ describe('swagger resolver', function () {
     });
   });
 
-  it('resolves path references', function(done) {
+  it('resolves path references 2', function(done) {
     var api = new Resolver();
     var spec = {
       paths: {
@@ -358,7 +358,7 @@ describe('swagger resolver', function () {
       }
     };
 
-    api.resolve(spec, function (spec) {
+    api.resolve(spec, function (spec, unresolved) {
       var health = spec.paths['/health'].get;
       test.object(health);
       test.object(spec.definitions.Health);
@@ -386,6 +386,26 @@ describe('swagger resolver', function () {
       var get = spec.paths['/myUsername'].get;
       var response = get.responses['400'];
       expect(response.description).toBe('failed');
+      done();
+    });
+  });
+
+  it('resolves relative references', function(done) {
+    var api = new Resolver();
+    var spec = {
+      host: 'http://petstore.swagger.io',
+      basePath: '/v2',
+      paths: {
+        '/health': {
+          $ref: '/v2/petstore.json#/definitions/Category'
+        }
+      }
+    };
+
+    api.resolve(spec, 'http://localhost:8000/foo/bar/swagger.json', function (spec) {
+      var health = spec.paths['/health'];
+      test.object(health);
+      test.object(health.properties);
       done();
     });
   });
