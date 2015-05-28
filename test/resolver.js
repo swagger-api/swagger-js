@@ -502,4 +502,43 @@ describe('swagger resolver', function () {
     });
   });
 
+  it('resolves a remote response object $ref without root', function (done) {
+    var api = new Resolver();
+    var spec = {
+      paths: {
+        '/pet': {
+          post: {
+            responses: {
+              200: {
+                $ref: '#/responses/200'
+              }
+            }
+          }
+        }
+      },
+      responses: {
+        '200': {
+          description: 'successful operation',
+          schema: {
+            $ref: '#/definitions/Pet'
+          }
+        }
+      },
+      definitions: {
+        Pet: {
+          properties: {
+            type: 'integer',
+            format: 'int32'
+          }
+        }
+      }
+    };
+
+    api.resolve(spec, function (spec) {
+      expect(spec.definitions.Pet).toExist();
+      expect(spec.paths['/pet'].post.responses['200'].schema.$ref).toBe('#/definitions/Pet');
+
+      done();
+    });
+  });
 });
