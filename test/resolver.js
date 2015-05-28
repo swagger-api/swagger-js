@@ -9,6 +9,7 @@ var Resolver = require('../lib/resolver');
 var instance;
 
 describe('swagger resolver', function () {
+
   before(function (done) {
     mock.petstore(done, function (petstore, server){
       instance = server;
@@ -42,9 +43,8 @@ describe('swagger resolver', function () {
       }
     };
 
-    api.resolve(spec, function (spec) {
+    api.resolve(spec, 'http://localhost:8000/v2/petstore.json', function (spec) {
       expect(spec.definitions.Category).toExist();
-
       done();
     });
   });
@@ -119,9 +119,8 @@ describe('swagger resolver', function () {
       }
     };
 
-    api.resolve(spec, function (spec) {
+    api.resolve(spec, 'http://localhost:8000/v2/petstore.json', function (spec) {
       expect(spec.definitions.Category).toExist();
-
       done();
     });
   });
@@ -143,7 +142,7 @@ describe('swagger resolver', function () {
       }
     };
 
-    api.resolve(spec, function (spec) {
+    api.resolve(spec, 'http://localhost:8000/v2/petstore.json', function (spec) {
       expect(spec.definitions.Pet).toExist();
       done();
     });
@@ -166,7 +165,7 @@ describe('swagger resolver', function () {
       }
     };
 
-    api.resolve(spec, function (spec) {
+    api.resolve(spec, 'http://localhost:8000/v2/petstore.json', function (spec) {
       expect(spec.definitions.Pet).toExist();
       expect(spec.paths['/pet'].post.responses['200'].schema.$ref).toBe('#/definitions/Pet');
 
@@ -198,13 +197,11 @@ describe('swagger resolver', function () {
       }
     };
 
-    api.resolve(spec, function (spec) {
+    api.resolve(spec, 'http://localhost:8000/v2/petstore.json', function (spec) {
       var params = spec.paths['/pet'].post.parameters;
-
       expect(params.length).toBe(1);
 
       var param = params[0];
-
       expect(param.name).toBe('skip');
 
       done();
@@ -235,7 +232,7 @@ describe('swagger resolver', function () {
       }
     };
 
-    api.resolve(spec, function (spec, unresolvedRefs) {
+    api.resolve(spec, 'http://localhost:8000/v2/petstore.json', function (spec, unresolvedRefs) {
       expect(unresolvedRefs['#/parameters/sharedSkipz']).toBe(null);
 
       done();
@@ -266,7 +263,7 @@ describe('swagger resolver', function () {
       }
     };
 
-    api.resolve(spec, function (spec) {
+    api.resolve(spec, 'http://localhost:8000/v2/petstore.json', function (spec) {
       var params = spec.paths['/pet'].post.parameters;
 
       expect(params.length).toBe(1);
@@ -303,7 +300,7 @@ describe('swagger resolver', function () {
       }
     };
 
-    api.resolve(spec, function (spec, unresolvedRefs) {
+    api.resolve(spec, 'http://localhost:8000/v2/petstore.json', function (spec, unresolvedRefs) {
       expect(unresolvedRefs['http://localhost:8000/v2/petstore.json#/parameters/sharedSkipz']).toBe(null);
 
       done();
@@ -320,7 +317,7 @@ describe('swagger resolver', function () {
       }
     };
 
-    api.resolve(spec, function (spec) {
+    api.resolve(spec, 'http://localhost:8000/v2/petstore.json', function (spec) {
       var path = spec.paths['/myUsername'];
       test.object(path);
       test.object(path.get);
@@ -340,7 +337,7 @@ describe('swagger resolver', function () {
       }
     };
 
-    api.resolve(spec, function (spec) {
+    api.resolve(spec, 'http://localhost:8000/v2/petstore.json', function (spec) {
       var path = spec.paths['/myUsername'];
       test.object(path);
       test.object(path.get);
@@ -358,8 +355,9 @@ describe('swagger resolver', function () {
       }
     };
 
-    api.resolve(spec, function (spec, unresolved) {
+    api.resolve(spec, 'http://localhost:8000/v2/petstore.json', function (spec, unresolved) {
       var health = spec.paths['/health'].get;
+      // console.log(JSON.stringify(spec, null, 2))
       test.object(health);
       test.object(spec.definitions.Health);
       test.object(spec.definitions.JVMMemory);
@@ -382,10 +380,105 @@ describe('swagger resolver', function () {
         }
       }
     };
-    api.resolve(spec, function (spec) {
+    api.resolve(spec, 'http://localhost:8000/v2/petstore.json', function (spec) {
       var get = spec.paths['/myUsername'].get;
       var response = get.responses['400'];
       expect(response.description).toBe('failed');
+      done();
+    });
+  });
+
+  it('resolves relative references absolute to root', function(done) {
+    var api = new Resolver();
+    var spec = {
+      host: 'http://petstore.swagger.io',
+      basePath: '/v2',
+      paths: {
+        '/health': {
+          get: {
+            parameters: [],
+            responses: {
+              default: { description: 'ok' }
+            }
+          }
+        }
+      },
+      definitions: {
+        Pet: {
+          properties: {
+            id: { $ref: '/v2/petstore.json#/definitions/Pet' }
+          }
+        }
+      }
+    };
+
+    // should look in http://localhost:8000/v2/petstore.json#/definitions/Category
+    api.resolve(spec, 'http://localhost:8000/foo/bar/swagger.json', function (spec) {
+      var health = spec.paths['/health'];
+      done();
+    });
+  });
+
+  it('resolves relative references relative to reference', function(done) {
+    var api = new Resolver();
+    var spec = {
+      host: 'http://petstore.swagger.io',
+      basePath: '/v2',
+      paths: {
+        '/health': {
+          get: {
+            parameters: [],
+            responses: {
+              default: { description: 'ok' }
+            }
+          }
+        }
+      },
+      definitions: {
+        Pet: {
+          properties: {
+            id: { $ref: 'Category' }
+          }
+        }
+      }
+    };
+
+    // console.log(JSON.stringify(spec, null, 2))
+
+    // should look in http://localhost:8000/v2/petstore.json#/definitions/Category
+    api.resolve(spec, 'http://localhost:8000/foo/bar/swagger.json', function (spec) {
+      var health = spec.paths['/health'];
+      done();
+    });
+  });
+
+  it('resolves relative references relative to reference 2', function(done) {
+    var api = new Resolver();
+    var spec = {
+      host: 'http://petstore.swagger.io',
+      basePath: '/v2',
+      paths: {
+        '/health': {
+          get: {
+            parameters: [],
+            responses: {
+              default: { description: 'ok' }
+            }
+          }
+        }
+      },
+      definitions: {
+        Pet: {
+          properties: {
+            id: { $ref: '../common/Address.json#/definitions/Pet' }
+          }
+        }
+      }
+    };
+
+    // should look in http://localhost:8000/v2/petstore.json#/definitions/Category
+    api.resolve(spec, 'http://localhost:8000/foo/bar/swagger.json', function (spec) {
+      var health = spec.paths['/health'];
       done();
     });
   });
@@ -397,16 +490,16 @@ describe('swagger resolver', function () {
       basePath: '/v2',
       paths: {
         '/health': {
-          $ref: '/v2/petstore.json#/definitions/Category'
+          $ref: 'Category'
         }
       }
     };
 
+    // should look in http://localhost:8000/foo/bar/swagger.json#/paths/health
     api.resolve(spec, 'http://localhost:8000/foo/bar/swagger.json', function (spec) {
       var health = spec.paths['/health'];
-      test.object(health);
-      test.object(health.properties);
       done();
     });
   });
+
 });
