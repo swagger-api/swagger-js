@@ -238,4 +238,43 @@ describe('converts specs', function () {
       done();
     }});
   });
+
+  var issues_spec;
+  describe('edge cases for v1.2', function() {
+
+    before(function(done){
+      var obj = {
+        url: 'http://localhost:8001/v1/issues.json',
+        method: 'get',
+        headers: {accept: 'application/json'},
+        on: {}
+      };
+      obj.on.response = function(data) {
+        var converter = new SwaggerSpecConverter();
+        converter.setDocumentationLocation('http://localhost:8001/v1/api-docs');
+        converter.convert(data.obj, {}, function(swagger) {
+          issues_spec = swagger;
+          done();
+        });
+      }
+      obj.on.error = function(err){
+        console.log('err', err);
+      }
+
+      // Get/convert our spec
+      new SwaggerHttp().execute(obj);
+    });
+
+    it('carries over schema.required array', function () {
+      // sanity test
+      var spec = issues_spec;
+      expect(spec.swagger).toBe('2.0');
+
+      var model = spec.definitions.TestRequired;
+      expect(model.required).toBeA(Array);
+      expect(model.required).toInclude('one');
+
+    });
+  });
+
 });
