@@ -557,4 +557,79 @@ describe('swagger resolver', function () {
       done();
     });
   });
+
+  it('resolves relative references from a peer file', function(done) {
+    var api = new Resolver();
+    var spec = {
+      host: 'http://petstore.swagger.io',
+      basePath: '/v2',
+      paths: {
+        '/health': {
+          $ref: 'definitions.yaml#/MyResource'
+        }
+      }
+    };
+
+    // should look in http://localhost:8000/foo/bar/swagger.json#/paths/health
+    api.resolve(spec, 'http://localhost:8000/foo/bar/swagger.json', function (spec, unresolvedRefs) {
+      console.log(unresolvedRefs)
+      expect(unresolvedRefs.Category).toEqual({
+        root: 'http://localhost:8000/foo/bar/definitions.yaml',
+        location: '/paths/health'
+      });
+      var health = spec.paths['/MyResource'];
+      test.object(health);
+      done();
+    });
+  });
+
+  it('resolves relative references from a sub-folder/file', function(done) {
+    var api = new Resolver();
+    var spec = {
+      host: 'http://petstore.swagger.io',
+      basePath: '/v2',
+      paths: {
+        '/health': {
+          $ref: 'specific-domain/definitions.yaml#/MyResource'
+        }
+      }
+    };
+
+    // should look in http://localhost:8000/foo/bar/swagger.json#/paths/health
+    api.resolve(spec, 'http://localhost:8000/foo/bar/swagger.json', function (spec, unresolvedRefs) {
+      console.log(unresolvedRefs)
+      expect(unresolvedRefs.Category).toEqual({
+        root: 'http://localhost:8000/specific-domain/definitions.yaml',
+        location: '/paths/health'
+      });
+      var health = spec.paths['/MyResource'];
+      test.object(health);
+      done();
+    });
+  });
+
+  it('resolves relative references from a parent folder/file', function(done) {
+    var api = new Resolver();
+    var spec = {
+      host: 'http://petstore.swagger.io',
+      basePath: '/v2',
+      paths: {
+        '/health': {
+          $ref: '../common/definitions.yaml#/ApiError'
+        }
+      }
+    };
+
+    // should look in http://localhost:8000/foo/bar/swagger.json#/paths/health
+    api.resolve(spec, 'http://localhost:8000/foo/bar/swagger.json', function (spec, unresolvedRefs) {
+      console.log(unresolvedRefs)
+      expect(unresolvedRefs.Category).toEqual({
+        root: 'http://localhost:8000/foo/common/definitions.yaml',
+        location: '/paths/health'
+      });
+      var health = spec.paths['/ApiError'];
+      test.object(health);
+      done();
+    });
+  });
 });
