@@ -62,8 +62,12 @@ describe('swagger resolver', function () {
     };
 
     api.resolve(spec, function (spec, unresolvedRefs) {
-      expect(unresolvedRefs['http://localhost:8000/v2/petstore.jsonZZZ#/definitions/Category']).toBe(null);
-
+      expect(unresolvedRefs['http://localhost:8000/v2/petstore.jsonZZZ#/definitions/Category']).toEqual(
+        {
+          root: 'http://localhost:8000/v2/petstore.jsonZZZ',
+          location: '/definitions/Category'
+        }
+      );
       done();
     });
   });
@@ -81,7 +85,12 @@ describe('swagger resolver', function () {
     };
 
     api.resolve(spec, function (spec, unresolvedRefs) {
-      expect(unresolvedRefs['http://localhost:8000/v2/petstore.json#/definitionz/Category']).toBe(null);
+      expect(unresolvedRefs['http://localhost:8000/v2/petstore.json#/definitionz/Category']).toEqual(
+        {
+          root: 'http://localhost:8000/v2/petstore.json',
+          location: '/definitionz/Category'
+        }
+      );
       done();
     });
   });
@@ -99,7 +108,10 @@ describe('swagger resolver', function () {
     };
 
     api.resolve(spec, function (spec, unresolvedRefs) {
-      expect(unresolvedRefs['http://localhost:8000/v2/petstore.json#/definition/Categoryzzz']).toBe(null);
+      expect(unresolvedRefs['http://localhost:8000/v2/petstore.json#/definition/Categoryzzz']).toEqual({
+        root: 'http://localhost:8000/v2/petstore.json',
+        location: '/definition/Categoryzzz'
+      });
       done();
     });
   });
@@ -233,8 +245,9 @@ describe('swagger resolver', function () {
     };
 
     api.resolve(spec, 'http://localhost:8000/v2/petstore.json', function (spec, unresolvedRefs) {
-      expect(unresolvedRefs['#/parameters/sharedSkipz']).toBe(null);
-
+      expect(unresolvedRefs['#/parameters/sharedSkipz']).toEqual({
+        root: 'http://localhost:8000/v2/petstore.json',
+        location: '/parameters/sharedSkipz' });
       done();
     });
   });
@@ -265,13 +278,9 @@ describe('swagger resolver', function () {
 
     api.resolve(spec, 'http://localhost:8000/v2/petstore.json', function (spec) {
       var params = spec.paths['/pet'].post.parameters;
-
       expect(params.length).toBe(1);
-
       var param = params[0];
-
       expect(param.name).toBe('skip');
-
       done();
     });
   });
@@ -301,8 +310,10 @@ describe('swagger resolver', function () {
     };
 
     api.resolve(spec, 'http://localhost:8000/v2/petstore.json', function (spec, unresolvedRefs) {
-      expect(unresolvedRefs['http://localhost:8000/v2/petstore.json#/parameters/sharedSkipz']).toBe(null);
-
+      expect(unresolvedRefs['http://localhost:8000/v2/petstore.json#/parameters/sharedSkipz']).toEqual({
+        root: 'http://localhost:8000/v2/petstore.json',
+        location: '/parameters/sharedSkipz' 
+      });
       done();
     });
   });
@@ -496,7 +507,11 @@ describe('swagger resolver', function () {
     };
 
     // should look in http://localhost:8000/foo/bar/swagger.json#/paths/health
-    api.resolve(spec, 'http://localhost:8000/foo/bar/swagger.json', function (spec) {
+    api.resolve(spec, 'http://localhost:8000/foo/bar/swagger.json', function (spec, unresolvedRefs) {
+      expect(unresolvedRefs.Category).toEqual({
+        root: 'http://localhost:8000/foo/bar/swagger.json',
+        location: '/paths/health'
+      });
       var health = spec.paths['/health'];
       test.object(health);
       done();
