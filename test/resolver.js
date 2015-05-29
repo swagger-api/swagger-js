@@ -575,7 +575,7 @@ describe('swagger resolver', function () {
       console.log(unresolvedRefs)
       expect(unresolvedRefs.Category).toEqual({
         root: 'http://localhost:8000/foo/bar/definitions.yaml',
-        location: '/paths/health'
+        location: '/paths/health/MyResource'
       });
       var health = spec.paths['/MyResource'];
       test.object(health);
@@ -600,7 +600,7 @@ describe('swagger resolver', function () {
       console.log(unresolvedRefs)
       expect(unresolvedRefs.Category).toEqual({
         root: 'http://localhost:8000/specific-domain/definitions.yaml',
-        location: '/paths/health'
+        location: '/paths/health/MyResource'
       });
       var health = spec.paths['/MyResource'];
       test.object(health);
@@ -625,7 +625,7 @@ describe('swagger resolver', function () {
       console.log(unresolvedRefs)
       expect(unresolvedRefs.Category).toEqual({
         root: 'http://localhost:8000/foo/common/definitions.yaml',
-        location: '/paths/health'
+        location: '/paths/health/ApiError'
       });
       var health = spec.paths['/ApiError'];
       test.object(health);
