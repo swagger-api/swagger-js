@@ -20,7 +20,7 @@ describe('swagger resolver', function () {
     instance.close();
     done();
   });
-
+/*
   it('is OK without remote references', function (done) {
     var api = new Resolver();
     var spec = {};
@@ -30,7 +30,7 @@ describe('swagger resolver', function () {
       done();
     });
   });
-
+*/
   it('resolves a remote model property reference $ref', function (done) {
     var api = new Resolver();
     var spec = {
@@ -355,9 +355,8 @@ describe('swagger resolver', function () {
       }
     };
 
-    api.resolve(spec, 'http://localhost:8000/v2/petstore.json', function (spec, unresolved) {
+    api.resolve(spec, 'http://localhost:8000/v2/petstore.json', function (spec) {
       var health = spec.paths['/health'].get;
-      // console.log(JSON.stringify(spec, null, 2))
       test.object(health);
       test.object(spec.definitions.Health);
       test.object(spec.definitions.JVMMemory);
@@ -415,6 +414,7 @@ describe('swagger resolver', function () {
     // should look in http://localhost:8000/v2/petstore.json#/definitions/Category
     api.resolve(spec, 'http://localhost:8000/foo/bar/swagger.json', function (spec) {
       var health = spec.paths['/health'];
+      test.object(health);
       done();
     });
   });
@@ -443,11 +443,10 @@ describe('swagger resolver', function () {
       }
     };
 
-    // console.log(JSON.stringify(spec, null, 2))
-
     // should look in http://localhost:8000/v2/petstore.json#/definitions/Category
     api.resolve(spec, 'http://localhost:8000/foo/bar/swagger.json', function (spec) {
       var health = spec.paths['/health'];
+      test.object(health);
       done();
     });
   });
@@ -479,6 +478,7 @@ describe('swagger resolver', function () {
     // should look in http://localhost:8000/v2/petstore.json#/definitions/Category
     api.resolve(spec, 'http://localhost:8000/foo/bar/swagger.json', function (spec) {
       var health = spec.paths['/health'];
+      test.object(health);
       done();
     });
   });
@@ -498,6 +498,7 @@ describe('swagger resolver', function () {
     // should look in http://localhost:8000/foo/bar/swagger.json#/paths/health
     api.resolve(spec, 'http://localhost:8000/foo/bar/swagger.json', function (spec) {
       var health = spec.paths['/health'];
+      test.object(health);
       done();
     });
   });
