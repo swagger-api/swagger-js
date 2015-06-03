@@ -188,6 +188,7 @@ describe('converts specs', function () {
     new SwaggerHttp().execute(obj);
   });
 
+
   it('converts a single file 1.0 spec', function (done) {
     var obj = {
       url: 'http://localhost:8001/v1/word.json',
@@ -237,5 +238,45 @@ describe('converts specs', function () {
       expect(obj.url).toBe('http://api.wordnik.com/v4/word.json/cat/relatedWords');
       done();
     }});
+  });
+
+  var issues_spec;
+  describe('edge cases for v1.2', function() {
+
+    before(function(done){
+      var obj = {
+        url: 'http://localhost:8001/v1/issues.json',
+        method: 'get',
+        headers: {accept: 'application/json'},
+        on: {}
+      };
+      obj.on.response = function(data) {
+        var converter = new SwaggerSpecConverter();
+        converter.setDocumentationLocation('http://localhost:8001/v1/api-docs');
+        converter.convert(data.obj, {}, function(swagger) {
+          issues_spec = swagger;
+          done();
+        });
+      }
+      obj.on.error = function(err){
+        console.log('err', err);
+      }
+
+      // Get/convert our spec
+      new SwaggerHttp().execute(obj);
+    });
+
+    it('handles operation.responseModel', function () {
+      // sanity test
+      var spec = issues_spec;
+      expect(spec.swagger).toBe('2.0');
+
+      var operation = spec.paths['/responseModels'].get;
+      expect(Object.keys(operation.responses).length).toBe(3); // 200 + 400 + default
+
+      expect(operation.responses['200'].schema).toEqual({'$ref': 'Test'});
+      expect(operation.responses['404']).toEqual({description: 'You got no Test'});
+
+    });
   });
 });
