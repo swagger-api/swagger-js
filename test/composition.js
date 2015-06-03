@@ -43,12 +43,6 @@ describe('swagger resolver', function () {
           }, {
             type: "object",
             properties : {
-              name : {
-                type : "string"
-              },
-              type : {
-                type : "string"
-              },
               firstName : {
                 type : "string"
               },
@@ -65,19 +59,8 @@ describe('swagger resolver', function () {
             type: "object",
             required : [ "isDomestic", "name", "type" ],
             properties : {
-              type : {
-                type : "string",
-                position : 1,
-                description : "The pet type"
-              },
-              name : {
-                type : "string",
-                position : 2,
-                description : "The name of the pet"
-              },
               isDomestic : {
                 type : "boolean",
-                position : 3,
                 default : false
               }
             }
@@ -119,6 +102,10 @@ describe('swagger resolver', function () {
             },
             {
               properties: {
+                petType: {
+                  type: "string",
+                  enum: [ "cat" ]
+                },
                 huntingSkill: {
                   type: "string",
                   description: "The measured skill for hunting",
@@ -145,6 +132,10 @@ describe('swagger resolver', function () {
             },
             {
               properties: {
+                petType: {
+                  type: "string",
+                  enum: [ "dog" ]
+                },                
                 packSize: {
                   type: "integer",
                   format: "int32",
@@ -167,6 +158,10 @@ describe('swagger resolver', function () {
             },
             {
               properties: {
+                petType: {
+                  type: "string",
+                  enum: [ "fish" ]
+                },                
                 fins: {
                   type: "integer",
                   format: "int32",
