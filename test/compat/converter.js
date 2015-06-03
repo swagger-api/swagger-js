@@ -267,15 +267,25 @@ describe('converts specs', function () {
     });
 
     it('handles operation.responseModel', function () {
-      // sanity test
       var spec = issues_spec;
-      expect(spec.swagger).toBe('2.0');
 
       var operation = spec.paths['/responseModels'].get;
       expect(Object.keys(operation.responses).length).toBe(3); // 200 + 400 + default
 
       expect(operation.responses['200'].schema).toEqual({'$ref': 'Test'});
       expect(operation.responses['404']).toEqual({description: 'You got no Test'});
+
+    });
+
+    it('carries over schema.required array', function () {
+      // sanity test
+      var spec = issues_spec;
+      expect(spec.swagger).toBe('2.0');
+
+
+      var model = spec.definitions.TestRequired;
+      expect(model.required).toBeA(Array);
+      expect(model.required).toInclude('one');
 
     });
   });
