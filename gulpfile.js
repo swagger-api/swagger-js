@@ -95,26 +95,11 @@ gulp.task('build', function (cb) {
 
 gulp.task('test', function () {
   process.env.NODE_ENV = 'test';
-
   return gulp
     .src(paths.tests)
     .pipe(mocha({reporter: 'spec'}));
 });
-/*
-gulp.task('browsertest', function () {
-  process.env.NODE_ENV = 'test';
 
-  return gulp
-    .src(paths.browserTests)
-    .pipe(mocha({reporter: 'spec'}))
-    .once('error', function () {
-      process.exit(1);
-    })
-    .once('end', function () {
-      process.exit();
-    });
-});
-*/
 gulp.task('watch', ['test'], function () {
   gulp.watch(paths.all, ['test']);
 });

@@ -16,8 +16,7 @@
   "scripts": {
     "build": "gulp build",
     "dev": "gulp watch",
-    "test": "gulp test",
-    "browsertest": "gulp browsertest"
+    "test": "gulp test"
   },
   "files": [
     "LICENSE",
