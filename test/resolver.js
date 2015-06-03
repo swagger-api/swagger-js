@@ -620,4 +620,24 @@ describe('swagger resolver', function () {
       done();
     });
   });
+
+  it('resolves relative references from a yaml folder/file', function(done) {
+    var api = new Resolver();
+    var spec = {
+      host: 'http://petstore.swagger.io',
+      basePath: '/v2',
+      paths: {
+        '/health': {
+          $ref: '../yaml/definitions.yaml#/ApiError'
+        }
+      }
+    };
+
+    // should look in http://localhost:8000/foo/bar/swagger.yaml#/paths/health
+    api.resolve(spec, 'http://localhost:8000/common/bar/swagger.json', function (spec, unresolvedRefs) {
+      expect(Object.keys(unresolvedRefs).length).toBe(0);
+      test.object(spec.paths['/health'].get);
+      done();
+    });
+  });
 });
