@@ -11,6 +11,10 @@ var jshint = require('gulp-jshint');
 var mocha  = require('gulp-mocha');
 var pkg = require('./package');
 var source = require('vinyl-source-stream');
+// Browser Unit Tests
+var karma = require('karma').server;
+var karma_config = require('./karma.conf');
+var assign = require('object.assign');
 
 var banner = ['/**',
   ' * <%= pkg.name %> - <%= pkg.description %>',
@@ -103,5 +107,15 @@ gulp.task('test', function () {
 gulp.task('watch', ['test'], function () {
   gulp.watch(paths.all, ['test']);
 });
+
+gulp.task('browsertest', function() {
+  karma.start(karma_config);
+});
+
+gulp.task('watch-browsertest', function(){
+  var opts = assign({}, karma_config, {singleRun: false});
+  karma.start(opts);
+});
+
 
 gulp.task('default', ['clean', 'lint', 'test', 'build']);
