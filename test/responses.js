@@ -25,6 +25,7 @@ var ResponseModel = {
 };
 
 describe('response types', function () {
+
   it('should return a 200 response definition', function () {
     var responses = {
       200:       MonsterResponse,
