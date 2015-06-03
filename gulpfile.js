@@ -100,7 +100,7 @@ gulp.task('test', function () {
     .src(paths.tests)
     .pipe(mocha({reporter: 'spec'}));
 });
-
+/*
 gulp.task('browsertest', function () {
   process.env.NODE_ENV = 'test';
 
@@ -114,7 +114,7 @@ gulp.task('browsertest', function () {
       process.exit();
     });
 });
-
+*/
 gulp.task('watch', ['test'], function () {
   gulp.watch(paths.all, ['test']);
 });
