@@ -108,13 +108,13 @@ gulp.task('watch', ['test'], function () {
   gulp.watch(paths.all, ['test']);
 });
 
-gulp.task('browsertest', function() {
-  karma.start(karma_config);
+gulp.task('browsertest', function(done) {
+  karma.start(karma_config, done);
 });
 
-gulp.task('watch-browsertest', function(){
+gulp.task('watch-browsertest', function(done){
   var opts = assign({}, karma_config, {singleRun: false});
-  karma.start(opts);
+  karma.start(opts, done);
 });
 
 
