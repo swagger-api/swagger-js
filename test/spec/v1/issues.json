@@ -35,7 +35,6 @@
               "code": 200,
               "message": "You got a Test",
               "responseModel": "Test"
-
             },
             {
               "code": 404,
@@ -81,6 +80,17 @@
           ]
         }
       ]
+    },
+    {
+      "path": "/required",
+      "operations": [
+        {
+          "method": "GET",
+          "summary": "required properties",
+          "type": "TestRequired",
+          "nickname": "getRequired"
+        }
+      ]
     }
   ],
   "models": {
@@ -92,6 +102,20 @@
         },
         "two": {
           "type": "number"
+        }
+      }
+    },
+    "TestRequired": {
+      "id": "TestRequired",
+      "required": [
+        "one"
+      ],
+      "properties": {
+        "one": {
+          "type": "string"
+        },
+        "two": {
+          "type": "integer"
         }
       }
     }
