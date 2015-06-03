@@ -3129,7 +3129,7 @@ Operation.prototype.setContentTypes = function (args, opts) {
   }
 
   if (accepts && this.produces) {
-    if (this.produces.indexOf(accepts) === -1) {
+    if (this.produces.indexOf(accepts) === -1 && this.operation.produces != '*/*') {
       helpers.log('server can\'t produce ' + accepts);
     }
   }
