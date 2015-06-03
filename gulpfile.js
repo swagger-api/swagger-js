@@ -72,9 +72,9 @@ gulp.task('build', function (cb) {
       standalone: 'SwaggerClient'
     });
 
-    if (!useDebug) {
-      b.transform({global: true}, 'uglifyify');
-    }
+    // if (!useDebug) {
+    //   b.transform({global: true}, 'uglifyify');
+    // }
 
     b.transform('brfs')
       .bundle()
