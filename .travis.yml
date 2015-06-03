@@ -7,3 +7,4 @@ script:
   - sh -e /etc/init.d/xvfb start
   - npm install
   - npm test
+  - npm run browsertest
