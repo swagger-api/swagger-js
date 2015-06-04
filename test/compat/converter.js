@@ -240,7 +240,7 @@ describe('converts specs', function () {
     }});
   });
 
-  var issues_spec;
+  var issuesSpec;
   describe('edge cases for v1.2', function() {
 
     before(function(done){
@@ -254,20 +254,21 @@ describe('converts specs', function () {
         var converter = new SwaggerSpecConverter();
         converter.setDocumentationLocation('http://localhost:8001/v1/api-docs');
         converter.convert(data.obj, {}, function(swagger) {
-          issues_spec = swagger;
+          issuesSpec = swagger;
           done();
         });
-      }
+      };
+
       obj.on.error = function(err){
         console.log('err', err);
-      }
+      };
 
       // Get/convert our spec
       new SwaggerHttp().execute(obj);
     });
 
     it('handles operation.responseModel', function () {
-      var spec = issues_spec;
+      var spec = issuesSpec;
 
       var operation = spec.paths['/responseModels'].get;
       expect(Object.keys(operation.responses).length).toBe(3); // 200 + 400 + default
@@ -279,7 +280,7 @@ describe('converts specs', function () {
 
     it('carries over schema.required array', function () {
       // sanity test
-      var spec = issues_spec;
+      var spec = issuesSpec;
       expect(spec.swagger).toBe('2.0');
 
 
