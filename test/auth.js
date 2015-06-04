@@ -1,14 +1,12 @@
-/* global  beforeEach, describe, it */
+/* global  after, before, beforeEach, describe, it */
 
 'use strict';
 
 var expect = require('chai').expect;
-var nock = require('nock');
-var petstore;
-var domain = 'http://example.com';
+var fauxjax = require('faux-jax');
 
 var Swagger = require('..');
-var Auth = require('./auth');
+var petstore;
 
 
 /**
@@ -17,6 +15,14 @@ var Auth = require('./auth');
  */
 
 describe('2.0 authorizations', function () {
+
+  before(function(){
+    fauxjax.install(); // Mock http requests
+  });
+
+  after(function(){
+    fauxjax.restore(); // Restore globals that were mocked
+  });
 
   beforeEach(function(done){
     petstore = new Swagger({
@@ -32,7 +38,7 @@ describe('2.0 authorizations', function () {
 
     // I don't really care what it adds...
     var auth = {foo: 'bar'};
-    var client = new Swagger('',{
+    var client = new Swagger({
       authorizations: {
         'someAuth': auth
       }
@@ -43,19 +49,20 @@ describe('2.0 authorizations', function () {
   });
 
   it('should have auth available when fetching the spec', function(done){
-    var uri = '/somespec.json';
+    var url = 'http://example.com/not_important';
 
     // Mock out the request, will only allow one request
-    nock(domain)
-      .get(uri)
-      .reply(function () {
-        expect(this.req.headers).to.include.keys('swagger');
-        expect(this.req.headers.swagger).to.equal('awesome');
-        return {swagger: '2.0', title: 'test'}; // minimal, so that we don't break anything
-      });
+    fauxjax.on('request', function (req) {
+
+      expect(req.requestHeaders).to.include.keys('swagger');
+      expect(req.requestHeaders.swagger).to.equal('awesome');
+
+      // Send something back, so we don't crash swagger
+      req.respond( 200, { }, JSON.stringify({swagger: '2.0', title: 'test'}));
+    });
 
     var swag = new Swagger({
-      url: domain + uri,
+      url: url,
       authorizations: {
         someAuth: function () {
           this.headers.swagger  = 'awesome';
@@ -67,6 +74,7 @@ describe('2.0 authorizations', function () {
       },
       failure: function (err) { throw err; }
     });
+
 
   });
 
