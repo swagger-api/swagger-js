@@ -59,7 +59,7 @@
     "karma-mocha": "^0.1.10",
     "karma-source-map-support": "^1.0.0",
     "mocha": "^1.21.3",
-    "nock": "^2.0.1",
+    "nock": "^2.3.0",
     "object.assign": "^3.0.0",
     "selenium-webdriver": "^2.45.1",
     "uglifyify": "^3.0.1",
