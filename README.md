@@ -195,7 +195,7 @@ gulp coverage
 License
 -------
 
-Copyright 2011-2015 Reverb Technologies, Inc.
+Copyright 2011-2015 SmartBear Technologies, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
