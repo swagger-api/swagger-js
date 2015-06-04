@@ -9,7 +9,6 @@ var Resolver = require('../lib/resolver');
 var instance;
 
 describe('swagger resolver', function () {
-/*
   before(function (done) {
     mock.petstore(done, function (petstore, server){
       instance = server;
@@ -20,7 +19,7 @@ describe('swagger resolver', function () {
     instance.close();
     done();
   });
-*/
+
   it('resolves a model with composition', function (done) {
     var api = new Resolver();
     var spec = {
@@ -96,6 +95,7 @@ describe('swagger resolver', function () {
     };
 
     api.resolve(spec, 'http://localhost:8000/v2/petstore.json', function (spec, unresolved) {
+      expect(Object.keys(unresolved).length).toBe(0);
       test.object(spec.definitions.Monster);
       var properties = spec.definitions.Monster.properties;
       test.object(properties.name);
@@ -220,7 +220,8 @@ describe('swagger resolver', function () {
     };
 
     api.resolve(spec, 'http://localhost:8000/v2/petstore.json', function (spec, unresolved) {
-      console.log(JSON.stringify(spec, null, 2));
+      expect(Object.keys(unresolved).length).toBe(0);
+      test.object(spec);
       done();
     });
   });

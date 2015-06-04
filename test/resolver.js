@@ -25,8 +25,8 @@ describe('swagger resolver', function () {
     var api = new Resolver();
     var spec = {};
 
-    api.resolve(spec, function (spec, unresolvedRefs) {
-      expect(Object.keys(unresolvedRefs).length).toBe(0);
+    api.resolve(spec, function (spec, unresolved) {
+      expect(Object.keys(unresolved).length).toBe(0);
       done();
     });
   });
@@ -61,8 +61,8 @@ describe('swagger resolver', function () {
       }
     };
 
-    api.resolve(spec, function (spec, unresolvedRefs) {
-      expect(unresolvedRefs['http://localhost:8000/v2/petstore.jsonZZZ#/definitions/Category']).toEqual(
+    api.resolve(spec, function (spec, unresolved) {
+      expect(unresolved['http://localhost:8000/v2/petstore.jsonZZZ#/definitions/Category']).toEqual(
         {
           root: 'http://localhost:8000/v2/petstore.jsonZZZ',
           location: '/definitions/Category'
@@ -84,8 +84,8 @@ describe('swagger resolver', function () {
       }
     };
 
-    api.resolve(spec, function (spec, unresolvedRefs) {
-      expect(unresolvedRefs['http://localhost:8000/v2/petstore.json#/definitionz/Category']).toEqual(
+    api.resolve(spec, function (spec, unresolved) {
+      expect(unresolved['http://localhost:8000/v2/petstore.json#/definitionz/Category']).toEqual(
         {
           root: 'http://localhost:8000/v2/petstore.json',
           location: '/definitionz/Category'
@@ -107,8 +107,8 @@ describe('swagger resolver', function () {
       }
     };
 
-    api.resolve(spec, function (spec, unresolvedRefs) {
-      expect(unresolvedRefs['http://localhost:8000/v2/petstore.json#/definition/Categoryzzz']).toEqual({
+    api.resolve(spec, function (spec, unresolved) {
+      expect(unresolved['http://localhost:8000/v2/petstore.json#/definition/Categoryzzz']).toEqual({
         root: 'http://localhost:8000/v2/petstore.json',
         location: '/definition/Categoryzzz'
       });
@@ -244,8 +244,8 @@ describe('swagger resolver', function () {
       }
     };
 
-    api.resolve(spec, 'http://localhost:8000/v2/petstore.json', function (spec, unresolvedRefs) {
-      expect(unresolvedRefs['#/parameters/sharedSkipz']).toEqual({
+    api.resolve(spec, 'http://localhost:8000/v2/petstore.json', function (spec, unresolved) {
+      expect(unresolved['#/parameters/sharedSkipz']).toEqual({
         root: 'http://localhost:8000/v2/petstore.json',
         location: '/parameters/sharedSkipz' });
       done();
@@ -309,8 +309,8 @@ describe('swagger resolver', function () {
       }
     };
 
-    api.resolve(spec, 'http://localhost:8000/v2/petstore.json', function (spec, unresolvedRefs) {
-      expect(unresolvedRefs['http://localhost:8000/v2/petstore.json#/parameters/sharedSkipz']).toEqual({
+    api.resolve(spec, 'http://localhost:8000/v2/petstore.json', function (spec, unresolved) {
+      expect(unresolved['http://localhost:8000/v2/petstore.json#/parameters/sharedSkipz']).toEqual({
         root: 'http://localhost:8000/v2/petstore.json',
         location: '/parameters/sharedSkipz' 
       });
@@ -507,8 +507,8 @@ describe('swagger resolver', function () {
     };
 
     // should look in http://localhost:8000/foo/bar/swagger.json#/paths/health
-    api.resolve(spec, 'http://localhost:8000/foo/bar/swagger.json', function (spec, unresolvedRefs) {
-      expect(unresolvedRefs.Category).toEqual({
+    api.resolve(spec, 'http://localhost:8000/foo/bar/swagger.json', function (spec, unresolved) {
+      expect(unresolved.Category).toEqual({
         root: 'http://localhost:8000/foo/bar/swagger.json',
         location: '/paths/health'
       });
@@ -571,8 +571,8 @@ describe('swagger resolver', function () {
     };
 
     // should look in http://localhost:8000/foo/bar/swagger.json#/paths/health
-    api.resolve(spec, 'http://localhost:8000/foo/bar/swagger.json', function (spec, unresolvedRefs) {
-      expect(unresolvedRefs['definitions.yaml#/MyResource']).toEqual({
+    api.resolve(spec, 'http://localhost:8000/foo/bar/swagger.json', function (spec, unresolved) {
+      expect(unresolved['definitions.yaml#/MyResource']).toEqual({
         root: 'http://localhost:8000/foo/bar/definitions.yaml',
         location: '/MyResource'
       });
@@ -593,8 +593,8 @@ describe('swagger resolver', function () {
     };
 
     // should look in http://localhost:8000/foo/bar/swagger.json#/paths/health
-    api.resolve(spec, 'http://localhost:8000/foo/bar/swagger.json', function (spec, unresolvedRefs) {
-      expect(unresolvedRefs['/specific-domain/definitions.yaml#/MyResource']).toEqual({
+    api.resolve(spec, 'http://localhost:8000/foo/bar/swagger.json', function (spec, unresolved) {
+      expect(unresolved['/specific-domain/definitions.yaml#/MyResource']).toEqual({
         root: 'http://localhost:8000/specific-domain/definitions.yaml',
         location: '/MyResource'
       });
@@ -615,7 +615,8 @@ describe('swagger resolver', function () {
     };
 
     // should look in http://localhost:8000/foo/bar/swagger.json#/paths/health
-    api.resolve(spec, 'http://localhost:8000/common/bar/swagger.json', function (spec, unresolvedRefs) {
+    api.resolve(spec, 'http://localhost:8000/common/bar/swagger.json', function (spec, unresolved) {
+      expect(Object.keys(unresolved).length).toBe(1);
       test.object(spec.paths['/health'].get);
       done();
     });
@@ -634,8 +635,8 @@ describe('swagger resolver', function () {
     };
 
     // should look in http://localhost:8000/foo/bar/swagger.yaml#/paths/health
-    api.resolve(spec, 'http://localhost:8000/common/bar/swagger.json', function (spec, unresolvedRefs) {
-      expect(Object.keys(unresolvedRefs).length).toBe(0);
+    api.resolve(spec, 'http://localhost:8000/common/bar/swagger.json', function (spec, unresolved) {
+      expect(Object.keys(unresolved).length).toBe(0);
       test.object(spec.paths['/health'].get);
       done();
     });
