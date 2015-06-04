@@ -8,7 +8,7 @@
   "info": {
     "title": "Issues and edge cases",
     "description": "This is a collection of edge cases for testing purpose",
-    "termsOfServiceUrl": "http://helloreverb.com/terms/",
+    "termsOfServiceUrl": "http://swagger.io/terms/",
     "contact": "apiteam@swagger.io",
     "license": "Apache 2.0",
     "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0.html"
