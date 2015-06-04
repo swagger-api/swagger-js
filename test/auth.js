@@ -21,6 +21,20 @@ describe('2.0 authorizations', function () {
     done();
   });
 
+  it('adds given hash to the auth object', function(){
+
+    // I don't really care what it adds...
+    var auth = {foo: 'bar'};
+    var client = new swagger('',{
+      authorizations: {
+        'someAuth': auth
+      }
+    });
+
+    expect(client.clientAuthorizations.authz.someAuth).toExist().toBe(auth);
+
+  });
+
   it('applies an api key to the query string', function () {
     var params = { petId: 1 };
     var opts = {
