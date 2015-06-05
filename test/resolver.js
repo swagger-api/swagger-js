@@ -312,7 +312,7 @@ describe('swagger resolver', function () {
     api.resolve(spec, 'http://localhost:8000/v2/petstore.json', function (spec, unresolved) {
       expect(unresolved['http://localhost:8000/v2/petstore.json#/parameters/sharedSkipz']).toEqual({
         root: 'http://localhost:8000/v2/petstore.json',
-        location: '/parameters/sharedSkipz' 
+        location: '/parameters/sharedSkipz'
       });
       done();
     });
@@ -690,7 +690,6 @@ describe('swagger resolver', function () {
 
     // should look in http://localhost:8000/foo/bar/swagger.yaml#/paths/health
     api.resolve(spec, 'http://localhost:8000/swagger.json', function (spec, unresolved) {
-      console.log(JSON.stringify(spec, null, 2));
       expect(spec.paths['/users'].get.parameters.length).toBe(2);
       expect(Object.keys(unresolved).length).toBe(0);
       test.object(spec.paths['/health'].get);
