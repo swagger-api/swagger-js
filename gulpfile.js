@@ -117,8 +117,8 @@ gulp.task('browsertest', function(done) {
 gulp.task('connect', function () {
   connect.server({
     livereload: false,
-    root: __dirname + '/test/spec',
-    port: 8080,
+    root: __dirname + '/test/spec/v2',
+    port: 8000,
     middleware: function (a,b) {
       return [ cors(a,b) ];
     }
