@@ -26,8 +26,7 @@ var banner = ['/**',
 var basename = 'swagger-client';
 var paths = {
   sources: ['index.js', 'lib/**/*.js'],
-  tests: ['test/*.js', 'test/compat/*.js', '!test/browser/*.js'],
-  browserTests: ['test/browser/*.js'],
+  tests: ['test/*.js', 'test/compat/*.js', 'test/both/*.js'],
   dist: 'browser'
 };
 
