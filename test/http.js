@@ -13,8 +13,8 @@ describe('yaml http', function () {
 
     before(function (done) {
       mock.petstore(done,{
-        url: 'http://localhost:8000/v2/petstore.yaml',
-        swaggerRequestHeaders: 'application/yaml',
+        url: 'http://localhost:8000/v2/petstore.yaml'
+        /*,swaggerRequestHeaders: 'application/yaml',*/
       }, function (petstore, server){
         sample = petstore;
         instance = server;
