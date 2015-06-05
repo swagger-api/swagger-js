@@ -14,8 +14,9 @@ describe('petstore', function () {
     });
   });
 
+// disabled because this has to be run in a browser
+/*
   it('should create body when file parameter present', function () {
-
     var req = client.pet.uploadFile({
       petId: 1,
       file: new Blob(['Hello World'], {type: 'text/plain'})
@@ -28,5 +29,5 @@ describe('petstore', function () {
     expect(req.body).to.have.property('type');
     expect(req.body.type).to.equal('formData');
   });
-
+*/
 });
