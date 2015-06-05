@@ -12,7 +12,7 @@
   "homepage": "http://swagger.io",
   "repository": {
     "type": "git",
-    "url": "git://github.com/swagger-api/swagger-client.git"
+    "url": "https://github.com/swagger-api/swagger-js.git"
   },
   "main": "index.js",
   "scripts": {
