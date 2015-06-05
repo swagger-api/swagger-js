@@ -584,5 +584,31 @@ describe('operations', function () {
     expect(p.allowableValues.descriptiveValues[1].isDefault).toBe(true); // false is the default
   });
 
+  it('should omit */* warnings', function() {
+    var parameters = [
+      quantityQP
+    ];
+    var op = new Operation({}, 'http', 'test', 'get', '/path', { parameters: parameters },
+                                   {}, {}, new auth.SwaggerAuthorizations());
+    expect(op.matchesAccept('application/json')).toEqual(true);
+
+    expect(op.matchesAccept('text/html')).toEqual(false);
+
+    op.produces.push('*/*');
+    expect(op.matchesAccept('text/html')).toEqual(true);
+    expect(op.matchesAccept('application/json')).toEqual(true);
+
+    op.produces = ['*/*'];
+    expect(op.matchesAccept('text/html')).toEqual(true);
+    expect(op.matchesAccept('application/json')).toEqual(true);
+
+    // no accepts, no produces, no problem!
+    expect(op.matchesAccept()).toEqual(true);
+
+    op.produces = undefined;
+    expect(op.matchesAccept()).toEqual(true);
+    expect(op.matchesAccept('application/json')).toEqual(true);
+  });
+
 });
 
