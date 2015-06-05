@@ -1,6 +1,6 @@
 {
   "name": "swagger-js",
-  "version": "2.1.6-M2",
+  "version": "2.1.7-M2",
   "main": "browser/swagger-client.js",
   "ignore": [
     "gulpfile.js",
@@ -16,7 +16,7 @@
   "license": "apache 2.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/swagger-api/swagger-client.git"
+    "url": "git://github.com/swagger-api/swagger-js.git"
   },
   "homepage": "http://swagger.io",
   "moduleType": [ "globals" ],

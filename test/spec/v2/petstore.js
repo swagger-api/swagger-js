@@ -4,7 +4,7 @@ exports.spec = {
     "description": "This is a sample server Petstore server.  You can find out more about Swagger at <a href=\"http://swagger.io\">http://swagger.io</a> or on irc.freenode.net, #swagger.  For this sample, you can use the api key \"special-key\" to test the authorization filters",
     "version": "1.0.0",
     "title": "Swagger Petstore",
-    "termsOfService": "http://helloreverb.com/terms/",
+    "termsOfService": "http://swagger.io/terms/",
     "contact": {
       "name": "apiteam@swagger.io"
     },
@@ -763,7 +763,7 @@ exports.spec = {
     },
     "petstore_auth": {
       "type": "oauth2",
-      "authorizationUrl": "http://petstore.swagger.wordnik.com/api/oauth/dialog",
+      "authorizationUrl": "http://petstore.swagger.io/api/oauth/dialog",
       "flow": "implicit",
       "scopes": {
         "write:pets": "modify pets in your account",

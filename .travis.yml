@@ -3,5 +3,8 @@ language: node_js
 node_js:
   - '0.10'
 script:
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
   - npm install
-  - mocha
+  - npm test
+  - npm run browsertest

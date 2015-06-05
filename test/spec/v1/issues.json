@@ -1,0 +1,123 @@
+{
+  "apiVersion": "1.0.0",
+  "swaggerVersion": "1.2",
+  "basePath": "http://petstore.swagger.io/api",
+  "produces": [
+    "application/json"
+  ],
+  "info": {
+    "title": "Issues and edge cases",
+    "description": "This is a collection of edge cases for testing purpose",
+    "termsOfServiceUrl": "http://swagger.io/terms/",
+    "contact": "apiteam@swagger.io",
+    "license": "Apache 2.0",
+    "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0.html"
+  },
+  "apis": [
+    {
+      "path": "/responseModels",
+      "operations": [
+        {
+          "method": "GET",
+          "type": "Test",
+          "nickname": "getTest",
+          "parameters": [
+            {
+              "name": "testParam1",
+              "description": "Test parameter one",
+              "required": false,
+              "type": "string",
+              "paramType": "query"
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": 200,
+              "message": "You got a Test",
+              "responseModel": "Test"
+            },
+            {
+              "code": 404,
+              "message": "You got no Test"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "/pet/findByStatus",
+      "operations": [
+        {
+          "method": "GET",
+          "summary": "Finds Pets by status",
+          "notes": "Multiple status values can be provided with comma seperated strings",
+          "type": "array",
+          "items": {
+            "$ref": "Pet"
+          },
+          "nickname": "findPetsByStatus",
+          "authorizations": {},
+          "parameters": [
+            {
+              "name": "status",
+              "description": "Status values that need to be considered for filter",
+              "defaultValue": "available",
+              "required": true,
+              "type": "string",
+              "paramType": "query",
+              "enum": [
+                "available",
+                "pending",
+                "sold"
+              ]
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": 400,
+              "message": "Invalid status value"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "/required",
+      "operations": [
+        {
+          "method": "GET",
+          "summary": "required properties",
+          "type": "TestRequired",
+          "nickname": "getRequired"
+        }
+      ]
+    }
+  ],
+  "models": {
+    "Test": {
+      "id": "Test",
+      "properties": {
+        "one": {
+          "type": "string"
+        },
+        "two": {
+          "type": "number"
+        }
+      }
+    },
+    "TestRequired": {
+      "id": "TestRequired",
+      "required": [
+        "one"
+      ],
+      "properties": {
+        "one": {
+          "type": "string"
+        },
+        "two": {
+          "type": "integer"
+        }
+      }
+    }
+  }
+}

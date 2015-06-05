@@ -17,16 +17,19 @@ npm install swagger-client
 
 Then let swagger do the work!
 ```js
-var client = require("swagger-client")
+var client = require('swagger-client');
 
 var swagger = new client({
   url: 'http://petstore.swagger.io/v2/swagger.json',
   success: function() {
-    swagger.apis.pet.getPetById({petId:1});
+    swagger.pet.getPetById({petId:7},{responseContentType: 'application/json'},function(pet){
+      console.log('pet', pet);
+    });
   }
 });
-
 ```
+
+NOTE: we're explicitly setting the responseContentType, because we don't want you getting stuck when there is more than one content type available.
 
 That's it!  You'll get a JSON response with the default callback handler:
 
@@ -80,7 +83,7 @@ Download `browser/swagger-client.js` into your webapp:
     url: "http://petstore.swagger.io/api/api-docs",
     success: function() {
       // upon connect, fetch a pet and set contents to element "mydata"
-      swagger.apis.pet.getPetById({petId:1}, function(data) {
+      swagger.apis.pet.getPetById({petId:1},{responseContentType: 'application/json'}, function(data) {
         document.getElementById("mydata").innerHTML = JSON.stringify(data.obj);
       });
     }
@@ -187,7 +190,7 @@ gulp coverage
 License
 -------
 
-Copyright 2011-2015 Reverb Technologies, Inc.
+Copyright 2011-2015 SmartBear Software
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
