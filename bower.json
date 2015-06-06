@@ -1,6 +1,6 @@
 {
   "name": "swagger-js",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "main": "browser/swagger-client.js",
   "ignore": [
     "gulpfile.js",
@@ -13,7 +13,7 @@
   ],
   "description": "swagger-client is a javascript client for use with swaggering APIs.",
   "authors": [ "Tony Tam <fehguy@gmail.com>", "jcscoobyrs@gmail.com" ],
-  "license": "apache 2.0",
+  "license": "Apache 2.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/swagger-api/swagger-js.git"
