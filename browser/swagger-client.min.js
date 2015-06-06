@@ -1,6 +1,6 @@
 /**
  * swagger-client - swagger-client is a javascript client for use with swaggering APIs.
- * @version v2.1.0
+ * @version v2.1.1
  * @link http://swagger.io
  * @license apache 2.0
  */
