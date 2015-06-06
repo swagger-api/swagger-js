@@ -13,7 +13,7 @@ var pkg = require('./package');
 var source = require('vinyl-source-stream');
 // Browser Unit Tests
 var karma = require('karma').server;
-var karma_config = require('./karma.conf');
+var karmaConfig = require('./karma.conf');
 var assign = require('object.assign');
 var connect = require('gulp-connect');
 var cors = require('connect-cors');
@@ -77,10 +77,6 @@ gulp.task('build', function (cb) {
       standalone: 'SwaggerClient'
     });
 
-    // if (!useDebug) {
-    //   b.transform({global: true}, 'uglifyify');
-    // }
-
     b.transform('brfs')
       .bundle()
       .pipe(source(basename + (!useDebug ? '.min' : '') + '.js'))
@@ -111,7 +107,7 @@ gulp.task('watch', ['test'], function () {
 });
 
 gulp.task('browsertest', function(done) {
-  karma.start(karma_config, done);
+  karma.start(karmaConfig, done);
 });
 
 gulp.task('connect', function () {
@@ -126,7 +122,7 @@ gulp.task('connect', function () {
 });
 
 gulp.task('watch-browsertest', function(done){
-  var opts = assign({}, karma_config, {singleRun: false});
+  var opts = assign({}, karmaConfig, {singleRun: false});
   karma.start(opts, done);
 });
 
