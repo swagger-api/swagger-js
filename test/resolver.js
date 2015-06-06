@@ -20,7 +20,7 @@ describe('swagger resolver', function () {
     instance.close();
     done();
   });
-/*
+
   it('is OK without remote references', function (done) {
     var api = new Resolver();
     var spec = {};
@@ -641,7 +641,7 @@ describe('swagger resolver', function () {
       done();
     });
   });
-*/
+
   it('resolves multiple path refs', function(done) {
     var api = new Resolver();
     var spec = {
@@ -671,16 +671,16 @@ describe('swagger resolver', function () {
             ],
             responses: {
               200: {
-                description: "Users in the system",
+                description: 'Users in the system',
                 schema: {
-                  type: "array",
+                  type: 'array',
                   items: {
-                    $ref: "http://localhost:8000/v2/models.json#/Health"
+                    $ref: 'http://localhost:8000/v2/models.json#/Health'
                   }
                 }
               },
               404: {
-                $ref: "http://localhost:8000/v2/responses.json#/NotFoundError"
+                $ref: 'http://localhost:8000/v2/responses.json#/NotFoundError'
               }
             }
           }
