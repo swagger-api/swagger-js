@@ -70,9 +70,9 @@ describe('swagger resolver', function () {
         Monster: {
           allOf : [
             {
-              $ref: '#/definitions/Animal'
-            }, {
               $ref: '#/definitions/Ghoul'
+            }, {
+              $ref: '#/definitions/Pet'
             }, {
               properties: {
                 hasScales: {
@@ -102,12 +102,10 @@ describe('swagger resolver', function () {
       expect(properties.name['x-resolved-from']).toBe('#/definitions/Animal');
       test.object(properties.type);
       expect(properties.type['x-resolved-from']).toBe('#/definitions/Animal');
-      test.object(properties.firstName);
-      expect(properties.firstName['x-resolved-from']).toBe('#/definitions/Animal');
-      test.object(properties.lastName);
-      expect(properties.lastName['x-resolved-from']).toBe('#/definitions/Animal');
+      test.undefined(properties.firstName);
+      test.undefined(properties.lastName);
       test.object(properties.isDomestic);
-      expect(properties.isDomestic['x-resolved-from']).toBe('#/definitions/Animal');
+      expect(properties.isDomestic['x-resolved-from']).toBe('#/definitions/Pet');
       test.object(properties.fangs);
       expect(properties.fangs['x-resolved-from']).toBe('#/definitions/Ghoul');
       test.object(properties.hasScales);
