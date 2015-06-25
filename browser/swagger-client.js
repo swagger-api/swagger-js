@@ -1493,6 +1493,9 @@ Resolver.prototype.resolveAllOf = function(spec, obj, depth) {
   var name;
   for(var key in obj) {
     var item = obj[key];
+    if(item === null) {
+      throw new TypeError("Swagger 2.0 does not support null types (" + obj + ").  See https://github.com/swagger-api/swagger-spec/issues/229.")
+    }
     if(item && typeof item.allOf !== 'undefined') {
       var allOf = item.allOf;
       if(Array.isArray(allOf)) {
