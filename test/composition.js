@@ -102,16 +102,24 @@ describe('swagger resolver', function () {
       expect(properties.name['x-resolved-from']).toBe('#/definitions/Animal');
       test.object(properties.type);
       expect(properties.type['x-resolved-from']).toBe('#/definitions/Animal');
-      test.object(properties.firstName);
-      expect(properties.firstName['x-resolved-from']).toBe('#/definitions/Animal');
-      test.object(properties.lastName);
-      expect(properties.lastName['x-resolved-from']).toBe('#/definitions/Animal');
-      test.object(properties.isDomestic);
-      expect(properties.isDomestic['x-resolved-from']).toBe('#/definitions/Animal');
       test.object(properties.fangs);
       expect(properties.fangs['x-resolved-from']).toBe('#/definitions/Ghoul');
       test.object(properties.hasScales);
       expect(properties.hasScales['x-resolved-from']).toBe('self');
+
+      properties = spec.definitions.Pet.properties;
+      test.object(properties.name);
+      expect(properties.name['x-resolved-from']).toBe('#/definitions/Animal');
+      test.object(properties.isDomestic);
+      expect(properties.isDomestic['x-resolved-from']).toBe('self');
+
+      properties = spec.definitions.Human.properties;
+      test.object(properties.name);
+      expect(properties.name['x-resolved-from']).toBe('#/definitions/Animal');
+      test.object(properties.lastName);
+      expect(properties.lastName['x-resolved-from']).toBe('self');
+
+      test.undefined(spec.definitions.Animal.properties.firstName);
       done();
     });
   });
@@ -176,7 +184,7 @@ describe('swagger resolver', function () {
                 petType: {
                   type: 'string',
                   enum: [ 'dog' ]
-                },                
+                },
                 packSize: {
                   type: 'integer',
                   format: 'int32',
@@ -202,7 +210,7 @@ describe('swagger resolver', function () {
                 petType: {
                   type: 'string',
                   enum: [ 'fish' ]
-                },                
+                },
                 fins: {
                   type: 'integer',
                   format: 'int32',
