@@ -110,6 +110,7 @@ describe('swagger resolver', function () {
       expect(properties.fangs['x-resolved-from']).toBe('#/definitions/Ghoul');
       test.object(properties.hasScales);
       expect(properties.hasScales['x-resolved-from']).toBe('self');
+      test.undefined(spec.definitions.Animal.properties.firstName);
       done();
     });
   });
