@@ -382,6 +382,15 @@
             "required": true,
             "type": "integer",
             "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Pet extra params that needs to be deleted",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/Pet"
+            }
           }
         ],
         "responses": {
