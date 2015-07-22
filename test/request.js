@@ -333,3 +333,60 @@ describe('swagger request functions', function () {
     expect(req.url).toBe('http://localhost:8000/v2/api/pet/foo%2Fbar');
   });
 });
+
+
+describe('swagger host override functions', function () {
+  before(function (done) {
+    mock.petstore(done, function (petstore, server){
+      sample = petstore;
+      instance = server;
+    });
+  });
+
+  after(function (done){
+    instance.close();
+
+    sample.clientAuthorizations.authz = {};
+    done();
+  });
+
+  it('overrides a host https://github.com/swagger-api/swagger-ui/issues/532', function () {
+    sample.setHost('foo:9000');
+    var petApi = sample.pet;
+    var req = petApi.getPetById({petId: 'foo/bar'}, {mock: true});
+
+    test.object(req);
+
+    expect(req.method).toBe('GET');
+    expect(req.headers.Accept).toBe('application/json');
+    expect(req.url).toBe('http://foo:9000/v2/api/pet/foo%2Fbar');
+  });
+});
+
+describe('swagger basePath override functions', function () {
+  before(function (done) {
+    mock.petstore(done, function (petstore, server){
+      sample = petstore;
+      instance = server;
+    });
+  });
+
+  after(function (done){
+    instance.close();
+
+    sample.clientAuthorizations.authz = {};
+    done();
+  });
+
+  it('overrides a basePath https://github.com/swagger-api/swagger-ui/issues/532', function () {
+    sample.setBasePath('/bar');
+    var petApi = sample.pet;
+    var req = petApi.deletePet({petId: 'foo/bar'}, {mock: true});
+
+    test.object(req);
+
+    expect(req.method).toBe('DELETE');
+    expect(req.headers.Accept).toBe('application/json');
+    expect(req.url).toBe('http://localhost:8000/bar/pet/foo%2Fbar');
+  });
+});
