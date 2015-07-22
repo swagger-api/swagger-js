@@ -150,7 +150,7 @@ describe('swagger request functions', function () {
     expect(req.body).toEqual('name=monster&status=miserable%20dog');
   });
 
-  it('generate a DELETE request', function () {
+  it('generate a DELETE request with no body', function () {
     var petApi = sample.pet;
     var req = petApi.deletePet({petId: 100}, {mock: true});
 
@@ -161,6 +161,19 @@ describe('swagger request functions', function () {
     expect(req.headers['Content-Type']).toBe(undefined);
     expect(req.url).toBe('http://localhost:8000/v2/api/pet/100');
     expect(req.body).toBe(undefined);
+  });
+
+  it('generate a DELETE request with body', function () {
+    var petApi = sample.pet;
+    var req = petApi.deletePet({petId: 100, body: {id: 100, name: 'gorilla'}}, {mock: true});
+
+    test.object(req);
+
+    expect(req.method).toBe('DELETE');
+    expect(req.headers.Accept).toBe('application/json');
+    expect(req.headers['Content-Type']).toBe('application/json');
+    expect(req.url).toBe('http://localhost:8000/v2/api/pet/100');
+    expect(req.body).toEqual({ id: 100, name: 'gorilla' });
   });
 
   it('escape an operation id', function () {
