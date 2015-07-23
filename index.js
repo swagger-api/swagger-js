@@ -40,3 +40,4 @@ SwaggerClient.PasswordAuthorization = auth.PasswordAuthorization;
 SwaggerClient.CookieAuthorization = auth.CookieAuthorization;
 SwaggerClient.SwaggerApi = deprecationWrapper;
 SwaggerClient.SwaggerClient = deprecationWrapper;
+SwaggerClient.SchemaMarkup = require('./lib/schema-markup');

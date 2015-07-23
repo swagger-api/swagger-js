@@ -5,23 +5,26 @@ var fauxjax = require('faux-jax');
 
 var Swagger = require('../../');
 var fs = require('fs');
-var petstoreYaml = fs.readFileSync(__dirname + '/../spec/v2/petstore.yaml', 'utf8'); // browserify with brfs with inline this for browser
+var petstoreYaml = fs.readFileSync(__dirname + '/../spec/v2/petstore.yaml', 'utf8'); // browserify with brfs will inline this for browser
 var petstore;
 
 describe('yaml http', function () {
 
-  describe('superagent', function(){
+  before(function(){
+    fauxjax.install();
+  });
 
-    // after(function(){
-    //   fauxjax.restore(); // Restore globals that were mocked
-    // });
+  after(function(){
+    fauxjax.restore();
+    fauxjax.removeAllListeners();
+  });
+
+  describe('superagent', function(){
 
     it('should fetch/parse petstore.yaml', function(done){
       // Mock our request
-      fauxjax.install();
-      fauxjax.on('request', function (req) {
+      fauxjax.once('request', function (req) {
         req.respond( 200, { }, petstoreYaml);
-        fauxjax.restore(); // Restore globals that were mocked
       });
 
       petstore = new Swagger({

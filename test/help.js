@@ -60,4 +60,14 @@ describe('help options', function () {
 
     expect(curl).toBe('curl -X GET --header "Accept: application/json" --header "name: tony" --header "age: 42" "http://localhost/path"');
   });
+
+  it('prints a curl statement with custom content-type', function () {
+    var op = new Operation({}, 'http', 'test', 'get', '/path', {summary: 'test operation'}, {}, {},
+        new auth.SwaggerAuthorizations());
+    var curl = op.asCurl({}, {
+      responseContentType: 'application/xml'
+    });
+
+    expect(curl).toBe('curl -X GET --header "Accept: application/xml" "http://localhost/path"');
+  });
 });
