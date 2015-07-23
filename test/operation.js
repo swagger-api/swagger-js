@@ -610,5 +610,26 @@ describe('operations', function () {
     expect(op.matchesAccept('application/json')).toEqual(true);
   });
 
-});
+  it('should post array parameters in formData, multi',function() {
+    var parameters = [
+      {
+        name: 'stringArray',
+        in: 'formData',
+        type: 'array',
+        items: {
+          type: 'string',
+        },
+        collectionFormat: 'multi'
+      }
+    ];
+    var op = new Operation({}, 'http', 'test', 'post', '/path', { parameters: parameters },
+                                   {}, {}, new auth.SwaggerAuthorizations());
 
+    op.setContentTypes({}, { requestContentType: 'multipart/form-data'});
+    var args = { stringArray: ['foo', 'bar'] };
+    var opts = {mock: true};
+    var obj = op.execute(args, opts);
+    expect(obj.body).toEqual("stringArray=foo&stringArray=bar");
+  });
+
+});
