@@ -15,6 +15,12 @@ Install swagger-client:
 npm install swagger-client
 ```
 
+or:
+
+```
+bower install swagger-js
+```
+
 Then let swagger do the work!
 ```js
 var client = require('swagger-client');
