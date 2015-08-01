@@ -266,6 +266,7 @@ describe('operations', function () {
     ];
     var op = new Operation({}, 'http', 'test', 'get', '/path/{a-0}/', { parameters: parameters },
                                    {}, {}, new auth.SwaggerAuthorizations());
+    debugger;
     var url = op.urlify(
       {'a-0': 'foo'}
     );
