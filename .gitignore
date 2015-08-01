@@ -11,3 +11,4 @@ coverage/
 .classpath
 .project
 .tm_properties
+.DS_Store
