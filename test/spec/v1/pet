@@ -371,7 +371,8 @@
               "description": "Tags to filter by",
               "required": false,
               "type": "string",
-              "paramType": "query"
+              "paramType": "query",
+              "collectionFormat": "multi"
             }
           ],
           "responseMessages": [
