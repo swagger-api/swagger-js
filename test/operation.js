@@ -274,6 +274,33 @@ describe('operations', function () {
     expect(url).toBe('http://localhost/path/foo/');
   });
 
+  it('should correctly sanitize query parameters conforming to RFC 6570', function () {
+    var op = new Operation({}, 'http', 'test', 'get', 'http://someuri.org/{path}/test{?q1,q2}',
+            { parameters: [] },
+            {}, {}, new auth.SwaggerAuthorizations());
+    var url = op.normalizedRfc6570Url( 'http://someuri.org/{path}/test{?q1,q2}');
+
+    expect(url).toBe('http://someuri.org/{path}/test');
+  });
+
+  it('should correctly sanitize query parameters conforming to RFC 6570', function () {
+    var op = new Operation({}, 'http', 'test', 'get',
+            'http://someuri.org/{path}/test?abc=1{&q1,q2}',
+            { parameters: [] },
+            {}, {}, new auth.SwaggerAuthorizations());
+    var url = op.normalizedRfc6570Url( 'http://someuri.org/{path}/test?abc=1{&q1,q2}');
+
+    expect(url).toBe('http://someuri.org/{path}/test?abc=1');
+  });
+
+  it('should correctly sanitize query parameters conforming to RFC 6570', function () {
+    var op = new Operation({}, 'http', 'test', 'get', '/path/{a-0}/', { parameters: [] },
+            {}, {}, new auth.SwaggerAuthorizations());
+    var url = op.normalizedRfc6570Url( 'http://someuri.org/{path}/{test?q1,q2}');
+
+    expect(url).toBe('http://someuri.org/{path}/{test}');
+  });
+
   it('should correctly replace path params with hyphens', function () {
     var parameters = [
       { in: 'path', name: 'year', type: 'string' },
