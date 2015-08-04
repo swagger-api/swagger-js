@@ -266,15 +266,14 @@ describe('operations', function () {
     ];
     var op = new Operation({}, 'http', 'test', 'get', '/path/{a-0}/', { parameters: parameters },
                                    {}, {}, new auth.SwaggerAuthorizations());
-    debugger;
     var url = op.urlify(
       {'a-0': 'foo'}
     );
 
     expect(url).toBe('http://localhost/path/foo/');
   });
-  describe("should correctly sanitize query parameters conforming to RFC 6570", function() {
-    it(', when only initiating query params are present', function() {
+  describe('should correctly sanitize query parameters conforming to RFC 6570', function() {
+    it('when only initiating query params are present', function() {
       var parameters = [
         {in: 'path', name: 'path', type: 'string'},
         {in: 'query', name: 'q1', type: 'string'},
@@ -288,7 +287,7 @@ describe('operations', function () {
       expect(url).toBe('http://someuri.org/{path}/test{?q1,q2}');
     });
 
-    it(', when continuing query params are present', function() {
+    it('when continuing query params are present', function() {
       var parameters = [
         {in: 'path', name: 'path', type: 'string'},
         {in: 'query', name: 'q1', type: 'string'},
@@ -303,7 +302,7 @@ describe('operations', function () {
       expect(url).toBe('http://someuri.org/{path}/test?abc=1{&q1,q2}');
     });
 
-    it(', when query string followed by initiating query params are present', function() {
+    it('when query string followed by initiating query params are present', function() {
       var parameters = [
         {in: 'path', name: 'path', type: 'string'},
         {in: 'query', name: 'q1', type: 'string'},
