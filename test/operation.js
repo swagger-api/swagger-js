@@ -136,6 +136,7 @@ describe('operations', function () {
     expect(url).toBe('http://localhost/path?intArray=3%204%205');
   });
 
+  //NOTE: This use-case while it exists as a test may not really be a valid real-world usecase
   it.skip('should generate a url with queryparams array, brackets', function () {
     var parameters = [
       {
@@ -260,6 +261,7 @@ describe('operations', function () {
     expect(url).toBe('http://localhost/path/foo/bar/bat/baz');
   });
 
+  //NOTE: This usecase should never occur in the wild. Not sure what the history behind this test case is.
   it.skip('should correctly replace path params with hyphens', function () {
     var parameters = [
       { in: 'path', name: 'a-0', type: 'string' }
@@ -272,6 +274,7 @@ describe('operations', function () {
 
     expect(url).toBe('http://localhost/path/foo/');
   });
+
   describe('should correctly sanitize query parameters conforming to RFC 6570', function() {
     it('when only initiating query params are present', function() {
       var parameters = [
