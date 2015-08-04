@@ -231,7 +231,7 @@ describe('converts specs', function () {
   it('creates a request for 1.0 resource', function(done) {
     var client = new SwaggerClient();
     client.initialize('http://localhost:8001/v1/word.json', {success: function () {
-      var args = { word: 'cat' };
+      var args = { word: 'cat', format: 'json' };
       var opts = { mock: true };
 
       var obj = client.word.getRelatedWords(args, opts);
