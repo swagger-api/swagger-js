@@ -12,7 +12,7 @@ Check out [Swagger-Spec](https://github.com/swagger-api/swagger-spec) for additi
 
 Install swagger-client:
 ```
-npm install swagger-client
+npm install swagger-clientde
 ```
 
 or:
@@ -158,7 +158,7 @@ Development
 -----------
 
 Please [fork the code](https://github.com/swagger-api/swagger-js) and help us improve
-swagger-client.js. Send us a pull request to the `develop_2.0` branch!  Tests make merges get accepted more quickly.
+swagger-client.js. Send us a pull request to the `master` branch!  Tests make merges get accepted more quickly.
 
 swagger-js use gulp for Node.js.
 
