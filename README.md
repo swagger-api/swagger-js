@@ -12,7 +12,7 @@ Check out [Swagger-Spec](https://github.com/swagger-api/swagger-spec) for additi
 
 Install swagger-client:
 ```
-npm install swagger-clientde
+npm install swagger-client
 ```
 
 or:
