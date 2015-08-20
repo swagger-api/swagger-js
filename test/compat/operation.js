@@ -53,7 +53,7 @@ describe('1.2 verifies the nickname is sanitized', function() {
   });
 });
 
-describe('verifies the get pet operation', function() {
+describe('1.2 verifies the get pet operation', function() {
   before(function(done) {
     mock.petstore(done, function(petstore, server){
       sample = petstore;
