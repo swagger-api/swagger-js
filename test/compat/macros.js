@@ -10,7 +10,7 @@ var sample, instance;
 describe('1.2 macro overrides', function () {
   before(function (done) {
     var macros = {
-      parameter: function (parameter) {
+      parameter: function (operation, parameter) {
         if (parameter.default === 3) {
           return 'testing';
         }
