@@ -4,10 +4,24 @@
     <script src="swagger-client.js"></script>
     <script type="text/javascript">
       // initialize swagger
+/*
       var swagger = new SwaggerClient({
         url: "http://petstore.swagger.io/api/api-docs",
-        success: function() {}
+        success: function() {
+          console.log('response', swagger);
+        }
       });
+*/
+      var swagger = new SwaggerClient({
+        url: "http://petstore.swagger.io/api/api-docs",
+        usePromise: true
+      });
+      swagger.then(function(response) {
+        console.log('test', response, swagger);
+      }).catch(function(error) {
+        console.error('error', error);
+      });
+
     </script>
   </head>
 </html>
