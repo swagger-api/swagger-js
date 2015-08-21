@@ -15,8 +15,7 @@
       var swagger = new SwaggerClient({
         url: "http://petstore.swagger.io/api/api-docs",
         usePromise: true
-      });
-      swagger.then(function(response) {
+      }).then(function(response) {
         console.log('test', response, swagger);
       }).catch(function(error) {
         console.error('error', error);

@@ -36,7 +36,7 @@ describe('SwaggerClient', function () {
     });
   });
 
-  describe.only('enabling promises', function() {
+  describe('enabling promises', function() {
 
     var client;
 
@@ -80,7 +80,7 @@ describe('SwaggerClient', function () {
           done();
         });
       });
-    })
+    });
 
     describe('given no url and no spec', function() {
       beforeEach(function() {
@@ -95,7 +95,7 @@ describe('SwaggerClient', function () {
           done();
         });
       });
-    })
+    });
 
   });
 
