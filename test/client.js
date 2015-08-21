@@ -36,6 +36,69 @@ describe('SwaggerClient', function () {
     });
   });
 
+  describe.only('enabling promises', function() {
+
+    var client;
+
+    describe('given a valid spec (or url)', function() {
+
+      beforeEach(function() {
+        client = new SwaggerClient({
+          spec: petstoreRaw,
+          usePromise: true
+        });
+      });
+
+      it('should resolve with an object as response', function(done) {
+        client.then(function(response) {
+          expect(response).toNotBe(null);
+          done();
+        });
+      });
+
+      it('should set the client to be ready', function(done) {
+        client.then(function(response) {
+          expect(response.ready).toBe(true);
+          done();
+        });
+      });
+
+    });
+
+    describe('given an invalid url or spec', function() {
+      beforeEach(function() {
+        client = new SwaggerClient({
+          url: 'http://not.valid.url',
+          spec: null,
+          usePromise: true
+        });
+      });
+
+      it('should reject with an error', function(done) {
+        client.catch(function(error) {
+          expect(error.length).toBeGreaterThan(0);
+          done();
+        });
+      });
+    })
+
+    describe('given no url and no spec', function() {
+      beforeEach(function() {
+        client = new SwaggerClient({
+          usePromise: true
+        });
+      });
+
+      it('should reject with an error', function(done) {
+        client.catch(function(error) {
+          expect(error.length).toBeGreaterThan(0);
+          done();
+        });
+      });
+    })
+
+  });
+
   describe('Runtime Support', function() {
     describe('IE 8', function() {
 
