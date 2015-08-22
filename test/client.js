@@ -69,7 +69,6 @@ describe('SwaggerClient', function () {
       beforeEach(function() {
         client = new SwaggerClient({
           url: 'http://not.valid.url',
-          spec: null,
           usePromise: true
         });
       });
