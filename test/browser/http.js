@@ -9,7 +9,7 @@ var petstore_yaml = fs.readFileSync(__dirname + '/../spec/v2/petstore.yaml', 'ut
 var petstore;
 var client;
 
-describe('yaml http', function () {
+describe.only('yaml http', function () {
   describe('superagent', function(){
 
     it('should fetch/parse petstore.yaml', function(done){
@@ -33,7 +33,7 @@ describe('yaml http', function () {
         expect(petstore.pet).to.respondTo('getPetById');
 
         // Make sure we /are/ testing the yaml spec and not the json...
-        expect(petstore.info.title).to.equal('Swagger Petstore YAML')
+        expect(petstore.info.title).to.equal('Swagger Petstore YAML');
         done();
       }
     });
@@ -57,6 +57,59 @@ describe('yaml http', function () {
     //   } catch(e) {}
 
     // });
+
+  });
+
+  describe('superagent with promise', function() {
+
+    var petstoreWithPromise;
+
+    beforeEach(function(done) {
+      // Mock our request
+      fauxjax.install();
+      fauxjax.on('request', function (req) {
+        req.respond( 200, { }, petstore_yaml);
+        fauxjax.restore(); // Restore globals that were mocked
+      });
+
+      new Swagger({
+        url: 'http://example.com/petstore.yaml',
+        usePromise: true
+      }).then(function(petstore) {
+        petstoreWithPromise = petstore;
+        done();
+      });
+    });
+
+    it('should fetch/parse petstore.yaml', function(done){
+      expect(petstoreWithPromise).to.be.an('object');
+      expect(petstoreWithPromise.pet).to.be.an('object');
+      expect(petstoreWithPromise.pet).to.respondTo('getPetById');
+
+      // Make sure we /are/ testing the yaml spec and not the json...
+      expect(petstoreWithPromise.info.title).to.equal('Swagger Petstore YAML');
+      done();
+    });
+
+    it('should call the then-function when executing a valid api-call', function(done) {
+      var petId = 3;
+      var petName = 'doggie';
+      petstoreWithPromise.pet.getPetById({petId: petId}).then(function(pet) {
+        expect(pet).to.be.an('object');
+        expect(pet.obj.id).to.equal(petId);
+        expect(pet.obj.name).to.equal(petName);
+        done();
+      });
+    });
+
+    it('should call the catch-function when executing an invalid api-call', function(done) {
+      var petId = -1;
+      petstoreWithPromise.pet.getPetById({petId: petId}).catch(function(error) {
+        expect(error.status).to.equal(404);
+        expect(error.statusText.indexOf('Pet not found')).to.be.greaterThan(0);
+        done();
+      });
+    });
 
   });
 
