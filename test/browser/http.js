@@ -9,7 +9,7 @@ var petstore_yaml = fs.readFileSync(__dirname + '/../spec/v2/petstore.yaml', 'ut
 var petstore;
 var client;
 
-describe.only('yaml http', function () {
+describe('yaml http', function () {
   describe('superagent', function(){
 
     it('should fetch/parse petstore.yaml', function(done){
