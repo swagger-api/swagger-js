@@ -1,26 +1,34 @@
 <html>
-  <head>
+<head>
     <title>Test Swagger Client</title>
     <script src="swagger-client.js"></script>
     <script type="text/javascript">
-      // initialize swagger
-/*
-      var swagger = new SwaggerClient({
-        url: "http://petstore.swagger.io/api/api-docs",
-        success: function() {
-          console.log('response', swagger);
-        }
-      });
-*/
-      var swagger = new SwaggerClient({
-        url: "http://petstore.swagger.io/api/api-docs",
-        usePromise: true
-      }).then(function(response) {
-        console.log('test', response, swagger);
-      }).catch(function(error) {
-        console.error('error', error);
-      });
+        // initialize swagger
+/*        var swaggerWithCallback = new SwaggerClient({
+            url: "http://petstore.swagger.io/api/api-docs",
+            success: function () {
+                console.log('response', swaggerWithCallback);
+            }
+        });*/
+
+        var swaggerWithPromise = new SwaggerClient({
+            url: "http://petstore.swagger.io/api/api-docs",
+            usePromise: true
+        });
+
+        swaggerWithPromise.then(function (swagger) {
+            swagger.pet.getPetById({petId: 7}, {responseContentType: 'application/json'}).then(function (pet) {
+                console.log('pet', pet);
+            });
+            swagger.store.getOrderById({orderId: 2}).then(function (inventory) {
+                console.log('inventory', inventory);
+            }).catch(function (error) {
+                console.error(error);
+            });
+        }).catch(function (error) {
+            console.error('error', error);
+        });
 
     </script>
-  </head>
+</head>
 </html>
