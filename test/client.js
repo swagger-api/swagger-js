@@ -36,7 +36,7 @@ describe('SwaggerClient', function () {
     });
   });
 
-  describe.only('enabling promises', function() {
+  describe('enabling promises', function() {
 
     var client;
 
@@ -63,37 +63,6 @@ describe('SwaggerClient', function () {
         });
       });
 
-    });
-
-/*    describe('given an invalid url or spec', function() {
-      beforeEach(function() {
-        client = new SwaggerClient({
-          //url: 'http://',
-          usePromise: true
-        });
-      });
-
-      it('should reject with an error', function(done) {
-        client.catch(function(error) {
-          expect(error.length).toBeGreaterThan(0);
-          done();
-        });
-      });
-    });*/
-
-    describe('given no url and no spec', function() {
-      beforeEach(function() {
-        client = new SwaggerClient({
-          usePromise: true
-        });
-      });
-
-      it('should reject with an error', function(done) {
-        client.catch(function(error) {
-          expect(error.length).toBeGreaterThan(0);
-          done();
-        });
-      });
     });
 
   });
