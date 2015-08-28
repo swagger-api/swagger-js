@@ -458,6 +458,9 @@
         },
         "name": {
           "type": "string"
+        },
+        "metadata": {
+          "type": "object"
         }
       }
     }
