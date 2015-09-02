@@ -51,7 +51,8 @@ describe('swagger resolver', function () {
           },
           {
             $ref : '#/definitions/Animal'
-          } ]
+          } ],
+          example: 'this is example'
         },
         Pet : {
           allOf : [ {
@@ -111,6 +112,7 @@ describe('swagger resolver', function () {
       test.object(properties.hasScales);
       expect(properties.hasScales['x-resolved-from']).toBe('self');
       test.undefined(spec.definitions.Animal.properties.firstName);
+      expect(spec.definitions.Human.example).toBe('this is example');
       done();
     });
   });
