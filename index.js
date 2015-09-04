@@ -41,3 +41,4 @@ SwaggerClient.CookieAuthorization = auth.CookieAuthorization;
 SwaggerClient.SwaggerApi = deprecationWrapper;
 SwaggerClient.SwaggerClient = deprecationWrapper;
 SwaggerClient.SchemaMarkup = require('./lib/schema-markup');
+SwaggerClient.OperationParams = require( './lib/types/OperationParams' );
