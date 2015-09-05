@@ -77,6 +77,21 @@ client.clientAuthorizations.add("apiKey", new client.ApiKeyAuthorization("api_ke
 client.clientAuthorizations.add("apiKey", new client.ApiKeyAuthorization("api_key","special-key","header"));
 ```
 
+...or with the swagger-client constructor:
+
+```js
+var swagger = new client({
+  url: 'http://example.com/spec.json',
+  success: function() {},
+  authorizations : {
+    easyapi_basic: new client.PasswordAuthorization('<name>', '<username>', '<password>'),
+    someHeaderAuth: new client.ApiKeyAuthorization('<nameOfHeader>', '<value>', 'header'),
+    someQueryAuth: new client.ApiKeyAuthorization('<nameOfQueryKey>', '<value>', 'query'),
+    someCookieAuth: new client.CookieAuthorization('<cookie>'),
+  }
+});
+```
+
 ### Calling an API with swagger + the browser!
 
 Download `browser/swagger-client.js` into your webapp:
