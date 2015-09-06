@@ -180,7 +180,6 @@ describe('2.0 authorizations', function () {
     // Mock out the request, will only allow one request
     fauxjax.once('request', function (req) {
 
-      console.log('req', req);
       expect(req.requestHeaders).to.include.keys('auth');
       expect(req.requestHeaders.auth).to.equal('val');
 
