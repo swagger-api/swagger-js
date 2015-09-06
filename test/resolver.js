@@ -19,7 +19,7 @@ describe('swagger resolver', function () {
     instance.close();
     done();
   });
-/*
+
   it('is OK without remote references', function (done) {
     var api = new Resolver();
     var spec = {};
@@ -29,7 +29,7 @@ describe('swagger resolver', function () {
       done();
     });
   });
-*/
+
   it('resolves a remote model property reference $ref', function (done) {
     var api = new Resolver();
     var spec = {
