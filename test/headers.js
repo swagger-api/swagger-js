@@ -14,7 +14,7 @@ describe('header extraction', function () {
         type: 'string'
       }
     ];
-    var op = new Operation(new OperationParams(), 'http', 'test', 'get', '/path', { parameters: parameters });
+    var op = new Operation( {}, 'http', 'test', 'get', '/path', { parameters: parameters });
     var args = new OperationParams();
     args.set( 'header', 'myHeader', 'tony' );
     var url = op.urlify(args);
@@ -33,7 +33,7 @@ describe('header extraction', function () {
         type: 'string'
       }
     ];
-    var op = new Operation(new OperationParams(), 'http', 'test', 'get', '/path', { parameters: parameters });
+    var op = new Operation({}, 'http', 'test', 'get', '/path', { parameters: parameters });
     var args = new OperationParams();
     args.set( 'header', 'myHeader', 'someKey=someValue' );
     var url = op.urlify(args);
@@ -54,7 +54,7 @@ describe('header extraction', function () {
         }
       }
     ];
-    var op = new Operation(new OperationParams(), 'http', 'test', 'get', '/path', { parameters: parameters });
+    var op = new Operation({}, 'http', 'test', 'get', '/path', { parameters: parameters });
     var args = new OperationParams();
     args.set( 'header', 'myHeader', ['firstParam=firstValue', 'secondParam=secondValue'] );
 
@@ -76,7 +76,7 @@ describe('header extraction', function () {
         }
       }
     ];
-    var op = new Operation(new OperationParams(), 'http', 'test', 'get', '/path', { parameters: parameters });
+    var op = new Operation({}, 'http', 'test', 'get', '/path', { parameters: parameters });
     var args = new OperationParams();
     args.set( 'header', 'myHeader', ['tony', 'tam'] );
 
@@ -107,7 +107,7 @@ describe('header extraction', function () {
       }
     ];
 
-    var op = new Operation(new OperationParams(), 'http', 'test', 'get', '/path', { parameters: parameters });
+    var op = new Operation({}, 'http', 'test', 'get', '/path', { parameters: parameters });
     var args = new OperationParams();
     args.set( 'header', 'myHeader', ['tony', 'tam'] );
     args.set( 'query', 'myHeader', 'johnny' );
