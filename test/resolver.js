@@ -19,7 +19,7 @@ describe('swagger resolver', function () {
     instance.close();
     done();
   });
-
+/*
   it('is OK without remote references', function (done) {
     var api = new Resolver();
     var spec = {};
@@ -558,7 +558,7 @@ describe('swagger resolver', function () {
     });
   });
 
-  it('resolves relative references from a peer file', function(done) {
+  it('detects unresolved relative references from a peer file', function(done) {
     var api = new Resolver();
     var spec = {
       host: 'http://petstore.swagger.io',
@@ -570,16 +570,56 @@ describe('swagger resolver', function () {
       }
     };
 
-    // should look in http://localhost:8000/foo/bar/swagger.json#/paths/health
-    api.resolve(spec, 'http://localhost:8000/foo/bar/swagger.json', function (spec, unresolved) {
+    // should look in http://localhost:8080/foo/bar/definitions.yaml#/MyResource
+    api.resolve(spec, 'http://localhost:8080/foo/bar/swagger.json', function (spec, unresolved) {
       expect(unresolved['definitions.yaml#/MyResource']).toEqual({
-        root: 'http://localhost:8000/foo/bar/definitions.yaml',
+        root: 'http://localhost:8080/foo/bar/definitions.yaml',
         location: '/MyResource'
       });
       done();
     });
   });
 
+  it('detects relative references from a peer file', function(done) {
+    var api = new Resolver();
+    var spec = {
+      host: 'http://petstore.swagger.io',
+      basePath: '/v2',
+      paths: {
+        '/health': {
+          $ref: 'models.json#/Health'
+        }
+      }
+    };
+
+    // should find `Health` in http://localhost:8080/v2/models.json#/Health
+    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec, unresolved) {
+      expect(Object.keys(unresolved).length).toBe(0);
+      done();
+    });
+  });
+ */
+
+  it('detects relative references without anchor', function(done) {
+    var api = new Resolver();
+    var spec = {
+      host: 'http://petstore.swagger.io',
+      basePath: '/v2',
+      paths: {
+        '/health': {
+          $ref: 'single.json'
+        }
+      }
+    };
+
+    // should find `Health` in http://localhost:8080/v2/models.json#/Health
+    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec, unresolved) {
+      console.log(JSON.stringif(spec, null, 2));
+      expect(Object.keys(unresolved).length).toBe(0);
+      done();
+    });
+  });
+/*
   it('resolves relative references from a sub-folder/file', function(done) {
     var api = new Resolver();
     var spec = {
@@ -726,4 +766,5 @@ describe('swagger resolver', function () {
       done();
     });
   });
+*/
 });
