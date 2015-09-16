@@ -138,7 +138,7 @@ describe('2.0 authorizations', function () {
   });
 
   it('does not apply api-key headers when the value has been manually added', function () {
-    var params = { api_key: 'foo' };
+    var params = { 'api_key': 'foo' };
 
     var parameters = [
       {
@@ -148,11 +148,11 @@ describe('2.0 authorizations', function () {
       }
     ];
     var authorizations = new auth.SwaggerAuthorizations();
-    authorizations.add("Basic", new auth.ApiKeyAuthorization('api_key', 'bar', 'header'));
+    authorizations.add('Basic', new auth.ApiKeyAuthorization('api_key', 'bar', 'header'));
     var op = new Operation({}, 'http', 'test', 'get', '/path', { parameters: parameters },
                                    {}, {}, authorizations);
     var req = op.execute(params, {mock : true});
-    expect(req.headers.api_key).to.equal('foo');
+    expect(req.headers['api_key']).to.equal('foo');
   });
 
   it('does not apply password auth when the value has been manually added', function () {
@@ -166,7 +166,7 @@ describe('2.0 authorizations', function () {
       }
     ];
     var authorizations = new auth.SwaggerAuthorizations();
-    authorizations.add("Basic", new auth.PasswordAuthorization('bar', 'baz'));
+    authorizations.add('Basic', new auth.PasswordAuthorization('bar', 'baz'));
     var op = new Operation({}, 'http', 'test', 'get', '/path', { parameters: parameters },
                                    {}, {}, authorizations);
     var req = op.execute(params, {mock : true});

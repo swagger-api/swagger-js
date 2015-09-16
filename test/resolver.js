@@ -783,7 +783,7 @@ describe('swagger resolver', function () {
 
     api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec, unresolved) {
       expect(spec.definitions.Parent).toExist();
-      expect(spec.definitions.Parent.properties.child['$ref']).toEqual('#/definitions/Child');
+      expect(spec.definitions.Parent.properties.child.$ref).toEqual('#/definitions/Child');
       expect(Object.keys(unresolved).length).toBe(0);
       expect(spec.definitions.Child).toExist();
       done();
@@ -794,8 +794,8 @@ describe('swagger resolver', function () {
     var api = new Resolver();
     var spec = {
       paths: {
-        "/linked": {
-          "$ref": "resourceWithLinkedDefinitions_part1.json"
+        '/linked': {
+          $ref: 'resourceWithLinkedDefinitions_part1.json'
         }
       }
     };
