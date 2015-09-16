@@ -508,10 +508,7 @@ describe('swagger resolver', function () {
 
     // should look in http://localhost:8000/foo/bar/swagger.json#/paths/health
     api.resolve(spec, 'http://localhost:8000/foo/bar/swagger.json', function (spec, unresolved) {
-      expect(unresolved.Category).toEqual({
-        root: 'http://localhost:8000/foo/bar/swagger.json',
-        location: '/paths/health'
-      });
+      expect(unresolved.Category).toExist();
       var health = spec.paths['/health'];
       test.object(health);
       done();
@@ -558,7 +555,7 @@ describe('swagger resolver', function () {
     });
   });
 
-  it('resolves relative references from a peer file', function(done) {
+  it('detects unresolved relative references from a peer file', function(done) {
     var api = new Resolver();
     var spec = {
       host: 'http://petstore.swagger.io',
@@ -570,12 +567,50 @@ describe('swagger resolver', function () {
       }
     };
 
-    // should look in http://localhost:8000/foo/bar/swagger.json#/paths/health
-    api.resolve(spec, 'http://localhost:8000/foo/bar/swagger.json', function (spec, unresolved) {
+    // should look in http://localhost:8080/foo/bar/definitions.yaml#/MyResource
+    api.resolve(spec, 'http://localhost:8080/foo/bar/swagger.json', function (spec, unresolved) {
       expect(unresolved['definitions.yaml#/MyResource']).toEqual({
-        root: 'http://localhost:8000/foo/bar/definitions.yaml',
+        root: 'http://localhost:8080/foo/bar/definitions.yaml',
         location: '/MyResource'
       });
+      done();
+    });
+  });
+
+  it('detects relative references from a peer file', function(done) {
+    var api = new Resolver();
+    var spec = {
+      host: 'http://petstore.swagger.io',
+      basePath: '/v2',
+      paths: {
+        '/health': {
+          $ref: 'models.json#/Health'
+        }
+      }
+    };
+
+    // should find `Health` in http://localhost:8080/v2/models.json#/Health
+    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec, unresolved) {
+      expect(Object.keys(unresolved).length).toBe(0);
+      done();
+    });
+  });
+
+  it('detects relative references without anchor', function(done) {
+    var api = new Resolver();
+    var spec = {
+      host: 'http://petstore.swagger.io',
+      basePath: '/v2',
+      paths: {
+        '/health': {
+          $ref: 'single.json'
+        }
+      }
+    };
+
+    // should find `Health` in http://localhost:8080/v2/models.json#/Health
+    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec, unresolved) {
+      expect(Object.keys(unresolved).length).toBe(0);
       done();
     });
   });
@@ -723,6 +758,89 @@ describe('swagger resolver', function () {
 
     api.resolve(spec, 'http://localhost:8000/swagger.json', function (spec, unresolved) {
       expect(Object.keys(unresolved).length).toBe(0);
+      done();
+    });
+  });
+
+  it('resolves an local ref per #573', function(done) {
+    var api = new Resolver();
+    var spec = {
+      paths: {
+        '/pet': {
+          post: {
+            parameters: [{
+              in: 'body',
+              name: 'body',
+              required: true,
+              schema: {
+                $ref: 'models.json#/Parent'
+              }
+            }]
+          }
+        }
+      }
+    };
+
+    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec, unresolved) {
+      expect(spec.definitions.Parent).toExist();
+      expect(spec.definitions.Parent.properties.child.$ref).toEqual('#/definitions/Child');
+      expect(Object.keys(unresolved).length).toBe(0);
+      expect(spec.definitions.Child).toExist();
+      done();
+    });
+  });
+
+  it('resolves a linked reference', function(done) {
+    var api = new Resolver();
+    var spec = {
+      paths: {
+        '/linked': {
+          $ref: 'resourceWithLinkedDefinitions_part1.json'
+        }
+      }
+    };
+
+    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec, unresolved) {
+      expect(spec.definitions.Pet).toExist();
+      expect(spec.definitions.ErrorModel).toExist();
+      expect(Object.keys(unresolved).length).toBe(0);
+      done();
+    });
+  });
+
+  it('resolves a linked reference', function(done) {
+    var api = new Resolver();
+    var spec = {
+      paths: {
+        '/linked': {
+          get: {
+            parameters: [
+              {
+                name: 'status',
+                in: 'query',
+                description: 'Status values that need to be considered for filter',
+                required: false,
+                type: 'string'
+              }
+            ],
+            responses: {
+              200: {
+                description: 'successful operation',
+                schema: {
+                  $ref: 'single.json'
+                }
+              },
+              400: {
+                description: 'Invalid status value'
+              }
+            }
+          }
+        }
+      }
+    };
+
+    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec, unresolved) {
+      expect(spec.definitions['single.json']).toExist();
       done();
     });
   });

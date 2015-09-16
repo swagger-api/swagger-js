@@ -231,14 +231,14 @@ describe('swagger resolver', function () {
     var api = new Resolver();
     var spec = {
       paths: {
-        "/test": {
+        '/test': {
           get: {
             responses: {
               200: {
                 schema: {
-                  type: "array",
+                  type: 'array',
                   items: {
-                    $ref: "#/definitions/Response"
+                    $ref: '#/definitions/Response'
                   }
                 }
               }
@@ -250,20 +250,21 @@ describe('swagger resolver', function () {
         Request: {
         properties: {
           name: {
-            type: "string"
+            type: 'string'
           }
         }
       },
       Response: {
         allOf: [
           {
-            $ref: "#/definitions/Request"
+            $ref: '#/definitions/Request'
           },
           {
             properties: {
               id: {
-                description: "ID of entry",
-                type: "integer"
+                description: 'ID of entry',
+                type: 'integer',
+                format: 'int32'
               }
             }
           }
@@ -283,17 +284,17 @@ describe('swagger resolver', function () {
     var api = new Resolver();
     var spec = {
       definitions: {
-        new_model: {
+        'new_model': {
           properties: {
             subclass: {
               allOf: [
                 {
-                  $ref: "#/definitions/superclass"
+                  $ref: '#/definitions/superclass'
                 },
                 {
                   properties: {
                     name: {
-                      type: "string"
+                      type: 'string'
                     }
                   }
                 }
@@ -304,8 +305,8 @@ describe('swagger resolver', function () {
         superclass: {
           properties: {
             id: {
-              format: "int32",
-              type: "integer"
+              format: 'int32',
+              type: 'integer'
             }
           }
         }
@@ -314,7 +315,7 @@ describe('swagger resolver', function () {
     api.resolve(spec, 'http://localhost:8000/v2/petstore.json', function (spec, unresolved) {
       expect(Object.keys(unresolved).length).toBe(0);
       test.object(spec);
-      var schema = spec.definitions.new_model.properties.subclass;
+      var schema = spec.definitions['new_model'].properties.subclass;
 
       expect(schema['x-composed']).toBe(true);
       expect(Array.isArray(schema['x-resolved-from'])).toBe(true);
@@ -324,12 +325,12 @@ describe('swagger resolver', function () {
       expect(Object.keys(schema.properties).length).toBe(2);
 
       var id = schema.properties.id;
-      expect(id.type).toBe("integer");
-      expect(id.format).toBe("int32");
+      expect(id.type).toBe('integer');
+      expect(id.format).toBe('int32');
       expect(id['x-resolved-from']).toBe('#/definitions/superclass');
 
       var name = schema.properties.name;
-      expect(name.type).toBe("string");
+      expect(name.type).toBe('string');
       expect(name['x-resolved-from']).toBe('self');
 
       done();

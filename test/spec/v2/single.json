@@ -1,0 +1,8 @@
+{
+  "description": "A tag entity in the system",
+  "properties": {
+    "name": {
+      "type": "string"
+    }
+  }
+}
