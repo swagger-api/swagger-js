@@ -24,14 +24,28 @@
       "200": {
         "description": "pet response",
         "schema": {
-          "$ref": "Pet"
+          "$ref": "#/Pet"
         }
       },
       "default": {
         "description": "error payload",
         "schema": {
-          "$ref": "ErrorModel"
+          "$ref": "#/ErrorModel"
         }
+      }
+    }
+  },
+  "ErrorModel": {
+    "properties": {
+      "id": {
+        "type": "string"
+      }
+    }
+  },
+  "Pet": {
+    "properties": {
+      "petId": {
+        "type": "string"
       }
     }
   }

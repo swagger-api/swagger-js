@@ -761,4 +761,87 @@ describe('swagger resolver', function () {
       done();
     });
   });
+
+  it('resolves an local ref per #573', function(done) {
+    var api = new Resolver();
+    var spec = {
+      paths: {
+        '/pet': {
+          post: {
+            parameters: [{
+              in: 'body',
+              name: 'body',
+              required: true,
+              schema: {
+                $ref: 'models.json#/Parent'
+              }
+            }]
+          }
+        }
+      }
+    };
+
+    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec, unresolved) {
+      expect(spec.definitions.Parent).toExist();
+      expect(spec.definitions.Parent.properties.child['$ref']).toEqual('#/definitions/Child');
+      expect(Object.keys(unresolved).length).toBe(0);
+      expect(spec.definitions.Child).toExist();
+      done();
+    });
+  });
+
+  it('resolves a linked reference', function(done) {
+    var api = new Resolver();
+    var spec = {
+      paths: {
+        "/linked": {
+          "$ref": "resourceWithLinkedDefinitions_part1.json"
+        }
+      }
+    };
+
+    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec, unresolved) {
+      expect(spec.definitions.Pet).toExist();
+      expect(spec.definitions.ErrorModel).toExist();
+      expect(Object.keys(unresolved).length).toBe(0);
+      done();
+    });
+  });
+
+  it('resolves a linked reference', function(done) {
+    var api = new Resolver();
+    var spec = {
+      paths: {
+        '/linked': {
+          get: {
+            parameters: [
+              {
+                name: 'status',
+                in: 'query',
+                description: 'Status values that need to be considered for filter',
+                required: false,
+                type: 'string'
+              }
+            ],
+            responses: {
+              200: {
+                description: 'successful operation',
+                schema: {
+                  $ref: 'single.json'
+                }
+              },
+              400: {
+                description: 'Invalid status value'
+              }
+            }
+          }
+        }
+      }
+    };
+
+    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec, unresolved) {
+      expect(spec.definitions['single.json']).toExist();
+      done();
+    });
+  });
 });

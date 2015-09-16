@@ -100,5 +100,24 @@
         "type": "string"
       }
     }
+  },
+  "Parent": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer",
+        "format": "int64"
+      },
+      "child": {
+        "$ref": "#/Child"
+      }
+    }
+  },
+  "Child": {
+    "properties": {
+      "name": {
+        "type": "string"
+      }
+    }
   }
 }

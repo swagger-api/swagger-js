@@ -1,0 +1,67 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is a sample server Petstore server.  You can find out more about Swagger at <a href=\"http://swagger.io\">http://swagger.io</a> or on irc.freenode.net, #swagger.  For this sample, you can use the api key \"special-key\" to test the authorization filters",
+    "version": "1.0.0",
+    "title": "Swagger Petstore",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "name": "apiteam@swagger.io"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "externalDocs": {
+    "description": "Find more info here",
+    "url": "https://swagger.io"
+  },
+  "host": "localhost:8000",
+  "basePath": "/v2/api",
+  "schemes": [
+    "http"
+  ],
+  "tags": [
+    {
+      "name": "pet",
+      "description": "Pet Operations",
+      "externalDocs": "http://swagger.io"
+    },
+    {
+      "name": "user",
+      "description": "All about the Users"
+    }
+  ],
+  "paths": {
+    "/linked": {
+      "get": {
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Status values that need to be considered for filter",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "pipes",
+            "default": "available"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "models.json#/Parent"
+            }
+          },
+          "400": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    }
+  }
+}
