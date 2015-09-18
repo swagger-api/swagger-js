@@ -303,7 +303,8 @@
               "description": "Pet object that needs to be added to the store",
               "required": true,
               "type": "Pet",
-              "paramType": "body"
+              "paramType": "body",
+              "defaultValue": "{\n  \"petId\":1234\n}"
             }
           ],
           "responseMessages": [
@@ -336,6 +337,7 @@
               "required": true,
               "type": "string",
               "paramType": "query",
+              "default": "sold",
               "enum": [
                 "available",
                 "pending",

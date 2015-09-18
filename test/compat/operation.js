@@ -148,6 +148,7 @@ describe('1.2 verifies the get pet operation', function() {
     expect(param.name).toBe('body');
     expect(param.schema.$ref).toBe('#/definitions/Pet');
     expect(param.in).toBe('body');
+    expect(param.default).toBe('{\n  \"petId\":1234\n}');
 
     test.value(param.description);
   });
