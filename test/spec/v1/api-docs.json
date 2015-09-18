@@ -4,7 +4,7 @@
   "basePath": "http://localhost:80",
   "apis": [
     {
-      "path": "http://localhost:8001/v1/pet",
+      "path": "http://localhost:8001/v1/pet.json",
       "description": "Operations about pets"
     },
     {
@@ -12,7 +12,7 @@
       "description": "Operations about user"
     },
     {
-      "path": "http://localhost:8001/v1/store",
+      "path": "http://localhost:8001/v1/store.json",
       "description": "Operations about store"
     }
   ],
