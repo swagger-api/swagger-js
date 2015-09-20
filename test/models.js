@@ -9,6 +9,19 @@ var petstore = require('./spec/v2/petstore.json');
 var SwaggerClient = require('..');
 
 describe('models', function () {
+  it('should allow an attribute named `nodeName` #546', function () {
+    var definition = {
+      properties: {
+        nodeName: {
+          type: 'string'
+        }
+      }
+    };
+    var model = new Model('Node', definition);
+
+    expect(model.createJSONSample()).toEqual({ nodeName: 'string' });
+  });
+/*
   it('should verify the JSON sample for a simple object model', function () {
     var definition = {
       properties: {
@@ -583,4 +596,5 @@ describe('models', function () {
       }
     });
   });
+  */
 });
