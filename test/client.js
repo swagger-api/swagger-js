@@ -64,6 +64,8 @@ describe('SwaggerClient', function () {
     var cPetStore = _.cloneDeep(petstoreRaw);
 
     cPetStore.tags[1].name = 'help';
+    // see https://github.com/swagger-api/swagger-ui/issues/1615
+    cPetStore.tags.push({ name: 'title' });
 
     _.forEach(cPetStore.paths, function (path) {
       _.forEach(path, function (operation) {
@@ -72,6 +74,8 @@ describe('SwaggerClient', function () {
             operation.tags[index] = 'help';
           }
         });
+        // see https://github.com/swagger-api/swagger-ui/issues/1615
+        operation.tags.push('title');
       });
     });
 
@@ -82,6 +86,9 @@ describe('SwaggerClient', function () {
         expect(client.apis.help).toBeA('function');
         expect(client.pet.help).toBeA('function');
         expect(client._help.help).toBeA('function');
+
+        expect(client.title).toBeA('string');
+        expect(client._title.help).toBeA('function');
 
         expect(Object.keys(client.pet)).toEqual(Object.keys(client.apis.pet));
         expect(client._help).toEqual(client.apis._help);
