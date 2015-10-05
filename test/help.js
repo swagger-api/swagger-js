@@ -48,17 +48,24 @@ describe('help options', function () {
       name: 'age',
       type: 'integer',
       format: 'int32'
-    }];
+    },
+    {
+      in: 'header',
+      name: 'Authorization',
+      type: 'string'
+    }
+    ];
     var op = new Operation({}, 'http', 'test', 'get', '/path', {
       summary: 'test operation',
       parameters: parameters
     }, {}, {}, new auth.SwaggerAuthorizations());
     var curl = op.asCurl({
       name: 'tony',
-      age: 42
+      age: 42,
+      Authorization: 'Oauth:"test"'
     });
 
-    expect(curl).toBe('curl -X GET --header "Accept: application/json" --header "name: tony" --header "age: 42" "http://localhost/path"');
+    expect(curl).toBe('curl -X GET --header "Accept: application/json" --header "name: tony" --header "age: 42" --header "Authorization: Oauth:\\"test\\"" "http://localhost/path"');
   });
 
   it('prints a curl statement with custom content-type', function () {
