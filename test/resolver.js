@@ -63,7 +63,6 @@ describe('swagger resolver', function () {
     };
 
     api.resolve(spec, function (spec, unresolved) {
-      console.log(JSON.stringify(unresolved, null, 2));
       expect(unresolved['/definitions/Category']).toEqual(
         {
           root: 'http://localhost:8000/v2/petstore.jsonZZZ',
