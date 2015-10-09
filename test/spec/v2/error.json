@@ -1,0 +1,16 @@
+{
+  "properties": {
+    "messageCode": {
+      "type": "string"
+    },
+    "messageType": {
+      "type": "string",
+      "enum": [
+        "Success",
+        "Error",
+        "Warning",
+        "Info"
+      ]
+    }
+  }
+}
