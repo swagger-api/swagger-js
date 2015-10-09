@@ -5,6 +5,7 @@
 var expect = require('expect');
 var test = require('unit.js');
 var mock = require('./mock');
+var SwaggerClient = require('..');
 var Resolver = require('../lib/resolver');
 var instance;
 
@@ -13,6 +14,7 @@ describe('swagger resolver', function () {
     mock.petstore(done, function (petstore, server){
       instance = server;
     });
+    // this.timeout(5000 * 1000);
   });
 
   after(function (done){
@@ -61,7 +63,8 @@ describe('swagger resolver', function () {
     };
 
     api.resolve(spec, function (spec, unresolved) {
-      expect(unresolved['http://localhost:8000/v2/petstore.jsonZZZ#/definitions/Category']).toEqual(
+      console.log(JSON.stringify(unresolved, null, 2));
+      expect(unresolved['/definitions/Category']).toEqual(
         {
           root: 'http://localhost:8000/v2/petstore.jsonZZZ',
           location: '/definitions/Category'
@@ -84,7 +87,7 @@ describe('swagger resolver', function () {
     };
 
     api.resolve(spec, function (spec, unresolved) {
-      expect(unresolved['http://localhost:8000/v2/petstore.json#/definitionz/Category']).toEqual(
+      expect(unresolved['/definitionz/Category']).toEqual(
         {
           root: 'http://localhost:8000/v2/petstore.json',
           location: '/definitionz/Category'
@@ -107,7 +110,7 @@ describe('swagger resolver', function () {
     };
 
     api.resolve(spec, function (spec, unresolved) {
-      expect(unresolved['http://localhost:8000/v2/petstore.json#/definition/Categoryzzz']).toEqual({
+      expect(unresolved['/definition/Categoryzzz']).toEqual({
         root: 'http://localhost:8000/v2/petstore.json',
         location: '/definition/Categoryzzz'
       });
@@ -843,5 +846,39 @@ describe('swagger resolver', function () {
       expect(spec.definitions['single.json']).toExist();
       done();
     });
+  });
+
+  it('resloves absolute references', function(done) {
+    var api = new Resolver();
+    var sample;
+    var opts = opts || {};
+    opts.url = opts.url || 'http://localhost:8000/v2/absoluteRef.json';
+    opts.success = function () {
+      var response = sample.apis['default'].operations.get_linked.successResponse;
+      expect(response).toExist();
+      expect(response['200']).toExist();
+      done();
+    };
+
+    sample = new SwaggerClient(opts);
+  });
+
+  it('resloves absolute references per #587', function(done) {
+    var api = new Resolver();
+    var sample;
+    var opts = opts || {};
+    opts.url = opts.url || 'http://localhost:8000/v2/test.json';
+    opts.success = function () {
+      expect(sample.swaggerObject.definitions).toExist();
+      expect(sample.swaggerObject.definitions['error.json']).toExist();
+      expect(sample.apis.Occupations.operations.post_occupations.parameters[0].schema).toEqual(
+          { '$ref': '#/definitions/error.json' });
+      expect(sample.apis.Occupations.operations.post_occupations.responses['500'].schema).toEqual(
+          { '$ref': '#/definitions/error.json' }
+      );
+      done();
+    };
+
+    sample = new SwaggerClient(opts);
   });
 });

@@ -1,0 +1,90 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Occupations API",
+    "description": "This API manages Occupations",
+    "version": "1.0.0"
+  },
+  "host": "localhost:8080",
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "basePath": "/",
+  "produces": [
+    "application/json",
+    "application/xml"
+  ],
+  "paths": {
+    "/occupations": {
+      "get": {
+        "tags": [
+          "Occupations"
+        ],
+        "summary": "Retrieves the list of Occupations",
+        "description": "",
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "responses": {
+          "200": {
+            "description": "An array of Occupations",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "http://localhost:8000/v2/error.json"
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "http://localhost:8000/v2/error.json"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Occupations"
+        ],
+        "summary": "Adds a new Occupation",
+        "description": "",
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "parameters": [
+          {
+            "name": "occupation",
+            "in": "body",
+            "description": "Occupatione object that needs to be added",
+            "required": true,
+            "schema": {
+              "$ref": "http://localhost:8000/v2/error.json"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "M00-01 - If the record was created",
+            "schema": {
+              "$ref": "http://localhost:8000/v2/error.json"
+            }
+          },
+          "500": {
+            "description": "M00-06 - Other cases",
+            "schema": {
+              "$ref": "http://localhost:8000/v2/error.json"
+            }
+          }
+        }
+      }
+    }
+  }
+}
