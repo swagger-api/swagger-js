@@ -181,6 +181,12 @@ describe('converts specs', function () {
         expect(photos.type).toBe('array');
         test.object(photos.items);
         expect(photos.items.type).toBe('string');
+
+        var category = definitions.Category;
+        expect(Object.keys(category.properties).length).toBe(3);
+        var metadata = category.properties.metadata;
+        expect(metadata.type).toBe('object');
+
         done();
       });
     };
