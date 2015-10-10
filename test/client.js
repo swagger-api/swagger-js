@@ -36,6 +36,37 @@ describe('SwaggerClient', function () {
     });
   });
 
+  describe('enabling promises', function() {
+
+    var client;
+
+    describe('given a valid spec (or url)', function() {
+
+      beforeEach(function() {
+        client = new SwaggerClient({
+          spec: petstoreRaw,
+          usePromise: true
+        });
+      });
+
+      it('should resolve with an object as response', function(done) {
+        client.then(function(response) {
+          expect(response).toNotBe(null);
+          done();
+        });
+      });
+
+      it('should set the client to be ready', function(done) {
+        client.then(function(response) {
+          expect(response.ready).toBe(true);
+          done();
+        });
+      });
+
+    });
+
+  });
+
   describe('Runtime Support', function() {
     describe('IE 8', function() {
 

@@ -110,6 +110,10 @@ gulp.task('watch', ['test'], function () {
   gulp.watch(paths.all, ['test']);
 });
 
+gulp.task('watch:build', ['build'], function() {
+  gulp.watch(paths.all, ['build']);
+});
+
 gulp.task('browsertest', function(done) {
   karma.start(karmaConfig, done);
 });
