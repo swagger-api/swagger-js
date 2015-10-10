@@ -93,11 +93,10 @@ describe('yaml http', function () {
 
     it('should call the then-function when executing a valid api-call', function(done) {
       var petId = 3;
-      var petName = 'doggie';
       petstoreWithPromise.pet.getPetById({petId: petId}).then(function(pet) {
         expect(pet).to.be.an('object');
         expect(pet.obj.id).to.equal(petId);
-        expect(pet.obj.name).to.equal(petName);
+        expect(pet.obj.name).to.be.an('string');
         done();
       });
     });
