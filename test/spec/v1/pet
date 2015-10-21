@@ -521,12 +521,15 @@
       "id": "Animals",
       "properties": {
         "cat": {
+          "description": "The cat property",
           "type": "Pet"
         },
         "dog": {
+          "description": "The dog property",
           "type": "Pet"
         },
         "mouse": {
+          "description": "The mouse property",
           "type": "Pet"
         }
       }
