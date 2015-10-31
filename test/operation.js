@@ -28,6 +28,17 @@ var intArrayQP = {
   },
   collectionFormat: 'csv'
 };
+var quantityFD = {
+  in: "formData",
+  name: "quantity",
+  type: "integer",
+  format: "int32"
+}
+var nameFD = {
+  in: "formData",
+  name: "name",
+  type: "string"
+}
 
 describe('operations', function () {
   it('should generate a url', function () {
@@ -610,5 +621,11 @@ describe('operations', function () {
     expect(op.matchesAccept('application/json')).toEqual(true);
   });
 
+  it('should generate a x-www-form-urlencoded body', function() {
+    var parameters = [quantityFD, nameFD];
+    var op = new Operation({}, 'http', 'test', 'get', '/path', { parameters: parameters },
+                                   {}, {}, new auth.SwaggerAuthorizations());
+    expect(op.getBody({}, {name: "Douglas Adams", quantity: 42}, {})).toEqual("quantity=42&name=Douglas%20Adams");
+  });
 });
 
