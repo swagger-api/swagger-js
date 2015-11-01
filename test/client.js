@@ -294,18 +294,6 @@ describe('SwaggerClient', function () {
     });
   });
 
-  it('should use jQuery', function(done) {
-    var client = new SwaggerClient({
-      spec: petstoreRaw,
-      useJQuery: true,
-      success: function () {
-        var result = client.pet.getPetById({petId: 3}, { mock: true });
-        expect(result.useJQuery).toBe(true);
-        done();
-      }
-    });
-  });
-
   it('should should use a custom http client', function(done) {
     var myHttpClient = {
       execute: function(obj) {
