@@ -380,16 +380,16 @@ describe('models', function () {
   });
 
   it('should properly handle enum', function (done) {
-    var cPetStore = _.cloneDeep(petstore);
+    var cloned = _.cloneDeep(petstore);
 
-    cPetStore.definitions.Pet.properties.status.enum = [
+    cloned.definitions.Pet.properties.status.enum = [
       'available',
       'pending',
       'sold'
     ];
 
     var client = new SwaggerClient({
-      spec: cPetStore,
+      spec: cloned,
       success: function () {
         var expectedJson = [
           {
@@ -423,9 +423,9 @@ describe('models', function () {
   });
 
   it('should support an array of items with an enum (Issue 198)', function (done) {
-    var cPetStore = _.cloneDeep(petstore);
+    var cloned = _.cloneDeep(petstore);
 
-    cPetStore.definitions.Statuses = {
+    cloned.definitions.Statuses = {
       type: 'array',
       items: {
         type: 'string',
@@ -437,7 +437,7 @@ describe('models', function () {
       }
     };
 
-    var path = cPetStore.paths['/pet/statuses'] = _.cloneDeep(cPetStore.paths['/pet/findByStatus']);
+    var path = cloned.paths['/pet/statuses'] = _.cloneDeep(cloned.paths['/pet/findByStatus']);
 
     path.get.operationId = 'listPetStatuses';
     path.get.parameters = [];
@@ -446,7 +446,7 @@ describe('models', function () {
     };
 
     var client = new SwaggerClient({
-      spec: cPetStore,
+      spec: cloned,
       success: function () {
         var response = client.pet.operations.listPetStatuses.successResponse['200'];
 
@@ -460,9 +460,9 @@ describe('models', function () {
   });
 
   it('should support an array of items with an enum in the wrong place (Issue 198)', function (done) {
-    var cPetStore = _.cloneDeep(petstore);
+    var cloned = _.cloneDeep(petstore);
 
-    cPetStore.definitions.Statuses = {
+    cloned.definitions.Statuses = {
       type: 'array',
       items: {
         type: 'string'
@@ -474,7 +474,7 @@ describe('models', function () {
       ]
     };
 
-    var path = cPetStore.paths['/pet/statuses'] = _.cloneDeep(cPetStore.paths['/pet/findByStatus']);
+    var path = cloned.paths['/pet/statuses'] = _.cloneDeep(cloned.paths['/pet/findByStatus']);
 
     path.get.operationId = 'listPetStatuses';
     path.get.parameters = [];
@@ -483,7 +483,7 @@ describe('models', function () {
     };
 
     var client = new SwaggerClient({
-      spec: cPetStore,
+      spec: cloned,
       success: function () {
         var response = client.pet.operations.listPetStatuses.successResponse['200'];
 
@@ -497,12 +497,12 @@ describe('models', function () {
   });
 
   it('should handle arrays that are missing its items property (Issue 190)', function (done) {
-    var cPetStore = _.cloneDeep(petstore);
+    var cloned = _.cloneDeep(petstore);
 
-    delete cPetStore.definitions.PetArray.items;
+    delete cloned.definitions.PetArray.items;
 
     var client = new SwaggerClient({
-      spec: cPetStore,
+      spec: cloned,
       success: function () {
         var response = client.pet.operations.findPetsByStatus.successResponse['200'];
 
@@ -516,9 +516,9 @@ describe('models', function () {
   });
 
   it('should handle references to inline primitive definitions (Issue 339)', function (done) {
-    var cPetStore = _.cloneDeep(petstore);
+    var cloned = _.cloneDeep(petstore);
 
-    cPetStore.definitions.ApplicationConfigPatch = {
+    cloned.definitions.ApplicationConfigPatch = {
       type : 'object',
       properties : {
         variantManagement : {
@@ -526,7 +526,7 @@ describe('models', function () {
         }
       }
     };
-    cPetStore.definitions.OperationalState = {
+    cloned.definitions.OperationalState = {
       type : 'string',
       enum : [
         'Enabled',
@@ -534,12 +534,12 @@ describe('models', function () {
       ]
     };
 
-    cPetStore.paths['/pet/findByStatus'].get.responses['200'].schema = {
+    cloned.paths['/pet/findByStatus'].get.responses['200'].schema = {
       $ref: '#/definitions/ApplicationConfigPatch'
     };
 
     var client = new SwaggerClient({
-      spec: cPetStore,
+      spec: cloned,
       success: function () {
         var response = client.pet.operations.findPetsByStatus.successResponse['200'];
 
@@ -553,9 +553,9 @@ describe('models', function () {
   });
 
   it('should not fail on missing references (Issue 419)', function (done) {
-    var cPetStore = _.cloneDeep(petstore);
+    var cloned = _.cloneDeep(petstore);
 
-    cPetStore.definitions.DefinitionWithMissingModel = {
+    cloned.definitions.DefinitionWithMissingModel = {
       type : 'object',
       required: ['variantManagement'],
       properties : {
@@ -564,7 +564,7 @@ describe('models', function () {
         }
       }
     };
-    cPetStore.definitions.OperationalState = {
+    cloned.definitions.OperationalState = {
       type : 'string',
       enum : [
         'Enabled',
@@ -572,12 +572,12 @@ describe('models', function () {
       ]
     };
 
-    cPetStore.paths['/pet/findByStatus'].get.responses['200'].schema = {
+    cloned.paths['/pet/findByStatus'].get.responses['200'].schema = {
       $ref: '#/definitions/DefinitionWithMissingModel'
     };
 
     var client = new SwaggerClient({
-      spec: cPetStore,
+      spec: cloned,
       success: function () {
         client.models.DefinitionWithMissingModel.getMockSignature();
         client.models.DefinitionWithMissingModel.createJSONSample();
