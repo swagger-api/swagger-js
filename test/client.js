@@ -342,4 +342,46 @@ describe('SwaggerClient', function () {
       }
     });
   });
+
+  it('should properly parse an array property', function(done) {
+    var spec = {
+      paths: {
+        '/foo': {
+          get: {
+            operationId: 'myop',
+            tags: [
+                'test'
+            ],
+            parameters: [
+              {
+                in: 'query',
+                name: 'username',
+                type: 'array',
+                items: {
+                  type: 'string',
+                  enum: [
+                    'a','b'
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      }
+    };
+
+    new SwaggerClient({
+      url: 'http://example.com/petstore.yaml',
+      spec: spec,
+      usePromise: true
+    }).then(function(client) {
+      var param = client.test.apis.myop.parameters[0];
+      console.log(param['enum']);
+      expect(param.enum).toBe(undefined);
+      expect(param.items.enum).toEqual(['a', 'b']);
+      done();
+    }).catch(function(exception) {
+      done(exception);
+    });
+  });
 });

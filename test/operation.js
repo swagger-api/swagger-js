@@ -609,6 +609,5 @@ describe('operations', function () {
     expect(op.matchesAccept()).toEqual(true);
     expect(op.matchesAccept('application/json')).toEqual(true);
   });
-
 });
 
