@@ -21,7 +21,7 @@ describe('models', function () {
 
     expect(model.createJSONSample()).toEqual({ nodeName: 'string' });
   });
-/*
+
   it('should verify the JSON sample for a simple object model', function () {
     var definition = {
       properties: {
@@ -596,5 +596,4 @@ describe('models', function () {
       }
     });
   });
-  */
 });
