@@ -280,6 +280,62 @@ describe('swagger resolver', function () {
     });
   });
 
+  it('tests issue #567', function (done) {
+    var api = new Resolver();
+    var spec = {
+      definitions: {
+        'Pet': {
+          discriminator: 'type',
+          required: [
+            'type'
+          ],
+          properties: {
+            hasFur: {
+              type: 'boolean'
+            },
+            limbCount: {
+              type: 'integer',
+              format: 'int32'
+            },
+            eatsMeat: {
+              type: 'boolean'
+            },
+            eatsPeople: {
+              type: 'boolean'
+            }
+          }
+        },
+        'Cat': {
+          properties: {
+            commonName: {
+              type: 'string',
+              example: 'Abyssinian'
+            }
+          }
+        },
+        'Dog': {
+          properties: {
+            barks: {
+              type: 'boolean'
+            },
+            slobberFactor: {
+              type: 'integer',
+              format: 'int32'
+            }
+          }
+        }
+      }
+    };
+    api.resolve(spec, 'http://localhost:8000/v2/petstore.json', function (spec, unresolved) {
+      expect(Object.keys(unresolved).length).toBe(0);
+      test.object(spec);
+      var pet = spec.definitions['Pet'];
+
+      expect(pet).toBeAn('object');
+      expect(pet.discriminator).toBeAn('string');
+    });
+  });
+
   it('tests issue #459', function (done) {
     var api = new Resolver();
     var spec = {
