@@ -333,6 +333,7 @@ describe('swagger resolver', function () {
 
       expect(pet).toBeAn('object');
       expect(pet.discriminator).toBeAn('string');
+      done();
     });
   });
 
