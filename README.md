@@ -66,6 +66,26 @@ That's it!  You'll get a JSON response with the default callback handler:
 }
 ```
 
+### Handling success and failures
+
+You need to pass success and error functions to do anything reasonable with the responses:
+
+```js
+var client = require('swagger-client');
+
+var swagger = new client({
+  url: 'http://petstore.swagger.io/v2/swagger.json',
+  success: function() {
+    swagger.pet.getPetById({petId:7}, function(success){
+      console.log('succeeded and returned this object: + success.obj);
+    },
+    function(error) {
+      console.log('failed with the following: ' + error.statusText);
+    });
+  }
+});
+```
+
 You can use promises too, by passing the `usePromise: true` option:
 
 ```js
