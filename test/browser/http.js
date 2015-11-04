@@ -5,6 +5,7 @@ var fauxjax = require('faux-jax');
 var Swagger = require('../../');
 var fs = require('fs');
 var petstore_yaml = fs.readFileSync(__dirname + '/../spec/v2/petstore.yaml', 'utf8'); // browserify with brfs with inline this for browser
+var petstoreJson = JSON.parse(fs.readFileSync(__dirname + '/../spec/v2/petstore.json', 'utf8')); // browserify with brfs with inline this for browser
 
 var petstore;
 var client;
@@ -93,11 +94,17 @@ describe('yaml http', function () {
 
     it('should call the then-function when executing a valid api-call', function(done) {
       var petId = 3;
-      petstoreWithPromise.pet.getPetById({petId: petId}).then(function(pet) {
-        expect(pet).to.be.an('object');
-        expect(pet.obj.id).to.equal(petId);
-        expect(pet.obj.name).to.be.an('string');
-        done();
+      petstoreWithPromise.pet.getPetById({petId: petId})
+        .then(function(pet) {
+            expect(pet).to.be.an('object');
+            expect(pet.obj.id).to.equal(petId);
+            expect(pet.obj.name).to.be.an('string');
+            done();
+        })
+        .catch(function(error) {
+            // someone deleted our pet!
+            expect(error.status).to.equal(404);
+            done();
       });
     });
 
@@ -109,7 +116,55 @@ describe('yaml http', function () {
         done();
       });
     });
-
   });
 
+
+
+  it('calls the API with promise from a static spec', function(done) {
+    var spec = petstoreJson;
+
+    // set the host + basePath so we can make real calls
+    spec.host = 'petstore.swagger.io';
+    spec.basePath = '/v2';
+    new Swagger({
+      url: 'http://foo.bar',
+      spec: petstoreJson,
+      usePromise: true
+    }).then(function(client) {
+        client.pet.getPetById({petId: 4})
+        .then(
+          function(response) {
+            var pet = response.obj;
+            expect(pet.id).to.equal(4);
+            done();
+          })
+        .catch(function(error) {
+          // it's ok if the pet was deleted
+          expect(error.status).to.equal(404);
+          expect(error.statusText.indexOf('Pet not found')).to.be.greaterThan(0);
+          done();
+        });
+      });
+  });
+
+  it('calls the API with promise from a url', function(done) {
+    new Swagger({
+      url: 'http://petstore.swagger.io/v2/swagger.json',
+      usePromise: true
+    }).then(function(client) {
+          client.pet.getPetById({petId: 4})
+              .then(
+              function(response) {
+                var pet = response.obj;
+                expect(pet.id).to.equal(4);
+                done();
+              })
+              .catch(function(error) {
+                // it's ok if the pet was deleted
+                expect(error.status).to.equal(404);
+                expect(error.statusText.indexOf('Pet not found')).to.be.greaterThan(0);
+                done();
+              });
+        });
+  });
 });

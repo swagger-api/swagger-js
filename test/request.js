@@ -384,14 +384,7 @@ describe('swagger basePath override functions', function () {
     });
   });
 
-  after(function (done){
-    instance.close();
-
-    sample.clientAuthorizations.authz = {};
-    done();
-  });
-
-  it('overrides a basePath https://github.com/swagger-api/swagger-ui/issues/532', function () {
+  it('overrides a basePath https://github.com/swagger-api/swagger-ui/issues/532', function (done) {
     sample.setBasePath('/bar');
     var petApi = sample.pet;
     var req = petApi.deletePet({petId: 'foo/bar'}, {mock: true});
@@ -401,5 +394,14 @@ describe('swagger basePath override functions', function () {
     expect(req.method).toBe('DELETE');
     expect(req.headers.Accept).toBe('application/json');
     expect(req.url).toBe('http://localhost:8000/bar/pet/foo%2Fbar');
+
+    done();
+  });
+
+  after(function (done){
+    instance.close();
+
+    sample.clientAuthorizations.authz = {};
+    done();
   });
 });

@@ -41,7 +41,6 @@ describe('SwaggerClient', function () {
     var client;
 
     describe('given a valid spec (or url)', function() {
-
       beforeEach(function() {
         client = new SwaggerClient({
           spec: petstoreRaw,
@@ -62,7 +61,6 @@ describe('SwaggerClient', function () {
           done();
         });
       });
-
     });
 
   });

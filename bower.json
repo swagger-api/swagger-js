@@ -1,6 +1,6 @@
 {
   "name": "swagger-js",
-  "version": "2.1.1",
+  "version": "2.1.7",
   "main": "browser/swagger-client.js",
   "ignore": [
     "gulpfile.js",

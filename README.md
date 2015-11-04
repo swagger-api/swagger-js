@@ -35,7 +35,8 @@ var swagger = new client({
 });
 ```
 
-NOTE: we're explicitly setting the responseContentType, because we don't want you getting stuck when there is more than one content type available.
+NOTE: we're explicitly setting the responseContentType, because we don't want you getting stuck when 
+there is more than one content type available.
 
 That's it!  You'll get a JSON response with the default callback handler:
 
@@ -65,7 +66,27 @@ That's it!  You'll get a JSON response with the default callback handler:
 }
 ```
 
-Need to pass an API key?  Configure one as a querystring:
+You can use promises too, by passing the `usePromise: true` option:
+
+```js
+var Swagger = require('swagger-client');
+
+new Swagger({
+  url: 'http://petstore.swagger.io/v2/swagger.json',
+  usePromise: true
+})
+.then(function(client) {
+  client.pet.getPetById({petId:7})
+    .then(function(pet) {
+      console.log(pet.obj);
+    })
+    .catch(function(error) {
+      console.log('Oops!  failed with message: ' + error.statusText);
+    });
+});
+```
+
+Need to pass an API key?  Configure one as a query string:
 
 ```js
 client.clientAuthorizations.add("apiKey", new client.ApiKeyAuthorization("api_key","special-key","query"));
@@ -101,10 +122,10 @@ Download `browser/swagger-client.js` into your webapp:
 <script type="text/javascript">
   // initialize swagger, point to a resource listing
   window.swagger = new SwaggerClient({
-    url: "http://petstore.swagger.io/api/api-docs",
+    url: "http://petstore.swagger.io/v2/swagger.json",
     success: function() {
       // upon connect, fetch a pet and set contents to element "mydata"
-      swagger.apis.pet.getPetById({petId:1},{responseContentType: 'application/json'}, function(data) {
+      swagger.pet.getPetById({petId:1},{responseContentType: 'application/json'}, function(data) {
         document.getElementById("mydata").innerHTML = JSON.stringify(data.obj);
       });
     }
@@ -155,7 +176,7 @@ CustomRequestSigner.prototype.apply = function(obj, authorizations) {
 ```
 
 In the above simple example, we're creating a new request signer that simply
-base 64 encodes the URL.  Of course you'd do something more sophisticated, but
+Base64 encodes the URL.  Of course you'd do something more sophisticated, but
 after encoding it, a header called `signature` is set before sending the request.
 
 ### How does it work?
