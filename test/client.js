@@ -24,6 +24,7 @@ describe('SwaggerClient', function () {
     instance.close();
     done();
   });
+
   /* jshint ignore:end */
   it('ensure externalDocs is attached to the client when available (Issue 276)', function (done) {
     var client = new SwaggerClient({
@@ -379,6 +380,62 @@ describe('SwaggerClient', function () {
       console.log(param['enum']);
       expect(param.enum).toBe(undefined);
       expect(param.items.enum).toEqual(['a', 'b']);
+      done();
+    }).catch(function(exception) {
+      done(exception);
+    });
+  });
+
+
+  it('tests https://github.com/swagger-api/swagger-js/issues/535', function(done) {
+    var spec = {
+      paths: {
+        '/foo': {
+          get: {
+            tags: [ 'foo' ],
+            operationId: 'test',
+            parameters: [
+              {
+                in: 'body',
+                name: 'body',
+                schema: { $ref: '#/definitions/ModelA' }
+              }
+            ]
+          }
+        }
+      },
+      definitions: {
+        ModelA: {
+          required: [ 'modelB' ],
+          properties: {
+            modelB: { $ref: '#/definitions/ModelB' }
+          }
+        },
+        ModelB: {
+          required: [ 'property1', 'property2' ],
+          properties: {
+            property1: { type: 'string', enum: ['a','b'] },
+            property2: { type: 'string' }
+          }
+        }
+      }
+    };
+
+    new SwaggerClient({
+      url: 'http://example.com/petstore.yaml',
+      spec: spec,
+      usePromise: true
+    }).then(function(client) {
+      var param = client.foo.apis.test.parameters[0];
+      var modelA = JSON.parse(param.sampleJSON);
+      expect(modelA).toBeAn('object');
+      expect(modelA.modelB).toBeAn('object');
+
+      var modelB = client.models.ModelB;
+      expect(modelB).toBeAn('object');
+      expect(modelB.definition.properties.property1).toBeAn('object');
+      expect(modelB.definition.properties.property2).toBeAn('object');
+
       done();
     }).catch(function(exception) {
       done(exception);
