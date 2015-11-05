@@ -862,7 +862,7 @@ describe('swagger resolver', function () {
     sample = new SwaggerClient(opts);
   });
 
-  it('resloves absolute references per #587', function(done) {
+  it('resolves absolute references per #587', function(done) {
     var api = new Resolver();
     var sample;
     var opts = opts || {};
@@ -879,5 +879,80 @@ describe('swagger resolver', function () {
     };
 
     sample = new SwaggerClient(opts);
+  });
+
+  it('resolves top-level shared parameters', function(done) {
+    var api = new Resolver();
+    var spec = {
+      parameters: {
+        skip: {
+          in: 'query',
+          name: 'skip',
+          type: 'integer',
+          format: 'int32',
+          required: 'true'
+        }
+      },
+      paths: {
+        '/foo': {
+          get: {
+            parameters: [
+              { $ref: '#/parameters/skip'}
+            ],
+            responses: {
+              200: {
+                description: 'ok'
+              }
+            }
+          }
+        }
+      }
+    };
+    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec, unresolved) {
+      expect(spec.paths['/foo'].get.parameters[0]).toBeAn('object');
+      done();
+    });
+  });
+
+  it('resolves path-level shared parameters', function(done) {
+    var api = new Resolver();
+    var spec = {
+      paths: {
+        '/foo': {
+          parameters: [
+            {
+              in: 'query',
+              name: 'skip',
+              type: 'integer',
+              format: 'int32',
+              required: 'true'
+            }
+          ],
+          get: {
+            parameters: [
+              {
+                in: 'query',
+                name: 'limit',
+                type: 'integer',
+                format: 'int32',
+                required: 'true'
+              }
+            ],
+            responses: {
+              200: {
+                description: 'ok'
+              }
+            }
+          }
+        }
+      }
+    };
+    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec, unresolved) {
+      var parameters = spec.paths['/foo'].get.parameters;
+      expect(parameters[0].name).toEqual('skip');
+      expect(parameters[1].name).toEqual('limit');
+      expect(spec.paths['/foo'].parameters.length).toBe(0);
+      done();
+    });
   });
 });
