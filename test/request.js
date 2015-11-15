@@ -384,6 +384,20 @@ describe('swagger basePath override functions', function () {
     });
   });
 
+  it('provides an error object per #549', function(done) {
+    var petApi = sample.pet;
+    petApi.getPetById({petId: 666}, function(success){
+      console.log(success);
+      done();
+    }, function(err){
+      expect(err.obj).toBeAn('object');
+      expect(err.obj.code).toBe(400);
+      expect(err.obj.type).toBe('bad input');
+      expect(err.obj.message).toBe('sorry!');
+      done();
+    });
+  });
+
   it('overrides a basePath https://github.com/swagger-api/swagger-ui/issues/532', function (done) {
     sample.setBasePath('/bar');
     var petApi = sample.pet;

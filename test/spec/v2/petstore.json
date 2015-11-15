@@ -102,7 +102,10 @@
         ],
         "responses": {
           "405": {
-            "description": "Invalid input"
+            "description": "Invalid input",
+            "$schema": {
+              "$ref": "#/definitions/ApiResponse"
+            }
           }
         },
         "security": [
@@ -290,7 +293,10 @@
             }
           },
           "400": {
-            "description": "Invalid ID supplied"
+            "description": "Invalid ID supplied",
+            "schema": {
+              "$ref": "#/definitions/ApiResponse"
+            }
           }
         },
         "security": [
@@ -731,7 +737,10 @@
             }
           },
           "400": {
-            "description": "Invalid username/password supplied"
+            "description": "Invalid username/password supplied",
+            "$schema": {
+              "$ref": "#/definitions/ApiResponse"
+            }
           }
         }
       }
@@ -1020,6 +1029,20 @@
       "type": "array",
       "items": {
         "$ref": "#/definitions/Pet"
+      }
+    },
+    "ApiResponse": {
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "type": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
       }
     }
   },
