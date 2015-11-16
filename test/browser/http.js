@@ -109,8 +109,12 @@ describe('yaml http', function () {
     });
 
     it('should call the catch-function when executing an invalid api-call', function(done) {
-      var petId = -1;
-      petstoreWithPromise.pet.getPetById({petId: petId}).catch(function(error) {
+      var petId = -100;
+      petstoreWithPromise.pet.getPetById({petId: petId}).then(function (success) {
+        console.log('why?');
+        console.log(success);
+        done();
+      }).catch(function(error) {
         expect(error.status).to.equal(404);
         expect(error.statusText.indexOf('Pet not found')).to.be.greaterThan(0);
         done();
