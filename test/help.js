@@ -53,7 +53,7 @@ describe('help options', function () {
         '/path',
         {summary: 'test operation'}, {}, {}, auths);
     var curl = op.asCurl({});
-    // repeat
+    // repeat to ensure no change
     curl = op.asCurl({});
 
     expect(curl).toBe('curl -X GET --header "Accept: application/json" "http://localhost/path?api_key=abc123"');
