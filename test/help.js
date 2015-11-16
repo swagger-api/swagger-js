@@ -39,7 +39,7 @@ describe('help options', function () {
         {summary: 'test operation'}, {}, {}, new auth.SwaggerAuthorizations());
     var curl = op.asCurl({});
 
-    expect(curl).toBe('curl -X GET --header \'Accept: application/json\' \'http://localhost/path\'');
+    expect(curl).toBe('curl -X GET --header "Accept: application/json" "http://localhost/path"');
   });
 
   it('does not duplicate api_key in query param per #624', function () {
@@ -56,7 +56,7 @@ describe('help options', function () {
     // repeat
     curl = op.asCurl({});
 
-    expect(curl).toBe('curl -X GET --header \'Accept: application/json\' \'http://localhost/path?api_key=abc123\'');
+    expect(curl).toBe('curl -X GET --header "Accept: application/json" "http://localhost/path?api_key=abc123"');
   });
 
   it('prints a curl statement with headers', function () {
