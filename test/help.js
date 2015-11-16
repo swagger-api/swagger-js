@@ -31,11 +31,32 @@ describe('help options', function () {
   });
 
   it('prints a simple curl statement', function () {
-    var op = new Operation({}, 'http', 'test', 'get', '/path', {summary: 'test operation'}, {}, {},
-                                   new auth.SwaggerAuthorizations());
+    var op = new Operation({},
+        'http',
+        'test',
+        'get',
+        '/path',
+        {summary: 'test operation'}, {}, {}, new auth.SwaggerAuthorizations());
     var curl = op.asCurl({});
 
     expect(curl).toBe('curl -X GET --header \'Accept: application/json\' "http://localhost/path"');
+  });
+
+  it('does not duplicate api_key in query param per #624', function () {
+    var apiKey = new auth.ApiKeyAuthorization('api_key', 'abc123', 'query');
+    var auths = new auth.SwaggerAuthorizations({'api_key': apiKey});
+
+    var op = new Operation({},
+        'http',
+        'test',
+        'get',
+        '/path',
+        {summary: 'test operation'}, {}, {}, auths);
+    var curl = op.asCurl({});
+    // repeat to ensure no change
+    curl = op.asCurl({});
+
+    expect(curl).toBe('curl -X GET --header "Accept: application/json" "http://localhost/path?api_key=abc123"');
   });
 
   it('prints a curl statement with headers', function () {
