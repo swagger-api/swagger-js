@@ -483,6 +483,8 @@ paths:
               description: date in UTC when toekn expires
         "400":
           description: Invalid username/password supplied
+          schema:
+            $ref: '#/definitions/ApiResponse'
   /user/logout:
     get:
       tags:
