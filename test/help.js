@@ -56,7 +56,7 @@ describe('help options', function () {
     // repeat to ensure no change
     curl = op.asCurl({});
 
-    expect(curl).toBe('curl -X GET --header "Accept: application/json" "http://localhost/path?api_key=abc123"');
+    expect(curl).toBe('curl -X GET --header \'Accept: application/json\' "http://localhost/path?api_key=abc123"');
   });
 
   it('prints a curl statement with headers', function () {
