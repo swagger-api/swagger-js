@@ -34,7 +34,7 @@ describe('1.2 request operations', function () {
   it('shows curl syntax', function () {
     var curl = sample.pet.getPetById.asCurl({petId: 1});
 
-    expect(curl).toBe('curl -X GET --header "Accept: application/json" "http://localhost:8001/v1/api/pet/1"');
+    expect(curl).toBe('curl -X GET --header \'Accept: application/json\' "http://localhost:8001/v1/api/pet/1"');
   });
 
   it('generate a get request', function () {
