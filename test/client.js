@@ -441,43 +441,42 @@ describe('SwaggerClient', function () {
       done(exception);
     });
   });
+  
+  it('applies both a request and response interceptor per #601 with promies', function(done) {
+    var startTime = 0;
+    var elapsed = 0;
 
-
-it('applies both a request and response interceptor per #601 with promies', function(done) {
-  var startTime = 0;
-  var elapsed = 0;
-
-  var interceptor = {
-    requestInterceptor: {
-      apply: function (data) {
-        // rewrites an invalid pet id (-100) to be valid (1)
-        // you can do what you want here, like inject headers, etc.
-        startTime = new Date().getTime();
-        return data;
+    var interceptor = {
+      requestInterceptor: {
+        apply: function (requestObj) {
+          // rewrites an invalid pet id (-100) to be valid (1)
+          // you can do what you want here, like inject headers, etc.
+          startTime = new Date().getTime();
+          return requestObj;
+        }
+      },
+      responseInterceptor: {
+        apply: function (responseObj) {
+          elapsed = new Date().getTime() - startTime;
+          return responseObj;
+        }
       }
-    },
-    responseInterceptor: {
-      apply: function (data) {
-        elapsed = new Date().getTime() - startTime;
-        return data;
-      }
-    }
-  };
+    };
 
-  new SwaggerClient({
-    url: 'http://petstore.swagger.io/v2/swagger.json',
-    usePromise: true,
-    requestInterceptor: interceptor.requestInterceptor,
-    responseInterceptor: interceptor.responseInterceptor
-  }).then(function(client) {
-      console.log('got the client!');
-    client.pet.getPetById({petId: 1}).then(function (pet){
-      expect(pet.obj).toBeAn('object');
-      expect(elapsed).toBeGreaterThan(0);
-      done();
+    new SwaggerClient({
+      url: 'http://petstore.swagger.io/v2/swagger.json',
+      usePromise: true,
+      requestInterceptor: interceptor.requestInterceptor,
+      responseInterceptor: interceptor.responseInterceptor
+    }).then(function(client) {
+        console.log('got the client!');
+      client.pet.getPetById({petId: 1}).then(function (pet){
+        expect(pet.obj).toBeAn('object');
+        expect(elapsed).toBeGreaterThan(0);
+        done();
+      });
+    }).catch(function(exception) {
+      done(exception);
     });
-  }).catch(function(exception) {
-    done(exception);
   });
-});
 });
