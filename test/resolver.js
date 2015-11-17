@@ -955,4 +955,51 @@ describe('swagger resolver', function () {
       done();
     });
   });
+
+  it('resolves shared responses', function(done) {
+    var api = new Resolver();
+    var spec = {
+      "swagger" : "2.0",
+      "info" : {
+        "version" : "0.0.0",
+        "title" : "Simple API"
+      },
+      "responses": {
+        "Success": {
+          "description": "Success",
+          "schema": {
+            "type": "string"
+          }
+        },
+        "Error": {
+          "description": "Error",
+          "schema": {
+            "type": "string"
+          }
+        }
+      },
+      "paths" : {
+        "/" : {
+          "get" : {
+            "parameters" : [ ],
+            "responses" : {
+              "200" : {
+                "$ref": "#/responses/Success"
+              },
+              "default": {
+                "$ref": "#/responses/Error"
+              }
+            }
+          }
+        }
+      },
+      "definitions" : { }
+    };
+    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec, unresolved) {
+      var responses = spec.paths['/'].get.responses;
+      expect(responses['200'].description).toBe('Success');
+      expect(responses['default'].description).toBe('Error');
+      done();
+    });
+  });
 });
