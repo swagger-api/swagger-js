@@ -324,7 +324,7 @@ describe('SwaggerClient', function () {
     });
   });
 
-  it('should should use a responseInterceptor', function(done) {
+  it('should use a responseInterceptor', function(done) {
     var responseInterceptor = {
       apply: function(data) {
         data.url = 'foo/bar';
