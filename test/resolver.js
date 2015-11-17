@@ -1083,7 +1083,8 @@ describe('swagger resolver', function () {
       'definitions' : { }
     };
     api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec, unresolved) {
-      console.log(JSON.stringify(spec, null, 2));
+      expect(spec.definitions).toBeAn('object');
+      expect(spec.definitions.inline_model).toBeAn('object');
       done();
     });
   });

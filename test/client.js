@@ -377,7 +377,6 @@ describe('SwaggerClient', function () {
       usePromise: true
     }).then(function(client) {
       var param = client.test.apis.myop.parameters[0];
-      console.log(param['enum']);
       expect(param.enum).toBe(undefined);
       expect(param.items.enum).toEqual(['a', 'b']);
       done();
@@ -385,7 +384,6 @@ describe('SwaggerClient', function () {
       done(exception);
     });
   });
-
 
   it('tests https://github.com/swagger-api/swagger-js/issues/535', function(done) {
     var spec = {
@@ -436,6 +434,48 @@ describe('SwaggerClient', function () {
       expect(modelB.definition.properties.property1).toBeAn('object');
       expect(modelB.definition.properties.property2).toBeAn('object');
 
+      done();
+    }).catch(function(exception) {
+      done(exception);
+    });
+  });
+
+
+  it('creates unique operationIds per #595', function(done) {
+    var spec = {
+      paths: {
+        '/foo': {
+          get: {
+            operationId: 'test',
+            parameters: [],
+            responses: {
+              'default': {
+                description: 'success'
+              }
+            }
+          }
+        },
+        '/bar': {
+          get: {
+            operationId: 'test',
+            parameters: [],
+            responses: {
+              'default': {
+                description: 'success'
+              }
+            }
+          }
+        }
+      }
+    };
+
+    new SwaggerClient({
+      url: 'http://example.com/petstore.yaml',
+      spec: spec,
+      usePromise: true
+    }).then(function(client) {
+      expect(client.default.test).toBeA('function');
+      expect(client.default.test_0).toBeAn('function');
       done();
     }).catch(function(exception) {
       done(exception);
