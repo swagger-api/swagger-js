@@ -18,7 +18,7 @@
           "summary": "Find pet by ID",
           "notes": "Returns a pet based on ID",
           "type": "Animals",
-          "nickname": "getPetById",
+          "nickname": "getAnimalsById",
           "authorizations": {},
           "parameters": [
             {
