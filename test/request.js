@@ -444,12 +444,12 @@ describe('swagger basePath override functions', function () {
         }
       },
       responseInterceptor: {
-        apply: function(data) {
+        apply: function (data) {
           elapsed = new Date().getTime() - startTime;
           return data;
         }
       }
-    }
+    };
 
     petApi.getPetById({petId: 1}, {
       requestInterceptor: interceptor.requestInterceptor,
