@@ -440,7 +440,6 @@ describe('SwaggerClient', function () {
     });
   });
 
-
   it('creates unique operationIds per #595', function(done) {
     var spec = {
       paths: {
@@ -468,15 +467,52 @@ describe('SwaggerClient', function () {
         }
       }
     };
-
     new SwaggerClient({
       url: 'http://example.com/petstore.yaml',
       spec: spec,
       usePromise: true
-    }).then(function(client) {
+    }).then(function (client) {
       expect(client.default.test).toBeA('function');
       expect(client.default.test_0).toBeAn('function');
       done();
+    }).catch(function (exception) {
+      done(exception);
+    });
+  });
+
+  it('applies both a request and response interceptor per #601 with promies', function(done) {
+    var startTime = 0;
+    var elapsed = 0;
+
+    var interceptor = {
+      requestInterceptor: {
+        apply: function (requestObj) {
+          // rewrites an invalid pet id (-100) to be valid (1)
+          // you can do what you want here, like inject headers, etc.
+          startTime = new Date().getTime();
+          return requestObj;
+        }
+      },
+      responseInterceptor: {
+        apply: function (responseObj) {
+          elapsed = new Date().getTime() - startTime;
+          return responseObj;
+        }
+      }
+    };
+
+    new SwaggerClient({
+      url: 'http://petstore.swagger.io/v2/swagger.json',
+      usePromise: true,
+      requestInterceptor: interceptor.requestInterceptor,
+      responseInterceptor: interceptor.responseInterceptor
+    }).then(function(client) {
+        console.log('got the client!');
+      client.pet.getPetById({petId: 1}).then(function (pet){
+        expect(pet.obj).toBeAn('object');
+        expect(elapsed).toBeGreaterThan(0);
+        done();
+      });
     }).catch(function(exception) {
       done(exception);
     });
