@@ -18,6 +18,11 @@ var assign = require('object.assign');
 var connect = require('gulp-connect');
 var cors = require('connect-cors');
 
+// This is a workaround for this bug...https://github.com/feross/buffer/issues/79 
+// Please refactor this, when the bug is resolved!
+// PS: you need to depend on buffer@3.4.3
+var OldBuffer = require.resolve('buffer/');
+
 var banner = ['/**',
   ' * <%= pkg.name %> - <%= pkg.description %>',
   ' * @version v<%= pkg.version %>',
@@ -74,6 +79,7 @@ gulp.task('build', function (cb) {
     var useDebug = n % 2 === 0;
     var b = browserify('./index.js', {
       debug: useDebug,
+      builtins: {buffer: OldBuffer},
       standalone: 'SwaggerClient'
     });
 
