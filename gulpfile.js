@@ -22,6 +22,8 @@ var cors = require('connect-cors');
 // Please refactor this, when the bug is resolved!
 // PS: you need to depend on buffer@3.4.3
 var OldBuffer = require.resolve('buffer/');
+var builtinsOverride = require('browserify/lib/builtins')
+builtinsOverride.buffer = OldBuffer
 
 var banner = ['/**',
   ' * <%= pkg.name %> - <%= pkg.description %>',
@@ -79,7 +81,7 @@ gulp.task('build', function (cb) {
     var useDebug = n % 2 === 0;
     var b = browserify('./index.js', {
       debug: useDebug,
-      builtins: {buffer: OldBuffer},
+      builtins: builtinsOverride,
       standalone: 'SwaggerClient'
     });
 
