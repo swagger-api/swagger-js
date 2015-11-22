@@ -110,7 +110,8 @@
           "responseMessages": [
             {
               "code": 400,
-              "message": "Invalid ID supplied"
+              "message": "Invalid ID supplied",
+              "responseModel": "VeryBad"
             },
             {
               "code": 404,
@@ -552,6 +553,13 @@
         },
         "phone": {
           "$ref": "Phone"
+        }
+      }
+    },
+    "VeryBad": {
+      "properties": {
+        "message": {
+          "type": "string"
         }
       }
     }

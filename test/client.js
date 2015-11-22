@@ -480,7 +480,7 @@ describe('SwaggerClient', function () {
     });
   });
 
-  it('applies both a request and response interceptor per #601 with promies', function(done) {
+  it('applies both a request and response interceptor per #601 with promises', function(done) {
     var startTime = 0;
     var elapsed = 0;
 
