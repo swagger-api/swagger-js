@@ -333,7 +333,7 @@ describe('swagger resolver', function () {
     api.resolve(spec, 'http://localhost:8000/v2/petstore.json', function (spec, unresolved) {
       expect(Object.keys(unresolved).length).toBe(0);
       test.object(spec);
-      var pet = spec.definitions['Pet'];
+      var pet = spec.definitions.Pet;
 
       expect(pet).toBeAn('object');
       expect(pet.discriminator).toBeAn('string');

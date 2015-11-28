@@ -13,7 +13,6 @@ var instance;
 /* jshint ignore:end */
 
 describe('client macros', function () {
-    /* jshint ignore:start */
     before(function (done) {
         mock.petstore(done, function (petstore, server){
             instance = server;

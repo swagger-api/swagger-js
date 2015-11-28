@@ -33,12 +33,12 @@ var quantityFD = {
   name: 'quantity',
   type: 'integer',
   format: 'int32'
-}
+};
 var nameFD = {
   in: 'formData',
   name: 'name',
   type: 'string'
-}
+};
 
 describe('operations', function () {
   it('should generate a url', function () {

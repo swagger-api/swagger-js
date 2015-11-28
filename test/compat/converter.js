@@ -305,7 +305,7 @@ describe('converts specs', function () {
           apply: function (requestObj) {
             // rewrites an invalid pet id (-100) to be valid (1)
             // you can do what you want here, like inject headers, etc.
-            callCount += 1
+            callCount += 1;
             return requestObj;
           }
         }
@@ -319,7 +319,7 @@ describe('converts specs', function () {
         var operation = client.apis.pet.operations.getPetById;
         expect(operation.successResponse[200].definition).toBeAn('object');
         expect(operation.responses[400].schema).toBeAn('object');
-        expect(operation.responses[400].schema['$ref']).toBe('#/definitions/VeryBad');
+        expect(operation.responses[400].schema.$ref).toBe('#/definitions/VeryBad');
         expect(callCount).toEqual(4);
         done();
       }).catch(function(e) {
