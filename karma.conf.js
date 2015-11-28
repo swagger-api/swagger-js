@@ -11,7 +11,8 @@ module.exports = {
   // list of files / patterns to load in the browser
   files: [
     "test/browser/*.js",
-    "test/both/*.js"
+    "test/both/*.js",
+    {pattern: "test/spec/v2/*.json", watched: false, included: false, served: true, nocache: false}
   ],
 
 
