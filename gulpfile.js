@@ -12,7 +12,7 @@ var mocha  = require('gulp-mocha');
 var pkg = require('./package');
 var source = require('vinyl-source-stream');
 // Browser Unit Tests
-var karma = require('karma').server;
+var Karma = require('karma').Server;
 var karmaConfig = require('./karma.conf');
 var assign = require('object.assign');
 var connect = require('gulp-connect');
@@ -123,7 +123,7 @@ gulp.task('watch:build', ['build'], function() {
 });
 
 gulp.task('browsertest', function(done) {
-  karma.start(karmaConfig, done);
+  new Karma(karmaConfig, done).start()
 });
 
 gulp.task('connect', function () {
@@ -139,7 +139,7 @@ gulp.task('connect', function () {
 
 gulp.task('watch-browsertest', function(done){
   var opts = assign({}, karmaConfig, {singleRun: false});
-  karma.start(opts, done);
+  new Karma(opts, done).start()
 });
 
 

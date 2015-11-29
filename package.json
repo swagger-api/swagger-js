@@ -57,7 +57,7 @@
     "gulp-mocha": "^2.0.0",
     "http-server": "git://github.com/nodeapps/http-server.git",
     "jshint-stylish": "^1.0.1",
-    "karma": "^0.12.35",
+    "karma": "^0.13.0",
     "karma-browserify": "^4.2.1",
     "karma-firefox-launcher": "^0.1.6",
     "karma-mocha": "^0.1.10",
