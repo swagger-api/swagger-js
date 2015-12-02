@@ -515,7 +515,6 @@ describe('SwaggerClient', function () {
     });
   });
 
-
   it('passes headers to the request interceptor', function (done) {
     var spec = {
       paths: {
@@ -577,6 +576,69 @@ describe('SwaggerClient', function () {
       requestInterceptor: interceptor.requestInterceptor
     }).then(function(client) {
       client.nada.addFoo({username: 'bob'}).then(function (data){
+        done();
+      });
+    }).catch(function(exception) {
+      done(exception);
+    });
+  });
+
+  it('uses a custom http client implementation', function (done) {
+
+    var spec = {
+      paths: {
+        '/foo': {
+          post: {
+            operationId: 'addFoo',
+            tags: [
+              'nada'
+            ],
+            parameters: [
+              {
+                in: 'header',
+                name: 'username',
+                type: 'string'
+              }
+            ],
+            responses: {
+              '200': {
+                description: 'ok'
+              }
+            }
+          }
+        }
+      }
+    };
+    var myHttpClient = {
+      execute: function(requestObj) {
+        /**
+         * Do your magic here.  When done, you should call the responseObj callback if successful
+         * For this mock client, just make it act async
+         */
+
+        setTimeout(function() {
+          requestObj.on.response({
+            obj: {
+              // payload
+              content: 'it works!'
+            },
+            status: 200,
+            statusText: 'it works!'
+          });
+          // and if something goes wrong call requestObj.on.error and pass the payload
+        }, 1000)
+      }
+    }
+
+    new SwaggerClient({
+      url: 'http://localhost:8000/v2/swagger.json',
+      spec: spec,
+      usePromise: true,
+      client: myHttpClient
+    }).then(function(client) {
+      client.nada.addFoo({username: 'bob'}).then(function (data){
+        expect(data.obj).toBeAn('object');
+        expect(data.status).toBe(200);
         done();
       });
     }).catch(function(exception) {
