@@ -487,8 +487,6 @@ describe('SwaggerClient', function () {
     var interceptor = {
       requestInterceptor: {
         apply: function (requestObj) {
-          // rewrites an invalid pet id (-100) to be valid (1)
-          // you can do what you want here, like inject headers, etc.
           startTime = new Date().getTime();
           return requestObj;
         }
@@ -507,10 +505,78 @@ describe('SwaggerClient', function () {
       requestInterceptor: interceptor.requestInterceptor,
       responseInterceptor: interceptor.responseInterceptor
     }).then(function(client) {
-        console.log('got the client!');
       client.pet.getPetById({petId: 1}).then(function (pet){
         expect(pet.obj).toBeAn('object');
         expect(elapsed).toBeGreaterThan(0);
+        done();
+      });
+    }).catch(function(exception) {
+      done(exception);
+    });
+  });
+
+
+  it('passes headers to the request interceptor', function (done) {
+    var spec = {
+      paths: {
+        '/foo': {
+          post: {
+            operationId: 'addFoo',
+            tags: [
+              'nada'
+            ],
+            parameters: [
+              {
+                in: 'header',
+                name: 'username',
+                type: 'string'
+              }
+            ],
+            responses: {
+              '200': {
+                description: 'ok'
+              }
+            }
+          }
+        }
+      }
+    };
+    var interceptor = {
+      requestInterceptor: {
+        apply: function (requestObj) {
+          /**
+           * Verify the payload.  You have the following available in `requestObj`:
+           *
+           * request.Obj.headers          <= map of headers to be sent, includes Content-Type, Accept headers
+           * requestObj.body              <= the content to send, undefined of none
+           * requestObj.method            <= the HTTP operation to execute
+           * requestObj.url               <= the fully resolved URL, including query params, to send
+           * requestObj.on.response       <= success function to execute
+           * requestObj.on.error          <= error function to execute on failure
+           *
+           * NOTE! It is not recommended to override the on.response / on.error functions as it may
+           * interrupt downstream processing in the client.  Use the responseInterceptor pattern instead
+           *
+           **/
+
+          // ensure the headers are present
+          expect(requestObj.headers.username).toBe('bob');
+
+          // rewrite this request to something that'll work locally
+          requestObj.method = 'GET';
+          requestObj.url = 'http://localhost:8000/v2/api/pet/1'
+          return requestObj;
+        }
+      }
+    };
+
+    new SwaggerClient({
+      url: 'http://petstore.swagger.io/v2/swagger.json',
+      spec: spec,
+      usePromise: true,
+      requestInterceptor: interceptor.requestInterceptor
+    }).then(function(client) {
+      client.nada.addFoo({username: 'bob'}).then(function (data){
         done();
       });
     }).catch(function(exception) {
