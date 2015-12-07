@@ -12,11 +12,18 @@ var mocha  = require('gulp-mocha');
 var pkg = require('./package');
 var source = require('vinyl-source-stream');
 // Browser Unit Tests
-var karma = require('karma').server;
+var Karma = require('karma').Server;
 var karmaConfig = require('./karma.conf');
 var assign = require('object.assign');
 var connect = require('gulp-connect');
 var cors = require('connect-cors');
+
+// This is a workaround for this bug...https://github.com/feross/buffer/issues/79 
+// Please refactor this, when the bug is resolved!
+// PS: you need to depend on buffer@3.4.3
+var OldBuffer = require.resolve('buffer/');
+var builtinsOverride = require('browserify/lib/builtins')
+builtinsOverride.buffer = OldBuffer
 
 var banner = ['/**',
   ' * <%= pkg.name %> - <%= pkg.description %>',
@@ -74,6 +81,7 @@ gulp.task('build', function (cb) {
     var useDebug = n % 2 === 0;
     var b = browserify('./index.js', {
       debug: useDebug,
+      builtins: builtinsOverride,
       standalone: 'SwaggerClient'
     });
 
@@ -115,7 +123,7 @@ gulp.task('watch:build', ['build'], function() {
 });
 
 gulp.task('browsertest', function(done) {
-  karma.start(karmaConfig, done);
+  new Karma(karmaConfig, done).start()
 });
 
 gulp.task('connect', function () {
@@ -131,7 +139,7 @@ gulp.task('connect', function () {
 
 gulp.task('watch-browsertest', function(done){
   var opts = assign({}, karmaConfig, {singleRun: false});
-  karma.start(opts, done);
+  new Karma(opts, done).start()
 });
 
 
