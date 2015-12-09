@@ -943,6 +943,13 @@ describe('swagger resolver', function () {
                 description: 'ok'
               }
             }
+          },
+          post: {
+            responses: {
+              200: {
+                description: 'ok'
+              }
+            }
           }
         }
       }
@@ -952,6 +959,10 @@ describe('swagger resolver', function () {
       expect(parameters[0].name).toEqual('skip');
       expect(parameters[1].name).toEqual('limit');
       expect(spec.paths['/foo'].parameters.length).toBe(0);
+
+
+      parameters = spec.paths['/foo'].post.parameters;
+      console.log(parameters);
       done();
     });
   });
@@ -1032,6 +1043,13 @@ describe('swagger resolver', function () {
                 description: 'ok'
               }
             }
+          },
+          post: {
+            responses: {
+              200: {
+                description: 'ok'
+              }
+            }
           }
         }
       }
@@ -1041,6 +1059,10 @@ describe('swagger resolver', function () {
       expect(parameters[0].name).toEqual('skip');
       expect(parameters[1].name).toEqual('limit');
       expect(spec.paths['/foo'].parameters.length).toBe(0);
+
+      parameters = spec.paths['/foo'].post.parameters;
+      expect(parameters[0].name).toEqual('skip');
+      expect(parameters.length).toEqual(1);
       done();
     });
   });
