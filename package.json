@@ -55,7 +55,7 @@
     "gulp-istanbul": "^0.5.0",
     "gulp-jshint": "^1.9.0",
     "gulp-mocha": "^2.0.0",
-    "http-server": "git://github.com/nodeapps/http-server.git",
+    "http-server": "^0.8.0",
     "jshint-stylish": "^1.0.1",
     "karma": "^0.13.0",
     "karma-browserify": "^4.2.1",
