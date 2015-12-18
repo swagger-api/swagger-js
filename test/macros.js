@@ -42,11 +42,11 @@ describe('client macros', function () {
             usePromise: true,
             parameterMacro: macros.parameter
         }).then(function (client) {
-                var parameters = client.pet.apis.getPetById.parameters;
-                expect(parameters[0].default).toBe('100');
-                done();
-            }).catch(function (exception) {
-                done(exception);
-            });
+            var parameters = client.pet.apis.getPetById.parameters;
+            expect(parameters[0].default).toBe('100');
+            done();
+        }).catch(function (exception) {
+            done(exception);
+        });
     });
 });
