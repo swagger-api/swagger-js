@@ -234,6 +234,57 @@ describe('operations', function () {
     expect(url).toBe('http://localhost/foo/tony%20tam/bar');
   });
 
+  it('should generate a url with optional path param', function () {
+    var parameters = [
+      {
+        in: 'path',
+        name: 'name',
+        type: 'string'
+      }
+    ];
+    var op = new Operation({}, 'http', 'test', 'get', '/foo{/name}/bar', { parameters: parameters },
+                                   {}, {}, new auth.SwaggerAuthorizations());
+    var url = op.urlify({
+      name: 'tony'
+    });
+
+    expect(url).toBe('http://localhost/foo/tony/bar');
+
+    url = op.urlify({
+      name: undefined
+    });
+
+    expect(url).toBe('http://localhost/foo/bar');
+
+    url = op.urlify({
+      name: ''
+    });
+
+    expect(url).toBe('http://localhost/foo/bar');
+  });
+  it('should generate a url with multiple segments path param', function () {
+    var parameters = [
+      {
+        in: 'path',
+        name: 'name',
+        type: 'string'
+      }
+    ];
+    var op = new Operation({}, 'http', 'test', 'get', '/foo{/name*}/bar', { parameters: parameters },
+                                   {}, {}, new auth.SwaggerAuthorizations());
+    var url = op.urlify({
+      name: 'tony'
+    });
+
+    expect(url).toBe('http://localhost/foo/tony/bar');
+
+    url = op.urlify({
+      name: 'tony/tam'
+    });
+
+    expect(url).toBe('http://localhost/foo/tony/tam/bar');
+  });
+
   it('should generate a url with path param string array', function () {
     var parameters = [
       {
