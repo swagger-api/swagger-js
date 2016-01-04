@@ -563,7 +563,7 @@ describe('SwaggerClient', function () {
 
           // rewrite this request to something that'll work locally
           requestObj.method = 'GET';
-          requestObj.url = 'http://localhost:8000/v2/api/pet/1'
+          requestObj.url = 'http://localhost:8000/v2/api/pet/1';
           return requestObj;
         }
       }
@@ -626,9 +626,9 @@ describe('SwaggerClient', function () {
             statusText: 'it works!'
           });
           // and if something goes wrong call requestObj.on.error and pass the payload
-        }, 1000)
+        }, 1000);
       }
-    }
+    };
 
     new SwaggerClient({
       url: 'http://localhost:8000/v2/swagger.json',
