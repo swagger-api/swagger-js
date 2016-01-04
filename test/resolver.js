@@ -1110,4 +1110,71 @@ describe('swagger resolver', function () {
       done();
     });
   });
+
+  it('base model properties', function(done) {
+      
+    var api = new Resolver();
+    var spec = {
+     
+      swagger:'2.0',
+      info:{
+      },
+      host:"localhost:9000",
+      schemes:[
+        "http"
+      ],
+      basePath:"/2.0",
+      paths:{
+        '/':{
+          get:{
+            responses:{
+              "200":{
+                description:"Pets",
+                schema:{
+                  "$ref":"#/definitions/Pet"
+                }
+              }
+            },
+            parameters:[
+            ]
+          }
+        }
+      },
+      definitions:{
+        Cat:{
+          allOf: [
+            {
+              "$ref": "#/definitions/Pet"
+            }, 
+            {
+              type: "object",
+              properties:{
+                size:{
+                  type: "number"
+                }
+              }
+            }
+          ]
+        },
+        Pet:{
+          type: "object",
+          properties:{
+            color:{
+              "$ref":"#/definitions/Color"
+            }
+          }
+        },
+        Color:{
+          "type": "string"
+        }
+      }
+    };
+    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec, unresolved) {
+        
+      expect(spec.definitions.Pet.properties.color['$ref']).toBe('#/definitions/Color');
+      expect(spec.definitions.Cat.properties.color['$ref']).toBe('#/definitions/Color');
+      
+      done();
+    });
+  });
 });
