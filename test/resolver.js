@@ -810,6 +810,24 @@ describe('swagger resolver', function () {
     });
   });
 
+  it('resolves a relative, nested linked reference', function(done) {
+    var api = new Resolver();
+    var spec = {
+      paths: {
+        '/linked': {
+          $ref: 'resourceWithLinkedDefinitions_part2.json'
+        }
+      }
+    };
+
+    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec, unresolved) {
+      expect(spec.definitions.Pet).toExist();
+      expect(spec.definitions.ErrorModel).toExist();
+      expect(Object.keys(unresolved).length).toBe(0);
+      done();
+    });
+  });
+
   it('resolves a linked reference', function(done) {
     var api = new Resolver();
     var spec = {
