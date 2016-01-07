@@ -23,12 +23,12 @@ bower install swagger-js
 
 Then let swagger do the work!
 ```js
-var client = require('swagger-client');
+var Swagger = require('swagger-client');
 
-var swagger = new client({
+var client = new Swagger({
   url: 'http://petstore.swagger.io/v2/swagger.json',
   success: function() {
-    swagger.pet.getPetById({petId:7},{responseContentType: 'application/json'},function(pet){
+    client.pet.getPetById({petId:7},{responseContentType: 'application/json'},function(pet){
       console.log('pet', pet);
     });
   }
@@ -71,12 +71,12 @@ That's it!  You'll get a JSON response with the default callback handler:
 You need to pass success and error functions to do anything reasonable with the responses:
 
 ```js
-var client = require('swagger-client');
+var Swagger = require('swagger-client');
 
-var swagger = new client({
+var client = new Swagger({
   url: 'http://petstore.swagger.io/v2/swagger.json',
   success: function() {
-    swagger.pet.getPetById({petId:7}, function(success){
+    client.pet.getPetById({petId:7}, function(success){
       console.log('succeeded and returned this object: ' + success.obj);
     },
     function(error) {
@@ -109,19 +109,19 @@ new Swagger({
 Need to pass an API key?  Configure one as a query string:
 
 ```js
-client.clientAuthorizations.add("apiKey", new client.ApiKeyAuthorization("api_key","special-key","query"));
+client.clientAuthorizations.add("apiKey", new Swagger.ApiKeyAuthorization("api_key","special-key","query"));
 ```
 
 ...or with a header:
 
 ```js
-client.clientAuthorizations.add("apiKey", new client.ApiKeyAuthorization("api_key","special-key","header"));
+client.clientAuthorizations.add("apiKey", new Swagger.ApiKeyAuthorization("api_key","special-key","header"));
 ```
 
 ...or with the swagger-client constructor:
 
 ```js
-var swagger = new client({
+var client = new Swagger({
   url: 'http://example.com/spec.json',
   success: function() {},
   authorizations : {
@@ -140,12 +140,12 @@ Download `browser/swagger-client.js` into your webapp:
 ```js
 <script src='browser/swagger-client.js' type='text/javascript'></script>
 <script type="text/javascript">
-  // initialize swagger, point to a resource listing
-  window.swagger = new SwaggerClient({
+  // initialize swagger client, point to a resource listing
+  window.client = new SwaggerClient({
     url: "http://petstore.swagger.io/v2/swagger.json",
     success: function() {
       // upon connect, fetch a pet and set contents to element "mydata"
-      swagger.pet.getPetById({petId:1},{responseContentType: 'application/json'}, function(data) {
+      client.pet.getPetById({petId:1},{responseContentType: 'application/json'}, function(data) {
         document.getElementById("mydata").innerHTML = JSON.stringify(data.obj);
       });
     }
@@ -163,19 +163,19 @@ var pet = {
   id: 100,
   name: "dog"};
 
-swagger.pet.addPet({body: pet});
+client.pet.addPet({body: pet});
 ```
 
 ### Sending XML in as a payload to your API?
 ```js
 var pet = "<Pet><id>2</id><name>monster</name></Pet>";
 
-swagger.pet.addPet({body: pet}, {requestContentType:"application/xml"});
+client.pet.addPet({body: pet}, {requestContentType:"application/xml"});
 ```
 
 ### Need XML response?
 ```js
-swagger.pet.getPetById({petId:1}, {responseContentType:"application/xml"});
+client.pet.getPetById({petId:1}, {responseContentType:"application/xml"});
 ```
 
 ### Custom request signing
