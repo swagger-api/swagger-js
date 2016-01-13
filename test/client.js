@@ -305,6 +305,42 @@ describe('SwaggerClient', function () {
     });
   });
 
+  it('should force jQuery for options', function(done) {
+    var spec = {
+      swagger: '2.0',
+      info: {
+        description: 'This is a sample server Petstore server',
+        version: '1.0.0',
+        title: 'Swagger Petstore'
+      },
+      host: 'petstore.swagger.io',
+      basePath: '/v2',
+      paths: {
+        '/pet': {
+          options: {
+            tags: [ 'pet' ],
+            operationId: 'testOptions',
+            responses: {
+              200: {
+                description: 'OK'
+              }
+            }
+          }
+        }
+      }
+    };
+
+    var client = new SwaggerClient({
+      spec: spec,
+      success: function () {
+        var result = client.pet.testOptions({}, function (data) {
+          expect(data.method).toEqual('OPTIONS');
+          done();
+        });
+      }
+    });
+  });
+
   it('should should use a custom http client', function(done) {
     var myHttpClient = {
       execute: function(obj) {
