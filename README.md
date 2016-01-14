@@ -199,6 +199,12 @@ In the above simple example, we're creating a new request signer that simply
 Base64 encodes the URL.  Of course you'd do something more sophisticated, but
 after encoding it, a header called `signature` is set before sending the request.
 
+You can add it to the swagger-client like such:
+
+```js
+client.clientAuthorizations.add('my-auth', new CustomRequestSigner());
+```
+
 ### How does it work?
 The swagger javascript client reads the swagger api definition directly from the server.  As it does, it constructs a client based on the api definition, which means it is completely dynamic.  It even reads the api text descriptions (which are intended for humans!) and provides help if you need it:
 
