@@ -14,7 +14,7 @@ describe('swagger resolver', function () {
     mock.petstore(done, function (petstore, server){
       instance = server;
     });
-    // this.timeout(5000 * 1000);
+     this.timeout(5000 * 1000);
   });
 
   after(function (done){
@@ -821,6 +821,7 @@ describe('swagger resolver', function () {
     };
 
     api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec, unresolved) {
+      console.log(unresolved);
       expect(spec.definitions.Pet).toExist();
       expect(spec.definitions.ErrorModel).toExist();
       expect(Object.keys(unresolved).length).toBe(0);
