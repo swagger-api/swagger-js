@@ -305,6 +305,46 @@ describe('SwaggerClient', function () {
     });
   });
 
+  it('should force jQuery for options', function(done) {
+    var spec = {
+      swagger: '2.0',
+      info: {
+        description: 'This is a sample server Petstore server',
+        version: '1.0.0',
+        title: 'Swagger Petstore'
+      },
+      host: 'petstore.swagger.io',
+      basePath: '/v2',
+      paths: {
+        '/pet': {
+          options: {
+            tags: [ 'pet' ],
+            operationId: 'testOptions',
+            responses: {
+              200: {
+                description: 'OK'
+              }
+            }
+          }
+        }
+      }
+    };
+
+    var client = new SwaggerClient({
+      spec: spec,
+      usePromise: true
+    }).then(function (client) {
+      client.pet.testOptions()
+        .then(function (data) {
+          done();
+        });
+    })
+    .catch (function (err) {
+      // this is expected
+      done();
+    })
+  });
+
   it('should should use a custom http client', function(done) {
     var myHttpClient = {
       execute: function(obj) {
@@ -563,7 +603,7 @@ describe('SwaggerClient', function () {
 
           // rewrite this request to something that'll work locally
           requestObj.method = 'GET';
-          requestObj.url = 'http://localhost:8000/v2/api/pet/1'
+          requestObj.url = 'http://localhost:8000/v2/api/pet/1';
           return requestObj;
         }
       }
@@ -626,9 +666,9 @@ describe('SwaggerClient', function () {
             statusText: 'it works!'
           });
           // and if something goes wrong call requestObj.on.error and pass the payload
-        }, 1000)
+        }, 1000);
       }
-    }
+    };
 
     new SwaggerClient({
       url: 'http://localhost:8000/v2/swagger.json',

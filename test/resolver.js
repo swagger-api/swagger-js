@@ -14,14 +14,14 @@ describe('swagger resolver', function () {
     mock.petstore(done, function (petstore, server){
       instance = server;
     });
-    // this.timeout(5000 * 1000);
+     this.timeout(5000 * 1000);
   });
 
   after(function (done){
     instance.close();
     done();
   });
-
+/*
   it('is OK without remote references', function (done) {
     var api = new Resolver();
     var spec = {};
@@ -810,6 +810,25 @@ describe('swagger resolver', function () {
     });
   });
 
+  it('resolves a relative, nested linked reference', function(done) {
+    var api = new Resolver();
+    var spec = {
+      paths: {
+        '/linked': {
+          $ref: 'resourceWithLinkedDefinitions_part2.json'
+        }
+      }
+    };
+
+    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec, unresolved) {
+      console.log(unresolved);
+      expect(spec.definitions.Pet).toExist();
+      expect(spec.definitions.ErrorModel).toExist();
+      expect(Object.keys(unresolved).length).toBe(0);
+      done();
+    });
+  });
+
   it('resolves a linked reference', function(done) {
     var api = new Resolver();
     var spec = {
@@ -1107,6 +1126,131 @@ describe('swagger resolver', function () {
     api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec, unresolved) {
       expect(spec.definitions).toBeAn('object');
       expect(spec.definitions.inline_model).toBeAn('object');
+      done();
+    });
+  });
+
+  it('base model properties', function(done) {
+    var api = new Resolver();
+    var spec = {
+     
+      swagger:'2.0',
+      info:{
+      },
+      host:"localhost:9000",
+      schemes:[
+        "http"
+      ],
+      basePath:"/2.0",
+      paths:{
+        '/':{
+          get:{
+            responses:{
+              "200":{
+                description:"Pets",
+                schema:{
+                  "$ref":"#/definitions/Pet"
+                }
+              }
+            },
+            parameters:[
+            ]
+          }
+        }
+      },
+      definitions:{
+        Cat:{
+          allOf: [
+            {
+              "$ref": "#/definitions/Pet"
+            }, 
+            {
+              type: "object",
+              properties:{
+                size:{
+                  type: "number"
+                }
+              }
+            }
+          ]
+        },
+        Pet:{
+          type: "object",
+          properties:{
+            color:{
+              "$ref":"#/definitions/Color"
+            }
+          }
+        },
+        Color:{
+          "type": "string"
+        }
+      }
+    };
+    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec, unresolved) {
+        
+      expect(spec.definitions.Pet.properties.color['$ref']).toBe('#/definitions/Color');
+      expect(spec.definitions.Cat.properties.color['$ref']).toBe('#/definitions/Color');
+      
+      done();
+    });
+  });
+*/
+  it('resolves allOf in response object for #681', function(done) {
+    var api = new Resolver();
+    var spec = {
+      swagger:'2.0',
+      info:{},
+      host:"localhost:9000",
+      basePath:"/2.0",
+      paths:{
+        '/':{
+          get:{
+            responses:{
+              "200":{
+                description:"Pets",
+                schema:{
+                  type: "object",
+                  allOf: [
+                    {
+                      $ref: "#/definitions/Pet"
+                    },
+                    {
+                      $ref: "#/definitions/Tag"
+                    }]
+                }
+              }
+            },
+            parameters:[]
+          }
+        }
+      },
+      definitions:{
+        Tag:{
+          properties:{
+            size:{
+              type: "number"
+            }
+          }
+        },
+        Pet:{
+          type: "object",
+          properties:{
+            name:{
+              type: "string"
+            }
+          }
+        }
+      }
+    };
+    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec, unresolved) {
+      expect(spec.paths['/'].get.responses['200'].schema['$ref']).toBeA('string');
+      var model = spec.paths['/'].get.responses['200'].schema['$ref'];
+
+      var parts = model.split('\/');
+      var simple = parts[parts.length - 1];
+
+      expect(spec.definitions[simple]).toBeA('object');
       done();
     });
   });
