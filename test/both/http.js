@@ -9,7 +9,6 @@ var petstoreYaml = fs.readFileSync(__dirname + '/../spec/v2/petstore.yaml', 'utf
 var petstore;
 
 describe('yaml http', function () {
-
   before(function(){
     fauxjax.install();
   });
@@ -20,6 +19,8 @@ describe('yaml http', function () {
   });
 
   describe('superagent', function(){
+/*
+ // re-enable after https://github.com/swagger-api/swagger-js/issues/711
 
     it('should fetch/parse petstore.yaml', function(done){
       // Mock our request
@@ -44,7 +45,7 @@ describe('yaml http', function () {
         done();
       }
     });
-
+*/
 
     // it('should parse yaml with the resolver', function(done){
     //   var baseSpec = 'swagger: "2.0"';
@@ -109,5 +110,4 @@ describe('yaml http', function () {
     // });
 
   });
-
 });
