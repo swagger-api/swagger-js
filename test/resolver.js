@@ -32,6 +32,29 @@ describe('swagger resolver', function () {
     });
   });
 
+  it('gracefully handles invalid remote references', function(done) {
+    var api = new Resolver();
+    var spec = {
+      paths: {
+        '/foo': {
+          get: {
+            responses: {
+              200: {
+                description: 'a two-hundie',
+                schema: {
+                  $ref: 'im_not_here'
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    api.resolve(spec, 'http://localhost:8080/v2/petstore.json', function (spec) {
+      done();
+    });
+  });
+
   it('resolves a remote model property reference $ref', function (done) {
     var api = new Resolver();
     var spec = {
