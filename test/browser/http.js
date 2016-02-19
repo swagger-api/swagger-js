@@ -173,15 +173,22 @@ describe('yaml http', function () {
   });
 
   it('should support relative spec URLs as per #645', function(done) {
-    try {
-      new Swagger({
-        url: '/base/test/spec/v2/test.json',
-        usePromise: true
-      }).then(function(client) {
-        done();
-      });
-    } catch (exception) {
-      done(exception);
+    // this test requires being run from the browser
+    if(typeof window !== 'undefined') {
+      try {
+        new Swagger({
+          url: '/base/test/spec/v2/test.json',
+          usePromise: true
+        }).then(function (client) {
+          done();
+        });
+      } catch (exception) {
+        done(exception);
+      }
+    }
+    else {
+      console.log('skipping headless test');
+      done();
     }
   });
 });
