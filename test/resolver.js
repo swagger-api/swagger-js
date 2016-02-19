@@ -1004,7 +1004,6 @@ describe('swagger resolver', function () {
 
 
       parameters = spec.paths['/foo'].post.parameters;
-      console.log(parameters);
       done();
     });
   });
