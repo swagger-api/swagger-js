@@ -829,6 +829,32 @@ describe('swagger resolver', function () {
     });
   });
 
+  it('resolves second level references', function(done) {
+    var api = new Resolver();
+    var spec = {
+      host: 'http://petstore.swagger.io',
+      basePath: '/v2',
+      paths: {
+        '/health': {
+          $ref: '#/definitions/ref1'
+        }
+      },
+      definitions: {
+        'ref1': {
+          $ref: '#/definitions/ref2'
+        },
+        'ref2': {
+          type: 'string'
+        }
+      }
+    };
+
+    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec, unresolved) {
+      expect(spec.paths['/health'].type).toBe('string')
+      done();
+    });
+  });
+
   it('resolves a linked reference', function(done) {
     var api = new Resolver();
     var spec = {
