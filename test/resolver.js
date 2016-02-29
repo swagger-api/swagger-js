@@ -21,7 +21,7 @@ describe('swagger resolver', function () {
     instance.close();
     done();
   });
-/*
+
   it('is OK without remote references', function (done) {
     var api = new Resolver();
     var spec = {};
@@ -1195,7 +1195,7 @@ describe('swagger resolver', function () {
       done();
     });
   });
-*/
+
   it('resolves allOf in response object for #681', function(done) {
     var api = new Resolver();
     var spec = {
