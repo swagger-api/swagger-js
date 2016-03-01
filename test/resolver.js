@@ -1159,19 +1159,19 @@ describe('swagger resolver', function () {
       swagger:'2.0',
       info:{
       },
-      host:"localhost:9000",
+      host:'localhost:9000',
       schemes:[
-        "http"
+        'http'
       ],
-      basePath:"/2.0",
+      basePath:'/2.0',
       paths:{
         '/':{
           get:{
             responses:{
-              "200":{
-                description:"Pets",
+              '200':{
+                description:'Pets',
                 schema:{
-                  "$ref":"#/definitions/Pet"
+                  '$ref':'#/definitions/Pet'
                 }
               }
             },
@@ -1184,28 +1184,28 @@ describe('swagger resolver', function () {
         Cat:{
           allOf: [
             {
-              "$ref": "#/definitions/Pet"
+              '$ref': '#/definitions/Pet'
             }, 
             {
-              type: "object",
+              type: 'object',
               properties:{
                 size:{
-                  type: "number"
+                  type: 'number'
                 }
               }
             }
           ]
         },
         Pet:{
-          type: "object",
+          type: 'object',
           properties:{
             color:{
-              "$ref":"#/definitions/Color"
+              '$ref':'#/definitions/Color'
             }
           }
         },
         Color:{
-          "type": "string"
+          'type': 'string'
         }
       }
     };
@@ -1223,22 +1223,22 @@ describe('swagger resolver', function () {
     var spec = {
       swagger:'2.0',
       info:{},
-      host:"localhost:9000",
-      basePath:"/2.0",
+      host:'localhost:9000',
+      basePath:'/2.0',
       paths:{
         '/':{
           get:{
             responses:{
-              "200":{
-                description:"Pets",
+              '200':{
+                description:'Pets',
                 schema:{
-                  type: "object",
+                  type: 'object',
                   allOf: [
                     {
-                      $ref: "#/definitions/Pet"
+                      $ref: '#/definitions/Pet'
                     },
                     {
-                      $ref: "#/definitions/Tag"
+                      $ref: '#/definitions/Tag'
                     }]
                 }
               }
@@ -1251,15 +1251,15 @@ describe('swagger resolver', function () {
         Tag:{
           properties:{
             size:{
-              type: "number"
+              type: 'number'
             }
           }
         },
         Pet:{
-          type: "object",
+          type: 'object',
           properties:{
             name:{
-              type: "string"
+              type: 'string'
             }
           }
         }
