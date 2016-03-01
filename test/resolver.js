@@ -21,7 +21,7 @@ describe('swagger resolver', function () {
     instance.close();
     done();
   });
-
+  
   it('is OK without remote references', function (done) {
     var api = new Resolver();
     var spec = {};
@@ -1273,6 +1273,81 @@ describe('swagger resolver', function () {
       var simple = parts[parts.length - 1];
 
       expect(spec.definitions[simple]).toBeA('object');
+      done();
+    });
+  });
+
+  it('resolves remote parameters', function(done) {
+    var api = new Resolver();
+    var spec = {
+      swagger:'2.0',
+      info:{},
+      host:'localhost:9000',
+      basePath:'/2.0',
+      paths:{
+        '/':{
+          get:{
+            responses:{
+              '200':{
+                description:'thanks'
+              }
+            },
+            parameters:[
+              {
+                '$ref': 'http://localhost:8000/v2/parameters.json#/query/skip'
+              }
+            ]
+          }
+        }
+      }
+    };
+    api.resolve(spec, 'http://localhost:9000/v2/swagger.json', function (spec, unresolved) {
+      expect(spec.paths['/'].get.parameters[0].name).toBe('skip');
+      done();
+    });
+  });
+
+  it('resolves remote paths', function(done) {
+    var api = new Resolver();
+    var spec = {
+      swagger:'2.0',
+      info:{},
+      host:'localhost:9000',
+      basePath:'/2.0',
+      paths:{
+        '/': {
+          '$ref': 'http://localhost:8000/v2/operations.json#/health'
+        }
+      }
+    };
+    api.resolve(spec, 'http://localhost:9000/v2/swagger.json', function (spec, unresolved) {
+      expect(spec.paths['/'].get).toBeAn('object');
+      done();
+    });
+  });
+
+  it('resolves remote responses', function(done) {
+    var api = new Resolver();
+    var spec = {
+      swagger:'2.0',
+      info:{},
+      host:'localhost:9000',
+      basePath:'/2.0',
+      paths:{
+        '/': {
+          get:{
+            responses:{
+              '200':{
+                '$ref': 'http://localhost:8000/v2/responses.json#/NotFoundError'
+              }
+            },
+            parameters:[]
+          }
+        }
+      }
+    };
+    api.resolve(spec, 'http://localhost:9000/v2/swagger.json', function (spec, unresolved) {
+      expect(spec.paths['/'].get.responses['200'].description).toBe('Entity not found');
       done();
     });
   });
