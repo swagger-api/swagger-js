@@ -8,9 +8,7 @@ var sample, instance;
 
 
 describe('yaml http', function () {
-
   describe('superagent', function(){
-
     before(function (done) {
       mock.petstore(done,{
         url: 'http://localhost:8000/v2/petstore.yaml'

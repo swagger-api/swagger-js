@@ -21,13 +21,36 @@ describe('swagger resolver', function () {
     instance.close();
     done();
   });
-
+  
   it('is OK without remote references', function (done) {
     var api = new Resolver();
     var spec = {};
 
     api.resolve(spec, function (spec, unresolved) {
       expect(Object.keys(unresolved).length).toBe(0);
+      done();
+    });
+  });
+
+  it('gracefully handles invalid remote references', function(done) {
+    var api = new Resolver();
+    var spec = {
+      paths: {
+        '/foo': {
+          get: {
+            responses: {
+              200: {
+                description: 'a two-hundie',
+                schema: {
+                  $ref: 'im_not_here'
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    api.resolve(spec, 'http://localhost:8080/v2/petstore.json', function (spec) {
       done();
     });
   });
@@ -981,7 +1004,6 @@ describe('swagger resolver', function () {
 
 
       parameters = spec.paths['/foo'].post.parameters;
-      console.log(parameters);
       done();
     });
   });
@@ -1137,19 +1159,19 @@ describe('swagger resolver', function () {
       swagger:'2.0',
       info:{
       },
-      host:"localhost:9000",
+      host:'localhost:9000',
       schemes:[
-        "http"
+        'http'
       ],
-      basePath:"/2.0",
+      basePath:'/2.0',
       paths:{
         '/':{
           get:{
             responses:{
-              "200":{
-                description:"Pets",
+              '200':{
+                description:'Pets',
                 schema:{
-                  "$ref":"#/definitions/Pet"
+                  '$ref':'#/definitions/Pet'
                 }
               }
             },
@@ -1162,28 +1184,28 @@ describe('swagger resolver', function () {
         Cat:{
           allOf: [
             {
-              "$ref": "#/definitions/Pet"
+              '$ref': '#/definitions/Pet'
             }, 
             {
-              type: "object",
+              type: 'object',
               properties:{
                 size:{
-                  type: "number"
+                  type: 'number'
                 }
               }
             }
           ]
         },
         Pet:{
-          type: "object",
+          type: 'object',
           properties:{
             color:{
-              "$ref":"#/definitions/Color"
+              '$ref':'#/definitions/Color'
             }
           }
         },
         Color:{
-          "type": "string"
+          'type': 'string'
         }
       }
     };
@@ -1201,22 +1223,22 @@ describe('swagger resolver', function () {
     var spec = {
       swagger:'2.0',
       info:{},
-      host:"localhost:9000",
-      basePath:"/2.0",
+      host:'localhost:9000',
+      basePath:'/2.0',
       paths:{
         '/':{
           get:{
             responses:{
-              "200":{
-                description:"Pets",
+              '200':{
+                description:'Pets',
                 schema:{
-                  type: "object",
+                  type: 'object',
                   allOf: [
                     {
-                      $ref: "#/definitions/Pet"
+                      $ref: '#/definitions/Pet'
                     },
                     {
-                      $ref: "#/definitions/Tag"
+                      $ref: '#/definitions/Tag'
                     }]
                 }
               }
@@ -1229,15 +1251,15 @@ describe('swagger resolver', function () {
         Tag:{
           properties:{
             size:{
-              type: "number"
+              type: 'number'
             }
           }
         },
         Pet:{
-          type: "object",
+          type: 'object',
           properties:{
             name:{
-              type: "string"
+              type: 'string'
             }
           }
         }
@@ -1251,6 +1273,81 @@ describe('swagger resolver', function () {
       var simple = parts[parts.length - 1];
 
       expect(spec.definitions[simple]).toBeA('object');
+      done();
+    });
+  });
+
+  it('resolves remote parameters', function(done) {
+    var api = new Resolver();
+    var spec = {
+      swagger:'2.0',
+      info:{},
+      host:'localhost:9000',
+      basePath:'/2.0',
+      paths:{
+        '/':{
+          get:{
+            responses:{
+              '200':{
+                description:'thanks'
+              }
+            },
+            parameters:[
+              {
+                '$ref': 'http://localhost:8000/v2/parameters.json#/query/skip'
+              }
+            ]
+          }
+        }
+      }
+    };
+    api.resolve(spec, 'http://localhost:9000/v2/swagger.json', function (spec, unresolved) {
+      expect(spec.paths['/'].get.parameters[0].name).toBe('skip');
+      done();
+    });
+  });
+
+  it('resolves remote paths', function(done) {
+    var api = new Resolver();
+    var spec = {
+      swagger:'2.0',
+      info:{},
+      host:'localhost:9000',
+      basePath:'/2.0',
+      paths:{
+        '/': {
+          '$ref': 'http://localhost:8000/v2/operations.json#/health'
+        }
+      }
+    };
+    api.resolve(spec, 'http://localhost:9000/v2/swagger.json', function (spec, unresolved) {
+      expect(spec.paths['/'].get).toBeAn('object');
+      done();
+    });
+  });
+
+  it('resolves remote responses', function(done) {
+    var api = new Resolver();
+    var spec = {
+      swagger:'2.0',
+      info:{},
+      host:'localhost:9000',
+      basePath:'/2.0',
+      paths:{
+        '/': {
+          get:{
+            responses:{
+              '200':{
+                '$ref': 'http://localhost:8000/v2/responses.json#/NotFoundError'
+              }
+            },
+            parameters:[]
+          }
+        }
+      }
+    };
+    api.resolve(spec, 'http://localhost:9000/v2/swagger.json', function (spec, unresolved) {
+      expect(spec.paths['/'].get.responses['200'].description).toBe('Entity not found');
       done();
     });
   });

@@ -411,7 +411,7 @@ describe('swagger basePath override functions', function () {
       apply: function(data) {
         // rewrites an invalid pet id (-100) to be valid (1)
         // you can do what you want here, like inject headers, etc.
-        data.url = 'http://petstore.swagger.io/v2/pet/1';
+        data.url = 'http://localhost:8000/v2/api/pet/1';
         return data;
       }
     };

@@ -540,7 +540,7 @@ describe('SwaggerClient', function () {
     };
 
     new SwaggerClient({
-      url: 'http://petstore.swagger.io/v2/swagger.json',
+      url: 'http://localhost:8000/v2/petstore.json',
       usePromise: true,
       requestInterceptor: interceptor.requestInterceptor,
       responseInterceptor: interceptor.responseInterceptor
