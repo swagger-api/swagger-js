@@ -1351,4 +1351,35 @@ describe('swagger resolver', function () {
       done();
     });
   });
+
+  it('resolves remote parameters, without providing a root', function(done) {
+    var api = new Resolver();
+    var spec = {
+      swagger:'2.0',
+      info:{},
+      host:'localhost:9000',
+      basePath:'/2.0',
+      paths:{
+        '/':{
+          get:{
+            responses:{
+              '200':{
+                description:'thanks'
+              }
+            },
+            parameters:[
+              {
+                '$ref': 'http://localhost:8000/v2/parameters.json#/query/skip'
+              }
+            ]
+          }
+        }
+      }
+    };
+    api.resolve(spec, function (spec, unresolved) {
+      expect(spec.paths['/'].get.parameters[0].name).toBe('skip');
+      done();
+    });
+  });
+
 });
