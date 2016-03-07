@@ -125,10 +125,10 @@ var client = new Swagger({
   url: 'http://example.com/spec.json',
   success: function() {},
   authorizations : {
-    easyapi_basic: new client.PasswordAuthorization('<username>', '<password>'),
-    someHeaderAuth: new client.ApiKeyAuthorization('<nameOfHeader>', '<value>', 'header'),
-    someQueryAuth: new client.ApiKeyAuthorization('<nameOfQueryKey>', '<value>', 'query'),
-    someCookieAuth: new client.CookieAuthorization('<cookie>'),
+    easyapi_basic: new Swagger.PasswordAuthorization('<username>', '<password>'),
+    someHeaderAuth: new Swagger.ApiKeyAuthorization('<nameOfHeader>', '<value>', 'header'),
+    someQueryAuth: new Swagger.ApiKeyAuthorization('<nameOfQueryKey>', '<value>', 'query'),
+    someCookieAuth: new Swagger.CookieAuthorization('<cookie>'),
   }
 });
 ```
