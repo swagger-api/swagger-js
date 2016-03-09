@@ -72,7 +72,8 @@ describe('1.2 verifies the get pet operation', function() {
 
     test.object(responses);
 
-    expect(Object.keys(responses).length).toBe(2);
+    expect(Object.keys(responses).length).toBe(3);
+    test.object(responses['200']);
     test.object(responses['400']);
     test.object(responses['404']);
   });
