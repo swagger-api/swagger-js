@@ -155,9 +155,8 @@ paths:
         "400":
           description: Invalid tag value
       security:
-        - petstore_auth:
-            - "write:pets"
-            - "read:pets"
+        - api_key: []
+        - basic_auth: []
   "/pet/{petId}":
     get:
       tags:
@@ -582,6 +581,8 @@ securityDefinitions:
     type: apiKey
     name: api_key
     in: header
+  basic_auth:
+    type: basic
 definitions:
   Order:
     properties:
@@ -650,6 +651,7 @@ definitions:
     xml:
       name: Tag
   Pet:
+    title: an ugly duckling
     required:
       - name
       - photoUrls

@@ -9,6 +9,27 @@ var petstore = require('./spec/v2/petstore.json');
 var SwaggerClient = require('..');
 
 describe('models', function () {
+  it('should use model title only when needed', function () {
+    var definition = {
+      type: 'object',
+      title: 'A very mean Sample',
+      properties: {
+        id: {
+          type: 'integer',
+          format: 'int32'
+        },
+        name: {
+          type: 'string'
+        },
+        photos: {
+          type: 'array'
+        }
+      }
+    };
+    var model = new Model('Sample', definition);
+    expect(model.name).toBe('Sample');
+  });
+
   it('should allow an attribute named `nodeName` #546', function () {
     var definition = {
       properties: {
@@ -127,7 +148,7 @@ describe('models', function () {
         }
       }
     };
-    var model = new Model('Sample', definition);
+    var model = new Model(null, definition);
 
     expect(model.getMockSignature()).toBe('<span class=\"strong\">Rad Object {</span><div><span class=\"propName \">id</span> (<span class=\"propType\">integer</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">name</span> (<span class=\"propType\">string</span>, <span class=\"propOptKey\">optional</span>),</div><div><span class=\"propName \">photos</span> (<span class=\"propType\">Array[object]</span>, <span class=\"propOptKey\">optional</span>)</div><span class=\"strong\">}</span>');
 
