@@ -685,4 +685,93 @@ describe('SwaggerClient', function () {
       done(exception);
     });
   });
+
+  it('verifies the order of tags', function(done) {
+    var spec = {
+      swagger: '2.0',
+      info: {
+        title: 'Swagger tags order',
+        'description' : 'Show tags order is alphabetical, not explicit \'tags\' order',
+        version: '1'
+      },
+      tags : [
+        { name : 'Most important resources',
+          description : 'I want these listed first'
+        },
+        { name : 'Not important resources',
+          description : 'I want these listed after most'
+        },
+        { name : 'Least important resources',
+          description : 'I want these listed last'
+        }
+      ],
+      schemes: [
+        'http'
+      ],
+      paths: {
+        '/not/important/resource': {
+          get: {
+            tags : [ 'Not important resources' ],
+            summary : 'Get API resouce links',
+            produces: [ 'application/json' ],
+            responses: {
+              200: {
+                description: 'something less important'
+              }
+            }
+          }
+        },
+        '/less/important/resource': {
+          get: {
+            tags : [ 'Least important resources' ],
+            summary : 'Get API resouce links',
+            produces: [ 'application/json' ],
+            responses: {
+              200: {
+                description: 'something less important'
+              }
+            }
+          }
+        },
+        '/important/resources': {
+          get: {
+            tags : [ 'Most important resources' ],
+            summary : 'Get API resouce links',
+            produces: [ 'application/json' ],
+            responses: {
+              200: {
+                description: 'something more important'
+              }
+            }
+          }
+        },
+        '/more/important/resources': {
+          get: {
+            tags : [ 'Most important resources' ],
+            summary : 'Get API resouce links',
+            produces: [ 'application/json' ],
+            responses: {
+              200: {
+                description: 'something more important'
+              }
+            }
+          }
+        }
+      }
+    };
+
+
+    new SwaggerClient({
+      url: 'http://localhost:8000/v2/swagger.json',
+      spec: spec,
+      usePromise: true
+    }).then(function(client) {
+      expect(client.apisArray[0].name).toEqual('Most important resources');
+      expect(client.apisArray[1].name).toEqual('Not important resources');
+      expect(client.apisArray[2].name).toEqual('Least important resources');
+      done();
+    }).catch(function(exception) {
+      done(exception);
+    });
+  });
 });
