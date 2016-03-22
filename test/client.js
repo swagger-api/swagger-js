@@ -766,7 +766,9 @@ describe('SwaggerClient', function () {
       spec: spec,
       usePromise: true
     }).then(function(client) {
-      console.log(client.tags);
+      expect(client.apisArray[0].name).toEqual('Most important resources');
+      expect(client.apisArray[1].name).toEqual('Not important resources');
+      expect(client.apisArray[2].name).toEqual('Least important resources');
       done();
     }).catch(function(exception) {
       done(exception);
