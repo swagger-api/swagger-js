@@ -210,7 +210,7 @@ describe('1.2 request operations', function () {
   });
 
   it('verifies headers when fetching the swagger specification', function () {
-    var sample = new SwaggerClient('http://localhost:8001/api-docs.json');
+    var sample = new SwaggerClient('http://localhost:8001/v1/api-docs.json');
     var req = sample.build(true);
 
     expect(req.headers.accept).toBe('application/json;charset=utf-8,*/*');
@@ -220,7 +220,7 @@ describe('1.2 request operations', function () {
     var opts = {
       swaggerRequestHeaders: 'foo/bar'
     };
-    var sample = new SwaggerClient('http://localhost:8001/api-docs.json', opts);
+    var sample = new SwaggerClient('http://localhost:8001/v1/api-docs.json', opts);
     var req = sample.build(true);
 
     expect(req.headers.accept).toBe('foo/bar');

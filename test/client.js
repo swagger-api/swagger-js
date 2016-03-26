@@ -26,7 +26,7 @@ describe('SwaggerClient', function () {
   });
 
   /* jshint ignore:end */
-  it('ensure externalDocs is attached to the client when available (Issue 276)', function (done) {
+  it('ensure externalDocs is attached to the client when available (Issue 276) [in success callback]', function (done) {
     var client = new SwaggerClient({
       spec: petstoreRaw,
       success: function () {
@@ -35,6 +35,16 @@ describe('SwaggerClient', function () {
         done();
       }
     });
+  });
+
+  it('ensure externalDocs is attached to the client when available (Issue 276) [synchronously]', function (done) {
+    var client = new SwaggerClient({
+      spec: petstoreRaw
+    });
+    expect(client.externalDocs).toEqual(petstoreRaw.externalDocs);
+    expect(client.apis).toBeAn('object');
+
+    done();
   });
 
   describe('enabling promises', function() {
