@@ -213,7 +213,7 @@ s.apis.pet.getPetById.help()
 '* petId (required) - ID of pet that needs to be fetched'
 ```
 
-The HTTP requests themselves are handled by the excellent [shred](https://github.com/automatthew/shred) library, which has a ton of features itself.  But it runs on both node and the browser.
+The HTTP requests themselves are handled by the excellent [superagent](https://github.com/visionmedia/superagent) library, which has a ton of features itself.  But it runs on both node and the browser.
 
 
 Development
