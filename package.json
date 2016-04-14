@@ -36,7 +36,8 @@
     "js-yaml": "^3.3.0",
     "lodash-compat": "^3.5.0",
     "q": "^1.4.1",
-    "superagent": "^1.2"
+    "superagent": "^1.2",
+    "superagent-proxy": "1.0.0"
   },
   "devDependencies": {
     "async": "^0.9.0",
