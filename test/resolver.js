@@ -757,6 +757,41 @@ describe('swagger resolver', function () {
     });
   });
 
+
+  it('resolves ref arrays in responses', function(done) {
+    var api = new Resolver();
+    var spec = {
+      host: 'http://petstore.swagger.io',
+      basePath: '/v2',
+      paths: {
+        '/foo': {
+          get: {
+            responses: {
+              200: {
+                description: 'Array of refs',
+                schema: {
+                  type: 'array',
+                  items: {
+                    $ref: 'http://localhost:8000/v2/models.json#/Health'
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    };
+
+    // should look in http://localhost:8000/foo/bar/swagger.yaml#/paths/health
+    api.resolve(spec, 'http://localhost:8000/swagger.json', function (spec, unresolved) {
+
+      expect(spec.paths['/foo'].get.responses['200'].schema.items['$ref']).toBe(undefined);
+      expect(spec.paths['/foo'].get.responses['200'].schema.items['x-resolved-from'][0]).toBe('http://localhost:8000/v2/models.json#/Health');
+
+      done();
+    });
+  });
+  
   it('does not make multiple calls for parameter refs #489', function(done) {
     var api = new Resolver();
     var spec = {
