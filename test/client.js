@@ -624,7 +624,6 @@ describe('SwaggerClient', function () {
   });
 
   it('uses a custom http client implementation', function (done) {
-
     var spec = {
       paths: {
         '/foo': {
@@ -681,6 +680,50 @@ describe('SwaggerClient', function () {
         expect(data.status).toBe(200);
         done();
       });
+    }).catch(function(exception) {
+      done(exception);
+    });
+  });
+
+  it('tests issue 743', function(done) {
+    var spec = {
+      paths: {
+        '/foo': {
+          get: {
+            tags: ['hi'],
+            operationId: 'there',
+            parameters: [
+              {
+                in: 'query',
+                name: 'values',
+                type: 'array',
+                items: {
+                  type: 'string',
+                  enum: ['a', 'b']
+                }
+              }
+            ],
+            responses: {
+              '200': {
+                description: 'ok'
+              }
+            }
+          }
+        }
+      }
+    };
+    new SwaggerClient({
+      url: 'http://localhost:8000/v2/swagger.json',
+      spec: spec,
+      usePromise: true
+    }).then(function(client) {
+      var allowable = client
+        .apis['hi']
+        .operations['there']
+        .parameters[0].allowableValues;
+       expect(allowable.values).toBeAn('object');
+       expect(allowable.values).toEqual(['a', 'b']);
+       done();
     }).catch(function(exception) {
       done(exception);
     });
@@ -759,7 +802,6 @@ describe('SwaggerClient', function () {
         }
       }
     };
-
 
     new SwaggerClient({
       url: 'http://localhost:8000/v2/swagger.json',
