@@ -6,6 +6,7 @@ var _ = require('lodash-compat');
 var expect = require('expect');
 var petstoreRaw = require('./spec/v2/petstore.json');
 var SwaggerClient = require('..');
+var auth = require('../lib/auth');
 
 /* jshint ignore:start */
 var mock = require('./mock');
@@ -811,6 +812,55 @@ describe('SwaggerClient', function () {
       expect(client.apisArray[0].name).toEqual('Most important resources');
       expect(client.apisArray[1].name).toEqual('Not important resources');
       expect(client.apisArray[2].name).toEqual('Least important resources');
+      done();
+    }).catch(function(exception) {
+      done(exception);
+    });
+  });
+
+
+  it('applies auth on a per-request basis', function(done) {
+    var spec = {
+      paths: {
+        '/foo': {
+          get: {
+            tags: ['hi'],
+            operationId: 'there',
+            security: {
+              authMe: []
+            },
+            parameters: [
+              {
+                in: 'query',
+                name: 'name',
+                type: 'string'
+              }
+            ],
+            responses: {
+              '200': {
+                description: 'ok'
+              }
+            }
+          }
+        }
+      }
+    };
+    new SwaggerClient({
+      url: 'http://localhost:8000/v2/swagger.json',
+      spec: spec,
+      usePromise: true
+    }).then(function(client) {
+      var mock = client.hi.there(
+          {
+            name: 'bob'
+          },
+          {
+            clientAuthorizations: {
+              authMe: new auth.PasswordAuthorization('foo', 'bar')
+            },
+            mock: true
+          });
+      expect(mock.headers.Authorization).toEqual('Basic Zm9vOmJhcg==');
       done();
     }).catch(function(exception) {
       done(exception);
