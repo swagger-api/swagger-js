@@ -170,7 +170,6 @@ describe('2.0 authorizations', function () {
     expect(req.headers.Authorization).to.equal('foo');
   });
 
-
   /*
    // re-enable after https://github.com/swagger-api/swagger-js/issues/711
 
