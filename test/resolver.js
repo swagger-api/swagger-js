@@ -1489,31 +1489,4 @@ describe('swagger resolver', function () {
       done();
     });
   });
-
-  it('support levels of model refs', function(done) {
-    var api = new Resolver();
-    var spec = {
-      definitions: {
-        Foo: {
-          $ref: '#/definitions/Bar'
-        },
-        Bar: {
-          $ref: '#/definitions/Baz'
-        },
-        Baz: {
-          properties: {
-            name: {
-              type: 'string'
-            }
-          }
-        }
-      }
-    };
-    api.resolve(spec, function (spec, unresolved) {
-      expect(spec.definitions.Foo.properties).toBeAn('object');
-      expect(spec.definitions.Foo.properties.name).toBeAn('object');
-      expect(spec.definitions.Foo.properties.name.type).toBe('string');
-      done();
-    });
-  });
 });
