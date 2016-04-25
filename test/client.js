@@ -818,7 +818,6 @@ describe('SwaggerClient', function () {
     });
   });
 
-
   it('applies auth on a per-request basis', function(done) {
     var spec = {
       paths: {
