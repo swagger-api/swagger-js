@@ -86,7 +86,7 @@ var client = new Swagger({
 });
 ```
 
-You can use promises too, by passing the `usePromise: true` option:
+You can use promises, too, by passing the `usePromise: true` option:
 
 ```js
 var Swagger = require('swagger-client');
@@ -106,7 +106,7 @@ new Swagger({
 });
 ```
 
-Need to pass an API key?  Configure one as a query string:
+Need to pass an API key?  Configure one in your client instance as a query string:
 
 ```js
 client.clientAuthorizations.add("apiKey", new Swagger.ApiKeyAuthorization("api_key","special-key","query"));
@@ -133,11 +133,29 @@ var client = new Swagger({
 });
 ```
 
+Note the authorization nickname, such as `easyapi_basic` in the above example, must match the `security` requirement in the specification (see the [OAI Specification](https://github.com/OAI/OpenAPI-Specification/blob/master/README.md) for details).
+
+You can also pass authorzations on a _per-request_ basis, in the event that you're reusing a `swagger-client` object across multiple connections:
+
+```
+client.pet.addPet({pet: {
+    name: 'doggie'
+  }}, {
+    clientAuthorizations: {
+      api_key: new Swagger.ApiKeyAuthorization('foo', 'bar', 'header')
+    }
+  })
+  .then(function(pet) {
+    console.log(pet.obj);
+  });
+```
+
+
 ### Calling an API with swagger + the browser!
 
-Download `browser/swagger-client.js` into your webapp:
+Download [`browser/swagger-client.min.js`](https://raw.githubusercontent.com/swagger-api/swagger-js/master/browser/swagger-client.min.js) and place it into your webapp:
 
-```js
+```html
 <script src='browser/swagger-client.js' type='text/javascript'></script>
 <script type="text/javascript">
   // initialize swagger client, point to a resource listing
@@ -163,6 +181,7 @@ var pet = {
   id: 100,
   name: "dog"};
 
+// note: the parameter for `addPet` is named `body` in the example below
 client.pet.addPet({body: pet});
 ```
 
@@ -173,7 +192,7 @@ var pet = "<Pet><id>2</id><name>monster</name></Pet>";
 client.pet.addPet({body: pet}, {requestContentType:"application/xml"});
 ```
 
-### Need XML response?
+### Need XML response? (assuming your server can produce it)
 ```js
 client.pet.getPetById({petId:1}, {responseContentType:"application/xml"});
 ```
@@ -205,6 +224,40 @@ You can add it to the swagger-client like such:
 client.clientAuthorizations.add('my-auth', new CustomRequestSigner());
 ```
 
+### Using your own HTTP client
+
+Don't like [superagent](https://github.com/visionmedia/superagent)? Despise [JQuery](https://github.com/jquery/jquery)?  Well, you're in luck.  You can plug your own HTTP library easily:
+
+```js
+var myHttpClient = {
+  // implment an execute function
+  execute: function(obj) {
+    var httpMethod = obj.method;
+    var requestHeaders = obj.headers;
+    var body = obj.body;
+    var url = obj.url;
+    // do your thing, and call `obj.on.response`
+    if(itWorked) {
+      obj.on.response('horray');
+    }
+    else {
+      obj.on.error('boo');
+    }
+  }
+};
+
+var client = new SwaggerClient({
+  spec: petstoreRaw,
+  client: myHttpClient,
+  success: function () {
+    client.pet.getPetById({petId: 3}, function(data){
+      expect(data).toBe('ok');
+      done();
+    });
+  }
+});
+```
+
 ### How does it work?
 The swagger javascript client reads the swagger api definition directly from the server.  As it does, it constructs a client based on the api definition, which means it is completely dynamic.  It even reads the api text descriptions (which are intended for humans!) and provides help if you need it:
 
@@ -219,8 +272,9 @@ The HTTP requests themselves are handled by the excellent [superagent](https://g
 Development
 -----------
 
-Please [fork the code](https://github.com/swagger-api/swagger-js) and help us improve
-swagger-client.js. Send us a pull request to the `master` branch!  Tests make merges get accepted more quickly.
+Please [fork the code](https://github.com/swagger-api/swagger-js) and help us improve swagger-js. Send us a pull request to the `master` branch!  Tests make merges get accepted more quickly.
+
+Note!  We _will not_ merge pull requests for features not supported in the OAI Specification!  Add an issue there instead!
 
 swagger-js use gulp for Node.js.
 
