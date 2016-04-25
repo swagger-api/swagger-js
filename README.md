@@ -106,7 +106,7 @@ new Swagger({
 });
 ```
 
-Need to pass an API key?  Configure one as a query string:
+Need to pass an API key?  Configure one in your client instance as a query string:
 
 ```js
 client.clientAuthorizations.add("apiKey", new Swagger.ApiKeyAuthorization("api_key","special-key","query"));
@@ -133,11 +133,29 @@ var client = new Swagger({
 });
 ```
 
+Note the authorization nickname, such as `easyapi_basic` in the above example, must match the `security` requirement in the specification (see the [OAI Specification](https://github.com/OAI/OpenAPI-Specification/blob/master/README.md) for details).
+
+You can also pass authorzations on a _request_ basis, in the event that you're reusing a `swagger-client` object across multiple connections:
+
+```
+client.pet.addPet({pet: {
+    name: 'doggie'
+  }}, {
+    clientAuthorizations: {
+      api_key: new Swagger.ApiKeyAuthorization('foo', 'bar', 'header')
+    }
+  })
+  .then(function(pet) {
+    console.log(pet.obj);
+  });
+```
+
+
 ### Calling an API with swagger + the browser!
 
-Download `browser/swagger-client.js` into your webapp:
+Download [`browser/swagger-client.js`](https://raw.githubusercontent.com/swagger-api/swagger-js/master/browser/swagger-client.min.js) into your webapp:
 
-```js
+```html
 <script src='browser/swagger-client.js' type='text/javascript'></script>
 <script type="text/javascript">
   // initialize swagger client, point to a resource listing
@@ -203,6 +221,40 @@ You can add it to the swagger-client like such:
 
 ```js
 client.clientAuthorizations.add('my-auth', new CustomRequestSigner());
+```
+
+### Using your own HTTP client
+
+Don't like [superagent]()? Despise JQuery?  Well, you're in luck.  You can plug your own HTTP library easily:
+
+```js
+var myHttpClient = {
+  // implment an execute function
+  execute: function(obj) {
+    var httpMethod = obj.method;
+    var requestHeaders = obj.headers;
+    var body = obj.body;
+    var url = obj.url;
+    // do your thing, and call `obj.on.response`
+    if(itWorked) {
+      obj.on.response('horray');
+    }
+    else {
+      obj.on.error('boo');
+    }
+  }
+};
+
+var client = new SwaggerClient({
+  spec: petstoreRaw,
+  client: myHttpClient,
+  success: function () {
+    client.pet.getPetById({petId: 3}, function(data){
+      expect(data).toBe('ok');
+      done();
+    });
+  }
+});
 ```
 
 ### How does it work?
