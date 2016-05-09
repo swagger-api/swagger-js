@@ -865,4 +865,70 @@ describe('SwaggerClient', function () {
       done(exception);
     });
   });
+
+  it('passes the correct content-type', function(done) {
+    var spec = {
+      paths: {
+        '/foo': {
+          post: {
+            tags: [
+                'test'
+            ],
+            operationId: 'formData',
+            consumes: ['multipart/form-data'],
+            parameters: [
+              {
+                in: 'formData',
+                name: 'name',
+                type: 'string',
+                required: false
+              }
+            ]
+          }
+        },
+        '/bar': {
+          post: {
+            tags: [
+              'test'
+            ],
+            operationId: 'encoded',
+            consumes: ['application/www-form-urlencoded'],
+            parameters: [
+              {
+                in: 'formData',
+                name: 'name',
+                type: 'string',
+                required: false
+              }
+            ]
+          }
+        }
+      }
+    };
+    new SwaggerClient({
+      url: 'http://localhost:8000/v2/swagger.json',
+      spec: spec,
+      usePromise: true
+    }).then(function(client) {
+      var mock = client.test.formData({
+        name: 'bob'
+      }, {
+        mock: true
+      });
+      expect(mock.headers).toBeAn('object');
+      expect(mock.headers['Content-Type']).toBe('multipart/form-data');
+
+      mock = client.test.encoded({
+        name: 'bob'
+      }, {
+        mock: true
+      });
+      expect(mock.headers).toBeAn('object');
+      expect(mock.headers['Content-Type']).toBe('application/www-form-urlencoded');
+
+      done();
+    }).catch(function(exception) {
+      done(exception);
+    });
+  });
 });
