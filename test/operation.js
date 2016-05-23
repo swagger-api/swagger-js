@@ -321,6 +321,39 @@ describe('operations', function () {
     expect(url).toBe('http://localhost/2015-01-30');
   });
 
+  it('should generate a url with empty-fragment removed from path', function () {
+    var parameters = [];
+    var op = new Operation({}, 'http', 'test', 'get', '/foo#', { parameters: parameters },
+                                   {}, {}, new auth.SwaggerAuthorizations());
+    var url = op.urlify();
+
+    expect(url).toBe('http://localhost/foo');
+  });
+
+  it('should generate a url with fragment removed from path', function () {
+    var parameters = [
+      {
+        in: 'path',
+        name: 'name',
+        type: 'string'
+      },
+      {
+        in: 'query',
+        name: 'age',
+        type: 'integer',
+        format: 'int32'
+      }
+    ];
+    var op = new Operation({}, 'http', 'test', 'get', '/foo/{name}#fragment', { parameters: parameters },
+                                   {}, {}, new auth.SwaggerAuthorizations());
+    var url = op.urlify({
+      name: 'tony',
+      age: 42
+    });
+
+    expect(url).toBe('http://localhost/foo/tony?age=42');
+  });
+
   it('should get a string array signature', function () {
     var parameters = [
       { in: 'query', name: 'year', type: 'array', items: {type: 'string'} }
@@ -650,4 +683,3 @@ describe('operations', function () {
     expect(op.getBody({}, {name: 'Douglas Adams', quantity: 42}, {})).toEqual('quantity=42&name=Douglas%20Adams');
   });
 });
-
