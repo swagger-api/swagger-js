@@ -932,7 +932,7 @@ describe('SwaggerClient', function () {
     });
   });
 
-  it('passes formData in an array', function(done) {
+  it('passes formData in an array with csv', function(done) {
     var spec = {
       paths: {
         '/foo': {
@@ -993,14 +993,72 @@ describe('SwaggerClient', function () {
       expect(mock.headers).toBeAn('object');
       expect(mock.headers['Content-Type']).toBe('application/x-www-form-urlencoded');
 
-      //var mock = client.test.formDataArray({
-      //  name: ['bob', 'fred']
-      //}, {
-      //  mock: true
-      //});
-      //expect(mock.body).toBe('name=bob,fred');
-      //expect(mock.headers).toBeAn('object');
-      //expect(mock.headers['Content-Type']).toBe('multipart/form-data');
+      done();
+    }).catch(function(exception) {
+      done(exception);
+    });
+  });
+
+  it('passes formData in an array with multi', function(done) {
+    var spec = {
+      paths: {
+        '/foo': {
+          post: {
+            tags: [
+              'test'
+            ],
+            operationId: 'encodedArray',
+            consumes: ['application/www-form-urlencoded'],
+            parameters: [
+              {
+                in: 'formData',
+                name: 'name',
+                type: 'array',
+                items: {
+                  type: 'string'
+                },
+                collectionFormat: 'brackets',
+                required: false
+              }
+            ]
+          }
+        }
+      },
+      '/bar': {
+        post: {
+          tags: [
+            'test'
+          ],
+          operationId: 'formDataArray',
+          consumes: ['multipart/form-data'],
+          parameters: [
+            {
+              in: 'formData',
+              name: 'name[]',
+              type: 'array',
+              items: {
+                type: 'string'
+              },
+              collectionFormat: 'csv',
+              required: false
+            }
+          ]
+        }
+      }
+    };
+    new SwaggerClient({
+      url: 'http://localhost:8000/v2/swagger.json',
+      spec: spec,
+      usePromise: true
+    }).then(function(client) {
+      var mock = client.test.encodedArray({
+        'name': ['bob', 'fred']
+      }, {
+        mock: true
+      });
+      expect(mock.body).toBe('name[]=bob&name[]=fred');
+      expect(mock.headers).toBeAn('object');
+      expect(mock.headers['Content-Type']).toBe('application/x-www-form-urlencoded');
 
       done();
     }).catch(function(exception) {
