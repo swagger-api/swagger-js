@@ -454,10 +454,15 @@ describe('swagger resolver', function () {
     api.resolve(spec, 'http://localhost:8000/v2/petstore.json', function (spec, unresolved) {
       expect(Object.keys(unresolved).length).toBe(0);
       test.object(spec);
-      console.log(spec);
-      console.log(spec.paths['/foo'].get.responses[200]);
-      console.log(spec.definitions['inline_model']);
+      test.object(spec.paths['/foo'].get.responses[200]);
+      var schema = spec.definitions['inline_model'];
 
+      expect(schema.properties.offset.type).toBe('integer');
+      expect(schema.properties.offset.format).toBe('int32');
+      expect(schema.properties.limit.type).toBe('integer');
+      expect(schema.properties.limit.format).toBe('int32');
+      expect(schema.properties.result.type).toBe('array');
+      expect(schema.properties.result.items.$ref).toBe('#/definitions/User');
       done();
     });
   });
