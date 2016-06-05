@@ -176,6 +176,30 @@ describe('swagger request functions', function () {
     expect(req.body).toEqual({ id: 100, name: 'gorilla' });
   });
 
+  it('generate a DELETE request with formData', function () {
+    var petApi = sample.pet;
+
+    // Monkey-patch delete operation to use form params
+    var deleteParams = petApi.operations.deletePet.parameters;
+    var petIdParam = deleteParams.find(function(p) { return p.name === 'petId'; });
+    var opBackup = {in: petIdParam.in, paramType: petIdParam.paramType};;
+    petIdParam.in = petIdParam.paramType = 'formData';
+
+    var req = petApi.deletePet({petId: 100}, {mock: true});
+
+    test.object(req);
+
+    expect(req.method).toBe('DELETE');
+    expect(req.headers.Accept).toBe('application/json');
+    expect(req.headers['Content-Type']).toBe('application/x-www-form-urlencoded');
+    expect(req.url).toBe('http://localhost:8000/v2/api/pet/{petId}');
+    expect(req.body).toEqual('petId=100');
+
+    // Restore op
+    petIdParam.in = opBackup.in;
+    petIdParam.paramType = opBackup.paramType;
+  });
+
   it('escape an operation id', function () {
     var storeApi = sample.store.get_inventory_1; // jshint ignore:line
 
