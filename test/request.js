@@ -270,6 +270,18 @@ describe('swagger request functions', function () {
     expect(req.useJQuery).toBe(true);
   });
 
+  it('verifies jqueryAjaxCache is set', function () {
+    var petApi = sample.pet;
+    var req = petApi.getPetById({petId: 1}, {useJQuery: true, jqueryAjaxCache: true, mock: true});
+
+    test.object(req);
+
+    expect(req.method).toBe('GET');
+    expect(req.headers.Accept).toBe('application/json');
+    expect(req.url).toBe('http://localhost:8000/v2/api/pet/1');
+    expect(req.jqueryAjaxCache).toBe(true);
+  });
+
   it('does not add a query param if not set', function () {
     var petApi = sample.pet;
     var req = petApi.findPetsByStatus({}, {mock: true});

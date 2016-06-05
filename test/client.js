@@ -306,6 +306,18 @@ describe('SwaggerClient', function () {
     });
   });
 
+  it('should use jqueryAjaxCache', function(done) {
+    var client = new SwaggerClient({
+      spec: petstoreRaw,
+      jqueryAjaxCache: true,
+      success: function () {
+        var result = client.pet.getPetById({petId: 3}, { mock: true });
+        expect(result.jqueryAjaxCache).toBe(true);
+        done();
+      }
+    });
+  });
+
   it('should force jQuery for options', function(done) {
     var spec = {
       swagger: '2.0',
