@@ -1065,4 +1065,33 @@ describe('SwaggerClient', function () {
       done(exception);
     });
   });
+
+  it('doesnt add double slashes with incorrect basePath', function(done) {
+    var spec = {
+      basePath: '/double/',
+      paths: {
+        '/foo': {
+          get: {
+            tags: [
+              'test'
+            ],
+            operationId: 'slash',
+            parameters: [],
+          }
+        }
+      }
+    };
+    new SwaggerClient({
+      url: 'http://localhost:8000/v2/swagger.json',
+      spec: spec,
+      usePromise: true
+    }).then(function(client) {
+      var mock = client.test.slash({}, {mock: true});
+      expect(mock.url).toBe('http://localhost:8000/double/foo');
+
+      done();
+    }).catch(function(exception) {
+      done(exception);
+    });
+  });
 });
