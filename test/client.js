@@ -1106,4 +1106,48 @@ describe('SwaggerClient', function () {
       done(exception);
     });
   });
+
+  it('doesnt escape query keys for #787', function(done) {
+    var spec = {
+      basePath: '/double/',
+      paths: {
+        '/foo': {
+          get: {
+            tags: [
+              'test'
+            ],
+            operationId: 'slash',
+            parameters: [
+              {
+                in: 'query',
+                name: '$offset',
+                type: 'integer',
+                format: 'int32'
+              },
+              {
+                in: 'query',
+                name: 'names[]',
+                type: 'array',
+                items: {
+                  type: 'string'
+                }
+              }
+            ]
+          }
+        }
+      }
+    };
+    new SwaggerClient({
+      url: 'http://localhost:8000/v2/swagger.json',
+      spec: spec,
+      usePromise: true
+    }).then(function(client) {
+      var mock = client.test.slash({'$offset': 10, 'names[]': ['fred', 'bob']}, {mock: true});
+      expect(mock.url).toBe('http://localhost:8000/double/foo?$offset=10&names[]=fred%2Cbob');
+
+      done();
+    }).catch(function(exception) {
+      done(exception);
+    });
+  });
 });
