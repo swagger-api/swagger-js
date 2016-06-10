@@ -1194,4 +1194,81 @@ describe('SwaggerClient', function () {
       done(exception);
     });
   });
+
+  it('should post a single multipart data', function(done) {
+    var spec = {
+      paths: {
+        '/foo': {
+          post: {
+            operationId: 'mypost',
+            consumes: ['multipart/form-data'],
+            tags: [ 'test' ],
+            parameters: [
+              {
+                in: 'formData',
+                name: 'name',
+                type: 'string'
+              }
+            ]
+          }
+        }
+      }
+    };
+
+    new SwaggerClient({
+      url: 'http://example.com/petstore.yaml',
+      spec: spec,
+      usePromise: true
+    }).then(function(client) {
+      client.test.mypost({name: 'tony'})
+        .then(function (data) {
+          fail();
+        })
+        .catch(function (data) {
+          done();
+        })
+    }).catch(function(exception) {
+      done(exception);
+    });
+  });
+
+  it('should post a multipart array', function(done) {
+    var spec = {
+      paths: {
+        '/foo': {
+          post: {
+            operationId: 'mypost',
+            consumes: ['multipart/form-data'],
+            tags: [ 'test' ],
+            parameters: [
+              {
+                in: 'formData',
+                name: 'name',
+                type: 'array',
+                items: {
+                  type: 'string'
+                }
+              }
+            ]
+          }
+        }
+      }
+    };
+
+    new SwaggerClient({
+      url: 'http://localhost:8080/petstore.yaml',
+      spec: spec,
+      usePromise: true
+    }).then(function(client) {
+      client.test.mypost({name: ['tony', 'tam']})
+          .then(function (data) {
+            fail();
+          })
+          .catch(function (data) {
+            done();
+          })
+    }).catch(function(exception) {
+      done(exception);
+    });
+  });
 });
