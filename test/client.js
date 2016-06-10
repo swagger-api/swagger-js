@@ -397,6 +397,50 @@ describe('SwaggerClient', function () {
     });
   });
 
+  it('should use a responseInterceptor with errors', function(done) {
+    var responseInterceptor = {
+      apply: function(data) {
+        expect(data.status).toBe(400);
+        data.statusText = 'bad!';
+        return data;
+      }
+    };
+
+    var client = new SwaggerClient({
+      spec: petstoreRaw,
+      responseInterceptor: responseInterceptor,
+      success: function () {
+        client.pet.getPetById({petId: 666}, function(data){
+          fail();
+        },
+        function(data) {
+          expect(data.statusText).toBe('bad!');
+          done();
+        })
+      }
+    });
+  });
+
+  it('should use a responseInterceptor with no error handler', function(done) {
+    var responseInterceptor = {
+      apply: function(data) {
+        expect(data.status).toBe(400);
+        done();
+        return data;
+      }
+    };
+
+    var client = new SwaggerClient({
+      spec: petstoreRaw,
+      responseInterceptor: responseInterceptor,
+      success: function () {
+        client.pet.getPetById({petId: 666}, function(data){
+          fail();
+        })
+      }
+    });
+  });
+
   it('should properly parse an array property', function(done) {
     var spec = {
       paths: {
