@@ -22,8 +22,8 @@ var cors = require('connect-cors');
 // Please refactor this, when the bug is resolved!
 // PS: you need to depend on buffer@3.4.3
 var OldBuffer = require.resolve('buffer/');
-var builtinsOverride = require('browserify/lib/builtins')
-builtinsOverride.buffer = OldBuffer
+var builtinsOverride = require('browserify/lib/builtins');
+builtinsOverride.buffer = OldBuffer;
 
 var banner = ['/**',
   ' * <%= pkg.name %> - <%= pkg.description %>',
@@ -123,7 +123,7 @@ gulp.task('watch:build', ['build'], function() {
 });
 
 gulp.task('browsertest', function(done) {
-  new Karma(karmaConfig, done).start()
+  new Karma(karmaConfig, done).start();
 });
 
 gulp.task('connect', function () {
@@ -139,7 +139,7 @@ gulp.task('connect', function () {
 
 gulp.task('watch-browsertest', function(done){
   var opts = assign({}, karmaConfig, {singleRun: false});
-  new Karma(opts, done).start()
+  new Karma(opts, done).start();
 });
 
 

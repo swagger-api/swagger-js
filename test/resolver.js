@@ -49,8 +49,8 @@ describe('swagger resolver', function () {
           }
         }
       }
-    }
-    api.resolve(spec, 'http://localhost:8080/v2/petstore.json', function (spec) {
+    };
+    api.resolve(spec, 'http://localhost:8080/v2/petstore.json', function () {
       done();
     });
   });
@@ -783,9 +783,9 @@ describe('swagger resolver', function () {
     };
 
     // should look in http://localhost:8000/foo/bar/swagger.yaml#/paths/health
-    api.resolve(spec, 'http://localhost:8000/swagger.json', function (spec, unresolved) {
+    api.resolve(spec, 'http://localhost:8000/swagger.json', function (spec) {
 
-      expect(spec.paths['/foo'].get.responses['200'].schema.items['$ref']).toBe(undefined);
+      expect(spec.paths['/foo'].get.responses['200'].schema.items.$ref).toBe(undefined);
       expect(spec.paths['/foo'].get.responses['200'].schema.items['x-resolved-from'][0]).toBe('http://localhost:8000/v2/models.json#/Health');
 
       done();
@@ -918,19 +918,18 @@ describe('swagger resolver', function () {
       }
     };
 
-    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec, unresolved) {
+    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec) {
       expect(spec.definitions['single.json']).toExist();
       done();
     });
   });
 
   it('resloves absolute references', function(done) {
-    var api = new Resolver();
     var sample;
     var opts = opts || {};
     opts.url = opts.url || 'http://localhost:8000/v2/absoluteRef.json';
     opts.success = function () {
-      var response = sample.apis['default'].operations.get_linked.successResponse;
+      var response = sample.apis.default.operations['get_linked'].successResponse;
       expect(response).toExist();
       expect(response['200']).toExist();
       done();
@@ -940,7 +939,6 @@ describe('swagger resolver', function () {
   });
 
   it('resolves absolute references per #587', function(done) {
-    var api = new Resolver();
     var sample;
     var opts = opts || {};
     opts.url = opts.url || 'http://localhost:8000/v2/test.json';
@@ -985,7 +983,7 @@ describe('swagger resolver', function () {
         }
       }
     };
-    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec, unresolved) {
+    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec) {
       expect(spec.paths['/foo'].get.parameters[0]).toBeAn('object');
       done();
     });
