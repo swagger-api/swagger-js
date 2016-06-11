@@ -2,28 +2,14 @@
 
 'use strict';
 
-var _ = require('lodash-compat');
+//var _ = require('lodash-compat');
 var expect = require('expect');
-var petstoreRaw = require('./spec/v2/petstore.json');
 var SwaggerClient = require('..');
 
-/* jshint ignore:start */
 var mock = require('./mock');
 var instance;
-/* jshint ignore:end */
 
 describe('client macros', function () {
-    before(function (done) {
-        mock.petstore(done, function (petstore, server){
-            instance = server;
-        });
-    });
-
-    after(function (done){
-        instance.close();
-        done();
-    });
-
     it('tests the parameter macro per #612', function(done) {
         var macros = {
             parameter: function (operation, parameter) {
