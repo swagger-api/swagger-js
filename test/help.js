@@ -394,4 +394,38 @@ describe('help options', function () {
       }
     });
   });
+
+  it('supports extended content-types', function (done) {
+    var spec = {
+      paths: {
+        '/foo': {
+          post: {
+            tags: [ 'test' ],
+            operationId: 'sample',
+            consumes: [ 'application/json' ],
+            produces: [ 'application/json; version=1'],
+            parameters: [
+              {
+                in: 'body',
+                name: 'complexBody',
+                schema: {
+                  type: 'object'
+                }
+              }
+            ]
+          }
+        }
+      }
+    };
+
+    var client = new SwaggerClient({
+      url: 'http://localhost:8080/petstore.yaml',
+      spec: spec,
+      success: function () {
+        var msg = client.test.sample.asCurl({complexBody: '{"name":"tony"}'},{requestContentType: 'application/json; version=1'});
+        expect(msg).toBe("curl -X POST --header 'Content-Type: application/json; version=1' --header 'Accept: application/json; version=1' -d '{\"name\":\"tony\"}' 'http://localhost:8080/foo'");
+        done();
+      }
+    });
+  });
 });
