@@ -238,4 +238,27 @@ describe('help options', function () {
       }
     });
   });
+
+  it('handles post with no body', function (done) {
+    var spec = {
+      paths: {
+        '/foo': {
+          post: {
+            tags: [ 'test' ],
+            operationId: 'sample'
+          }
+        }
+      }
+    };
+
+    var client = new SwaggerClient({
+      url: 'http://localhost:8080/petstore.yaml',
+      spec: spec,
+      success: function () {
+        var msg = client.test.sample.asCurl({});
+        expect(msg).toBe("curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' 'http://localhost:8080/foo'");
+        done();
+      }
+    });
+  });
 });
