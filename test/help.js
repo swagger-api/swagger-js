@@ -428,4 +428,35 @@ describe('help options', function () {
       }
     });
   });
+
+  it('has brackets in variables', function (done) {
+    var spec = {
+      paths: {
+        '/foo': {
+          post: {
+            tags: [ 'test' ],
+            operationId: 'sample',
+            parameters: [
+              {
+                in: 'query',
+                name: 'fields',
+                type: 'string'
+              }
+            ]
+          }
+        }
+      }
+    };
+
+    var client = new SwaggerClient({
+      url: 'http://localhost:8080/petstore.yaml',
+      spec: spec,
+      success: function () {
+        var msg = client.test.sample.asCurl({fields: '[articles]=title'});
+        expect(msg).toBe("curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' 'http://localhost:8080/foo?fields=%5Barticles%5D%3Dtitle'");
+
+        done();
+      }
+    });
+  });
 });
