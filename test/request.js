@@ -353,7 +353,7 @@ describe('swagger request functions', function () {
     var petApi = sample.pet;
     var curl = petApi.addPet.asCurl({body: '{"id":"foo\'bar"}'});
 
-    expect(curl).toBe('curl -X POST --header \'Content-Type: application/json\' --header \'Accept: application/json\' -d \'{"id":"foo\\u0027bar"}\' \'http://localhost:8000/v2/api/pet\'');
+    expect(curl).toBe('curl -X POST --header \'Content-Type: application/json\' --header \'Accept: application/json\' -d \'{"id":"foo%27bar"}\' \'http://localhost:8000/v2/api/pet\'');
   });
 
   it('gets an server side 404, and verifies that the content-type in the response is correct, and different than one in the request', function (done) {
