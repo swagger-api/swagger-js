@@ -4,6 +4,7 @@
 
 var auth = require('../lib/auth');
 var expect = require('expect');
+var SwaggerClient = require('..');
 var Operation = require('../lib/types/operation');
 
 describe('help options', function () {
@@ -97,5 +98,110 @@ describe('help options', function () {
     });
 
     expect(curl).toBe('curl -X GET --header \'Accept: application/xml\' \'http://localhost/path\'');
+  });
+
+  it('prints a curl statement with an array of query params', function (done) {
+    var spec = {
+      paths: {
+        '/foo': {
+          get: {
+            operationId: 'sample',
+            tags: [ 'test' ],
+            parameters: [
+              {
+                in: 'query',
+                name: 'name',
+                type: 'array',
+                items: {
+                  type: 'string'
+                },
+                collectionFormat: 'pipes'
+              }
+            ]
+          }
+        }
+      }
+    };
+
+    var client = new SwaggerClient({
+      url: 'http://localhost:8080/petstore.yaml',
+      spec: spec,
+      success: function () {
+        var msg = client.test.sample.asCurl({name: ['tony', 'tam']});
+        expect(msg).toBe('curl -X GET --header \'Accept: application/json\' \'http://localhost:8080/foo?name=tony|tam\'');
+        done();
+      }
+    })
+  });
+
+  it('prints a curl statement with an array of query params and auth', function (done) {
+    var spec = {
+      paths: {
+        '/foo': {
+          get: {
+            operationId: 'sample',
+            tags: [ 'test' ],
+            parameters: [
+              {
+                in: 'query',
+                name: 'name',
+                type: 'array',
+                items: {
+                  type: 'string'
+                },
+                collectionFormat: 'pipes'
+              }
+            ]
+          }
+        }
+      }
+    };
+
+    var client = new SwaggerClient({
+      url: 'http://localhost:8080/petstore.yaml',
+      spec: spec,
+      authorizations: {
+        authMe: new auth.PasswordAuthorization('foo', 'bar')
+      },
+      success: function () {
+        var msg = client.test.sample.asCurl({name: ['tony', 'tam']});
+        expect(msg).toBe("curl -X GET --header 'Accept: application/json' --header 'Authorization: Basic Zm9vOmJhcg==' 'http://localhost:8080/foo?name=tony|tam'");
+        done();
+      }
+    })
+  });
+
+  it('prints a curl statement with html', function (done) {
+    var spec = {
+      paths: {
+        '/foo': {
+          post: {
+            tags: [ 'test' ],
+            operationId: 'sample',
+            parameters: [
+              {
+                in: 'body',
+                name: 'body',
+                schema: {
+                  type: 'object'
+                }
+              }
+            ]
+          }
+        }
+      }
+    };
+
+    var client = new SwaggerClient({
+      url: 'http://localhost:8080/petstore.yaml',
+      spec: spec,
+      success: function () {
+        var msg = client.test.sample.asCurl({body: {
+          description: '<b>Test</b>'
+        }});
+        expect(msg).toBe("curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d '{\"description\":\"<b>Test</b>\"}' 'http://localhost:8080/foo'");
+        done();
+      }
+    })
   });
 });
