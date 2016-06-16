@@ -262,7 +262,38 @@ describe('help options', function () {
     });
   });
 
-  it('handles delete form', function (done) {
+  it('handles delete form with parameters', function (done) {
+    var spec = {
+      paths: {
+        '/foo': {
+          delete: {
+            tags: [ 'test' ],
+            operationId: 'sample',
+            consumes: [ 'application/x-www-form-urlencoded' ],
+            parameters: [
+              {
+                in: 'formData',
+                name: 'name',
+                type: 'string'
+              }
+            ]
+          }
+        }
+      }
+    };
+
+    var client = new SwaggerClient({
+      url: 'http://localhost:8080/petstore.yaml',
+      spec: spec,
+      success: function () {
+        var msg = client.test.sample.asCurl({name: 'fred'});
+        expect(msg).toBe("curl -X DELETE --header 'Content-Type: application/x-www-form-urlencoded' --header 'Accept: application/json' -d 'name=fred' 'http://localhost:8080/foo'");
+        done();
+      }
+    });
+  });
+
+  it('handles delete form with no parameters', function (done) {
     var spec = {
       paths: {
         '/foo': {
