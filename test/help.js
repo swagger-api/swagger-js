@@ -204,4 +204,38 @@ describe('help options', function () {
       }
     })
   });
+
+  it('handles post body with html', function (done) {
+    var spec = {
+      paths: {
+        '/foo': {
+          post: {
+            tags: [ 'test' ],
+            operationId: 'sample',
+            parameters: [
+              {
+                in: 'body',
+                name: 'body',
+                schema: {
+                  type: 'object'
+                }
+              }
+            ]
+          }
+        }
+      }
+    };
+
+    var client = new SwaggerClient({
+      url: 'http://localhost:8080/petstore.yaml',
+      spec: spec,
+      success: function () {
+        var msg = client.test.sample.asCurl({body: {
+          description: "<h1>hello world<script>alert('test')</script></h1>"
+        }});
+        expect(msg).toBe("curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d '{\"description\":\"<h1>hello world<script>alert(\\u0027test\\u0027)</script></h1>\"}' 'http://localhost:8080/foo'");
+        done();
+      }
+    })
+  });
 });
