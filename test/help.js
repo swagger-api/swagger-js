@@ -389,7 +389,7 @@ describe('help options', function () {
       spec: spec,
       success: function () {
         var msg = client.test.sample.asCurl({names: ['tony', 'tam']});
-        expect(msg).toBe("curl -X POST --header 'Content-Type: application/x-www-form-urlencoded' --header 'Accept: application/json' -d 'names[]=tony%26names[]=tam' 'http://localhost:8080/foo'");
+        expect(msg).toBe("curl -X POST --header 'Content-Type: application/x-www-form-urlencoded' --header 'Accept: application/json' -d 'names[]=tony&names[]=tam' 'http://localhost:8080/foo'");
         done();
       }
     });
@@ -454,6 +454,114 @@ describe('help options', function () {
       success: function () {
         var msg = client.test.sample.asCurl({fields: '[articles]=title'});
         expect(msg).toBe("curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' 'http://localhost:8080/foo?fields=%5Barticles%5D%3Dtitle'");
+
+        done();
+      }
+    });
+  });
+
+  it('shows curl for multipart/form-data', function (done) {
+    var spec = {
+      basePath: '/v2',
+      paths: {
+        '/pet/{id}': {
+          post: {
+            tags: [ 'test' ],
+            operationId: 'sample',
+            consumes: ['multipart/form-data'],
+            parameters: [
+              {
+                in: 'path',
+                name: 'id',
+                type: 'integer',
+                format: 'int32',
+                required: true
+              },
+              {
+                in: 'formData',
+                name: 'name',
+                type: 'string'
+              },
+              {
+                in: 'formData',
+                name: 'status',
+                type: 'string',
+                enum: [
+                    'available',
+                    'dead'
+                ]
+              }
+            ]
+          }
+        }
+      }
+    };
+
+    var client = new SwaggerClient({
+      url: 'http://petstore.swagger.io/v2/swagger.json',
+      spec: spec,
+      success: function () {
+        var msg = client.test.sample.asCurl({id: 3, name: 'tony', status: 'dead'});
+        expect(msg).toBe("curl -X POST --header 'Content-Type: multipart/form-data' --header 'Accept: application/json' -F name=tony -F status=dead  'http://petstore.swagger.io/v2/pet/3'");
+
+        done();
+      }
+    });
+  });
+
+
+  it('shows curl for multipart/form-data with array parameters', function (done) {
+    var spec = {
+      basePath: '/v2',
+      paths: {
+        '/pet/{id}': {
+          post: {
+            tags: [ 'test' ],
+            operationId: 'sample',
+            consumes: ['multipart/form-data'],
+            parameters: [
+              {
+                in: 'path',
+                name: 'id',
+                type: 'integer',
+                format: 'int32',
+                required: true
+              },
+              {
+                in: 'formData',
+                name: 'name',
+                type: 'string'
+              },
+              {
+                in: 'formData',
+                name: 'file',
+                type: 'file'
+              },
+              {
+                in: 'formData',
+                name: 'status',
+                type: 'array',
+                collectionFormat: 'pipes',
+                items: {
+                  type: 'string',
+                  enum: [
+                    'available',
+                    'dead'
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      }
+    };
+
+    var client = new SwaggerClient({
+      url: 'http://petstore.swagger.io/v2/swagger.json',
+      spec: spec,
+      success: function () {
+        var msg = client.test.sample.asCurl({file: {}, id: 3, name: 'tony', status: ['alive','dead']});
+        expect(msg).toBe("curl -X POST --header 'Content-Type: multipart/form-data' --header 'Accept: application/json' -F name=tony -F status=alive|dead  'http://petstore.swagger.io/v2/pet/3'");
 
         done();
       }
