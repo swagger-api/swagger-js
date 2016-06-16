@@ -261,4 +261,28 @@ describe('help options', function () {
       }
     });
   });
+
+  it('handles delete form', function (done) {
+    var spec = {
+      paths: {
+        '/foo': {
+          delete: {
+            tags: [ 'test' ],
+            operationId: 'sample',
+            consumes: [ 'application/x-www-form-urlencoded' ]
+          }
+        }
+      }
+    };
+
+    var client = new SwaggerClient({
+      url: 'http://localhost:8080/petstore.yaml',
+      spec: spec,
+      success: function () {
+        var msg = client.test.sample.asCurl({});
+        expect(msg).toBe("curl -X DELETE --header 'Content-Type: application/x-www-form-urlencoded' --header 'Accept: application/json' 'http://localhost:8080/foo'");
+        done();
+      }
+    });
+  });
 });
