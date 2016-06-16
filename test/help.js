@@ -131,7 +131,7 @@ describe('help options', function () {
         expect(msg).toBe('curl -X GET --header \'Accept: application/json\' \'http://localhost:8080/foo?name=tony|tam\'');
         done();
       }
-    })
+    });
   });
 
   it('prints a curl statement with an array of query params and auth', function (done) {
@@ -168,7 +168,7 @@ describe('help options', function () {
         expect(msg).toBe("curl -X GET --header 'Accept: application/json' --header 'Authorization: Basic Zm9vOmJhcg==' 'http://localhost:8080/foo?name=tony|tam'");
         done();
       }
-    })
+    });
   });
 
   it('prints a curl statement with html', function (done) {
@@ -202,7 +202,7 @@ describe('help options', function () {
         expect(msg).toBe("curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d '{\"description\":\"<b>Test</b>\"}' 'http://localhost:8080/foo'");
         done();
       }
-    })
+    });
   });
 
   it('handles post body with html', function (done) {
@@ -233,9 +233,9 @@ describe('help options', function () {
         var msg = client.test.sample.asCurl({body: {
           description: "<h1>hello world<script>alert('test')</script></h1>"
         }});
-        expect(msg).toBe("curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d '{\"description\":\"<h1>hello world<script>alert(\\u0027test\\u0027)</script></h1>\"}' 'http://localhost:8080/foo'");
+        expect(msg).toBe("curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d '{\"description\":\"<h1>hello world<script>alert(%27test%27)</script></h1>\"}' 'http://localhost:8080/foo'");
         done();
       }
-    })
+    });
   });
 });

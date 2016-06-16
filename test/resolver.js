@@ -929,7 +929,7 @@ describe('swagger resolver', function () {
     var opts = opts || {};
     opts.url = opts.url || 'http://localhost:8000/v2/absoluteRef.json';
     opts.success = function () {
-      var response = sample.apis.default.operations['get_linked'].successResponse;
+      var response = sample.apis.default.operations.get_linked.successResponse;
       expect(response).toExist();
       expect(response['200']).toExist();
       done();
@@ -945,9 +945,9 @@ describe('swagger resolver', function () {
     opts.success = function () {
       expect(sample.swaggerObject.definitions).toExist();
       expect(sample.swaggerObject.definitions['error.json']).toExist();
-      expect(sample.apis.Occupations.operations.post_occupations.parameters[0].schema).toEqual(
+      expect(sample.apis.Occupations.operations['post_occupations'].parameters[0].schema).toEqual(
           { '$ref': '#/definitions/error.json' });
-      expect(sample.apis.Occupations.operations.post_occupations.responses['500'].schema).toEqual(
+      expect(sample.apis.Occupations.operations['post_occupations'].responses['500'].schema).toEqual(
           { '$ref': '#/definitions/error.json' }
       );
       done();
@@ -1029,7 +1029,7 @@ describe('swagger resolver', function () {
         }
       }
     };
-    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec, unresolved) {
+    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec) {
       var parameters = spec.paths['/foo'].get.parameters;
       expect(parameters[0].name).toEqual('skip');
       expect(parameters[1].name).toEqual('limit');
@@ -1080,7 +1080,7 @@ describe('swagger resolver', function () {
       },
       definitions : { }
     };
-    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec, unresolved) {
+    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec) {
       var responses = spec.paths['/'].get.responses;
       expect(responses['200'].description).toBe('Success');
       expect(responses['default'].description).toBe('Error');
@@ -1128,7 +1128,7 @@ describe('swagger resolver', function () {
         }
       }
     };
-    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec, unresolved) {
+    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec) {
       var parameters = spec.paths['/foo'].get.parameters;
       expect(parameters[0].name).toEqual('skip');
       expect(parameters[1].name).toEqual('limit');
@@ -1178,7 +1178,7 @@ describe('swagger resolver', function () {
       },
       'definitions' : { }
     };
-    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec, unresolved) {
+    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec) {
       expect(spec.definitions).toBeAn('object');
       expect(spec.definitions.inline_model).toBeAn('object');
       done();
