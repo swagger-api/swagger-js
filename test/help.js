@@ -359,4 +359,39 @@ describe('help options', function () {
       }
     });
   });
+
+  it('handles formData with brackets', function (done) {
+    var spec = {
+      paths: {
+        '/foo': {
+          post: {
+            tags: [ 'test' ],
+            operationId: 'sample',
+            consumes: [ 'application/x-www-form-urlencoded' ],
+            parameters: [
+              {
+                in: 'formData',
+                name: 'names',
+                type: 'array',
+                items: {
+                  type: 'string'
+                },
+                collectionFormat: 'brackets'
+              }
+            ]
+          }
+        }
+      }
+    };
+
+    var client = new SwaggerClient({
+      url: 'http://localhost:8080/petstore.yaml',
+      spec: spec,
+      success: function () {
+        var msg = client.test.sample.asCurl({names: ['tony', 'tam']});
+        expect(msg).toBe("curl -X POST --header 'Content-Type: application/x-www-form-urlencoded' --header 'Accept: application/json' -d 'names[]=tony%26names[]=tam' 'http://localhost:8080/foo'");
+        done();
+      }
+    });
+  });
 });
