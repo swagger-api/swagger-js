@@ -239,6 +239,49 @@ describe('help options', function () {
     });
   });
 
+  it('handles post body with special chars', function (done) {
+    var spec = {
+      paths: {
+        '/foo': {
+          post: {
+            tags: [ 'test' ],
+            operationId: 'sample',
+            parameters: [
+              {
+                in: 'body',
+                name: 'body',
+                schema: {
+                  type: 'object'
+                }
+              }
+            ]
+          }
+        }
+      }
+    };
+
+    var body = '@prefix nif:<http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .\n' +
+      '@prefix itsrdf: <http://www.w3.org/2005/11/its/rdf#> .\n' +
+      '@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n' +
+      '<http://example.org/document/1#char=0,21>\n' +
+      'a nif:String , nif:Context, nif:RFC5147String ;\n' +
+      'nif:isString "Welcome to Berlin"^^xsd:string;\n' +
+      'nif:beginIndex "0"^^xsd:nonNegativeInteger;\n' +
+      'nif:endIndex "21"^^xsd:nonNegativeInteger;\n' +
+      'nif:sourceUrl <http://differentday.blogspot.com/2007_01_01_archive.html>.';
+
+    var client = new SwaggerClient({
+      url: 'http://localhost:8080/petstore.yaml',
+      spec: spec,
+      success: function () {
+        var msg = client.test.sample.asCurl({body: body});
+        //expect(msg).toBe("curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d '{\"description\":\"<h1>hello world<script>alert(%27test%27)</script></h1>\"}' 'http://localhost:8080/foo'");
+        done();
+      }
+    });
+  });
+
+
   it('handles post with no body', function (done) {
     var spec = {
       paths: {
