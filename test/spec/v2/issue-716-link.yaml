@@ -1,0 +1,6 @@
+SuperErrorModel:
+  properties:
+    id:
+      type: string
+ErrorModel:
+  $ref: '#/SuperErrorModel'

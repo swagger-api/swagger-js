@@ -1271,4 +1271,20 @@ describe('SwaggerClient', function () {
       done(exception);
     });
   });
+
+  it('should resolve a model per issue 716', function(done) {
+    new SwaggerClient({
+      url: 'http://localhost:8000/v2/issue-716.yaml',
+      usePromise: true
+    }).then(function(client) {
+      var models = client.models;
+      console.log(models.SuperErrorModel.createJSONSample());
+      console.log(models.SuperErrorModel.getMockSignature());
+      console.log(models.SuperErrorModel.getSampleValue());
+
+      done();
+    }).catch(function(exception) {
+      done(exception);
+    });
+  });
 });
