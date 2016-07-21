@@ -6,8 +6,7 @@
 var expect = require('expect');
 var SwaggerClient = require('..');
 
-var mock = require('./mock');
-var instance;
+require('./mock');
 
 describe('client macros', function () {
     it('tests the parameter macro per #612', function(done) {

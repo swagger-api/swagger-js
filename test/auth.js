@@ -149,7 +149,7 @@ describe('2.0 authorizations', function () {
     var op = new Operation({}, 'http', 'test', 'get', '/path', { parameters: parameters },
                                    {}, {}, authorizations);
     var req = op.execute(params, {mock : true});
-    expect(req.headers['api_key']).to.equal('foo');
+    expect(req.headers.api_key).to.equal('foo');
   });
 
   it('does not apply password auth when the value has been manually added', function () {

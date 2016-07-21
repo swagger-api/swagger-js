@@ -165,7 +165,7 @@ describe('help options', function () {
       },
       success: function () {
         var msg = client.test.sample.asCurl({name: ['tony', 'tam']});
-        expect(msg).toBe("curl -X GET --header 'Accept: application/json' --header 'Authorization: Basic Zm9vOmJhcg==' 'http://localhost:8080/foo?name=tony|tam'");
+        expect(msg).toBe('curl -X GET --header \'Accept: application/json\' --header \'Authorization: Basic Zm9vOmJhcg==\' \'http://localhost:8080/foo?name=tony|tam\'');
         done();
       }
     });
@@ -199,7 +199,7 @@ describe('help options', function () {
         var msg = client.test.sample.asCurl({body: {
           description: '<b>Test</b>'
         }});
-        expect(msg).toBe("curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d '{\"description\":\"<b>Test</b>\"}' 'http://localhost:8080/foo'");
+        expect(msg).toBe('curl -X POST --header \'Content-Type: application/json\' --header \'Accept: application/json\' -d \'{"description":"<b>Test</b>"}\' \'http://localhost:8080/foo\'');
         done();
       }
     });
@@ -231,9 +231,9 @@ describe('help options', function () {
       spec: spec,
       success: function () {
         var msg = client.test.sample.asCurl({body: {
-          description: "<h1>hello world<script>alert('test')</script></h1>"
+          description: '<h1>hello world<script>alert(\'test\')</script></h1>'
         }});
-        expect(msg).toBe("curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d '{\"description\":\"<h1>hello world<script>alert(%27test%27)</script></h1>\"}' 'http://localhost:8080/foo'");
+        expect(msg).toBe('curl -X POST --header \'Content-Type: application/json\' --header \'Accept: application/json\' -d \'{"description":"<h1>hello world<script>alert(%27test%27)</script></h1>"}\' \'http://localhost:8080/foo\'');
         done();
       }
     });
@@ -275,7 +275,7 @@ describe('help options', function () {
       spec: spec,
       success: function () {
         var msg = client.test.sample.asCurl({body: body});
-        //expect(msg).toBe("curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d '{\"description\":\"<h1>hello world<script>alert(%27test%27)</script></h1>\"}' 'http://localhost:8080/foo'");
+        expect(msg).toBe('curl -X POST --header \'Content-Type: application\/json\' --header \'Accept: application\/json\' -d \'%40prefix nif:<http:\/\/persistence.uni-leipzig.org\/nlp2rdf\/ontologies\/nif-core#> . \\ \n %40prefix itsrdf: <http:\/\/www.w3.org\/2005\/11\/its\/rdf#> . \\ \n %40prefix xsd: <http:\/\/www.w3.org\/2001\/XMLSchema#> . \\ \n <http:\/\/example.org\/document\/1#char=0,21> \\ \n a nif:String , nif:Context, nif:RFC5147String ; \\ \n nif:isString "Welcome to Berlin"^^xsd:string; \\ \n nif:beginIndex "0"^^xsd:nonNegativeInteger; \\ \n nif:endIndex "21"^^xsd:nonNegativeInteger; \\ \n nif:sourceUrl <http:\/\/differentday.blogspot.com\/2007_01_01_archive.html>.\' \'http:\/\/localhost:8080\/foo\'');
         done();
       }
     });
@@ -299,7 +299,7 @@ describe('help options', function () {
       spec: spec,
       success: function () {
         var msg = client.test.sample.asCurl({});
-        expect(msg).toBe("curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' 'http://localhost:8080/foo'");
+        expect(msg).toBe('curl -X POST --header \'Content-Type: application/json\' --header \'Accept: application/json\' \'http://localhost:8080/foo\'');
         done();
       }
     });
@@ -330,7 +330,7 @@ describe('help options', function () {
       spec: spec,
       success: function () {
         var msg = client.test.sample.asCurl({name: 'fred'});
-        expect(msg).toBe("curl -X DELETE --header 'Content-Type: application/x-www-form-urlencoded' --header 'Accept: application/json' -d 'name=fred' 'http://localhost:8080/foo'");
+        expect(msg).toBe('curl -X DELETE --header \'Content-Type: application/x-www-form-urlencoded\' --header \'Accept: application/json\' -d \'name=fred\' \'http://localhost:8080/foo\'');
         done();
       }
     });
@@ -354,7 +354,7 @@ describe('help options', function () {
       spec: spec,
       success: function () {
         var msg = client.test.sample.asCurl({});
-        expect(msg).toBe("curl -X DELETE --header 'Content-Type: application/x-www-form-urlencoded' --header 'Accept: application/json' 'http://localhost:8080/foo'");
+        expect(msg).toBe('curl -X DELETE --header \'Content-Type: application/x-www-form-urlencoded\' --header \'Accept: application/json\' \'http://localhost:8080/foo\'');
         done();
       }
     });
@@ -389,7 +389,7 @@ describe('help options', function () {
       spec: spec,
       success: function () {
         var msg = client.test.sample.asCurl({names: ['tony', 'tam']});
-        expect(msg).toBe("curl -X POST --header 'Content-Type: application/x-www-form-urlencoded' --header 'Accept: application/json' -d 'names[]=tony&names[]=tam' 'http://localhost:8080/foo'");
+        expect(msg).toBe('curl -X POST --header \'Content-Type: application/x-www-form-urlencoded\' --header \'Accept: application/json\' -d \'names[]=tony&names[]=tam\' \'http://localhost:8080/foo\'');
         done();
       }
     });
@@ -423,7 +423,7 @@ describe('help options', function () {
       spec: spec,
       success: function () {
         var msg = client.test.sample.asCurl({complexBody: '{"name":"tony"}'},{requestContentType: 'application/json; version=1'});
-        expect(msg).toBe("curl -X POST --header 'Content-Type: application/json; version=1' --header 'Accept: application/json; version=1' -d '{\"name\":\"tony\"}' 'http://localhost:8080/foo'");
+        expect(msg).toBe('curl -X POST --header \'Content-Type: application/json; version=1\' --header \'Accept: application/json; version=1\' -d \'{"name":"tony"}\' \'http://localhost:8080/foo\'');
         done();
       }
     });
@@ -453,7 +453,7 @@ describe('help options', function () {
       spec: spec,
       success: function () {
         var msg = client.test.sample.asCurl({fields: '[articles]=title'});
-        expect(msg).toBe("curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' 'http://localhost:8080/foo?fields=%5Barticles%5D%3Dtitle'");
+        expect(msg).toBe('curl -X POST --header \'Content-Type: application/json\' --header \'Accept: application/json\' \'http://localhost:8080/foo?fields=%5Barticles%5D%3Dtitle\'');
 
         done();
       }
@@ -502,7 +502,7 @@ describe('help options', function () {
       spec: spec,
       success: function () {
         var msg = client.test.sample.asCurl({id: 3, name: 'tony', status: 'dead'});
-        expect(msg).toBe("curl -X POST --header 'Content-Type: multipart/form-data' --header 'Accept: application/json' -F name=tony -F status=dead  'http://petstore.swagger.io/v2/pet/3'");
+        expect(msg).toBe('curl -X POST --header \'Content-Type: multipart/form-data\' --header \'Accept: application/json\' -F name=tony -F status=dead  \'http://petstore.swagger.io/v2/pet/3\'');
 
         done();
       }
@@ -561,7 +561,7 @@ describe('help options', function () {
       spec: spec,
       success: function () {
         var msg = client.test.sample.asCurl({file: {}, id: 3, name: 'tony', status: ['alive','dead']});
-        expect(msg).toBe("curl -X POST --header 'Content-Type: multipart/form-data' --header 'Accept: application/json' -F name=tony -F status=alive|dead  'http://petstore.swagger.io/v2/pet/3'");
+        expect(msg).toBe('curl -X POST --header \'Content-Type: multipart/form-data\' --header \'Accept: application/json\' -F name=tony -F status=alive|dead  \'http://petstore.swagger.io/v2/pet/3\'');
 
         done();
       }

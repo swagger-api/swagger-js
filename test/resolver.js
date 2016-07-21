@@ -1242,7 +1242,7 @@ describe('swagger resolver', function () {
         }
       }
     };
-    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec, unresolved) {
+    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec) {
         
       expect(spec.definitions.Pet.properties.color['$ref']).toBe('#/definitions/Color');
       expect(spec.definitions.Cat.properties.color['$ref']).toBe('#/definitions/Color');
@@ -1298,7 +1298,7 @@ describe('swagger resolver', function () {
         }
       }
     };
-    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec, unresolved) {
+    api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec) {
       expect(spec.paths['/'].get.responses['200'].schema['$ref']).toBeA('string');
       var model = spec.paths['/'].get.responses['200'].schema['$ref'];
 
@@ -1334,7 +1334,7 @@ describe('swagger resolver', function () {
         }
       }
     };
-    api.resolve(spec, 'http://localhost:9000/v2/swagger.json', function (spec, unresolved) {
+    api.resolve(spec, 'http://localhost:9000/v2/swagger.json', function (spec) {
       expect(spec.paths['/'].get.parameters[0].name).toBe('skip');
       done();
     });
@@ -1353,7 +1353,7 @@ describe('swagger resolver', function () {
         }
       }
     };
-    api.resolve(spec, 'http://localhost:9000/v2/swagger.json', function (spec, unresolved) {
+    api.resolve(spec, 'http://localhost:9000/v2/swagger.json', function (spec) {
       expect(spec.paths['/'].get).toBeAn('object');
       done();
     });
@@ -1379,7 +1379,7 @@ describe('swagger resolver', function () {
         }
       }
     };
-    api.resolve(spec, 'http://localhost:9000/v2/swagger.json', function (spec, unresolved) {
+    api.resolve(spec, 'http://localhost:9000/v2/swagger.json', function (spec) {
       expect(spec.paths['/'].get.responses['200'].description).toBe('Entity not found');
       done();
     });
@@ -1409,7 +1409,7 @@ describe('swagger resolver', function () {
         }
       }
     };
-    api.resolve(spec, function (spec, unresolved) {
+    api.resolve(spec, function (spec) {
       expect(spec.paths['/'].get.parameters[0].name).toBe('skip');
       done();
     });
@@ -1454,7 +1454,7 @@ describe('swagger resolver', function () {
         }
       }
     };
-    api.resolve(spec, function (spec, unresolved) {
+    api.resolve(spec, function (spec) {
       var param = spec.paths['/'].post.parameters[0];
       expect(param.name).toBe('theBody');
       expect(param.schema['$ref']).toBeA('string');
@@ -1480,7 +1480,7 @@ describe('swagger resolver', function () {
         }
       }
     };
-    api.resolve(spec, function (spec, unresolved) {
+    api.resolve(spec, function (spec) {
       expect(spec.definitions.Foo.properties).toBeAn('object');
       expect(spec.definitions.Foo.properties.name).toBeAn('object');
       expect(spec.definitions.Foo.properties.name.type).toBe('string');

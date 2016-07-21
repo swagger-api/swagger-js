@@ -343,19 +343,19 @@ describe('SwaggerClient', function () {
       }
     };
 
-    var client = new SwaggerClient({
+    new SwaggerClient({
       spec: spec,
       usePromise: true
     }).then(function (client) {
       client.pet.testOptions()
-        .then(function (data) {
+        .then(function () {
           done();
         });
     })
-    .catch (function (err) {
+    .catch (function () {
       // this is expected
       done();
-    })
+    });
   });
 
   it('should should use a custom http client', function(done) {
@@ -410,13 +410,13 @@ describe('SwaggerClient', function () {
       spec: petstoreRaw,
       responseInterceptor: responseInterceptor,
       success: function () {
-        client.pet.getPetById({petId: 666}, function(data){
-          fail();
+        client.pet.getPetById({petId: 666}, function(){
+          done('it failed');
         },
         function(data) {
           expect(data.statusText).toBe('bad!');
           done();
-        })
+        });
       }
     });
   });
@@ -434,9 +434,9 @@ describe('SwaggerClient', function () {
       spec: petstoreRaw,
       responseInterceptor: responseInterceptor,
       success: function () {
-        client.pet.getPetById({petId: 666}, function(data){
-          fail();
-        })
+        client.pet.getPetById({petId: 666}, function(){
+          done('it failed');
+        });
       }
     });
   });
@@ -672,7 +672,7 @@ describe('SwaggerClient', function () {
       usePromise: true,
       requestInterceptor: interceptor.requestInterceptor
     }).then(function(client) {
-      client.nada.addFoo({username: 'bob'}).then(function (data){
+      client.nada.addFoo({username: 'bob'}).then(function (){
         done();
       });
     }).catch(function(exception) {
@@ -775,8 +775,8 @@ describe('SwaggerClient', function () {
       usePromise: true
     }).then(function(client) {
       var allowable = client
-        .apis['hi']
-        .operations['there']
+        .apis.hi
+        .operations.there
         .parameters[0].allowableValues;
        expect(allowable.values).toBeAn('object');
        expect(allowable.values).toEqual(['a', 'b']);
@@ -1221,12 +1221,12 @@ describe('SwaggerClient', function () {
       usePromise: true
     }).then(function(client) {
       client.test.mypost({name: 'tony'})
-        .then(function (data) {
-          fail();
+        .then(function () {
+          done('it failed');
         })
-        .catch(function (data) {
+        .catch(function () {
           done();
-        })
+        });
     }).catch(function(exception) {
       done(exception);
     });
@@ -1261,12 +1261,12 @@ describe('SwaggerClient', function () {
       usePromise: true
     }).then(function(client) {
       client.test.mypost({name: ['tony', 'tam']})
-          .then(function (data) {
-            fail();
+          .then(function () {
+            done('it failed');
           })
-          .catch(function (data) {
+          .catch(function () {
             done();
-          })
+          });
     }).catch(function(exception) {
       done(exception);
     });

@@ -182,7 +182,7 @@ describe('swagger request functions', function () {
     // Monkey-patch delete operation to use form params
     var deleteParams = petApi.operations.deletePet.parameters;
     var petIdParam = deleteParams.find(function(p) { return p.name === 'petId'; });
-    var opBackup = {in: petIdParam.in, paramType: petIdParam.paramType};;
+    var opBackup = {in: petIdParam.in, paramType: petIdParam.paramType};
     petIdParam.in = petIdParam.paramType = 'formData';
 
     var req = petApi.deletePet({petId: 100}, {mock: true});
