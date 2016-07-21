@@ -1,0 +1,19 @@
+swagger: "2.0"
+info:
+  version: "0.1"
+  title: Pets API
+basePath: /
+paths:
+  /linked:
+    get:
+      description: Returns a list of pets
+      operationId: getPets
+      responses:
+        400:
+          description: error payload
+          schema:
+            $ref: 'issue-716-link.yaml#/SuperErrorModel' # Works fine
+        default:
+          description: error payload
+          schema:
+            $ref: 'issue-716-link.yaml#/ErrorModel' # Error: "#/SuperErrorModel is not defined!"
