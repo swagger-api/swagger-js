@@ -938,6 +938,35 @@ describe('swagger resolver', function () {
     sample = new SwaggerClient(opts);
   });
 
+  it('should resolve external references within allOf', function (done) {
+    var sample;
+    var opts = opts || {};
+    opts.url = opts.url || 'http://localhost:8000/v2/externalRefInAllOf.json';
+        
+    opts.success = function () {
+        var response = sample.apis.Queries.operations.getAsync.successResponse;
+
+        expect(response).toExist();
+        expect(response["200"]).toExist();
+           
+        //JSON sample is not resolved is $ref used within allOf
+        var jsonSample = response["200"].createJSONSample();
+            
+        expect(jsonSample).toExist();
+        expect(jsonSample.error).toExist();
+        expect(jsonSample.value).toExist();
+
+        var mockSignature = response['200'].getMockSignature();
+        expect(mockSignature).toExist();
+        expect(mockSignature.indexOf('http://localhost:8000/v2/externalRef.json#/definitions/ErrorResponse')).toBe(-1);
+        expect(mockSignature.indexOf('http://localhost:8000/v2/externalRef.json#/definitions/Order')).toBe(-1);
+
+        done();
+    };
+
+    sample = new SwaggerClient(opts);
+  });
+
   it('resolves absolute references per #587', function(done) {
     var sample;
     var opts = opts || {};
