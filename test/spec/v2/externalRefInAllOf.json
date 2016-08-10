@@ -1,0 +1,138 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Customer"
+  },
+  "tags": [
+    {
+      "name": "Queries",
+      "description": "Query the Customer domain"
+    }
+  ],
+  "paths": {
+    "/get/{id}": {
+      "get": {
+        "tags": [
+          "Queries"
+        ],
+        "summary": "get Summary",
+        "description": "get Description",
+        "operationId": "getAsync",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "resource id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/OrderQueryGetResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    }
+	},
+  "definitions": {
+	"ValidationError": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "field": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "message"
+      ]
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ValidationError"
+          }
+        }
+      },
+      "required": [
+        "message"
+      ]
+    },
+    "QueryResponse": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "schema": {
+          "type": "string"
+        },
+        "domain": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string"
+        },
+        "error": {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      },
+      "required": [
+        "source",
+        "schema",
+        "domain",
+        "action"
+      ]
+    },
+    "OrderValue": {
+        "type": "object",
+        "properties": {
+            "value": {
+                "$ref": "http://petstore.swagger.io/v2/swagger.json#/definitions/Order"
+            }
+        },
+        "required": [
+            "value"
+        ]
+    },
+    "OrderQueryGetResponse": {
+        "type": "object",
+        "properties": {
+            "response": {
+                "$ref": "#/definitions/QueryResponse"
+            },
+            "value": {
+                "$ref": "#/definitions/Order"
+            }
+        }
+    }
+  }
+}
