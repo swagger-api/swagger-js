@@ -125,14 +125,10 @@
     },
     "OrderQueryGetResponse": {
         "type": "object",
-        "properties": {
-            "response": {
-                "$ref": "#/definitions/QueryResponse"
-            },
-            "value": {
-                "$ref": "#/definitions/Order"
-            }
-        }
+        "allOf": [
+            { "$ref": "#/definitions/QueryResponse" },
+            { "$ref": "#/definitions/OrderValue" }
+        ]
     }
   }
 }
