@@ -947,13 +947,13 @@ describe('swagger resolver', function () {
         var response = sample.apis.Queries.operations.getAsync.successResponse;
 
         expect(response).toExist();
-        expect(response["200"]).toExist();
+        expect(response['200']).toExist();
            
         //JSON sample is not resolved is $ref used within allOf
-        var jsonSample = response["200"].createJSONSample();
+        var jsonSample = response['200'].createJSONSample();
             
         expect(jsonSample).toExist();
-        expect(jsonSample.error).toExist();
+        expect(jsonSample.response).toExist();
         expect(jsonSample.value).toExist();
 
         var mockSignature = response['200'].getMockSignature();
