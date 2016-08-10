@@ -1516,4 +1516,44 @@ describe('swagger resolver', function () {
       done();
     });
   });
+
+  it('resolves parameter with inline schema with only additionalProperties', function(done) {
+    var api = new Resolver();
+    var spec = {
+      swagger:'2.0',
+      info:{},
+      host:'localhost:9000',
+      basePath:'/2.0',
+      paths:{
+        '/':{
+          post:{
+            responses:{
+              '200':{
+                description:'thanks'
+              }
+            },
+            parameters:[{
+              in: 'body',
+              name: 'myObj',
+              required: true,
+              schema: {
+                type: 'object',
+                additionalProperties: {
+                  type: "string"
+                }
+              }
+            }]
+          }
+        }
+      }
+    };
+    api.resolve(spec, function (spec) {
+      var param = spec.paths['/'].post.parameters[0];
+      expect(param.name).toBe('myObj');
+      expect(param.schema['$ref']).toBeA('string');
+      expect(param.schema['$ref']).toEqual('#/definitions/inline_model');
+      expect(spec.definitions['inline_model']).toBeAn('object');
+      done();
+    });
+  });
 });
