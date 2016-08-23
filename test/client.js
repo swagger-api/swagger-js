@@ -731,7 +731,7 @@ describe('SwaggerClient', function () {
            **/
 
           // ensure the headers are present
-          expect(requestObj.headers.username).toBe('Bob');
+          expect(requestObj.headers.UserNaMe).toBe('Bob');
 
           // rewrite this request to something that'll work locally
           requestObj.method = 'GET';
