@@ -224,6 +224,46 @@ You can add it to the swagger-client like such:
 client.clientAuthorizations.add('my-auth', new CustomRequestSigner());
 ```
 
+### Setting headers
+
+Headers are a type of `parameter`, and can be passed with the other parameters. For example, if you supported translated pet details via the `Accept-Language` header:
+
+```js
+"parameters": [
+  {
+    "name": "petId",
+    "description": "ID of pet that needs to be fetched",
+    "required": true,
+    "type": "integer",
+    "format": "int64",
+    "paramType": "path",
+    "minimum": "1.0",
+    "defaultValue": 3,
+    "maximum": "100000.0"
+  },
+  "LanguageHeader": {
+    "name": "Accept-Language",
+    "in": "header",
+    "description": "Specify the user's language",
+    "required": false,
+    "type": "string"
+  }
+...
+```
+
+Then you would pass the header value via the parameters ([header parameters are case-insenstive](https://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2)):
+
+```js
+
+client.pet.getPetById({
+  petId: 7,
+  'accept-language': 'fr'
+}, function(pet){
+  console.log('pet', pet);
+});
+
+```
+
 ### Using your own HTTP client
 
 Don't like [superagent](https://github.com/visionmedia/superagent)? Despise [JQuery](https://github.com/jquery/jquery)?  Well, you're in luck.  You can plug your own HTTP library easily:
