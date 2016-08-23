@@ -25,6 +25,24 @@ describe('header extraction', function () {
     expect(headers.myHeader).toBe('tony');
   });
 
+  it('should extract header params with case insensitivity', function () {
+    var parameters = [
+      {
+        in: 'header',
+        name: 'myHeader',
+        type: 'string'
+      }
+    ];
+    var op = new Operation({}, 'http', 'test', 'get', '/path', { parameters: parameters });
+    var args = {
+      MyHeAdeR: 'nick'
+    };
+    var url = op.urlify(args);
+    var headers = op.getHeaderParams(args);
+
+    expect(url).toBe('http://localhost/path');
+    expect(headers.myHeader).toBe('nick');
+  });
 
   it('should not URL encode header string values', function () {
     var parameters = [
