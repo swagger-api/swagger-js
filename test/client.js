@@ -699,7 +699,7 @@ describe('SwaggerClient', function () {
             parameters: [
               {
                 in: 'header',
-                name: 'username',
+                name: 'UserNaMe',
                 type: 'string'
               }
             ],
@@ -731,7 +731,7 @@ describe('SwaggerClient', function () {
            **/
 
           // ensure the headers are present
-          expect(requestObj.headers.username).toBe('bob');
+          expect(requestObj.headers.username).toBe('Bob');
 
           // rewrite this request to something that'll work locally
           requestObj.method = 'GET';
@@ -747,7 +747,7 @@ describe('SwaggerClient', function () {
       usePromise: true,
       requestInterceptor: interceptor.requestInterceptor
     }).then(function(client) {
-      client.nada.addFoo({username: 'bob'}).then(function (){
+      client.nada.addFoo({Username: 'Bob'}).then(function (){
         done();
       });
     }).catch(function(exception) {
