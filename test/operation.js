@@ -682,4 +682,32 @@ describe('operations', function () {
                                    {}, {}, new auth.SwaggerAuthorizations());
     expect(op.getBody({}, {name: 'Douglas Adams', quantity: 42}, {})).toEqual('quantity=42&name=Douglas%20Adams');
   });
+
+  // options.timeout
+  it('should use timeout specified on client by default', function () {
+    var parent = {
+      timeout: 1
+    };
+
+    var op = new Operation(parent, 'http', 'test', 'get', '/path', {},
+                                   {}, {}, new auth.SwaggerAuthorizations());
+    var result = op.execute({}, {mock: true});
+
+    expect(result.timeout).toBe(1, "Operation.execute timeout was not applied from client");
+  });
+  //
+  it('should prefer timeout passed in execute options over client', function () {
+    var parent = {
+      timeout: 1
+    };
+
+    var op = new Operation(parent, 'http', 'test', 'get', '/path', {},
+                                   {}, {}, new auth.SwaggerAuthorizations());
+    var result = op.execute({}, {
+      mock: true,
+      timeout: 2
+    });
+
+    expect(result.timeout).toBe(2, "Operation.execute timeout was not applied from options");
+  })
 });
