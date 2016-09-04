@@ -256,6 +256,25 @@ describe('operations', function () {
     expect(url).toBe('http://localhost/foo/tony%20tam/bar');
   });
 
+  it('should generate a url with path param with proper escaping, ignoring slashes if told to do so', function () {
+    var parameters = [
+      {
+        in: 'path',
+        name: 'location',
+        type: 'string'
+      }
+    ];
+    var op = new Operation({}, 'http', 'test', 'get', '/foo/{location}', { parameters: parameters },
+                                   {}, {}, new auth.SwaggerAuthorizations());
+    op.preserveSlashes = true;
+    var url = op.urlify({
+      location: 'qux/baz.txt'
+    });
+
+    expect(url).toBe('http://localhost/foo/qux/baz.txt');
+  });
+
+
   it('should generate a url with path param string array', function () {
     var parameters = [
       {
