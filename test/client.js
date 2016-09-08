@@ -377,6 +377,81 @@ describe('SwaggerClient', function () {
     });
   });
 
+  it('should accept a timeout', function(done) {
+    var timeoutValue = 1000;
+    var client = new SwaggerClient({
+      spec: petstoreRaw,
+      timeout: timeoutValue,
+      success: function () {
+        expect(client.timeout).toBe(timeoutValue);
+        expect(client.fetchSpecTimeout).toBe(timeoutValue);
+        done();
+      }
+    });
+  });
+
+  it('should accept a timeout for fetching a spec', function(done) {
+    var timeoutValue = 1000;
+    var client = new SwaggerClient({
+      spec: petstoreRaw,
+      fetchSpecTimeout: timeoutValue,
+      success: function () {
+        expect(client.timeout).toBe(null);
+        expect(client.fetchSpecTimeout).toBe(timeoutValue);
+        done();
+      }
+    });
+  });
+
+  it('should prefer fetchSpecTimeout over timeout when both are specified', function(done) {
+    var timeoutValue = 1000;
+    var fetchSpecTimeoutValue = 2000;
+    var client = new SwaggerClient({
+      spec: petstoreRaw,
+      timeout: timeoutValue,
+      fetchSpecTimeout: fetchSpecTimeoutValue,
+      success: function () {
+        expect(client.timeout).toBe(timeoutValue);
+        expect(client.fetchSpecTimeout).toBe(fetchSpecTimeoutValue);
+        done();
+      }
+    });
+  });
+
+  it('should use a timeout when fetching a spec', function (done) {
+    var client = new SwaggerClient({
+      url: 'http://localhost:8000/v2/petstore.json',
+      fetchSpecTimeout: 1,
+      success: function () {
+        expect().toExist('Fetch spec timeout was not applied');
+        done();
+      },
+      failure: function (message) {
+        expect(message).toBe('Request timed out after 1ms');
+        done();
+      }
+    });
+  });
+
+  it('should use a timeout when making an operation request', function (done) {
+    var timeout = 1;
+    new SwaggerClient({
+      url: 'http://localhost:8000/v2/petstore.json',
+      usePromise: true,
+      timeout: timeout,
+      // pass null to avoid false failures when fetching spec
+      fetchSpecTimeout: null
+    }).then(function (client) {
+      client.pet.getPetById({petId: 1})
+        .then(function (pet) {
+          expect().toExist('Operation request timeout was not applied')
+        }).catch(function (err) {
+          expect(err.errObj.message).toBe('timeout of 1ms exceeded', 'Operation request timeout was not applied')
+          done();
+        });
+    }).catch(done);
+  });
+
   it('should use a responseInterceptor', function(done) {
     var responseInterceptor = {
       apply: function(data) {
