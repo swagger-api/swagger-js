@@ -2,9 +2,12 @@
 
 'use strict';
 
+var rewire = require('rewire');
+
 var auth = require('../lib/auth');
 var expect = require('expect');
-var Operation = require('../lib/types/operation');
+var Operation = rewire('../lib/types/operation');
+Operation.__set__('FormData', require('form-data'));
 
 var quantityQP = {
   in: 'query',
@@ -50,11 +53,6 @@ var countryFD = {
   name: 'country',
   type: 'array',
   collectionFormat: 'multi'
-};
-var fileFD = {
-  in: 'formData',
-  name: 'file',
-  type: 'file'
 };
 
 
