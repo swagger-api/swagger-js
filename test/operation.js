@@ -6,8 +6,7 @@ var rewire = require('rewire');
 
 var auth = require('../lib/auth');
 var expect = require('expect');
-var Operation = rewire('../lib/types/operation');
-//Operation.__set__('FormData', require('form-data'));
+var Operation = require('../lib/types/operation');
 
 var quantityQP = {
   in: 'query',
@@ -699,14 +698,19 @@ describe('operations', function () {
     expect(op.getBody({}, {name: 'Douglas Adams', quantity: 42}, {})).toEqual('quantity=42&name=Douglas%20Adams');
   });
 
-  xit('should generate a multipart/form-data body with correct strings for array-like values', function () {
+  it('should generate a multipart/form-data body with correct strings for array-like values', function () {
     var parameters = [langFD, countryFD, nameFD];
     var op = new Operation({}, 'http', 'test', 'post', '/path', { parameters: parameters}, {}, {}, new auth.SwaggerAuthorizations());
 
+    global.FormData = require('form-data');
     var body = op.getBody({'Content-Type': 'multipart/form-data'}, {lang: ['en', 'de'], country: ['US', 'DE'], name: 'Douglas Adams'}, {});
+    global.FormData = undefined;
+
     expect(body._streams[1]).toEqual('en,de');
     expect(body._streams[4]).toEqual('US&country=DE');
     expect(body._streams[7]).toEqual('Douglas Adams');
+
+
   })
 
   // options.timeout
