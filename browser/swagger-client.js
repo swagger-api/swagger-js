@@ -3344,7 +3344,7 @@ var Operation = module.exports = function (parent, scheme, operationId, httpMeth
   this.produces = args.produces || parent.produces || ['application/json'];
   this.deprecated = args.deprecated;
   this.description = args.description;
-  this.host = parent.host || 'localhost';
+  this.host = parent.host || SwaggerClient.prototype.parseUri.host;
   this.method = (httpMethod || errors.push('Operation ' + operationId + ' is missing method.'));
   this.models = models || {};
   this.nickname = (operationId || errors.push('Operations must have a nickname.'));
