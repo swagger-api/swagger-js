@@ -2,8 +2,6 @@
 
 'use strict';
 
-var rewire = require('rewire');
-
 var auth = require('../lib/auth');
 var expect = require('expect');
 var Operation = require('../lib/types/operation');
