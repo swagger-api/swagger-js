@@ -35,13 +35,13 @@ describe('header extraction', function () {
     ];
     var op = new Operation({}, 'http', 'test', 'get', '/path', { parameters: parameters });
     var args = {
-      MyHeAdeR: 'nick'
+      MyHeAdeR: 'tony'
     };
     var url = op.urlify(args);
     var headers = op.getHeaderParams(args);
 
     expect(url).toBe('http://localhost/path');
-    expect(headers.myHeader).toBe('nick');
+    expect(headers.myHeader).toBe('tony');
   });
 
   it('should not URL encode header string values', function () {
