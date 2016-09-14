@@ -21,7 +21,7 @@ describe('swagger resolver', function () {
     instance.close();
     done();
   });
-  
+
   it('is OK without remote references', function (done) {
     var api = new Resolver();
     var spec = {};
@@ -455,6 +455,26 @@ describe('swagger resolver', function () {
     });
   });
 
+  it('resolves relative references absolute to root multiple times', function(done) {
+    var api = new Resolver();
+    var spec = {
+      host: 'http://petstore.swagger.io',
+      basePath: '/v2',
+      paths: {},
+      definitions: {
+        Pet: {
+          $ref: '/v2/relativeToRoot.json#/definitions/intermediatePet'
+        }
+      }
+    };
+
+    api.resolve(spec, 'http://localhost:8000/foo/bar/swagger.json', function (spec) {
+      // check our double $ref unwrapped into final Pet object
+      expect(spec.definitions.Pet.required).toEqual(["name", "photoUrls"]);
+      done();
+    });
+  });
+
   it('resolves relative references relative to reference', function(done) {
     var api = new Resolver();
     var spec = {
@@ -791,7 +811,7 @@ describe('swagger resolver', function () {
       done();
     });
   });
-  
+
   it('does not make multiple calls for parameter refs #489', function(done) {
     var api = new Resolver();
     var spec = {
@@ -1217,7 +1237,7 @@ describe('swagger resolver', function () {
   it('base model properties', function(done) {
     var api = new Resolver();
     var spec = {
-     
+
       swagger:'2.0',
       info:{
       },
@@ -1247,7 +1267,7 @@ describe('swagger resolver', function () {
           allOf: [
             {
               '$ref': '#/definitions/Pet'
-            }, 
+            },
             {
               type: 'object',
               properties:{
@@ -1272,10 +1292,10 @@ describe('swagger resolver', function () {
       }
     };
     api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec) {
-        
+
       expect(spec.definitions.Pet.properties.color['$ref']).toBe('#/definitions/Color');
       expect(spec.definitions.Cat.properties.color['$ref']).toBe('#/definitions/Color');
-      
+
       done();
     });
   });

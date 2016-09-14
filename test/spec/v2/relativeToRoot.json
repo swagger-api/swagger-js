@@ -1,0 +1,7 @@
+{
+  "definitions" : {
+    "intermediatePet": {
+      "$ref": "/v2/petstore.json#/definitions/Pet"
+    }
+  }
+}
