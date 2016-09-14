@@ -39,6 +39,19 @@ var nameFD = {
   name: 'name',
   type: 'string'
 };
+var langFD = {
+  in: 'formData',
+  name: 'lang',
+  type: 'array',
+  collectionFormat: 'csv'
+};
+var countryFD = {
+  in: 'formData',
+  name: 'country',
+  type: 'array',
+  collectionFormat: 'multi'
+};
+
 
 describe('operations', function () {
   it('should generate a url', function () {
@@ -682,6 +695,18 @@ describe('operations', function () {
                                    {}, {}, new auth.SwaggerAuthorizations());
     expect(op.getBody({}, {name: 'Douglas Adams', quantity: 42}, {})).toEqual('quantity=42&name=Douglas%20Adams');
   });
+
+  it('should generate a multipart/form-data body with correct strings for array-like values', function () {
+    var parameters = [langFD, countryFD, nameFD];
+    var op = new Operation({}, 'http', 'test', 'post', '/path', { parameters: parameters}, {}, {}, new auth.SwaggerAuthorizations());
+
+    var body = op.getBody({'Content-Type': 'multipart/form-data'}, {lang: ['en', 'de'], country: ['US', 'DE'], name: 'Douglas Adams'}, {});
+
+    expect(body.lang[0]).toBe('en');
+    expect(body.lang[1]).toBe('de');
+
+    console.log(body);
+  })
 
   // options.timeout
   it('should use timeout specified on client by default', function () {
