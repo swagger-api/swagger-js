@@ -617,4 +617,57 @@ describe('models', function () {
       }
     });
   });
+
+  it('allOf test for #843', function(done) {
+    var spec = {
+      swagger: '2.0',
+      paths: {
+        '/persons': {
+          get: {
+            tags: [
+                'fun'
+            ],
+            operationId: 'test',
+            responses: {
+              '200': {
+                schema: {
+                  allOf: [
+                    {$ref: '#/definitions/OkResponse'},
+                    {
+                      properties: {
+                        data: {
+                          type: 'array',
+                          items: {
+                            type: 'string'
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      definitions: {
+        OkResponse: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string'
+            }
+          }
+        }
+      }
+    }
+    var client = new SwaggerClient({
+      spec: spec,
+      success: function () {
+        var response = client.fun.operations.test.successResponse['200'];
+        expect(response.getMockSignature()).toEqual('<span class="strong">inline_model {</span><div><span class="propName ">name</span> (<span class="propType">string</span>, <span class="propOptKey">optional</span>),</div><div><span class="propName ">data</span> (<span class="propType">Array[string]</span>, <span class="propOptKey">optional</span>)</div><span class="strong">}</span>');
+        done();
+      }
+    });
+  });
 });
