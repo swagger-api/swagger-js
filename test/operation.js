@@ -700,15 +700,12 @@ describe('operations', function () {
     var parameters = [langFD, countryFD, nameFD];
     var op = new Operation({}, 'http', 'test', 'post', '/path', { parameters: parameters}, {}, {}, new auth.SwaggerAuthorizations());
 
-    global.FormData = require('form-data');
     var body = op.getBody({'Content-Type': 'multipart/form-data'}, {lang: ['en', 'de'], country: ['US', 'DE'], name: 'Douglas Adams'}, {});
-    global.FormData = undefined;
 
-    expect(body._streams[1]).toEqual('en,de');
-    expect(body._streams[4]).toEqual('US&country=DE');
-    expect(body._streams[7]).toEqual('Douglas Adams');
+    expect(body.lang[0]).toBe('en');
+    expect(body.lang[1]).toBe('de');
 
-
+    console.log(body);
   })
 
   // options.timeout
