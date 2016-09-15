@@ -62,6 +62,7 @@
     "karma-firefox-launcher": "^0.1.6",
     "karma-mocha": "^0.1.10",
     "karma-source-map-support": "^1.0.0",
+    "md5-file": "^3.1.1",
     "mocha": "^1.21.3",
     "object.assign": "^3.0.0",
     "selenium-webdriver": "^2.45.1",

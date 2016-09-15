@@ -19,8 +19,19 @@ exports.petstore = function (arg1, arg2, arg3, arg4) {
   var instance = http.createServer(function (req, res) {
     var uri = url.parse(req.url).pathname;
     var filename = path.join('test/spec', uri);
+
+    // for testing blobs
+    if(filename === 'test/spec/v2/blob/image.png') {
+      var readStream = fs.createReadStream(filename);
+      var headers = {
+        'Content-Type': 'image/png'
+      };
+
+      res.writeHead(200, headers);
+      readStream.pipe(res);
+    }
     // for testing redirects
-    if(filename === 'test/spec/v2/api/pet/666' && req.method === 'GET') {
+    else if(filename === 'test/spec/v2/api/pet/666' && req.method === 'GET') {
       res.setHeader('Content-Type', 'application/json');
       res.writeHead(400, 'application/json');
       res.write(JSON.stringify({
