@@ -7,15 +7,19 @@ var expect = require('expect');
 var petstoreRaw = require('./spec/v2/petstore.json');
 var SwaggerClient = require('..');
 var auth = require('../lib/auth');
+var fs = require('fs');
+var md5 = require('md5-file');
 
 /* jshint ignore:start */
 var mock = require('./mock');
 var instance;
+var testBlobMD5;
 /* jshint ignore:end */
 
 describe('SwaggerClient', function () {
   /* jshint ignore:start */
   before(function (done) {
+    testBlobMD5 = md5.sync('test/spec/v2/blob/image.png');
     mock.petstore(done, function (petstore, server){
       instance = server;
     });
@@ -1399,11 +1403,58 @@ describe('SwaggerClient', function () {
       usePromise: true
     }).then(function(client) {
       var models = client.models;
-      console.log(models.SuperErrorModel.createJSONSample());
-      console.log(models.SuperErrorModel.getMockSignature());
-      console.log(models.SuperErrorModel.getSampleValue());
-
       done();
+    }).catch(function(exception) {
+      done(exception);
+    });
+  });
+
+
+  it('should read a blob', function(done) {
+    var spec = {
+      paths: {
+        '/v2/blob/image.png': {
+          get: {
+            operationId: 'getBlob',
+            produces: ['image/png'],
+            tags: [ 'test' ],
+            parameters: [],
+            responses: {
+              default: {
+                description: 'ok',
+                schema: {
+                  type: 'string',
+                  format: 'byte'
+                }
+              }
+            }
+          }
+        }
+      }
+    };
+
+    new SwaggerClient({
+      url: 'http://localhost:8000',
+      spec: spec,
+      usePromise: true
+    }).then(function(client) {
+      client.test.getBlob({})
+        .then(function (response) {
+          console.log('horray');
+          var filename = './file.tmp';
+          fs.writeFile(filename, response.data, function(err) {
+            if(err) {
+              return done('it failed');
+            }
+            var hash = md5.sync(filename);
+            expect(hash).toBe(testBlobMD5);
+            fs.unlinkSync(filename);
+            done();
+          });
+        })
+        .catch(function () {
+          done('it failed');
+        });
     }).catch(function(exception) {
       done(exception);
     });
