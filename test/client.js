@@ -703,7 +703,7 @@ describe('SwaggerClient', function () {
             parameters: [
               {
                 in: 'header',
-                name: 'username',
+                name: 'Accept-Language',
                 type: 'string'
               }
             ],
@@ -735,7 +735,7 @@ describe('SwaggerClient', function () {
            **/
 
           // ensure the headers are present
-          expect(requestObj.headers.username).toBe('bob');
+          expect(requestObj.headers['Accept-Language']).toBe('fr');
 
           // rewrite this request to something that'll work locally
           requestObj.method = 'GET';
@@ -751,7 +751,7 @@ describe('SwaggerClient', function () {
       usePromise: true,
       requestInterceptor: interceptor.requestInterceptor
     }).then(function(client) {
-      client.nada.addFoo({username: 'bob'}).then(function (){
+      client.nada.addFoo({'accept-LANGUAGE': 'fr'}).then(function (){
         done();
       });
     }).catch(function(exception) {
