@@ -1409,7 +1409,6 @@ describe('SwaggerClient', function () {
     });
   });
 
-
   it('should read a blob', function(done) {
     var spec = {
       paths: {
@@ -1440,7 +1439,6 @@ describe('SwaggerClient', function () {
     }).then(function(client) {
       client.test.getBlob({})
         .then(function (response) {
-          console.log('horray');
           var filename = './file.tmp';
           fs.writeFile(filename, response.data, function(err) {
             if(err) {
@@ -1455,6 +1453,39 @@ describe('SwaggerClient', function () {
         .catch(function () {
           done('it failed');
         });
+    }).catch(function(exception) {
+      done(exception);
+    });
+  });
+
+
+  it('should honor schemes', function(done) {
+    var spec = {
+      schemes: ['https'],
+      paths: {
+        '/v2/nada': {
+          get: {
+            operationId: 'getNothing',
+            tags: [ 'test' ],
+            parameters: [],
+            responses: {
+              default: {
+                description: 'ok'
+              }
+            }
+          }
+        }
+      }
+    };
+
+    var output = new SwaggerClient({
+      url: 'http://localhost:8000',
+      spec: spec,
+      usePromise: true
+    }).then(function(client) {
+      var mock = client.test.getNothing({},{mock: true});
+      expect(mock.url).toEqual('https://localhost:8000/v2/nada');
+      done();
     }).catch(function(exception) {
       done(exception);
     });
