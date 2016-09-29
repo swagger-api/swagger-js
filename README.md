@@ -1,6 +1,7 @@
 # Swagger JS library
 
 [![Build Status](https://travis-ci.org/swagger-api/swagger-js.svg?branch=master)](https://travis-ci.org/swagger-api/swagger-js)
+[![NPM version](https://badge.fury.io/js/swagger-client.svg)](http://badge.fury.io/js/swagger-client)
 
 This is the Swagger javascript client for use with [swagger](http://swagger.io) enabled APIs.
 It's written in javascript and tested with mocha, and is the fastest way to enable a javascript client to communicate with a swagger-enabled server.
@@ -222,6 +223,46 @@ You can add it to the swagger-client like such:
 
 ```js
 client.clientAuthorizations.add('my-auth', new CustomRequestSigner());
+```
+
+### Setting headers
+
+Headers are a type of `parameter`, and can be passed with the other parameters. For example, if you supported translated pet details via the `Accept-Language` header:
+
+```js
+"parameters": [
+  {
+    "name": "petId",
+    "description": "ID of pet that needs to be fetched",
+    "required": true,
+    "type": "integer",
+    "format": "int64",
+    "paramType": "path",
+    "minimum": "1.0",
+    "defaultValue": 3,
+    "maximum": "100000.0"
+  },
+  "LanguageHeader": {
+    "name": "Accept-Language",
+    "in": "header",
+    "description": "Specify the user's language",
+    "required": false,
+    "type": "string"
+  }
+...
+```
+
+Then you would pass the header value via the parameters ([header parameters are case-insenstive](https://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2)):
+
+```js
+
+client.pet.getPetById({
+  petId: 7,
+  'accept-language': 'fr'
+}, function(pet){
+  console.log('pet', pet);
+});
+
 ```
 
 ### Using your own HTTP client
