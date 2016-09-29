@@ -1409,7 +1409,6 @@ describe('SwaggerClient', function () {
     });
   });
 
-
   it('should read a blob', function(done) {
     var spec = {
       paths: {
@@ -1455,6 +1454,39 @@ describe('SwaggerClient', function () {
         .catch(function () {
           done('it failed');
         });
+    }).catch(function(exception) {
+      done(exception);
+    });
+  });
+
+  it('should read vendor extensions', function(done) {
+    new SwaggerClient({
+      url: 'http://localhost:8000/v2/extensions.yaml',
+      usePromise: true
+    }).then(function(client) {
+      var swagger = client.swaggerObject;
+      // swagger objects
+      expect(swagger['x-root-extension']).toEqual('root');
+      expect(swagger.info.contact['x-contact-extension']).toEqual('contact');
+      expect(swagger.info.license['x-license-extension']).toEqual('license');
+      expect(swagger.securityDefinitions.myKey['x-auth-extension']).toEqual('auth');
+      expect(swagger.securityDefinitions.myOAuth.scopes['x-scopes-extension']).toEqual('scopes');
+      expect(swagger.tags[0]['x-tags-extension']).toEqual('tags');
+      expect(swagger.paths['x-paths-extension']).toEqual('paths');
+      expect(swagger.paths['/device'].get.externalDocs['x-external-docs-extension']).toEqual('docs');
+
+      // client object
+      expect(client.securityDefinitions.myKey.vendorExtensions['x-auth-extension']).toBe('auth');
+      expect(client.securityDefinitions.myOAuth.scopes.vendorExtensions['x-scopes-extension']).toBe('scopes');
+
+      expect(client.myTag.vendorExtensions['x-tags-extension']).toEqual('tags');
+      expect(client.myTag.externalDocs.vendorExtensions['x-external-docs-in-tag']).toEqual('docs-in-tag');
+
+      expect(client.myTag.apis.deviceSummary.vendorExtensions['x-operation-extension']).toEqual('operation');
+
+      expect(client.myTag.apis.deviceSummary.externalDocs.vendorExtensions['x-external-docs-extension']).toEqual('docs');
+
+      done();
     }).catch(function(exception) {
       done(exception);
     });
