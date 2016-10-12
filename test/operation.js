@@ -280,7 +280,6 @@ describe('operations', function () {
     ];
     var op = new Operation({}, 'http', 'test', 'get', '/foo/{location}', { parameters: parameters },
                                    {}, {}, new auth.SwaggerAuthorizations());
-    op.preserveSlashes = true;
     var url = op.urlify({
       location: 'qux/baz.txt'
     });
@@ -305,7 +304,6 @@ describe('operations', function () {
     ];
     var op = new Operation({}, 'http', 'test', 'get', '/foo/{type}/{location}', { parameters: parameters },
                                    {}, {}, new auth.SwaggerAuthorizations());
-    op.preserveSlashes = true;
     var url = op.urlify({
       type: 'bar/bar',
       location: 'qux/baz.txt'
