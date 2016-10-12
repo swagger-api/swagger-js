@@ -1478,6 +1478,10 @@ describe('SwaggerClient', function () {
       expect(swagger.paths['/device'].get.parameters[0]['x-parameter-extension']).toEqual('parameter');
       expect(swagger.paths['/device'].get.responses['x-responses-extension']).toEqual('responses');
 
+      // until we expose all responses, these assertion must be disabled.
+      // expect(swagger.paths['/device'].get.responses['200']['x-response-extension']).toEqual('response');
+      // expect(swagger.paths['/device'].get.responses['200'].headers['my-header']['x-header-extension']).toEqual('header');
+
       // client object
       expect(client.securityDefinitions.myKey.vendorExtensions['x-auth-extension']).toBe('auth');
       expect(client.securityDefinitions.myOAuth.scopes.vendorExtensions['x-scopes-extension']).toBe('scopes');
@@ -1492,7 +1496,9 @@ describe('SwaggerClient', function () {
       expect(client.myTag.apis.deviceSummary.parameters[0].vendorExtensions['x-parameter-extension']).toEqual('parameter');
 
       expect(client.myTag.apis.deviceSummary.responses.vendorExtensions['x-responses-extension']).toEqual('responses');
+      expect(client.myTag.apis.deviceSummary.successResponse['200'].vendorExtensions['x-response-extension']).toEqual('response');
 
+      expect(client.myTag.apis.deviceSummary.successResponse['200'].headers['my-header'].vendorExtensions['x-header-extension']).toEqual('header');
 
       done();
     }).catch(function(exception) {
