@@ -1473,8 +1473,10 @@ describe('SwaggerClient', function () {
       expect(swagger.securityDefinitions.myOAuth.scopes['x-scopes-extension']).toEqual('scopes');
       expect(swagger.tags[0]['x-tags-extension']).toEqual('tags');
       expect(swagger.paths['x-paths-extension']).toEqual('paths');
-      expect(swagger.paths['/device'].get.externalDocs['x-external-docs-extension']).toEqual('docs');
       expect(swagger.paths['/device'].get['x-operation-extension']).toEqual('operation');
+      expect(swagger.paths['/device'].get.externalDocs['x-external-docs-extension']).toEqual('docs');
+      expect(swagger.paths['/device'].get.parameters[0]['x-parameter-extension']).toEqual('parameter');
+      expect(swagger.paths['/device'].get.responses['x-responses-extension']).toEqual('responses');
 
       // client object
       expect(client.securityDefinitions.myKey.vendorExtensions['x-auth-extension']).toBe('auth');
@@ -1488,6 +1490,8 @@ describe('SwaggerClient', function () {
       expect(client.myTag.apis.deviceSummary.externalDocs.vendorExtensions['x-external-docs-extension']).toEqual('docs');
       expect(client.myTag.apis.deviceSummary.vendorExtensions['x-operation-extension']).toEqual('operation');
       expect(client.myTag.apis.deviceSummary.parameters[0].vendorExtensions['x-parameter-extension']).toEqual('parameter');
+
+      expect(client.myTag.apis.deviceSummary.responses.vendorExtensions['x-responses-extension']).toEqual('responses');
 
 
       done();
