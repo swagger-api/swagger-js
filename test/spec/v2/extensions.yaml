@@ -50,6 +50,7 @@ paths:
           name: limit
           type: integer
           format: int32
+          x-parameter-extension: parameter
       responses:
         x-responses-extension: responses
         200:
