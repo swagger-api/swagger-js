@@ -20,7 +20,7 @@
   "host": "localhost:8000",
   "basePath": "/v2/api",
   "schemes": [
-    "http"
+    "https"
   ],
   "tags": [
     {
