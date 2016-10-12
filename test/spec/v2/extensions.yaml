@@ -1,0 +1,71 @@
+swagger: "2.0"
+info:
+  description: simple
+  version: '1.0.0'
+  title: 'an api'
+  contact:
+    name: tony
+    x-contact-extension: contact
+  license:
+    name: nada
+    x-license-extension: license
+basePath: '/'
+x-root-extension: root
+securityDefinitions:
+  myKey:
+    type: apiKey
+    name: api_key
+    in: header
+    x-auth-extension: auth
+  myOAuth:
+    type: oauth2
+    authorizationUrl: http://swagger.io/api/oauth/dialog
+    flow: implicit
+    scopes:
+      write:pets: modify pets in your account
+      read:pets: read your pets
+      x-scopes-extension: scopes
+tags:
+  - name: myTag
+    description: description
+    x-tags-extension: tags
+    externalDocs:
+      name: external
+      url: http://foo.bar
+      x-external-docs-in-tag: docs-in-tag
+paths:
+  x-paths-extension: paths
+  /device:
+    get:
+      externalDocs:
+        description: see more
+        url: http://foo.com
+        x-external-docs-extension: docs
+      x-operation-extension: operation
+      tags:
+      - myTag
+      operationId: deviceSummary
+      parameters:
+        - in: query
+          name: limit
+          type: integer
+          format: int32
+          x-parameter-extension: parameter
+      responses:
+        x-responses-extension: responses
+        200:
+          x-response-extension: response
+          description: ok
+          schema:
+            $ref: '#/definitions/foo'
+          headers:
+            my-header:
+              type: string
+              x-header-extension: header
+definitions:
+  foo:
+    x-model-extension: model
+    properties:
+      bar:
+        type: string
+        x-property-extension: property

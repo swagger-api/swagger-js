@@ -1458,7 +1458,6 @@ describe('SwaggerClient', function () {
     });
   });
 
-
   it('should honor schemes', function(done) {
     var spec = {
       schemes: ['https'],
@@ -1485,6 +1484,51 @@ describe('SwaggerClient', function () {
     }).then(function(client) {
       var mock = client.test.getNothing({},{mock: true});
       expect(mock.url).toEqual('https://localhost:8000/v2/nada');
+      done();
+    });
+  });
+
+  it('should read vendor extensions', function(done) {
+    new SwaggerClient({
+      url: 'http://localhost:8000/v2/extensions.yaml',
+      usePromise: true
+    }).then(function(client) {
+      var swagger = client.swaggerObject;
+      // swagger objects
+      expect(swagger['x-root-extension']).toEqual('root');
+      expect(swagger.info.contact['x-contact-extension']).toEqual('contact');
+      expect(swagger.info.license['x-license-extension']).toEqual('license');
+      expect(swagger.securityDefinitions.myKey['x-auth-extension']).toEqual('auth');
+      expect(swagger.securityDefinitions.myOAuth.scopes['x-scopes-extension']).toEqual('scopes');
+      expect(swagger.tags[0]['x-tags-extension']).toEqual('tags');
+      expect(swagger.paths['x-paths-extension']).toEqual('paths');
+      expect(swagger.paths['/device'].get['x-operation-extension']).toEqual('operation');
+      expect(swagger.paths['/device'].get.externalDocs['x-external-docs-extension']).toEqual('docs');
+      expect(swagger.paths['/device'].get.parameters[0]['x-parameter-extension']).toEqual('parameter');
+      expect(swagger.paths['/device'].get.responses['x-responses-extension']).toEqual('responses');
+
+      // until we expose all responses, these assertion must be disabled.
+      // expect(swagger.paths['/device'].get.responses['200']['x-response-extension']).toEqual('response');
+      // expect(swagger.paths['/device'].get.responses['200'].headers['my-header']['x-header-extension']).toEqual('header');
+
+      // client object
+      expect(client.securityDefinitions.myKey.vendorExtensions['x-auth-extension']).toBe('auth');
+      expect(client.securityDefinitions.myOAuth.scopes.vendorExtensions['x-scopes-extension']).toBe('scopes');
+
+      expect(client.myTag.vendorExtensions['x-tags-extension']).toEqual('tags');
+      expect(client.myTag.externalDocs.vendorExtensions['x-external-docs-in-tag']).toEqual('docs-in-tag');
+
+      expect(client.myTag.apis.deviceSummary.vendorExtensions['x-operation-extension']).toEqual('operation');
+
+      expect(client.myTag.apis.deviceSummary.externalDocs.vendorExtensions['x-external-docs-extension']).toEqual('docs');
+      expect(client.myTag.apis.deviceSummary.vendorExtensions['x-operation-extension']).toEqual('operation');
+      expect(client.myTag.apis.deviceSummary.parameters[0].vendorExtensions['x-parameter-extension']).toEqual('parameter');
+
+      expect(client.myTag.apis.deviceSummary.responses.vendorExtensions['x-responses-extension']).toEqual('responses');
+      expect(client.myTag.apis.deviceSummary.successResponse['200'].vendorExtensions['x-response-extension']).toEqual('response');
+
+      expect(client.myTag.apis.deviceSummary.successResponse['200'].headers['my-header'].vendorExtensions['x-header-extension']).toEqual('header');
+
       done();
     }).catch(function(exception) {
       done(exception);
