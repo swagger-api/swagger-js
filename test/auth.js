@@ -113,7 +113,7 @@ describe('2.0 authorizations', function () {
     var req = petApi.getPetById(params, opts);
 
     expect(req.url).to.equal('http://localhost:8000/v2/api/pet/1');
-    expect(req.headers.api_key).to.equal('abc123'); // jshint ignore:line
+    expect(req.headers['api_key']).to.equal('abc123'); // jshint ignore:line
 
     petstore.clientAuthorizations.authz = {};
   });
@@ -149,7 +149,7 @@ describe('2.0 authorizations', function () {
     var op = new Operation({}, 'http', 'test', 'get', '/path', { parameters: parameters },
                                    {}, {}, authorizations);
     var req = op.execute(params, {mock : true});
-    expect(req.headers.api_key).to.equal('foo');
+    expect(req.headers['api_key']).to.equal('foo');
   });
 
   it('does not apply password auth when the value has been manually added', function () {

@@ -470,7 +470,7 @@ describe('swagger resolver', function () {
 
     api.resolve(spec, 'http://localhost:8000/foo/bar/swagger.json', function (spec) {
       // check our double $ref unwrapped into final Pet object
-      expect(spec.definitions.Pet.required).toEqual(["name", "photoUrls"]);
+      expect(spec.definitions.Pet.required).toEqual(['name', 'photoUrls']);
       done();
     });
   });
@@ -949,7 +949,7 @@ describe('swagger resolver', function () {
     var opts = opts || {};
     opts.url = opts.url || 'http://localhost:8000/v2/absoluteRef.json';
     opts.success = function () {
-      var response = sample.apis.default.operations.get_linked.successResponse;
+      var response = sample.apis.default.operations['get_linked'].successResponse;
       expect(response).toExist();
       expect(response['200']).toExist();
       done();
@@ -1229,7 +1229,7 @@ describe('swagger resolver', function () {
     };
     api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec) {
       expect(spec.definitions).toBeAn('object');
-      expect(spec.definitions.inline_model).toBeAn('object');
+      expect(spec.definitions['inline_model']).toBeAn('object');
       done();
     });
   });
@@ -1293,8 +1293,8 @@ describe('swagger resolver', function () {
     };
     api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec) {
 
-      expect(spec.definitions.Pet.properties.color['$ref']).toBe('#/definitions/Color');
-      expect(spec.definitions.Cat.properties.color['$ref']).toBe('#/definitions/Color');
+      expect(spec.definitions.Pet.properties.color.$ref).toBe('#/definitions/Color');
+      expect(spec.definitions.Cat.properties.color.$ref).toBe('#/definitions/Color');
 
       done();
     });
@@ -1348,8 +1348,8 @@ describe('swagger resolver', function () {
       }
     };
     api.resolve(spec, 'http://localhost:8000/v2/swagger.json', function (spec) {
-      expect(spec.paths['/'].get.responses['200'].schema['$ref']).toBeA('string');
-      var model = spec.paths['/'].get.responses['200'].schema['$ref'];
+      expect(spec.paths['/'].get.responses['200'].schema.$ref).toBeA('string');
+      var model = spec.paths['/'].get.responses['200'].schema.$ref;
 
       var parts = model.split('\/');
       var simple = parts[parts.length - 1];
@@ -1506,8 +1506,8 @@ describe('swagger resolver', function () {
     api.resolve(spec, function (spec) {
       var param = spec.paths['/'].post.parameters[0];
       expect(param.name).toBe('theBody');
-      expect(param.schema['$ref']).toBeA('string');
-      expect(param.schema['$ref']).toEqual('#/definitions/inline_model');
+      expect(param.schema.$ref).toBeA('string');
+      expect(param.schema.$ref).toEqual('#/definitions/inline_model');
       expect(spec.definitions['inline_model']).toBeAn('object');
       done();
     });
@@ -1559,7 +1559,7 @@ describe('swagger resolver', function () {
               schema: {
                 type: 'object',
                 additionalProperties: {
-                  type: "string"
+                  type: 'string'
                 }
               }
             }]
@@ -1570,8 +1570,8 @@ describe('swagger resolver', function () {
     api.resolve(spec, function (spec) {
       var param = spec.paths['/'].post.parameters[0];
       expect(param.name).toBe('myObj');
-      expect(param.schema['$ref']).toBeA('string');
-      expect(param.schema['$ref']).toEqual('#/definitions/inline_model');
+      expect(param.schema.$ref).toBeA('string');
+      expect(param.schema.$ref).toEqual('#/definitions/inline_model');
       expect(spec.definitions['inline_model']).toBeAn('object');
       done();
     });

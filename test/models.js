@@ -660,7 +660,7 @@ describe('models', function () {
           }
         }
       }
-    }
+    };
     var client = new SwaggerClient({
       spec: spec,
       success: function () {
