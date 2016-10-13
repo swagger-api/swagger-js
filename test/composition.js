@@ -376,7 +376,7 @@ describe('swagger resolver', function () {
     api.resolve(spec, 'http://localhost:8000/v2/petstore.json', function (spec, unresolved) {
       expect(Object.keys(unresolved).length).toBe(0);
       test.object(spec);
-      var schema = spec.definitions.new_model.properties.subclass;
+      var schema = spec.definitions['new_model'].properties.subclass;
 
       expect(schema['x-composed']).toBe(true);
       expect(Array.isArray(schema['x-resolved-from'])).toBe(true);
@@ -455,7 +455,7 @@ describe('swagger resolver', function () {
       expect(Object.keys(unresolved).length).toBe(0);
       test.object(spec);
       test.object(spec.paths['/foo'].get.responses[200]);
-      var schema = spec.definitions.inline_model;
+      var schema = spec.definitions['inline_model'];
 
       expect(schema.properties.offset.type).toBe('integer');
       expect(schema.properties.offset.format).toBe('int32');

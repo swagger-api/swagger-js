@@ -43,15 +43,12 @@ describe('SwaggerClient', function () {
   });
 
   describe('enabling promises', function() {
-
     var client;
 
     describe('given a valid spec (or url)', function() {
-      beforeEach(function() {
-        client = new SwaggerClient({
-          spec: petstoreRaw,
-          usePromise: true
-        });
+      client = new SwaggerClient({
+        spec: petstoreRaw,
+        usePromise: true
       });
 
       it('should resolve with an object as response', function(done) {
@@ -423,7 +420,7 @@ describe('SwaggerClient', function () {
   });
 
   it('should use a timeout when fetching a spec', function (done) {
-    var client = new SwaggerClient({
+    new SwaggerClient({
       url: 'http://localhost:8000/v2/petstore.json',
       fetchSpecTimeout: 1,
       success: function () {
@@ -447,10 +444,10 @@ describe('SwaggerClient', function () {
       fetchSpecTimeout: null
     }).then(function (client) {
       client.pet.getPetById({petId: 1})
-        .then(function (pet) {
-          expect().toExist('Operation request timeout was not applied')
+        .then(function () {
+          expect().toExist('Operation request timeout was not applied');
         }).catch(function (err) {
-          expect(err.errObj.message).toBe('timeout of 1ms exceeded', 'Operation request timeout was not applied')
+          expect(err.errObj.message).toBe('timeout of 1ms exceeded', 'Operation request timeout was not applied');
           done();
         });
     }).catch(done);
@@ -649,7 +646,7 @@ describe('SwaggerClient', function () {
       usePromise: true
     }).then(function (client) {
       expect(client.default.test).toBeA('function');
-      expect(client.default.test_0).toBeAn('function');
+      expect(client.default['test_0']).toBeAn('function');
       done();
     }).catch(function (exception) {
       done(exception);
@@ -1348,7 +1345,7 @@ describe('SwaggerClient', function () {
             done();
           });
       var curl = client.test.mypost.asCurl({name: ['tony', 'tam']});
-      expect(curl).toBe("curl -X POST --header 'Content-Type: multipart/form-data' --header 'Accept: application/json' -F name=tony,tam  'http://localhost:8080/foo'");
+      expect(curl).toBe('curl -X POST --header \'Content-Type: multipart/form-data\' --header \'Accept: application/json\' -F name=tony,tam  \'http://localhost:8080/foo\'');
     }).catch(function(exception) {
       done(exception);
     });
@@ -1391,7 +1388,7 @@ describe('SwaggerClient', function () {
           done();
         });
       var curl = client.test.mypost.asCurl({name: ['tony', 'tam']});
-      expect(curl).toBe("curl -X POST --header 'Content-Type: multipart/form-data' --header 'Accept: application/json' -F name=tony -F name=tam  'http://localhost:8080/foo'");
+      expect(curl).toBe('curl -X POST --header \'Content-Type: multipart/form-data\' --header \'Accept: application/json\' -F name=tony -F name=tam  \'http://localhost:8080/foo\'');
     }).catch(function(exception) {
       done(exception);
     });
@@ -1401,8 +1398,7 @@ describe('SwaggerClient', function () {
     new SwaggerClient({
       url: 'http://localhost:8000/v2/issue-716.yaml',
       usePromise: true
-    }).then(function(client) {
-      var models = client.models;
+    }).then(function() {
       done();
     }).catch(function(exception) {
       done(exception);
@@ -1477,7 +1473,7 @@ describe('SwaggerClient', function () {
       }
     };
 
-    var output = new SwaggerClient({
+    new SwaggerClient({
       url: 'http://localhost:8000',
       spec: spec,
       usePromise: true
