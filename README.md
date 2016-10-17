@@ -299,6 +299,29 @@ var client = new SwaggerClient({
 });
 ```
 
+### Using custom http(s) agent
+In case if you need to sign all requests to petstore with custom certificate 
+
+```js
+var connectionAgent = {
+    rejectUnauthorized: false,
+    key: "/certs/example.key",
+    cert: "/certs/example.pem",
+    ca: ["/certs/example.ca.pem"]
+}
+
+var client = new SwaggerClient({
+  url: "http://petstore.swagger.io/v2/swagger.json",
+  connectionAgent: connectionAgent,
+  success: function() {
+    // upon connect, fetch a pet and set contents to element "mydata"
+    client.pet.getPetById({petId:1},{responseContentType: 'application/json'}, function(data) {
+      document.getElementById("mydata").innerHTML = JSON.stringify(data.obj);
+    });
+  }
+});
+```
+
 ### How does it work?
 The swagger javascript client reads the swagger api definition directly from the server.  As it does, it constructs a client based on the api definition, which means it is completely dynamic.  It even reads the api text descriptions (which are intended for humans!) and provides help if you need it:
 
