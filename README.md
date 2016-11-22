@@ -36,7 +36,7 @@ var client = new Swagger({
 });
 ```
 
-NOTE: we're explicitly setting the responseContentType, because we don't want you getting stuck when 
+NOTE: we're explicitly setting the responseContentType, because we don't want you getting stuck when
 there is more than one content type available.
 
 That's it!  You'll get a JSON response with the default callback handler:
@@ -299,8 +299,24 @@ var client = new SwaggerClient({
 });
 ```
 
+You can also pass in your own version superagent (if, for example, you have other superagent plugins etc that you want to use)
+
+var agent = require('some-other-special-superagent');
+
+var client = new SwaggerClient({
+  spec: petstoreRaw,
+  requestAgent: agent,
+  success: function () {
+    client.pet.getPetById({petId: 3}, function(data){
+      expect(data).toBe('ok');
+      done();
+    });
+  }
+});
+```
+
 ### Using custom http(s) agent
-In case if you need to sign all requests to petstore with custom certificate 
+In case if you need to sign all requests to petstore with custom certificate
 
 ```js
 var connectionAgent = {
