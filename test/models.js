@@ -671,7 +671,7 @@ describe('models', function () {
     });
   });
 
-  it('should do something', function(done) {
+  it('verify the response examples', function(done) {
     var spec = {
       swagger: '2.0',
       paths: {
@@ -682,7 +682,7 @@ describe('models', function () {
                 responses: {
               200: {
                 description: 'OK',
-                    schema: {
+                  schema: {
                   $ref: '#/definitions/A'
                 },
                 examples: {
@@ -699,7 +699,7 @@ describe('models', function () {
                 responses: {
               200: {
                 description: 'OK',
-                    schema: {
+                  schema: {
                   $ref: '#/definitions/A'
                 },
                 examples: {
@@ -728,7 +728,6 @@ describe('models', function () {
       usePromise: true
     }).then(function(client) {
       expect(client.apisArray[0].operationsArray[0].successResponse['200'].name).toEqual('A');
-      expect(client.apisArray[0].operationsArray[1].successResponse['200'].name).toEqual('B');
       done();
     })
   })
