@@ -1405,6 +1405,23 @@ describe('SwaggerClient', function () {
     });
   });
 
+  it('should catch an error', function(done) {
+    new SwaggerClient({
+      url: 'http://localhost:8000/v2/issue-716.yaml',
+      usePromise: true
+    }).then(function(client) {
+      client.Data.getPets()
+        .then(function(data) {
+          done('shoulda failed');
+        })
+        .catch(function(err) {
+          done();
+        })
+    }).catch(function(exception) {
+      done(exception);
+    });
+  });
+
   it('should read a blob', function(done) {
     var spec = {
       paths: {
