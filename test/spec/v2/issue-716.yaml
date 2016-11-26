@@ -6,6 +6,8 @@ basePath: /
 paths:
   /linked:
     get:
+      tags:
+      - Data
       description: Returns a list of pets
       operationId: getPets
       responses:
