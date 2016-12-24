@@ -106,17 +106,50 @@ new Swagger({
     });
 });
 ```
+### Authorization
 
-Need to pass an API key?  Configure one in your client instance as a query string:
+Need to pass an API key? Ok, here is sample `swagger.yml`:
+
+```yaml
+# ...
+
+securityDefinitions:
+
+  api_sheme_name:           # swagger scheme name
+    type: apiKey            # swagger type (one of "basic", "apiKey" or "oauth2")
+    name: queryParamName    # The name of the header or query parameter to be used
+    in: query               # location of the API key
+
+  api_sheme_name_2:
+    type: apiKey
+    name: X-KEY-PARAM
+    in: header
+
+# ...
+```
+
+Configure auth for that definition in your client instance as a query string:
 
 ```js
-client.clientAuthorizations.add("apiKey", new Swagger.ApiKeyAuthorization("api_key","special-key","query"));
+client.clientAuthorizations.add("api_sheme_name",
+  new Swagger.ApiKeyAuthorization(
+    "queryParamName",
+    "<YOUR-SECRET-KEY>",
+    "query"
+  )
+);
 ```
 
 ...or with a header:
 
 ```js
-client.clientAuthorizations.add("apiKey", new Swagger.ApiKeyAuthorization("api_key","special-key","header"));
+client.clientAuthorizations.add("api_sheme_name_2",
+  new Swagger.ApiKeyAuthorization(
+    "X-KEY-PARAM",
+    "<YOUR-SECRET-KEY>",
+    "header"
+  )
+);
 ```
 
 ...or with the swagger-client constructor:
