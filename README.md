@@ -108,7 +108,7 @@ new Swagger({
 ```
 ### Authorization
 
-Need to pass an API key? Ok, here is sample `swagger.yml`:
+Need to pass an API key? Ok, lets do it for this sample `swagger.yml`:
 
 ```yaml
 # ...
@@ -128,7 +128,7 @@ securityDefinitions:
 # ...
 ```
 
-Configure auth for that definition in your client instance as a query string:
+Configure auth for that definition in your client instance as a *query string*:
 
 ```js
 client.clientAuthorizations.add("api_sheme_name",
@@ -140,7 +140,7 @@ client.clientAuthorizations.add("api_sheme_name",
 );
 ```
 
-...or with a header:
+...or with a *header*:
 
 ```js
 client.clientAuthorizations.add("api_sheme_name_2",
