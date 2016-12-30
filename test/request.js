@@ -365,6 +365,12 @@ describe('swagger request functions', function () {
       expect(resp.headers['content-type']).toNotBe(undefined);
       expect(resp.headers['content-type']).toBe('text/plain');
 
+      done('should have failed');
+    }, function(err) {
+      expect(err.headers).toNotBe(undefined);
+      expect(err.headers['content-type']).toNotBe(undefined);
+      expect(err.headers['content-type']).toBe('text/plain');
+
       done();
     });
   });

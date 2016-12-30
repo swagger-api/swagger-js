@@ -43,15 +43,12 @@ describe('SwaggerClient', function () {
   });
 
   describe('enabling promises', function() {
-
     var client;
 
     describe('given a valid spec (or url)', function() {
-      beforeEach(function() {
-        client = new SwaggerClient({
-          spec: petstoreRaw,
-          usePromise: true
-        });
+      client = new SwaggerClient({
+        spec: petstoreRaw,
+        usePromise: true
       });
 
       it('should resolve with an object as response', function(done) {
@@ -423,7 +420,7 @@ describe('SwaggerClient', function () {
   });
 
   it('should use a timeout when fetching a spec', function (done) {
-    var client = new SwaggerClient({
+    new SwaggerClient({
       url: 'http://localhost:8000/v2/petstore.json',
       fetchSpecTimeout: 1,
       success: function () {
@@ -447,10 +444,10 @@ describe('SwaggerClient', function () {
       fetchSpecTimeout: null
     }).then(function (client) {
       client.pet.getPetById({petId: 1})
-        .then(function (pet) {
-          expect().toExist('Operation request timeout was not applied')
+        .then(function () {
+          expect().toExist('Operation request timeout was not applied');
         }).catch(function (err) {
-          expect(err.errObj.message).toBe('timeout of 1ms exceeded', 'Operation request timeout was not applied')
+          expect(err.errObj.message).toBe('timeout of 1ms exceeded', 'Operation request timeout was not applied');
           done();
         });
     }).catch(done);
@@ -649,7 +646,7 @@ describe('SwaggerClient', function () {
       usePromise: true
     }).then(function (client) {
       expect(client.default.test).toBeA('function');
-      expect(client.default.test_0).toBeAn('function');
+      expect(client.default['test_0']).toBeAn('function');
       done();
     }).catch(function (exception) {
       done(exception);
@@ -703,7 +700,7 @@ describe('SwaggerClient', function () {
             parameters: [
               {
                 in: 'header',
-                name: 'username',
+                name: 'Accept-Language',
                 type: 'string'
               }
             ],
@@ -735,7 +732,7 @@ describe('SwaggerClient', function () {
            **/
 
           // ensure the headers are present
-          expect(requestObj.headers.username).toBe('bob');
+          expect(requestObj.headers['Accept-Language']).toBe('fr');
 
           // rewrite this request to something that'll work locally
           requestObj.method = 'GET';
@@ -751,7 +748,7 @@ describe('SwaggerClient', function () {
       usePromise: true,
       requestInterceptor: interceptor.requestInterceptor
     }).then(function(client) {
-      client.nada.addFoo({username: 'bob'}).then(function (){
+      client.nada.addFoo({'accept-LANGUAGE': 'fr'}).then(function (){
         done();
       });
     }).catch(function(exception) {
@@ -1348,7 +1345,7 @@ describe('SwaggerClient', function () {
             done();
           });
       var curl = client.test.mypost.asCurl({name: ['tony', 'tam']});
-      expect(curl).toBe("curl -X POST --header 'Content-Type: multipart/form-data' --header 'Accept: application/json' -F name=tony,tam  'http://localhost:8080/foo'");
+      expect(curl).toBe('curl -X POST --header \'Content-Type: multipart/form-data\' --header \'Accept: application/json\' -F name=tony,tam  \'http://localhost:8080/foo\'');
     }).catch(function(exception) {
       done(exception);
     });
@@ -1391,7 +1388,7 @@ describe('SwaggerClient', function () {
           done();
         });
       var curl = client.test.mypost.asCurl({name: ['tony', 'tam']});
-      expect(curl).toBe("curl -X POST --header 'Content-Type: multipart/form-data' --header 'Accept: application/json' -F name=tony -F name=tam  'http://localhost:8080/foo'");
+      expect(curl).toBe('curl -X POST --header \'Content-Type: multipart/form-data\' --header \'Accept: application/json\' -F name=tony -F name=tam  \'http://localhost:8080/foo\'');
     }).catch(function(exception) {
       done(exception);
     });
@@ -1401,14 +1398,29 @@ describe('SwaggerClient', function () {
     new SwaggerClient({
       url: 'http://localhost:8000/v2/issue-716.yaml',
       usePromise: true
-    }).then(function(client) {
-      var models = client.models;
+    }).then(function() {
       done();
     }).catch(function(exception) {
       done(exception);
     });
   });
 
+  it('should catch an error', function(done) {
+    new SwaggerClient({
+      url: 'http://localhost:8000/v2/issue-716.yaml',
+      usePromise: true
+    }).then(function(client) {
+      client.Data.getPets()
+        .then(function(data) {
+          done('shoulda failed');
+        })
+        .catch(function(err) {
+          done();
+        })
+    }).catch(function(exception) {
+      done(exception);
+    });
+  });
 
   it('should read a blob', function(done) {
     var spec = {
@@ -1440,7 +1452,6 @@ describe('SwaggerClient', function () {
     }).then(function(client) {
       client.test.getBlob({})
         .then(function (response) {
-          console.log('horray');
           var filename = './file.tmp';
           fs.writeFile(filename, response.data, function(err) {
             if(err) {
@@ -1455,6 +1466,83 @@ describe('SwaggerClient', function () {
         .catch(function () {
           done('it failed');
         });
+    }).catch(function(exception) {
+      done(exception);
+    });
+  });
+
+  it('should honor schemes', function(done) {
+    var spec = {
+      schemes: ['https'],
+      paths: {
+        '/v2/nada': {
+          get: {
+            operationId: 'getNothing',
+            tags: [ 'test' ],
+            parameters: [],
+            responses: {
+              default: {
+                description: 'ok'
+              }
+            }
+          }
+        }
+      }
+    };
+
+    new SwaggerClient({
+      url: 'http://localhost:8000',
+      spec: spec,
+      usePromise: true
+    }).then(function(client) {
+      var mock = client.test.getNothing({},{mock: true});
+      expect(mock.url).toEqual('https://localhost:8000/v2/nada');
+      done();
+    });
+  });
+
+  it('should read vendor extensions', function(done) {
+    new SwaggerClient({
+      url: 'http://localhost:8000/v2/extensions.yaml',
+      usePromise: true
+    }).then(function(client) {
+      var swagger = client.swaggerObject;
+      // swagger objects
+      expect(swagger['x-root-extension']).toEqual('root');
+      expect(swagger.info.contact['x-contact-extension']).toEqual('contact');
+      expect(swagger.info.license['x-license-extension']).toEqual('license');
+      expect(swagger.securityDefinitions.myKey['x-auth-extension']).toEqual('auth');
+      expect(swagger.securityDefinitions.myOAuth.scopes['x-scopes-extension']).toEqual('scopes');
+      expect(swagger.tags[0]['x-tags-extension']).toEqual('tags');
+      expect(swagger.paths['x-paths-extension']).toEqual('paths');
+      expect(swagger.paths['/device'].get['x-operation-extension']).toEqual('operation');
+      expect(swagger.paths['/device'].get.externalDocs['x-external-docs-extension']).toEqual('docs');
+      expect(swagger.paths['/device'].get.parameters[0]['x-parameter-extension']).toEqual('parameter');
+      expect(swagger.paths['/device'].get.responses['x-responses-extension']).toEqual('responses');
+
+      // until we expose all responses, these assertion must be disabled.
+      // expect(swagger.paths['/device'].get.responses['200']['x-response-extension']).toEqual('response');
+      // expect(swagger.paths['/device'].get.responses['200'].headers['my-header']['x-header-extension']).toEqual('header');
+
+      // client object
+      expect(client.securityDefinitions.myKey.vendorExtensions['x-auth-extension']).toBe('auth');
+      expect(client.securityDefinitions.myOAuth.scopes.vendorExtensions['x-scopes-extension']).toBe('scopes');
+
+      expect(client.myTag.vendorExtensions['x-tags-extension']).toEqual('tags');
+      expect(client.myTag.externalDocs.vendorExtensions['x-external-docs-in-tag']).toEqual('docs-in-tag');
+
+      expect(client.myTag.apis.deviceSummary.vendorExtensions['x-operation-extension']).toEqual('operation');
+
+      expect(client.myTag.apis.deviceSummary.externalDocs.vendorExtensions['x-external-docs-extension']).toEqual('docs');
+      expect(client.myTag.apis.deviceSummary.vendorExtensions['x-operation-extension']).toEqual('operation');
+      expect(client.myTag.apis.deviceSummary.parameters[0].vendorExtensions['x-parameter-extension']).toEqual('parameter');
+
+      expect(client.myTag.apis.deviceSummary.responses.vendorExtensions['x-responses-extension']).toEqual('responses');
+      expect(client.myTag.apis.deviceSummary.successResponse['200'].vendorExtensions['x-response-extension']).toEqual('response');
+
+      expect(client.myTag.apis.deviceSummary.successResponse['200'].headers['my-header'].vendorExtensions['x-header-extension']).toEqual('header');
+
+      done();
     }).catch(function(exception) {
       done(exception);
     });

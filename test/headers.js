@@ -29,19 +29,19 @@ describe('header extraction', function () {
     var parameters = [
       {
         in: 'header',
-        name: 'myHeader',
+        name: 'Request-ID',
         type: 'string'
       }
     ];
     var op = new Operation({}, 'http', 'test', 'get', '/path', { parameters: parameters });
     var args = {
-      MyHeAdeR: 'nick'
+      'request-Id': '12ab34ef'
     };
     var url = op.urlify(args);
     var headers = op.getHeaderParams(args);
 
     expect(url).toBe('http://localhost/path');
-    expect(headers.myHeader).toBe('nick');
+    expect(headers['Request-ID']).toBe('12ab34ef');
   });
 
   it('should not URL encode header string values', function () {

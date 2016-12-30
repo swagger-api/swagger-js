@@ -25,6 +25,9 @@
             "description": "Status values that need to be considered for filter",
             "required": false,
             "type": "string"
+          },
+          {
+            "$ref": "#/parameters/LanguageHeader"
           }
         ],
         "responses": {
@@ -39,6 +42,15 @@
           }
         }
       }
+    }
+  },
+  "parameters": {
+    "LanguageHeader": {
+      "name": "Accept-Language",
+      "in": "header",
+      "description": "Specify the user's language",
+      "required": false,
+      "type": "string"
     }
   }
 }

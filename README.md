@@ -1,6 +1,7 @@
 # Swagger JS library
 
 [![Build Status](https://travis-ci.org/swagger-api/swagger-js.svg?branch=master)](https://travis-ci.org/swagger-api/swagger-js)
+[![NPM version](https://badge.fury.io/js/swagger-client.svg)](http://badge.fury.io/js/swagger-client)
 
 This is the Swagger javascript client for use with [swagger](http://swagger.io) enabled APIs.
 It's written in javascript and tested with mocha, and is the fastest way to enable a javascript client to communicate with a swagger-enabled server.
@@ -35,7 +36,7 @@ var client = new Swagger({
 });
 ```
 
-NOTE: we're explicitly setting the responseContentType, because we don't want you getting stuck when 
+NOTE: we're explicitly setting the responseContentType, because we don't want you getting stuck when
 there is more than one content type available.
 
 That's it!  You'll get a JSON response with the default callback handler:
@@ -105,17 +106,50 @@ new Swagger({
     });
 });
 ```
+### Authorization
 
-Need to pass an API key?  Configure one in your client instance as a query string:
+Need to pass an API key? Ok, lets do it for this sample `swagger.yml`:
 
-```js
-client.clientAuthorizations.add("apiKey", new Swagger.ApiKeyAuthorization("api_key","special-key","query"));
+```yaml
+# ...
+
+securityDefinitions:
+
+  api_sheme_name:           # swagger scheme name
+    type: apiKey            # swagger type (one of "basic", "apiKey" or "oauth2")
+    name: queryParamName    # The name of the header or query parameter to be used
+    in: query               # location of the API key
+
+  api_sheme_name_2:
+    type: apiKey
+    name: X-KEY-PARAM
+    in: header
+
+# ...
 ```
 
-...or with a header:
+Configure auth for that definition in your client instance as a *query string*:
 
 ```js
-client.clientAuthorizations.add("apiKey", new Swagger.ApiKeyAuthorization("api_key","special-key","header"));
+client.clientAuthorizations.add("api_sheme_name",
+  new Swagger.ApiKeyAuthorization(
+    "queryParamName",
+    "<YOUR-SECRET-KEY>",
+    "query"
+  )
+);
+```
+
+...or with a *header*:
+
+```js
+client.clientAuthorizations.add("api_sheme_name_2",
+  new Swagger.ApiKeyAuthorization(
+    "X-KEY-PARAM",
+    "<YOUR-SECRET-KEY>",
+    "header"
+  )
+);
 ```
 
 ...or with the swagger-client constructor:
@@ -224,6 +258,46 @@ You can add it to the swagger-client like such:
 client.clientAuthorizations.add('my-auth', new CustomRequestSigner());
 ```
 
+### Setting headers
+
+Headers are a type of `parameter`, and can be passed with the other parameters. For example, if you supported translated pet details via the `Accept-Language` header:
+
+```js
+"parameters": [
+  {
+    "name": "petId",
+    "description": "ID of pet that needs to be fetched",
+    "required": true,
+    "type": "integer",
+    "format": "int64",
+    "paramType": "path",
+    "minimum": "1.0",
+    "defaultValue": 3,
+    "maximum": "100000.0"
+  },
+  "LanguageHeader": {
+    "name": "Accept-Language",
+    "in": "header",
+    "description": "Specify the user's language",
+    "required": false,
+    "type": "string"
+  }
+...
+```
+
+Then you would pass the header value via the parameters ([header parameters are case-insenstive](https://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2)):
+
+```js
+
+client.pet.getPetById({
+  petId: 7,
+  'accept-language': 'fr'
+}, function(pet){
+  console.log('pet', pet);
+});
+
+```
+
 ### Using your own HTTP client
 
 Don't like [superagent](https://github.com/visionmedia/superagent)? Despise [JQuery](https://github.com/jquery/jquery)?  Well, you're in luck.  You can plug your own HTTP library easily:
@@ -253,6 +327,45 @@ var client = new SwaggerClient({
     client.pet.getPetById({petId: 3}, function(data){
       expect(data).toBe('ok');
       done();
+    });
+  }
+});
+```
+
+You can also pass in your own version superagent (if, for example, you have other superagent plugins etc that you want to use)
+
+var agent = require('some-other-special-superagent');
+
+var client = new SwaggerClient({
+  spec: petstoreRaw,
+  requestAgent: agent,
+  success: function () {
+    client.pet.getPetById({petId: 3}, function(data){
+      expect(data).toBe('ok');
+      done();
+    });
+  }
+});
+```
+
+### Using custom http(s) agent
+In case if you need to sign all requests to petstore with custom certificate
+
+```js
+var connectionAgent = {
+    rejectUnauthorized: false,
+    key: "/certs/example.key",
+    cert: "/certs/example.pem",
+    ca: ["/certs/example.ca.pem"]
+}
+
+var client = new SwaggerClient({
+  url: "http://petstore.swagger.io/v2/swagger.json",
+  connectionAgent: connectionAgent,
+  success: function() {
+    // upon connect, fetch a pet and set contents to element "mydata"
+    client.pet.getPetById({petId:1},{responseContentType: 'application/json'}, function(data) {
+      document.getElementById("mydata").innerHTML = JSON.stringify(data.obj);
     });
   }
 });

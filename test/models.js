@@ -660,7 +660,7 @@ describe('models', function () {
           }
         }
       }
-    }
+    };
     var client = new SwaggerClient({
       spec: spec,
       success: function () {
@@ -670,4 +670,65 @@ describe('models', function () {
       }
     });
   });
+
+  it('verify the response examples', function(done) {
+    var spec = {
+      swagger: '2.0',
+      paths: {
+        '/bar': {
+          post: {
+            operationId: 'thePOST',
+                parameters: [],
+                responses: {
+              200: {
+                description: 'OK',
+                  schema: {
+                  $ref: '#/definitions/A'
+                },
+                examples: {
+                  A: {
+                    status: 'Winning!'
+                  }
+                }
+              }
+            }
+          },
+          put: {
+            operationId: 'thePUT',
+                parameters: [],
+                responses: {
+              200: {
+                description: 'OK',
+                  schema: {
+                  $ref: '#/definitions/A'
+                },
+                examples: {
+                  B: {
+                    status: 'Losing!'
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+        definitions: {
+          A: {
+            properties: {
+              severity: {
+                type: 'string'
+              }
+            }
+          }
+        }
+      };
+
+    new SwaggerClient({
+      spec: spec,
+      usePromise: true
+    }).then(function(client) {
+      expect(client.apisArray[0].operationsArray[0].successResponse['200'].name).toEqual('A');
+      done();
+    })
+  })
 });
