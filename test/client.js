@@ -1471,6 +1471,42 @@ describe('SwaggerClient', function () {
     });
   });
 
+  it('should keep password format', function(done) {
+    var spec = {
+      schemes: ['https'],
+      paths: {
+        '/v2/nada': {
+          get: {
+            operationId: 'getNothing',
+            tags: [ 'test' ],
+            parameters: [{
+              in: 'query',
+              name: 'password',
+              type: 'string',
+              format: 'password',
+              required: true
+            }],
+            responses: {
+              default: {
+                description: 'ok'
+              }
+            }
+          }
+        }
+      }
+    };
+
+    new SwaggerClient({
+      url: 'http://localhost:8000',
+      spec: spec,
+      usePromise: true
+    }).then(function(client) {
+      expect(client.apis.test.operations.getNothing.parameters[0].format).toBe('password');
+      expect(client.apis.test.operations.getNothing.asCurl({password: 'hidden!'})).toBe('curl -X GET --header \'Accept: application/json\' \'https://localhost:8000/v2/nada?password=******\'');
+      done();
+    });
+  });
+
   it('should honor schemes', function(done) {
     var spec = {
       schemes: ['https'],

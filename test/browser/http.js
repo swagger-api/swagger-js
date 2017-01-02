@@ -111,7 +111,6 @@ describe('yaml http', function () {
     it('should call the catch-function when executing an invalid api-call', function(done) {
       var petId = -100;
       petstoreWithPromise.pet.getPetById({petId: petId}).then(function (success) {
-        console.log('why?');
         console.log(success);
         done();
       }).catch(function(error) {

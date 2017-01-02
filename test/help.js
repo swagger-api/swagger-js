@@ -509,6 +509,40 @@ describe('help options', function () {
     });
   });
 
+  it('masks passwords in curl example', function (done) {
+    var spec = {
+      basePath: '/v2',
+      paths: {
+        '/test': {
+          post: {
+            tags: [ 'test' ],
+            operationId: 'sample',
+            parameters: [
+              {
+                in: 'query',
+                name: 'password',
+                type: 'string',
+                format: 'password',
+                required: true
+              }
+            ]
+          }
+        }
+      }
+    };
+
+    var client = new SwaggerClient({
+      url: 'http://petstore.swagger.io/v2/swagger.json',
+      spec: spec,
+      success: function () {
+        var msg = client.test.sample.asCurl({password: 'hidden!'});
+        expect(msg).toBe('curl -X POST --header \'Content-Type: application/json\' --header \'Accept: application/json\' \'http://petstore.swagger.io/v2/test?password=******\'');
+
+        done();
+      }
+    });
+  });
+
 
   it('shows curl for multipart/form-data with array parameters', function (done) {
     var spec = {
