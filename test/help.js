@@ -460,6 +460,74 @@ describe('help options', function () {
     });
   });
 
+  it('shows curl for multipart/form-data with password masking', function (done) {
+    var spec = {
+      basePath: '/v2',
+      paths: {
+        '/test': {
+          post: {
+            tags: [ 'test' ],
+            operationId: 'sample',
+            consumes: ['multipart/form-data'],
+            parameters: [
+              {
+                in: 'query',
+                name: 'password',
+                type: 'string',
+                format: 'password',
+                required: true
+              }
+            ]
+          }
+        }
+      }
+    };
+
+    var client = new SwaggerClient({
+      url: 'http://petstore.swagger.io/v2/swagger.json',
+      spec: spec,
+      success: function () {
+        var msg = client.test.sample.asCurl({password: 'hidden!'});
+        expect(msg).toBe('curl -X POST --header \'Content-Type: multipart/form-data\' --header \'Accept: application/json\' {} \'http://petstore.swagger.io/v2/test?password=******\'');
+
+        done();
+      }
+    });
+  });
+
+  it('masks www-form-urlencoded passwords', function (done) {
+    var spec = {
+      paths: {
+        '/foo': {
+          delete: {
+            tags: [ 'test' ],
+            operationId: 'sample',
+            consumes: [ 'application/x-www-form-urlencoded' ],
+            parameters: [
+              {
+                in: 'formData',
+                name: 'password',
+                type: 'string',
+                format: 'password'
+              }
+            ]
+          }
+        }
+      }
+    };
+
+    var client = new SwaggerClient({
+      url: 'http://localhost:8080/petstore.yaml',
+      spec: spec,
+      success: function () {
+        var msg = client.test.sample.asCurl({password: 'hidden!'});
+        expect(msg).toBe('curl -X DELETE --header \'Content-Type: application/x-www-form-urlencoded\' --header \'Accept: application/json\' -d \'password=******\' \'http://localhost:8080/foo\'');
+        done();
+      }
+    });
+  });
+
+
   it('shows curl for multipart/form-data', function (done) {
     var spec = {
       basePath: '/v2',
