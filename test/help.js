@@ -522,6 +522,9 @@ describe('help options', function () {
       success: function () {
         var msg = client.test.sample.asCurl({password: 'hidden!'});
         expect(msg).toBe('curl -X DELETE --header \'Content-Type: application/x-www-form-urlencoded\' --header \'Accept: application/json\' -d \'password=******\' \'http://localhost:8080/foo\'');
+
+        var obj = client.test.sample({password: 'hidden!'}, {mock: true});
+        expect(obj.body).toBe('password=hidden!');
         done();
       }
     });
