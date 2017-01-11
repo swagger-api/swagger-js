@@ -510,6 +510,19 @@ describe('swagger basePath override functions', function () {
     });
   });
 
+  it('applies a request interceptor to asCurl #903', function() {
+    var petApi = sample.pet;
+    var requestInterceptor = {
+      apply: function(data) {
+        data.url = 'http://localhost:8000/v2/api/pet/1';
+        return data;
+      }
+    };
+
+    var curl = petApi.getPetById.asCurl({petId: -100}, {requestInterceptor: requestInterceptor});
+    expect(curl).toBe('curl -X GET --header \'Accept: application/json\' \'http://localhost:8000/v2/api/pet/1\'');
+  });
+
   it('applies request interceptor and waits for beforeSend as per #701', function(done) {
     this.timeout(10000);
     var petApi = sample.pet;
