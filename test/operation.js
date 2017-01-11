@@ -269,6 +269,50 @@ describe('operations', function () {
     expect(url).toBe('http://localhost/foo/tony%20tam/bar');
   });
 
+  it('should generate a url with path param with proper escaping, ignoring slashes if told to do so', function () {
+    var parameters = [
+      {
+        in: 'path',
+        name: 'location',
+        type: 'string',
+        'x-escape': false
+      }
+    ];
+    var op = new Operation({}, 'http', 'test', 'get', '/foo/{location}', { parameters: parameters },
+                                   {}, {}, new auth.SwaggerAuthorizations());
+    var url = op.urlify({
+      location: 'qux/baz.txt'
+    });
+
+    expect(url).toBe('http://localhost/foo/qux/baz.txt');
+  });
+
+  it('should generate a url with path param with proper escaping, ignoring slashes if told to do so, with multiple slashes', function () {
+    var parameters = [
+      {
+        in: 'path',
+        name: 'type',
+        type: 'string',
+        'x-escape': false
+      },
+      {
+        in: 'path',
+        name: 'location',
+        type: 'string',
+        'x-escape': false
+      }
+    ];
+    var op = new Operation({}, 'http', 'test', 'get', '/foo/{type}/{location}', { parameters: parameters },
+                                   {}, {}, new auth.SwaggerAuthorizations());
+    var url = op.urlify({
+      type: 'bar/bar',
+      location: 'qux/baz.txt'
+    });
+
+    expect(url).toBe('http://localhost/foo/bar/bar/qux/baz.txt');
+  });
+
+
   it('should generate a url with path param string array', function () {
     var parameters = [
       {
