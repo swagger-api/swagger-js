@@ -1583,4 +1583,77 @@ describe('SwaggerClient', function () {
       done(exception);
     });
   });
+
+  it('honors allowEmptyValue #825', function(done) {
+    var spec = {
+      basePath: '/double/',
+      paths: {
+        '/foo': {
+          get: {
+            tags: [
+              'test'
+            ],
+            operationId: 'slash',
+            parameters: [{
+              in: 'query',
+              allowEmptyValue: true,
+              name: 'happy',
+              type: 'string',
+              required: false
+            }],
+          }
+        }
+      }
+    };
+    new SwaggerClient({
+      url: 'http://localhost:8000/v2/swagger.json',
+      spec: spec,
+      usePromise: true
+    }).then(function(client) {
+      var mock = client.test.slash({}, {mock: true});
+      expect(mock.url).toBe('http://localhost:8000/double/foo?happy=');
+
+      done();
+    }).catch(function(exception) {
+      done(exception);
+    });
+  });
+
+  it('honors allowEmptyValue #825 in arrays', function(done) {
+    var spec = {
+      basePath: '/double/',
+      paths: {
+        '/foo': {
+          get: {
+            tags: [
+              'test'
+            ],
+            operationId: 'slash',
+            parameters: [{
+              in: 'query',
+              allowEmptyValue: true,
+              name: 'happy',
+              type: 'array',
+              items: {
+                type: 'string'
+              },
+              required: false
+            }],
+          }
+        }
+      }
+    };
+    new SwaggerClient({
+      url: 'http://localhost:8000/v2/swagger.json',
+      spec: spec,
+      usePromise: true
+    }).then(function(client) {
+      var mock = client.test.slash({}, {mock: true});
+      expect(mock.url).toBe('http://localhost:8000/double/foo?happy=');
+
+      done();
+    }).catch(function(exception) {
+      done(exception);
+    });
+  });
 });
