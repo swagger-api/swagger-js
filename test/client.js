@@ -1650,10 +1650,46 @@ describe('SwaggerClient', function () {
     }).then(function(client) {
       var mock = client.test.slash({}, {mock: true});
       expect(mock.url).toBe('http://localhost:8000/double/foo?happy=');
-
       done();
     }).catch(function(exception) {
       done(exception);
     });
   });
+
+  it('passes data in a delete with formData', function(done) {
+
+    var spec = {
+      paths: {
+        '/foo': {
+          delete: {
+            tags: [
+              'test'
+            ],
+            operationId: 'removeMe',
+            consumes: [
+                'x-www-form-urlencoded'
+            ],
+            parameters: [{
+              in: 'formData',
+              name: 'username',
+              type: 'string',
+              required: false
+            }],
+          }
+        }
+      }
+    };
+    new SwaggerClient({
+      url: 'http://localhost:8000/v2/swagger.json',
+      spec: spec,
+      usePromise: true
+    }).then(function(client) {
+      var mock = client.test.removeMe({username: 'Tony'}, {mock: true});
+      expect(mock.body).toBe('username=Tony');
+      expect(mock.headers['Content-Type']).toBe('application/x-www-form-urlencoded');
+      done();
+    }).catch(function(exception) {
+      done(exception);
+    });
+  })
 });
