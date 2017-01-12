@@ -1692,4 +1692,33 @@ describe('SwaggerClient', function () {
       done(exception);
     });
   })
+
+  it('verifies a 201 response #820', function(done) {
+    new SwaggerClient({
+      spec: petstoreRaw,
+      usePromise: true
+    }).then(function (client) {
+      return client.pet.getPetById({petId: 777})
+    }).then(function (data) {
+      expect(data.status).toBe(201);
+      done();
+    }).catch(function(err) {
+      done('oops');
+    })
+  });
+
+  it('verifies a 400 response #820', function(done) {
+    new SwaggerClient({
+      spec: petstoreRaw,
+      usePromise: true
+    }).then(function (client) {
+      return client.pet.getPetById({petId: 666})
+    }).then(function (data) {
+      done('expected an error');
+    }).catch(function(err) {
+      expect(err.status).toBe(400);
+      expect(err.obj).toEqual({code: 400, message: 'sorry!', type: 'bad input'});
+      done();
+    })
+  });
 });

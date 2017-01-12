@@ -42,6 +42,10 @@ exports.petstore = function (arg1, arg2, arg3, arg4) {
 
       res.end();
     }
+    else if (filename === 'test/spec/v2/api/pet/777') {
+      res.writeHead(201);
+      res.end();
+    }
     else if (filename === 'test/spec/api/redirect') {
       res.writeHead(302, {
         'Location': 'http://localhost:8000/api/pet/1'
