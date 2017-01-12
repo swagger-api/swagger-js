@@ -334,6 +334,7 @@ var client = new SwaggerClient({
 
 You can also pass in your own version superagent (if, for example, you have other superagent plugins etc that you want to use)
 
+```js
 var agent = require('some-other-special-superagent');
 
 var client = new SwaggerClient({
