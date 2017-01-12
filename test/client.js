@@ -1619,6 +1619,41 @@ describe('SwaggerClient', function () {
     });
   });
 
+
+  it('doesnt remove 0 from query params', function(done) {
+    var spec = {
+      basePath: '/double/',
+      paths: {
+        '/foo': {
+          get: {
+            tags: [
+              'test'
+            ],
+            operationId: 'slash',
+            parameters: [{
+              in: 'query',
+              name: 'bar',
+              type: 'integer',
+              required: false
+            }],
+          }
+        }
+      }
+    };
+    new SwaggerClient({
+      url: 'http://localhost:8000/v2/swagger.json',
+      spec: spec,
+      usePromise: true
+    }).then(function(client) {
+      var mock = client.test.slash({bar: 0}, {mock: true});
+      expect(mock.url).toBe('http://localhost:8000/double/foo?bar=0');
+
+      done();
+    }).catch(function(exception) {
+      done(exception);
+    });
+  });
+
   it('honors allowEmptyValue #825 in arrays', function(done) {
     var spec = {
       basePath: '/double/',
