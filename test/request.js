@@ -353,7 +353,7 @@ describe('swagger request functions', function () {
     var petApi = sample.pet;
     var curl = petApi.addPet.asCurl({body: '{"id":"foo\'bar"}'});
 
-    expect(curl).toBe('curl -X POST --header \'Content-Type: application/json\' --header \'Accept: application/json\' --data-raw \'{"id":"foo\u0027bar"}\' \'http://localhost:8000/v2/api/pet\'');
+    expect(curl).toBe('curl -X POST --header \'Content-Type: application/json\' --header \'Accept: application/json\' --data-raw \'{"id":"foo\\u0027bar"}\' \'http://localhost:8000/v2/api/pet\'');
   });
 
   it('prints a curl post statement from an object containing a file', function () {

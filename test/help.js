@@ -233,7 +233,7 @@ describe('help options', function () {
         var msg = client.test.sample.asCurl({body: {
           description: '<h1>hello world<script>alert(\'test\')</script></h1>'
         }});
-        expect(msg).toBe('curl -X POST --header \'Content-Type: application/json\' --header \'Accept: application/json\' --data-raw \'{"description":"<h1>hello world<script>alert(\u0027test\u0027)</script></h1>"}\' \'http://localhost:8080/foo\'');
+        expect(msg).toBe('curl -X POST --header \'Content-Type: application/json\' --header \'Accept: application/json\' --data-raw \'{"description":"<h1>hello world<script>alert(\\u0027test\\u0027)</script></h1>"}\' \'http://localhost:8080/foo\'');
         done();
       }
     });
