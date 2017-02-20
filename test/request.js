@@ -339,21 +339,28 @@ describe('swagger request functions', function () {
     var petApi = sample.pet;
     var curl = petApi.addPet.asCurl({body: {id:10101}});
 
-    expect(curl).toBe('curl -X POST --header \'Content-Type: application/json\' --header \'Accept: application/json\' -d \'{"id":10101}\' \'http://localhost:8000/v2/api/pet\'');
+    expect(curl).toBe('curl -X POST --header \'Content-Type: application/json\' --header \'Accept: application/json\' --data-raw \'{"id":10101}\' \'http://localhost:8000/v2/api/pet\'');
   });
 
   it('prints a curl post statement from a string', function () {
     var petApi = sample.pet;
     var curl = petApi.addPet.asCurl({body: '{"id":10101}'});
 
-    expect(curl).toBe('curl -X POST --header \'Content-Type: application/json\' --header \'Accept: application/json\' -d \'{"id":10101}\' \'http://localhost:8000/v2/api/pet\'');
+    expect(curl).toBe('curl -X POST --header \'Content-Type: application/json\' --header \'Accept: application/json\' --data-raw \'{"id":10101}\' \'http://localhost:8000/v2/api/pet\'');
   });
 
   it('prints a curl post statement from a string containing a single quote', function () {
     var petApi = sample.pet;
     var curl = petApi.addPet.asCurl({body: '{"id":"foo\'bar"}'});
 
-    expect(curl).toBe('curl -X POST --header \'Content-Type: application/json\' --header \'Accept: application/json\' -d \'{"id":"foo%27bar"}\' \'http://localhost:8000/v2/api/pet\'');
+    expect(curl).toBe('curl -X POST --header \'Content-Type: application/json\' --header \'Accept: application/json\' --data-raw \'{"id":"foo\u0027bar"}\' \'http://localhost:8000/v2/api/pet\'');
+  });
+
+  it('prints a curl post statement from an object containing a file', function () {
+    var petApi = sample.pet;
+    var curl = petApi.uploadFile.asCurl({petId: 1234, file: {name: 'testfile', type: 'file'}});
+
+    expect(curl).toBe('curl -X POST --header \'Content-Type: multipart/form-data\' --header \'Accept: application/json\' -F file=@\"testfile"  \'http://localhost:8000/v2/api/pet/1234/uploadImage\'');
   });
 
   it('gets an server side 404, and verifies that the content-type in the response is correct, and different than one in the request', function (done) {
