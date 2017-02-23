@@ -480,6 +480,47 @@ describe('models', function () {
     });
   });
 
+  it('should support an array of items with an enum as property (Issue 951)', function (done) {
+    var cloned = _.cloneDeep(petstore);
+
+    cloned.definitions.Statuses = {
+      properties: {
+        statuses: {
+          type: 'array',
+          items: {
+            type: 'string',
+            enum: [
+              'available',
+              'pending',
+              'sold'
+            ]
+          }
+        }
+      }
+    };
+
+    var path = cloned.paths['/pet/statuses'] = _.cloneDeep(cloned.paths['/pet/findByStatus']);
+
+    path.get.operationId = 'listPetStatuses';
+    path.get.parameters = [];
+    path.get.responses['200'].schema = {
+      $ref: '#/definitions/Statuses'
+    };
+
+    var client = new SwaggerClient({
+      spec: cloned,
+      success: function () {
+        var response = client.pet.operations.listPetStatuses.successResponse['200'];
+
+        expect(response.createJSONSample()).toEqual({ statuses: ['available'] });
+        expect(response.getSampleValue()).toEqual({ statuses: ['available'] });
+        expect(response.getMockSignature()).toEqual('<span class="strong">Statuses {</span><div><span class="propWrap"><span class="propName ">statuses</span> (<span class="propType">Array[string]</span>, <span class="propOptKey">optional</span>) = <span class="propVals">[\'available\', \'pending\', \'sold\']</span><table class="optionsWrapper"><tr><th colspan="2">string</th></tr><tr><td class="optionName">Enum:</td><td>"available", "pending", "sold"</td></tr></table></span></div><span class="strong">}</span>');
+
+        done();
+      }
+    });
+  });
+
   it('should support an array of items with an enum in the wrong place (Issue 198)', function (done) {
     var cloned = _.cloneDeep(petstore);
 
