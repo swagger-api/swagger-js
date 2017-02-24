@@ -11,6 +11,7 @@ var SwaggerClient = require('..');
 var MonsterResponse = { schema: { $ref: '#/definitions/Monster' }};
 var StringResponse = { schema: { type: 'string'} };
 var BasicResponseModel = { schema: { $ref: '#/definitions/ResponseModel'}};
+var AllOfResponseModel = { schema: { allOf: [{ $ref: '#/definitions/Monster'}, { $ref: '#/definitions/ResponseModel'}]}};
 var MonsterModel = {
   properties: {
     id: { type: 'integer', format: 'int64' },
@@ -211,5 +212,27 @@ describe('response types', function () {
         done();
       }
     });
+  });
+
+  it('should return a composite JSON sample for a definition including allOf', function () {
+    var responses = {
+      200:       AllOfResponseModel
+    };
+    var definitions = {
+      Monster: MonsterModel,
+      ResponseModel: ResponseModel,
+      AllOfResponseModel: AllOfResponseModel
+    };
+    var op = new Operation(
+      {},
+      'http',
+      'operationId',
+      'get',
+      '/path',
+      {responses: responses}, // args
+      definitions); // definitions
+
+    expect(typeof op.successResponse).toBe('object');
+    expect(op.successResponse['200'].createJSONSample()).toEqual({ id: 0, name: 'string', code: 0, message: 'string' });
   });
 });
