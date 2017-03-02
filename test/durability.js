@@ -42,7 +42,7 @@ describe('swagger resolver', function () {
           done('should have failed');
         })
         .catch(function(error) {
-          console.log('error')
+          // this is expected
           done();
         })
     }).catch(function(err) {
