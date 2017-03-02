@@ -39,13 +39,10 @@ describe('swagger resolver', function () {
     }).then(function(client) {
       client.pet.getPetById({petId: 3})
         .then(function(data) {
-          console.log('ok')
-          console.log(data);
           done('should have failed');
         })
         .catch(function(error) {
           console.log('error')
-          console.log(error);
           done();
         })
     }).catch(function(err) {
