@@ -29,8 +29,7 @@ exports.petstore = function (arg1, arg2, arg3, arg4) {
 
       res.writeHead(200, headers);
       readStream.pipe(res);
-    }
-    if(filename === 'test/spec/v2/blob/test.pdf') {
+    } else if(filename === 'test/spec/v2/blob/test.pdf') {
         var readStream = fs.createReadStream(filename);
         var headers = {
             'Content-Type': 'application/pdf'
