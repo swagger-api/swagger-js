@@ -1,0 +1,14 @@
+{
+  "three": {
+    "three": 3
+  },
+  "fourandfive": {
+    "four": 4,
+    "schema": {
+      "$ref": "#/five"
+    }
+  },
+  "five": {
+    "five": 5
+  }
+}

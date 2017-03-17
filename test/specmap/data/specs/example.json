@@ -1,0 +1,18 @@
+{
+  "schema": {
+    "$ref": "#/internal/one"
+  },
+  "two": {
+    "fourandfive": {
+      "$ref": "http://example.com/underten#/fourandfive"
+    },
+    "schema": {
+      "$ref": "http://example.com/underten#/three"
+    }
+  },
+  "internal": {
+    "one": {
+      "one": 1
+    }
+  }
+}

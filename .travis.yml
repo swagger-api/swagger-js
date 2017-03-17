@@ -1,0 +1,18 @@
+language: node_js
+
+node_js:
+  - "4.7"
+  - "6.9"
+
+branches:
+  only:
+  - master
+
+deploy:
+  provider: npm
+  email: "apiteam@swagger.io"
+  api_key: $NPM_API_KEY
+  skip_cleanup: true
+  on:
+    tags: true
+    branch: master

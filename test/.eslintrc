@@ -1,0 +1,11 @@
+{
+  "env": {
+    "mocha": true
+  },
+  "rules": {
+    "prefer-arrow-callback": 0, // don't want to bind lexical `this` to Mocha functions
+    "no-console": 0,
+    "global-require": 0,
+    "import/no-dynamic-require": 0
+  }
+}

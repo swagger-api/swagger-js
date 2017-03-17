@@ -1,0 +1,21 @@
+{
+  "schema": {
+    "one": 1
+  },
+  "two": {
+    "schema": {
+      "three": 3
+    },
+    "fourandfive": {
+      "four": 4,
+      "schema": {
+        "five": 5
+      }
+    }
+  },
+  "internal": {
+    "one": {
+      "one": 1
+    }
+  }
+}
