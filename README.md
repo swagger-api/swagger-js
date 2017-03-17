@@ -1,7 +1,7 @@
 Swagger-JS
 ===========
 
-[![Build Status](https://travis-ci.org/swagger-api/swagger-js.svg?branch=master)](https://travis-ci.com/swagger-api/swagger-js)
+[![Build Status](https://travis-ci.org/swagger-api/swagger-js.svg?branch=master)](https://travis-ci.org/swagger-api/swagger-js)
 
 ## New!
 
