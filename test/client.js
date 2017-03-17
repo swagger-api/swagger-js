@@ -14,12 +14,14 @@ var md5 = require('md5-file');
 var mock = require('./mock');
 var instance;
 var testBlobMD5;
+var testApplicationBlobMD5;
 /* jshint ignore:end */
 
 describe('SwaggerClient', function () {
   /* jshint ignore:start */
   before(function (done) {
     testBlobMD5 = md5.sync('test/spec/v2/blob/image.png');
+    testApplicationBlobMD5 = md5.sync('test/spec/v2/blob/test.pdf');
     mock.petstore(done, function (petstore, server){
       instance = server;
     });
@@ -447,7 +449,7 @@ describe('SwaggerClient', function () {
         .then(function () {
           expect().toExist('Operation request timeout was not applied');
         }).catch(function (err) {
-          expect(err.errObj.message).toBe('timeout of 1ms exceeded', 'Operation request timeout was not applied');
+          expect(err.errObj.message).toBe('Timeout of 1ms exceeded', 'Operation request timeout was not applied');
           done();
         });
     }).catch(done);
@@ -1459,6 +1461,56 @@ describe('SwaggerClient', function () {
             }
             var hash = md5.sync(filename);
             expect(hash).toBe(testBlobMD5);
+            fs.unlinkSync(filename);
+            done();
+          });
+        })
+        .catch(function () {
+          done('it failed');
+        });
+    }).catch(function(exception) {
+      done(exception);
+    });
+  });
+
+
+  it('should read an other blob', function(done) {
+    var spec = {
+      paths: {
+        '/v2/blob/test.pdf': {
+          get: {
+            operationId: 'getApplicationBlob',
+            produces: ['application/pdf'],
+            tags: [ 'test' ],
+            parameters: [],
+            responses: {
+              default: {
+                description: 'ok',
+                schema: {
+                  type: 'string',
+                  format: 'byte'
+                }
+              }
+            }
+          }
+        }
+      }
+    };
+
+    new SwaggerClient({
+      url: 'http://localhost:8000',
+      spec: spec,
+      usePromise: true
+    }).then(function(client) {
+      client.test.getApplicationBlob({})
+        .then(function (response) {
+          var filename = './file.tmp';
+          fs.writeFile(filename, response.data, function(err) {
+            if(err) {
+              return done('it failed');
+            }
+            var hash = md5.sync(filename);
+            expect(hash).toBe(testApplicationBlobMD5);
             fs.unlinkSync(filename);
             done();
           });
