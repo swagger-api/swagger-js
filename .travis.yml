@@ -1,19 +1,17 @@
 language: node_js
-
 node_js:
-  - "4.7"
-  - "6.9"
-
+- '4.7'
+- '6.9'
 branches:
   only:
   - master
   - /^v\d+\.\d+(\.\d+)?(-\S*)?$/
-
 deploy:
   provider: npm
-  email: "apiteam@swagger.io"
-  api_key: $NPM_API_KEY
+  email: apiteam@swagger.io
   skip_cleanup: true
+  api_key:
+    secure: UdKoVequ8Z4DtyH2+oEQU+ZAa/GhApkUGpF/PCZbQkWrsqzAPXnx8Qs096Q8/hnB1HC/N9PboBpYbz55vEdx1zyQ9PWSX+GjjYJruFYyafTOQHu66oACwkumJRW+1YrYnDF3GQxGpER4PKemEB6N/DzY9Sxs79L5VMl8YdAewOg=
   on:
     tags: true
-    all_branches: true
+    repo: swagger-api/swagger-js
