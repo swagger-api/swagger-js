@@ -54,7 +54,9 @@ export function buildRequest({
   let req = {
     url: baseUrl(spec, scheme),
     headers: {
-      'access-control-allow-origin': '*'
+      // This breaks CORSs... removing this line... probably breaks oAuth. Need to address that
+      // This also breaks tests
+      // 'access-control-allow-origin': '*'
     }
   }
 
