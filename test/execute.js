@@ -32,9 +32,7 @@ describe('execute', () => {
       expect(req).toEqual({
         method: 'GET',
         url: 'http://swagger.io/v1/one',
-        headers: {
-          'access-control-allow-origin': '*'
-        }
+        headers: {},
       })
     })
 
@@ -51,9 +49,7 @@ describe('execute', () => {
       // Then
       expect(req).toEqual({
         url: 'http://swagger.io/v1',
-        headers: {
-          'access-control-allow-origin': '*'
-        }
+        headers: { }
       })
     })
 
@@ -70,9 +66,7 @@ describe('execute', () => {
       // Then
       expect(req).toEqual({
         url: 'http://foo.com:8081/v1',
-        headers: {
-          'access-control-allow-origin': '*'
-        }
+        headers: { }
       })
     })
 
@@ -97,9 +91,7 @@ describe('execute', () => {
       expect(req).toEqual({
         url: 'http://swagger.io/v1/one',
         method: 'GET',
-        headers: {
-          'access-control-allow-origin': '*'
-        }
+        headers: { }
       })
     })
 
@@ -129,9 +121,7 @@ describe('execute', () => {
       expect(spy.calls[0].arguments[0]).toEqual({
         method: 'GET',
         url: 'https://swagger.io/one',
-        headers: {
-          'access-control-allow-origin': '*'
-        }
+        headers: { }
       })
     })
 
@@ -157,9 +147,7 @@ describe('execute', () => {
       expect(req).toEqual({
         url: 'http://swagger.io/v1/one?petId=123',
         method: 'GET',
-        headers: {
-          'access-control-allow-origin': '*'
-        }
+        headers: { }
       })
     })
 
@@ -189,9 +177,7 @@ describe('execute', () => {
       expect(req).toEqual({
         url: 'http://swagger.io/v1/one?fields=%5Barticles%5D%3Dtitle',
         method: 'GET',
-        headers: {
-          'access-control-allow-origin': '*'
-        }
+        headers: { }
       })
     })
 
@@ -221,9 +207,7 @@ describe('execute', () => {
       expect(req).toEqual({
         url: 'http://swagger.io/v1/one?petId=true',
         method: 'GET',
-        headers: {
-          'access-control-allow-origin': '*'
-        }
+        headers: { }
       })
     })
 
@@ -251,9 +235,7 @@ describe('execute', () => {
       expect(req).toEqual({
         url: 'http://swagger.io/v1/one?petId=3',
         method: 'GET',
-        headers: {
-          'access-control-allow-origin': '*'
-        }
+        headers: { }
       })
     })
 
@@ -366,9 +348,7 @@ describe('execute', () => {
       expect(req).toEqual({
         url: 'http://swagger.io/v1/pets/findByStatus?status=',
         method: 'GET',
-        headers: {
-          'access-control-allow-origin': '*'
-        }
+        headers: { }
       })
     })
 
@@ -412,7 +392,6 @@ describe('execute', () => {
         url: 'http://swagger.io/one',
         headers: {
           accept: 'application/josh',
-          'access-control-allow-origin': '*'
         },
         method: 'GET'
       })
@@ -446,9 +425,7 @@ describe('execute', () => {
       expect(req).toEqual({
         url: 'http://swagger.io/v1/one?username=fred&password=meyer',
         method: 'GET',
-        headers: {
-          'access-control-allow-origin': '*'
-        }
+        headers: { }
       })
     })
 
@@ -467,7 +444,6 @@ describe('execute', () => {
         url: 'http://swagger.io/one',
         headers: {
           'content-type': 'application/josh',
-          'access-control-allow-origin': '*'
         },
         method: 'GET'
       })
@@ -538,7 +514,6 @@ describe('execute', () => {
         method: 'PUT',
         headers: {
           head: 'justTheHead',
-          'access-control-allow-origin': '*'
         },
         body: {
           json: 'rulez'
@@ -768,9 +743,7 @@ describe('execute', () => {
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one?petId=a%2Cb',
           method: 'GET',
-          headers: {
-            'access-control-allow-origin': '*'
-          }
+          headers: { }
         })
       })
 
@@ -815,9 +788,7 @@ describe('execute', () => {
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one?ids=1,2,3&the%20names=a%2Cb|mary',
           method: 'GET',
-          headers: {
-            'access-control-allow-origin': '*'
-          }
+          headers: { }
         })
       })
 
@@ -851,9 +822,7 @@ describe('execute', () => {
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one?petId=1,2,3',
           method: 'GET',
-          headers: {
-            'access-control-allow-origin': '*'
-          }
+          headers: { }
         })
       })
 
@@ -887,9 +856,7 @@ describe('execute', () => {
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one?petId=1%202%203',
           method: 'GET',
-          headers: {
-            'access-control-allow-origin': '*'
-          }
+          headers: { }
         })
       })
 
@@ -923,9 +890,7 @@ describe('execute', () => {
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one?petId=1&petId=2&petId=3',
           method: 'GET',
-          headers: {
-            'access-control-allow-origin': '*'
-          }
+          headers: { }
         })
       })
 
@@ -959,9 +924,7 @@ describe('execute', () => {
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one?petId=1%092%093',
           method: 'GET',
-          headers: {
-            'access-control-allow-origin': '*'
-          }
+          headers: { }
         })
       })
 
@@ -995,9 +958,7 @@ describe('execute', () => {
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one?name=john|smith',
           method: 'GET',
-          headers: {
-            'access-control-allow-origin': '*'
-          }
+          headers: { }
         })
       })
     })
@@ -1073,9 +1034,7 @@ describe('execute', () => {
               name: 'johny',
               id: '123',
             },
-            headers: {
-              'access-control-allow-origin': '*'
-            }
+            headers: { }
           })
         })
 
@@ -1087,9 +1046,7 @@ describe('execute', () => {
             url: 'http://swagger.io/v1/one',
             method: 'POST',
             body: 123,
-            headers: {
-              'access-control-allow-origin': '*'
-            }
+            headers: { }
           })
         })
 
@@ -1101,9 +1058,7 @@ describe('execute', () => {
             url: 'http://swagger.io/v1/one',
             method: 'POST',
             body: undefined,
-            headers: {
-              'access-control-allow-origin': '*'
-            }
+            headers: { }
           })
         })
       })
@@ -1132,9 +1087,7 @@ describe('execute', () => {
             url: 'http://swagger.io/v1/one',
             method: 'DELETE',
             body: undefined,
-            headers: {
-              'access-control-allow-origin': '*'
-            }
+            headers: { }
           })
         })
 
@@ -1145,9 +1098,7 @@ describe('execute', () => {
             url: 'http://swagger.io/v1/one',
             method: 'DELETE',
             body: 123,
-            headers: {
-              'access-control-allow-origin': '*'
-            }
+            headers: { }
           })
         })
       })
@@ -1179,7 +1130,6 @@ describe('execute', () => {
           method: 'DELETE',
           headers: {
             api_key: 123,
-            'access-control-allow-origin': '*'
           }
         })
       })
@@ -1211,7 +1161,6 @@ describe('execute', () => {
           method: 'GET',
           headers: {
             accept: 'application/json',
-            'access-control-allow-origin': '*'
           }
         })
       })
@@ -1243,7 +1192,6 @@ describe('execute', () => {
           url: 'http://swagger.io/v1/123',
           method: 'GET',
           headers: {
-            'access-control-allow-origin': '*'
           }
         })
       })
@@ -1272,9 +1220,7 @@ describe('execute', () => {
         expect(req).toEqual({
           url: 'http://swagger.io/v1/foo%2Fbar',
           method: 'DELETE',
-          headers: {
-            'access-control-allow-origin': '*'
-          }
+          headers: { }
         })
       })
     })
@@ -1307,7 +1253,9 @@ describe('execute', () => {
       expect(req).toEqual({
         url: 'http://swagger.io/v1/one',
         method: 'POST',
-        headers: {'content-type': 'application/x-www-form-urlencoded', 'access-control-allow-origin': '*'},
+        headers: {
+          'content-type': 'application/x-www-form-urlencoded',
+        },
         body: 'petId=id'
       })
     })
