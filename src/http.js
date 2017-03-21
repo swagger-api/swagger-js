@@ -27,7 +27,7 @@ export default function http(url, request) {
   }
 
   return fetch(request.url, request).then((res) => {
-    return self.serializeRes(res, url).then((_res) => {
+    return self.serializeRes(res, url, request).then((_res) => {
       if (request.responseInterceptor) {
         _res = request.responseInterceptor(_res) || _res
       }
@@ -44,7 +44,7 @@ function shouldDownloadAsText(contentType) {
 }
 
 // Serialize the response, returns a promise with headers and the body part of the hash
-export function serializeRes(oriRes, url) {
+export function serializeRes(oriRes, url, {loadSpec = false}) {
   const res = {
     ok: oriRes.ok,
     url: oriRes.url || url,
@@ -53,7 +53,7 @@ export function serializeRes(oriRes, url) {
     headers: serializeHeaders(oriRes.headers)
   }
 
-  const useText = shouldDownloadAsText(res.headers['content-type'])
+  const useText = loadSpec || shouldDownloadAsText(res.headers['content-type'])
 
   return oriRes[useText ? 'text' : 'blob']().then((body) => {
     res.text = body

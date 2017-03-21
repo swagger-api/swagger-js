@@ -25,6 +25,19 @@ describe('http', () => {
     })
   })
 
+  it('should always load a spec as text', () => {
+    xapp = xmock()
+    xapp.get('http://swagger.io/somespec', (req, res) => {
+      res.set('content-type', 'application/octet-stream')
+      res.send('key: val')
+    })
+
+    return http({url: 'http://swagger.io/somespec', loadSpec: true}).then((res) => {
+      expect(res.status).toEqual(200)
+      expect(res.text).toEqual('key: val')
+    })
+  })
+
   describe('serializeHeaders', function () {
     it('should handle FetchAPI Headers object, which is iterable', function () {
       // Given

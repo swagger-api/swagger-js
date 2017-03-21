@@ -225,7 +225,7 @@ function getDoc(docPath) {
  * @api public
  */
 function fetchJSON(docPath) {
-  return fetch(docPath, {headers: {Accept: 'application/json'}}).then(res => res.json())
+  return fetch(docPath, {headers: {Accept: 'application/json'}, loadSpec: true}).then(res => res.json())
 }
 
 /**
