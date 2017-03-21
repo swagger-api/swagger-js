@@ -6,6 +6,7 @@ export function makeFetchJSON(http) {
   return (docPath) => {
     return http({
       url: docPath,
+      loadSpec: true,
       headers: {
         Accept: 'application/json'
       }
