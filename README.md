@@ -173,31 +173,6 @@ By default the instance version of `#http` serializes the body and headers.
 However, headers pose an issue when there are multiple headers with the same name.
 As such we've left the static version of `http` to not perform any serialization.
 
-##### Interfaces
-
-```js
-// Interface #1
-// Pro: code readability
-// Con: conflicts with SwaggerJS named properties, which means we need to rename tags or properties (both aren't fun).
-client[tag][operation]:ExecuteFunction
-
-// Interface #2
-// Pro: No conflicts, the whole api is under `apis` property
-// Con: an unusual use of the named `operation` and `execute` properties, instead of simply making the operation the function
-client.apis[tag].operation.[operation].execute:ExecuteFunction
-
-// Interface #3
-// Pro: No conflicts with SwaggerJS property names
-// Con: Not directly bound to the interface, ie: its under `apis`
-client.apis[tag][operation]:ExecuteFunction
-
-// Interface #4
-// Pro: direct access to operationIds
-// Con: No tags
-client.ops[operation]:ExecuteFunction
-```
-
-
 ### Build
 
 ```sh
@@ -206,4 +181,81 @@ npm run test       # run test
 npm run test:watch # run test with change watching
 npm run lint       # run lint
 npm run build      # package to release
+```
+
+### Migration from 2.x
+
+There are major changes from the 2.x release.  Please look at the [release notes](https://github.com/swagger-api/swagger-js/releases/tag/v3.0.2) for the breaking changes.
+
+The new swagger-js is _almost_ a drop-in replacement for the 2.x series _depending_ on your style of integration.  For migrating from a 2.x to 3.x implementation, it is important to understand the changes per the release notes.  Below is a quick-start for integrating with the 3.x version.
+
+* Before you start, please verify the minimum requirements to use the library.  They have changed.
+
+* You can construct a swagger-js client the same way as before.  There is a "legacy" mode for retaining the older style of API to the client--this can be disabled by passing the `{disableInterfaces: true}` option.  Note, you **cannot** use tags directly on the Swagger client.  You _must_ reference them through the `client.apis` object.  While supported in the 2.x series, this was not the most common method of addressing different operations assigned to a tag.
+
+If you did this:
+
+```js
+client.pets
+  .findPetById(...)
+```
+
+You must now do this:
+
+```js
+client.apis['pets']
+  .findPetById(...)
+```
+
+* You _must_ use promises rather than success and error callbacks.  If your old code looked like this:
+
+```js
+client.apis['pets']
+  .findPetById(
+    {petId: 3},
+    function(data) { /* success callback */},
+    function(error) { /* error callback */ });
+```
+
+you now would call it like such:
+
+```js
+client.apis['pets'].findPetById({petId: 3})
+  .then(function(data) { /* success callback */},
+  .catch(function(error) {/* error callback */ }));
+```
+
+* The _parsed_ response body object in response payloads has a new key name.  If you previously did this:
+
+```js
+function(response) {
+  // print out the parsed object
+  console.log(response.obj);
+}
+```
+
+You now do this:
+
+```js
+function(response) {
+  // print out the parsed object
+  console.log(response.body);
+}
+```
+
+* Until #971 is resolved, you _must_ apply authorizations on each operation.  Previously you could do this:
+
+```js
+new Swagger('http://petstore.swagger.io/v2/swagger.json',
+  {
+    authorizations: {
+      my_basic_auth: new PasswordAuthorization('foo', 'bar')
+    }
+  })
+```
+
+You now must apply authorizations like this:
+
+```
+TODO
 ```
