@@ -1196,6 +1196,43 @@ describe('execute', () => {
         })
       })
 
+      it('should work', function () {
+        const spec = {
+          host: 'swagger.io',
+          basePath: '/v1',
+          paths: {
+            '/pet/{id}': {
+              parameters: [
+                {
+                  name: 'id',
+                  in: 'path',
+                  type: 'number',
+                  required: true
+                }
+              ],
+              get: {
+                operationId: 'getPetsById',
+                parameters: [
+                  {
+                    name: 'test',
+                    in: 'query',
+                    type: 'number'
+                  }
+                ],
+              }
+            }
+          }
+        }
+
+        const req = buildRequest({spec, operationId: 'getPetsById', parameters: {id: 123}})
+
+        expect(req).toEqual({
+          url: "http://swagger.io/v1/pet/123",
+          headers: {},
+          method: "GET"
+        })
+      })
+
       it('should encode path parameter', function () {
         const spec = {
           host: 'swagger.io',
