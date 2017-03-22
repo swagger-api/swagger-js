@@ -25,6 +25,7 @@ export default function http(url, request) {
   if (request.requestInterceptor) {
     request = request.requestInterceptor(request) || request
   }
+  request.credentials = 'same-origin';
 
   return fetch(request.url, request).then((res) => {
     return self.serializeRes(res, url, request).then((_res) => {
