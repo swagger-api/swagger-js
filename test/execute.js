@@ -1196,7 +1196,7 @@ describe('execute', () => {
         })
       })
 
-      it('should work', function () {
+      it('should Merge Path and Operation parameters', function () {
         const spec = {
           host: 'swagger.io',
           basePath: '/v1',
