@@ -9,13 +9,18 @@ Swagger-JS
 
 For the older version of swagger-js, refer to the [*2.x branch*](https://github.com/swagger-api/swagger-js/tree/2.x).
 
+
+### Note:
+The npm package is called `swagger-client` and the GitHub repository `swagger-js`.
+We'll be consolidating that soon. Just giving you the heads up. You may see reference to both names.
+
 ### Usage
 
 ##### Prerequisites
 - Node 4.x
-- NPM 2.x
+- npm 2.x
 
-##### Download via NPM
+##### Download via npm
 
 ```
 npm install swagger-client
@@ -25,25 +30,31 @@ npm install swagger-client
 
 ```javascript
 import Swagger from 'swagger-client'
+// Or commonjs
+const Swagger = require('swagger-client') 
 ```
 
 #### API
 
 This lib exposes these functionalities:
 
-1. HTTP Client
-1. Swagger Spec Resolver
-1. TryItOut Executor
-1. Tags Interface
-1. JS API
+1. Static functions for...
+  1. HTTP Client
+  1. Swagger Spec Resolver ( OAS 2.0 )
+  1. TryItOut Executor
+1. A constructor with the methods...
+  1. HTTP Client
+  1. Swagger Spec Resolver ( OAS 2.0 )
+  1. TryItOut Executor
+  1. Tags Interface
 
 HTTP Client
 -----------
 
-`Swagger.http(req)` exposes a [Fetch-like interface](https://github.com/matthew-andrews/isomorphic-fetch) with a tweak: allowing `url` in the request object so that it can be passed around and mutated. It extends Fetch to support request and response interceptor and perform response & headers serialization. This method could be overridden to change how SwaggerJS performs HTTP requests.
+`Swagger.http(req)` exposes a [Fetch-like interface](https://github.com/matthew-andrews/isomorphic-fetch) with a twist: allowing `url` in the request object so that it can be passed around and mutated. It extends Fetch to support request and response interceptors and performs response & header serialization. This method could be overridden to change how SwaggerJS performs HTTP requests.
 
 ```js
-// Fetch-like, but support `url`
+// Fetch-like, but support `url`, `query` and `xxxInterceptor`
 const request = {
   url,
   query,
@@ -57,10 +68,10 @@ const request = {
 Swagger.http(request)
   .then((res) => {
     res.statusCode // status code
-    res.statusText // status text
+    res.statusText // status text, ie: "Not Found"
     res.body       // JSON object or undefined
     res.obj        // same as above, legacy
-    res.text       // textual body
+    res.text       // textual body, or Blob
     res.headers    // header hash
   })
   .catch((err) => {
@@ -91,42 +102,33 @@ Swagger.resolve({url, spec, http}).then((resolved) => {
 
 TryItOut Executor
 -----------------
-An HTTP client for OAI operations, maps an operation and values into a request/response.
+An HTTP client for OAS operations, maps an operation and values into an HTTP request.
 
 ```js
 const params = {
   spec,
-  operationId,
+
+  operationId, // Either operationId, or you can use pathName + method
   (pathName),
   (method),
-  parameters,
-  securities,
-  requestContentType,
-  responseContentType
+
+  parameters, // _named_ parameters in an object, eg: { petId: 'abc' }
+  securities, // _named_ securities, will only be added to the request, if the spec indicates it. eg: {apiKey: 'abc'}
+  requestContentType, 
+  responseContentType,
+
+  (http), // You can also override the HTTP client completely
 }
 
 // Creates a request object compatible with HTTP client interface.
-// If `pathName` and `method`, then those are used instead of operationId.
+// If `pathName` and `method`, then those are used instead of operationId. This is useful if you're using this dynamically, as `pathName` + `method` are guarenteed to be unique.
+const res = Swagger.execute({...params})
+
+// You can also generate just the request ( without executing... )
 const req = Swagger.buildRequest(...params)
-Swagger.execute({http, ...params})
 ```
 
-Tags Interface
---------------
-A JS client for operations. We're currently using the `apis[tag][operationId]:ExecuteFunction` interface, which can be disabled entirely using `Swagger({disableInterfaces: true})` if you don't need it.
-
-OperationId's are meant to be unique within spec, if they're not we do the following:
-- If a tag is absent, we use `default` as the internal tag
-- If an operationId is missing, we deduce it from the http method and path, i.e. `${method}-${path}`
-- If an operationId is duplicated across all operationIds of the spec, we suffix it with \_%d
-
-```js
-Swagger({...}).then((client) => {
-  client.apis.pets.addPet({id: 1, name: "bobby"}).then(...)
-})
-```
-
-JS API
+Constructor and methods
 ------
 
 Resolve the spec and expose some methods that use the resolved spec:
@@ -135,6 +137,41 @@ Resolve the spec and expose some methods that use the resolved spec:
 - Exposes tags interface (see above)
 - Exposes the static functions: `execute`, `http`, `resolve` and some other minor ones
 - Exposes `#http`, `#execute` and `#resolve` bound to the instance
+
+```javascript
+Swagger('http://petstore.swagger.io/v2/swagger.json')
+  .then( client => {
+      client.spec // The resolved spec
+      client.originalSpec // In case you need it
+      client.errors // Any resolver errors
+
+      // Tags interface 
+      client.apis.pet.addPet({id: 1, name: "bobby"}).then(...)
+
+      // TryItOut Executor, with the `spec` already provided
+      client.execute({operationId: 'addPet', parameters: {id: 1, name: "bobby") }).then(...) 
+   })
+
+```
+
+Tags Interface
+--------------
+A client for operations. We're currently using the `apis[tag][operationId]:ExecuteFunction` interface, which can be disabled entirely using `Swagger({disableInterfaces: true})` if you don't need it.
+
+OperationId's are meant to be unique within spec, if they're not we do the following:
+- If a tag is absent, we use `default` as the internal tag
+- If an operationId is missing, we deduce it from the http method and path, i.e. `${method}-${path}`
+- If an operationId is duplicated across all operationIds of the spec, we suffix it with \_%d
+
+```js
+Swagger({...}).then((client) => {
+    client
+      .apis
+      .pet // tag name == `pet`
+      .addPet({id: 1, name: "bobby"}) // operationId == `addPet`
+      .then(...) 
+})
+```
 
 Compatibility
 -------------
@@ -151,8 +188,9 @@ SwaggerJS has some legacy signature _shapes_.
   status,
   statusText,
   headers,
-  data,
-  obj
+
+  data, // The textual content
+  obj   // The body object
 }
 
 // New shape
@@ -162,8 +200,9 @@ SwaggerJS has some legacy signature _shapes_.
   status,
   statusText,
   headers, // See note below regarding headers
+
   text,    // The textual content
-  body,    // a JSON object
+  body,    // The body object
 }
 ```
 
@@ -191,26 +230,50 @@ The new swagger-js is _almost_ a drop-in replacement for the 2.x series _dependi
 
 * Before you start, please verify the minimum requirements to use the library.  They have changed.
 
-* You can construct a swagger-js client the same way as before.  There is a "legacy" mode for retaining the older style of API to the client--this can be disabled by passing the `{disableInterfaces: true}` option.  Note, you **cannot** use tags directly on the Swagger client.  You _must_ reference them through the `client.apis` object.  While supported in the 2.x series, this was not the most common method of addressing different operations assigned to a tag.
+### Promises.
+The new swagger-js, uses promises and removes the older style of callbacks.
+As such creating an instance of SwaggerClient will return a promise.
 
 If you did this:
 
 ```js
-client.pets
+var client = new SwaggerClient({ success, failure, ...})
+function success() {
+  client.pet.addPet(...) 
+}
+```
+
+You must now do this:
+
+```js
+SwaggerClient({...}).then(client => {
+  client.pet.addPet(...) 
+})
+```
+
+### Tags interface
+Note, you **cannot** use tags directly on the Swagger client.  You _must_ reference them through the `client.apis` object.  While supported in the 2.x series, this was not the most common method of addressing different operations assigned to a tag.
+
+
+If you did this:
+
+```js
+client.pet
   .findPetById(...)
 ```
 
 You must now do this:
 
 ```js
-client.apis['pets']
+client.apis.pet 
   .findPetById(...)
 ```
 
+### Promises in executors
 * You _must_ use promises rather than success and error callbacks.  If your old code looked like this:
 
 ```js
-client.apis['pets']
+client.apis.pet
   .findPetById(
     {petId: 3},
     function(data) { /* success callback */},
@@ -220,7 +283,7 @@ client.apis['pets']
 you now would call it like such:
 
 ```js
-client.apis['pets'].findPetById({petId: 3})
+client.apis.pet.findPetById({petId: 3})
   .then(function(data) { /* success callback */},
   .catch(function(error) {/* error callback */ }));
 ```
@@ -254,8 +317,73 @@ new Swagger('http://petstore.swagger.io/v2/swagger.json',
   })
 ```
 
-You now must apply authorizations like this:
+Pending the above issue, the newer syntax would be...
 
 ```
-TODO
+new Swagger('http://petstore.swagger.io/v2/swagger.json', {
+    authorizations: {
+      my_basic_auth: { username: "foo", password: "bar" }
+    }
+  })
 ```
+
+
+### Graveyard
+During the course of the refactor some items were left behind. Some of these may be resuscitated as needed. But for the most part we can consider them dead
+
+- client.apisArray
+  - client.apisArray[i].operationsArray
+- client.modelsArray
+- client.authorizationScheme
+- client.basePath
+- client.build
+- client.buildFrom1_1Spec
+- client.buildFrom1_2Spec
+- client.buildFromSpec
+- client.clientAuthorizations
+- client.convertInfo
+- client.debug
+- client.defaultErrorCallback
+- client.defaultSuccessCallback
+- client.enableCookies
+- client.fail
+- client.failure
+- client.finish
+- client.help
+- client.host
+- client.idFromOp
+- client.info
+- client.initialize
+- client.isBuilt
+- client.isValid
+- client.modelPropertyMacro
+- client.models
+- client.modelsArray
+- client.options
+- client.parameterMacro
+- client.parseUri
+- client.progress
+- client.resourceCount
+- client.sampleModels
+- client.selfReflect
+- client.setConsolidatedModels
+- client.supportedSubmitMethods
+- client.swaggerRequestHeaders
+- client.tagFromLabel
+- client.title
+- client.useJQuery
+- client.jqueryAjaxCach
+
+- client.apis[tag]
+  - .apis
+  - .asCurl
+  - .description
+  - .externalDocs
+  - .help
+  - .label
+  - .name
+  - .operation
+  - .operations
+  - .operationsArray
+  - .path
+  - .tag
