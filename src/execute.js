@@ -57,7 +57,7 @@ export function buildRequest({
   requestInterceptor, responseInterceptor
 }) {
   parameterBuilders = parameterBuilders || PARAMETER_BUILDERS
-
+  
   // Base Template
   let req = {
     url: baseUrl(spec, scheme),
@@ -94,34 +94,35 @@ export function buildRequest({
   if (requestContentType) {
     req.headers['content-type'] = requestContentType
   }
+
   // Add values to request
-  arrayOrEmpty(operation.parameters).forEach((parameter) => {
-    const builder = parameterBuilders[parameter.in]
-    let value
+  arrayOrEmpty(operation.parameters) // operation parameters
+    .concat(arrayOrEmpty(spec.paths[pathName].parameters)) // path parameters
+    .forEach((parameter) => {
+      const builder = parameterBuilders[parameter.in]
+      let value
 
-    if(parameter.in === 'body' && parameter.schema && parameter.schema.properties) {
-      value = parameters
-    }
+      if(parameter.in === 'body' && parameter.schema && parameter.schema.properties) {
+        value = parameters
+      }
 
-    value = parameter && parameter.name && parameters[parameter.name]
+      value = parameter && parameter.name && parameters[parameter.name]
 
-    if (typeof parameter.default !== 'undefined' && typeof value === 'undefined') {
-      value = parameter.default
-    }
+      if (typeof parameter.default !== 'undefined' && typeof value === 'undefined') {
+        value = parameter.default
+      }
 
-    if (typeof value === 'undefined' && parameter.required && !parameter.allowEmptyValue) {
-      throw new Error(`Required parameter ${parameter.name} is not provided`)
-    }
+      if (typeof value === 'undefined' && parameter.required && !parameter.allowEmptyValue) {
+        throw new Error(`Required parameter ${parameter.name} is not provided`)
+      }
 
-    if (builder) {
-      builder({req, parameter, value, operation, spec})
-    }
-  })
-
+      if (builder) {
+        builder({req, parameter, value, operation, spec})
+      }
+    })
 
   // Add securities, which are applicable
   req = applySecurities({request: req, securities, operation, spec})
-
   // Will add the query object into the URL, if it exists
   mergeInQueryOrForm(req)
   return req
