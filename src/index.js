@@ -31,13 +31,18 @@ function Swagger(url, opts = {}) {
 
   assign(this, opts)
 
-  return this.resolve()
+  const prom = this.resolve()
     .then(() => {
       if (!this.disableInterfaces) {
         assign(this, Swagger.makeApisTagOperation(this))
       }
+
       return this
     })
+
+  // Expose this instance on the promise that gets returned
+  prom.client = this
+  return prom
 }
 
 module.exports = Swagger
