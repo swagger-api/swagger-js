@@ -1224,7 +1224,7 @@ describe('execute', () => {
           }
         }
 
-        const req = buildRequest({ spec, operationId: 'getPetsById', parameters: { id: 123, test: 567 } })
+        const req = buildRequest({spec, operationId: 'getPetsById', parameters: {id: 123, test: 567}})
 
         expect(req).toEqual({
           url: "http://swagger.io/v1/pet/123?test=567",

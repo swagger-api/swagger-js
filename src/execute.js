@@ -89,29 +89,29 @@ export function buildRequest({
 
   // Add values to request
   arrayOrEmpty(operation.parameters) // operation parameters
-  .concat(arrayOrEmpty(spec.paths[pathName].parameters)) // path parameters
-  .forEach((parameter) => {
-    const builder = parameterBuilders[parameter.in]
-    let value
+    .concat(arrayOrEmpty(spec.paths[pathName].parameters)) // path parameters
+    .forEach((parameter) => {
+      const builder = parameterBuilders[parameter.in]
+      let value
 
-    if(parameter.in === 'body' && parameter.schema && parameter.schema.properties) {
-      value = parameters
-    }
+      if(parameter.in === 'body' && parameter.schema && parameter.schema.properties) {
+        value = parameters
+      }
 
-    value = parameter && parameter.name && parameters[parameter.name]
+      value = parameter && parameter.name && parameters[parameter.name]
 
-    if (typeof parameter.default !== 'undefined' && typeof value === 'undefined') {
-      value = parameter.default
-    }
+      if (typeof parameter.default !== 'undefined' && typeof value === 'undefined') {
+        value = parameter.default
+      }
 
-    if (typeof value === 'undefined' && parameter.required && !parameter.allowEmptyValue) {
-      throw new Error(`Required parameter ${parameter.name} is not provided`)
-    }
+      if (typeof value === 'undefined' && parameter.required && !parameter.allowEmptyValue) {
+        throw new Error(`Required parameter ${parameter.name} is not provided`)
+      }
 
-    if (builder) {
-      builder({req, parameter, value, operation, spec})
-    }
-  })
+      if (builder) {
+        builder({req, parameter, value, operation, spec})
+      }
+    })
 
   // Add securities, which are applicable
   req = applySecurities({request: req, securities, operation, spec})
