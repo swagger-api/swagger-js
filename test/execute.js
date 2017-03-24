@@ -1196,7 +1196,44 @@ describe('execute', () => {
         })
       })
 
-      it('should Merge Path and Operation parameters', function () {
+      it('should merge Path and Operation parameters', function () {
+        const spec = {
+          host: 'swagger.io',
+          basePath: '/v1',
+          paths: {
+            '/pet/{id}': {
+              get: {
+                operationId: 'getPetsById',
+                parameters: [
+                  {
+                    name: 'test',
+                    in: 'query',
+                    type: 'number'
+                  }
+                ],
+              parameters: [
+                {
+                  name: 'id',
+                  in: 'path',
+                  type: 'number',
+                  required: true
+                }
+              ],
+              }
+            }
+          }
+        }
+
+        const req = buildRequest({spec, operationId: 'getPetsById', parameters: {id: 123, test: 567}})
+
+        expect(req).toEqual({
+          url: "http://swagger.io/v1/pet/123?test=567",
+          headers: {},
+          method: "GET"
+        })
+      })
+
+      it('should merge Path and Operation parameters when parameter is the first item in paths', function () {
         const spec = {
           host: 'swagger.io',
           basePath: '/v1',
@@ -1224,10 +1261,10 @@ describe('execute', () => {
           }
         }
 
-        const req = buildRequest({spec, operationId: 'getPetsById', parameters: {id: 123}})
+        const req = buildRequest({spec, operationId: 'getPetsById', parameters: {id: 123, test: 567}})
 
         expect(req).toEqual({
-          url: "http://swagger.io/v1/pet/123",
+          url: "http://swagger.io/v1/pet/123?test=567",
           headers: {},
           method: "GET"
         })
