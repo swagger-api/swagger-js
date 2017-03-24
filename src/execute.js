@@ -26,10 +26,18 @@ export const PARAMETER_BUILDERS = {
 // Execute request, with the given operationId and parameters
 // pathName/method or operationId is optional
 export function execute({
-  fetch, spec, operationId, pathName, method, parameters, securities, ...extras
+  http: userHttp,
+  fetch, // This is legacy
+  spec,
+  operationId,
+  pathName,
+  method,
+  parameters,
+  securities,
+  ...extras
 }) {
   // Provide default fetch implementation
-  fetch = fetch || http
+  userHttp = userHttp || fetch || http // Default to _our_ http
 
   // Prefer pathName/method if it exists
   if (pathName && method) {
@@ -39,7 +47,7 @@ export function execute({
   const request = self.buildRequest({spec, operationId, parameters, securities, ...extras})
 
   // Build request and execute it
-  return fetch(request)
+  return userHttp(request)
 }
 
 // Build a request, which can be handled by the `http.js` implementation.
