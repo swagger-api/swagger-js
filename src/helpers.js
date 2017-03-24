@@ -37,8 +37,7 @@ export function getOperationRaw(spec, id) {
       return true
     }
 
-    var newId = idFromPathMethod(pathName, method)
-    const [_pathName, _method] = pathMethodFromId(newId)
+    const [_pathName, _method] = pathMethodFromId(id)
     return _pathName === pathName && toLower(_method) === toLower(method)
   })
 }

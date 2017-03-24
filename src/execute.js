@@ -49,6 +49,7 @@ export function buildRequest({
   requestInterceptor, responseInterceptor
 }) {
   parameterBuilders = parameterBuilders || PARAMETER_BUILDERS
+  
   // Base Template
   let req = {
     url: baseUrl(spec, scheme),
