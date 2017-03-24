@@ -54,7 +54,8 @@ Swagger.prototype = {
   execute(argHash) {
     return Swagger.execute({
       spec: this.spec,
-      fetch: this.http.bind(this),
+      http: this.http.bind(this),
+      securities: {authorized: this.authorizations},
       ...argHash
     })
   },
