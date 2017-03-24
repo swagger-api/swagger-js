@@ -11,11 +11,13 @@ export const self = {
 
 // Handles fetch-like syntax and the case where there is only one object passed-in
 // (which will have the URL as a property). Also serilizes the response.
-export default function http(url, request) {
+export default function http(url, request={}) {
   if (typeof url === 'object') {
     request = url
     url = request.url
   }
+
+  request.headers = request.headers || {}
 
   // Serializes query, for convenience
   // Should be the last thing we do, as its hard to mutate the URL with
@@ -24,6 +26,14 @@ export default function http(url, request) {
 
   if (request.requestInterceptor) {
     request = request.requestInterceptor(request) || request
+  }
+
+  // for content-type=multipart\/form-data remove content-type from request before fetch
+  // so that correct one with `boundary` is set
+  let contentType = request.headers["content-type"] || request.headers["Content-Type"]
+  if (/multipart\/form-data/i.test(contentType)) {
+    delete request.headers['content-type']
+    delete request.headers['Content-Type']
   }
 
   return fetch(request.url, request).then((res) => {
@@ -165,7 +175,9 @@ export function mergeInQueryOrForm(req = {}) {
       return isFile(form[key].value)
     })
 
-    if (hasFile) {
+    let contentType = req.headers["content-type"] || req.headers["Content-Type"]
+
+    if (hasFile || /multipart\/form-data/i.test(contentType)) {
       const FormData = require('isomorphic-form-data') // eslint-disable-line global-require
       req.body = new FormData()
       Object.keys(form).forEach((key) => {
