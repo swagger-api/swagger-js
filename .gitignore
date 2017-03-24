@@ -20,3 +20,4 @@ notes/
 .DS_Store
 .deps_check
 test/specmap/data/private
+browser
