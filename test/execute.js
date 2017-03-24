@@ -1,6 +1,6 @@
-import expect, {createSpy, spyOn} from 'expect'
+import expect, { createSpy, spyOn } from 'expect'
 import xmock from 'xmock'
-import {execute, buildRequest, applySecurities, self as stubs} from '../src/execute'
+import { execute, buildRequest, applySecurities, self as stubs } from '../src/execute'
 
 // Supported shape...  { spec, operationId, parameters, securities, fetch }
 // One can use operationId or pathItem + method
@@ -27,7 +27,7 @@ describe('execute', () => {
       }
 
       // when
-      const req = buildRequest({spec, operationId: 'getMe'})
+      const req = buildRequest({ spec, operationId: 'getMe' })
 
       expect(req).toEqual({
         method: 'GET',
@@ -44,12 +44,12 @@ describe('execute', () => {
       }
 
       // When
-      const req = buildRequest({spec})
+      const req = buildRequest({ spec })
 
       // Then
       expect(req).toEqual({
         url: 'http://swagger.io/v1',
-        headers: { }
+        headers: {}
       })
     })
 
@@ -61,12 +61,12 @@ describe('execute', () => {
       }
 
       // When
-      const req = buildRequest({spec})
+      const req = buildRequest({ spec })
 
       // Then
       expect(req).toEqual({
         url: 'http://foo.com:8081/v1',
-        headers: { }
+        headers: {}
       })
     })
 
@@ -85,13 +85,13 @@ describe('execute', () => {
       }
 
       // When
-      const req = buildRequest({spec, operationId: 'getMe'})
+      const req = buildRequest({ spec, operationId: 'getMe' })
 
       // Then
       expect(req).toEqual({
         url: 'http://swagger.io/v1/one',
         method: 'GET',
-        headers: { }
+        headers: {}
       })
     })
 
@@ -121,7 +121,7 @@ describe('execute', () => {
       expect(spy.calls[0].arguments[0]).toEqual({
         method: 'GET',
         url: 'https://swagger.io/one',
-        headers: { }
+        headers: {}
       })
     })
 
@@ -134,20 +134,20 @@ describe('execute', () => {
           '/one': {
             get: {
               operationId: 'getMe',
-              parameters: [{name: 'petId', in: 'query'}]
+              parameters: [{ name: 'petId', in: 'query' }]
             }
           }
         }
       }
 
       // When
-      const req = buildRequest({spec, operationId: 'getMe', parameters: {petId: 123}})
+      const req = buildRequest({ spec, operationId: 'getMe', parameters: { petId: 123 } })
 
       // Then
       expect(req).toEqual({
         url: 'http://swagger.io/v1/one?petId=123',
         method: 'GET',
-        headers: { }
+        headers: {}
       })
     })
 
@@ -171,13 +171,13 @@ describe('execute', () => {
       }
 
       // When
-      const req = buildRequest({spec, operationId: 'getMe', parameters: {fields: '[articles]=title'}})
+      const req = buildRequest({ spec, operationId: 'getMe', parameters: { fields: '[articles]=title' } })
 
       // Then
       expect(req).toEqual({
         url: 'http://swagger.io/v1/one?fields=%5Barticles%5D%3Dtitle',
         method: 'GET',
-        headers: { }
+        headers: {}
       })
     })
 
@@ -201,13 +201,13 @@ describe('execute', () => {
       }
 
       // When
-      const req = buildRequest({spec, operationId: 'getMe', parameters: {petId: true}})
+      const req = buildRequest({ spec, operationId: 'getMe', parameters: { petId: true } })
 
       // Then
       expect(req).toEqual({
         url: 'http://swagger.io/v1/one?petId=true',
         method: 'GET',
-        headers: { }
+        headers: {}
       })
     })
 
@@ -230,12 +230,12 @@ describe('execute', () => {
         }
       }
 
-      const req = buildRequest({spec, operationId: 'getMe', parameters: {}})
+      const req = buildRequest({ spec, operationId: 'getMe', parameters: {} })
 
       expect(req).toEqual({
         url: 'http://swagger.io/v1/one?petId=3',
         method: 'GET',
-        headers: { }
+        headers: {}
       })
     })
 
@@ -259,7 +259,7 @@ describe('execute', () => {
         }
       }
 
-      expect(() => buildRequest({spec, operationId: 'getMe'})).toThrow('Required parameter petId is not provided')
+      expect(() => buildRequest({ spec, operationId: 'getMe' })).toThrow('Required parameter petId is not provided')
     })
 
     describe('formData', function () {
@@ -283,7 +283,7 @@ describe('execute', () => {
         }
 
         // When
-        const req = buildRequest({spec, operationId: 'deleteMe', parameters: {}})
+        const req = buildRequest({ spec, operationId: 'deleteMe', parameters: {} })
 
         // Then
         expect(req.body).toEqual('petId=')
@@ -312,7 +312,7 @@ describe('execute', () => {
         }
 
         // When
-        const req = buildRequest({spec, operationId: 'getMe', parameters: {petId: [1, 2, 3]}})
+        const req = buildRequest({ spec, operationId: 'getMe', parameters: { petId: [1, 2, 3] } })
 
         // Then
         expect(req.body).toEqual('petId=1,2,3')
@@ -342,13 +342,13 @@ describe('execute', () => {
       }
 
       // When
-      const req = buildRequest({spec, operationId: 'getMe', parameters: {}})
+      const req = buildRequest({ spec, operationId: 'getMe', parameters: {} })
 
       // Then
       expect(req).toEqual({
         url: 'http://swagger.io/v1/pets/findByStatus?status=',
         method: 'GET',
-        headers: { }
+        headers: {}
       })
     })
 
@@ -374,18 +374,18 @@ describe('execute', () => {
       }
 
       // Then
-      expect(() => buildRequest({spec, operationId: 'getMe', parameters: {}})).toThrow()
+      expect(() => buildRequest({ spec, operationId: 'getMe', parameters: {} })).toThrow()
     })
 
     it('should handle responseContentType', function () {
       // Given
       const spec = {
         host: 'swagger.io',
-        paths: {'/one': {get: {operationId: 'getMe'}}}
+        paths: { '/one': { get: { operationId: 'getMe' } } }
       }
 
       // When
-      const req = buildRequest({spec, operationId: 'getMe', responseContentType: 'application/josh'})
+      const req = buildRequest({ spec, operationId: 'getMe', responseContentType: 'application/josh' })
 
       // Then
       expect(req).toEqual({
@@ -420,12 +420,12 @@ describe('execute', () => {
         }
       }
 
-      const req = buildRequest({spec, operationId: 'loginUser', parameters: {username: 'fred', password: 'meyer'}})
+      const req = buildRequest({ spec, operationId: 'loginUser', parameters: { username: 'fred', password: 'meyer' } })
 
       expect(req).toEqual({
         url: 'http://swagger.io/v1/one?username=fred&password=meyer',
         method: 'GET',
-        headers: { }
+        headers: {}
       })
     })
 
@@ -433,11 +433,11 @@ describe('execute', () => {
       // Given
       const spec = {
         host: 'swagger.io',
-        paths: {'/one': {get: {operationId: 'getMe'}}}
+        paths: { '/one': { get: { operationId: 'getMe' } } }
       }
 
       // When
-      const req = buildRequest({spec, operationId: 'getMe', requestContentType: 'application/josh'})
+      const req = buildRequest({ spec, operationId: 'getMe', requestContentType: 'application/josh' })
 
       // Then
       expect(req).toEqual({
@@ -499,14 +499,16 @@ describe('execute', () => {
       }
 
       // When
-      const req = buildRequest({spec,
+      const req = buildRequest({
+        spec,
         operationId: 'getMe',
         parameters: {
           head: 'justTheHead',
           two: '2',
-          body: {json: 'rulez'},
+          body: { json: 'rulez' },
           question: 'answer'
-        }})
+        }
+      })
 
       // Then
       expect(req).toEqual({
@@ -528,13 +530,13 @@ describe('execute', () => {
     // Given
     const spec = {
       host: 'swagger.io',
-      paths: {'/one': {get: {operationId: 'getMe'}}}
+      paths: { '/one': { get: { operationId: 'getMe' } } }
     }
 
     const buildRequestSpy = spyOn(stubs, 'buildRequest')
 
     execute({
-      fetch: createSpy().andReturn({then() { }}),
+      fetch: createSpy().andReturn({ then() { } }),
       spec,
       operationId: 'getMe',
       josh: 1
@@ -551,7 +553,7 @@ describe('execute', () => {
       const spec = {
         host: 'swagger.io',
         basePath: '/v1',
-        security: [{apiKey: []}],
+        security: [{ apiKey: [] }],
         paths: {
           '/one': {
             get: {
@@ -574,7 +576,7 @@ describe('execute', () => {
         method: 'GET'
       }
 
-      const applySecurity = applySecurities({request, securities, operation: spec.paths['/one'].get, spec})
+      const applySecurity = applySecurities({ request, securities, operation: spec.paths['/one'].get, spec })
 
       expect(applySecurity).toEqual({
         url: 'http://swagger.io/v1/one',
@@ -586,12 +588,12 @@ describe('execute', () => {
       const spec = {
         host: 'swagger.io',
         basePath: '/v1',
-        security: [{authMe: []}],
+        security: [{ authMe: [] }],
         paths: {
           '/one': {
             get: {
               operationId: 'getMe',
-              security: [{authMe: []}]
+              security: [{ authMe: [] }]
             }
           }
         },
@@ -615,7 +617,7 @@ describe('execute', () => {
         }
       }
 
-      const applySecurity = applySecurities({request, securities, operation: spec.paths['/one'].get, spec})
+      const applySecurity = applySecurities({ request, securities, operation: spec.paths['/one'].get, spec })
 
       expect(applySecurity.headers).toEqual({
         authorization: 'Basic Zm9vOmJhcg=='
@@ -626,12 +628,12 @@ describe('execute', () => {
       const spec = {
         host: 'swagger.io',
         basePath: '/v1',
-        security: [{authMe: []}],
+        security: [{ authMe: [] }],
         paths: {
           '/one': {
             get: {
               operationId: 'getMe',
-              security: [{authMe: []}]
+              security: [{ authMe: [] }]
             }
           }
         },
@@ -656,7 +658,7 @@ describe('execute', () => {
         }
       }
 
-      const applySecurity = applySecurities({request, securities, operation: spec.paths['/one'].get, spec})
+      const applySecurity = applySecurities({ request, securities, operation: spec.paths['/one'].get, spec })
 
       expect(applySecurity.headers).toEqual({
         authorization: 'Basic Zm9vOmJhcg=='
@@ -667,12 +669,12 @@ describe('execute', () => {
       const spec = {
         host: 'swagger.io',
         basePath: '/v1',
-        security: [{authMe: []}, {apiKey: []}],
+        security: [{ authMe: [] }, { apiKey: [] }],
         paths: {
           '/one': {
             get: {
               operationId: 'getMe',
-              security: [{authMe: []}, {apiKey: []}]
+              security: [{ authMe: [] }, { apiKey: [] }]
             }
           }
         },
@@ -703,7 +705,7 @@ describe('execute', () => {
         }
       }
 
-      const applySecurity = applySecurities({request, securities, operation: spec.paths['/one'].get, spec})
+      const applySecurity = applySecurities({ request, securities, operation: spec.paths['/one'].get, spec })
 
       expect(applySecurity.headers).toEqual({
         authorization: 'Basic Zm9vOmJhcg==',
@@ -737,13 +739,13 @@ describe('execute', () => {
         }
 
         // When
-        const req = buildRequest({spec, operationId: 'getMe', parameters: {petId: ['a,b']}})
+        const req = buildRequest({ spec, operationId: 'getMe', parameters: { petId: ['a,b'] } })
 
         // Then
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one?petId=a%2Cb',
           method: 'GET',
-          headers: { }
+          headers: {}
         })
       })
 
@@ -782,13 +784,13 @@ describe('execute', () => {
         }
 
         // When
-        const req = buildRequest({spec, operationId: 'getMe', parameters: {ids: [1, 2, 3], 'the names': ['a,b', 'mary']}})
+        const req = buildRequest({ spec, operationId: 'getMe', parameters: { ids: [1, 2, 3], 'the names': ['a,b', 'mary'] } })
 
         // Then
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one?ids=1,2,3&the%20names=a%2Cb|mary',
           method: 'GET',
-          headers: { }
+          headers: {}
         })
       })
 
@@ -816,13 +818,13 @@ describe('execute', () => {
         }
 
         // When
-        const req = buildRequest({spec, operationId: 'getMe', parameters: {petId: [1, 2, 3]}})
+        const req = buildRequest({ spec, operationId: 'getMe', parameters: { petId: [1, 2, 3] } })
 
         // Then
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one?petId=1,2,3',
           method: 'GET',
-          headers: { }
+          headers: {}
         })
       })
 
@@ -850,13 +852,13 @@ describe('execute', () => {
         }
 
         // When
-        const req = buildRequest({spec, operationId: 'getMe', parameters: {petId: [1, 2, 3]}})
+        const req = buildRequest({ spec, operationId: 'getMe', parameters: { petId: [1, 2, 3] } })
 
         // Then
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one?petId=1%202%203',
           method: 'GET',
-          headers: { }
+          headers: {}
         })
       })
 
@@ -884,13 +886,13 @@ describe('execute', () => {
         }
 
         // When
-        const req = buildRequest({spec, operationId: 'getMe', parameters: {petId: [1, 2, 3]}})
+        const req = buildRequest({ spec, operationId: 'getMe', parameters: { petId: [1, 2, 3] } })
 
         // Then
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one?petId=1&petId=2&petId=3',
           method: 'GET',
-          headers: { }
+          headers: {}
         })
       })
 
@@ -918,13 +920,13 @@ describe('execute', () => {
         }
 
         // When
-        const req = buildRequest({spec, operationId: 'getMe', parameters: {petId: [1, 2, 3]}})
+        const req = buildRequest({ spec, operationId: 'getMe', parameters: { petId: [1, 2, 3] } })
 
         // Then
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one?petId=1%092%093',
           method: 'GET',
-          headers: { }
+          headers: {}
         })
       })
 
@@ -952,13 +954,13 @@ describe('execute', () => {
         }
 
         // When
-        const req = buildRequest({spec, operationId: 'getMe', parameters: {name: ['john', 'smith']}})
+        const req = buildRequest({ spec, operationId: 'getMe', parameters: { name: ['john', 'smith'] } })
 
         // Then
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one?name=john|smith',
           method: 'GET',
-          headers: { }
+          headers: {}
         })
       })
     })
@@ -1004,8 +1006,8 @@ describe('execute', () => {
                       schema: {
                         type: 'object',
                         properties: {
-                          id: {type: 'integer'},
-                          name: {type: 'string'}
+                          id: { type: 'integer' },
+                          name: { type: 'string' }
                         }
                       }
                     }
@@ -1024,7 +1026,8 @@ describe('execute', () => {
                 id: '123'
               },
               someQuery: 'foo',
-            }})
+            }
+          })
 
 
           expect(req).toEqual({
@@ -1034,31 +1037,31 @@ describe('execute', () => {
               name: 'johny',
               id: '123',
             },
-            headers: { }
+            headers: {}
           })
         })
 
         it('should not add values of body parameters to the URL', function () {
-          const req = buildRequest({spec, operationId: 'postMe', parameters: {petId: 123}})
+          const req = buildRequest({ spec, operationId: 'postMe', parameters: { petId: 123 } })
 
 
           expect(req).toEqual({
             url: 'http://swagger.io/v1/one',
             method: 'POST',
             body: 123,
-            headers: { }
+            headers: {}
           })
         })
 
         it('should generate a request with an empty body parameter', function () {
-          const req = buildRequest({spec, operationId: 'postMe', parameters: {}})
+          const req = buildRequest({ spec, operationId: 'postMe', parameters: {} })
 
 
           expect(req).toEqual({
             url: 'http://swagger.io/v1/one',
             method: 'POST',
             body: undefined,
-            headers: { }
+            headers: {}
           })
         })
       })
@@ -1081,24 +1084,24 @@ describe('execute', () => {
         }
 
         it('should generate a request with an empty body parameter', function () {
-          const req = buildRequest({spec, operationId: 'deleteMe', parameters: {}})
+          const req = buildRequest({ spec, operationId: 'deleteMe', parameters: {} })
 
           expect(req).toEqual({
             url: 'http://swagger.io/v1/one',
             method: 'DELETE',
             body: undefined,
-            headers: { }
+            headers: {}
           })
         })
 
         it('should generate a request with body parameter', function () {
-          const req = buildRequest({spec, operationId: 'deleteMe', parameters: {petId: 123}})
+          const req = buildRequest({ spec, operationId: 'deleteMe', parameters: { petId: 123 } })
 
           expect(req).toEqual({
             url: 'http://swagger.io/v1/one',
             method: 'DELETE',
             body: 123,
-            headers: { }
+            headers: {}
           })
         })
       })
@@ -1123,7 +1126,7 @@ describe('execute', () => {
           }
         }
 
-        const req = buildRequest({spec, operationId: 'deleteMe', parameters: {api_key: 123}})
+        const req = buildRequest({ spec, operationId: 'deleteMe', parameters: { api_key: 123 } })
 
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one',
@@ -1154,7 +1157,7 @@ describe('execute', () => {
           }
         }
 
-        const req = buildRequest({spec, operationId: 'getMe', responseContentType: 'application/json', parameters: {}})
+        const req = buildRequest({ spec, operationId: 'getMe', responseContentType: 'application/json', parameters: {} })
 
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one',
@@ -1186,7 +1189,7 @@ describe('execute', () => {
           }
         }
 
-        const req = buildRequest({spec, operationId: 'getMe', parameters: {id: '123'}})
+        const req = buildRequest({ spec, operationId: 'getMe', parameters: { id: '123' } })
 
         expect(req).toEqual({
           url: 'http://swagger.io/v1/123',
@@ -1211,6 +1214,7 @@ describe('execute', () => {
                     type: 'number'
                   }
                 ],
+              },
               parameters: [
                 {
                   name: 'id',
@@ -1219,12 +1223,11 @@ describe('execute', () => {
                   required: true
                 }
               ],
-              }
             }
           }
         }
 
-        const req = buildRequest({spec, operationId: 'getPetsById', parameters: {id: 123, test: 567}})
+        const req = buildRequest({ spec, operationId: 'getPetsById', parameters: { id: 123, test: 567 } })
 
         expect(req).toEqual({
           url: "http://swagger.io/v1/pet/123?test=567",
@@ -1261,7 +1264,7 @@ describe('execute', () => {
           }
         }
 
-        const req = buildRequest({spec, operationId: 'getPetsById', parameters: {id: 123, test: 567}})
+        const req = buildRequest({ spec, operationId: 'getPetsById', parameters: { id: 123, test: 567 } })
 
         expect(req).toEqual({
           url: "http://swagger.io/v1/pet/123?test=567",
@@ -1289,12 +1292,12 @@ describe('execute', () => {
           }
         }
 
-        const req = buildRequest({spec, operationId: 'deleteMe', parameters: {id: 'foo/bar'}})
+        const req = buildRequest({ spec, operationId: 'deleteMe', parameters: { id: 'foo/bar' } })
 
         expect(req).toEqual({
           url: 'http://swagger.io/v1/foo%2Fbar',
           method: 'DELETE',
-          headers: { }
+          headers: {}
         })
       })
     })
@@ -1319,10 +1322,12 @@ describe('execute', () => {
     }
 
     it('should generate a request with application/x-www-form-urlencoded', function () {
-      const req = buildRequest({spec,
+      const req = buildRequest({
+        spec,
         requestContentType: 'application/x-www-form-urlencoded',
         operationId: 'postMe',
-        parameters: {petId: 'id'}})
+        parameters: { petId: 'id' }
+      })
 
       expect(req).toEqual({
         url: 'http://swagger.io/v1/one',

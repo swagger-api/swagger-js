@@ -49,7 +49,6 @@ export function buildRequest({
   requestInterceptor, responseInterceptor
 }) {
   parameterBuilders = parameterBuilders || PARAMETER_BUILDERS
-
   // Base Template
   let req = {
     url: baseUrl(spec, scheme),
@@ -86,8 +85,11 @@ export function buildRequest({
   if (requestContentType) {
     req.headers['content-type'] = requestContentType
   }
+
   // Add values to request
-  arrayOrEmpty(operation.parameters).forEach((parameter) => {
+  arrayOrEmpty(operation.parameters) // operation parameters
+  .concat(arrayOrEmpty(spec.paths[pathName].parameters)) // path parameters
+  .forEach((parameter) => {
     const builder = parameterBuilders[parameter.in]
     let value
 
@@ -110,10 +112,8 @@ export function buildRequest({
     }
   })
 
-
   // Add securities, which are applicable
   req = applySecurities({request: req, securities, operation, spec})
-
   // Will add the query object into the URL, if it exists
   mergeInQueryOrForm(req)
   return req
