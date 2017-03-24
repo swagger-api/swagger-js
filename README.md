@@ -38,15 +38,15 @@ const Swagger = require('swagger-client')
 
 This lib exposes these functionalities:
 
-1. Static functions for...
-  1. HTTP Client
-  1. Swagger Spec Resolver ( OAS 2.0 )
-  1. TryItOut Executor
-1. A constructor with the methods...
-  1. HTTP Client
-  1. Swagger Spec Resolver ( OAS 2.0 )
-  1. TryItOut Executor
-  1. Tags Interface
+- Static functions for...
+  -  HTTP Client
+  - Swagger Spec Resolver ( OAS 2.0 )
+  - TryItOut Executor
+- A constructor with the methods...
+  - HTTP Client, for convenience
+  - Swagger Spec Resolver ( OAS 2.0 ), which will use `url` or `spec` from the instance
+  - TryItOut Executor, bound to the `http` and `spec` instance properties
+  - Tags Interface, also bound to the instance
 
 HTTP Client
 -----------
@@ -309,22 +309,21 @@ function(response) {
 * Until #971 is resolved, you _must_ apply authorizations on each operation.  Previously you could do this:
 
 ```js
-new Swagger('http://petstore.swagger.io/v2/swagger.json',
-  {
-    authorizations: {
-      my_basic_auth: new PasswordAuthorization('foo', 'bar')
-    }
-  })
+var client = new Swagger('http://petstore.swagger.io/v2/swagger.json', {
+  authorizations: {
+    my_basic_auth: new PasswordAuthorization('foo', 'bar')
+  }
+})
 ```
 
 Pending the above issue, the newer syntax would be...
 
-```
-new Swagger('http://petstore.swagger.io/v2/swagger.json', {
-    authorizations: {
-      my_basic_auth: { username: "foo", password: "bar" }
-    }
-  })
+```javascript
+Swagger('http://petstore.swagger.io/v2/swagger.json', {
+  authorizations: {
+    my_basic_auth: { username: "foo", password: "bar" }
+  }
+}).then( client => ... )
 ```
 
 
