@@ -27,6 +27,7 @@ export const PARAMETER_BUILDERS = {
 // pathName/method or operationId is optional
 export function execute({
   http: userHttp,
+  fetch, // This is legacy
   spec,
   operationId,
   pathName,
@@ -36,7 +37,7 @@ export function execute({
   ...extras
 }) {
   // Provide default fetch implementation
-  userHttp = userHttp || extras.fetch || http // Default to _our_ http
+  userHttp = userHttp || fetch || http // Default to _our_ http
 
   // Prefer pathName/method if it exists
   if (pathName && method) {
