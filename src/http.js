@@ -22,10 +22,10 @@ export default function http(url, request) {
   // the search string, but much easier to manipulate the req.query object
   self.mergeInQueryOrForm(request)
 
+  request.credentials = 'same-origin';
   if (request.requestInterceptor) {
     request = request.requestInterceptor(request) || request
   }
-  request.credentials = 'same-origin';
 
   return fetch(request.url, request).then((res) => {
     return self.serializeRes(res, url, request).then((_res) => {
