@@ -153,7 +153,9 @@ export function headerBuilder({req, parameter, value}) {
 
 // Replace path paramters, with values ( ie: the URL )
 export function pathBuilder({req, value, parameter}) {
-  req.url = req.url.replace(`{${parameter.name}}`, encodeURIComponent(value))
+  const encodedValue = value.toString().replace('%', '%25').replace('/', '%2F').replace('?', '%3F')
+    .replace('#', '%23')
+  req.url = req.url.replace(`{${parameter.name}}`, encodedValue)
 }
 
 // Add a query to the `query` object, which will later be stringified into the URL's search

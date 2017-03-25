@@ -1270,7 +1270,7 @@ describe('execute', () => {
         })
       })
 
-      it('should encode path parameter', function () {
+      it('should encode slashes in a path parameter', function () {
         const spec = {
           host: 'swagger.io',
           basePath: '/v1',
@@ -1293,6 +1293,118 @@ describe('execute', () => {
 
         expect(req).toEqual({
           url: 'http://swagger.io/v1/foo%2Fbar',
+          method: 'DELETE',
+          headers: { }
+        })
+      })
+
+      it('should encode hashtags in a path parameter', function () {
+        const spec = {
+          host: 'swagger.io',
+          basePath: '/v1',
+          paths: {
+            '/{id}': {
+              delete: {
+                operationId: 'deleteMe',
+                parameters: [{
+                  in: 'path',
+                  name: 'id',
+                  type: 'string',
+                  required: true
+                }]
+              }
+            }
+          }
+        }
+
+        const req = buildRequest({spec, operationId: 'deleteMe', parameters: {id: 'foo#bar'}})
+
+        expect(req).toEqual({
+          url: 'http://swagger.io/v1/foo%23bar',
+          method: 'DELETE',
+          headers: { }
+        })
+      })
+
+      it('should encode question marks in a path parameter', function () {
+        const spec = {
+          host: 'swagger.io',
+          basePath: '/v1',
+          paths: {
+            '/{id}': {
+              delete: {
+                operationId: 'deleteMe',
+                parameters: [{
+                  in: 'path',
+                  name: 'id',
+                  type: 'string',
+                  required: true
+                }]
+              }
+            }
+          }
+        }
+
+        const req = buildRequest({spec, operationId: 'deleteMe', parameters: {id: 'foo?bar'}})
+
+        expect(req).toEqual({
+          url: 'http://swagger.io/v1/foo%3Fbar',
+          method: 'DELETE',
+          headers: { }
+        })
+      })
+
+      it('should encode percent signs in a path parameter', function () {
+        const spec = {
+          host: 'swagger.io',
+          basePath: '/v1',
+          paths: {
+            '/{id}': {
+              delete: {
+                operationId: 'deleteMe',
+                parameters: [{
+                  in: 'path',
+                  name: 'id',
+                  type: 'string',
+                  required: true
+                }]
+              }
+            }
+          }
+        }
+
+        const req = buildRequest({spec, operationId: 'deleteMe', parameters: {id: 'foo%bar'}})
+
+        expect(req).toEqual({
+          url: 'http://swagger.io/v1/foo%25bar',
+          method: 'DELETE',
+          headers: { }
+        })
+      })
+
+      it('should not encode colons in a path parameter', function () {
+        const spec = {
+          host: 'swagger.io',
+          basePath: '/v1',
+          paths: {
+            '/{id}': {
+              delete: {
+                operationId: 'deleteMe',
+                parameters: [{
+                  in: 'path',
+                  name: 'id',
+                  type: 'string',
+                  required: true
+                }]
+              }
+            }
+          }
+        }
+
+        const req = buildRequest({spec, operationId: 'deleteMe', parameters: {id: 'foo:bar'}})
+
+        expect(req).toEqual({
+          url: 'http://swagger.io/v1/foo:bar',
           method: 'DELETE',
           headers: { }
         })
