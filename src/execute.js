@@ -1,6 +1,7 @@
 import assign from 'lodash/assign'
 import getIn from 'lodash/get'
 import btoa from 'btoa'
+import url from 'url'
 import http, {mergeInQueryOrForm} from './http'
 import {getOperationRaw, idFromPathMethod} from './helpers'
 
@@ -54,13 +55,13 @@ export function execute({
 export function buildRequest({
   spec, operationId, parameters, securities, requestContentType,
   responseContentType, parameterBuilders, scheme,
-  requestInterceptor, responseInterceptor
+  requestInterceptor, responseInterceptor, contextUrl
 }) {
   parameterBuilders = parameterBuilders || PARAMETER_BUILDERS
-  
+
   // Base Template
   let req = {
-    url: baseUrl(spec, scheme),
+    url: baseUrl({spec, scheme, contextUrl}),
     headers: {
       // This breaks CORSs... removing this line... probably breaks oAuth. Need to address that
       // This also breaks tests
@@ -173,14 +174,16 @@ export function queryBuilder({req, value, parameter}) {
 }
 
 // Compose the baseUrl ( scheme + host + basePath )
-export function baseUrl(spec, scheme) {
+export function baseUrl({spec, scheme, contextUrl = ''}) {
   const {host, basePath, schemes = ['http']} = spec
+
+  const parsedUrl = url.parse(contextUrl)
 
   let applyScheme = ['http', 'https'].indexOf(scheme) > -1 ? scheme : schemes[0]
   applyScheme = applyScheme ? `${applyScheme}:` : ''
 
-  if (host || basePath) {
-    return `${applyScheme}//${host || ''}${basePath || ''}`
+  if (host || basePath || contextUrl) {
+    return `${applyScheme}//${host || parsedUrl.host || ''}${basePath || ''}`
   }
 
   return ''
