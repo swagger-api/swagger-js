@@ -9,7 +9,11 @@ module.exports = deepMerge(
     },
 
     output: {
-      filename: 'bundle.js'
-    }
+      path: path.join(__dirname, 'browser'),
+      library: 'SwaggerClient',
+      libraryTarget: 'umd',
+      filename: 'swagger-client.js'
+    },
+
   }
 )

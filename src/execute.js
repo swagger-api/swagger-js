@@ -1,6 +1,7 @@
 import assign from 'lodash/assign'
 import getIn from 'lodash/get'
 import btoa from 'btoa'
+import url from 'url'
 import http, {mergeInQueryOrForm} from './http'
 import {getOperationRaw, idFromPathMethod} from './helpers'
 
@@ -26,10 +27,18 @@ export const PARAMETER_BUILDERS = {
 // Execute request, with the given operationId and parameters
 // pathName/method or operationId is optional
 export function execute({
-  fetch, spec, operationId, pathName, method, parameters, securities, ...extras
+  http: userHttp,
+  fetch, // This is legacy
+  spec,
+  operationId,
+  pathName,
+  method,
+  parameters,
+  securities,
+  ...extras
 }) {
   // Provide default fetch implementation
-  fetch = fetch || http
+  userHttp = userHttp || fetch || http // Default to _our_ http
 
   // Prefer pathName/method if it exists
   if (pathName && method) {
@@ -39,20 +48,20 @@ export function execute({
   const request = self.buildRequest({spec, operationId, parameters, securities, ...extras})
 
   // Build request and execute it
-  return fetch(request)
+  return userHttp(request)
 }
 
 // Build a request, which can be handled by the `http.js` implementation.
 export function buildRequest({
   spec, operationId, parameters, securities, requestContentType,
   responseContentType, parameterBuilders, scheme,
-  requestInterceptor, responseInterceptor
+  requestInterceptor, responseInterceptor, contextUrl
 }) {
   parameterBuilders = parameterBuilders || PARAMETER_BUILDERS
 
   // Base Template
   let req = {
-    url: baseUrl(spec, scheme),
+    url: baseUrl({spec, scheme, contextUrl}),
       // send cookies, see https://github.com/github/fetch#sending-cookies
     credentials: 'same-origin',
     headers: {
@@ -88,34 +97,35 @@ export function buildRequest({
   if (requestContentType) {
     req.headers['content-type'] = requestContentType
   }
+
   // Add values to request
-  arrayOrEmpty(operation.parameters).forEach((parameter) => {
-    const builder = parameterBuilders[parameter.in]
-    let value
+  arrayOrEmpty(operation.parameters) // operation parameters
+    .concat(arrayOrEmpty(spec.paths[pathName].parameters)) // path parameters
+    .forEach((parameter) => {
+      const builder = parameterBuilders[parameter.in]
+      let value
 
-    if(parameter.in === 'body' && parameter.schema && parameter.schema.properties) {
-      value = parameters
-    }
+      if(parameter.in === 'body' && parameter.schema && parameter.schema.properties) {
+        value = parameters
+      }
 
-    value = parameter && parameter.name && parameters[parameter.name]
+      value = parameter && parameter.name && parameters[parameter.name]
 
-    if (typeof parameter.default !== 'undefined' && typeof value === 'undefined') {
-      value = parameter.default
-    }
+      if (typeof parameter.default !== 'undefined' && typeof value === 'undefined') {
+        value = parameter.default
+      }
 
-    if (typeof value === 'undefined' && parameter.required && !parameter.allowEmptyValue) {
-      throw new Error(`Required parameter ${parameter.name} is not provided`)
-    }
+      if (typeof value === 'undefined' && parameter.required && !parameter.allowEmptyValue) {
+        throw new Error(`Required parameter ${parameter.name} is not provided`)
+      }
 
-    if (builder) {
-      builder({req, parameter, value, operation, spec})
-    }
-  })
-
+      if (builder) {
+        builder({req, parameter, value, operation, spec})
+      }
+    })
 
   // Add securities, which are applicable
   req = applySecurities({request: req, securities, operation, spec})
-
   // Will add the query object into the URL, if it exists
   mergeInQueryOrForm(req)
   return req
@@ -166,14 +176,16 @@ export function queryBuilder({req, value, parameter}) {
 }
 
 // Compose the baseUrl ( scheme + host + basePath )
-export function baseUrl(spec, scheme) {
+export function baseUrl({spec, scheme, contextUrl = ''}) {
   const {host, basePath, schemes = ['http']} = spec
+
+  const parsedUrl = url.parse(contextUrl)
 
   let applyScheme = ['http', 'https'].indexOf(scheme) > -1 ? scheme : schemes[0]
   applyScheme = applyScheme ? `${applyScheme}:` : ''
 
-  if (host || basePath) {
-    return `${applyScheme}//${host || ''}${basePath || ''}`
+  if (host || basePath || contextUrl) {
+    return `${applyScheme}//${host || parsedUrl.host || ''}${basePath || ''}`
   }
 
   return ''

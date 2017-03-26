@@ -60,6 +60,9 @@ export function eachOperation(spec, cb, find) {
   // Iterate over the spec, collecting operations
   for (const pathName in paths) {
     for (const method in paths[pathName]) {
+      if (method.toUpperCase() === 'PARAMETERS') { 
+        continue
+      }
       const operation = paths[pathName][method]
       if (!operation || typeof operation !== 'object') {
         continue
