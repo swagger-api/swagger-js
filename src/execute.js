@@ -62,6 +62,8 @@ export function buildRequest({
   // Base Template
   let req = {
     url: baseUrl({spec, scheme, contextUrl}),
+      // send cookies, see https://github.com/github/fetch#sending-cookies
+    credentials: 'same-origin',
     headers: {
       // This breaks CORSs... removing this line... probably breaks oAuth. Need to address that
       // This also breaks tests
