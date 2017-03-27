@@ -334,11 +334,11 @@ Pending the above issue, the newer syntax would be...
 ```javascript
 Swagger('http://petstore.swagger.io/v2/swagger.json', {
   authorizations: {
-    // Type of auth, is inferred from specification provided 
-    my_basic_auth: ['fooUser', 'fooPassword'],
+    // Type of auth, is inferred from the specification provided 
+    my_basic_auth: { username: 'foo', password: 'bar' },
     my_query_auth: 'foo', 
     my_header_auth: 'foo', 
-    my_oauth2_token: 'abcabc', 
+    my_oauth2_token: { token: { access_token: 'abcabc' } },
     cookie_auth: null, // !!Not implemented
   }
 }).then( client => ... )
