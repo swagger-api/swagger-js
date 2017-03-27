@@ -32,7 +32,6 @@ describe('execute', () => {
       expect(req).toEqual({
         method: 'GET',
         url: 'http://swagger.io/v1/one',
-        credentials: 'same-origin',
         headers: {},
       })
     })
@@ -50,7 +49,6 @@ describe('execute', () => {
       // Then
       expect(req).toEqual({
         url: 'http://swagger.io/v1',
-        credentials: 'same-origin',
         headers: { }
       })
     })
@@ -68,7 +66,6 @@ describe('execute', () => {
       // Then
       expect(req).toEqual({
         url: 'http://foo.com:8081/v1',
-        credentials: 'same-origin',
         headers: { }
       })
     })
@@ -94,7 +91,6 @@ describe('execute', () => {
       expect(req).toEqual({
         url: 'http://swagger.io/v1/one',
         method: 'GET',
-        credentials: 'same-origin',
         headers: { }
       })
     })
@@ -125,7 +121,6 @@ describe('execute', () => {
       expect(spy.calls[0].arguments[0]).toEqual({
         method: 'GET',
         url: 'https://swagger.io/one',
-        credentials: 'same-origin',
         headers: { }
       })
     })
@@ -152,7 +147,6 @@ describe('execute', () => {
       expect(req).toEqual({
         url: 'http://swagger.io/v1/one?petId=123',
         method: 'GET',
-        credentials: 'same-origin',
         headers: { }
       })
     })
@@ -183,7 +177,6 @@ describe('execute', () => {
       expect(req).toEqual({
         url: 'http://swagger.io/v1/one?fields=%5Barticles%5D%3Dtitle',
         method: 'GET',
-        credentials: 'same-origin',
         headers: { }
       })
     })
@@ -214,7 +207,6 @@ describe('execute', () => {
       expect(req).toEqual({
         url: 'http://swagger.io/v1/one?petId=true',
         method: 'GET',
-        credentials: 'same-origin',
         headers: { }
       })
     })
@@ -243,7 +235,6 @@ describe('execute', () => {
       expect(req).toEqual({
         url: 'http://swagger.io/v1/one?petId=3',
         method: 'GET',
-        credentials: 'same-origin',
         headers: { }
       })
     })
@@ -357,7 +348,6 @@ describe('execute', () => {
       expect(req).toEqual({
         url: 'http://swagger.io/v1/pets/findByStatus?status=',
         method: 'GET',
-        credentials: 'same-origin',
         headers: { }
       })
     })
@@ -400,7 +390,6 @@ describe('execute', () => {
       // Then
       expect(req).toEqual({
         url: 'http://swagger.io/one',
-        credentials: 'same-origin',
         headers: {
           accept: 'application/josh',
         },
@@ -436,7 +425,6 @@ describe('execute', () => {
       expect(req).toEqual({
         url: 'http://swagger.io/v1/one?username=fred&password=meyer',
         method: 'GET',
-        credentials: 'same-origin',
         headers: { }
       })
     })
@@ -454,7 +442,6 @@ describe('execute', () => {
       // Then
       expect(req).toEqual({
         url: 'http://swagger.io/one',
-        credentials: 'same-origin',
         headers: {
           'content-type': 'application/josh',
         },
@@ -525,7 +512,6 @@ describe('execute', () => {
       expect(req).toEqual({
         url: 'whoop://swagger.io/api/one/2?question=answer',
         method: 'PUT',
-        credentials: 'same-origin',
         headers: {
           head: 'justTheHead',
         },
@@ -757,7 +743,6 @@ describe('execute', () => {
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one?petId=a%2Cb',
           method: 'GET',
-          credentials: 'same-origin',
           headers: { }
         })
       })
@@ -803,7 +788,6 @@ describe('execute', () => {
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one?ids=1,2,3&the%20names=a%2Cb|mary',
           method: 'GET',
-          credentials: 'same-origin',
           headers: { }
         })
       })
@@ -838,7 +822,6 @@ describe('execute', () => {
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one?petId=1,2,3',
           method: 'GET',
-          credentials: 'same-origin',
           headers: { }
         })
       })
@@ -873,7 +856,6 @@ describe('execute', () => {
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one?petId=1%202%203',
           method: 'GET',
-          credentials: 'same-origin',
           headers: { }
         })
       })
@@ -908,7 +890,6 @@ describe('execute', () => {
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one?petId=1&petId=2&petId=3',
           method: 'GET',
-          credentials: 'same-origin',
           headers: { }
         })
       })
@@ -943,7 +924,6 @@ describe('execute', () => {
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one?petId=1%092%093',
           method: 'GET',
-          credentials: 'same-origin',
           headers: { }
         })
       })
@@ -978,7 +958,6 @@ describe('execute', () => {
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one?name=john|smith',
           method: 'GET',
-          credentials: 'same-origin',
           headers: { }
         })
       })
@@ -1055,7 +1034,6 @@ describe('execute', () => {
               name: 'johny',
               id: '123',
             },
-            credentials: 'same-origin',
             headers: { }
           })
         })
@@ -1068,7 +1046,6 @@ describe('execute', () => {
             url: 'http://swagger.io/v1/one',
             method: 'POST',
             body: 123,
-            credentials: 'same-origin',
             headers: { }
           })
         })
@@ -1081,7 +1058,6 @@ describe('execute', () => {
             url: 'http://swagger.io/v1/one',
             method: 'POST',
             body: undefined,
-            credentials: 'same-origin',
             headers: { }
           })
         })
@@ -1111,7 +1087,6 @@ describe('execute', () => {
             url: 'http://swagger.io/v1/one',
             method: 'DELETE',
             body: undefined,
-            credentials: 'same-origin',
             headers: { }
           })
         })
@@ -1123,7 +1098,6 @@ describe('execute', () => {
             url: 'http://swagger.io/v1/one',
             method: 'DELETE',
             body: 123,
-            credentials: 'same-origin',
             headers: { }
           })
         })
@@ -1154,7 +1128,6 @@ describe('execute', () => {
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one',
           method: 'DELETE',
-          credentials: 'same-origin',
           headers: {
             api_key: 123,
           }
@@ -1186,7 +1159,6 @@ describe('execute', () => {
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one',
           method: 'GET',
-          credentials: 'same-origin',
           headers: {
             accept: 'application/json',
           }
@@ -1219,7 +1191,6 @@ describe('execute', () => {
         expect(req).toEqual({
           url: 'http://swagger.io/v1/123',
           method: 'GET',
-          credentials: 'same-origin',
           headers: {
           }
         })
@@ -1323,7 +1294,6 @@ describe('execute', () => {
         expect(req).toEqual({
           url: 'http://swagger.io/v1/foo%2Fbar',
           method: 'DELETE',
-          credentials: 'same-origin',
           headers: { }
         })
       })
@@ -1360,7 +1330,6 @@ describe('execute', () => {
         headers: {
           'content-type': 'application/x-www-form-urlencoded',
         },
-        credentials: 'same-origin',
         body: 'petId=id'
       })
     })
