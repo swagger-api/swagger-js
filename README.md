@@ -10,9 +10,9 @@ Swagger-JS
 For the older version of swagger-js, refer to the [*2.x branch*](https://github.com/swagger-api/swagger-js/tree/2.x).
 
 
-### Note:
-The npm package is called `swagger-client` and the GitHub repository `swagger-js`.
-We'll be consolidating that soon. Just giving you the heads up. You may see reference to both names.
+## Note:
+The npm package is called `swagger-client` and the GitHub repository is `swagger-js`.
+We'll be consolidating that soon. Just giving you the heads up. You may see references to both names.
 
 ### Usage
 
@@ -129,7 +129,7 @@ const req = Swagger.buildRequest(...params)
 ```
 
 Constructor and methods
-------
+-----------------------
 
 Resolve the spec and expose some methods that use the resolved spec:
 
@@ -230,7 +230,7 @@ The new swagger-js is _almost_ a drop-in replacement for the 2.x series _dependi
 
 * Before you start, please verify the minimum requirements to use the library.  They have changed.
 
-### Promises.
+#### Promises.
 The new swagger-js, uses promises and removes the older style of callbacks.
 As such creating an instance of SwaggerClient will return a promise.
 
@@ -251,7 +251,7 @@ SwaggerClient({...}).then(client => {
 })
 ```
 
-### Tags interface
+#### Tags interface
 Note, you **cannot** use tags directly on the Swagger client.  You _must_ reference them through the `client.apis` object.  While supported in the 2.x series, this was not the most common method of addressing different operations assigned to a tag.
 
 
@@ -269,7 +269,7 @@ client.apis.pet
   .findPetById(...)
 ```
 
-### Promises in executors
+#### Promises in executors
 * You _must_ use promises rather than success and error callbacks.  If your old code looked like this:
 
 ```js
@@ -306,25 +306,45 @@ function(response) {
 }
 ```
 
-* Until #971 is resolved, you _must_ apply authorizations on each operation.  Previously you could do this:
+#### Authorizations
 
+Previously you would add authorizations ( tokens, keys, etc ) as such...
 ```js
 var client = new Swagger('http://petstore.swagger.io/v2/swagger.json', {
   authorizations: {
-    my_basic_auth: new PasswordAuthorization('foo', 'bar')
+    my_query_auth: new ApiKeyAuthorization('my-query', 'bar', 'query'),
+    my_header_auth: new ApiKeyAuthorization('My-Header', 'bar', 'header'),
+    my_basic_auth: new PasswordAuthorization('foo', 'bar'),
+    cookie_: new CookieAuthorization('one=two')
   }
 })
 ```
 
-Pending the above issue, the newer syntax would be...
+Or like this...
+```js
+var client = new Swagger('http://petstore.swagger.io/v2/swagger.json', ...)
+// Basic Auth
+client.clientAuthorizations.add('my_query_auth', new ApiKeyAuthorization('my-query', 'bar', 'query'))
+client.clientAuthorizations.add('my_header_auth', new ApiKeyAuthorization('My-Header', 'bar', 'header'))
+client.clientAuthorizations.add('my_basic_auth', new PasswordAuthorization('foo', 'bar'))
+client.clientAuthorizations.add('cookie', new CookieAuthorization('one=two'))
+```
 
+Pending the above issue, the newer syntax would be...
 ```javascript
 Swagger('http://petstore.swagger.io/v2/swagger.json', {
   authorizations: {
-    my_basic_auth: { username: "foo", password: "bar" }
+    // Type of auth, is inferred from specification provided 
+    my_basic_auth: ['fooUser', 'fooPassword'],
+    my_query_auth: 'foo', 
+    my_header_auth: 'foo', 
+    my_oauth2_token: 'abcabc', 
+    cookie_auth: null, // !!Not implemented
   }
 }).then( client => ... )
 ```
+
+## NOTE: Cookie authentication is not implemented yet
 
 
 ### Graveyard
