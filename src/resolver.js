@@ -20,7 +20,11 @@ export function clearCache() {
   plugins.refs.clearCache()
 }
 
-export default function resolve({http, fetch, spec, baseDoc, mode, allowMetaPatches = true}) {
+export default function resolve({http, fetch, spec, url, baseDoc, mode, allowMetaPatches = true}) {
+  // @TODO Swagger-UI uses baseDoc instead of url, this is to allow both
+  // need to fix and pick one.
+  baseDoc = baseDoc || url
+
   // Provide a default fetch implementation
   // TODO fetch should be removed, and http used instead
   http = fetch || http || Http
