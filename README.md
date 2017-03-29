@@ -17,8 +17,12 @@ We'll be consolidating that soon. Just giving you the heads up. You may see refe
 ### Usage
 
 ##### Prerequisites
-- Node 4.x
-- npm 2.x
+Runtime: 
+- browser: es5 compatible. IE11+ 
+- node v4.x.x
+Building
+- node v6.x.x 
+
 
 ##### Download via npm
 
@@ -87,7 +91,7 @@ Swagger.http({
 
 ```
 
-Swagger Spec Resolver
+Swagger Specification Resolver
 ---------------------
 
 `Swagger.resolve({url, spec, http})` resolves `$ref`s (JSON-Refs) with the objects they point to.
@@ -99,6 +103,7 @@ Swagger.resolve({url, spec, http}).then((resolved) => {
   resolved.spec   // the resolved spec
 })
 ```
+> This is done automatically if you use the constructor/methods
 
 TryItOut Executor
 -----------------
@@ -222,187 +227,12 @@ npm run lint       # run lint
 npm run build      # package to release
 ```
 
-### Migration from 2.x
+# Migration from 2.x
 
-There are major changes from the 2.x release.  Please look at the [release notes](https://github.com/swagger-api/swagger-js/releases/tag/v3.0.2) for the breaking changes.
-
-The new swagger-js is _almost_ a drop-in replacement for the 2.x series _depending_ on your style of integration.  For migrating from a 2.x to 3.x implementation, it is important to understand the changes per the release notes.  Below is a quick-start for integrating with the 3.x version.
-
-* Before you start, please verify the minimum requirements to use the library.  They have changed.
-
-#### Promises.
-The new swagger-js, uses promises and removes the older style of callbacks.
-As such creating an instance of SwaggerClient will return a promise.
-
-If you did this:
-
-```js
-var client = new SwaggerClient({ success, failure, ...})
-function success() {
-  client.pet.addPet(...) 
-}
-```
-
-You must now do this:
-
-```js
-SwaggerClient({...}).then(client => {
-  client.pet.addPet(...) 
-})
-```
-
-#### Tags interface
-Note, you **cannot** use tags directly on the Swagger client.  You _must_ reference them through the `client.apis` object.  While supported in the 2.x series, this was not the most common method of addressing different operations assigned to a tag.
-
-
-If you did this:
-
-```js
-client.pet
-  .findPetById(...)
-```
-
-You must now do this:
-
-```js
-client.apis.pet 
-  .findPetById(...)
-```
-
-#### Promises in executors
-* You _must_ use promises rather than success and error callbacks.  If your old code looked like this:
-
-```js
-client.apis.pet
-  .findPetById(
-    {petId: 3},
-    function(data) { /* success callback */},
-    function(error) { /* error callback */ });
-```
-
-you now would call it like such:
-
-```js
-client.apis.pet.findPetById({petId: 3})
-  .then(function(data) { /* success callback */},
-  .catch(function(error) {/* error callback */ }));
-```
-
-* The _parsed_ response body object in response payloads has a new key name.  If you previously did this:
-
-```js
-function(response) {
-  // print out the parsed object
-  console.log(response.obj);
-}
-```
-
-You now do this:
-
-```js
-function(response) {
-  // print out the parsed object
-  console.log(response.body);
-}
-```
-
-#### Authorizations
-
-Previously you would add authorizations ( tokens, keys, etc ) as such...
-```js
-var client = new Swagger('http://petstore.swagger.io/v2/swagger.json', {
-  authorizations: {
-    my_query_auth: new ApiKeyAuthorization('my-query', 'bar', 'query'),
-    my_header_auth: new ApiKeyAuthorization('My-Header', 'bar', 'header'),
-    my_basic_auth: new PasswordAuthorization('foo', 'bar'),
-    cookie_: new CookieAuthorization('one=two')
-  }
-})
-```
-
-Or like this...
-```js
-var client = new Swagger('http://petstore.swagger.io/v2/swagger.json', ...)
-// Basic Auth
-client.clientAuthorizations.add('my_query_auth', new ApiKeyAuthorization('my-query', 'bar', 'query'))
-client.clientAuthorizations.add('my_header_auth', new ApiKeyAuthorization('My-Header', 'bar', 'header'))
-client.clientAuthorizations.add('my_basic_auth', new PasswordAuthorization('foo', 'bar'))
-client.clientAuthorizations.add('cookie', new CookieAuthorization('one=two'))
-```
-
-Pending the above issue, the newer syntax would be...
-```javascript
-Swagger('http://petstore.swagger.io/v2/swagger.json', {
-  authorizations: {
-    // Type of auth, is inferred from the specification provided 
-    my_basic_auth: { username: 'foo', password: 'bar' },
-    my_query_auth: 'foo', 
-    my_header_auth: 'foo', 
-    my_oauth2_token: { token: { access_token: 'abcabc' } },
-    cookie_auth: null, // !!Not implemented
-  }
-}).then( client => ... )
-```
-
-## NOTE: Cookie authentication is not implemented yet
-
+There has been a complete overhaul of the codebase. 
+For notes about how to migrate coming from 2.x,
+please see [Migration from 2.x](docs/MIGRATION_2_X.md)
 
 ### Graveyard
-During the course of the refactor some items were left behind. Some of these may be resuscitated as needed. But for the most part we can consider them dead
 
-- client.apisArray
-  - client.apisArray[i].operationsArray
-- client.modelsArray
-- client.authorizationScheme
-- client.basePath
-- client.build
-- client.buildFrom1_1Spec
-- client.buildFrom1_2Spec
-- client.buildFromSpec
-- client.clientAuthorizations
-- client.convertInfo
-- client.debug
-- client.defaultErrorCallback
-- client.defaultSuccessCallback
-- client.enableCookies
-- client.fail
-- client.failure
-- client.finish
-- client.help
-- client.host
-- client.idFromOp
-- client.info
-- client.initialize
-- client.isBuilt
-- client.isValid
-- client.modelPropertyMacro
-- client.models
-- client.modelsArray
-- client.options
-- client.parameterMacro
-- client.parseUri
-- client.progress
-- client.resourceCount
-- client.sampleModels
-- client.selfReflect
-- client.setConsolidatedModels
-- client.supportedSubmitMethods
-- client.swaggerRequestHeaders
-- client.tagFromLabel
-- client.title
-- client.useJQuery
-- client.jqueryAjaxCach
-
-- client.apis[tag]
-  - .apis
-  - .asCurl
-  - .description
-  - .externalDocs
-  - .help
-  - .label
-  - .name
-  - .operation
-  - .operations
-  - .operationsArray
-  - .path
-  - .tag
+For features known to be missing from 3.x please see [the Graveyard](docs/GRAVEYARD.md)
