@@ -17,12 +17,11 @@ We'll be consolidating that soon. Just giving you the heads up. You may see refe
 ### Usage
 
 ##### Prerequisites
-Runtime: 
-- browser: es5 compatible. IE11+ 
-- node v4.x.x
-Building
-- node v6.x.x 
-
+- Runtime: 
+  - browser: es5 compatible. IE11+ 
+  - node v4.x.x
+- Building
+  - node v6.x.x 
 
 ##### Download via npm
 
@@ -130,7 +129,7 @@ const params = {
 const res = Swagger.execute({...params})
 
 // You can also generate just the request ( without executing... )
-const req = Swagger.buildRequest(...params)
+const req = Swagger.buildRequest({...params})
 ```
 
 Constructor and methods
