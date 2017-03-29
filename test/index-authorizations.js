@@ -17,6 +17,7 @@ describe('(instance) #execute', function () {
       client.execute({http, operationId: 'getPets'})
       expect(http.calls.length).toEqual(1)
       expect(http.calls[0].arguments[0]).toEqual({
+        credentials: 'same-origin',
         headers: {},
         method: 'GET',
         url: '/pet'
@@ -50,6 +51,7 @@ describe('(instance) #execute', function () {
       client.execute({http, operationId: 'getPets'})
       expect(http.calls.length).toEqual(1)
       expect(http.calls[0].arguments[0]).toEqual({
+        credentials: 'same-origin',
         headers: {
           authorization: 'Basic Zm9vOmJhcg=='
         },
@@ -87,6 +89,7 @@ describe('(instance) #execute', function () {
       client.execute({http, operationId: 'getPets'})
       expect(http.calls.length).toEqual(1)
       expect(http.calls[0].arguments[0]).toEqual({
+        credentials: 'same-origin',
         headers: {
           petKey: 'fooBar'
         },
@@ -124,6 +127,7 @@ describe('(instance) #execute', function () {
       client.execute({http, operationId: 'getPets'})
       expect(http.calls.length).toEqual(1)
       expect(http.calls[0].arguments[0]).toEqual({
+        credentials: 'same-origin',
         headers: { },
         method: 'GET',
         url: '/pet?petKey=barFoo'
@@ -161,6 +165,7 @@ describe('(instance) #execute', function () {
       client.execute({http, operationId: 'getPets'})
       expect(http.calls.length).toEqual(1)
       expect(http.calls[0].arguments[0]).toEqual({
+        credentials: 'same-origin',
         headers: {
           authorization: 'Bearer one two'
         },
@@ -198,6 +203,7 @@ describe('(instance) #execute', function () {
       client.execute({http, operationId: 'getPets'})
       expect(http.calls.length).toEqual(1)
       expect(http.calls[0].arguments[0]).toEqual({
+        credentials: 'same-origin',
         headers: {
           Auth: 'yup'
         },
@@ -207,4 +213,3 @@ describe('(instance) #execute', function () {
     })
   })
 })
-
