@@ -60,7 +60,7 @@ export default class ContextTree {
       const children = branch.children
 
       if (!children[token] && ensureExists) {
-        children[token] = createNode()
+        children[token] = createNode(null, branch)
       }
 
       return children[token]
@@ -79,7 +79,7 @@ function createNode(value, parent) {
 function updateNode(node, value, parent) {
   node.value = value || {}
   node.protoValue = parent
-    ? Object.assign(Object.create(parent.protoValue), node.value)
+    ? {...parent.protoValue, ...node.value}
     : node.value
 
   Object.keys(node.children).forEach((prop) => {
