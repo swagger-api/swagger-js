@@ -4,14 +4,17 @@ import {normalizeSwagger} from './helpers'
 
 export function makeFetchJSON(http) {
   return (docPath) => {
-    return http({
+    return Promise.resolve(http({
       url: docPath,
       loadSpec: true,
       headers: {
         Accept: 'application/json'
       }
+    }))
+    .then((res) => {
+      // To allow overriding with spies
+      return res.body || res
     })
-    .then(res => res.body)
   }
 }
 
