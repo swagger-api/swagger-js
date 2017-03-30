@@ -1,6 +1,7 @@
+/* global Headers */
 import expect from 'expect'
 import xmock from 'xmock'
-import fetchMock from 'fetch-mock'
+import fetch from 'isomorphic-fetch'
 import http, {serializeHeaders, mergeInQueryOrForm, encodeFormOrQuery, serializeRes} from '../src/http'
 
 describe('http', () => {
@@ -115,7 +116,7 @@ describe('http', () => {
     })
   })
 
-  describe.skip('encodeFormOrQuery', function () {
+  describe('encodeFormOrQuery', function () {
     it('should parse a query object into a query string', function () {
       const req = {
         query: {
@@ -144,8 +145,10 @@ describe('http', () => {
     })
 
     it('should handle custom array serilization', function () {
+      xapp = xmock()
+      xapp.get(() => ({}))
+
       // Given
-      fetchMock.get('*', {hello: 'world'})
       const req = {
         url: 'http://example.com',
         method: 'GET',
@@ -159,10 +162,10 @@ describe('http', () => {
         }
       }
 
-      return http('http://example.com', req).then((response) => {
+      return http(req).then((response) => {
         expect(response.url).toEqual('http://example.com?anotherOne=one,two&evenMore=hi&bar=1%202%203')
         expect(response.status).toEqual(200)
-      }).then(fetchMock.restore)
+      })
     })
   })
 
@@ -172,15 +175,13 @@ describe('http', () => {
       headers.append('Authorization', 'Basic hoop-la')
       headers.append('Authorization', 'Advanced hoop-la')
 
-      const mockRes = new Request('http://swagger.io', {headers})
-
-      const res = fetchMock.mock('http://swagger.io', mockRes)
+      xapp.get('http://swagger.io', {})
 
       fetch('http://swagger.io').then((_res) => {
         return serializeRes(_res, 'https://swagger.io')
       }).then((resSerialize) => {
         expect(resSerialize.headers).toEqual({authorization: ['Basic hoop-la', 'Advanced hoop-la']})
-      }).then(fetchMock.restore)
+      })
     })
   })
 })
