@@ -175,7 +175,7 @@ describe('http', () => {
       const res = fetchMock.mock('http://swagger.io', {headers})
 
       return fetch('http://swagger.io').then((_res) => {
-        return serializeRes(_res, 'https://swagger.io', {})
+        return serializeRes(_res, 'https://swagger.io')
       }).then((resSerialize) => {
         expect(resSerialize.headers).toEqual({authorization: ['Basic hoop-la', 'Advanced hoop-la']})
       }).then(fetchMock.restore)
@@ -190,7 +190,7 @@ describe('http', () => {
       const res = fetchMock.mock('http://swagger.io', {body, headers})
 
       return fetch('http://swagger.io').then((_res) => {
-        return serializeRes(_res, 'https://swagger.io', {})
+        return serializeRes(_res, 'https://swagger.io')
       }).then((resSerialize) => {
         expect(resSerialize.data).toBe(resSerialize.text)
         if (typeof Blob !== 'undefined') {
@@ -212,7 +212,7 @@ describe('http', () => {
       const res = fetchMock.mock('http://swagger.io', {body, headers})
 
       return fetch('http://swagger.io').then((_res) => {
-        return serializeRes(_res, 'https://swagger.io', {})
+        return serializeRes(_res, 'https://swagger.io')
       }).then((resSerialize) => {
         expect(resSerialize.data).toBe(resSerialize.text)
         expect(resSerialize.data).toBe(body)

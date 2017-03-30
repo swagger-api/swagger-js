@@ -54,7 +54,7 @@ function shouldDownloadAsText(contentType) {
 }
 
 // Serialize the response, returns a promise with headers and the body part of the hash
-export function serializeRes(oriRes, url, {loadSpec = false}) {
+export function serializeRes(oriRes, url, {loadSpec = false} = {}) {
   const res = {
     ok: oriRes.ok,
     url: oriRes.url || url,
