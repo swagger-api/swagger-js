@@ -168,9 +168,9 @@ describe('http', () => {
 
   describe('serializeRes', function () {
     it('should serialize fetch-like response and call serializeHeaders', function () {
-      const headers = new Headers()
-      headers.append('Authorization', 'Basic hoop-la')
-      headers.append('Authorization', 'Advanced hoop-la')
+      const headers = {
+        Authorization: ['Basic hoop-la', 'Advanced hoop-la']
+      }
 
       const res = fetchMock.mock('http://swagger.io', {headers})
 
