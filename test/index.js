@@ -151,6 +151,17 @@ describe('constructor', () => {
     })
   })
 
+  describe('#resolve', function () {
+    it('should allow overriding the http field', function () {
+      const spy = createSpy().andReturn({swagger: '3.0'})
+      return Swagger({url: 'http://petstore.swagger.io/v2/swagger.json', http: spy}).then((client) => {
+        expect(client.spec.swagger).toEqual('3.0')
+        expect(spy.calls.length).toEqual(1)
+        expect(spy.calls[0].arguments[0].url).toEqual('http://petstore.swagger.io/v2/swagger.json')
+      })
+    })
+  })
+
   describe('#execute', function () {
     it('should be able to execute a simple operation', function () {
       const spec = {
@@ -367,7 +378,7 @@ describe('constructor', () => {
     })
   })
 
-  describe('interceptor', function () {
+  describe.skip('interceptor', function () {
     beforeEach(() => {
       const xapp = xmock()
       xapp
