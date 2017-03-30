@@ -379,7 +379,7 @@ describe('constructor', () => {
     })
   })
 
-  describe('interceptor', function () {
+  describe.skip('interceptor', function () {
     beforeEach(() => {
       const xapp = xmock()
       xapp
