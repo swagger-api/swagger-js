@@ -62,7 +62,6 @@ Swagger.prototype = {
 
   resolve() {
     return Swagger.resolve({
-      http: this.http,
       spec: this.spec,
       url: this.url,
       allowMetaPatches: this.allowMetaPatches

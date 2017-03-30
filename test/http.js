@@ -115,7 +115,7 @@ describe('http', () => {
     })
   })
 
-  describe.skip('encodeFormOrQuery', function () {
+  describe('encodeFormOrQuery', function () {
     it('should parse a query object into a query string', function () {
       const req = {
         query: {
