@@ -65,7 +65,10 @@ export function serializeRes(oriRes, url, {loadSpec = false}) {
 
   const useText = loadSpec || shouldDownloadAsText(res.headers['content-type'])
 
-  return oriRes[useText ? 'text' : 'blob']().then((body) => {
+  // Note: Response.blob not implemented in node-fetch 1.  Use buffer instead.
+  const getBody = useText ? oriRes.text : (oriRes.blob || oriRes.buffer)
+
+  return getBody.call(oriRes).then((body) => {
     res.text = body
     res.data = body
 
