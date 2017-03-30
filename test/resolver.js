@@ -51,7 +51,7 @@ describe('resolver', () => {
     xmock().get(url, (req, res) => res.send({one: 1}))
 
     // When
-    return Swagger.resolve({url, allowMetaPatches: false})
+    return Swagger.resolve({baseDoc: url, allowMetaPatches: false})
       .then(handleResponse)
 
     // Then

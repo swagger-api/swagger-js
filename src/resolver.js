@@ -20,7 +20,11 @@ export function clearCache() {
   plugins.refs.clearCache()
 }
 
-export default function resolve({http, fetch, spec, url, mode, allowMetaPatches = true}) {
+export default function resolve({http, fetch, spec, url, baseDoc, mode, allowMetaPatches = true}) {
+  // @TODO Swagger-UI uses baseDoc instead of url, this is to allow both
+  // need to fix and pick one.
+  baseDoc = baseDoc || url
+
   // Provide a default fetch implementation
   // TODO fetch should be removed, and http used instead
   http = fetch || http || Http
@@ -28,11 +32,11 @@ export default function resolve({http, fetch, spec, url, mode, allowMetaPatches 
   if (!spec) {
     // We create a spec, that has a single $ref to the url
     // This is how we'll resolve it based on a URL only
-    spec = {$ref: url}
+    spec = {$ref: baseDoc}
   }
   else {
     // Store the spec into the url provided, to cache it
-    plugins.refs.docCache[url] = spec
+    plugins.refs.docCache[baseDoc] = spec
   }
 
   // Build a json-fetcher ( ie: give it a URL and get json out )
@@ -47,7 +51,7 @@ export default function resolve({http, fetch, spec, url, mode, allowMetaPatches 
   // mapSpec is where the hard work happens, see https://github.com/swagger-api/specmap for more details
   return mapSpec({
     spec,
-    context: {baseDoc: url},
+    context: {baseDoc},
     plugins: plugs,
     allowMetaPatches // allows adding .meta patches, which include adding `$$ref`s to the spec
   }).then(normalizeSwagger)

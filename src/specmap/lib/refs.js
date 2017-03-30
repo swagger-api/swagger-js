@@ -104,7 +104,7 @@ const plugin = {
     }
 
     const patch = lib.replace(parent, promOrVal, {$$ref: ref})
-    if (basePath) {
+    if (basePath && basePath !== baseDoc) {
       return [patch, lib.context(parent, {baseDoc: basePath})]
     }
 
