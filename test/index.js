@@ -169,6 +169,7 @@ describe('constructor', () => {
         expect(http.calls[0].arguments[0]).toEqual({
           headers: {},
           method: 'GET',
+          credentials: 'same-origin',
           url: '/pet'
         })
       })
@@ -206,6 +207,7 @@ describe('constructor', () => {
           headers: {
             authorization: 'Basic Zm9vOmJhcg=='
           },
+          credentials: 'same-origin',
           method: 'GET',
           url: '/pet'
         })
@@ -243,6 +245,7 @@ describe('constructor', () => {
           headers: {
             petKey: 'fooBar'
           },
+          credentials: 'same-origin',
           method: 'GET',
           url: '/pet'
         })
@@ -279,6 +282,7 @@ describe('constructor', () => {
         expect(http.calls[0].arguments[0]).toEqual({
           headers: { },
           method: 'GET',
+          credentials: 'same-origin',
           url: '/pet?petKey=barFoo'
         })
       })
@@ -317,6 +321,7 @@ describe('constructor', () => {
           headers: {
             authorization: 'Bearer one two'
           },
+          credentials: 'same-origin',
           method: 'GET',
           url: '/pet'
         })
@@ -354,6 +359,7 @@ describe('constructor', () => {
           headers: {
             Auth: 'yup'
           },
+          credentials: 'same-origin',
           method: 'GET',
           url: '/pet'
         })
