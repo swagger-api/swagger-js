@@ -144,7 +144,6 @@ export function normalizeSwagger(parsedSpec) {
           toBeInherit.parameters = pathParameters
           inheritsList.push(toBeInherit)
         }
-        
 
         if (inheritsList.length !== 0) {
           for (const inherits of inheritsList) {
@@ -153,7 +152,8 @@ export function normalizeSwagger(parsedSpec) {
             for (const inhName in inherits) {
               if (!operation[inhName]) {
                 operation[inhName] = inherits[inhName]
-              } else if(inhName === "parameters") {
+              }
+              else if(inhName === "parameters") {
                 var exists = false
                 for(const item in inherits[inhName]) {
 
@@ -169,9 +169,9 @@ export function normalizeSwagger(parsedSpec) {
                 }
               }
             }
-
           }
         }
+
       }
     }
   }
