@@ -355,6 +355,61 @@ describe('helpers', function () {
           }
         }})
       })
+
+      it('should not override operation parameters with the same name', function () {
+        const spec = {spec: {
+          paths: {
+            '/two': {
+              parameters: [
+                {
+                  name: 'user',
+                  in: 'path'
+                }
+              ],
+              get: {
+                parameters: [
+                  {
+                    name: 'user',
+                    in: 'query'
+                  },
+                  {
+                    name: 'test',
+                    in: 'query'
+                  }
+                ]
+              }
+            }
+          }
+        }}
+
+        const resultSpec = normalizeSwagger(spec)
+
+        expect(resultSpec).toEqual({spec: {
+          paths: {
+            '/two': {
+              parameters: [
+                {
+                  name: 'user',
+                  in: 'path'
+                }
+              ],
+              get: {
+                parameters: [
+                  {
+                    name: 'user',
+                    in: 'query'
+                  },
+                  {
+                    name: 'test',
+                    in: 'query'
+                  }
+                ]
+              }
+            }
+          }
+        }})
+      })
+
     })
   })
 })

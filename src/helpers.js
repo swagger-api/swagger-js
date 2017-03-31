@@ -154,11 +154,22 @@ export function normalizeSwagger(parsedSpec) {
               if (!operation[inhName]) {
                 operation[inhName] = inherits[inhName]
               } else if(inhName === "parameters") {
+                var exists = false
                 for(const item in inherits[inhName]) {
-                  operation[inhName].push(inherits[inhName][item])
+
+                  for(const param in operation[inhName]) {
+                    if(operation[inhName][param].name === inherits[inhName][item].name) {
+                      exists = true
+                    }
+                  }
+
+                  if(!exists) {
+                    operation[inhName].push(inherits[inhName][item])
+                  }
                 }
               }
             }
+
           }
         }
       }
