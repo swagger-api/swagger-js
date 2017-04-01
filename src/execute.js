@@ -62,6 +62,7 @@ export function buildRequest({
   // Base Template
   let req = {
     url: baseUrl({spec, scheme, contextUrl}),
+    credentials: 'same-origin',
     headers: {
       // This breaks CORSs... removing this line... probably breaks oAuth. Need to address that
       // This also breaks tests

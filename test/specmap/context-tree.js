@@ -37,6 +37,13 @@ describe('ContextTree', function () {
     expect(tree.get(['one', 'two']).root).toEqual('rooty')
   })
 
+  it('should retrieve root after setting a sibling', function () {
+    const tree = new ContextTree()
+    tree.set([], {baseDoc: 'rooty'})
+    tree.set(['one', 'two', 'four'], {two: 2})
+    expect(tree.get(['one', 'three', 'four']).baseDoc).toEqual('rooty')
+  })
+
   it('should allow setting the root from contructor and get without arg, returns root', function () {
     const tree = new ContextTree({two: 2})
     const res = tree.get()

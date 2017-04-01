@@ -15,7 +15,8 @@
     "deps_check_dir": ".deps_check"
   },
   "scripts": {
-    "build": "NODE_ENV=production webpack -p --config ./webpack.config.js && NODE_ENV=production webpack -p --config ./webpack.bundle.config.js ",
+    "build": "NODE_ENV=production webpack -p --config ./webpack.config.js",
+    "build-bundle": "NODE_ENV=production webpack -p --config ./webpack.bundle.config.js",
     "watch": "webpack --config webpack.config.js --watch --progress",
     "test": "NODE_ENV=test node --debug ./node_modules/.bin/_mocha --recursive --compilers js:babel-core/register",
     "inspector": "node-debug",
