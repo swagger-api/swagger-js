@@ -1,5 +1,5 @@
 import fetch from 'isomorphic-fetch'
-import url from 'url'
+import Url from 'url'
 import lib from '../lib'
 import createError from '../lib/create-error'
 
@@ -10,8 +10,9 @@ const JSONRefError = createError('JSONRefError', function (message, extra, oriEr
   Object.assign(this, extra || {})
 })
 
-const docCache = {}
 const specmapRefs = new WeakMap()
+const fallbackDocCache = {}
+const mod = {}
 
 
 // =========================
@@ -42,6 +43,10 @@ const plugin = {
   plugin: (ref, key, fullPath, specmap) => {
     const parent = fullPath.slice(0, -1)
     const baseDoc = specmap.getContext(fullPath).baseDoc
+
+    let {docCache, fetchJSON} = specmap
+    fetchJSON = fetchJSON || mod.fetchJSON
+    docCache = docCache || mod.docCache
 
     if (typeof ref !== 'string') {
       return new JSONRefError('$ref: must be a string (JSON-Ref)', {
@@ -89,7 +94,7 @@ const plugin = {
       }
     }
     else {
-      promOrVal = extractFromDoc(basePath, pointer).catch((e) => {
+      promOrVal = extractFromDoc({docCache, fetchJSON, url: basePath, pointer}).catch((e) => {
         throw wrapError(e, {
           pointer,
           $ref: ref,
@@ -115,8 +120,9 @@ const plugin = {
 }
 
 
-const mod = Object.assign(plugin, {
-  docCache,
+Object.assign(mod, plugin, {
+  docCache: fallbackDocCache,
+  fetchJSON: fallbackFetchJSON,
   absoluteify,
   clearCache,
   JSONRefError,
@@ -124,7 +130,6 @@ const mod = Object.assign(plugin, {
   getDoc,
   split,
   extractFromDoc,
-  fetchJSON,
   extract,
   jsonPointerToArray,
   unescapeJsonPointerToken
@@ -146,7 +151,7 @@ function absoluteify(path, basePath) {
     if (!basePath) {
       throw new JSONRefError(`Tried to resolve a relative URL, without having a basePath. path: '${path}' basePath: '${basePath}'`)
     }
-    return url.resolve(basePath, path)
+    return Url.resolve(basePath, path)
   }
   return path
 }
@@ -172,13 +177,16 @@ function split(ref) {
 
 /**
  * Extracts a pointer from its document.
- * @param  {String} docPath the absolute document URL.
- * @param  {String} pointer the pointer whose value is to be extracted.
- * @return {Promise}        a promise of the pointer value.
+ * @param  {Object} p           object params
+ * @param  {String} p.url       the absolute document URL.
+ * @param  {String} p.pointer   the pointer whose value is to be extracted.
+ * @param  {String} p.docCache  the object used to cache responses.
+ * @param  {String} p.fetchJSON the pointer whose value is to be extracted.
+ * @return {Promise}            a promise of the pointer value.
  * @api public
  */
-function extractFromDoc(docPath, pointer) {
-  return getDoc(docPath).then(doc => extract(pointer, doc))
+function extractFromDoc({url, pointer, docCache, fetchJSON}) {
+  return getDoc(url, {fetchJSON, docCache}).then(doc => extract(pointer, doc))
 }
 
 /**
@@ -188,34 +196,38 @@ function extractFromDoc(docPath, pointer) {
  */
 function clearCache(item) {
   if (typeof item !== 'undefined') {
-    delete docCache[item]
+    delete mod.docCache[item]
   }
   else {
-    Object.keys(docCache).forEach((key) => {
-      delete docCache[key]
+    Object.keys(mod.docCache).forEach((key) => {
+      delete mod.docCache[key]
     })
   }
 }
 
 /**
  * Fetches and caches a document.
- * @param  {String} docPath the absolute URL of the document.
- * @return {Promise}        a promise of the document content.
+ * @param  {String}   url   the absolute URL of the document.
+ * @param  {Object}   [o]           options
+ * @param  {Function} [o.fetchJSON] fetch a json document
+ * @param  {Object}   [o.docCache]  cache of documents
+ * @return {Promise}  a promise of the document content.
  * @api public
  */
-function getDoc(docPath) {
-  const val = docCache[docPath]
+function getDoc(url, {fetchJSON, docCache} = {}) {
+  fetchJSON = fetchJSON || mod.fetchJSON
+  docCache = docCache || mod.docCache
+
+  const val = docCache[url]
   if (val) {
     return lib.isPromise(val) ? val : Promise.resolve(val)
   }
 
-  // NOTE: we need to use `mod.fetchJSON` in order to be able to overwrite it.
-  // Any tips on how to make this cleaner, please ping!
-  docCache[docPath] = mod.fetchJSON(docPath).then((doc) => {
-    docCache[docPath] = doc
+  docCache[url] = fetchJSON(url).then((doc) => {
+    docCache[url] = doc
     return doc
   })
-  return docCache[docPath]
+  return docCache[url]
 }
 
 /**
@@ -224,7 +236,7 @@ function getDoc(docPath) {
  * @return {Promise}        a promise of the document content.
  * @api public
  */
-function fetchJSON(docPath) {
+function fallbackFetchJSON(docPath) {
   return fetch(docPath, {headers: {Accept: 'application/json'}, loadSpec: true}).then(res => res.json())
 }
 

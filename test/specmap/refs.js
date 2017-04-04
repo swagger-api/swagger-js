@@ -154,7 +154,7 @@ describe('refs', function () {
       refs.docCache['some-path'] = {
         one: '1'
       }
-      return refs.extractFromDoc('some-path', '/one')
+      return refs.extractFromDoc({url: 'some-path', pointer: '/one'})
         .then((val) => {
           expect(val).toEqual('1')
         })
@@ -165,7 +165,7 @@ describe('refs', function () {
         one: '1'
       }
 
-      return refs.extractFromDoc('some-path', '/two', '#/two')
+      return refs.extractFromDoc({url: 'some-path', pointer: '/two'})
         .then((val) => {
           throw new Error('Should have failed')
         })
