@@ -168,54 +168,18 @@ describe('http', () => {
 
   describe('serializeRes', function () {
     it('should serialize fetch-like response and call serializeHeaders', function () {
-      const headers = {
-        Authorization: ['Basic hoop-la', 'Advanced hoop-la']
-      }
+      const headers = new Headers()
+      headers.append('Authorization', 'Basic hoop-la')
+      headers.append('Authorization', 'Advanced hoop-la')
 
-      const res = fetchMock.mock('http://swagger.io', {headers})
+      const mockRes = new Request('http://swagger.io', {headers})
 
-      return fetch('http://swagger.io').then((_res) => {
+      const res = fetchMock.mock('http://swagger.io', mockRes)
+
+      fetch('http://swagger.io').then((_res) => {
         return serializeRes(_res, 'https://swagger.io')
       }).then((resSerialize) => {
         expect(resSerialize.headers).toEqual({authorization: ['Basic hoop-la', 'Advanced hoop-la']})
-      }).then(fetchMock.restore)
-    })
-
-    it('should set .text and .data to body Blob or Buffer for binary response', function () {
-      const headers = {
-        'Content-Type': 'application/octet-stream'
-      }
-
-      const body = 'body data'
-      const res = fetchMock.mock('http://swagger.io', {body, headers})
-
-      return fetch('http://swagger.io').then((_res) => {
-        return serializeRes(_res, 'https://swagger.io')
-      }).then((resSerialize) => {
-        expect(resSerialize.data).toBe(resSerialize.text)
-        if (typeof Blob !== 'undefined') {
-          expect(resSerialize.data).toBeA(Blob)
-        }
-        else {
-          expect(resSerialize.data).toBeA(Buffer)
-          expect(resSerialize.data).toEqual(new Buffer(body))
-        }
-      }).then(fetchMock.restore)
-    })
-
-    it('should set .text and .data to body string for text response', function () {
-      const headers = {
-        'Content-Type': 'application/json'
-      }
-
-      const body = 'body data'
-      const res = fetchMock.mock('http://swagger.io', {body, headers})
-
-      return fetch('http://swagger.io').then((_res) => {
-        return serializeRes(_res, 'https://swagger.io')
-      }).then((resSerialize) => {
-        expect(resSerialize.data).toBe(resSerialize.text)
-        expect(resSerialize.data).toBe(body)
       }).then(fetchMock.restore)
     })
   })
