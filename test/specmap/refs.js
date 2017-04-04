@@ -101,7 +101,8 @@ describe('refs', function () {
       })
     })
 
-    it('should parse YAML docs into JSON', function () {
+    // There is no yaml parser in specmap... only in swagger-js.
+    it.skip('should parse YAML docs into JSON', function () {
       const url = 'http://example.com/common.yaml'
 
       xapp.get(url, (req, res, next) => {
