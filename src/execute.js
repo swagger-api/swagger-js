@@ -186,8 +186,8 @@ export function baseUrl({spec, scheme, contextUrl = ''}) {
   if (host || basePath || contextUrl) {
     let res = `${applyScheme}//${host || parsedUrl.host || ''}${basePath || ''}`
 
-    // If last character is "/", trim it off
-    return res[res.length - 1] === "/" ? res.slice(0, -1) : res
+    // If last character is '/', trim it off
+    return res[res.length - 1] === '/' ? res.slice(0, -1) : res
   }
 
   return ''
