@@ -145,7 +145,6 @@ export function normalizeSwagger(parsedSpec) {
           inheritsList.push(toBeInherit)
         }
 
-
         if (inheritsList.length !== 0) {
           for (const inherits of inheritsList) {
             // Add inheritsList only if aperation does not already have any consumes
@@ -154,9 +153,25 @@ export function normalizeSwagger(parsedSpec) {
               if (!operation[inhName]) {
                 operation[inhName] = inherits[inhName]
               }
+              else if (inhName === "parameters") {
+                var exists = false
+                for (const item in inherits[inhName]) {
+
+                  for (const param in operation[inhName]) {
+                    if (operation[inhName][param].name === inherits[inhName][item].name) {
+                      exists = true
+                    }
+                  }
+
+                  if (!exists) {
+                    operation[inhName].push(inherits[inhName][item])
+                  }
+                }
+              }
             }
           }
         }
+
       }
     }
   }
