@@ -1161,6 +1161,62 @@ describe('execute', () => {
         })
       })
 
+      it('should process a delete request without headers of value undefined', function () {
+        const spec = {
+          host: 'swagger.io',
+          basePath: '/v1',
+          paths: {
+            '/one': {
+              delete: {
+                operationId: 'deleteMe',
+                parameters: [{
+                  in: 'header',
+                  name: 'api_key',
+                  type: 'integer'
+                }]
+              }
+            }
+          }
+        }
+
+        const req = buildRequest({spec, operationId: 'deleteMe', parameters: {api_key: undefined}})
+
+        expect(req).toEqual({
+          url: 'http://swagger.io/v1/one',
+          method: 'DELETE',
+          credentials: 'same-origin',
+          headers: {}
+        })
+      })
+
+      it('should process a delete request without headers wich are not provided', function () {
+        const spec = {
+          host: 'swagger.io',
+          basePath: '/v1',
+          paths: {
+            '/one': {
+              delete: {
+                operationId: 'deleteMe',
+                parameters: [{
+                  in: 'header',
+                  name: 'api_key',
+                  type: 'integer'
+                }]
+              }
+            }
+          }
+        }
+
+        const req = buildRequest({spec, operationId: 'deleteMe', parameters: {}})
+
+        expect(req).toEqual({
+          url: 'http://swagger.io/v1/one',
+          method: 'DELETE',
+          credentials: 'same-origin',
+          headers: {}
+        })
+      })
+
       it('should accept the format', function () {
         const spec = {
           host: 'swagger.io',
