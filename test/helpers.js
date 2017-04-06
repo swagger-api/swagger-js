@@ -254,14 +254,18 @@ describe('helpers', function () {
     })
 
     describe('parameters', function () {
-      it('should not overwrite parameters from path when exists in operation', function () {
+      it('should add parameters from path to operation without overwriting', function () {
         const spec = {spec: {
           paths: {
             '/two': {
               parameters: [
                 {
                   name: 'user',
-                  in: 'query'
+                  in: 'path'
+                },
+                {
+                  name: 'blah',
+                  in: 'path'
                 }
               ],
               get: {
@@ -284,7 +288,11 @@ describe('helpers', function () {
               parameters: [
                 {
                   name: 'user',
-                  in: 'query'
+                  in: 'path'
+                },
+                {
+                  name: 'blah',
+                  in: 'path'
                 }
               ],
               get: {
@@ -292,6 +300,14 @@ describe('helpers', function () {
                   {
                     name: 'test',
                     in: 'query'
+                  },
+                  {
+                    name: 'user',
+                    in: 'path'
+                  },
+                  {
+                    name: 'blah',
+                    in: 'path'
                   }
                 ],
               }
@@ -307,7 +323,7 @@ describe('helpers', function () {
               parameters: [
                 {
                   name: 'user',
-                  in: 'query'
+                  in: 'path'
                 }
               ],
               get: {
@@ -324,13 +340,67 @@ describe('helpers', function () {
               parameters: [
                 {
                   name: 'user',
-                  in: 'query'
+                  in: 'path'
                 }
               ],
               get: {
                 parameters: [
                   {
                     name: 'user',
+                    in: 'path'
+                  }
+                ]
+              }
+            }
+          }
+        }})
+      })
+
+      it('should not override operation parameters with the same name', function () {
+        const spec = {spec: {
+          paths: {
+            '/two': {
+              parameters: [
+                {
+                  name: 'user',
+                  in: 'path'
+                }
+              ],
+              get: {
+                parameters: [
+                  {
+                    name: 'user',
+                    in: 'query'
+                  },
+                  {
+                    name: 'test',
+                    in: 'query'
+                  }
+                ]
+              }
+            }
+          }
+        }}
+
+        const resultSpec = normalizeSwagger(spec)
+
+        expect(resultSpec).toEqual({spec: {
+          paths: {
+            '/two': {
+              parameters: [
+                {
+                  name: 'user',
+                  in: 'path'
+                }
+              ],
+              get: {
+                parameters: [
+                  {
+                    name: 'user',
+                    in: 'query'
+                  },
+                  {
+                    name: 'test',
                     in: 'query'
                   }
                 ]
@@ -339,6 +409,7 @@ describe('helpers', function () {
           }
         }})
       })
+
     })
   })
 })
