@@ -1396,6 +1396,17 @@ describe('execute', () => {
       expect(res).toEqual("http://foo.com:8080/bar")
     })
 
+    it('should trim the trailing slash when basePath is "/"', () => {
+      let res = baseUrl({
+        spec: {
+          host: "foo.com:8080",
+          basePath: "/"
+        }
+      })
+
+      expect(res).toEqual("http://foo.com:8080")
+    })
+
     it('should infer the host and port based on the contextUrl', () => {
       let res = baseUrl({
         spec: {
