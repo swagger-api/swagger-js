@@ -254,24 +254,12 @@ describe('helpers', function () {
     })
 
     describe('parameters', function () {
-      it('should not overwrite parameters from path when exists in operation', function () {
+      it('should add parameters from path when no parameters in operation', function () {
         const spec = {spec: {
           paths: {
             '/two': {
-              parameters: [
-                {
-                  name: 'user',
-                  in: 'query'
-                }
-              ],
-              get: {
-                parameters: [
-                  {
-                    name: 'test',
-                    in: 'query'
-                  }
-                ],
-              }
+              parameters: [{name: 'a', in: 'path'}],
+              get: {}
             }
           }
         }}
@@ -281,36 +269,28 @@ describe('helpers', function () {
         expect(resultSpec).toEqual({spec: {
           paths: {
             '/two': {
-              parameters: [
-                {
-                  name: 'user',
-                  in: 'query'
-                }
-              ],
+              parameters: [{name: 'a', in: 'path'}],
               get: {
-                parameters: [
-                  {
-                    name: 'test',
-                    in: 'query'
-                  }
-                ],
+                parameters: [{name: 'a', in: 'path'}]
               }
             }
           }
         }})
       })
 
-      it('should add parameters from path when no parameters in operation', function () {
+      it('should add parameters from path but not override parameters in operation', function () {
         const spec = {spec: {
           paths: {
             '/two': {
               parameters: [
-                {
-                  name: 'user',
-                  in: 'query'
-                }
+                {name: 'a', in: 'path'},
+                {name: 'b', in: 'path'}
               ],
               get: {
+                parameters: [
+                  {name: 'a', in: 'query'},
+                  {name: 'c', in: 'query'}
+                ]
               }
             }
           }
@@ -322,17 +302,14 @@ describe('helpers', function () {
           paths: {
             '/two': {
               parameters: [
-                {
-                  name: 'user',
-                  in: 'query'
-                }
+                {name: 'a', in: 'path'},
+                {name: 'b', in: 'path'}
               ],
               get: {
                 parameters: [
-                  {
-                    name: 'user',
-                    in: 'query'
-                  }
+                  {name: 'a', in: 'query'},
+                  {name: 'c', in: 'query'},
+                  {name: 'b', in: 'path'}
                 ]
               }
             }
