@@ -254,80 +254,12 @@ describe('helpers', function () {
     })
 
     describe('parameters', function () {
-      it('should add parameters from path to operation without overwriting', function () {
-        const spec = {spec: {
-          paths: {
-            '/two': {
-              parameters: [
-                {
-                  name: 'user',
-                  in: 'path'
-                },
-                {
-                  name: 'blah',
-                  in: 'path'
-                }
-              ],
-              get: {
-                parameters: [
-                  {
-                    name: 'test',
-                    in: 'query'
-                  }
-                ],
-              }
-            }
-          }
-        }}
-
-        const resultSpec = normalizeSwagger(spec)
-
-        expect(resultSpec).toEqual({spec: {
-          paths: {
-            '/two': {
-              parameters: [
-                {
-                  name: 'user',
-                  in: 'path'
-                },
-                {
-                  name: 'blah',
-                  in: 'path'
-                }
-              ],
-              get: {
-                parameters: [
-                  {
-                    name: 'test',
-                    in: 'query'
-                  },
-                  {
-                    name: 'user',
-                    in: 'path'
-                  },
-                  {
-                    name: 'blah',
-                    in: 'path'
-                  }
-                ],
-              }
-            }
-          }
-        }})
-      })
-
       it('should add parameters from path when no parameters in operation', function () {
         const spec = {spec: {
           paths: {
             '/two': {
-              parameters: [
-                {
-                  name: 'user',
-                  in: 'path'
-                }
-              ],
-              get: {
-              }
+              parameters: [{name: 'a', in: 'path'}],
+              get: {}
             }
           }
         }}
@@ -337,45 +269,27 @@ describe('helpers', function () {
         expect(resultSpec).toEqual({spec: {
           paths: {
             '/two': {
-              parameters: [
-                {
-                  name: 'user',
-                  in: 'path'
-                }
-              ],
+              parameters: [{name: 'a', in: 'path'}],
               get: {
-                parameters: [
-                  {
-                    name: 'user',
-                    in: 'path'
-                  }
-                ]
+                parameters: [{name: 'a', in: 'path'}]
               }
             }
           }
         }})
       })
 
-      it('should not override operation parameters with the same name', function () {
+      it('should add parameters from path but not override parameters in operation', function () {
         const spec = {spec: {
           paths: {
             '/two': {
               parameters: [
-                {
-                  name: 'user',
-                  in: 'path'
-                }
+                {name: 'a', in: 'path'},
+                {name: 'b', in: 'path'}
               ],
               get: {
                 parameters: [
-                  {
-                    name: 'user',
-                    in: 'query'
-                  },
-                  {
-                    name: 'test',
-                    in: 'query'
-                  }
+                  {name: 'a', in: 'query'},
+                  {name: 'c', in: 'query'}
                 ]
               }
             }
@@ -388,28 +302,20 @@ describe('helpers', function () {
           paths: {
             '/two': {
               parameters: [
-                {
-                  name: 'user',
-                  in: 'path'
-                }
+                {name: 'a', in: 'path'},
+                {name: 'b', in: 'path'}
               ],
               get: {
                 parameters: [
-                  {
-                    name: 'user',
-                    in: 'query'
-                  },
-                  {
-                    name: 'test',
-                    in: 'query'
-                  }
+                  {name: 'a', in: 'query'},
+                  {name: 'c', in: 'query'},
+                  {name: 'b', in: 'path'}
                 ]
               }
             }
           }
         }})
       })
-
     })
   })
 })

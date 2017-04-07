@@ -60,7 +60,7 @@ export function eachOperation(spec, cb, find) {
   // Iterate over the spec, collecting operations
   for (const pathName in paths) {
     for (const method in paths[pathName]) {
-      if (method.toUpperCase() === 'PARAMETERS') { 
+      if (method.toUpperCase() === 'PARAMETERS') {
         continue
       }
       const operation = paths[pathName][method]
@@ -145,33 +145,26 @@ export function normalizeSwagger(parsedSpec) {
           inheritsList.push(toBeInherit)
         }
 
-        if (inheritsList.length !== 0) {
+        if (inheritsList.length) {
           for (const inherits of inheritsList) {
-            // Add inheritsList only if aperation does not already have any consumes
-            // produces or securities
-            for (const inhName in inherits) {
-              if (!operation[inhName]) {
-                operation[inhName] = inherits[inhName]
+            for (const inheritName in inherits) {
+              if (!operation[inheritName]) {
+                operation[inheritName] = inherits[inheritName]
               }
-              else if (inhName === "parameters") {
-                var exists = false
-                for (const item in inherits[inhName]) {
-
-                  for (const param in operation[inhName]) {
-                    if (operation[inhName][param].name === inherits[inhName][item].name) {
-                      exists = true
-                    }
-                  }
+              else if (inheritName === 'parameters') {
+                for (const param of inherits[inheritName]) {
+                  const exists = operation[inheritName].some((opParam) => {
+                    return opParam.name === param.name
+                  })
 
                   if (!exists) {
-                    operation[inhName].push(inherits[inhName][item])
+                    operation[inheritName].push(param)
                   }
                 }
               }
             }
           }
         }
-
       }
     }
   }
