@@ -150,7 +150,9 @@ export function formDataBuilder({req, value, parameter}) {
 // Add a header to the request
 export function headerBuilder({req, parameter, value}) {
   req.headers = req.headers || {}
-  req.headers[parameter.name] = value
+  if (typeof value !== 'undefined') {
+    req.headers[parameter.name] = value
+  }
 }
 
 // Replace path paramters, with values ( ie: the URL )
