@@ -1,0 +1,10 @@
+swagger: '2.0'
+
+paths:
+  /test:
+    get:
+      operationId: tryMe
+      parameters: []
+      responses:
+        200:
+          description: well done

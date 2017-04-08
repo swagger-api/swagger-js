@@ -2,6 +2,7 @@ import cloneDeep from 'lodash/cloneDeep'
 import assign from 'lodash/assign'
 import Http, {makeHttp, serializeRes, serializeHeaders} from './http'
 import Resolver, {clearCache} from './resolver'
+import url from 'url'
 import {makeApisTagOperation} from './interfaces'
 import {execute, buildRequest, PARAMETER_BUILDERS} from './execute'
 
@@ -36,7 +37,6 @@ function Swagger(url, opts = {}) {
       if (!this.disableInterfaces) {
         assign(this, Swagger.makeApisTagOperation(this))
       }
-
       return this
     })
 
@@ -52,6 +52,8 @@ Swagger.prototype = {
   http: Http,
 
   execute(argHash) {
+    this.applyDefaults()
+
     return Swagger.execute({
       spec: this.spec,
       http: this.http.bind(this),
@@ -71,5 +73,22 @@ Swagger.prototype = {
       this.errors = obj.errors
       return this
     })
+  }
+}
+
+Swagger.prototype.applyDefaults = function() {
+  var spec = this.spec
+  var specUrl = this.url
+  if(specUrl && specUrl.startsWith('http')) {
+    var parsed = url.parse(specUrl)
+    if(!spec.host) {
+      spec.host = parsed.host
+    }
+    if(!spec.schemes) {
+      spec.schemes = [parsed.protocol.replace(':','')]
+    }
+    if(!spec.basePath) {
+      spec.basePath = '/'
+    }
   }
 }
