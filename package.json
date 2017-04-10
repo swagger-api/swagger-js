@@ -53,13 +53,11 @@
     "json-loader": "^0.5.4",
     "license-checker": "^8.0.3",
     "mocha": "^2.4.5",
+    "node-inspector": "0.12.8",
     "traverse": "^0.6.6",
     "webpack": "^2.2.1",
     "webpack-bundle-size-analyzer": "^2.2.0",
     "xmock": "^0.3.0"
-  },
-  "optionalDependencies": {
-    "node-inspector": "0.12.8"
   },
   "dependencies": {
     "babel-runtime": "^6.23.0",
