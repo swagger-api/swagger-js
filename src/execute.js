@@ -108,10 +108,14 @@ export function buildRequest({
         value = parameters
       }
 
-      value = parameter && parameter.name && parameters[parameter.name]
+      value = (parameter && parameter.name && parameters[parameter.name]) || value
 
       if (typeof parameter.default !== 'undefined' && typeof value === 'undefined') {
         value = parameter.default
+      }
+
+      if (parameter.in === 'body' && typeof value === 'object') {
+        value = JSON.stringify(value)
       }
 
       if (typeof value === 'undefined' && parameter.required && !parameter.allowEmptyValue) {
