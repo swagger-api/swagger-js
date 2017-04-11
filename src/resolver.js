@@ -11,7 +11,9 @@ export function makeFetchJSON(http) {
         Accept: 'application/json'
       }
     })
-    .then(res => res.body)
+    .then((res) => {
+      return res.body
+    })
   }
 }
 
@@ -30,29 +32,29 @@ export default function resolve({http, fetch, spec, url, baseDoc, mode, allowMet
   http = fetch || http || Http
 
   if (!spec) {
-    // We create a spec, that has a single $ref to the url
-    // This is how we'll resolve it based on a URL only
-    spec = {$ref: baseDoc}
-  }
-  else {
-    // Store the spec into the url provided, to cache it
-    plugins.refs.docCache[baseDoc] = spec
+    return makeFetchJSON(http)(baseDoc).then(doResolve)
   }
 
-  // Build a json-fetcher ( ie: give it a URL and get json out )
-  plugins.refs.fetchJSON = makeFetchJSON(http)
+  return doResolve(spec)
 
-  const plugs = [plugins.refs]
+  function doResolve(_spec) {
+    plugins.refs.docCache[baseDoc] = _spec
 
-  if (mode !== 'strict') {
-    plugs.push(plugins.allOf)
+    // Build a json-fetcher ( ie: give it a URL and get json out )
+    plugins.refs.fetchJSON = makeFetchJSON(http)
+
+    const plugs = [plugins.refs]
+
+    if (mode !== 'strict') {
+      plugs.push(plugins.allOf)
+    }
+
+    // mapSpec is where the hard work happens, see https://github.com/swagger-api/specmap for more details
+    return mapSpec({
+      spec: _spec,
+      context: {baseDoc},
+      plugins: plugs,
+      allowMetaPatches // allows adding .meta patches, which include adding `$$ref`s to the spec
+    }).then(normalizeSwagger)
   }
-
-  // mapSpec is where the hard work happens, see https://github.com/swagger-api/specmap for more details
-  return mapSpec({
-    spec,
-    context: {baseDoc},
-    plugins: plugs,
-    allowMetaPatches // allows adding .meta patches, which include adding `$$ref`s to the spec
-  }).then(normalizeSwagger)
 }

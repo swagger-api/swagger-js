@@ -13,7 +13,7 @@ describe('constructor', () => {
   })
 
   it('should return an instance, without "new"', function (cb) {
-    Swagger().then((instance) => {
+    Swagger({spec: {}}).then((instance) => {
       expect(instance).toBeA(Swagger)
       cb()
     })
@@ -94,6 +94,21 @@ describe('constructor', () => {
   })
 
   describe('#http', function () {
+    it('should throw if fetch error', function (cb) {
+      const xapp = xmock()
+      xapp.get('http://petstore.swagger.io/404', (req, res) => {
+        res.status(404)
+        res.send('not found')
+      })
+
+      new Swagger({url: 'http://petstore.swagger.io/404'})
+        .catch((err) => {
+          expect(err.status).toBe(404)
+          expect(err.message).toBe('Not Found')
+          cb()
+        })
+    })
+
     it('should serialize the response', function () {
       // Given
       require('isomorphic-fetch') // To ensure global.Headers

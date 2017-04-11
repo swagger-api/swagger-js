@@ -11,7 +11,7 @@ export const self = {
 
 // Handles fetch-like syntax and the case where there is only one object passed-in
 // (which will have the URL as a property). Also serilizes the response.
-export default function http(url, request={}) {
+export default function http(url, request = {}) {
   if (typeof url === 'object') {
     request = url
     url = request.url
@@ -30,13 +30,18 @@ export default function http(url, request={}) {
 
   // for content-type=multipart\/form-data remove content-type from request before fetch
   // so that correct one with `boundary` is set
-  let contentType = request.headers["content-type"] || request.headers["Content-Type"]
+  const contentType = request.headers['content-type'] || request.headers['Content-Type']
   if (/multipart\/form-data/i.test(contentType)) {
     delete request.headers['content-type']
     delete request.headers['Content-Type']
   }
 
   return fetch(request.url, request).then((res) => {
+    if (!res.ok) {
+      const error = new Error(res.statusText)
+      error.statusCode = error.status = res.status
+      throw error
+    }
     return self.serializeRes(res, url, request).then((_res) => {
       if (request.responseInterceptor) {
         _res = request.responseInterceptor(_res) || _res
@@ -178,7 +183,7 @@ export function mergeInQueryOrForm(req = {}) {
       return isFile(form[key].value)
     })
 
-    let contentType = req.headers["content-type"] || req.headers["Content-Type"]
+    const contentType = req.headers['content-type'] || req.headers['Content-Type']
 
     if (hasFile || /multipart\/form-data/i.test(contentType)) {
       const FormData = require('isomorphic-form-data') // eslint-disable-line global-require
