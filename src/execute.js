@@ -93,10 +93,6 @@ export function buildRequest({
     req.headers.accept = responseContentType
   }
 
-  // if (requestContentType) {
-  //   req.headers['content-type'] = requestContentType
-  // }
-
   // Add values to request
   arrayOrEmpty(operation.parameters) // operation parameters
     .concat(arrayOrEmpty(spec.paths[pathName].parameters)) // path parameters
