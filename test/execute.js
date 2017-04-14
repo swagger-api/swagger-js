@@ -536,7 +536,7 @@ describe('execute', () => {
     })
   })
 
-  it('should pass through the parameters object as the value if parameter is in the body', function () {
+  it('should use the whole parameters object as the parameter value if parameter is in the body', function () {
     const spec = {
       host: 'swagger.io',
       paths: {
