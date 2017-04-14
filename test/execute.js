@@ -460,7 +460,7 @@ describe('execute', () => {
       })
     })
 
-    it('should not add content-type with no form-data or body param', function () {
+    it('should add content-type multipart/form-data when param type is file and no other sources of consumes', function () {
       // Given
       const spec = {
         host: 'swagger.io',
