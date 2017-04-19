@@ -102,7 +102,7 @@ describe('baseUrl', () => {
     expect(res).toEqual("https://example.com:9090")
   })
 
-  it('should default to the correct scheme based on the spec', () => {
+  it('should default to HTTP scheme based on the contextUrl', () => {
     const res = baseUrl({
       spec: {
         host: 'foo.com:8080'
@@ -111,5 +111,16 @@ describe('baseUrl', () => {
     })
 
     expect(res).toEqual("http://foo.com:8080")
+  })
+
+  it('should default to HTTPS scheme based on the contextUrl', () => {
+    const res = baseUrl({
+      spec: {
+        host: 'foo.com:8080'
+      },
+      contextUrl: "https://example.com:9090/hello/swagger.json"
+    })
+
+    expect(res).toEqual("https://foo.com:8080")
   })
 })
