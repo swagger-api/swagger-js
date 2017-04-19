@@ -93,10 +93,6 @@ export function buildRequest({
     req.headers.accept = responseContentType
   }
 
-  if (requestContentType) {
-    req.headers['content-type'] = requestContentType
-  }
-
   // Add values to request
   arrayOrEmpty(operation.parameters) // operation parameters
     .concat(arrayOrEmpty(spec.paths[pathName].parameters)) // path parameters
@@ -127,6 +123,20 @@ export function buildRequest({
   req = applySecurities({request: req, securities, operation, spec})
   // Will add the query object into the URL, if it exists
   mergeInQueryOrForm(req)
+
+  if (req.body || req.form) {
+    if (requestContentType) {
+      req.headers['content-type'] = requestContentType
+    } else if (Array.isArray(operation.consumes)) {
+      req.headers['content-type'] = operation.consumes[0]
+    } else if (Array.isArray(spec.consumes)) {
+      req.headers['content-type'] = spec.consumes[0]
+    } else if (operation.parameters.filter((p)=> p.type === "file").length) {
+      req.headers['content-type'] = "multipart/form-data"
+    } else if (operation.parameters.filter((p)=> p.in === "formData").length) {
+      req.headers['content-type'] = "application/x-www-form-urlencoded"
+    }
+  }
   return req
 }
 

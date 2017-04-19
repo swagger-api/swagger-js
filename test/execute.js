@@ -441,7 +441,7 @@ describe('execute', () => {
       })
     })
 
-    it('should handle requestContentType', function () {
+    it('should not add content-type with no form-data or body param', function () {
       // Given
       const spec = {
         host: 'swagger.io',
@@ -454,11 +454,140 @@ describe('execute', () => {
       // Then
       expect(req).toEqual({
         url: 'http://swagger.io/one',
-        headers: {
-          'content-type': 'application/josh',
-        },
+        headers: {},
         credentials: 'same-origin',
         method: 'GET'
+      })
+    })
+
+    it('should add content-type multipart/form-data when param type is file and no other sources of consumes', function () {
+      // Given
+      const spec = {
+        host: 'swagger.io',
+        paths: {
+          '/one': {
+            post: {
+              operationId: 'postMe',
+              parameters: [{name: 'file', type: 'file', 'in': "formData"}]
+            }
+          }
+        }
+      }
+
+      // When
+      const req = buildRequest({
+        spec,
+        operationId: 'postMe',
+        parameters: { file: 'test'}})
+
+      // Then
+      expect(req).toEqual({
+        method: "POST",
+        "body": "file=test",
+        url: 'http://swagger.io/one',
+        headers: {
+          "content-type": "multipart/form-data"
+        },
+        credentials: 'same-origin'
+      })
+    })
+
+    it('should add content-type application/x-www-form-urlencoded when in: formData ', function () {
+      // Given
+      const spec = {
+        host: 'swagger.io',
+        paths: {
+          '/one': {
+            post: {
+              operationId: 'postMe',
+              parameters: [{name: 'file', in: 'formData'}]
+            }
+          }
+        }
+      }
+
+      // When
+      const req = buildRequest({
+        spec,
+        operationId: 'postMe',
+        parameters: { file: 'test'}})
+
+      // Then
+      expect(req).toEqual({
+        body: "file=test",
+        method: "POST",
+        url: 'http://swagger.io/one',
+        headers: {
+          "content-type": "application/x-www-form-urlencoded"
+        },
+        credentials: 'same-origin'
+      })
+    })
+
+    it('should add content-type from spec when no consumes in operation and no requestContentType passed', function () {
+      // Given
+      const spec = {
+        host: 'swagger.io',
+        consumes: ["test"],
+        paths: {
+          '/one': {
+            post: {
+              operationId: 'postMe',
+              parameters: [{name: 'file', in: 'formData'}]
+            }
+          }
+        }
+      }
+
+      // When
+      const req = buildRequest({
+        spec,
+        operationId: 'postMe',
+        parameters: { file: 'test'}})
+
+      // Then
+      expect(req).toEqual({
+        body: "file=test",
+        method: "POST",
+        url: 'http://swagger.io/one',
+        headers: {
+          "content-type": "test"
+        },
+        credentials: 'same-origin'
+      })
+    })
+
+    it('should add content-type from operation when no requestContentType passed', function () {
+      // Given
+      const spec = {
+        host: 'swagger.io',
+        consumes: ["no"],
+        paths: {
+          '/one': {
+            post: {
+              operationId: 'postMe',
+              consumes: ["test"],
+              parameters: [{name: 'file', in: 'formData'}]
+            }
+          }
+        }
+      }
+
+      // When
+      const req = buildRequest({
+        spec,
+        operationId: 'postMe',
+        parameters: { file: 'test'}})
+
+      // Then
+      expect(req).toEqual({
+        body: "file=test",
+        method: "POST",
+        url: 'http://swagger.io/one',
+        headers: {
+          "content-type": "test"
+        },
+        credentials: 'same-origin'
       })
     })
 
