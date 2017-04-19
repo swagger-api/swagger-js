@@ -186,17 +186,19 @@ export function queryBuilder({req, value, parameter}) {
   }
 }
 
+const stripNonAlpha = str => (str ? str.replace(/\W/g, '') : null)
+
 // Compose the baseUrl ( scheme + host + basePath )
 export function baseUrl({spec, scheme, contextUrl = ''}) {
-  const {host, basePath, schemes = ['http']} = spec
+  const parsedContextUrl = url.parse(contextUrl)
+  const firstSchemeInSpec = Array.isArray(spec.schemes) ? spec.schemes[0] : null
 
-  const parsedUrl = url.parse(contextUrl)
+  const computedScheme = scheme || firstSchemeInSpec || stripNonAlpha(parsedContextUrl.protocol) || 'http'
+  const computedHost = spec.host || parsedContextUrl.host || ''
+  const computedPath = spec.basePath || ''
 
-  let applyScheme = ['http', 'https'].indexOf(scheme) > -1 ? scheme : schemes[0]
-  applyScheme = applyScheme ? `${applyScheme}:` : ''
-
-  if (host || basePath || contextUrl) {
-    let res = `${applyScheme}//${host || parsedUrl.host || ''}${basePath || ''}`
+  if (computedScheme && computedHost) {
+    const res = `${computedScheme}://${computedHost + computedPath}`
 
     // If last character is '/', trim it off
     return res[res.length - 1] === '/' ? res.slice(0, -1) : res
