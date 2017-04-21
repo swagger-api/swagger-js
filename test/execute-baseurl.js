@@ -7,10 +7,6 @@ import {execute, buildRequest, baseUrl, applySecurities, self as stubs} from '..
 
 describe('baseUrl', () => {
 
-  describe('with contextUrl', () => {
-
-  })
-
   it('should calculate a valid baseUrl given host, basePath, context, schemes', () => {
     const res = baseUrl({
       spec: {
