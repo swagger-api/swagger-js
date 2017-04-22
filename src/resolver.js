@@ -4,14 +4,17 @@ import {normalizeSwagger} from './helpers'
 
 export function makeFetchJSON(http) {
   return (docPath) => {
-    return http({
+    return Promise.resolve(http({
       url: docPath,
       loadSpec: true,
       headers: {
         Accept: 'application/json'
       }
+    }))
+    .then((res) => {
+      // To allow overriding with spies
+      return res.body || res
     })
-    .then(res => res.body)
   }
 }
 
@@ -28,6 +31,7 @@ export default function resolve({http, fetch, spec, url, baseDoc, mode, allowMet
   // Provide a default fetch implementation
   // TODO fetch should be removed, and http used instead
   http = fetch || http || Http
+  const docCache = {}
 
   if (!spec) {
     // We create a spec, that has a single $ref to the url
@@ -36,11 +40,11 @@ export default function resolve({http, fetch, spec, url, baseDoc, mode, allowMet
   }
   else {
     // Store the spec into the url provided, to cache it
-    plugins.refs.docCache[baseDoc] = spec
+    docCache[baseDoc] = spec
   }
 
   // Build a json-fetcher ( ie: give it a URL and get json out )
-  plugins.refs.fetchJSON = makeFetchJSON(http)
+  const fetchJSON = makeFetchJSON(http)
 
   const plugs = [plugins.refs]
 
@@ -50,6 +54,8 @@ export default function resolve({http, fetch, spec, url, baseDoc, mode, allowMet
 
   // mapSpec is where the hard work happens, see https://github.com/swagger-api/specmap for more details
   return mapSpec({
+    fetchJSON,
+    docCache,
     spec,
     context: {baseDoc},
     plugins: plugs,
