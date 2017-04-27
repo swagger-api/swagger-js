@@ -91,6 +91,43 @@ describe('constructor', () => {
         expect(apis.me.getMe).toBeA(Function)
       })
     })
+
+    it('should handle circular $refs when a baseDoc is provided', () => {
+      // Given
+      const spec = {
+        swagger: '2.0',
+        definitions: {
+          node: {
+            required: ['id', 'nodes'],
+            type: 'object',
+            properties: {
+              id: {
+                type: 'string'
+              },
+              nodes: {
+                type: 'array',
+                items: {
+                  $ref: '#/definitions/node'
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // When
+      return Swagger.resolve({
+        spec,
+        allowMetaPatches: false,
+        baseDoc: 'http://example.com/swagger.json'
+      }).then(handleResponse)
+
+      // Then
+      function handleResponse(obj) {
+        expect(obj.errors).toEqual([])
+        expect(obj.spec).toEqual(spec)
+      }
+    })
   })
 
   describe('#http', function () {
