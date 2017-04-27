@@ -93,10 +93,6 @@ export function buildRequest({
     req.headers.accept = responseContentType
   }
 
-  if (requestContentType) {
-    req.headers['content-type'] = requestContentType
-  }
-
   // Add values to request
   arrayOrEmpty(operation.parameters) // operation parameters
     .concat(arrayOrEmpty(spec.paths[pathName].parameters)) // path parameters
@@ -127,6 +123,20 @@ export function buildRequest({
   req = applySecurities({request: req, securities, operation, spec})
   // Will add the query object into the URL, if it exists
   mergeInQueryOrForm(req)
+
+  if (req.body || req.form) {
+    if (requestContentType) {
+      req.headers['content-type'] = requestContentType
+    } else if (Array.isArray(operation.consumes)) {
+      req.headers['content-type'] = operation.consumes[0]
+    } else if (Array.isArray(spec.consumes)) {
+      req.headers['content-type'] = spec.consumes[0]
+    } else if (operation.parameters.filter((p)=> p.type === "file").length) {
+      req.headers['content-type'] = "multipart/form-data"
+    } else if (operation.parameters.filter((p)=> p.in === "formData").length) {
+      req.headers['content-type'] = "application/x-www-form-urlencoded"
+    }
+  }
   return req
 }
 
@@ -176,17 +186,19 @@ export function queryBuilder({req, value, parameter}) {
   }
 }
 
+const stripNonAlpha = str => (str ? str.replace(/\W/g, '') : null)
+
 // Compose the baseUrl ( scheme + host + basePath )
 export function baseUrl({spec, scheme, contextUrl = ''}) {
-  const {host, basePath, schemes = ['http']} = spec
+  const parsedContextUrl = url.parse(contextUrl)
+  const firstSchemeInSpec = Array.isArray(spec.schemes) ? spec.schemes[0] : null
 
-  const parsedUrl = url.parse(contextUrl)
+  const computedScheme = scheme || firstSchemeInSpec || stripNonAlpha(parsedContextUrl.protocol) || 'http'
+  const computedHost = spec.host || parsedContextUrl.host || ''
+  const computedPath = spec.basePath || ''
 
-  let applyScheme = ['http', 'https'].indexOf(scheme) > -1 ? scheme : schemes[0]
-  applyScheme = applyScheme ? `${applyScheme}:` : ''
-
-  if (host || basePath || contextUrl) {
-    let res = `${applyScheme}//${host || parsedUrl.host || ''}${basePath || ''}`
+  if (computedScheme && computedHost) {
+    const res = `${computedScheme}://${computedHost + computedPath}`
 
     // If last character is '/', trim it off
     return res[res.length - 1] === '/' ? res.slice(0, -1) : res

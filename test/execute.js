@@ -441,7 +441,7 @@ describe('execute', () => {
       })
     })
 
-    it('should handle requestContentType', function () {
+    it('should not add content-type with no form-data or body param', function () {
       // Given
       const spec = {
         host: 'swagger.io',
@@ -454,11 +454,140 @@ describe('execute', () => {
       // Then
       expect(req).toEqual({
         url: 'http://swagger.io/one',
-        headers: {
-          'content-type': 'application/josh',
-        },
+        headers: {},
         credentials: 'same-origin',
         method: 'GET'
+      })
+    })
+
+    it('should add content-type multipart/form-data when param type is file and no other sources of consumes', function () {
+      // Given
+      const spec = {
+        host: 'swagger.io',
+        paths: {
+          '/one': {
+            post: {
+              operationId: 'postMe',
+              parameters: [{name: 'file', type: 'file', 'in': "formData"}]
+            }
+          }
+        }
+      }
+
+      // When
+      const req = buildRequest({
+        spec,
+        operationId: 'postMe',
+        parameters: { file: 'test'}})
+
+      // Then
+      expect(req).toEqual({
+        method: "POST",
+        "body": "file=test",
+        url: 'http://swagger.io/one',
+        headers: {
+          "content-type": "multipart/form-data"
+        },
+        credentials: 'same-origin'
+      })
+    })
+
+    it('should add content-type application/x-www-form-urlencoded when in: formData ', function () {
+      // Given
+      const spec = {
+        host: 'swagger.io',
+        paths: {
+          '/one': {
+            post: {
+              operationId: 'postMe',
+              parameters: [{name: 'file', in: 'formData'}]
+            }
+          }
+        }
+      }
+
+      // When
+      const req = buildRequest({
+        spec,
+        operationId: 'postMe',
+        parameters: { file: 'test'}})
+
+      // Then
+      expect(req).toEqual({
+        body: "file=test",
+        method: "POST",
+        url: 'http://swagger.io/one',
+        headers: {
+          "content-type": "application/x-www-form-urlencoded"
+        },
+        credentials: 'same-origin'
+      })
+    })
+
+    it('should add content-type from spec when no consumes in operation and no requestContentType passed', function () {
+      // Given
+      const spec = {
+        host: 'swagger.io',
+        consumes: ["test"],
+        paths: {
+          '/one': {
+            post: {
+              operationId: 'postMe',
+              parameters: [{name: 'file', in: 'formData'}]
+            }
+          }
+        }
+      }
+
+      // When
+      const req = buildRequest({
+        spec,
+        operationId: 'postMe',
+        parameters: { file: 'test'}})
+
+      // Then
+      expect(req).toEqual({
+        body: "file=test",
+        method: "POST",
+        url: 'http://swagger.io/one',
+        headers: {
+          "content-type": "test"
+        },
+        credentials: 'same-origin'
+      })
+    })
+
+    it('should add content-type from operation when no requestContentType passed', function () {
+      // Given
+      const spec = {
+        host: 'swagger.io',
+        consumes: ["no"],
+        paths: {
+          '/one': {
+            post: {
+              operationId: 'postMe',
+              consumes: ["test"],
+              parameters: [{name: 'file', in: 'formData'}]
+            }
+          }
+        }
+      }
+
+      // When
+      const req = buildRequest({
+        spec,
+        operationId: 'postMe',
+        parameters: { file: 'test'}})
+
+      // Then
+      expect(req).toEqual({
+        body: "file=test",
+        method: "POST",
+        url: 'http://swagger.io/one',
+        headers: {
+          "content-type": "test"
+        },
+        credentials: 'same-origin'
       })
     })
 
@@ -1421,112 +1550,6 @@ describe('execute', () => {
         },
         body: 'petId=id'
       })
-    })
-  })
-
-  describe('baseUrl', () => {
-    let contextUrl = "http://example.com:9090/hello/swagger.json"
-
-    it('should calculate a valid baseUrl given host, basePath, context, schemes', () => {
-      let res = baseUrl({
-        spec: {
-          schemes: ["https"],
-          host: "foo.com:8080",
-          basePath: "/bar"
-        },
-        contextUrl
-      })
-
-      expect(res).toEqual("https://foo.com:8080/bar")
-    })
-
-    it('should calculate a valid baseUrl given host, basePath, context', () => {
-      let res = baseUrl({
-        spec: {
-          host: "foo.com:8080",
-          basePath: "/bar"
-        },
-        contextUrl
-      })
-
-      expect(res).toEqual("http://foo.com:8080/bar")
-    })
-
-    it('should trim the trailing slash when basePath is "/"', () => {
-      let res = baseUrl({
-        spec: {
-          host: "foo.com:8080",
-          basePath: "/"
-        }
-      })
-
-      expect(res).toEqual("http://foo.com:8080")
-    })
-
-    it('should infer the host and port based on the contextUrl', () => {
-      let res = baseUrl({
-        spec: {
-          basePath: "/bar"
-        },
-        contextUrl
-      })
-
-      expect(res).toEqual("http://example.com:9090/bar")
-    })
-
-    it('should infer the entire url based on the contextUrl', () => {
-      let res = baseUrl({
-        spec: {},
-        contextUrl
-      })
-
-      expect(res).toEqual("http://example.com:9090")
-    })
-
-    it('should infer the host based on the contextUrl', () => {
-      let res = baseUrl({
-        spec: {
-          schemes: ['https'],
-          basePath: '/bar'
-        },
-        contextUrl
-      })
-
-      expect(res).toEqual("https://example.com:9090/bar")
-    })
-
-    it('should default to an empty basePath', () => {
-      let res = baseUrl({
-        spec: {
-          schemes: ['https'],
-          host: 'foo.com:8080'
-        },
-        contextUrl
-      })
-
-      expect(res).toEqual("https://foo.com:8080")
-    })
-
-    it('should default to the correct scheme based on the spec', () => {
-      let res = baseUrl({
-        spec: {
-          schemes: ['https']
-        },
-        contextUrl
-      })
-
-      expect(res).toEqual("https://example.com:9090")
-    })
-
-    it('should default to the correct scheme based on the spec', () => {
-      let res = baseUrl({
-        spec: {
-          host: 'foo.com:8080'
-        },
-        contextUrl
-      })
-
-      expect(res).toEqual("http://foo.com:8080")
     })
   })
 })
