@@ -329,10 +329,12 @@ function pointerAlreadyInPath(pointer, basePath, parent, specmap) {
 
   // Case 1: direct cycle, e.g. a.b.c.$ref: '/a.b'
   // Detect by checking that the parent path doesn't start with pointer.
-  // This only applies if the pointer is purely internal.
-  if (basePath == null && pointerIsAParent(parentPointer, pointer)) {
+  // This only applies if the pointer is internal, i.e. basePath === rootPath (could be null)
+  const rootDoc = specmap.contextTree.get([]).baseDoc
+  if (basePath === rootDoc && pointerIsAParent(parentPointer, pointer)) {
     return true
   }
+
 
   // Case 2: indirect cycle
   //  ex1: a.$ref: '/b'  &  b.c.$ref: '/b/c'
