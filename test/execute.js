@@ -737,6 +737,29 @@ describe('execute', () => {
     expect(fetchSpy.calls.length).toEqual(1)
     expect(fetchSpy.calls[0].arguments[0].body).toEqual('{"one":1,"two":{"three":3}}')
   })
+
+  it('should NOT stringify body, if its a non-object', function () {
+    // Given
+    const spec = {
+      host: 'swagger.io',
+      paths: {'/me': {post: {parameters: [{name: 'body', in: 'body'}], operationId: 'makeMe'}}}
+    }
+
+    const fetchSpy = createSpy().andReturn({then() { }})
+
+    execute({
+      fetch: fetchSpy,
+      spec,
+      operationId: 'makeMe',
+      parameters: {
+        body: 'hello'
+      }
+    })
+
+    expect(fetchSpy.calls.length).toEqual(1)
+    expect(fetchSpy.calls[0].arguments[0].body).toEqual('hello')
+  })
+
   describe('applySecurities', function () {
     it('should NOT add any securities, if the operation does not require it', function () {
       const spec = {
