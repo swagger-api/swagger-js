@@ -89,14 +89,20 @@ const plugin = {
       }
     }
     else {
-      promOrVal = extractFromDoc(basePath, pointer).catch((e) => {
-        throw wrapError(e, {
-          pointer,
-          $ref: ref,
-          baseDoc,
-          fullPath,
+      promOrVal = extractFromDoc(basePath, pointer)
+      if (promOrVal.__value != null) {
+        promOrVal = promOrVal.__value
+      }
+      else {
+        promOrVal = promOrVal.catch((e) => {
+          throw wrapError(e, {
+            pointer,
+            $ref: ref,
+            baseDoc,
+            fullPath,
+          })
         })
-      })
+      }
     }
 
     if (promOrVal instanceof Error) {
@@ -178,7 +184,24 @@ function split(ref) {
  * @api public
  */
 function extractFromDoc(docPath, pointer) {
-  return getDoc(docPath).then(doc => extract(pointer, doc))
+  const doc = docCache[docPath]
+  if (doc && !lib.isPromise(doc)) {
+    // If doc is already available, return __value together with the promise.
+    // __value is for special handling in cycle check:
+    // pointerAlreadyInPath() won't work if patch.value is a promise,
+    // thus when that promise is finally resolved, cycle might happen (because
+    // `spec` and `docCache[basePath]` refer to the exact same object).
+    // See test "should resolve a cyclic spec when baseDoc is specified".
+    try {
+      const v = extract(pointer, doc)
+      return Object.assign(Promise.resolve(v), {__value: v})
+    }
+    catch (e) {
+      return Promise.reject(e)
+    }
+  }
+
+  return getDoc(docPath).then(_doc => extract(pointer, _doc))
 }
 
 /**
@@ -331,7 +354,7 @@ function pointerAlreadyInPath(pointer, basePath, parent, specmap) {
   // Detect by checking that the parent path doesn't start with pointer.
   // This only applies if the pointer is internal, i.e. basePath === rootPath (could be null)
   const rootDoc = specmap.contextTree.get([]).baseDoc
-  if (basePath === rootDoc && pointerIsAParent(parentPointer, pointer)) {
+  if (basePath == rootDoc && pointerIsAParent(parentPointer, pointer)) { // eslint-disable-line
     return true
   }
 

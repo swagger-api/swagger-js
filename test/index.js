@@ -52,6 +52,38 @@ describe('constructor', () => {
       })
     })
 
+    it('should resolve a cyclic spec when baseDoc is specified', function (cb) {
+      const spec = {
+        paths: {
+          post: {
+            parameters: [
+              {
+                $ref: '#/definitions/list',
+              }
+            ]
+          }
+        },
+        definitions: {
+          item: {
+            items: {
+              $ref: '#/definitions/item'
+            }
+          },
+          list: {
+            items: {
+              $ref: '#/definitions/item'
+            }
+          }
+        }
+      }
+
+      Swagger.resolve({spec, baseDoc: 'http://whatever/'}).then((swag) => {
+        expect(swag.errors).toEqual([])
+        cb()
+      })
+    })
+
+
     it('should keep resolve errors in #errors', function () {
       // Given
       const spec = {

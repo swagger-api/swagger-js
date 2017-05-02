@@ -38,7 +38,9 @@ export default function resolve({http, fetch, spec, url, baseDoc, mode, allowMet
   return doResolve(spec)
 
   function doResolve(_spec) {
-    plugins.refs.docCache[baseDoc] = _spec
+    if (baseDoc) {
+      plugins.refs.docCache[baseDoc] = _spec
+    }
 
     // Build a json-fetcher ( ie: give it a URL and get json out )
     plugins.refs.fetchJSON = makeFetchJSON(http)
