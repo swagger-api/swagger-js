@@ -663,6 +663,28 @@ describe('execute', () => {
         }
       })
     })
+
+    it('should NOT stringify the body, if provided with a javascript object (only execute should do that, allowing us to modify the object in a clean way)', function() {
+
+      // Given
+      const spec = {
+        host: 'swagger.io',
+        paths: {'/me': {post: {parameters: [{name: 'body', in: 'body'}], operationId: 'makeMe'}}}
+      }
+
+      const req = buildRequest({
+        spec,
+        operationId: 'makeMe',
+        parameters: {
+          body: {
+            one: 1,
+          }
+        }})
+
+      expect(req.body).toEqual({
+        one: 1
+      })
+    })
   })
 
   // Note: this is to handle requestContentType and responseContentType
@@ -674,7 +696,7 @@ describe('execute', () => {
       paths: {'/one': {get: {operationId: 'getMe'}}}
     }
 
-    const buildRequestSpy = spyOn(stubs, 'buildRequest')
+    const buildRequestSpy = spyOn(stubs, 'buildRequest').andReturn({})
 
     execute({
       fetch: createSpy().andReturn({then() { }}),
@@ -687,6 +709,55 @@ describe('execute', () => {
     expect(buildRequestSpy.calls[0].arguments[0]).toInclude({
       josh: 1
     })
+  })
+
+  it('should stringify body, if provided with javascript object', function () {
+    // Given
+    const spec = {
+      host: 'swagger.io',
+      paths: {'/me': {post: {parameters: [{name: 'body', in: 'body'}], operationId: 'makeMe'}}}
+    }
+
+    const fetchSpy = createSpy().andReturn({then() { }})
+
+    execute({
+      fetch: fetchSpy,
+      spec,
+      operationId: 'makeMe',
+      parameters: {
+        body: {
+          one: 1,
+          two: {
+            three: 3
+          }
+        }
+      }
+    })
+
+    expect(fetchSpy.calls.length).toEqual(1)
+    expect(fetchSpy.calls[0].arguments[0].body).toEqual('{"one":1,"two":{"three":3}}')
+  })
+
+  it('should NOT stringify body, if its a non-object', function () {
+    // Given
+    const spec = {
+      host: 'swagger.io',
+      paths: {'/me': {post: {parameters: [{name: 'body', in: 'body'}], operationId: 'makeMe'}}}
+    }
+
+    const fetchSpy = createSpy().andReturn({then() { }})
+
+    execute({
+      fetch: fetchSpy,
+      spec,
+      operationId: 'makeMe',
+      parameters: {
+        body: 'hello'
+      }
+    })
+
+    expect(fetchSpy.calls.length).toEqual(1)
+    expect(fetchSpy.calls[0].arguments[0].body).toEqual('hello')
   })
 
   describe('applySecurities', function () {

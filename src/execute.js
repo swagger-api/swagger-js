@@ -1,5 +1,6 @@
 import assign from 'lodash/assign'
 import getIn from 'lodash/get'
+import isObject from 'lodash/isObject'
 import btoa from 'btoa'
 import url from 'url'
 import http, {mergeInQueryOrForm} from './http'
@@ -46,6 +47,10 @@ export function execute({
   }
 
   const request = self.buildRequest({spec, operationId, parameters, securities, ...extras})
+
+  if (request.body && isObject(request.body)) {
+    request.body = JSON.stringify(request.body)
+  }
 
   // Build request and execute it
   return userHttp(request)
