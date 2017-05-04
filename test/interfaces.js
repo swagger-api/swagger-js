@@ -311,7 +311,7 @@ describe('intefaces', function () {
         // Then
       expect(tags).toEqual({
         alpha: {
-          'get-/one': null,
+          'get_one': null,
         }
       })
     })
@@ -339,7 +339,7 @@ describe('intefaces', function () {
       })
     })
 
-    it('should remap duplicate operationId as ${operationId}_${count}', function () {
+    it('should remap duplicate operationId as ${operationId}${count} starting at 1', function () {
       // Given
       const spec = {
         paths: {
@@ -360,8 +360,8 @@ describe('intefaces', function () {
         // Then
       expect(tags).toEqual({
         hug: {
-          getOne: null,
-          getOne_1: null,
+          getOne1: null,
+          getOne2: null,
         }
       })
     })
