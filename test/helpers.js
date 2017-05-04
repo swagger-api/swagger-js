@@ -42,10 +42,10 @@ describe('helpers', function () {
   describe('pathMethodFromId', function () {
     it('should return [method, pathName]', function () {
       // When
-      const id = pathMethodFromId('get-/one')
+      const pathAndMethod = pathMethodFromId('get_one')
 
       // Then
-      expect(id).toEqual(['/one', 'get'])
+      expect(pathAndMethod).toEqual(['/one', 'get'])
     })
   })
 
