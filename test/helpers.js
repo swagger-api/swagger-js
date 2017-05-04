@@ -1,16 +1,16 @@
 import expect from 'expect'
 import {
-  normalizeSwagger, getOperationRaw, idFromPathMethod, pathMethodFromId, opId
+  normalizeSwagger, getOperationRaw, idFromPathMethod, pathMethodFromId
 } from '../src/helpers'
 
 describe('helpers', function () {
   describe('idFromPathMethod', function () {
-    it('should return "get-/one"', function () {
+    it('should return get_one', function () {
       // When
       const id = idFromPathMethod('/one', 'get')
 
       // Then
-      expect(id).toEqual('get-/one')
+      expect(id).toEqual('get_one')
     })
 
     it('should create unique operationIds', function () {
@@ -34,7 +34,8 @@ describe('helpers', function () {
       const id2 = id.spec.paths['/bar'].get.operationId
 
       // Then
-      expect(id1).toNotEqual(id2)
+      expect(id1).toEqual('test1')
+      expect(id2).toEqual('test2')
     })
   })
 
@@ -49,7 +50,7 @@ describe('helpers', function () {
   })
 
   describe('getOperationRaw', function () {
-    it('should return the operation object, given an operationId', function () {
+    it('should return the operation object, given an explicit operationId', function () {
       // Given
       const spec = {
         paths: {
@@ -70,18 +71,20 @@ describe('helpers', function () {
       })
     })
 
-    it('should return the operationObj, given a `${method}-${pathName}`', function () {
-      // Given
+    it('should return the operationObj, given a generated operationId', function () {
+      // Given`
       const spec = {
         paths: {
           '/two': {
-            get: { }
+            get: {
+              description: 'an operation'
+            }
           },
         }
       }
 
       // When
-      const op = getOperationRaw(spec, 'get-/two')
+      const op = getOperationRaw(spec, 'get_two')
 
       // Then
       expect(op).toInclude({
