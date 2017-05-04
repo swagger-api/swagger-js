@@ -293,7 +293,7 @@ describe('intefaces', function () {
       })
     })
 
-    it('should use path + method for ops without an operationId', function () {
+    it('should use method + path for ops without an operationId', function () {
       // Given
       const spec = {
         paths: {

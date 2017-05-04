@@ -5,7 +5,7 @@ import {
 
 describe('helpers', function () {
   describe('idFromPathMethod', function () {
-    it('should return get_one', function () {
+    it('should return get_one as an operationId', function () {
       // When
       const id = idFromPathMethod('/one', 'get')
 
@@ -37,10 +37,67 @@ describe('helpers', function () {
       expect(id1).toEqual('test1')
       expect(id2).toEqual('test2')
     })
+
+    it('should generate unique operationIds when explicit operationIds are empty or blank', function () {
+      const spec = {spec: {
+        paths: {
+          '/foo': {
+            get: {
+              operationId: ''
+            }
+          },
+          '/bar': {
+            get: {
+              operationId: ' '
+            }
+          }
+        }
+      }}
+
+      const id = normalizeSwagger(spec)
+      const id1 = id.spec.paths['/foo'].get.operationId
+      const id2 = id.spec.paths['/bar'].get.operationId
+
+      // Then
+      expect(id1).toEqual('get_foo')
+      expect(id2).toEqual('get_bar')
+    })
+
+    it('should create unique operationIds when explicit operationIds are effectively the same due to whitespace', function () {
+      const spec = {spec: {
+        paths: {
+          '/foo': {
+            get: {
+              operationId: 'test'
+            }
+          },
+          '/bar': {
+            get: {
+              operationId: 'te st'
+            }
+          },
+          '/bat': {
+            get: {
+              operationId: 'te/st'
+            }
+          }
+        }
+      }}
+
+      const id = normalizeSwagger(spec)
+      const id1 = id.spec.paths['/foo'].get.operationId
+      const id2 = id.spec.paths['/bar'].get.operationId
+      const id3 = id.spec.paths['/bat'].get.operationId
+
+      // Then
+      expect(id1).toEqual('test1')
+      expect(id2).toEqual('te_st1')
+      expect(id3).toEqual('te_st2')
+    })
   })
 
   describe('pathMethodFromId', function () {
-    it('should return [method, pathName]', function () {
+    it('should return [method, pathName] given a valid operationId', function () {
       // When
       const pathAndMethod = pathMethodFromId('get_one')
 
