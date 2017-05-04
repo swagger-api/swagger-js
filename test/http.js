@@ -38,6 +38,67 @@ describe('http', () => {
     })
   })
 
+  it('should include status code and response with HTTP Error', () => {
+    xapp = xmock()
+    xapp.get('http://swagger.io', (req, res) => res.status(400).send('hi'))
+
+    return http({
+      url: 'http://swagger.io'
+    })
+    .then(
+      (res) => {
+        throw new Error('Expected rejection for HTTP status 400')
+      },
+      (err) => {
+        expect(err.status).toEqual(400)
+        expect(err.statusCode).toEqual(400)
+        expect(err.response.text).toEqual('hi')
+      }
+    )
+  })
+
+  it('should apply responseInterceptor to error responses', () => {
+    xapp = xmock()
+    xapp.get('http://swagger.io', (req, res) => res.status(400).send('hi'))
+
+    return http({
+      url: 'http://swagger.io',
+      responseInterceptor: (res) => {
+        res.testValue = 5
+      }
+    })
+    .then(
+      (res) => {
+        throw new Error('Expected rejection for HTTP status 400')
+      },
+      (err) => {
+        expect(err.response.testValue).toEqual(5)
+      }
+    )
+  })
+
+  it('should set responseError on responseInterceptor Error', () => {
+    xapp = xmock()
+    xapp.get('http://swagger.io', (req, res) => res.status(400).send('hi'))
+
+    const testError = new Error()
+    return http({
+      url: 'http://swagger.io',
+      responseInterceptor: (res) => {
+        throw testError
+      }
+    })
+    .then(
+      (res) => {
+        throw new Error('Expected rejection for HTTP status 400')
+      },
+      (err) => {
+        expect(err.response).toEqual(null)
+        expect(err.responseError).toBe(testError)
+      }
+    )
+  })
+
   describe('serializeHeaders', function () {
     it('should handle FetchAPI Headers object, which is iterable', function () {
       // Given
