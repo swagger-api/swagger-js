@@ -1,17 +1,24 @@
 import isObject from 'lodash/isObject'
 
 const toLower = str => String.prototype.toLowerCase.call(str)
+const escapeString = str => {
+  return str.replace(/[^\w]/gi, '_')
+}
 
 // Strategy for determining operationId
 export function opId(operation, pathName, method = '') {
-  return operation.operationId
-    ? operation.operationId : idFromPathMethod(pathName, method)
+  const idWithoutWhitespace = (operation.operationId || '').replace(/\s/g, '')
+  if(operation.operationId && idWithoutWhitespace.length) {
+    return operation.operationId
+  } else {
+    return idFromPathMethod(pathName, method)
+  }
 }
 
 
 // Create a generated operationId from pathName + method
 export function idFromPathMethod(pathName, method) {
-  return `${toLower(method)}-${pathName}`
+  return `${toLower(method)}${escapeString(pathName)}`
 }
 
 // Extract pathName + method from generated operationId
