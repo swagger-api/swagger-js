@@ -12,88 +12,6 @@ describe('helpers', function () {
       // Then
       expect(id).toEqual('get_one')
     })
-
-    it('should create unique operationIds', function () {
-      const spec = {spec: {
-        paths: {
-          '/foo': {
-            get: {
-              operationId: 'test'
-            }
-          },
-          '/bar': {
-            get: {
-              operationId: 'test'
-            }
-          }
-        }
-      }}
-
-      const id = normalizeSwagger(spec)
-      const id1 = id.spec.paths['/foo'].get.operationId
-      const id2 = id.spec.paths['/bar'].get.operationId
-
-      // Then
-      expect(id1).toEqual('test1')
-      expect(id2).toEqual('test2')
-    })
-
-    it('should generate unique operationIds when explicit operationIds are empty or blank', function () {
-      const spec = {spec: {
-        paths: {
-          '/foo': {
-            get: {
-              operationId: ''
-            }
-          },
-          '/bar': {
-            get: {
-              operationId: ' '
-            }
-          }
-        }
-      }}
-
-      const id = normalizeSwagger(spec)
-      const id1 = id.spec.paths['/foo'].get.operationId
-      const id2 = id.spec.paths['/bar'].get.operationId
-
-      // Then
-      expect(id1).toEqual('get_foo')
-      expect(id2).toEqual('get_bar')
-    })
-
-    it('should create unique operationIds when explicit operationIds are effectively the same due to whitespace', function () {
-      const spec = {spec: {
-        paths: {
-          '/foo': {
-            get: {
-              operationId: 'test'
-            }
-          },
-          '/bar': {
-            get: {
-              operationId: 'te st'
-            }
-          },
-          '/bat': {
-            get: {
-              operationId: 'te/st'
-            }
-          }
-        }
-      }}
-
-      const id = normalizeSwagger(spec)
-      const id1 = id.spec.paths['/foo'].get.operationId
-      const id2 = id.spec.paths['/bar'].get.operationId
-      const id3 = id.spec.paths['/bat'].get.operationId
-
-      // Then
-      expect(id1).toEqual('test1')
-      expect(id2).toEqual('te_st1')
-      expect(id3).toEqual('te_st2')
-    })
   })
 
   describe('pathMethodFromId', function () {
@@ -154,6 +72,89 @@ describe('helpers', function () {
 
 
   describe('normalizeSwagger', function () {
+    describe('operationId', function () {
+      it('should create unique operationIds', function () {
+        const spec = {spec: {
+          paths: {
+            '/foo': {
+              get: {
+                operationId: 'test'
+              }
+            },
+            '/bar': {
+              get: {
+                operationId: 'test'
+              }
+            }
+          }
+        }}
+
+        const id = normalizeSwagger(spec)
+        const id1 = id.spec.paths['/foo'].get.operationId
+        const id2 = id.spec.paths['/bar'].get.operationId
+
+        // Then
+        expect(id1).toEqual('test1')
+        expect(id2).toEqual('test2')
+      })
+
+      it('should generate unique operationIds when explicit operationIds are empty or blank', function () {
+        const spec = {spec: {
+          paths: {
+            '/foo': {
+              get: {
+                operationId: ''
+              }
+            },
+            '/bar': {
+              get: {
+                operationId: ' '
+              }
+            }
+          }
+        }}
+
+        const id = normalizeSwagger(spec)
+        const id1 = id.spec.paths['/foo'].get.operationId
+        const id2 = id.spec.paths['/bar'].get.operationId
+
+        // Then
+        expect(id1).toEqual('get_foo')
+        expect(id2).toEqual('get_bar')
+      })
+
+      it('should create unique operationIds when explicit operationIds are effectively the same due to whitespace', function () {
+        const spec = {spec: {
+          paths: {
+            '/foo': {
+              get: {
+                operationId: 'test'
+              }
+            },
+            '/bar': {
+              get: {
+                operationId: 'te st'
+              }
+            },
+            '/bat': {
+              get: {
+                operationId: 'te/st'
+              }
+            }
+          }
+        }}
+
+        const id = normalizeSwagger(spec)
+        const id1 = id.spec.paths['/foo'].get.operationId
+        const id2 = id.spec.paths['/bar'].get.operationId
+        const id3 = id.spec.paths['/bat'].get.operationId
+
+        // Then
+        expect(id1).toEqual('test1')
+        expect(id2).toEqual('te_st1')
+        expect(id3).toEqual('te_st2')
+      })
+    })
     describe('consumes', function () {
       it('should not overwrite consumes values from the global-level when exists in operation', function () {
         const spec = {spec: {
