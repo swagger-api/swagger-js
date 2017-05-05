@@ -73,7 +73,7 @@ describe('helpers', function () {
 
   describe('normalizeSwagger', function () {
     describe('operationId', function () {
-      it('should create unique operationIds', function () {
+      it('should create unique operationIds when explicit operationIds are duplicates', function () {
         const spec = {spec: {
           paths: {
             '/foo': {
@@ -99,7 +99,7 @@ describe('helpers', function () {
       })
 
       it('should generate unique operationIds when explicit operationIds are empty or blank', function () {
-        const spec = {spec: {
+        const input = {spec: {
           paths: {
             '/foo': {
               get: {
@@ -114,9 +114,9 @@ describe('helpers', function () {
           }
         }}
 
-        const id = normalizeSwagger(spec)
-        const id1 = id.spec.paths['/foo'].get.operationId
-        const id2 = id.spec.paths['/bar'].get.operationId
+        const res = normalizeSwagger(input)
+        const id1 = res.spec.paths['/foo'].get.operationId
+        const id2 = res.spec.paths['/bar'].get.operationId
 
         // Then
         expect(id1).toEqual('get_foo')
@@ -150,7 +150,7 @@ describe('helpers', function () {
         const id3 = id.spec.paths['/bat'].get.operationId
 
         // Then
-        expect(id1).toEqual('test1')
+        expect(id1).toEqual('test')
         expect(id2).toEqual('te_st1')
         expect(id3).toEqual('te_st2')
       })
