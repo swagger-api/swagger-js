@@ -360,8 +360,8 @@ describe('intefaces', function () {
         // Then
       expect(tags).toEqual({
         hug: {
+          getOne: null,
           getOne1: null,
-          getOne2: null,
         }
       })
     })
