@@ -9,7 +9,7 @@ const escapeString = str => {
 export function opId(operation, pathName, method = '') {
   const idWithoutWhitespace = (operation.operationId || '').replace(/\s/g, '')
   if(operation.operationId && idWithoutWhitespace.length) {
-    return operation.operationId
+    return escapeString(operation.operationId)
   } else {
     return idFromPathMethod(pathName, method)
   }
@@ -124,10 +124,14 @@ export function normalizeSwagger(parsedSpec) {
           map[oid] = [operation]
         }
 
+        // oid ( via opId() ) will preserve the set operationId if it is well-formed,
+        // i.e. it isn't purely whitespace
+        operation.operationId = oid
+
         Object.keys(map).forEach((op) => {
           if (map[op].length > 1) {
             map[op].forEach((o, i) => {
-              o.operationId = `${op}_${i}`
+              o.operationId = `${op}${i+1}`
             })
           }
         })
