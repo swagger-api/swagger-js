@@ -34,8 +34,8 @@ describe('helpers', function () {
       const id2 = id.spec.paths['/bar'].get.operationId
 
       // Then
-      expect(id1).toEqual('test')
-      expect(id2).toEqual('test1')
+      expect(id1).toEqual('test1')
+      expect(id2).toEqual('test2')
     })
 
     it('should generate unique operationIds when explicit operationIds are empty or blank', function () {
@@ -90,9 +90,9 @@ describe('helpers', function () {
       const id3 = id.spec.paths['/bat'].get.operationId
 
       // Then
-      expect(id1).toEqual('test')
-      expect(id2).toEqual('te_st')
-      expect(id3).toEqual('te_st1')
+      expect(id1).toEqual('test1')
+      expect(id2).toEqual('te_st1')
+      expect(id3).toEqual('te_st2')
     })
   })
 
