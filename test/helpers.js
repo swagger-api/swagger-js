@@ -14,16 +14,6 @@ describe('helpers', function () {
     })
   })
 
-  describe('pathMethodFromId', function () {
-    it('should return [method, pathName] given a valid operationId', function () {
-      // When
-      const pathAndMethod = pathMethodFromId('get_one')
-
-      // Then
-      expect(pathAndMethod).toEqual(['/one', 'get'])
-    })
-  })
-
   describe('getOperationRaw', function () {
     it('should return the operation object, given an explicit operationId', function () {
       // Given

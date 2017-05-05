@@ -21,19 +21,16 @@ export function idFromPathMethod(pathName, method) {
   return `${toLower(method)}${escapeString(pathName)}`
 }
 
-// Extract pathName + method from generated operationId
-export function pathMethodFromId(id) {
-  const [, method, pathName] = /^([^-]*)-(.*)$/.exec(id)
-  return [pathName, method]
-}
-
 // Get the operation, based on operationId ( just return the object, no inheritence )
 export function getOperationRaw(spec, id) {
   if (!spec || !spec.paths) {
     return null
   }
 
-  return findOperation(spec, ({pathName, method, operation}) => {
+  const normalized = normalizeSwagger({ spec })
+
+
+  return findOperation(normalized.spec, ({pathName, method, operation}) => {
     if (!operation || typeof operation !== 'object') {
       return false
     }
@@ -44,8 +41,7 @@ export function getOperationRaw(spec, id) {
       return true
     }
 
-    const [_pathName, _method] = pathMethodFromId(id)
-    return _pathName === pathName && toLower(_method) === toLower(method)
+    return false
   })
 }
 
