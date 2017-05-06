@@ -88,7 +88,7 @@ describe('helpers', function () {
         expect(id2).toEqual('test2')
       })
 
-      it('should generate unique operationIds when explicit operationIds are empty or blank', function () {
+      it('should generate unique operationIds when explicit operationIds are empty or blank, and addOpIds is enabled', function () {
         const input = {spec: {
           paths: {
             '/foo': {
@@ -104,7 +104,7 @@ describe('helpers', function () {
           }
         }}
 
-        const res = normalizeSwagger(input)
+        const res = normalizeSwagger(input, { addOpIds: true })
         const id1 = res.spec.paths['/foo'].get.operationId
         const id2 = res.spec.paths['/bar'].get.operationId
 
