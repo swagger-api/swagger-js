@@ -83,9 +83,15 @@ export function mapTagOperations({spec, cb = nullFn, defaultTag = 'default'}) {
       // Id already exists?
       if (typeof tagObj[id] !== 'undefined') {
         // Bump counter ( for this operationId )
-        operationIdCounter[id] = (operationIdCounter[id] || 0) + 1
+        let originalCounterValue = (operationIdCounter[id] || 1)
+        operationIdCounter[id] = originalCounterValue + 1
         // Append _x to the operationId
-        tagObj[`${id}_${operationIdCounter[id]}`] = cbResult
+        tagObj[`${id}${operationIdCounter[id]}`] = cbResult
+
+        // Rename the first operationId, if it exists
+        let temp = tagObj[id]
+        delete tagObj[id]
+        tagObj[`${id}${originalCounterValue}`] = temp
       }
       else {
         // Assign callback result ( usually a bound function )
