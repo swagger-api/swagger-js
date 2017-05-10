@@ -924,6 +924,55 @@ describe('execute', () => {
         api_key: 'hello'
       })
     })
+
+    it('should use the correct authorization scheme with OAuth2', function() {
+      const spec = {
+        host: 'swagger.io',
+        basePath: '/v1',
+        security: [{oauth2app: []}],
+        paths: {
+          '/one': {
+            get: {
+              operationId: 'getMe',
+              security: [{oauth2app: []}]
+            }
+          }
+        },
+        securityDefinitions: {
+          oauth2app: {
+            type: 'oauth2',
+            flow: 'application',
+            tokenUrl: 'https://swagger.io/oauth2/token',
+            scopes: {
+              read: 'read access'
+            }
+          }
+        }
+      }
+
+      const request = {
+        url: 'http://swagger.io/v1/one',
+        method: 'GET',
+        query: {}
+      }
+
+      const securities = {
+        authorized: {
+          oauth2app: {
+            token: {
+              access_token: 'one two',
+              token_type: 'bearer'
+            }
+          }
+        }
+      }
+
+      const applySecurity = applySecurities({request, securities, operation: spec.paths['/one'].get, spec})
+
+      expect(applySecurity.headers).toEqual({
+        authorization: 'Bearer one two'
+      })
+    })
   })
 
   describe('parameterBuilders', function () {

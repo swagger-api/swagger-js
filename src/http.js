@@ -37,17 +37,29 @@ export default function http(url, request = {}) {
   }
 
   return fetch(request.url, request).then((res) => {
-    if (!res.ok) {
-      const error = new Error(res.statusText)
-      error.statusCode = error.status = res.status
-      throw error
-    }
-    return self.serializeRes(res, url, request).then((_res) => {
+    const serialized = self.serializeRes(res, url, request).then((_res) => {
       if (request.responseInterceptor) {
         _res = request.responseInterceptor(_res) || _res
       }
       return _res
     })
+
+    if (!res.ok) {
+      const error = new Error(res.statusText)
+      error.statusCode = error.status = res.status
+      return serialized.then(
+        (_res) => {
+          error.response = _res
+          throw error
+        },
+        (resError) => {
+          error.responseError = resError
+          throw error
+        }
+      )
+    }
+
+    return serialized
   })
 }
 
