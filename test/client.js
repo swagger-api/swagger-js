@@ -39,7 +39,7 @@ describe('http', () => {
       }
 
       fs.exists(filename, function (exists) {
-        if (exists) {
+        if (exists && filename[filename.length - 1] !== "/") {
           const fileStream = fs.createReadStream(filename)
           res.setHeader('Access-Control-Allow-Origin', '*')
           res.writeHead(200, contentType)
@@ -124,7 +124,7 @@ describe('http', () => {
    * Loads a spec where the `host` and `schema` are not defined
    * See https://github.com/swagger-api/swagger-js/issues/1000
    */
-  it('use the host from whence the spec was fetched', (done) => {
+  it.only('use the host from whence the spec was fetched', (done) => {
     Swagger('http://localhost:8000/pathless.yaml')
       .then((client) => {
         client.apis.default.tryMe().catch((err) => {
