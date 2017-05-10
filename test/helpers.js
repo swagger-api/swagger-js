@@ -88,31 +88,6 @@ describe('helpers', function () {
         expect(id2).toEqual('test2')
       })
 
-      it('should generate unique operationIds when explicit operationIds are empty or blank, and addOpIds is enabled', function () {
-        const input = {spec: {
-          paths: {
-            '/foo': {
-              get: {
-                operationId: ''
-              }
-            },
-            '/bar': {
-              get: {
-                operationId: ' '
-              }
-            }
-          }
-        }}
-
-        const res = normalizeSwagger(input, { addOpIds: true })
-        const id1 = res.spec.paths['/foo'].get.operationId
-        const id2 = res.spec.paths['/bar'].get.operationId
-
-        // Then
-        expect(id1).toEqual('get_foo')
-        expect(id2).toEqual('get_bar')
-      })
-
       it('should create unique operationIds when explicit operationIds are effectively the same due to whitespace', function () {
         const spec = {spec: {
           paths: {
