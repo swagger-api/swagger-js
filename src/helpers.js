@@ -27,15 +27,13 @@ export function getOperationRaw(spec, id) {
     return null
   }
 
-  const normalized = normalizeSwagger({ spec }, { addOpIds: true })
 
-
-  return findOperation(normalized.spec, ({pathName, method, operation}) => {
+  return findOperation(spec, ({pathName, method, operation}) => {
     if (!operation || typeof operation !== 'object') {
       return false
     }
 
-    const {operationId} = operation
+    const operationId = opId(operation, pathName, method)
 
     if (operationId && operationId === id) {
       return true
@@ -86,7 +84,7 @@ export function eachOperation(spec, cb, find) {
   }
 }
 
-export function normalizeSwagger(parsedSpec, { addOpIds } = {}) {
+export function normalizeSwagger(parsedSpec) {
   const {spec} = parsedSpec
   const {paths} = spec
   const map = {}
@@ -118,12 +116,6 @@ export function normalizeSwagger(parsedSpec, { addOpIds } = {}) {
         }
         else {
           map[oid] = [operation]
-        }
-
-        if(addOpIds) {
-          // oid ( via opId() ) will preserve the set operationId if it is well-formed,
-          // i.e. it isn't purely whitespace
-          operation.operationId = oid
         }
 
         Object.keys(map).forEach((op) => {
