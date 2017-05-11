@@ -462,13 +462,14 @@ describe('execute', () => {
 
     it('should add content-type multipart/form-data when param type is file and no other sources of consumes', function () {
       // Given
+      const FormData = require('isomorphic-form-data')
       const spec = {
         host: 'swagger.io',
         paths: {
           '/one': {
             post: {
               operationId: 'postMe',
-              parameters: [{name: 'file', type: 'file', 'in': "formData"}]
+              parameters: [{name: 'foo', type: 'file', 'in': "formData"}]
             }
           }
         }
@@ -481,15 +482,13 @@ describe('execute', () => {
         parameters: { file: 'test'}})
 
       // Then
-      expect(req).toEqual({
-        method: "POST",
-        "body": "file=test",
-        url: 'http://swagger.io/one',
-        headers: {
-          "content-type": "multipart/form-data"
-        },
-        credentials: 'same-origin'
+      expect(req.headers).toEqual({
+        "content-type": "multipart/form-data"
       })
+
+      expect(req.url).toEqual('http://swagger.io/one')
+      expect(req.body).toBeA(FormData) // Would like to do a more thourough test ( ie: ensure the value `foo` exists.. but I don't feel like attacking the interals of the node pollyfill for FormData, as it seems to be missing `.get()`)
+
     })
 
     it('should add content-type application/x-www-form-urlencoded when in: formData ', function () {
@@ -664,7 +663,7 @@ describe('execute', () => {
       })
     })
 
-    it('should NOT stringify the body, if provided with a javascript object (only execute should do that, allowing us to modify the object in a clean way)', function() {
+    it('should NOT stringify the body, if provided with a javascript object (execute alone should do that, allowing us to modify the object in a clean way)', function () {
 
       // Given
       const spec = {
@@ -685,6 +684,7 @@ describe('execute', () => {
         one: 1
       })
     })
+
   })
 
   // Note: this is to handle requestContentType and responseContentType
@@ -758,6 +758,31 @@ describe('execute', () => {
 
     expect(fetchSpy.calls.length).toEqual(1)
     expect(fetchSpy.calls[0].arguments[0].body).toEqual('hello')
+  })
+
+  it('should NOT stringify body, if its an instance of FormData', function () {
+    // Given
+    const FormData = require('isomorphic-form-data')
+    const spec = {
+      host: 'swagger.io',
+      paths: {'/me': {post: {parameters: [{name: 'one', in: 'formData'}], operationId: 'makeMe'}}}
+    }
+
+    const fetchSpy = createSpy().andReturn({then() { }})
+
+    execute({
+      fetch: fetchSpy,
+      spec,
+      operationId: 'makeMe',
+      requestContentType: 'multipart/form-data',
+      parameters: {
+        one: {hello: true}
+      }
+    })
+
+    const req = fetchSpy.calls[0].arguments[0]
+    expect(fetchSpy.calls.length).toEqual(1)
+    expect(fetchSpy.calls[0].arguments[0].body).toBeA(FormData)
   })
 
   describe('applySecurities', function () {
