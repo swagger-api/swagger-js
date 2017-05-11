@@ -1,6 +1,6 @@
 import assign from 'lodash/assign'
 import getIn from 'lodash/get'
-import isObject from 'lodash/isObject'
+import isPlainObject from 'lodash/isPlainObject'
 import btoa from 'btoa'
 import url from 'url'
 import http, {mergeInQueryOrForm} from './http'
@@ -48,7 +48,7 @@ export function execute({
 
   const request = self.buildRequest({spec, operationId, parameters, securities, ...extras})
 
-  if (request.body && isObject(request.body)) {
+  if (request.body && isPlainObject(request.body)) {
     request.body = JSON.stringify(request.body)
   }
 
@@ -126,8 +126,6 @@ export function buildRequest({
 
   // Add securities, which are applicable
   req = applySecurities({request: req, securities, operation, spec})
-  // Will add the query object into the URL, if it exists
-  mergeInQueryOrForm(req)
 
   if (req.body || req.form) {
     if (requestContentType) {
@@ -142,6 +140,11 @@ export function buildRequest({
       req.headers['content-type'] = "application/x-www-form-urlencoded"
     }
   }
+
+  // Will add the query object into the URL, if it exists
+  // ... will also create a FormData instance, if multipart/form-data (eg: a file)
+  mergeInQueryOrForm(req)
+
   return req
 }
 
