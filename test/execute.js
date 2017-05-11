@@ -664,7 +664,6 @@ describe('execute', () => {
     })
 
     it('should NOT stringify the body, if provided with a javascript object (execute alone should do that, allowing us to modify the object in a clean way)', function () {
-
       // Given
       const spec = {
         host: 'swagger.io',
@@ -684,7 +683,6 @@ describe('execute', () => {
         one: 1
       })
     })
-
   })
 
   // Note: this is to handle requestContentType and responseContentType

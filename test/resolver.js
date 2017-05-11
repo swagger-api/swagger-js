@@ -45,6 +45,55 @@ describe('resolver', () => {
     }
   })
 
+  it('should be able to resolve circular $refs when a baseDoc is provided', () => {
+    // Given
+    const spec = {
+      "one": {
+        "$ref": "#/two"
+      },
+      "two": {
+        "a": {
+          "$ref": "#/three"
+        }
+      },
+      "three": {
+        "b": {
+          "$ref": "#/two"
+        }
+      }
+    }
+
+    // When
+    return Swagger.resolve({spec, baseDoc: 'http://example.com/swagger.json', allowMetaPatches: false})
+      .then(handleResponse)
+
+    // Then
+    function handleResponse(obj) {
+      expect(obj.errors).toEqual([])
+      expect(obj.spec).toEqual({
+        "one": {
+          "a": {
+            "b": {
+              "$ref": "#/two"
+            }
+          }
+        },
+        "three": {
+          "b": {
+            "$ref": "#/two"
+          }
+        },
+        "two": {
+          "a": {
+            "b": {
+              "$ref": "#/two"
+            }
+          }
+        }
+      })
+    }
+  })
+
   it('should resolve the url, if no spec provided', function () {
     // Given
     const url = 'http://example.com/swagger.json'
