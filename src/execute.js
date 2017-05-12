@@ -127,7 +127,7 @@ export function buildRequest({
   // Add securities, which are applicable
   req = applySecurities({request: req, securities, operation, spec})
 
-  if (req.body || req.form) {
+  if (req.body || req.form || req.method === 'POST') {
     if (requestContentType) {
       req.headers['content-type'] = requestContentType
     } else if (Array.isArray(operation.consumes)) {
