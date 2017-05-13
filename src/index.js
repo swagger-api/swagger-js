@@ -5,6 +5,7 @@ import Resolver, {clearCache} from './resolver'
 import url from 'url'
 import {makeApisTagOperation} from './interfaces'
 import {execute, buildRequest, PARAMETER_BUILDERS} from './execute'
+import {opId} from './helpers'
 
 Swagger.http = Http
 Swagger.makeHttp = makeHttp.bind(null, Swagger.http)
@@ -16,6 +17,7 @@ Swagger.clearCache = clearCache
 Swagger.parameterBuilders = PARAMETER_BUILDERS // Add this to the execute call
 Swagger.makeApisTagOperation = makeApisTagOperation
 Swagger.buildRequest = buildRequest
+Swagger.helpers = {opId}
 
 function Swagger(url, opts = {}) {
   // Allow url as a separate argument
