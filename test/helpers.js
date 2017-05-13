@@ -58,6 +58,29 @@ describe('helpers', function () {
         method: 'GET'
       })
     })
+
+    it('should return the operationObj, given a generated legacy operationId', function () {
+      // Given`
+      const spec = {
+        paths: {
+          '/two': {
+            get: {
+              description: 'an operation'
+            }
+          },
+        }
+      }
+
+      // When
+      const op = getOperationRaw(spec, 'get-/two')
+
+      // Then
+      expect(op).toInclude({
+        operation: spec.paths['/two'].get,
+        pathName: '/two',
+        method: 'GET'
+      })
+    })
   })
 
 

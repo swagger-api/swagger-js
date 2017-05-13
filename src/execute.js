@@ -77,6 +77,10 @@ export function buildRequest({
     req.responseInterceptor = responseInterceptor
   }
 
+  if (pathName && method && !operationId) {
+    operationId = idFromPathMethod(pathName, method)
+  }
+
   // Mostly for testing
   if (!operationId) {
     return req
