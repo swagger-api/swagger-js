@@ -8,7 +8,7 @@ const escapeString = str => {
 // Strategy for determining operationId
 export function opId(operation, pathName, method = '') {
   const idWithoutWhitespace = (operation.operationId || '').replace(/\s/g, '')
-  if(operation.operationId && idWithoutWhitespace.length) {
+  if(idWithoutWhitespace.length) {
     return escapeString(operation.operationId)
   } else {
     return idFromPathMethod(pathName, method)
@@ -35,11 +35,7 @@ export function getOperationRaw(spec, id) {
 
     const operationId = opId(operation, pathName, method)
 
-    if (operationId && operationId === id) {
-      return true
-    }
-
-    return false
+    return operationId && operationId === id
   })
 }
 
