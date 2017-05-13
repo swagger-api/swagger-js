@@ -41,6 +41,10 @@ export function execute({
   // Provide default fetch implementation
   userHttp = userHttp || fetch || http // Default to _our_ http
 
+  if (pathName && method && !operationId) {
+    operationId = idFromPathMethod(pathName, method)
+  }
+
   const request = self.buildRequest({spec, operationId, parameters, securities, ...extras})
 
   if (request.body && isPlainObject(request.body)) {
