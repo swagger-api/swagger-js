@@ -39,7 +39,7 @@ describe('http', () => {
       }
 
       fs.exists(filename, function (exists) {
-        if (exists && filename[filename.length - 1] !== "/") {
+        if (exists) {
           const fileStream = fs.createReadStream(filename)
           res.setHeader('Access-Control-Allow-Origin', '*')
           res.writeHead(200, contentType)
