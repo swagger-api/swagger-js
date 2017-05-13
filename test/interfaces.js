@@ -353,18 +353,23 @@ describe('intefaces', function () {
             put: {
               operationId: 'getOne'
             },
+            post: {
+              operationId: 'getOne'
+            }
           }
         }
       }
 
       // With
-      const tags = mapTagOperations({spec, defaultTag: 'hug'})
+      let count = 1
+      const tags = mapTagOperations({spec, defaultTag: 'hug', cb: () => count++})
 
         // Then
       expect(tags).toEqual({
         hug: {
-          getOne1: null,
-          getOne2: null,
+          getOne1: 1,
+          getOne2: 2,
+          getOne3: 3
         }
       })
     })
