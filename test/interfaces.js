@@ -41,6 +41,7 @@ describe('intefaces', function () {
       expect(spyExecute.calls.length).toEqual(1)
       expect(spyExecute.calls[0].arguments[0]).toEqual({
         spec: undefined,
+        operationId: undefined,
         method: 'GET',
         option: 1,
         parameters: ['param'],
@@ -98,6 +99,7 @@ describe('intefaces', function () {
       expect(spyExecute.calls.length).toEqual(1)
       expect(spyExecute.calls[0].arguments[0]).toEqual({
         spec: undefined,
+        operationId: undefined,
         method: 'GET',
         option: 1,
         parameters: ['param'],
@@ -228,6 +230,7 @@ describe('intefaces', function () {
         operation: spec.paths.one.get,
         pathName: 'one',
         method: 'GET',
+        operationId: 'getOne',
         spec
       })
     })

@@ -15,13 +15,14 @@ export const self = {
 
 // Make an execute, bound to arguments defined in mapTagOperation's callback (cb)
 export function makeExecute(swaggerJs = {}) {
-  return ({pathName, method}) => (parameters, opts = {}) => {
+  return ({pathName, method, operationId}) => (parameters, opts = {}) => {
     return swaggerJs.execute({
       spec: swaggerJs.spec,
       ...pick(swaggerJs, 'requestInterceptor', 'responseInterceptor'),
       pathName,
       method,
       parameters,
+      operationId,
       ...opts
     })
   }
@@ -78,7 +79,7 @@ export function mapTagOperations({spec, cb = nullFn, defaultTag = 'default'}) {
       }
       const tagObj = tagOperations[tag] = tagOperations[tag] || {}
       const id = opId(operation, pathName, method)
-      const cbResult = cb({spec, pathName, method, operation})
+      const cbResult = cb({spec, pathName, method, operation, operationId: id})
 
       // Id already exists?
       if (typeof tagObj[id] !== 'undefined') {
