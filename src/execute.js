@@ -41,7 +41,6 @@ export function execute({
   // Provide default fetch implementation
   userHttp = userHttp || fetch || http // Default to _our_ http
 
-
   if (pathName && method && !operationId) {
     operationId = legacyIdFromPathMethod(pathName, method)
   }
