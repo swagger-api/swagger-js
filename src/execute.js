@@ -4,7 +4,7 @@ import isPlainObject from 'lodash/isPlainObject'
 import btoa from 'btoa'
 import url from 'url'
 import http, {mergeInQueryOrForm} from './http'
-import {getOperationRaw, idFromPathMethod} from './helpers'
+import {getOperationRaw, idFromPathMethod, legacyIdFromPathMethod} from './helpers'
 
 const arrayOrEmpty = (ar) => {
   return Array.isArray(ar) ? ar : []
@@ -42,7 +42,7 @@ export function execute({
   userHttp = userHttp || fetch || http // Default to _our_ http
 
   if (pathName && method && !operationId) {
-    operationId = idFromPathMethod(pathName, method)
+    operationId = legacyIdFromPathMethod(pathName, method)
   }
 
   const request = self.buildRequest({spec, operationId, parameters, securities, ...extras})

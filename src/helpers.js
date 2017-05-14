@@ -21,6 +21,10 @@ export function idFromPathMethod(pathName, method) {
   return `${toLower(method)}${escapeString(pathName)}`
 }
 
+export function legacyIdFromPathMethod(pathName, method) {
+  return `${toLower(method)}-${pathName}`
+}
+
 // Get the operation, based on operationId ( just return the object, no inheritence )
 export function getOperationRaw(spec, id) {
   if (!spec || !spec.paths) {
@@ -34,8 +38,9 @@ export function getOperationRaw(spec, id) {
     }
 
     const operationId = opId(operation, pathName, method)
+    const legacyOperationId = legacyIdFromPathMethod(pathName, method)
 
-    return operationId && operationId === id
+    return operationId && (operationId === id || id === legacyOperationId)
   })
 }
 
