@@ -947,6 +947,66 @@ describe('execute', () => {
         api_key: 'hello'
       })
     })
+
+    it('should be able to apply __custom securities to all operations', function () {
+      const spec = {
+        host: 'swagger.io',
+        basePath: '/v1',
+        paths: {
+          '/one': {
+            get: {
+              operationId: 'getMe'
+            }
+          }
+        },
+        securityDefinitions: {
+          authMe: {
+            type: 'basic'
+          },
+          apiKey: {
+            in: 'header',
+            name: 'api_key',
+            type: 'apiKey'
+          }
+        }
+      }
+
+      const request = {
+        url: 'http://swagger.io/v1/one',
+        method: 'GET',
+        query: {}
+      }
+      const securities = {
+        authorized: {
+          __custom: [
+            {
+              value: {
+                username: 'foo',
+                password: 'bar'
+              },
+              schema: {
+                type: 'basic'
+              }
+            },
+            {
+              value: 'hello',
+              schema: {
+                in: 'header',
+                name: 'api_key',
+                type: 'apiKey'
+              }
+            }
+          ]
+        }
+      }
+
+      const applySecurity = applySecurities({request, securities, operation: spec.paths['/one'].get, spec})
+
+      expect(applySecurity.headers).toEqual({
+        authorization: 'Basic Zm9vOmJhcg==',
+        api_key: 'hello'
+      })
+    })
   })
 
   describe('parameterBuilders', function () {
