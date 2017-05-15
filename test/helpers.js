@@ -1,55 +1,21 @@
 import expect from 'expect'
 import {
-  normalizeSwagger, getOperationRaw, idFromPathMethod, pathMethodFromId, opId
+  normalizeSwagger, getOperationRaw, idFromPathMethod, pathMethodFromId
 } from '../src/helpers'
 
 describe('helpers', function () {
   describe('idFromPathMethod', function () {
-    it('should return "get-/one"', function () {
+    it('should return get_one as an operationId', function () {
       // When
       const id = idFromPathMethod('/one', 'get')
 
       // Then
-      expect(id).toEqual('get-/one')
-    })
-
-    it('should create unique operationIds', function () {
-      const spec = {spec: {
-        paths: {
-          '/foo': {
-            get: {
-              operationId: 'test'
-            }
-          },
-          '/bar': {
-            get: {
-              operationId: 'test'
-            }
-          }
-        }
-      }}
-
-      const id = normalizeSwagger(spec)
-      const id1 = id.spec.paths['/foo'].get.operationId
-      const id2 = id.spec.paths['/bar'].get.operationId
-
-      // Then
-      expect(id1).toNotEqual(id2)
-    })
-  })
-
-  describe('pathMethodFromId', function () {
-    it('should return [method, pathName]', function () {
-      // When
-      const id = pathMethodFromId('get-/one')
-
-      // Then
-      expect(id).toEqual(['/one', 'get'])
+      expect(id).toEqual('get_one')
     })
   })
 
   describe('getOperationRaw', function () {
-    it('should return the operation object, given an operationId', function () {
+    it('should return the operation object, given an explicit operationId', function () {
       // Given
       const spec = {
         paths: {
@@ -70,12 +36,37 @@ describe('helpers', function () {
       })
     })
 
-    it('should return the operationObj, given a `${method}-${pathName}`', function () {
-      // Given
+    it('should return the operationObj, given a generated operationId', function () {
+      // Given`
       const spec = {
         paths: {
           '/two': {
-            get: { }
+            get: {
+              description: 'an operation'
+            }
+          },
+        }
+      }
+
+      // When
+      const op = getOperationRaw(spec, 'get_two')
+
+      // Then
+      expect(op).toInclude({
+        operation: spec.paths['/two'].get,
+        pathName: '/two',
+        method: 'GET'
+      })
+    })
+
+    it('should return the operationObj, given a generated legacy operationId', function () {
+      // Given`
+      const spec = {
+        paths: {
+          '/two': {
+            get: {
+              description: 'an operation'
+            }
           },
         }
       }
@@ -94,6 +85,64 @@ describe('helpers', function () {
 
 
   describe('normalizeSwagger', function () {
+    describe('operationId', function () {
+      it('should create unique operationIds when explicit operationIds are duplicates', function () {
+        const spec = {spec: {
+          paths: {
+            '/foo': {
+              get: {
+                operationId: 'test'
+              }
+            },
+            '/bar': {
+              get: {
+                operationId: 'test'
+              }
+            }
+          }
+        }}
+
+        const id = normalizeSwagger(spec)
+        const id1 = id.spec.paths['/foo'].get.operationId
+        const id2 = id.spec.paths['/bar'].get.operationId
+
+        // Then
+        expect(id1).toEqual('test1')
+        expect(id2).toEqual('test2')
+      })
+
+      it('should create unique operationIds when explicit operationIds are effectively the same due to whitespace', function () {
+        const spec = {spec: {
+          paths: {
+            '/foo': {
+              get: {
+                operationId: 'test'
+              }
+            },
+            '/bar': {
+              get: {
+                operationId: 'te st'
+              }
+            },
+            '/bat': {
+              get: {
+                operationId: 'te/st'
+              }
+            }
+          }
+        }}
+
+        const id = normalizeSwagger(spec)
+        const id1 = id.spec.paths['/foo'].get.operationId
+        const id2 = id.spec.paths['/bar'].get.operationId
+        const id3 = id.spec.paths['/bat'].get.operationId
+
+        // Then
+        expect(id1).toEqual('test')
+        expect(id2).toEqual('te_st1')
+        expect(id3).toEqual('te_st2')
+      })
+    })
     describe('consumes', function () {
       it('should not overwrite consumes values from the global-level when exists in operation', function () {
         const spec = {spec: {

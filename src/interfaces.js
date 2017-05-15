@@ -15,13 +15,14 @@ export const self = {
 
 // Make an execute, bound to arguments defined in mapTagOperation's callback (cb)
 export function makeExecute(swaggerJs = {}) {
-  return ({pathName, method}) => (parameters, opts = {}) => {
+  return ({pathName, method, operationId}) => (parameters, opts = {}) => {
     return swaggerJs.execute({
       spec: swaggerJs.spec,
       ...pick(swaggerJs, 'requestInterceptor', 'responseInterceptor'),
       pathName,
       method,
       parameters,
+      operationId,
       ...opts
     })
   }
@@ -78,16 +79,23 @@ export function mapTagOperations({spec, cb = nullFn, defaultTag = 'default'}) {
       }
       const tagObj = tagOperations[tag] = tagOperations[tag] || {}
       const id = opId(operation, pathName, method)
-      const cbResult = cb({spec, pathName, method, operation})
+      const cbResult = cb({spec, pathName, method, operation, operationId: id})
 
-      // Id already exists?
-      if (typeof tagObj[id] !== 'undefined') {
+      if(operationIdCounter[id]) {
+        operationIdCounter[id] = operationIdCounter[id] + 1
+        tagObj[`${id}${operationIdCounter[id]}`] = cbResult
+      } else if (typeof tagObj[id] !== 'undefined') {
         // Bump counter ( for this operationId )
-        operationIdCounter[id] = (operationIdCounter[id] || 0) + 1
+        let originalCounterValue = (operationIdCounter[id] || 1)
+        operationIdCounter[id] = originalCounterValue + 1
         // Append _x to the operationId
-        tagObj[`${id}_${operationIdCounter[id]}`] = cbResult
-      }
-      else {
+        tagObj[`${id}${operationIdCounter[id]}`] = cbResult
+
+        // Rename the first operationId
+        let temp = tagObj[id]
+        delete tagObj[id]
+        tagObj[`${id}${originalCounterValue}`] = temp
+      } else {
         // Assign callback result ( usually a bound function )
         tagObj[id] = cbResult
       }

@@ -41,6 +41,7 @@ describe('intefaces', function () {
       expect(spyExecute.calls.length).toEqual(1)
       expect(spyExecute.calls[0].arguments[0]).toEqual({
         spec: undefined,
+        operationId: undefined,
         method: 'GET',
         option: 1,
         parameters: ['param'],
@@ -98,6 +99,7 @@ describe('intefaces', function () {
       expect(spyExecute.calls.length).toEqual(1)
       expect(spyExecute.calls[0].arguments[0]).toEqual({
         spec: undefined,
+        operationId: undefined,
         method: 'GET',
         option: 1,
         parameters: ['param'],
@@ -228,6 +230,7 @@ describe('intefaces', function () {
         operation: spec.paths.one.get,
         pathName: 'one',
         method: 'GET',
+        operationId: 'getOne',
         spec
       })
     })
@@ -293,7 +296,7 @@ describe('intefaces', function () {
       })
     })
 
-    it('should use path + method for ops without an operationId', function () {
+    it('should use method + path for ops without an operationId', function () {
       // Given
       const spec = {
         paths: {
@@ -311,7 +314,7 @@ describe('intefaces', function () {
         // Then
       expect(tags).toEqual({
         alpha: {
-          'get-/one': null,
+          'get_one': null,
         }
       })
     })
@@ -339,7 +342,7 @@ describe('intefaces', function () {
       })
     })
 
-    it('should remap duplicate operationId as ${operationId}_${count}', function () {
+    it('should remap duplicate operationId as ${operationId}${count} starting at 1', function () {
       // Given
       const spec = {
         paths: {
@@ -350,18 +353,23 @@ describe('intefaces', function () {
             put: {
               operationId: 'getOne'
             },
+            post: {
+              operationId: 'getOne'
+            }
           }
         }
       }
 
       // With
-      const tags = mapTagOperations({spec, defaultTag: 'hug'})
+      let count = 1
+      const tags = mapTagOperations({spec, defaultTag: 'hug', cb: () => count++})
 
         // Then
       expect(tags).toEqual({
         hug: {
-          getOne: null,
-          getOne_1: null,
+          getOne1: 1,
+          getOne2: 2,
+          getOne3: 3
         }
       })
     })

@@ -1,23 +1,28 @@
 import isObject from 'lodash/isObject'
 
 const toLower = str => String.prototype.toLowerCase.call(str)
+const escapeString = str => {
+  return str.replace(/[^\w]/gi, '_')
+}
 
 // Strategy for determining operationId
 export function opId(operation, pathName, method = '') {
-  return operation.operationId
-    ? operation.operationId : idFromPathMethod(pathName, method)
+  const idWithoutWhitespace = (operation.operationId || '').replace(/\s/g, '')
+  if(idWithoutWhitespace.length) {
+    return escapeString(operation.operationId)
+  } else {
+    return idFromPathMethod(pathName, method)
+  }
 }
 
 
 // Create a generated operationId from pathName + method
 export function idFromPathMethod(pathName, method) {
-  return `${toLower(method)}-${pathName}`
+  return `${toLower(method)}${escapeString(pathName)}`
 }
 
-// Extract pathName + method from generated operationId
-export function pathMethodFromId(id) {
-  const [, method, pathName] = /^([^-]*)-(.*)$/.exec(id)
-  return [pathName, method]
+export function legacyIdFromPathMethod(pathName, method) {
+  return `${toLower(method)}-${pathName}`
 }
 
 // Get the operation, based on operationId ( just return the object, no inheritence )
@@ -26,19 +31,16 @@ export function getOperationRaw(spec, id) {
     return null
   }
 
+
   return findOperation(spec, ({pathName, method, operation}) => {
     if (!operation || typeof operation !== 'object') {
       return false
     }
 
-    const {operationId} = operation
+    const operationId = opId(operation, pathName, method)
+    const legacyOperationId = legacyIdFromPathMethod(pathName, method)
 
-    if (operationId && operationId === id) {
-      return true
-    }
-
-    const [_pathName, _method] = pathMethodFromId(id)
-    return _pathName === pathName && toLower(_method) === toLower(method)
+    return operationId && (operationId === id || id === legacyOperationId)
   })
 }
 
@@ -120,7 +122,7 @@ export function normalizeSwagger(parsedSpec) {
         Object.keys(map).forEach((op) => {
           if (map[op].length > 1) {
             map[op].forEach((o, i) => {
-              o.operationId = `${op}_${i}`
+              o.operationId = `${op}${i+1}`
             })
           }
         })
