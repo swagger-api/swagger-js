@@ -157,4 +157,84 @@ describe('resolver', () => {
       })
     }
   })
+
+  it('should be able to resolve complex allOf', () => {
+    // Given
+    const spec = {
+      definitions: {
+        Simple1: {
+          type: 'object',
+          properties: {
+            id1: {
+              type: 'integer',
+              format: 'int64'
+            }
+          }
+        },
+        Simple2: {
+          type: 'object',
+          properties: {
+            id2: {
+              type: 'integer',
+              format: 'int64'
+            }
+          }
+        },
+        Composed: {
+          allOf: [
+            {
+              $ref: '#/definitions/Simple1'
+            },
+            {
+              $ref: '#/definitions/Simple2'
+            }
+          ]
+        }
+      }
+    }
+
+    // When
+    return Swagger.resolve({spec, allowMetaPatches: false})
+      .then(handleResponse)
+
+    // Then
+    function handleResponse(obj) {
+      expect(obj.errors).toEqual([])
+      expect(obj.spec).toEqual({
+        definitions: {
+          Simple1: {
+            type: 'object',
+            properties: {
+              id1: {
+                type: 'integer',
+                format: 'int64'
+              }
+            }
+          },
+          Simple2: {
+            type: 'object',
+            properties: {
+              id2: {
+                type: 'integer',
+                format: 'int64'
+              }
+            }
+          },
+          Composed: {
+            type: 'object',
+            properties: {
+              id1: {
+                type: 'integer',
+                format: 'int64'
+              },
+              id2: {
+                type: 'integer',
+                format: 'int64'
+              }
+            }
+          }
+        }
+      })
+    }
+  })
 })
