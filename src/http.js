@@ -1,4 +1,4 @@
-import fetch from 'isomorphic-fetch'
+import 'isomorphic-fetch'
 import qs from 'qs'
 import jsYaml from 'js-yaml'
 import assign from 'lodash/assign'
