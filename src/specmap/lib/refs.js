@@ -1,4 +1,4 @@
-import fetch from 'isomorphic-fetch'
+import fetch from 'fetch-everywhere'
 import url from 'url'
 import lib from '../lib'
 import createError from '../lib/create-error'

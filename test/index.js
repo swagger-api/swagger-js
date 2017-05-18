@@ -180,7 +180,7 @@ describe('constructor', () => {
 
     it('should serialize the response', function () {
       // Given
-      require('isomorphic-fetch') // To ensure global.Headers
+      require('fetch-everywhere') // To ensure global.Headers
       const xapp = xmock().get('https://swagger.io/one', function (req, res, next) {
         res.set('hi', 'ho')
         return res.send({me: true})
