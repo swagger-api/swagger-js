@@ -2,6 +2,7 @@ import 'isomorphic-fetch'
 import qs from 'qs'
 import jsYaml from 'js-yaml'
 import assign from 'lodash/assign'
+import isString from 'lodash/isString'
 
 // For testing
 export const self = {
@@ -136,7 +137,7 @@ function isFile(obj) {
   return obj !== null && typeof obj === 'object' && typeof obj.pipe === 'function'
 }
 
-function encodeValue({value, collectionFormat, allowEmptyValue}) {
+function formatValue({value, collectionFormat, allowEmptyValue}, skipEncoding) {
   const SEPARATORS = {
     csv: ',',
     ssv: '%20',
@@ -150,16 +151,23 @@ function encodeValue({value, collectionFormat, allowEmptyValue}) {
   if (isFile(value)) {
     return value
   }
+
+  let encodeFn = encodeURIComponent
+  if (skipEncoding) {
+    if (isString(value)) encodeFn = str => str
+    else encodeFn = obj => JSON.stringify(obj)
+  }
+
   if (value && !Array.isArray(value)) {
-    return encodeURIComponent(value)
+    return encodeFn(value)
   }
   if (Array.isArray(value) && !collectionFormat) {
-    return value.map(encodeURIComponent).join(',')
+    return value.map(encodeFn).join(',')
   }
   if (collectionFormat === 'multi') {
-    return value.map(encodeURIComponent)
+    return value.map(encodeFn)
   }
-  return value.map(encodeURIComponent).join(SEPARATORS[collectionFormat])
+  return value.map(encodeFn).join(SEPARATORS[collectionFormat])
 }
 
 // Encodes an object using appropriate serializer.
@@ -175,7 +183,7 @@ export function encodeFormOrQuery(data) {
     const paramValue = data[parameterName]
     const encodedParameterName = encodeURIComponent(parameterName)
     const notArray = isObject(paramValue) && !Array.isArray(paramValue)
-    result[encodedParameterName] = encodeValue(notArray ? paramValue : {value: paramValue})
+    result[encodedParameterName] = formatValue(notArray ? paramValue : {value: paramValue})
     return result
   }, {})
   return qs.stringify(encodedQuery, {encode: false, indices: false}) || ''
@@ -201,7 +209,7 @@ export function mergeInQueryOrForm(req = {}) {
       const FormData = require('isomorphic-form-data') // eslint-disable-line global-require
       req.body = new FormData()
       Object.keys(form).forEach((key) => {
-        req.body.append(key, encodeValue(form[key]))
+        req.body.append(key, formatValue(form[key], true))
       })
     }
     else {
