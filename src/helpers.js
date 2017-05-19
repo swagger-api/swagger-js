@@ -85,10 +85,11 @@ export function eachOperation(spec, cb, find) {
   }
 }
 
-export function normalizeSwagger(parsedSpec) {
+export function normalizeSwagger(parsedSpec, config={}) {
   const {spec} = parsedSpec
   const {paths} = spec
   const map = {}
+  const { modelPropertyMacro, parameterMacro } = config
 
   if (!paths) {
     return parsedSpec
@@ -167,6 +168,11 @@ export function normalizeSwagger(parsedSpec) {
             }
           }
         }
+      }
+      if ( typeof parameterMacro === 'function' && Array.isArray(operation.parameters)) {
+        operation.parameters.forEach(function (param, i){
+          parameterMacro(operation, operation.parameters[i])
+        })
       }
     }
   }

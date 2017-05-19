@@ -365,6 +365,52 @@ describe('helpers', function () {
           }
         }})
       })
+
+      it('should mutate parameter with passed parameterMacro function', function () {
+        const spec = {spec: {
+          paths: {
+            '/two': {
+              get: {
+                consumes: [
+                  'json'
+                ],
+                parameters: [
+                  {
+                    name: 'user',
+                    in: 'query'
+                  }
+                ]
+              }
+            }
+          }
+        }}
+
+        const parameterMacro = function (operation, parameter) {
+          if (operation.consumes[0] === 'json') {
+            parameter.example = 'json'
+          }
+        }
+
+        const resultSpec = normalizeSwagger(spec, { parameterMacro })
+        expect(resultSpec).toEqual({spec: {
+          paths: {
+            '/two': {
+              get: {
+                consumes: [
+                  'json'
+                ],
+                parameters: [
+                  {
+                    name: 'user',
+                    in: 'query',
+                    example: 'json'
+                  }
+                ]
+              }
+            }
+          }
+        }})
+      })
     })
   })
 })

@@ -22,7 +22,7 @@ export function clearCache() {
   plugins.refs.clearCache()
 }
 
-export default function resolve({http, fetch, spec, url, baseDoc, mode, allowMetaPatches = true}) {
+export default function resolve({http, fetch, spec, url, baseDoc, mode, allowMetaPatches = true, modelPropertyMacro, parameterMacro}) {
   // @TODO Swagger-UI uses baseDoc instead of url, this is to allow both
   // need to fix and pick one.
   baseDoc = baseDoc || url
@@ -57,6 +57,6 @@ export default function resolve({http, fetch, spec, url, baseDoc, mode, allowMet
       context: {baseDoc},
       plugins: plugs,
       allowMetaPatches // allows adding .meta patches, which include adding `$$ref`s to the spec
-    }).then(normalizeSwagger)
+    }).then(normalizeSwagger, { modelPropertyMacro, parameterMacro })
   }
 }
