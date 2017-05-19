@@ -1,6 +1,7 @@
 import assign from 'lodash/assign'
 import getIn from 'lodash/get'
 import isPlainObject from 'lodash/isPlainObject'
+import isArray from 'lodash/isArray'
 import btoa from 'btoa'
 import url from 'url'
 import http, {mergeInQueryOrForm} from './http'
@@ -47,7 +48,7 @@ export function execute({
 
   const request = self.buildRequest({spec, operationId, parameters, securities, ...extras})
 
-  if (request.body && isPlainObject(request.body)) {
+  if (request.body && (isPlainObject(request.body) || isArray(request.body))) {
     request.body = JSON.stringify(request.body)
   }
 
