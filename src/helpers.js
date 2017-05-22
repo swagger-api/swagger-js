@@ -86,13 +86,19 @@ export function eachOperation(spec, cb, find) {
 }
 
 export function normalizeSwagger(parsedSpec, config={}) {
-  const {spec} = parsedSpec
+  const {spec, errors} = parsedSpec
   const {paths} = spec
   const map = {}
   const { modelPropertyMacro, parameterMacro } = config
 
   if (!paths) {
     return parsedSpec
+  }
+
+  if (spec.definitions && typeof applyModelPropertyMacro === 'function') {
+    for ( let k in spec.definitions ) {
+      applyModelPropertyMacro.call(null, spec.definitions[k], `#/definitions/${k}`, modelPropertyMacro)
+    }
   }
 
   for (const pathName in paths) {
@@ -170,12 +176,37 @@ export function normalizeSwagger(parsedSpec, config={}) {
         }
       }
       if ( typeof parameterMacro === 'function' && Array.isArray(operation.parameters)) {
+        let op = Object.assign({}, operation)
         operation.parameters.forEach(function (param, i){
-          parameterMacro(operation, operation.parameters[i])
+          try {
+            parameterMacro.call(null, op, operation.parameters[i])
+          } catch (e) {
+            console.log(e)
+            errors.push({
+              message: `Cannot apply parameterMacro: ${e.message}`,
+              originalError: e,
+              stack: e.stack
+            })
+          }
+
         })
       }
     }
   }
 
   return parsedSpec
+}
+
+function applyModelPropertyMacro (definintion, $ref, modelPropertyMacro) {
+  let cache = {}
+
+  return (function () {
+    let $$ref = definintion.$$ref || $ref
+
+    if (!cache[$$ref]) {
+      cache[$$ref] = modelPropertyMacro.call(null, definintion)
+    }
+
+    return cache[$$ref];
+  })();
 }
