@@ -89,17 +89,10 @@ export function normalizeSwagger(parsedSpec, config={}) {
   const {spec, errors} = parsedSpec
   const {paths} = spec
   const map = {}
-  const { modelPropertyMacro, parameterMacro } = config
-  const isModelPropertyMacro = typeof modelPropertyMacro === 'function'
+  const { parameterMacro } = config
 
   if (!paths) {
     return parsedSpec
-  }
-
-  if (spec.definitions && isModelPropertyMacro) {
-    for ( let k in spec.definitions ) {
-      applyModelPropertyMacro.call(null, spec.definitions[k], `#/definitions/${k}`, modelPropertyMacro)
-    }
   }
 
   for (const pathName in paths) {
@@ -198,16 +191,3 @@ export function normalizeSwagger(parsedSpec, config={}) {
   return parsedSpec
 }
 
-function applyModelPropertyMacro (definintion, $ref, modelPropertyMacro) {
-  let cache = {}
-
-  return (function () {
-    let $$ref = definintion.$$ref || $ref
-
-    if (!cache[$$ref]) {
-      cache[$$ref] = modelPropertyMacro.call(null, definintion)
-    }
-
-    return cache[$$ref];
-  })();
-}

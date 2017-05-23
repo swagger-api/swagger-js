@@ -57,6 +57,6 @@ export default function resolve({http, fetch, spec, url, baseDoc, mode, allowMet
       context: {baseDoc},
       plugins: plugs,
       allowMetaPatches // allows adding .meta patches, which include adding `$$ref`s to the spec
-    }).then(normalizeSwagger, { modelPropertyMacro, parameterMacro })
+    }).then(normalizeSwagger, { parameterMacro })
   }
 }
