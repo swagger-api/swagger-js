@@ -90,12 +90,13 @@ export function normalizeSwagger(parsedSpec, config={}) {
   const {paths} = spec
   const map = {}
   const { modelPropertyMacro, parameterMacro } = config
+  const isModelPropertyMacro = typeof modelPropertyMacro === 'function'
 
   if (!paths) {
     return parsedSpec
   }
 
-  if (spec.definitions && typeof applyModelPropertyMacro === 'function') {
+  if (spec.definitions && isModelPropertyMacro) {
     for ( let k in spec.definitions ) {
       applyModelPropertyMacro.call(null, spec.definitions[k], `#/definitions/${k}`, modelPropertyMacro)
     }
