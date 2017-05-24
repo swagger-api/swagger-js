@@ -304,67 +304,176 @@ describe('helpers', function () {
 
     describe('parameters', function () {
       it('should add parameters from path when no parameters in operation', function () {
-        const spec = {spec: {
-          paths: {
-            '/two': {
-              parameters: [{name: 'a', in: 'path'}],
-              get: {}
-            }
-          }
-        }}
-
-        const resultSpec = normalizeSwagger(spec)
-
-        expect(resultSpec).toEqual({spec: {
-          paths: {
-            '/two': {
-              parameters: [{name: 'a', in: 'path'}],
-              get: {
-                parameters: [{name: 'a', in: 'path'}]
+        const spec = {
+          spec: {
+            paths: {
+              '/two': {
+                parameters: [{name: 'a', in: 'path'}],
+                get: {}
               }
             }
           }
-        }})
+        }
+
+        const resultSpec = normalizeSwagger(spec)
+
+        expect(resultSpec).toEqual({
+          spec: {
+            paths: {
+              '/two': {
+                parameters: [{name: 'a', in: 'path'}],
+                get: {
+                  parameters: [{name: 'a', in: 'path'}]
+                }
+              }
+            }
+          }
+        })
       })
 
       it('should add parameters from path but not override parameters in operation', function () {
-        const spec = {spec: {
-          paths: {
-            '/two': {
-              parameters: [
-                {name: 'a', in: 'path'},
-                {name: 'b', in: 'path'}
-              ],
-              get: {
+        const spec = {
+          spec: {
+            paths: {
+              '/two': {
                 parameters: [
-                  {name: 'a', in: 'query'},
-                  {name: 'c', in: 'query'}
-                ]
+                  {name: 'a', in: 'path'},
+                  {name: 'b', in: 'path'}
+                ],
+                get: {
+                  parameters: [
+                    {name: 'a', in: 'query'},
+                    {name: 'c', in: 'query'}
+                  ]
+                }
               }
             }
           }
-        }}
+        }
 
         const resultSpec = normalizeSwagger(spec)
 
-        expect(resultSpec).toEqual({spec: {
-          paths: {
-            '/two': {
-              parameters: [
-                {name: 'a', in: 'path'},
-                {name: 'b', in: 'path'}
-              ],
-              get: {
+        expect(resultSpec).toEqual({
+          spec: {
+            paths: {
+              '/two': {
                 parameters: [
-                  {name: 'a', in: 'query'},
-                  {name: 'c', in: 'query'},
+                  {name: 'a', in: 'path'},
                   {name: 'b', in: 'path'}
-                ]
+                ],
+                get: {
+                  parameters: [
+                    {name: 'a', in: 'query'},
+                    {name: 'c', in: 'query'},
+                    {name: 'b', in: 'path'}
+                  ]
+                }
               }
             }
           }
-        }})
+        })
       })
+
+      it('should mutate parameter with passed parameterMacro function', function () {
+        const spec = {
+          spec: {
+            paths: {
+              '/two': {
+                get: {
+                  consumes: [
+                    'json'
+                  ],
+                  parameters: [
+                    {
+                      name: 'user',
+                      in: 'query'
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+
+        const parameterMacro = function (operation, parameter) {
+          if (operation.consumes[0] === 'json') {
+            parameter.example = 'json'
+          }
+        }
+
+        const resultSpec = normalizeSwagger(spec, {parameterMacro})
+        expect(resultSpec).toEqual({
+          spec: {
+            paths: {
+              '/two': {
+                get: {
+                  consumes: [
+                    'json'
+                  ],
+                  parameters: [
+                    {
+                      name: 'user',
+                      in: 'query',
+                      example: 'json'
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        })
+      })
+
+      it('shouldn\'t mutate operation with passed parameterMacro function', function () {
+        const spec = {
+          spec: {
+            paths: {
+              '/two': {
+                get: {
+                  consumes: [
+                    'json'
+                  ],
+                  parameters: [
+                    {
+                      name: 'user',
+                      in: 'query'
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+
+        const parameterMacro = function (operation, parameter) {
+          if (operation.consumes[0] === 'json') {
+            operation.consumes = ["xml"]
+          }
+        }
+
+        const resultSpec = normalizeSwagger(spec, {parameterMacro})
+        expect(resultSpec).toEqual({
+          spec: {
+            paths: {
+              '/two': {
+                get: {
+                  consumes: [
+                    'json'
+                  ],
+                  parameters: [
+                    {
+                      name: 'user',
+                      in: 'query'
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        })
+      })
+
     })
+
   })
 })

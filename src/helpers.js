@@ -85,10 +85,11 @@ export function eachOperation(spec, cb, find) {
   }
 }
 
-export function normalizeSwagger(parsedSpec) {
-  const {spec} = parsedSpec
+export function normalizeSwagger(parsedSpec, config={}) {
+  const {spec, errors} = parsedSpec
   const {paths} = spec
   const map = {}
+  const { parameterMacro } = config
 
   if (!paths) {
     return parsedSpec
@@ -168,8 +169,25 @@ export function normalizeSwagger(parsedSpec) {
           }
         }
       }
+      if ( typeof parameterMacro === 'function' && Array.isArray(operation.parameters)) {
+        let op = Object.assign({}, operation)
+        operation.parameters.forEach(function (param, i){
+          try {
+            parameterMacro.call(null, op, operation.parameters[i])
+          } catch (e) {
+            console.log(e)
+            errors.push({
+              message: `Cannot apply parameterMacro: ${e.message}`,
+              originalError: e,
+              stack: e.stack
+            })
+          }
+
+        })
+      }
     }
   }
 
   return parsedSpec
 }
+
