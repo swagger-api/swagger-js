@@ -175,7 +175,7 @@ describe('http', () => {
       })
     })
 
-    it.only('should not encode form-data', function () {
+    it('should not encode form-data', function () {
       const FormData = require('isomorphic-form-data')
       const _append = FormData.prototype.append
       FormData.prototype.append = function (k, v) {
