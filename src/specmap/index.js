@@ -1,6 +1,8 @@
 import lib from './lib'
 import refs from './lib/refs'
 import allOf from './lib/all-of'
+import parameters from './lib/parameters'
+import properties from './lib/properties'
 import ContextTree from './lib/context-tree'
 
 const HARD_LIMIT = 100
@@ -353,5 +355,5 @@ export default function mapSpec(opts) {
   return new SpecMap(opts).dispatch()
 }
 
-const plugins = {refs, allOf}
+const plugins = {refs, allOf, parameters, properties}
 export {SpecMap, plugins}
