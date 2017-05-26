@@ -18,7 +18,7 @@
     "build": "NODE_ENV=production webpack -p --config ./webpack.config.js",
     "build-bundle": "NODE_ENV=production webpack -p --config ./webpack.bundle.config.js",
     "watch": "webpack --config webpack.config.js --watch --progress",
-    "test": "NODE_ENV=test node --debug ./node_modules/.bin/_mocha --recursive --compilers js:babel-core/register",
+    "test": "NODE_ENV=test node ./node_modules/.bin/_mocha --recursive --compilers js:babel-core/register",
     "test:watch": "npm run test -- -w",
     "lint": "eslint src/ test/",
     "deps-license": "license-checker --production --csv --out $npm_package_config_deps_check_dir/licenses.csv && license-checker --development --csv --out $npm_package_config_deps_check_dir/licenses-dev.csv",
