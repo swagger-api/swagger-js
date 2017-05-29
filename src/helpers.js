@@ -37,10 +37,12 @@ export function getOperationRaw(spec, id) {
       return false
     }
 
+    const rawOperationId = operation.operationId // straight from the source
     const operationId = opId(operation, pathName, method)
     const legacyOperationId = legacyIdFromPathMethod(pathName, method)
 
-    return operationId && (operationId === id || id === legacyOperationId)
+    return [operationId, legacyOperationId, rawOperationId]
+      .some(val => val === id)
   })
 }
 

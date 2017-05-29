@@ -36,6 +36,27 @@ describe('helpers', function () {
       })
     })
 
+    it('should return the operation object, given an explicit operationId with special characters', function () {
+      // Given
+      const spec = {
+        paths: {
+          '/one': {
+            get: {operationId: 'A.Very_Special-operationID!'}
+          }
+        }
+      }
+
+      // When
+      const op = getOperationRaw(spec, 'A.Very_Special-operationID!')
+
+      // Then
+      expect(op).toInclude({
+        operation: spec.paths['/one'].get,
+        pathName: '/one',
+        method: 'GET'
+      })
+    })
+
     it('should return the operationObj, given a generated operationId', function () {
       // Given`
       const spec = {
