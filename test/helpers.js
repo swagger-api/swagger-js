@@ -71,7 +71,7 @@ describe('helpers', function () {
       const op = getOperationRaw(spec, 'ThisOperationIdDoesNotExist')
 
       // Then
-      expect(op).toEqual({})
+      expect(op).toEqual(null)
     })
 
     it('should return the operationObj, given a generated operationId', function () {
