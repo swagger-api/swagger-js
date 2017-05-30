@@ -42,14 +42,14 @@ export function getOperationRaw(spec, id) {
     const legacyOperationId = legacyIdFromPathMethod(pathName, method)
 
     return [operationId, legacyOperationId, rawOperationId]
-      .some(val => val === id)
+      .some(val => val && val === id)
   })
 }
 
 // Will stop iterating over the operations and return the operationObj
 // as soon as predicate returns true
 export function findOperation(spec, predicate) {
-  return eachOperation(spec, predicate, true)
+  return eachOperation(spec, predicate, true) || {}
 }
 
 // iterate over each operation, and fire a callback with details

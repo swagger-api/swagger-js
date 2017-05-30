@@ -57,6 +57,23 @@ describe('helpers', function () {
       })
     })
 
+    it('should return null, given an explicit operationId that does not exist', function () {
+      // Given
+      const spec = {
+        paths: {
+          '/one': {
+            get: {operationId: 'getOne'}
+          }
+        }
+      }
+
+      // When
+      const op = getOperationRaw(spec, 'ThisOperationIdDoesNotExist')
+
+      // Then
+      expect(op).toEqual({})
+    })
+
     it('should return the operationObj, given a generated operationId', function () {
       // Given`
       const spec = {
