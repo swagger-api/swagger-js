@@ -49,7 +49,7 @@ export function getOperationRaw(spec, id) {
 // Will stop iterating over the operations and return the operationObj
 // as soon as predicate returns true
 export function findOperation(spec, predicate) {
-  return eachOperation(spec, predicate, true) || {}
+  return eachOperation(spec, predicate, true) || null
 }
 
 // iterate over each operation, and fire a callback with details
