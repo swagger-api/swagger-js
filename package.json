@@ -61,7 +61,7 @@
     "babel-runtime": "^6.23.0",
     "btoa": "1.1.2",
     "deep-extend": "^0.4.1",
-    "fast-json-patch": "^1.1.8",
+    "fast-json-patch": "~1.1.8",
     "isomorphic-fetch": "2.2.1",
     "isomorphic-form-data": "0.0.1",
     "js-yaml": "^3.8.1",
