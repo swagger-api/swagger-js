@@ -130,6 +130,7 @@ export function normalizeSwagger(parsedSpec) {
             // Ensure we always add the normalized operation ID if one already exists ( potentially different, given that we normalize our IDs)
             // ... _back_ to the spec. Otherwise, they might not line up
             if(typeof operation.operationId !== 'undefined') {
+              operation.__originalOperationId = operation.operationId
               operation.operationId = op
             }
           }
