@@ -149,6 +149,46 @@ describe('helpers', function () {
         expect(id2).toEqual('test2')
       })
 
+      it('should add the normalized operation id to the spec, if a non-normalized id exists', function () {
+        // Given
+        const spec = {spec: {
+          paths: {
+            '/foo': {
+              get: {
+                operationId: 'something with spaces'
+              }
+            },
+          }
+        }}
+
+        // When
+        const normalizedSpec = normalizeSwagger(spec)
+        const id = normalizedSpec.spec.paths['/foo'].get.operationId
+
+        // Then
+        expect(id).toEqual('something_with_spaces')
+      })
+
+      it('should add the original operation id to the spec, if a non-normalized id exists', function () {
+        // Given
+        const spec = {spec: {
+          paths: {
+            '/foo': {
+              get: {
+                operationId: 'something with spaces'
+              }
+            },
+          }
+        }}
+
+        // When
+        const normalizedSpec = normalizeSwagger(spec)
+        const originalId = normalizedSpec.spec.paths['/foo'].get.__originalOperationId
+
+        // Then
+        expect(originalId).toEqual('something with spaces')
+      })
+
       it('should create unique operationIds when explicit operationIds are effectively the same due to whitespace', function () {
         const spec = {spec: {
           paths: {
