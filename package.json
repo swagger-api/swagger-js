@@ -1,6 +1,6 @@
 {
   "name": "swagger-client",
-  "version": "3.0.12",
+  "version": "3.0.13",
   "description": "SwaggerJS - a collection of interfaces for OAI specs",
   "main": "dist/index.js",
   "contributors": [
