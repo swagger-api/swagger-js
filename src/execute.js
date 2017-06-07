@@ -105,14 +105,20 @@ export function buildRequest({
       const builder = parameterBuilders[parameter.in]
       let value
 
-      if(parameter.in === 'body' && parameter.schema && parameter.schema.properties) {
+      //use the parameter value from the parameters object if it is set
+      if(parameter.name && parameters[parameter.name]) {
+        value = parameters[parameter.name];
+      } else if(parameter.in === 'body' && parameter.schema && parameter.schema.properties) {
+        //if this parameter is in the body and has an object schema, use the whole parameters object
         value = parameters
       }
 
-      value = parameter && parameter.name && parameters[parameter.name]
-
       if (typeof parameter.default !== 'undefined' && typeof value === 'undefined') {
         value = parameter.default
+      }
+
+      if (parameter.in === 'body' && typeof value === 'object') {
+        value = JSON.stringify(value)
       }
 
       if (typeof value === 'undefined' && parameter.required && !parameter.allowEmptyValue) {

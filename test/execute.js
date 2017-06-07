@@ -657,9 +657,9 @@ describe('execute', () => {
         headers: {
           head: 'justTheHead',
         },
-        body: {
+        body: JSON.stringify({
           json: 'rulez'
-        }
+        })
       })
     })
 
@@ -682,6 +682,53 @@ describe('execute', () => {
       expect(req.body).toEqual({
         one: 1
       })
+    })
+  })
+
+  it('should use the whole parameters object as the parameter value if parameter is in the body', function () {
+    const spec = {
+      host: 'swagger.io',
+      paths: {
+        '/v1/blob/image.png': {
+          post: {
+            operationId: 'getBlob',
+            parameters: [
+              {
+                name: 'bodyParam',
+                in: 'body',
+                required: true,
+                schema: {
+                  type: 'object',
+                  properties: {
+                    id: {type: 'integer'},
+                    name: {type: 'string'}
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+
+    const req = buildRequest({
+      spec: spec,
+      operationId: 'getBlob',
+      parameters: {
+        name: 'johny',
+        id: '123'
+      }})
+
+
+    expect(req).toEqual({
+      url: 'http://swagger.io/v1/blob/image.png',
+      method: 'POST',
+      credentials: 'same-origin',
+      body: JSON.stringify({
+        name: 'johny',
+        id: '123',
+      }),
+      headers: { }
     })
   })
 
@@ -1275,10 +1322,10 @@ describe('execute', () => {
             url: 'http://swagger.io/v1/blob/image.png?someQuery=foo',
             method: 'POST',
             credentials: 'same-origin',
-            body: {
+            body: JSON.stringify({
               name: 'johny',
               id: '123',
-            },
+            }),
             headers: { }
           })
         })
