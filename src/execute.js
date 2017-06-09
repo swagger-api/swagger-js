@@ -6,10 +6,16 @@ import btoa from 'btoa'
 import url from 'url'
 import http, {mergeInQueryOrForm} from './http'
 import {getOperationRaw, idFromPathMethod, legacyIdFromPathMethod} from './helpers'
+import createError from './specmap/lib/create-error'
 
 const arrayOrEmpty = (ar) => {
   return Array.isArray(ar) ? ar : []
 }
+
+const OperationNotFoundError = createError('OperationNotFoundError', function(message, extra, oriError) {
+  this.originalError = oriError
+  Object.assign(this, extra || {})
+})
 
 // For stubbing in tests
 export const self = {
@@ -47,6 +53,10 @@ export function execute({
   }
 
   const request = self.buildRequest({spec, operationId, parameters, securities, ...extras})
+
+  if (request.error) {
+    throw new OperationNotFoundError(request.error)
+  }
 
   if (request.body && (isPlainObject(request.body) || isArray(request.body))) {
     request.body = JSON.stringify(request.body)
@@ -87,7 +97,13 @@ export function buildRequest({
     return req
   }
 
-  const {operation = {}, method, pathName} = getOperationRaw(spec, operationId)
+  const operationRaw = getOperationRaw(spec, operationId)
+  if (!operationRaw) {
+    req.error = `Operation ${operationId} not found`
+    return req
+  }
+
+  const {operation = {}, method, pathName} = operationRaw
 
   req.url += pathName // Have not yet replaced the path parameters
   req.method = (`${method}`).toUpperCase()
