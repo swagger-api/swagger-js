@@ -220,9 +220,10 @@ export function baseUrl({spec, scheme, contextUrl = ''}) {
 export function applySecurities({request, securities = {}, operation = {}, spec}) {
   const result = assign({}, request)
   const {authorized = {}, specSecurity = {}} = securities
-  const security = operation.security || specSecurity
+  const security = operation.security || specSecurity || []
   const isAuthorized = authorized && !!Object.keys(authorized).length
   const securityDef = spec.securityDefinitions
+  const __custom = authorized.__custom || []
 
   result.headers = result.headers || {}
   result.query = result.query || {}
@@ -232,7 +233,7 @@ export function applySecurities({request, securities = {}, operation = {}, spec}
     return request
   }
 
-  security.forEach((securityObj, index) => {
+  security.forEach && security.forEach((securityObj, index) => {
     for (const key in securityObj) {
       const auth = authorized[key]
       if (!auth) {
@@ -242,31 +243,40 @@ export function applySecurities({request, securities = {}, operation = {}, spec}
       const token = auth.token
       const value = auth.value || auth
       const schema = securityDef[key]
-      const {type} = schema
-      const accessToken = token && token.access_token
-      const tokenType = token && token.token_type
 
-      if (auth) {
-        if (type === 'apiKey') {
-          const inType = schema.in === 'query' ? 'query' : 'headers'
-          result[inType] = result[inType] || {}
-          result[inType][schema.name] = value
-        }
-        else if (type === 'basic') {
-          if (value.header) {
-            result.headers.authorization = value.header
-          }
-          else {
-            value.base64 = btoa(`${value.username}:${value.password}`)
-            result.headers.authorization = `Basic ${value.base64}`
-          }
-        }
-        else if (type === 'oauth2') {
-          result.headers.authorization = `${tokenType || 'Bearer'} ${accessToken}`
-        }
-      }
+      applySecurity(result, schema, value, token)
     }
   })
 
+  __custom.forEach((auth)=> {
+    applySecurity(result, auth.schema, auth.value)
+  })
+
   return result
+}
+
+const applySecurity = (req, schema, value, token) => {
+  const {type} = schema
+  const accessToken = token && token.access_token
+  const tokenType = token && token.token_type
+
+  if (type === 'apiKey') {
+    const inType = schema.in === 'query' ? 'query' : 'headers'
+    req[inType] = req[inType] || {}
+    req[inType][schema.name] = value
+  }
+  else if (type === 'basic') {
+    if (value.header) {
+      req.headers.authorization = value.header
+    }
+    else {
+      value.base64 = btoa(`${value.username}:${value.password}`)
+      req.headers.authorization = `Basic ${value.base64}`
+    }
+  }
+  else if (type === 'oauth2') {
+    req.headers.authorization = `${tokenType || 'Bearer'} ${accessToken}`
+  }
+
+  return req
 }
