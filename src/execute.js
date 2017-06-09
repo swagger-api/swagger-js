@@ -93,6 +93,7 @@ export function buildRequest({
   req.method = (`${method}`).toUpperCase()
 
   parameters = parameters || {}
+  const path = spec.paths[pathName] || {}
 
   if (responseContentType) {
     req.headers.accept = responseContentType
@@ -100,7 +101,7 @@ export function buildRequest({
 
   // Add values to request
   arrayOrEmpty(operation.parameters) // operation parameters
-    .concat(arrayOrEmpty(spec.paths[pathName].parameters)) // path parameters
+    .concat(arrayOrEmpty(path.parameters)) // path parameters
     .forEach((parameter) => {
       const builder = parameterBuilders[parameter.in]
       let value
@@ -219,7 +220,7 @@ export function baseUrl({spec, scheme, contextUrl = ''}) {
 // Add security values, to operations - that declare their need on them
 export function applySecurities({request, securities = {}, operation = {}, spec}) {
   const result = assign({}, request)
-  const {authorized = {}, specSecurity = {}} = securities
+  const {authorized = {}, specSecurity = []} = securities
   const security = operation.security || specSecurity
   const isAuthorized = authorized && !!Object.keys(authorized).length
   const securityDef = spec.securityDefinitions
