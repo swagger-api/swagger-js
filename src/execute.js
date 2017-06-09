@@ -54,10 +54,6 @@ export function execute({
 
   const request = self.buildRequest({spec, operationId, parameters, securities, ...extras})
 
-  if (request.error) {
-    throw new OperationNotFoundError(request.error)
-  }
-
   if (request.body && (isPlainObject(request.body) || isArray(request.body))) {
     request.body = JSON.stringify(request.body)
   }
@@ -99,8 +95,7 @@ export function buildRequest({
 
   const operationRaw = getOperationRaw(spec, operationId)
   if (!operationRaw) {
-    req.error = `Operation ${operationId} not found`
-    return req
+    throw new OperationNotFoundError(`Operation ${operationId} not found`)
   }
 
   const {operation = {}, method, pathName} = operationRaw
