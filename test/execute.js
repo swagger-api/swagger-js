@@ -271,6 +271,23 @@ describe('execute', () => {
       expect(() => buildRequest({spec, operationId: 'getMe'})).toThrow('Required parameter petId is not provided')
     })
 
+    it('should throw error if operation was not found', function () {
+      // Given
+      const spec = {
+        host: 'swagger.io',
+        basePath: '/v1',
+        paths: {
+          '/one': {
+            get: {
+              operationId: 'getMe'
+            }
+          }
+        }
+      }
+
+      expect(() => buildRequest({spec, operationId: 'nonExistingOperationId'})).toThrow('Operation nonExistingOperationId not found')
+    })
+
     describe('formData', function () {
       it('should add an empty query param if the value is empty and allowEmptyValue: true', function () {
         // Given
