@@ -6,10 +6,16 @@ import btoa from 'btoa'
 import url from 'url'
 import http, {mergeInQueryOrForm} from './http'
 import {getOperationRaw, idFromPathMethod, legacyIdFromPathMethod} from './helpers'
+import createError from './specmap/lib/create-error'
 
 const arrayOrEmpty = (ar) => {
   return Array.isArray(ar) ? ar : []
 }
+
+const OperationNotFoundError = createError('OperationNotFoundError', function(message, extra, oriError) {
+  this.originalError = oriError
+  Object.assign(this, extra || {})
+})
 
 // For stubbing in tests
 export const self = {
@@ -87,12 +93,18 @@ export function buildRequest({
     return req
   }
 
-  const {operation = {}, method, pathName} = getOperationRaw(spec, operationId)
+  const operationRaw = getOperationRaw(spec, operationId)
+  if (!operationRaw) {
+    throw new OperationNotFoundError(`Operation ${operationId} not found`)
+  }
+
+  const {operation = {}, method, pathName} = operationRaw
 
   req.url += pathName // Have not yet replaced the path parameters
   req.method = (`${method}`).toUpperCase()
 
   parameters = parameters || {}
+  const path = spec.paths[pathName] || {}
 
   if (responseContentType) {
     req.headers.accept = responseContentType
@@ -100,7 +112,7 @@ export function buildRequest({
 
   // Add values to request
   arrayOrEmpty(operation.parameters) // operation parameters
-    .concat(arrayOrEmpty(spec.paths[pathName].parameters)) // path parameters
+    .concat(arrayOrEmpty(path.parameters)) // path parameters
     .forEach((parameter) => {
       const builder = parameterBuilders[parameter.in]
       let value
@@ -219,7 +231,7 @@ export function baseUrl({spec, scheme, contextUrl = ''}) {
 // Add security values, to operations - that declare their need on them
 export function applySecurities({request, securities = {}, operation = {}, spec}) {
   const result = assign({}, request)
-  const {authorized = {}, specSecurity = {}} = securities
+  const {authorized = {}, specSecurity = []} = securities
   const security = operation.security || specSecurity
   const isAuthorized = authorized && !!Object.keys(authorized).length
   const securityDef = spec.securityDefinitions
