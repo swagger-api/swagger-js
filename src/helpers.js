@@ -124,14 +124,16 @@ export function normalizeSwagger(parsedSpec) {
         Object.keys(map).forEach((op) => {
           if (map[op].length > 1) {
             map[op].forEach((o, i) => {
+              o.__originalOperationId = o.__originalOperationId ||  o.operationId
               o.operationId = `${op}${i+1}`
             })
           } else {
             // Ensure we always add the normalized operation ID if one already exists ( potentially different, given that we normalize our IDs)
             // ... _back_ to the spec. Otherwise, they might not line up
             if(typeof operation.operationId !== 'undefined') {
-              operation.__originalOperationId = operation.operationId
-              operation.operationId = op
+              let obj = map[op][0]
+              obj.__originalOperationId = obj.__originalOperationId || operation.operationId
+              obj.operationId = op
             }
           }
 
