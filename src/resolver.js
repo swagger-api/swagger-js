@@ -9,7 +9,8 @@ export function makeFetchJSON(http) {
       loadSpec: true,
       headers: {
         Accept: 'application/json'
-      }
+      },
+      credentials: 'same-origin' // same-origin to send cookies and auth headers
     })
     .then((res) => {
       return res.body
