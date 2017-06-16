@@ -174,8 +174,8 @@ A client for operations. We're currently using the `apis[tag][operationId]:Execu
 
 OperationId's are meant to be unique within spec, if they're not we do the following:
 - If a tag is absent, we use `default` as the internal tag
-- If an operationId is missing, we deduce it from the http method and path, i.e. `${method}-${path}`
-- If an operationId is duplicated across all operationIds of the spec, we suffix it with \_%d
+- If an operationId is missing, we deduce it from the http method and path, i.e. `${method}${path}`, with non-alphanumeric characters escaped to `_`. See these tests ([1](https://github.com/swagger-api/swagger-js/blob/7da5755fa18791cd114ecfc9587dcd1b5c58ede1/test/helpers.js#L7), [2](https://github.com/swagger-api/swagger-js/blob/7da5755fa18791cd114ecfc9587dcd1b5c58ede1/test/helpers.js#L77)) for examples.
+- If an operationId is duplicated across all operationIds of the spec, we rename all of them with numbers after the ID to keep them unique. You should not rely on this, as the renaming is non-deterministic. See [this test](https://github.com/swagger-api/swagger-js/blob/7da5755fa18791cd114ecfc9587dcd1b5c58ede1/test/helpers.js#L127) for an example.
 
 ```js
 Swagger({...}).then((client) => {
