@@ -1,3 +1,5 @@
+import find from 'lodash/find'
+
 import lib from './lib'
 import refs from './lib/refs'
 import allOf from './lib/all-of'
@@ -112,7 +114,8 @@ class SpecMap {
   }
 
   nextPlugin() {
-    return this.wrappedPlugins.find((plugin) => {
+    // Array.prototype.find doesn't work in IE 11 :(
+    return find(this.wrappedPlugins, (plugin) => {
       const mutations = this.getMutationsForPlugin(plugin)
       return mutations.length > 0
     })
