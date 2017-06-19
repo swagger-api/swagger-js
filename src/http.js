@@ -141,7 +141,7 @@ function formatValue({ value, collectionFormat, allowEmptyValue }, skipEncoding)
     return value;
   }
 
-  let encodeFn = encodeURIComponent
+  let encodeFn = encodeURIComponent;
   if (skipEncoding) {
     encodeFn = isString(value) ? str => str : obj => JSON.stringify(obj);
   }
@@ -229,6 +229,3 @@ export function makeHttp(httpFn, preFetch = a => a, postFetch = a => a) {
     )
   );
 }
-process.on('unhandledRejection', (reason) => {
-    console.log(eason);
-});
