@@ -116,7 +116,7 @@ describe('execute', () => {
       const spy = createSpy().andReturn(Promise.resolve())
 
       execute({
-        fetch: spy,
+        http: spy,
         spec,
         operationId: 'getMe'
       })
@@ -714,7 +714,7 @@ describe('execute', () => {
     const buildRequestSpy = spyOn(stubs, 'buildRequest').andReturn({})
 
     execute({
-      fetch: createSpy().andReturn({then() { }}),
+      http: createSpy().andReturn({then() { }}),
       spec,
       operationId: 'getMe',
       josh: 1
@@ -736,7 +736,7 @@ describe('execute', () => {
     const fetchSpy = createSpy().andReturn({then() { }})
 
     execute({
-      fetch: fetchSpy,
+      http: fetchSpy,
       spec,
       operationId: 'makeMe',
       parameters: {
@@ -763,7 +763,7 @@ describe('execute', () => {
     const fetchSpy = createSpy().andReturn({then() { }})
 
     execute({
-      fetch: fetchSpy,
+      http: fetchSpy,
       spec,
       operationId: 'makeMe',
       parameters: {
@@ -786,7 +786,7 @@ describe('execute', () => {
     const fetchSpy = createSpy().andReturn({then() { }})
 
     execute({
-      fetch: fetchSpy,
+      http: fetchSpy,
       spec,
       operationId: 'makeMe',
       requestContentType: 'multipart/form-data',

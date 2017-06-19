@@ -36,7 +36,6 @@ export const PARAMETER_BUILDERS = {
 // pathName/method or operationId is optional
 export function execute({
   http: userHttp,
-  fetch, // This is legacy
   spec,
   operationId,
   pathName,
@@ -46,7 +45,7 @@ export function execute({
   ...extras
 }) {
   // Provide default fetch implementation
-  userHttp = userHttp || fetch || http // Default to _our_ http
+  userHttp = userHttp || http // Default to _our_ http
 
   if (pathName && method && !operationId) {
     operationId = legacyIdFromPathMethod(pathName, method)
@@ -66,7 +65,7 @@ export function execute({
 export function buildRequest({
   spec, operationId, parameters, securities, requestContentType,
   responseContentType, parameterBuilders, scheme,
-  requestInterceptor, responseInterceptor, contextUrl
+  requestInterceptor, responseInterceptor, contextUrl, fetch
 }) {
   parameterBuilders = parameterBuilders || PARAMETER_BUILDERS
 
@@ -86,6 +85,9 @@ export function buildRequest({
   }
   if (responseInterceptor) {
     req.responseInterceptor = responseInterceptor
+  }
+  if (fetch) {
+    req.fetch = fetch
   }
 
   // Mostly for testing
