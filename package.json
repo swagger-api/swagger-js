@@ -1,8 +1,9 @@
 {
   "name": "swagger-client",
-  "version": "3.0.13",
+  "version": "3.0.15",
   "description": "SwaggerJS - a collection of interfaces for OAI specs",
   "main": "dist/index.js",
+  "repository": "git@github.com:swagger-api/swagger-js.git",
   "contributors": [
     "(in alphabetical order)",
     "Anna Bodnia <anna.bodnia@gmail.com>",
