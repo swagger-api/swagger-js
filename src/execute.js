@@ -193,6 +193,11 @@ export function pathBuilder({req, value, parameter}) {
 // Add a query to the `query` object, which will later be stringified into the URL's search
 export function queryBuilder({req, value, parameter}) {
   req.query = req.query || {}
+
+  if (value === false && parameter.type === 'boolean') {
+    value = 'false'
+  }
+
   if (value) {
     req.query[parameter.name] = {
       collectionFormat: parameter.collectionFormat,

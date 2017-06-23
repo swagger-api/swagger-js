@@ -379,6 +379,39 @@ describe('execute', () => {
       })
     })
 
+    it('should correctly process boolean parameters', function () {
+      // Given
+      const spec = {
+        host: 'swagger.io',
+        basePath: '/v1',
+        consumes: ['application/json'],
+        paths: {
+          '/pets/findByStatus': {
+            get: {
+              operationId: 'getMe',
+              parameters: [{
+                in: 'query',
+                name: 'status',
+                type: 'boolean',
+                required: false
+              }]
+            }
+          }
+        }
+      }
+
+      // When
+      const req = buildRequest({spec, operationId: 'getMe', parameters: {status: false}})
+
+      // Then
+      expect(req).toEqual({
+        url: 'http://swagger.io/v1/pets/findByStatus?status=false',
+        method: 'GET',
+        credentials: 'same-origin',
+        headers: { }
+      })
+    })
+
     it('should throw error if there is no parameter value', function () {
       // Given
       const spec = {
