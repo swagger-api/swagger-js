@@ -130,6 +130,37 @@ describe('execute', () => {
       })
     })
 
+    it('should execute a simple get request with user-defined fetch', () => {
+      // Given
+      const spec = {
+        host: 'swagger.io',
+        schemes: ['https'],
+        paths: {
+          '/one': {
+            get: {
+              operationId: 'getMe'
+            }
+          }
+        }
+      }
+
+      const spy = createSpy().andReturn(Promise.resolve())
+
+      execute({
+        userFetch: spy,
+        spec,
+        operationId: 'getMe'
+      })
+      expect(spy.calls.length).toEqual(1)
+      expect(spy.calls[0].arguments[1]).toEqual({
+        method: 'GET',
+        url: 'https://swagger.io/one',
+        credentials: 'same-origin',
+        headers: { },
+        userFetch: spy
+      })
+    })
+
     it('should include values for query parameters', function () {
       // Given
       const spec = {
