@@ -88,7 +88,7 @@ export function buildRequest({
     req.responseInterceptor = responseInterceptor
   }
   if (userFetch) {
-    req.userFetch = userFetch;
+    req.userFetch = userFetch
   }
 
   // Mostly for testing
