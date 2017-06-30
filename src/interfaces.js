@@ -18,7 +18,7 @@ export function makeExecute(swaggerJs = {}) {
   return ({pathName, method, operationId}) => (parameters, opts = {}) => {
     return swaggerJs.execute({
       spec: swaggerJs.spec,
-      ...pick(swaggerJs, 'requestInterceptor', 'responseInterceptor'),
+      ...pick(swaggerJs, 'requestInterceptor', 'responseInterceptor', 'userFetch'),
       pathName,
       method,
       parameters,

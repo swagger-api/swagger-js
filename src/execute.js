@@ -66,7 +66,7 @@ export function execute({
 export function buildRequest({
   spec, operationId, parameters, securities, requestContentType,
   responseContentType, parameterBuilders, scheme,
-  requestInterceptor, responseInterceptor, contextUrl
+  requestInterceptor, responseInterceptor, contextUrl, userFetch
 }) {
   parameterBuilders = parameterBuilders || PARAMETER_BUILDERS
 
@@ -86,6 +86,9 @@ export function buildRequest({
   }
   if (responseInterceptor) {
     req.responseInterceptor = responseInterceptor
+  }
+  if (userFetch) {
+    req.userFetch = userFetch;
   }
 
   // Mostly for testing
