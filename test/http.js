@@ -208,11 +208,14 @@ describe('http', () => {
           },
           two: {
             value: 2
+          },
+          three: {
+            value: false
           }
         }
       }
 
-      expect(encodeFormOrQuery(req.query)).toEqual('one=1&two=2')
+      expect(encodeFormOrQuery(req.query)).toEqual('one=1&two=2&three=false')
     })
 
     it('should handle arrays', function () {

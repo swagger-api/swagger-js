@@ -148,7 +148,8 @@ function formatValue({value, collectionFormat, allowEmptyValue}, skipEncoding) {
   if (typeof value === 'undefined' && allowEmptyValue) {
     return ''
   }
-  if (isFile(value)) {
+
+  if (isFile(value) || typeof value === 'boolean') {
     return value
   }
 
