@@ -44,7 +44,19 @@ function applyPatch(obj, patch, opts) {
   else if (patch.op === 'mergeDeep') {
     const valPatch = _get(patch.path)
     jsonPatch.apply(obj, [valPatch])
+    const origValPatchValue = Object.assign({}, valPatch.value)
     deepExtend(valPatch.value, patch.value)
+
+    // deepExtend doesn't merge arrays, so we will do it manually
+    for ( let prop in patch.value ) {
+      if ( patch.value.hasOwnProperty(prop) ) {
+        const propVal = patch.value[prop]
+        if ( Array.isArray(propVal) ) {
+          let existing = origValPatchValue[prop] || []
+          valPatch.value[prop] = existing.concat( propVal )
+        }
+      }
+    }
   }
   else {
     jsonPatch.apply(obj, [patch])
