@@ -48,17 +48,17 @@ describe('resolver', () => {
   it('should be able to resolve circular $refs when a baseDoc is provided', () => {
     // Given
     const spec = {
-      "one": {
-        "$ref": "#/two"
+      one: {
+        $ref: '#/two'
       },
-      "two": {
-        "a": {
-          "$ref": "#/three"
+      two: {
+        a: {
+          $ref: '#/three'
         }
       },
-      "three": {
-        "b": {
-          "$ref": "#/two"
+      three: {
+        b: {
+          $ref: '#/two'
         }
       }
     }
@@ -71,22 +71,22 @@ describe('resolver', () => {
     function handleResponse(obj) {
       expect(obj.errors).toEqual([])
       expect(obj.spec).toEqual({
-        "one": {
-          "a": {
-            "b": {
-              "$ref": "#/two"
+        one: {
+          a: {
+            b: {
+              $ref: '#/two'
             }
           }
         },
-        "three": {
-          "b": {
-            "$ref": "#/two"
+        three: {
+          b: {
+            $ref: '#/two'
           }
         },
-        "two": {
-          "a": {
-            "b": {
-              "$ref": "#/two"
+        two: {
+          a: {
+            b: {
+              $ref: '#/two'
             }
           }
         }

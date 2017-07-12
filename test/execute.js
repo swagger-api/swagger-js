@@ -519,7 +519,7 @@ describe('execute', () => {
           '/one': {
             post: {
               operationId: 'postMe',
-              parameters: [{name: 'foo', type: 'file', 'in': "formData"}]
+              parameters: [{name: 'foo', type: 'file', in: 'formData'}]
             }
           }
         }
@@ -529,16 +529,18 @@ describe('execute', () => {
       const req = buildRequest({
         spec,
         operationId: 'postMe',
-        parameters: { file: 'test'}})
+        parameters: {file: 'test'}})
 
       // Then
       expect(req.headers).toEqual({
-        "content-type": "multipart/form-data"
+        'content-type': 'multipart/form-data'
       })
 
+      // Would like to do a more thourough test ( ie: ensure the value `foo` exists..
+      // but I don't feel like attacking the interals of the node pollyfill
+      // for FormData, as it seems to be missing `.get()`)
       expect(req.url).toEqual('http://swagger.io/one')
-      expect(req.body).toBeA(FormData) // Would like to do a more thourough test ( ie: ensure the value `foo` exists.. but I don't feel like attacking the interals of the node pollyfill for FormData, as it seems to be missing `.get()`)
-
+      expect(req.body).toBeA(FormData)
     })
 
     it('should add content-type application/x-www-form-urlencoded when in: formData ', function () {
@@ -559,15 +561,15 @@ describe('execute', () => {
       const req = buildRequest({
         spec,
         operationId: 'postMe',
-        parameters: { file: 'test'}})
+        parameters: {file: 'test'}})
 
       // Then
       expect(req).toEqual({
-        body: "file=test",
-        method: "POST",
+        body: 'file=test',
+        method: 'POST',
         url: 'http://swagger.io/one',
         headers: {
-          "content-type": "application/x-www-form-urlencoded"
+          'content-type': 'application/x-www-form-urlencoded'
         },
         credentials: 'same-origin'
       })
@@ -577,7 +579,7 @@ describe('execute', () => {
       // Given
       const spec = {
         host: 'swagger.io',
-        consumes: ["test"],
+        consumes: ['test'],
         paths: {
           '/one': {
             post: {
@@ -592,15 +594,15 @@ describe('execute', () => {
       const req = buildRequest({
         spec,
         operationId: 'postMe',
-        parameters: { file: 'test'}})
+        parameters: {file: 'test'}})
 
       // Then
       expect(req).toEqual({
-        body: "file=test",
-        method: "POST",
+        body: 'file=test',
+        method: 'POST',
         url: 'http://swagger.io/one',
         headers: {
-          "content-type": "test"
+          'content-type': 'test'
         },
         credentials: 'same-origin'
       })
@@ -610,12 +612,12 @@ describe('execute', () => {
       // Given
       const spec = {
         host: 'swagger.io',
-        consumes: ["no"],
+        consumes: ['no'],
         paths: {
           '/one': {
             post: {
               operationId: 'postMe',
-              consumes: ["test"],
+              consumes: ['test'],
               parameters: [{name: 'file', in: 'formData'}]
             }
           }
@@ -626,15 +628,15 @@ describe('execute', () => {
       const req = buildRequest({
         spec,
         operationId: 'postMe',
-        parameters: { file: 'test'}})
+        parameters: {file: 'test'}})
 
       // Then
       expect(req).toEqual({
-        body: "file=test",
-        method: "POST",
+        body: 'file=test',
+        method: 'POST',
         url: 'http://swagger.io/one',
         headers: {
-          "content-type": "test"
+          'content-type': 'test'
         },
         credentials: 'same-origin'
       })
@@ -1585,10 +1587,10 @@ describe('execute', () => {
         const req = buildRequest({spec, operationId: 'getPetsById', parameters: {id: 123, test: 567}})
 
         expect(req).toEqual({
-          url: "http://swagger.io/v1/pet/123?test=567",
+          url: 'http://swagger.io/v1/pet/123?test=567',
           headers: {},
           credentials: 'same-origin',
-          method: "GET"
+          method: 'GET'
         })
       })
 
@@ -1620,13 +1622,13 @@ describe('execute', () => {
           }
         }
 
-        const req = buildRequest({ spec, operationId: 'getPetsById', parameters: { id: 123, test: 567 } })
+        const req = buildRequest({spec, operationId: 'getPetsById', parameters: {id: 123, test: 567}})
 
         expect(req).toEqual({
-          url: "http://swagger.io/v1/pet/123?test=567",
+          url: 'http://swagger.io/v1/pet/123?test=567',
           headers: {},
           credentials: 'same-origin',
-          method: "GET"
+          method: 'GET'
         })
       })
 

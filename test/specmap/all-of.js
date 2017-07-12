@@ -174,7 +174,7 @@ describe('allOf', function () {
     })
   })
 
-  it('merges arrays inside of an `allOf`', function() {
+  it('merges arrays inside of an `allOf`', function () {
     return mapSpec({
       plugins: [plugins.refs, plugins.allOf],
       showDebug: true,
