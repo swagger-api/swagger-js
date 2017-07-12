@@ -37,7 +37,7 @@ export default function http(url, request = {}) {
     delete request.headers['Content-Type']
   }
 
-  return (request.userFetch || fetch)(request.url, request).then((res) => {
+  return (request.userFetch || fetch)(request.url, request).then((res) => { // eslint-disable-line no-undef
     const serialized = self.serializeRes(res, url, request).then((_res) => {
       if (request.responseInterceptor) {
         _res = request.responseInterceptor(_res) || _res
@@ -65,7 +65,7 @@ export default function http(url, request = {}) {
 }
 
 // exported for testing
-export const shouldDownloadAsText = (contentType = "") => /json|xml|yaml|text/.test(contentType)
+export const shouldDownloadAsText = (contentType = '') => /json|xml|yaml|text/.test(contentType)
 
 // Serialize the response, returns a promise with headers and the body part of the hash
 export function serializeRes(oriRes, url, {loadSpec = false} = {}) {
@@ -128,7 +128,7 @@ export function serializeHeaders(headers = {}) {
 
 function isFile(obj) {
   if (typeof File !== 'undefined') {
-    return obj instanceof File
+    return obj instanceof File // eslint-disable-line no-undef
   }
   return obj !== null && typeof obj === 'object' && typeof obj.pipe === 'function'
 }
@@ -144,7 +144,8 @@ function formatValue({value, collectionFormat, allowEmptyValue}, skipEncoding) {
   if (typeof value === 'undefined' && allowEmptyValue) {
     return ''
   }
-  if (isFile(value)) {
+
+  if (isFile(value) || typeof value === 'boolean') {
     return value
   }
 

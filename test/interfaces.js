@@ -314,7 +314,7 @@ describe('intefaces', function () {
         // Then
       expect(tags).toEqual({
         alpha: {
-          'get_one': null,
+          get_one: null,
         }
       })
     })
