@@ -311,28 +311,28 @@ describe('http', () => {
   })
 
   describe('shouldDownloadAsText', () => {
-    it('should return true for json, xml, yaml, and text types', function() {
+    it('should return true for json, xml, yaml, and text types', function () {
       const types = [
-        "text/x-yaml", "application/xml", "text/xml", "application/json",
-        "text/plain"
+        'text/x-yaml', 'application/xml', 'text/xml', 'application/json',
+        'text/plain'
       ]
 
-      types.forEach(v => {
-        expect(`${v} ${shouldDownloadAsText(v)}`).toEqual(v + " true")
+      types.forEach((v) => {
+        expect(`${v} ${shouldDownloadAsText(v)}`).toEqual(`${v} true`)
       })
     })
 
-    it('should return false for other common types', function() {
+    it('should return false for other common types', function () {
       const types = [
-        "application/octet-stream", "application/x-binary"
+        'application/octet-stream', 'application/x-binary'
       ]
 
-      types.forEach(v => {
-        expect(`${v} ${shouldDownloadAsText(v)}`).toEqual(v + " false")
+      types.forEach((v) => {
+        expect(`${v} ${shouldDownloadAsText(v)}`).toEqual(`${v} false`)
       })
     })
 
-    it('should fail gracefully when called with no parameters', function() {
+    it('should fail gracefully when called with no parameters', function () {
       expect(shouldDownloadAsText()).toEqual(false)
     })
   })
