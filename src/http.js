@@ -65,7 +65,7 @@ export default function http(url, request = {}) {
 }
 
 // exported for testing
-export const shouldDownloadAsText = (contentType = "") => /json|xml|yaml|text/.test(contentType)
+export const shouldDownloadAsText = (contentType = '') => /json|xml|yaml|text/.test(contentType)
 
 // Serialize the response, returns a promise with headers and the body part of the hash
 export function serializeRes(oriRes, url, {loadSpec = false} = {}) {

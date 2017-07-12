@@ -78,18 +78,18 @@ Swagger.prototype = {
   }
 }
 
-Swagger.prototype.applyDefaults = function() {
-  var spec = this.spec
-  var specUrl = this.url
-  if(specUrl && specUrl.startsWith('http')) {
-    var parsed = url.parse(specUrl)
-    if(!spec.host) {
+Swagger.prototype.applyDefaults = function () {
+  const spec = this.spec
+  const specUrl = this.url
+  if (specUrl && specUrl.startsWith('http')) {
+    const parsed = url.parse(specUrl)
+    if (!spec.host) {
       spec.host = parsed.host
     }
-    if(!spec.schemes) {
-      spec.schemes = [parsed.protocol.replace(':','')]
+    if (!spec.schemes) {
+      spec.schemes = [parsed.protocol.replace(':', '')]
     }
-    if(!spec.basePath) {
+    if (!spec.basePath) {
       spec.basePath = '/'
     }
   }
