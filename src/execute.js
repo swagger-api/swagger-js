@@ -202,6 +202,10 @@ export function queryBuilder({req, value, parameter}) {
     value = 'false'
   }
 
+  if (value === 0 && ['number', 'integer'].indexOf(parameter.type) > -1) {
+    value = '0'
+  }
+
   if (value) {
     req.query[parameter.name] = {
       collectionFormat: parameter.collectionFormat,
