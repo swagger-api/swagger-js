@@ -1,8 +1,9 @@
 {
   "name": "swagger-client",
-  "version": "3.0.10",
+  "version": "3.0.17",
   "description": "SwaggerJS - a collection of interfaces for OAI specs",
   "main": "dist/index.js",
+  "repository": "git@github.com:swagger-api/swagger-js.git",
   "contributors": [
     "(in alphabetical order)",
     "Anna Bodnia <anna.bodnia@gmail.com>",
@@ -18,7 +19,7 @@
     "build": "NODE_ENV=production webpack -p --config ./webpack.config.js",
     "build-bundle": "NODE_ENV=production webpack -p --config ./webpack.bundle.config.js",
     "watch": "webpack --config webpack.config.js --watch --progress",
-    "test": "NODE_ENV=test node --debug ./node_modules/.bin/_mocha --recursive --compilers js:babel-core/register",
+    "test": "NODE_ENV=test node ./node_modules/.bin/_mocha --recursive --compilers js:babel-core/register",
     "test:watch": "npm run test -- -w",
     "lint": "eslint src/ test/",
     "deps-license": "license-checker --production --csv --out $npm_package_config_deps_check_dir/licenses.csv && license-checker --development --csv --out $npm_package_config_deps_check_dir/licenses-dev.csv",
@@ -61,7 +62,7 @@
     "babel-runtime": "^6.23.0",
     "btoa": "1.1.2",
     "deep-extend": "^0.4.1",
-    "fast-json-patch": "^1.1.8",
+    "fast-json-patch": "~1.1.8",
     "isomorphic-fetch": "2.2.1",
     "isomorphic-form-data": "0.0.1",
     "js-yaml": "^3.8.1",

@@ -36,6 +36,44 @@ describe('helpers', function () {
       })
     })
 
+    it('should return the operation object, given an explicit operationId with special characters', function () {
+      // Given
+      const spec = {
+        paths: {
+          '/one': {
+            get: {operationId: 'A.Very_Special-operationID!'}
+          }
+        }
+      }
+
+      // When
+      const op = getOperationRaw(spec, 'A.Very_Special-operationID!')
+
+      // Then
+      expect(op).toInclude({
+        operation: spec.paths['/one'].get,
+        pathName: '/one',
+        method: 'GET'
+      })
+    })
+
+    it('should return null, given an explicit operationId that does not exist', function () {
+      // Given
+      const spec = {
+        paths: {
+          '/one': {
+            get: {operationId: 'getOne'}
+          }
+        }
+      }
+
+      // When
+      const op = getOperationRaw(spec, 'ThisOperationIdDoesNotExist')
+
+      // Then
+      expect(op).toEqual(null)
+    })
+
     it('should return the operationObj, given a generated operationId', function () {
       // Given`
       const spec = {
@@ -86,8 +124,8 @@ describe('helpers', function () {
 
   describe('normalizeSwagger', function () {
     describe('operationId', function () {
-      it('should create unique operationIds when explicit operationIds are duplicates', function () {
-        const spec = {spec: {
+      it('should create unique operationIds when explicit operationIds are duplicates, and preserve originals', function () {
+        const input = {spec: {
           paths: {
             '/foo': {
               get: {
@@ -98,17 +136,145 @@ describe('helpers', function () {
               get: {
                 operationId: 'test'
               }
+            },
+            '/baz': {
+              get: {
+                operationId: 'test'
+              }
             }
           }
         }}
 
-        const id = normalizeSwagger(spec)
-        const id1 = id.spec.paths['/foo'].get.operationId
-        const id2 = id.spec.paths['/bar'].get.operationId
+        const res = normalizeSwagger(input)
+        const fooRes = res.spec.paths['/foo'].get
+        const barRes = res.spec.paths['/bar'].get
+        const bazRes = res.spec.paths['/baz'].get
 
         // Then
-        expect(id1).toEqual('test1')
-        expect(id2).toEqual('test2')
+        expect(fooRes.operationId).toEqual('test1')
+        expect(barRes.operationId).toEqual('test2')
+        expect(bazRes.operationId).toEqual('test3')
+        expect(fooRes.__originalOperationId).toEqual('test')
+        expect(barRes.__originalOperationId).toEqual('test')
+        expect(bazRes.__originalOperationId).toEqual('test')
+      })
+
+      it('should add the normalized operation id to the spec, if a non-normalized id exists', function () {
+        // Given
+        const spec = {spec: {
+          paths: {
+            '/foo': {
+              get: {
+                operationId: 'something with spaces'
+              }
+            },
+          }
+        }}
+
+        // When
+        const normalizedSpec = normalizeSwagger(spec)
+        const id = normalizedSpec.spec.paths['/foo'].get.operationId
+
+        // Then
+        expect(id).toEqual('something_with_spaces')
+      })
+
+      it('should add __originalOperationId for non-duplicate, normal operationIds', function () {
+        // Given
+        const input = {spec: {
+          paths: {
+            '/foo': {
+              get: {
+                operationId: 'fooOperation'
+              }
+            },
+            '/bar': {
+              get: {
+                operationId: 'barOperation'
+              }
+            },
+            '/baz': {
+              get: {
+                operationId: 'bazOperation'
+              }
+            },
+          }
+        }}
+
+        // When
+        const result = normalizeSwagger(input)
+        const fooOperation = input.spec.paths['/foo'].get
+        const barOperation = input.spec.paths['/bar'].get
+        const bazOperation = input.spec.paths['/baz'].get
+
+        // Then
+        expect(fooOperation.operationId).toEqual('fooOperation')
+        expect(fooOperation.__originalOperationId).toEqual('fooOperation')
+
+        expect(barOperation.operationId).toEqual('barOperation')
+        expect(barOperation.__originalOperationId).toEqual('barOperation')
+
+        expect(bazOperation.operationId).toEqual('bazOperation')
+        expect(bazOperation.__originalOperationId).toEqual('bazOperation')
+      })
+
+      it('should add __originalOperationId for non-duplicate, abnormal operationIds', function () {
+        // Given
+        const input = {spec: {
+          paths: {
+            '/foo': {
+              get: {
+                operationId: 'foo!Operation'
+              }
+            },
+            '/bar': {
+              get: {
+                operationId: 'bar!Operation'
+              }
+            },
+            '/baz': {
+              get: {
+                operationId: 'baz!Operation'
+              }
+            },
+          }
+        }}
+
+        // When
+        const result = normalizeSwagger(input)
+        const fooOperation = input.spec.paths['/foo'].get
+        const barOperation = input.spec.paths['/bar'].get
+        const bazOperation = input.spec.paths['/baz'].get
+
+        // Then
+        expect(fooOperation.operationId).toEqual('foo_Operation')
+        expect(fooOperation.__originalOperationId).toEqual('foo!Operation')
+
+        expect(barOperation.operationId).toEqual('bar_Operation')
+        expect(barOperation.__originalOperationId).toEqual('bar!Operation')
+
+        expect(bazOperation.operationId).toEqual('baz_Operation')
+        expect(bazOperation.__originalOperationId).toEqual('baz!Operation')
+      })
+
+      it('should add the original operation id to the spec, if a non-normalized id exists', function () {
+        // Given
+        const spec = {spec: {
+          paths: {
+            '/foo': {
+              get: {
+                operationId: 'something with spaces'
+              }
+            },
+          }
+        }}
+
+        // When
+        const normalizedSpec = normalizeSwagger(spec)
+        const originalId = normalizedSpec.spec.paths['/foo'].get.__originalOperationId
+
+        // Then
+        expect(originalId).toEqual('something with spaces')
       })
 
       it('should create unique operationIds when explicit operationIds are effectively the same due to whitespace', function () {

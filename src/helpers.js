@@ -37,17 +37,19 @@ export function getOperationRaw(spec, id) {
       return false
     }
 
+    const rawOperationId = operation.operationId // straight from the source
     const operationId = opId(operation, pathName, method)
     const legacyOperationId = legacyIdFromPathMethod(pathName, method)
 
-    return operationId && (operationId === id || id === legacyOperationId)
+    return [operationId, legacyOperationId, rawOperationId]
+      .some(val => val && val === id)
   })
 }
 
 // Will stop iterating over the operations and return the operationObj
 // as soon as predicate returns true
 export function findOperation(spec, predicate) {
-  return eachOperation(spec, predicate, true)
+  return eachOperation(spec, predicate, true) || null
 }
 
 // iterate over each operation, and fire a callback with details
@@ -122,9 +124,19 @@ export function normalizeSwagger(parsedSpec) {
         Object.keys(map).forEach((op) => {
           if (map[op].length > 1) {
             map[op].forEach((o, i) => {
+              o.__originalOperationId = o.__originalOperationId ||  o.operationId
               o.operationId = `${op}${i+1}`
             })
+          } else {
+            // Ensure we always add the normalized operation ID if one already exists ( potentially different, given that we normalize our IDs)
+            // ... _back_ to the spec. Otherwise, they might not line up
+            if(typeof operation.operationId !== 'undefined') {
+              let obj = map[op][0]
+              obj.__originalOperationId = obj.__originalOperationId || operation.operationId
+              obj.operationId = op
+            }
           }
+
         })
       }
 

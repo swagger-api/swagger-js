@@ -1,6 +1,10 @@
+import find from 'lodash/find'
+
 import lib from './lib'
 import refs from './lib/refs'
 import allOf from './lib/all-of'
+import parameters from './lib/parameters'
+import properties from './lib/properties'
 import ContextTree from './lib/context-tree'
 
 const HARD_LIMIT = 100
@@ -110,7 +114,8 @@ class SpecMap {
   }
 
   nextPlugin() {
-    return this.wrappedPlugins.find((plugin) => {
+    // Array.prototype.find doesn't work in IE 11 :(
+    return find(this.wrappedPlugins, (plugin) => {
       const mutations = this.getMutationsForPlugin(plugin)
       return mutations.length > 0
     })
@@ -353,5 +358,5 @@ export default function mapSpec(opts) {
   return new SpecMap(opts).dispatch()
 }
 
-const plugins = {refs, allOf}
+const plugins = {refs, allOf, parameters, properties}
 export {SpecMap, plugins}

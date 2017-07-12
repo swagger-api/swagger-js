@@ -37,6 +37,16 @@ import Swagger from 'swagger-client'
 const Swagger = require('swagger-client') 
 ```
 
+##### Import in browser
+
+```html
+<script src='browser/swagger-client.js' type='text/javascript'></script>
+<script>
+var swaggerClient = new SwaggerClient(specUrl);
+</script>
+```
+
+
 #### API
 
 This lib exposes these functionalities:
@@ -164,8 +174,8 @@ A client for operations. We're currently using the `apis[tag][operationId]:Execu
 
 OperationId's are meant to be unique within spec, if they're not we do the following:
 - If a tag is absent, we use `default` as the internal tag
-- If an operationId is missing, we deduce it from the http method and path, i.e. `${method}-${path}`
-- If an operationId is duplicated across all operationIds of the spec, we suffix it with \_%d
+- If an operationId is missing, we deduce it from the http method and path, i.e. `${method}${path}`, with non-alphanumeric characters escaped to `_`. See these tests ([1](https://github.com/swagger-api/swagger-js/blob/7da5755fa18791cd114ecfc9587dcd1b5c58ede1/test/helpers.js#L7), [2](https://github.com/swagger-api/swagger-js/blob/7da5755fa18791cd114ecfc9587dcd1b5c58ede1/test/helpers.js#L77)) for examples.
+- If an operationId is duplicated across all operationIds of the spec, we rename all of them with numbers after the ID to keep them unique. You should not rely on this, as the renaming is non-deterministic. See [this test](https://github.com/swagger-api/swagger-js/blob/7da5755fa18791cd114ecfc9587dcd1b5c58ede1/test/helpers.js#L127) for an example.
 
 ```js
 Swagger({...}).then((client) => {
@@ -176,6 +186,44 @@ Swagger({...}).then((client) => {
       .then(...) 
 })
 ```
+
+In Browser 
+----------
+
+Prepare swagger-client.js by `npm run build-bundle` 
+Note, browser version exports class `SwaggerClient` to global namespace
+If you need activate CORS requests, just enable it by `withCredentials` property at `http`
+
+```html
+<html>
+<head>
+<script src='browser/swagger-client.js' type='text/javascript'></script>
+<script>
+var specUrl = 'http://petstore.swagger.io/v2/swagger.json'; // data urls are OK too 'data:application/json;base64,abc...'
+var swaggerClient = new SwaggerClient(specUrl)
+      .then(function (swaggerClient) {                                            
+          swaggerClient.http.withCredentials = true; // this activates CORS, if necessary
+                   
+          return swaggerClient.apis.pet.addPet({id: 1, name: "bobby"}); // chaining promises
+      }, function (reason) {
+         console.error("failed to load the spec" + reason);
+      })
+      .then(function(addPetResult) {
+         console.log(addPetResult.obj); 
+         // you may return more promises, if necessary
+      }, function (reason) {
+          console.error("failed on API call " + reason);
+      });    
+})
+</script>
+</head>
+<body>
+  check console in browser's dev. tools
+</body>
+</html>
+
+```
+
 
 Compatibility
 -------------
@@ -220,10 +268,11 @@ As such we've left the static version of `http` to not perform any serialization
 
 ```sh
 npm install
-npm run test       # run test
-npm run test:watch # run test with change watching
-npm run lint       # run lint
-npm run build      # package to release
+npm run test         # run test
+npm run test:watch   # run test with change watching
+npm run lint         # run lint
+npm run build        # package to release
+npm run build-bundle # build browser version available at .../browser
 ```
 
 # Migration from 2.x

@@ -1,7 +1,10 @@
 import expect from 'expect'
 import xmock from 'xmock'
 import fetchMock from 'fetch-mock'
-import http, {serializeHeaders, mergeInQueryOrForm, encodeFormOrQuery, serializeRes} from '../src/http'
+import http, {
+  serializeHeaders, mergeInQueryOrForm, encodeFormOrQuery, serializeRes,
+  shouldDownloadAsText
+} from '../src/http'
 
 describe('http', () => {
   let xapp
@@ -174,6 +177,29 @@ describe('http', () => {
         url: 'https://swagger.io?one=1&two=2&three=3'
       })
     })
+
+    it('should not encode form-data', function () {
+      const FormData = require('isomorphic-form-data')
+      const _append = FormData.prototype.append
+      FormData.prototype.append = function (k, v) {
+        this._entries = this._entries || {}
+        this._entries[k] = v
+      }
+
+      const req = {
+        headers: {
+          'content-type': 'multipart/form-data'
+        },
+        form: {
+          testJson: {
+            value: '{"name": "John"}'
+          }
+        }
+      }
+      mergeInQueryOrForm(req)
+      expect(req.body._entries.testJson).toEqual('{"name": "John"}')
+      FormData.prototype.append = _append
+    })
   })
 
   describe('encodeFormOrQuery', function () {
@@ -185,11 +211,14 @@ describe('http', () => {
           },
           two: {
             value: 2
+          },
+          three: {
+            value: false
           }
         }
       }
 
-      expect(encodeFormOrQuery(req.query)).toEqual('one=1&two=2')
+      expect(encodeFormOrQuery(req.query)).toEqual('one=1&two=2&three=false')
     })
 
     it('should handle arrays', function () {
@@ -278,6 +307,33 @@ describe('http', () => {
         expect(resSerialize.data).toBe(resSerialize.text)
         expect(resSerialize.data).toBe(body)
       }).then(fetchMock.restore)
+    })
+  })
+
+  describe('shouldDownloadAsText', () => {
+    it('should return true for json, xml, yaml, and text types', function() {
+      const types = [
+        "text/x-yaml", "application/xml", "text/xml", "application/json",
+        "text/plain"
+      ]
+
+      types.forEach(v => {
+        expect(`${v} ${shouldDownloadAsText(v)}`).toEqual(v + " true")
+      })
+    })
+
+    it('should return false for other common types', function() {
+      const types = [
+        "application/octet-stream", "application/x-binary"
+      ]
+
+      types.forEach(v => {
+        expect(`${v} ${shouldDownloadAsText(v)}`).toEqual(v + " false")
+      })
+    })
+
+    it('should fail gracefully when called with no parameters', function() {
+      expect(shouldDownloadAsText()).toEqual(false)
     })
   })
 })

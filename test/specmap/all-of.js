@@ -173,6 +173,51 @@ describe('allOf', function () {
       })
     })
   })
+
+  it('merges arrays inside of an `allOf`', function() {
+    return mapSpec({
+      plugins: [plugins.refs, plugins.allOf],
+      showDebug: true,
+      spec: {
+        definitions: {
+          one: {
+            allOf: [
+              {
+                $ref: '#/definitions/two'
+              },
+              {
+                type: 'object',
+                required: ['a', 'b']
+              }
+            ]
+          },
+          two: {
+            allOf: [
+              {
+                type: 'object',
+                required: ['c', 'd']
+              }
+            ]
+          }
+        }
+      }
+    }).then((res) => {
+      expect(res.errors).toEqual([])
+      expect(res.spec).toEqual({
+        definitions: {
+          one: {
+            type: 'object',
+            required: ['c', 'd', 'a', 'b']
+          },
+          two: {
+            type: 'object',
+            required: ['c', 'd']
+          }
+        },
+      })
+    })
+  })
+
   // TODO: this needs to get fixed
   it.skip('should handle case, with an `allOf` referencing an `allOf` ', function () {
     return mapSpec({
