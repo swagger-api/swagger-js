@@ -536,8 +536,11 @@ describe('execute', () => {
         'content-type': 'multipart/form-data'
       })
 
+      // Would like to do a more thourough test ( ie: ensure the value `foo` exists..
+      // but I don't feel like attacking the interals of the node pollyfill
+      // for FormData, as it seems to be missing `.get()`)
       expect(req.url).toEqual('http://swagger.io/one')
-      expect(req.body).toBeA(FormData) // Would like to do a more thourough test ( ie: ensure the value `foo` exists.. but I don't feel like attacking the interals of the node pollyfill for FormData, as it seems to be missing `.get()`)
+      expect(req.body).toBeA(FormData)
     })
 
     it('should add content-type application/x-www-form-urlencoded when in: formData ', function () {

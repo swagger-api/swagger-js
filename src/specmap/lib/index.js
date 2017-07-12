@@ -49,7 +49,7 @@ function applyPatch(obj, patch, opts) {
 
     // deepExtend doesn't merge arrays, so we will do it manually
     for (const prop in patch.value) {
-      if (patch.value.hasOwnProperty(prop)) {
+      if (Object.prototype.hasOwnProperty.call(patch.value, prop)) {
         const propVal = patch.value[prop]
         if (Array.isArray(propVal)) {
           const existing = origValPatchValue[prop] || []

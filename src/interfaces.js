@@ -82,7 +82,7 @@ export function mapTagOperations({spec, cb = nullFn, defaultTag = 'default'}) {
       const cbResult = cb({spec, pathName, method, operation, operationId: id})
 
       if (operationIdCounter[id]) {
-        operationIdCounter[id] = operationIdCounter[id] + 1
+        operationIdCounter[id]++
         tagObj[`${id}${operationIdCounter[id]}`] = cbResult
       }
       else if (typeof tagObj[id] !== 'undefined') {

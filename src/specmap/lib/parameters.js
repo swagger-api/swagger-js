@@ -19,9 +19,7 @@ export default {
         }
       })
 
-      const patch = lib.replace(fullPath, val)
-
-      return patch
+      return lib.replace(fullPath, val)
     }
 
     return lib.replace(fullPath, parameters)

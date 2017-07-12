@@ -127,14 +127,13 @@ export function normalizeSwagger(parsedSpec) {
               o.operationId = `${op}${i + 1}`
             })
           }
-          else {
-            // Ensure we always add the normalized operation ID if one already exists ( potentially different, given that we normalize our IDs)
+          else if (typeof operation.operationId !== 'undefined') {
+            // Ensure we always add the normalized operation ID if one already exists
+            // ( potentially different, given that we normalize our IDs)
             // ... _back_ to the spec. Otherwise, they might not line up
-            if (typeof operation.operationId !== 'undefined') {
-              const obj = map[op][0]
-              obj.__originalOperationId = obj.__originalOperationId || operation.operationId
-              obj.operationId = op
-            }
+            const obj = map[op][0]
+            obj.__originalOperationId = obj.__originalOperationId || operation.operationId
+            obj.operationId = op
           }
         })
       }
