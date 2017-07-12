@@ -108,7 +108,7 @@ describe('http', () => {
       // isomorphic-fetch exposes FetchAPI methods onto global
       require('isomorphic-fetch')
       expect(global.Headers).toBeA(Function)
-      const headers = new Headers()
+      const headers = new Headers() // eslint-disable-line no-undef
       headers.append('Authorization', 'Basic hoop-la')
       headers.append('Content-Type', 'application/oai.json')
 
@@ -127,7 +127,7 @@ describe('http', () => {
       // isomorphic-fetch exposes FetchAPI methods onto global
       require('isomorphic-fetch')
       expect(global.Headers).toBeA(Function)
-      const headers = new Headers()
+      const headers = new Headers() // eslint-disable-line no-undef
       headers.append('Authorization', 'Basic hoop-la')
       headers.append('Authorization', 'Advanced hoop-la')
 
@@ -145,7 +145,7 @@ describe('http', () => {
       // isomorphic-fetch exposes FetchAPI methods onto global
       require('isomorphic-fetch')
       expect(global.Headers).toBeA(Function)
-      const headers = new Headers()
+      const headers = new Headers() // eslint-disable-line no-undef
       headers.append('Authorization', 'Basic hoop-la')
       headers.append('Authorization', 'Advanced hoop-la')
       headers.append('Authorization', 'Super-Advanced hoop-la')
@@ -264,7 +264,7 @@ describe('http', () => {
 
       const res = fetchMock.mock('http://swagger.io', {headers})
 
-      return fetch('http://swagger.io').then((_res) => {
+      return fetch('http://swagger.io').then((_res) => { // eslint-disable-line no-undef
         return serializeRes(_res, 'https://swagger.io')
       }).then((resSerialize) => {
         expect(resSerialize.headers).toEqual({authorization: ['Basic hoop-la', 'Advanced hoop-la']})
@@ -279,12 +279,12 @@ describe('http', () => {
       const body = 'body data'
       const res = fetchMock.mock('http://swagger.io', {body, headers})
 
-      return fetch('http://swagger.io').then((_res) => {
+      return fetch('http://swagger.io').then((_res) => { // eslint-disable-line no-undef
         return serializeRes(_res, 'https://swagger.io')
       }).then((resSerialize) => {
         expect(resSerialize.data).toBe(resSerialize.text)
         if (typeof Blob !== 'undefined') {
-          expect(resSerialize.data).toBeA(Blob)
+          expect(resSerialize.data).toBeA(Blob) // eslint-disable-line no-undef
         }
         else {
           expect(resSerialize.data).toBeA(Buffer)
@@ -301,7 +301,7 @@ describe('http', () => {
       const body = 'body data'
       const res = fetchMock.mock('http://swagger.io', {body, headers})
 
-      return fetch('http://swagger.io').then((_res) => {
+      return fetch('http://swagger.io').then((_res) => { // eslint-disable-line no-undef
         return serializeRes(_res, 'https://swagger.io')
       }).then((resSerialize) => {
         expect(resSerialize.data).toBe(resSerialize.text)

@@ -37,7 +37,7 @@ export default function http(url, request = {}) {
     delete request.headers['Content-Type']
   }
 
-  return fetch(request.url, request).then((res) => {
+  return fetch(request.url, request).then((res) => { // eslint-disable-line no-undef
     const serialized = self.serializeRes(res, url, request).then((_res) => {
       if (request.responseInterceptor) {
         _res = request.responseInterceptor(_res) || _res
@@ -128,7 +128,7 @@ export function serializeHeaders(headers = {}) {
 
 function isFile(obj) {
   if (typeof File !== 'undefined') {
-    return obj instanceof File
+    return obj instanceof File // eslint-disable-line no-undef
   }
   return obj !== null && typeof obj === 'object' && typeof obj.pipe === 'function'
 }
