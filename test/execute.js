@@ -188,6 +188,63 @@ describe('execute', () => {
       })
     })
 
+    it('should include values and defaults that are falsy', function () {
+      // Given
+      const spec = {
+        host: 'swagger.io',
+        basePath: '/v1',
+        paths: {
+          '/one': {
+            get: {
+              operationId: 'getMe',
+              parameters: [
+                {
+                  name: 'zero',
+                  in: 'query',
+                  type: 'integer'
+                },
+                {
+                  name: 'false',
+                  in: 'query',
+                  type: 'boolean'
+                },
+                {
+                  name: 'zeroDefault',
+                  in: 'query',
+                  type: 'integer',
+                  default: 0
+                },
+                {
+                  name: 'falseDefault',
+                  in: 'query',
+                  type: 'boolean',
+                  default: false
+                },
+              ]
+            }
+          }
+        }
+      }
+
+      // When
+      const req = buildRequest({
+        spec,
+        operationId: 'getMe',
+        parameters: {
+          false: false,
+          zero: 0
+        }
+      })
+
+      // Then
+      expect(req).toEqual({
+        url: 'http://swagger.io/v1/one?zero=0&false=false&zeroDefault=0&falseDefault=false',
+        method: 'GET',
+        credentials: 'same-origin',
+        headers: { }
+      })
+    })
+
     it('should include values for boolean query parameters', function () {
       // Given
       const spec = {
