@@ -237,7 +237,7 @@ export function baseUrl({spec, scheme, contextUrl = ''}) {
     return res[res.length - 1] === '/' ? res.slice(0, -1) : res
   }
 
-  return ''
+  return computedPath
 }
 
 
