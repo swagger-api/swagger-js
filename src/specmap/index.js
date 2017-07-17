@@ -94,7 +94,10 @@ class SpecMap {
             }
           }
           else {
-            const parent = path[path.length - 1]
+            const parentIndex = path.length - 1
+            const parent = path[parentIndex]
+            const indexOfFirstProperties = path.indexOf('properties')
+            const isRootProperties = parent === 'properties' && parentIndex === indexOfFirstProperties
 
             for (const key of Object.keys(obj)) {
               const val = obj[key]
@@ -103,7 +106,8 @@ class SpecMap {
               if (lib.isObject(val)) {
                 yield* traverse(val, updatedPath, patch)
               }
-              if (parent !== 'properties' && key === pluginObj.key) {
+
+              if (!isRootProperties && key === pluginObj.key) {
                 yield pluginObj.plugin(val, key, updatedPath, specmap, patch)
               }
             }
