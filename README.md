@@ -75,7 +75,8 @@ const request = {
   body,
   headers,
   requestInterceptor,
-  responseInterceptor
+  responseInterceptor,
+  userFetch
 }
 
 Swagger.http(request)
@@ -96,6 +97,11 @@ Swagger.http(request)
 Swagger.http({
   requestInterceptor: (req: Request) => Request
   responseInterceptor: (res: Response) => Response
+})
+
+// Custom Fetch
+Swagger.http({
+  userFetch: (url: String, options: Object) => Promise
 })
 
 ```
@@ -132,6 +138,7 @@ const params = {
   responseContentType,
 
   (http), // You can also override the HTTP client completely
+  (userFetch), // Alternatively you can just override the fetch method (if you want to use request.js or some other HttpAgent)
 }
 
 // Creates a request object compatible with HTTP client interface.
