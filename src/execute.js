@@ -12,7 +12,7 @@ const arrayOrEmpty = (ar) => {
   return Array.isArray(ar) ? ar : []
 }
 
-const OperationNotFoundError = createError('OperationNotFoundError', function(message, extra, oriError) {
+const OperationNotFoundError = createError('OperationNotFoundError', function (message, extra, oriError) {
   this.originalError = oriError
   Object.assign(this, extra || {})
 })
@@ -117,7 +117,7 @@ export function buildRequest({
       const builder = parameterBuilders[parameter.in]
       let value
 
-      if(parameter.in === 'body' && parameter.schema && parameter.schema.properties) {
+      if (parameter.in === 'body' && parameter.schema && parameter.schema.properties) {
         value = parameters
       }
 
@@ -142,14 +142,18 @@ export function buildRequest({
   if (req.body || req.form) {
     if (requestContentType) {
       req.headers['content-type'] = requestContentType
-    } else if (Array.isArray(operation.consumes)) {
+    }
+    else if (Array.isArray(operation.consumes)) {
       req.headers['content-type'] = operation.consumes[0]
-    } else if (Array.isArray(spec.consumes)) {
+    }
+    else if (Array.isArray(spec.consumes)) {
       req.headers['content-type'] = spec.consumes[0]
-    } else if (operation.parameters.filter((p)=> p.type === "file").length) {
-      req.headers['content-type'] = "multipart/form-data"
-    } else if (operation.parameters.filter((p)=> p.in === "formData").length) {
-      req.headers['content-type'] = "application/x-www-form-urlencoded"
+    }
+    else if (operation.parameters.filter(p => p.type === 'file').length) {
+      req.headers['content-type'] = 'multipart/form-data'
+    }
+    else if (operation.parameters.filter(p => p.in === 'formData').length) {
+      req.headers['content-type'] = 'application/x-www-form-urlencoded'
     }
   }
 
@@ -193,6 +197,15 @@ export function pathBuilder({req, value, parameter}) {
 // Add a query to the `query` object, which will later be stringified into the URL's search
 export function queryBuilder({req, value, parameter}) {
   req.query = req.query || {}
+
+  if (value === false && parameter.type === 'boolean') {
+    value = 'false'
+  }
+
+  if (value === 0 && ['number', 'integer'].indexOf(parameter.type) > -1) {
+    value = '0'
+  }
+
   if (value) {
     req.query[parameter.name] = {
       collectionFormat: parameter.collectionFormat,

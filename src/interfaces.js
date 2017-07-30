@@ -81,21 +81,23 @@ export function mapTagOperations({spec, cb = nullFn, defaultTag = 'default'}) {
       const id = opId(operation, pathName, method)
       const cbResult = cb({spec, pathName, method, operation, operationId: id})
 
-      if(operationIdCounter[id]) {
-        operationIdCounter[id] = operationIdCounter[id] + 1
+      if (operationIdCounter[id]) {
+        operationIdCounter[id]++
         tagObj[`${id}${operationIdCounter[id]}`] = cbResult
-      } else if (typeof tagObj[id] !== 'undefined') {
+      }
+      else if (typeof tagObj[id] !== 'undefined') {
         // Bump counter ( for this operationId )
-        let originalCounterValue = (operationIdCounter[id] || 1)
+        const originalCounterValue = (operationIdCounter[id] || 1)
         operationIdCounter[id] = originalCounterValue + 1
         // Append _x to the operationId
         tagObj[`${id}${operationIdCounter[id]}`] = cbResult
 
         // Rename the first operationId
-        let temp = tagObj[id]
+        const temp = tagObj[id]
         delete tagObj[id]
         tagObj[`${id}${originalCounterValue}`] = temp
-      } else {
+      }
+      else {
         // Assign callback result ( usually a bound function )
         tagObj[id] = cbResult
       }

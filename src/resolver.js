@@ -23,7 +23,10 @@ export function clearCache() {
   plugins.refs.clearCache()
 }
 
-export default function resolve({http, fetch, spec, url, baseDoc, mode, allowMetaPatches = true, modelPropertyMacro, parameterMacro}) {
+export default function resolve({
+  http, fetch, spec, url, baseDoc, mode, allowMetaPatches = true,
+  modelPropertyMacro, parameterMacro
+}) {
   // @TODO Swagger-UI uses baseDoc instead of url, this is to allow both
   // need to fix and pick one.
   baseDoc = baseDoc || url

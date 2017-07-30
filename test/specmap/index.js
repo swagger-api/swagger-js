@@ -728,6 +728,38 @@ describe('specmap', function () {
           })
         })
       })
+
+      it('should merge sub-properties', function () {
+        return mapSpec({
+          plugins: [plugins.refs, plugins.allOf],
+          spec: {
+            properties: {
+              test: {
+                type: 'object',
+                properties: {
+                  color: {
+                    type: 'integer'
+                  }
+                }
+              }
+            }
+          }
+        }).then((res) => {
+          expect(res.errors.length).toEqual(0)
+          expect(res.spec).toEqual({
+            properties: {
+              test: {
+                type: 'object',
+                properties: {
+                  color: {
+                    type: 'integer'
+                  }
+                }
+              }
+            }
+          })
+        })
+      })
     })
 
     describe('context', function () {

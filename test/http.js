@@ -1,7 +1,10 @@
 import expect from 'expect'
 import xmock from 'xmock'
 import fetchMock from 'fetch-mock'
-import http, {serializeHeaders, mergeInQueryOrForm, encodeFormOrQuery, serializeRes} from '../src/http'
+import http, {
+  serializeHeaders, mergeInQueryOrForm, encodeFormOrQuery, serializeRes,
+  shouldDownloadAsText
+} from '../src/http'
 
 describe('http', () => {
   let xapp
@@ -105,7 +108,7 @@ describe('http', () => {
       // isomorphic-fetch exposes FetchAPI methods onto global
       require('isomorphic-fetch')
       expect(global.Headers).toBeA(Function)
-      const headers = new Headers()
+      const headers = new Headers() // eslint-disable-line no-undef
       headers.append('Authorization', 'Basic hoop-la')
       headers.append('Content-Type', 'application/oai.json')
 
@@ -124,7 +127,7 @@ describe('http', () => {
       // isomorphic-fetch exposes FetchAPI methods onto global
       require('isomorphic-fetch')
       expect(global.Headers).toBeA(Function)
-      const headers = new Headers()
+      const headers = new Headers() // eslint-disable-line no-undef
       headers.append('Authorization', 'Basic hoop-la')
       headers.append('Authorization', 'Advanced hoop-la')
 
@@ -142,7 +145,7 @@ describe('http', () => {
       // isomorphic-fetch exposes FetchAPI methods onto global
       require('isomorphic-fetch')
       expect(global.Headers).toBeA(Function)
-      const headers = new Headers()
+      const headers = new Headers() // eslint-disable-line no-undef
       headers.append('Authorization', 'Basic hoop-la')
       headers.append('Authorization', 'Advanced hoop-la')
       headers.append('Authorization', 'Super-Advanced hoop-la')
@@ -208,11 +211,14 @@ describe('http', () => {
           },
           two: {
             value: 2
+          },
+          three: {
+            value: false
           }
         }
       }
 
-      expect(encodeFormOrQuery(req.query)).toEqual('one=1&two=2')
+      expect(encodeFormOrQuery(req.query)).toEqual('one=1&two=2&three=false')
     })
 
     it('should handle arrays', function () {
@@ -258,7 +264,7 @@ describe('http', () => {
 
       const res = fetchMock.mock('http://swagger.io', {headers})
 
-      return fetch('http://swagger.io').then((_res) => {
+      return fetch('http://swagger.io').then((_res) => { // eslint-disable-line no-undef
         return serializeRes(_res, 'https://swagger.io')
       }).then((resSerialize) => {
         expect(resSerialize.headers).toEqual({authorization: ['Basic hoop-la', 'Advanced hoop-la']})
@@ -273,12 +279,12 @@ describe('http', () => {
       const body = 'body data'
       const res = fetchMock.mock('http://swagger.io', {body, headers})
 
-      return fetch('http://swagger.io').then((_res) => {
+      return fetch('http://swagger.io').then((_res) => { // eslint-disable-line no-undef
         return serializeRes(_res, 'https://swagger.io')
       }).then((resSerialize) => {
         expect(resSerialize.data).toBe(resSerialize.text)
         if (typeof Blob !== 'undefined') {
-          expect(resSerialize.data).toBeA(Blob)
+          expect(resSerialize.data).toBeA(Blob) // eslint-disable-line no-undef
         }
         else {
           expect(resSerialize.data).toBeA(Buffer)
@@ -295,12 +301,39 @@ describe('http', () => {
       const body = 'body data'
       const res = fetchMock.mock('http://swagger.io', {body, headers})
 
-      return fetch('http://swagger.io').then((_res) => {
+      return fetch('http://swagger.io').then((_res) => { // eslint-disable-line no-undef
         return serializeRes(_res, 'https://swagger.io')
       }).then((resSerialize) => {
         expect(resSerialize.data).toBe(resSerialize.text)
         expect(resSerialize.data).toBe(body)
       }).then(fetchMock.restore)
+    })
+  })
+
+  describe('shouldDownloadAsText', () => {
+    it('should return true for json, xml, yaml, and text types', function () {
+      const types = [
+        'text/x-yaml', 'application/xml', 'text/xml', 'application/json',
+        'text/plain'
+      ]
+
+      types.forEach((v) => {
+        expect(`${v} ${shouldDownloadAsText(v)}`).toEqual(`${v} true`)
+      })
+    })
+
+    it('should return false for other common types', function () {
+      const types = [
+        'application/octet-stream', 'application/x-binary'
+      ]
+
+      types.forEach((v) => {
+        expect(`${v} ${shouldDownloadAsText(v)}`).toEqual(`${v} false`)
+      })
+    })
+
+    it('should fail gracefully when called with no parameters', function () {
+      expect(shouldDownloadAsText()).toEqual(false)
     })
   })
 })
