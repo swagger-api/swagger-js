@@ -115,13 +115,11 @@ export function buildRequest({
     .concat(arrayOrEmpty(path.parameters)) // path parameters
     .forEach((parameter) => {
       const builder = parameterBuilders[parameter.in]
-      let value
+      let value = parameter.value
 
       if (parameter.in === 'body' && parameter.schema && parameter.schema.properties) {
         value = parameters
       }
-
-      value = parameter.value && parameter.value
 
       if (typeof parameter.default !== 'undefined' && typeof value === 'undefined') {
         value = parameter.default
