@@ -121,7 +121,7 @@ export function buildRequest({
         value = parameters
       }
 
-      value = parameter && parameter.name && parameters[parameter.name]
+      value = parameter.name && parameter.value
 
       if (typeof parameter.default !== 'undefined' && typeof value === 'undefined') {
         value = parameter.default
