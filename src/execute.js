@@ -121,7 +121,7 @@ export function buildRequest({
         value = parameters
       }
 
-      value = parameter && parameter.name && parameters[`${parameter.name}-${parameter.in}`]
+      value = parameter && parameter.name && parameters[parameter.name]
 
       if (typeof value === 'undefined') {
         // check for `name-in` formatted key

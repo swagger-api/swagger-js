@@ -146,7 +146,7 @@ describe('execute', () => {
       }
 
       // When
-      const req = buildRequest({spec, operationId: 'getMe', parameters: {'petId-query': 123}})
+      const req = buildRequest({spec, operationId: 'getMe', parameters: {petId: 123}})
 
       // Then
       expect(req).toEqual({
@@ -177,7 +177,7 @@ describe('execute', () => {
       }
 
       // When
-      const req = buildRequest({spec, operationId: 'getMe', parameters: {'fields-query': '[articles]=title'}})
+      const req = buildRequest({spec, operationId: 'getMe', parameters: {fields: '[articles]=title'}})
 
       // Then
       expect(req).toEqual({
@@ -231,8 +231,8 @@ describe('execute', () => {
         spec,
         operationId: 'getMe',
         parameters: {
-          'false-query': false,
-          'zero-query': 0
+          false: false,
+          zero: 0
         }
       })
 
@@ -265,7 +265,7 @@ describe('execute', () => {
       }
 
       // When
-      const req = buildRequest({spec, operationId: 'getMe', parameters: {'petId-query': true}})
+      const req = buildRequest({spec, operationId: 'getMe', parameters: {petId: true}})
 
       // Then
       expect(req).toEqual({
@@ -395,7 +395,7 @@ describe('execute', () => {
         }
 
         // When
-        const req = buildRequest({spec, operationId: 'getMe', parameters: {'petId-formData': [1, 2, 3]}})
+        const req = buildRequest({spec, operationId: 'getMe', parameters: {petId: [1, 2, 3]}})
 
         // Then
         expect(req.body).toEqual('petId=1,2,3')
@@ -458,7 +458,7 @@ describe('execute', () => {
       }
 
       // When
-      const req = buildRequest({spec, operationId: 'getMe', parameters: {'status-query': false}})
+      const req = buildRequest({spec, operationId: 'getMe', parameters: {status: false}})
 
       // Then
       expect(req).toEqual({
@@ -538,7 +538,7 @@ describe('execute', () => {
         }
       }
 
-      const req = buildRequest({spec, operationId: 'loginUser', parameters: {'username-query': 'fred', 'password-query': 'meyer'}})
+      const req = buildRequest({spec, operationId: 'loginUser', parameters: {username: 'fred', password: 'meyer'}})
 
       expect(req).toEqual({
         url: 'http://swagger.io/v1/one?username=fred&password=meyer',
@@ -618,7 +618,7 @@ describe('execute', () => {
       const req = buildRequest({
         spec,
         operationId: 'postMe',
-        parameters: {'file-formData': 'test'}})
+        parameters: {file: 'test'}})
 
       // Then
       expect(req).toEqual({
@@ -651,7 +651,7 @@ describe('execute', () => {
       const req = buildRequest({
         spec,
         operationId: 'postMe',
-        parameters: {'file-formData': 'test'}})
+        parameters: {file: 'test'}})
 
       // Then
       expect(req).toEqual({
@@ -685,7 +685,7 @@ describe('execute', () => {
       const req = buildRequest({
         spec,
         operationId: 'postMe',
-        parameters: {'file-formData': 'test'}})
+        parameters: {file: 'test'}})
 
       // Then
       expect(req).toEqual({
@@ -752,10 +752,10 @@ describe('execute', () => {
       const req = buildRequest({spec,
         operationId: 'getMe',
         parameters: {
-          'head-header': 'justTheHead',
-          'two-path': '2',
-          'body-body': {json: 'rulez'},
-          'question-query': 'answer'
+          head: 'justTheHead',
+          two: '2',
+          body: {json: 'rulez'},
+          question: 'answer'
         }})
 
       // Then
@@ -783,7 +783,7 @@ describe('execute', () => {
         spec,
         operationId: 'makeMe',
         parameters: {
-          'body-body': {
+          body: {
             one: 1,
           }
         }})
@@ -832,7 +832,7 @@ describe('execute', () => {
       spec,
       operationId: 'makeMe',
       parameters: {
-        'body-body': {
+        body: {
           one: 1,
           two: {
             three: 3
@@ -859,7 +859,7 @@ describe('execute', () => {
       spec,
       operationId: 'makeMe',
       parameters: {
-        'body-body': 'hello'
+        body: 'hello'
       }
     })
 
@@ -1083,7 +1083,7 @@ describe('execute', () => {
         }
 
         // When
-        const req = buildRequest({spec, operationId: 'getMe', parameters: {'petId-query': ['a,b']}})
+        const req = buildRequest({spec, operationId: 'getMe', parameters: {petId: ['a,b']}})
 
         // Then
         expect(req).toEqual({
@@ -1129,7 +1129,7 @@ describe('execute', () => {
         }
 
         // When
-        const req = buildRequest({spec, operationId: 'getMe', parameters: {'ids-query': [1, 2, 3], 'the names-query': ['a,b', 'mary']}})
+        const req = buildRequest({spec, operationId: 'getMe', parameters: {ids: [1, 2, 3], 'the names': ['a,b', 'mary']}})
 
         // Then
         expect(req).toEqual({
@@ -1164,7 +1164,7 @@ describe('execute', () => {
         }
 
         // When
-        const req = buildRequest({spec, operationId: 'getMe', parameters: {'petId-query': [1, 2, 3]}})
+        const req = buildRequest({spec, operationId: 'getMe', parameters: {petId: [1, 2, 3]}})
 
         // Then
         expect(req).toEqual({
@@ -1199,7 +1199,7 @@ describe('execute', () => {
         }
 
         // When
-        const req = buildRequest({spec, operationId: 'getMe', parameters: {'petId-query': [1, 2, 3]}})
+        const req = buildRequest({spec, operationId: 'getMe', parameters: {petId: [1, 2, 3]}})
 
         // Then
         expect(req).toEqual({
@@ -1234,7 +1234,7 @@ describe('execute', () => {
         }
 
         // When
-        const req = buildRequest({spec, operationId: 'getMe', parameters: {'petId-query': [1, 2, 3]}})
+        const req = buildRequest({spec, operationId: 'getMe', parameters: {petId: [1, 2, 3]}})
 
         // Then
         expect(req).toEqual({
@@ -1269,7 +1269,7 @@ describe('execute', () => {
         }
 
         // When
-        const req = buildRequest({spec, operationId: 'getMe', parameters: {'petId-query': [1, 2, 3]}})
+        const req = buildRequest({spec, operationId: 'getMe', parameters: {petId: [1, 2, 3]}})
 
         // Then
         expect(req).toEqual({
@@ -1304,7 +1304,7 @@ describe('execute', () => {
         }
 
         // When
-        const req = buildRequest({spec, operationId: 'getMe', parameters: {'name-query': ['john', 'smith']}})
+        const req = buildRequest({spec, operationId: 'getMe', parameters: {name: ['john', 'smith']}})
 
         // Then
         expect(req).toEqual({
@@ -1403,11 +1403,11 @@ describe('execute', () => {
             spec: spec2,
             operationId: 'getBlob',
             parameters: {
-              'bodyParam-body': {
+              bodyParam: {
                 name: 'johny',
                 id: '123'
               },
-              'someQuery-query': 'foo',
+              someQuery: 'foo',
             }})
 
 
@@ -1424,7 +1424,7 @@ describe('execute', () => {
         })
 
         it('should not add values of body parameters to the URL', function () {
-          const req = buildRequest({spec, operationId: 'postMe', parameters: {'petId-body': 123}})
+          const req = buildRequest({spec, operationId: 'postMe', parameters: {petId: 123}})
 
 
           expect(req).toEqual({
@@ -1480,7 +1480,7 @@ describe('execute', () => {
         })
 
         it('should generate a request with body parameter', function () {
-          const req = buildRequest({spec, operationId: 'deleteMe', parameters: {'petId-body': 123}})
+          const req = buildRequest({spec, operationId: 'deleteMe', parameters: {petId: 123}})
 
           expect(req).toEqual({
             url: 'http://swagger.io/v1/one',
@@ -1512,7 +1512,7 @@ describe('execute', () => {
           }
         }
 
-        const req = buildRequest({spec, operationId: 'deleteMe', parameters: {'api_key-header': 123}})
+        const req = buildRequest({spec, operationId: 'deleteMe', parameters: {api_key: 123}})
 
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one',
@@ -1633,7 +1633,7 @@ describe('execute', () => {
           }
         }
 
-        const req = buildRequest({spec, operationId: 'getMe', parameters: {'id-path': '123'}})
+        const req = buildRequest({spec, operationId: 'getMe', parameters: {id: '123'}})
 
         expect(req).toEqual({
           url: 'http://swagger.io/v1/123',
@@ -1672,7 +1672,7 @@ describe('execute', () => {
           }
         }
 
-        const req = buildRequest({spec, operationId: 'getPetsById', parameters: {'id-path': 123, 'test-query': 567}})
+        const req = buildRequest({spec, operationId: 'getPetsById', parameters: {id: 123, test: 567}})
 
         expect(req).toEqual({
           url: 'http://swagger.io/v1/pet/123?test=567',
@@ -1710,7 +1710,7 @@ describe('execute', () => {
           }
         }
 
-        const req = buildRequest({spec, operationId: 'getPetsById', parameters: {'id-path': 123, 'test-query': 567}})
+        const req = buildRequest({spec, operationId: 'getPetsById', parameters: {id: 123, test: 567}})
 
         expect(req).toEqual({
           url: 'http://swagger.io/v1/pet/123?test=567',
@@ -1739,7 +1739,7 @@ describe('execute', () => {
           }
         }
 
-        const req = buildRequest({spec, operationId: 'deleteMe', parameters: {'id-path': 'foo/bar'}})
+        const req = buildRequest({spec, operationId: 'deleteMe', parameters: {id: 'foo/bar'}})
 
         expect(req).toEqual({
           url: 'http://swagger.io/v1/foo%2Fbar',
@@ -1773,7 +1773,7 @@ describe('execute', () => {
       const req = buildRequest({spec,
         requestContentType: 'application/x-www-form-urlencoded',
         operationId: 'postMe',
-        parameters: {'petId-formData': 'id'}})
+        parameters: {petId: 'id'}})
 
       expect(req).toEqual({
         url: 'http://swagger.io/v1/one',
