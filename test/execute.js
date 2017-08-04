@@ -1335,7 +1335,7 @@ describe('execute', () => {
         }
 
         // When
-        const req = buildRequest({spec, operationId: 'getMe', parameters: {'name-query': 'john'}})
+        const req = buildRequest({spec, operationId: 'getMe', parameters: {'query.name': 'john'}})
 
         // Then
         expect(req).toEqual({
@@ -1343,6 +1343,44 @@ describe('execute', () => {
           method: 'GET',
           credentials: 'same-origin',
           headers: { }
+        })
+      })
+
+      it('should set all parameter options when given an ambiguous parameter value', function () {
+        // Given
+        const spec = {
+          host: 'swagger.io',
+          basePath: '/v1',
+          paths: {
+            '/one': {
+              get: {
+                operationId: 'getMe',
+                parameters: [{
+                  name: 'name',
+                  in: 'query',
+                  type: 'string'
+                }, {
+                  name: 'name',
+                  in: 'formData',
+                  type: 'string'
+                }]
+              }
+            }
+          }
+        }
+
+        // When
+        const req = buildRequest({spec, operationId: 'getMe', parameters: {name: 'john'}})
+
+        // Then
+        expect(req).toEqual({
+          url: 'http://swagger.io/v1/one?name=john',
+          method: 'GET',
+          credentials: 'same-origin',
+          headers: {
+            'content-type': 'application/x-www-form-urlencoded'
+          },
+          body: 'name=john'
         })
       })
     })

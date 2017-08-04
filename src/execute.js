@@ -17,6 +17,10 @@ const OperationNotFoundError = createError('OperationNotFoundError', function (m
   Object.assign(this, extra || {})
 })
 
+const findParametersWithName = (name, parameters) => {
+  return parameters.filter(p => p.name === name)
+}
+
 // For stubbing in tests
 export const self = {
   buildRequest
@@ -110,36 +114,43 @@ export function buildRequest({
     req.headers.accept = responseContentType
   }
 
-  // Add values to request
-  arrayOrEmpty(operation.parameters) // operation parameters
+  const combinedParameters = []
+    .concat(arrayOrEmpty(operation.parameters)) // operation parameters
     .concat(arrayOrEmpty(path.parameters)) // path parameters
-    .forEach((parameter) => {
-      const builder = parameterBuilders[parameter.in]
-      let value
 
-      if (parameter.in === 'body' && parameter.schema && parameter.schema.properties) {
-        value = parameters
-      }
+  // Add values to request
+  combinedParameters.forEach((parameter) => {
+    const builder = parameterBuilders[parameter.in]
+    let value
 
-      value = parameter && parameter.name && parameters[parameter.name]
+    if (parameter.in === 'body' && parameter.schema && parameter.schema.properties) {
+      value = parameters
+    }
 
-      if (typeof value === 'undefined') {
+    value = parameter && parameter.name && parameters[parameter.name]
+
+    if (typeof value === 'undefined') {
         // check for `name-in` formatted key
-        value = parameter && parameter.name && parameters[`${parameter.name}-${parameter.in}`]
-      }
+      value = parameter && parameter.name && parameters[`${parameter.in}.${parameter.name}`]
+    }
+    else if (findParametersWithName(parameter.name, combinedParameters).length > 1) {
+      // value came from `parameters[parameter.name]`
+      // check to see if this is an ambiguous parameter
+      console.warn(`Parameter '${parameter.name}' is ambiguous because the defined spec has more than one parameter with the name: '${parameter.name}' and the passed-in parameter values did not define an 'in' value.`)
+    }
 
-      if (typeof parameter.default !== 'undefined' && typeof value === 'undefined') {
-        value = parameter.default
-      }
+    if (typeof parameter.default !== 'undefined' && typeof value === 'undefined') {
+      value = parameter.default
+    }
 
-      if (typeof value === 'undefined' && parameter.required && !parameter.allowEmptyValue) {
-        throw new Error(`Required parameter ${parameter.name} is not provided`)
-      }
+    if (typeof value === 'undefined' && parameter.required && !parameter.allowEmptyValue) {
+      throw new Error(`Required parameter ${parameter.name} is not provided`)
+    }
 
-      if (builder) {
-        builder({req, parameter, value, operation, spec})
-      }
-    })
+    if (builder) {
+      builder({req, parameter, value, operation, spec})
+    }
+  })
 
   // Add securities, which are applicable
   req = applySecurities({request: req, securities, operation, spec})
