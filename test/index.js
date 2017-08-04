@@ -467,7 +467,7 @@ describe('constructor', () => {
           req.url = 'http://petstore.swagger.io/v2/pet/4'
         }
       }).then((client) => {
-        client.apis.pet.getPetById({'petId-path': 3}).then((data) => {
+        client.apis.pet.getPetById({petId: 3}).then((data) => {
           expect(data.body.id).toEqual(4)
           cb()
         })
@@ -481,7 +481,7 @@ describe('constructor', () => {
           res.body.id = 4
         }
       }).then((client) => {
-        client.apis.pet.getPetById({'petId-path': 3}).then((data) => {
+        client.apis.pet.getPetById({petId: 3}).then((data) => {
           expect(data.body.id).toEqual(4)
           cb()
         })
