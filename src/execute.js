@@ -123,6 +123,11 @@ export function buildRequest({
 
       value = parameter && parameter.name && parameters[parameter.name]
 
+      if (typeof value === 'undefined') {
+        // check for `name-in` formatted key
+        value = parameter && parameter.name && parameters[`${parameter.name}-${parameter.in}`]
+      }
+
       if (typeof parameter.default !== 'undefined' && typeof value === 'undefined') {
         value = parameter.default
       }

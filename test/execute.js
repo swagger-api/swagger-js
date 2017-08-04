@@ -1314,6 +1314,37 @@ describe('execute', () => {
           headers: { }
         })
       })
+
+      it('should fall back to `name-in` format when a parameter cannot be found', function () {
+        // Given
+        const spec = {
+          host: 'swagger.io',
+          basePath: '/v1',
+          paths: {
+            '/one': {
+              get: {
+                operationId: 'getMe',
+                parameters: [{
+                  name: 'name',
+                  in: 'query',
+                  type: 'string'
+                }]
+              }
+            }
+          }
+        }
+
+        // When
+        const req = buildRequest({spec, operationId: 'getMe', parameters: {'name-query': 'john'}})
+
+        // Then
+        expect(req).toEqual({
+          url: 'http://swagger.io/v1/one?name=john',
+          method: 'GET',
+          credentials: 'same-origin',
+          headers: { }
+        })
+      })
     })
 
     describe('body', function () {
