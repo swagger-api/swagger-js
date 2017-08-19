@@ -124,7 +124,7 @@ export function serializeHeaders(headers = {}) {
     return obj
   }
 
-  return obj
+  return headers
 }
 
 function isFile(obj) {
