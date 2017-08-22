@@ -24,6 +24,9 @@ export const self = {
 
 // These functions will update the request.
 // They'll be given {req, value, paramter, spec, operation}.
+
+// TODO: OAS3: add builder for requestBody
+// QUESTION: OAS3: how do we decide which media type to use from a requestBody?
 export const PARAMETER_BUILDERS = {
   body: bodyBuilder,
   header: headerBuilder,
@@ -120,6 +123,9 @@ export function buildRequest({
       const builder = parameterBuilders[parameter.in]
       let value
 
+      // REVIEW: OAS3: have any key names or parameter shapes changed?
+      // Any new features that need to be plugged in here?
+
       if (parameter.in === 'body' && parameter.schema && parameter.schema.properties) {
         value = parameters
       }
@@ -140,6 +146,7 @@ export function buildRequest({
     })
 
   // Add securities, which are applicable
+  // REVIEW: OAS3: what changed in securities?
   req = applySecurities({request: req, securities, operation, spec})
 
   if (req.body || req.form) {
@@ -156,6 +163,7 @@ export function buildRequest({
       req.headers['content-type'] = 'multipart/form-data'
     }
     else if (operation.parameters.filter(p => p.in === 'formData').length) {
+      // TODO: OAS3: disable this
       req.headers['content-type'] = 'application/x-www-form-urlencoded'
     }
   }
@@ -169,11 +177,13 @@ export function buildRequest({
 
 // Add the body to the request
 export function bodyBuilder({req, value}) {
+  // REVIEW: OAS3: wtf does this do
   req.body = value
 }
 
 // Add a form data object.
 export function formDataBuilder({req, value, parameter}) {
+  // REVIEW: OAS3: check for any parameter changes that affect the builder
   req.form = req.form || {}
   if (value || parameter.allowEmptyValue) {
     req.form[parameter.name] = {
@@ -186,6 +196,7 @@ export function formDataBuilder({req, value, parameter}) {
 
 // Add a header to the request
 export function headerBuilder({req, parameter, value}) {
+  // REVIEW: OAS3: check for any parameter changes that affect the builder
   req.headers = req.headers || {}
   if (typeof value !== 'undefined') {
     req.headers[parameter.name] = value
@@ -194,11 +205,13 @@ export function headerBuilder({req, parameter, value}) {
 
 // Replace path paramters, with values ( ie: the URL )
 export function pathBuilder({req, value, parameter}) {
+  // REVIEW: OAS3: check for any parameter changes that affect the builder
   req.url = req.url.replace(`{${parameter.name}}`, encodeURIComponent(value))
 }
 
 // Add a query to the `query` object, which will later be stringified into the URL's search
 export function queryBuilder({req, value, parameter}) {
+  // REVIEW: OAS3: check for any parameter changes that affect the builder
   req.query = req.query || {}
 
   if (value === false && parameter.type === 'boolean') {
@@ -226,6 +239,9 @@ const stripNonAlpha = str => (str ? str.replace(/\W/g, '') : null)
 
 // Compose the baseUrl ( scheme + host + basePath )
 export function baseUrl({spec, scheme, contextUrl = ''}) {
+  // TODO: OAS3: support `servers` instead of host+basePath
+  // QUESTION: OAS3: how are we handling `servers`?
+  // QUESTION: OAS3: are we still doing assumed URL components the same way?
   const parsedContextUrl = url.parse(contextUrl)
   const firstSchemeInSpec = Array.isArray(spec.schemes) ? spec.schemes[0] : null
 

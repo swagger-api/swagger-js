@@ -825,6 +825,64 @@ describe('execute', () => {
     })
   })
 
+describe.only("buildRequest for OpenAPI 3.0", function () {
+  it('should build a request for the given operationId', function () {
+    // Given
+    const spec = {
+      openapi: "3.0.0",
+      paths: {
+        '/one': {
+          get: {
+            operationId: 'getMe'
+          }
+        }
+      }
+    }
+
+    // when
+    const req = buildRequest({spec, operationId: 'getMe'})
+
+    expect(req).toEqual({
+      method: 'GET',
+      url: '/one',
+      credentials: 'same-origin',
+      headers: {},
+    })
+  })
+
+  it('should build a request for the given operationId with a server provided', function () {
+    // Given
+    const spec = {
+      openapi: '3.0.0',
+      servers: [
+        {
+          url: 'http://petstore.swagger.io/v2',
+          name: 'Petstore'
+        }
+      ],
+      paths: {
+        '/one': {
+          get: {
+            operationId: 'getMe'
+          }
+        }
+      }
+    }
+
+    // when
+    const req = buildRequest({spec, operationId: 'getMe'})
+
+    expect(req).toEqual({
+      method: 'GET',
+      url: 'http://petstore.swagger.io/v2/one',
+      credentials: 'same-origin',
+      headers: {},
+    })
+  })
+
+
+})
+
   // Note: this is to handle requestContentType and responseContentType
   // although more might end up using it.
   it('should pass extras props to buildRequest', () => {

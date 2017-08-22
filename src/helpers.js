@@ -86,6 +86,9 @@ export function eachOperation(spec, cb, find) {
   }
 }
 
+// REVIEW: OAS3: identify normalization steps that need changes
+// ...maybe create `normalizeOAS3`?
+
 export function normalizeSwagger(parsedSpec) {
   const {spec} = parsedSpec
   const {paths} = spec
