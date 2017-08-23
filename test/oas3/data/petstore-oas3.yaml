@@ -1,0 +1,400 @@
+openapi: 3.0.0
+info:
+  title: Swagger Petstore
+  version: '2.0'
+  description: >-
+    This is a sample server Petstore server. You can find out more about Swagger at
+    [https://swagger.io](https://swagger.io) or on [irc.freenode.net, #swagger](https://swagger.io/irc/).    
+  termsOfService: https://swagger.io/terms/
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+externalDocs:
+  url: https://swagger.io
+  description: Find out more about Swagger
+
+servers:
+  - url: http://petstore.swagger.io/v3
+
+tags:
+  - name: pets
+    description: Operations to add and manage pets in the store
+
+paths:
+  /pets:
+    post:
+      summary: Add a new pet to the store
+      operationId: addPet
+      tags:
+        - pets
+      requestBody:
+        required: true
+        description: Pet object to be added to the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Pet'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Pet'
+      responses:
+        '201':
+          description: >
+            Pet was successfully added.
+            Response body contains pet info as JSON or XML.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Pet'
+          headers:
+            Location:
+              description: The URL to access the pet
+              schema:
+                type: string
+                format: uri
+                # Absolute or relative?
+                example: http://petstore.swagger.io/v3/pets/5
+
+          # How various values from this request and response
+          # can be used in other operations
+          links:
+
+            petIdGet:
+              description: Response field `id` can be used as the `petId` parameter in `GET /pet/{petId}`
+              operationId: getPetById
+              parameters:
+                petId: '$response.body#/id'
+
+            petIdDelete:
+              description: Response field `id` can be used as the `petId` parameter in `DELETE /pet/{petId}`
+              operationId: deletePet
+              parameters:
+                petId: '$response.body#/id'
+
+            petIdImage:
+              description: >
+                Response field `id` can be used as the `petId` parameter in `GET /pets/{petId}/image`.
+                
+                Note we refer to the operation by path and not ID.
+                Here, `~pets~1{petId}~1image` is `/pets/{petId}/image` with `/` escaped as `~1`.
+              operationRef: '#/paths/~pets~1{petId}~1image/get'
+              parameters:
+                petId: '$response.body#/id'
+
+            tags:
+              description: >
+                The `tags` array passed in the request body (if any) can be used
+                to filter `GET /pets` by `tags`
+              operationId: getPets
+              parameters:
+                tags: '$request.body#/tags'
+
+    get:
+      summary: List all pets in the store
+      operationId: getPets
+      tags:
+        - pets
+      description: |
+        Use `limit` and `offset` to limit the number of returned results.
+        
+        The total number of pets is returned in the response header `X-Total-Count`.
+      parameters:
+        - in: query
+          name: status
+          description: Only return pets with the specified statuses
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Pet'
+            minItems: 1
+        - in: query
+          name: tags
+          description: Only return pets with the specified tags
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Tag'
+            minItems: 1
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            minimum: 0
+        - in: query
+          name: limit
+          description: Maximum number of results to return
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: A list of pets
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArrayOfPets'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ArrayOfPets'
+          headers:
+            X-Total-Count:
+              description: Total number of pets in the store
+              schema:
+                type: integer
+                minimum: 0
+                example: 15
+
+          # How various values from this request and response
+          # can be used in other operations
+          links:
+            limit:  # ???
+              description: >
+                The value of the response header `X-Total-Count` can be used
+                as the `limit` parameter in `GET /pets`
+              operationId: getPets
+              parameters:
+                limit: '$response.header.X-Total-Count'
+
+            petIdGet:
+              description: We can get individual pets by the `id` returned in this response body
+              operationId: getPet
+              parameters:
+                petId: '$response.body#/0/id'
+
+            filterByTags:
+              description: We can `GET /pets` filtered by `tags` returned in this response body
+              operationId: getPets
+              parameters:
+                tags: '$response.body#/0/tags'
+
+  /pets/{petId}:
+    parameters:
+      - $ref: '#/components/parameters/petId'
+
+    get:
+      summary: Get a pet by ID
+      operationId: getPetById
+      tags:
+        - pets
+      responses:
+        '200':
+          description: A pet with the specified ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArrayOfPets'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ArrayOfPets'
+
+          # How various values from this request and response
+          # can be used in other operations
+          links:
+            petId:
+              description: The `petId` parameter is the same as used in `DELETE /pet/{petId}`
+              operationId: deletePet
+              parameters:
+                petId: '$request.path.petId'
+            petIdImage:
+              description: The `petId` parameter is the same as used get the pet image
+              operationRef: '#/paths/~pets~1{petId}~1image/get'
+              parameters:
+                petId: '$request.path.petId'
+
+        '400':
+          $ref: '#/components/responses/InvalidId'
+        '404':
+          $ref: '#/components/responses/PetNotFound'
+
+    delete:
+      summary: Delete a pet
+      operationId: deletePet
+      tags:
+        - pets
+      responses:
+        '204':
+          description: Deleted
+        '400':
+          $ref: '#/components/responses/InvalidId'
+        '404':
+          $ref: '#/components/responses/PetNotFound'
+
+
+  /pets/{petId}/image:
+    parameters:
+      - $ref: '#/components/parameters/petId'
+
+    get:
+      summary: Get image of a pet
+      tags:
+        - pets
+      description: >
+        Note: The uploaded images are not actually used anywhere.
+      responses:
+        '200':
+          description: Image of the specified pet
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+          links:
+            image:
+              description: We can upload this image back to this pet
+              operationRef: '#/paths/~pets~1{petId}~1image/get'
+              parameters:
+                requestBody: '$response.body'
+        '400':
+          $ref: '#/components/responses/InvalidId'
+        '404':
+          $ref: '#/components/responses/PetNotFound'
+
+    post:
+      summary: Upload a pet image
+      tags:
+        - pets
+      requestBody:
+        required: true
+        description: Image to upload
+        content:
+          image/*:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: Image was successfully uploaded
+      
+
+  # /pets/types:  # inventory?
+  #   get:
+  #     summary: Get number of pets of each type
+  #     tags:
+  #       - pets
+  #     responses:
+  #       '200':
+  #         description: >
+  #           A string-to-integer map where the keys are pet types
+  #           and the values are the number of pets of that type
+  #         content:
+  #           # application/xml: ???
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               additionalProperties:
+  #                 type: integer
+  #                 minimum: 0
+  #               example:
+  #                 cat: 5
+  #                 dog: 7
+  #                 hamster: 2
+
+  #         # No links - can't link to individual fields in the target request body
+  #         # only the whole request body
+
+components:
+  parameters:
+    petId:
+      in: path
+      name: petId
+      description: Pet ID in the store
+      required: true
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+
+
+  schemas:
+
+    Pet:
+      type: object
+      required:
+        - id
+        - petType
+        - name
+        - price
+      properties:    # TODO: breed?
+        id:
+          description: Pet ID in the store
+          type: integer
+          format: int64
+          readOnly: true
+          minimum: 1
+          example: 5
+          xml:
+            attribute: true
+        petType:
+          type: string
+          enum:
+            - cat
+            - dog
+            - other
+          xml:
+            name: type
+        name:
+          description: Pet name
+          type: string
+          example: Fluffy
+        tags:
+          description: Up to 5 arbitrary tags that describe the pet
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+          maxItems: 5
+          xml:
+            wrapped: true
+        photoUrl:
+          type: string
+          format: uri
+          example: http://petstore.swagger.io/images/fluffy.png
+        price:
+          type: number
+          minimum: 0
+          example: 125.7
+        status:
+          $ref: '#/components/schemas/Status'
+      xml:
+        name: pet
+
+    ArrayOfPets:
+      type: array
+      items:
+        $ref: '#/components/schemas/Pet'
+      xml:
+        name: pets
+        wrapped: true
+
+    Status:
+      type: string
+      description: Pet status in the store
+      enum:
+        - available
+        - pending
+        - sold
+      default: available
+      xml:
+        name: status   # use lowercase element name in XML
+
+    Tag:
+      description: An arbitrary word that describes a pet
+      type: string
+      minLength: 3
+      maxLength: 15
+      example: playful
+      xml:
+        name: tag   # use lowercase element name in XML
+
+  responses:
+    InvalidId:
+      description: Invalid ID supplied (must be an integer >= 1)
+    PetNotFound:
+      description: A pet with the specified ID was not found
