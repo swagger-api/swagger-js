@@ -5,7 +5,7 @@ import isArray from 'lodash/isArray'
 import btoa from 'btoa'
 import url from 'url'
 import http, {mergeInQueryOrForm} from './http'
-import {getOperationRaw, idFromPathMethod, legacyIdFromPathMethod} from './helpers'
+import {getOperationRaw, idFromPathMethod, legacyIdFromPathMethod, isOAS3} from './helpers'
 import createError from './specmap/lib/create-error'
 
 const arrayOrEmpty = (ar) => {
@@ -25,8 +25,7 @@ export const self = {
 // These functions will update the request.
 // They'll be given {req, value, paramter, spec, operation}.
 
-// TODO: OAS3: add builder for requestBody
-// QUESTION: OAS3: how do we decide which media type to use from a requestBody?
+
 export const PARAMETER_BUILDERS = {
   body: bodyBuilder,
   header: headerBuilder,
@@ -69,13 +68,16 @@ export function execute({
 export function buildRequest({
   spec, operationId, parameters, securities, requestContentType,
   responseContentType, parameterBuilders, scheme,
-  requestInterceptor, responseInterceptor, contextUrl, userFetch
+  requestInterceptor, responseInterceptor, contextUrl, userFetch,
+  requestBody, server, serverVariables
 }) {
+  const specIsOAS3 = isOAS3(spec)
+
   parameterBuilders = parameterBuilders || PARAMETER_BUILDERS
 
   // Base Template
   let req = {
-    url: baseUrl({spec, scheme, contextUrl}),
+    url: baseUrl({spec, scheme, contextUrl, server, serverVariables}),
     credentials: 'same-origin',
     headers: {
       // This breaks CORSs... removing this line... probably breaks oAuth. Need to address that
@@ -141,9 +143,25 @@ export function buildRequest({
       }
 
       if (builder) {
-        builder({req, parameter, value, operation, spec})
+        builder({req, parameter, value, operation, spec, specIsOAS3})
       }
     })
+
+  // for OAS3: add requestBody to request
+  if (specIsOAS3 && requestBody) {
+    if (requestContentType) {
+      const requestBodyDef = operation.requestBody
+      const requestBodyMediaTypes = Object.keys(requestBodyDef.content || {})
+      if (requestBodyMediaTypes.indexOf(requestContentType) > -1) {
+        // only attach body if the requestBody has a definition for the
+        // contentType that has been explicitly set
+        req.body = requestBody
+      }
+    }
+    else {
+      req.body = requestBody
+    }
+  }
 
   // Add securities, which are applicable
   // REVIEW: OAS3: what changed in securities?
@@ -151,20 +169,28 @@ export function buildRequest({
 
   if (req.body || req.form) {
     if (requestContentType) {
-      req.headers['content-type'] = requestContentType
+      req.headers['Content-Type'] = requestContentType
     }
+    else if (specIsOAS3) {
+      const requestBodyDef = operation.requestBody
+      const requestBodyMediaTypes = Object.keys(requestBodyDef.content || {})
+      const firstMediaType = requestBodyMediaTypes[0]
+      if (firstMediaType) {
+        req.headers['Content-Type'] = firstMediaType
+      }
+    }
+    // all following conditionals are Swagger2 only
     else if (Array.isArray(operation.consumes)) {
-      req.headers['content-type'] = operation.consumes[0]
+      req.headers['Content-Type'] = operation.consumes[0]
     }
     else if (Array.isArray(spec.consumes)) {
-      req.headers['content-type'] = spec.consumes[0]
+      req.headers['Content-Type'] = spec.consumes[0]
     }
-    else if (operation.parameters.filter(p => p.type === 'file').length) {
-      req.headers['content-type'] = 'multipart/form-data'
+    else if (operation.parameters && operation.parameters.filter(p => p.type === 'file').length) {
+      req.headers['Content-Type'] = 'multipart/form-data'
     }
-    else if (operation.parameters.filter(p => p.in === 'formData').length) {
-      // TODO: OAS3: disable this
-      req.headers['content-type'] = 'application/x-www-form-urlencoded'
+    else if (operation.parameters && operation.parameters.filter(p => p.in === 'formData').length) {
+      req.headers['Content-Type'] = 'application/x-www-form-urlencoded'
     }
   }
 
@@ -176,8 +202,10 @@ export function buildRequest({
 }
 
 // Add the body to the request
-export function bodyBuilder({req, value}) {
-  // REVIEW: OAS3: wtf does this do
+export function bodyBuilder({req, value, specIsOAS3}) {
+  if (specIsOAS3) {
+    return
+  }
   req.body = value
 }
 
@@ -237,8 +265,68 @@ export function queryBuilder({req, value, parameter}) {
 
 const stripNonAlpha = str => (str ? str.replace(/\W/g, '') : null)
 
+export function baseUrl(obj) {
+  const specIsOAS3 = isOAS3(obj.spec)
+
+  return specIsOAS3 ? oas3BaseUrl(obj) : swagger2BaseUrl(obj)
+}
+
+function oas3BaseUrl({spec, server, serverVariables = {}}) {
+  const servers = spec.servers
+
+  let selectedServerUrl = ''
+  let selectedServerObj = null
+
+  if (!servers || !Array.isArray(servers)) {
+    return '/'
+  }
+
+  if (server) {
+    const serverUrls = servers.map(srv => srv.url)
+
+    if(serverUrls.indexOf(server) > -1) {
+      selectedServerUrl = server
+      selectedServerObj = servers[serverUrls.indexOf(server)]
+    }
+  }
+
+  if (!selectedServerUrl) {
+    // default to the first server if we don't have one by now
+    selectedServerUrl = servers[0].url
+    selectedServerObj = servers[0]
+  }
+
+  if (selectedServerUrl.indexOf('{') > -1) {
+    // do variable substitution
+    const varNames = getVariableTemplateNames(selectedServerUrl)
+    varNames.forEach((vari) => {
+      if (selectedServerObj.variables && selectedServerObj.variables[vari]) {
+        // variable is defined in server
+        const variableDefinition = selectedServerObj.variables[vari]
+        const variableValue = serverVariables[vari] || variableDefinition.default
+
+        const re = new RegExp(`\{${vari}\}`,"g")
+        selectedServerUrl = selectedServerUrl.replace(re, variableValue)
+      }
+    })
+  }
+
+  return selectedServerUrl
+}
+
+function getVariableTemplateNames(str) {
+  const results = []
+  const re = /{([^}]+)}/g
+  let text
+
+  while (text = re.exec(str)) {
+    results.push(text[1])
+  }
+  return results
+}
+
 // Compose the baseUrl ( scheme + host + basePath )
-export function baseUrl({spec, scheme, contextUrl = ''}) {
+function swagger2BaseUrl({spec, scheme, contextUrl = ''}) {
   // TODO: OAS3: support `servers` instead of host+basePath
   // QUESTION: OAS3: how are we handling `servers`?
   // QUESTION: OAS3: are we still doing assumed URL components the same way?

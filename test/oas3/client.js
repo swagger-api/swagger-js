@@ -67,46 +67,16 @@ describe('http - OpenAPI Specification 3.0', () => {
         expect(client).toExist()
 
         // we have 3 tags
-        expect(Object.keys(client.apis).length).toBe(1)
+        expect(Object.keys(client.apis).length).toBe(3)
 
         // the pet tag exists
-        expect(client.apis.pets).toExist()
+        expect(client.apis.pet).toExist()
 
         // the get pet operation
-        expect(client.apis.pets.getPetById).toExist()
+        expect(client.apis.pet.getPetById).toExist()
 
         done()
       })
-      .catch(e => done (e))
-  })
-
-  /**
-   * See https://github.com/swagger-api/swagger-js/issues/1005
-   */
-  it('should get a pet from the petstore', (done) => {
-    Swagger('http://localhost:8000/petstore-oas3.yaml')
-      .then((client) => {
-        client.apis.pets.getPetById({petId: -1})
-          .then((data) => {
-            done()
-          })
-          .catch((err) => {
-            done(err)
-          })
-      })
-      .catch(e => done (e))
-  })
-
-  /**
-   * See https://github.com/swagger-api/swagger-js/issues/1002
-   */
-  it('should return an error when a spec doesnt exist', (done) => {
-    Swagger('http://localhost:8000/not-real.yaml')
-      .then((client) => {
-        done('expected an error')
-      })
-      .catch((error) => {
-        done()
-      })
+      .catch(e => done(e))
   })
 })
