@@ -175,7 +175,18 @@ export function buildRequest({
         // only attach body if the requestBody has a definition for the
         // contentType that has been explicitly set
         if (requestContentType === 'application/x-www-form-urlencoded') {
-          req.form = requestBody
+          if (typeof requestBody === 'object') {
+            req.form = {}
+            Object.keys(requestBody).forEach((k) => {
+              const val = requestBody[k]
+              req.form[k] = {
+                value: val
+              }
+            })
+          }
+          else {
+            req.form = requestBody
+          }
         }
         else {
           req.body = requestBody
@@ -186,6 +197,7 @@ export function buildRequest({
       req.body = requestBody
     }
   }
+
 
   // Add securities, which are applicable
   // REVIEW: OAS3: what changed in securities?
