@@ -147,15 +147,39 @@ export function buildRequest({
       }
     })
 
+  const requestBodyDef = operation.requestBody || {}
+  const requestBodyMediaTypes = Object.keys(requestBodyDef.content || {})
+
+  // for OAS3: set the Content-Type
+  if (specIsOAS3 && requestBody) {
+    // does the passed requestContentType appear in the requestBody definition?
+    const isExplicitContentTypeValid = requestContentType
+      && requestBodyMediaTypes.indexOf(requestContentType) > -1
+
+    if (requestContentType && isExplicitContentTypeValid) {
+      req.headers['Content-Type'] = requestContentType
+    }
+    else if (!requestContentType) {
+      const firstMediaType = requestBodyMediaTypes[0]
+      if (firstMediaType) {
+        req.headers['Content-Type'] = firstMediaType
+        requestContentType = firstMediaType
+      }
+    }
+  }
+
   // for OAS3: add requestBody to request
   if (specIsOAS3 && requestBody) {
     if (requestContentType) {
-      const requestBodyDef = operation.requestBody
-      const requestBodyMediaTypes = Object.keys(requestBodyDef.content || {})
       if (requestBodyMediaTypes.indexOf(requestContentType) > -1) {
         // only attach body if the requestBody has a definition for the
         // contentType that has been explicitly set
-        req.body = requestBody
+        if (requestContentType === 'application/x-www-form-urlencoded') {
+          req.form = requestBody
+        }
+        else {
+          req.body = requestBody
+        }
       }
     }
     else {
@@ -167,19 +191,11 @@ export function buildRequest({
   // REVIEW: OAS3: what changed in securities?
   req = applySecurities({request: req, securities, operation, spec})
 
-  if (req.body || req.form) {
+  if (!specIsOAS3 && (req.body || req.form)) {
+    // all following conditionals are Swagger2 only
     if (requestContentType) {
       req.headers['Content-Type'] = requestContentType
     }
-    else if (specIsOAS3) {
-      const requestBodyDef = operation.requestBody
-      const requestBodyMediaTypes = Object.keys(requestBodyDef.content || {})
-      const firstMediaType = requestBodyMediaTypes[0]
-      if (firstMediaType) {
-        req.headers['Content-Type'] = firstMediaType
-      }
-    }
-    // all following conditionals are Swagger2 only
     else if (Array.isArray(operation.consumes)) {
       req.headers['Content-Type'] = operation.consumes[0]
     }
@@ -278,13 +294,13 @@ function oas3BaseUrl({spec, server, serverVariables = {}}) {
   let selectedServerObj = null
 
   if (!servers || !Array.isArray(servers)) {
-    return '/'
+    return ''
   }
 
   if (server) {
     const serverUrls = servers.map(srv => srv.url)
 
-    if(serverUrls.indexOf(server) > -1) {
+    if (serverUrls.indexOf(server) > -1) {
       selectedServerUrl = server
       selectedServerObj = servers[serverUrls.indexOf(server)]
     }
@@ -305,7 +321,7 @@ function oas3BaseUrl({spec, server, serverVariables = {}}) {
         const variableDefinition = selectedServerObj.variables[vari]
         const variableValue = serverVariables[vari] || variableDefinition.default
 
-        const re = new RegExp(`\{${vari}\}`,"g")
+        const re = new RegExp(`{${vari}}`, 'g')
         selectedServerUrl = selectedServerUrl.replace(re, variableValue)
       }
     })
@@ -319,6 +335,7 @@ function getVariableTemplateNames(str) {
   const re = /{([^}]+)}/g
   let text
 
+  // eslint-ignore-next-line no-cond-assign
   while (text = re.exec(str)) {
     results.push(text[1])
   }
@@ -327,9 +344,6 @@ function getVariableTemplateNames(str) {
 
 // Compose the baseUrl ( scheme + host + basePath )
 function swagger2BaseUrl({spec, scheme, contextUrl = ''}) {
-  // TODO: OAS3: support `servers` instead of host+basePath
-  // QUESTION: OAS3: how are we handling `servers`?
-  // QUESTION: OAS3: are we still doing assumed URL components the same way?
   const parsedContextUrl = url.parse(contextUrl)
   const firstSchemeInSpec = Array.isArray(spec.schemes) ? spec.schemes[0] : null
 

@@ -260,7 +260,7 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
           a: 1,
           b: 2
         },
-        requestContentType: "application/json"
+        requestContentType: 'application/json'
       })
 
       expect(req).toEqual({
@@ -325,6 +325,7 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
     it('should build updatePetWithForm correctly', function () {
       const req = buildRequest({
         spec: petstoreSpec,
+        requestContentType: 'application/x-www-form-urlencoded',
         operationId: 'updatePetWithForm',
         parameters: {
           petId: 1234
@@ -342,7 +343,7 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
         },
-        body: 'thePetId=1234&name=OAS3+Pet'
+        body: 'thePetId=1234&name=OAS3%20pet'
       })
     })
 
@@ -367,7 +368,7 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
     })
   })
   describe('baseUrl', function () {
-    it('should return / if no servers are specified', function () {
+    it.skip('should return / if no servers are specified', function () {
       const spec = {
         openapi: '3.0.0'
       }

@@ -105,7 +105,7 @@ describe('refs', function () {
       const url = 'http://example.com/common.yaml'
 
       xapp.get(url, (req, res, next) => {
-        res.set('content-type', 'application/yaml')
+        res.set('Content-Type', 'application/yaml')
         res.send('works:\n  yay: true')
       })
 
