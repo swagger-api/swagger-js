@@ -17,7 +17,7 @@ export default {
     const parent = fullPath.slice(0, -1)
     let alreadyAddError = false
 
-    return [specmap.replace(parent, {})].concat(val.map((toMerge, index) => {
+    const allOfPatches = [specmap.replace(parent, {})].concat(val.map((toMerge, index) => {
       if (!specmap.isObject(toMerge)) {
         if (alreadyAddError) {
           return null
@@ -31,5 +31,17 @@ export default {
 
       return specmap.mergeDeep(parent, toMerge)
     }))
+
+    // Find the $$ref value from the patch's copy of the spec
+    // and add it as the last patch for the `allOf` resolution
+    let specObj = patch.value
+    parent.forEach((part) => {
+      specObj = specObj[part]
+    })
+    allOfPatches.push(specmap.mergeDeep(parent, {
+      $$ref: specObj.$$ref
+    }))
+
+    return allOfPatches
   }
 }
