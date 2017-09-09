@@ -5,7 +5,7 @@ Swagger-JS
 
 ## New!
 
-**This is the new version of swagger-js, 3.x. Want to learn more? Check out our [FAQ](http://swagger.io/new-ui-faq/).**
+**This is the new version of swagger-js, 3.x. Want to learn more? Check out our [FAQ](https://github.com/swagger-api/swagger-js/blob/master/docs/MIGRATION_2_X.md).**
 
 For the older version of swagger-js, refer to the [*2.x branch*](https://github.com/swagger-api/swagger-js/tree/2.x).
 
