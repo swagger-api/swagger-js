@@ -5,6 +5,25 @@ const escapeString = (str) => {
   return str.replace(/[^\w]/gi, '_')
 }
 
+// Spec version detection
+export function isOAS3(spec) {
+  const oasVersion = spec.openapi
+  if (!oasVersion) {
+    return false
+  }
+
+  return oasVersion.startsWith('3.0.0')
+}
+
+export function isSwagger2(spec) {
+  const swaggerVersion = spec.swagger
+  if (!swaggerVersion) {
+    return false
+  }
+
+  return swaggerVersion.startsWith('2')
+}
+
 // Strategy for determining operationId
 export function opId(operation, pathName, method = '') {
   const idWithoutWhitespace = (operation.operationId || '').replace(/\s/g, '')
@@ -85,6 +104,9 @@ export function eachOperation(spec, cb, find) {
     }
   }
 }
+
+// REVIEW: OAS3: identify normalization steps that need changes
+// ...maybe create `normalizeOAS3`?
 
 export function normalizeSwagger(parsedSpec) {
   const {spec} = parsedSpec
