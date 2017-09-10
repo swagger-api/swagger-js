@@ -61,6 +61,100 @@ describe('allOf', function () {
     })
   })
 
+  it.skip('should set $$ref values', function () {
+    return mapSpec({
+      spec: {
+        Pet: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string'
+            }
+          }
+        },
+        Cat: {
+          allOf: [
+            {$ref: '#/Pet'},
+            {
+              type: 'object',
+              properties: {
+                meow: {
+                  type: 'string'
+                }
+              }
+            }
+          ]
+        },
+        Animal: {
+          type: 'object',
+          properties: {
+            pet: {
+              $ref: '#/Pet'
+            },
+            cat: {
+              $ref: '#/Cat'
+            }
+          }
+        }
+      },
+      plugins: [plugins.refs, plugins.allOf]
+    }).then((res) => {
+      console.log('res', res.spec.Animal.properties)
+      expect(res).toEqual({
+        errors: [],
+        spec: {
+          Pet: {
+            $$ref: '#/Pet',
+            type: 'object',
+            properties: {
+              name: {
+                type: 'string'
+              }
+            }
+          },
+          Cat: {
+            $$ref: '#/Cat',
+            properties: {
+              meow: {
+                type: 'string'
+              },
+              name: {
+                type: 'string'
+              }
+            },
+            type: 'object'
+          },
+          Animal: {
+            type: 'object',
+            properties: {
+              pet: {
+                $$ref: '#/Pet',
+                properties: {
+                  name: {
+                    type: 'string'
+                  }
+                },
+                type: 'object'
+              },
+              cat: {
+                $$ref: '#/Cat',
+                properties: {
+                  meow: {
+                    type: 'string'
+                  },
+                  name: {
+                    type: 'string'
+                  }
+                },
+                type: 'object'
+              }
+            }
+          }
+        }
+      })
+    })
+  })
+
   it('should return error if allOf is not an array', function () {
     return mapSpec({
       spec: {

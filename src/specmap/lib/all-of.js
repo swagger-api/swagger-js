@@ -38,9 +38,11 @@ export default {
     parent.forEach((part) => {
       specObj = specObj[part]
     })
-    allOfPatches.push(specmap.mergeDeep(parent, {
-      $$ref: specObj.$$ref
-    }))
+    if (specObj.$$ref) {
+      allOfPatches.push(specmap.mergeDeep(parent, {
+        $$ref: specObj.$$ref
+      }))
+    }
 
     return allOfPatches
   }
