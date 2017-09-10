@@ -31,7 +31,7 @@ describe('http', () => {
   it('should always load a spec as text', () => {
     xapp = xmock()
     xapp.get('http://swagger.io/somespec', (req, res) => {
-      res.set('content-type', 'application/octet-stream')
+      res.set('Content-Type', 'application/octet-stream')
       res.send('key: val')
     })
 
@@ -188,7 +188,7 @@ describe('http', () => {
 
       const req = {
         headers: {
-          'content-type': 'multipart/form-data'
+          'Content-Type': 'multipart/form-data'
         },
         form: {
           testJson: {
