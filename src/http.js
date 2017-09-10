@@ -135,6 +135,7 @@ function isFile(obj) {
 }
 
 function formatValue({value, collectionFormat, allowEmptyValue}, skipEncoding) {
+  // REVIEW: OAS3: usage of this fn for compatibility w/ new value formats
   const SEPARATORS = {
     csv: ',',
     ssv: '%20',
