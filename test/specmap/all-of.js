@@ -54,6 +54,7 @@ describe('allOf', function () {
       expect(res).toEqual({
         errors: [],
         spec: {
+          bar: {baz: 4},
           one: {baz: 4},
           two: 2,
         }
