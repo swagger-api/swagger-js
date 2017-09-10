@@ -39,9 +39,15 @@ export default {
       specObj = specObj[part]
     })
     if (specObj.$$ref) {
+      // If there was an existing $$ref value, make sure it is applied last so it is preserved
       allOfPatches.push(specmap.mergeDeep(parent, {
         $$ref: specObj.$$ref
       }))
+    }
+    else {
+      // If there was not an existing $$ref value, make sure to remove
+      // any $$ref value that may existing from the result of `allOf` merges
+      allOfPatches.push(specmap.remove([].concat(parent, '$$ref')))
     }
 
     return allOfPatches
