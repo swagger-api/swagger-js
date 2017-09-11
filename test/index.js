@@ -412,6 +412,47 @@ describe('constructor', () => {
       })
     })
 
+    it('should not add an empty oAuth2 Bearer token header to a request', function () {
+      const spec = {
+        securityDefinitions: {
+          bearer: {
+            description: 'Bearer authorization token',
+            type: 'oauth2',
+            name: 'Authorization',
+            in: 'header'
+          }
+        },
+        security: [{bearer: []}],
+        paths: {
+          '/pet': {
+            get: {
+              operationId: 'getPets'
+            }
+          }
+        }
+      }
+
+      const authorizations = {
+        bearer: {
+          token: {
+            access_token: ''
+          }
+        }
+      }
+
+      return Swagger({spec, authorizations}).then((client) => {
+        const http = createSpy()
+        client.execute({http, operationId: 'getPets'})
+        expect(http.calls.length).toEqual(1)
+        expect(http.calls[0].arguments[0]).toEqual({
+          headers: {},
+          credentials: 'same-origin',
+          method: 'GET',
+          url: '/pet'
+        })
+      })
+    })
+
     it('should add global securites', function () {
       const spec = {
         securityDefinitions: {
