@@ -56,6 +56,7 @@ describe('allOf', function () {
         spec: {
           one: {baz: 4},
           two: 2,
+          bar: {baz: 4}
         }
       })
     })
