@@ -62,6 +62,29 @@ describe('allOf', function () {
     })
   })
 
+  it('should not overwrite properties that are already present', function () {
+    return mapSpec({
+      spec: {
+        original: 'yes',
+        allOf: [
+          {
+            original: 'no',
+            notOriginal: 'yes'
+          }
+        ]
+      },
+      plugins: [plugins.refs, plugins.allOf]
+    }).then((res) => {
+      expect(res).toEqual({
+        errors: [],
+        spec: {
+          original: 'yes',
+          notOriginal: 'yes'
+        }
+      })
+    })
+  })
+
   it.skip('should set $$ref values', function () {
     return mapSpec({
       spec: {
