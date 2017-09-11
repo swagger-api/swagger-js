@@ -337,7 +337,7 @@ describe('allOf', function () {
   })
 
   // TODO: this needs to get fixed
-  it.skip('should handle case, with an `allOf` referencing an `allOf` ', function () {
+  it('should handle case, with an `allOf` referencing an `allOf` ', function () {
     return mapSpec({
       plugins: [plugins.refs, plugins.allOf],
       showDebug: true,
