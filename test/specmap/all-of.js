@@ -56,6 +56,124 @@ describe('allOf', function () {
         spec: {
           one: {baz: 4},
           two: 2,
+          bar: {baz: 4}
+        }
+      })
+    })
+  })
+
+  it('should not overwrite properties that are already present', function () {
+    return mapSpec({
+      spec: {
+        original: 'yes',
+        allOf: [
+          {
+            original: 'no',
+            notOriginal: 'yes'
+          }
+        ]
+      },
+      plugins: [plugins.refs, plugins.allOf]
+    }).then((res) => {
+      expect(res).toEqual({
+        errors: [],
+        spec: {
+          original: 'yes',
+          notOriginal: 'yes'
+        }
+      })
+    })
+  })
+
+  it('should set $$ref values', function () {
+    return mapSpec({
+      allowMetaPatches: true,
+      spec: {
+        Pet: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string'
+            }
+          }
+        },
+        Cat: {
+          allOf: [
+            {$ref: '#/Pet'},
+            {
+              type: 'object',
+              properties: {
+                meow: {
+                  type: 'string'
+                }
+              }
+            }
+          ]
+        },
+        Animal: {
+          type: 'object',
+          properties: {
+            pet: {
+              $ref: '#/Pet'
+            },
+            cat: {
+              $ref: '#/Cat'
+            }
+          }
+        }
+      },
+      plugins: [plugins.refs, plugins.allOf]
+    }).then((res) => {
+      expect(res).toEqual({
+        errors: [],
+        spec: {
+          Pet: {
+            $$ref: '#/Pet',
+            type: 'object',
+            properties: {
+              name: {
+                type: 'string'
+              }
+            }
+          },
+          Cat: {
+            $$ref: '#/Cat',
+            properties: {
+              meow: {
+                type: 'string'
+              },
+              name: {
+                type: 'string'
+              }
+            },
+            type: 'object'
+          },
+          Animal: {
+            type: 'object',
+            properties: {
+              pet: {
+                $$ref: '#/Pet',
+                properties: {
+                  name: {
+                    type: 'string'
+                  }
+                },
+                type: 'object'
+              },
+              cat: {
+                $$ref: '#/Cat',
+                properties: {
+                  meow: {
+                    type: 'string'
+                  },
+                  name: {
+                    type: 'string'
+                  }
+                },
+                type: 'object'
+              }
+            }
+          }
         }
       })
     })
@@ -218,8 +336,7 @@ describe('allOf', function () {
     })
   })
 
-  // TODO: this needs to get fixed
-  it.skip('should handle case, with an `allOf` referencing an `allOf` ', function () {
+  it('should handle case, with an `allOf` referencing an `allOf` ', function () {
     return mapSpec({
       plugins: [plugins.refs, plugins.allOf],
       showDebug: true,
