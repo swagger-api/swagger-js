@@ -419,7 +419,7 @@ export function applySecurities({request, securities = {}, operation = {}, spec}
             result.headers.authorization = `Basic ${value.base64}`
           }
         }
-        else if (type === 'oauth2') {
+        else if (type === 'oauth2' && accessToken) {
           result.headers.authorization = `${tokenType || 'Bearer'} ${accessToken}`
         }
       }
