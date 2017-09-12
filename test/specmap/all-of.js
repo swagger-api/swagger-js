@@ -85,8 +85,9 @@ describe('allOf', function () {
     })
   })
 
-  it.skip('should set $$ref values', function () {
+  it('should set $$ref values', function () {
     return mapSpec({
+      allowMetaPatches: true,
       spec: {
         Pet: {
           type: 'object',
