@@ -123,7 +123,6 @@ describe('allOf', function () {
       },
       plugins: [plugins.refs, plugins.allOf]
     }).then((res) => {
-      console.log('res', res.spec.Animal.properties)
       expect(res).toEqual({
         errors: [],
         spec: {
