@@ -1,6 +1,6 @@
 import jsonPatch from 'fast-json-patch'
 import regenerator from 'babel-runtime/regenerator'
-import {mergeWith as _mergeWith, isArray as _isArray} from 'lodash'
+import {mergeDeep as mergeDeepHelper} from '../../helpers'
 
 export default {
   add,
@@ -46,12 +46,7 @@ function applyPatch(obj, patch, opts) {
     jsonPatch.apply(obj, [valPatch])
     const origValPatchValue = {...valPatch.value}
 
-    const customizer = function (objValue, srcValue) {
-      if (_isArray(objValue)) {
-        return objValue.concat(srcValue)
-      }
-    }
-    _mergeWith(valPatch.value, patch.value, customizer)
+    mergeDeepHelper(valPatch.value, patch.value)
   }
   else {
     jsonPatch.apply(obj, [patch])

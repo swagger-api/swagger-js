@@ -1,9 +1,47 @@
 import expect from 'expect'
 import {
-  normalizeSwagger, getOperationRaw, idFromPathMethod, pathMethodFromId
+  normalizeSwagger, getOperationRaw, idFromPathMethod, pathMethodFromId, mergeDeep
 } from '../src/helpers'
 
 describe('helpers', function () {
+  describe('mergeDeep', function () {
+    it('should merge objects with nested objects and arrays', function () {
+      // Given
+      const dest = {
+        object: {
+          a: 'b'
+        },
+        array: [1],
+        string: 'test',
+        integer: 1,
+        boolean: true
+      }
+      const src = {
+        object: {
+          c: 'd'
+        },
+        array: [2],
+        string: 'updated strng',
+        integer: 2,
+        boolean: false
+      }
+
+      // When
+      mergeDeep(dest, src)
+
+      expect(dest).toEqual({
+        object: {
+          a: 'b',
+          c: 'd'
+        },
+        array: [1, 2],
+        string: 'updated strng',
+        integer: 2,
+        boolean: false
+      })
+    })
+  })
+
   describe('idFromPathMethod', function () {
     it('should return get_one as an operationId', function () {
       // When
