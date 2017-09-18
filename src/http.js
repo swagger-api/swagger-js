@@ -37,7 +37,8 @@ export default function http(url, request = {}) {
     delete request.headers['Content-Type']
   }
 
-  return fetch(request.url, request).then((res) => { // eslint-disable-line no-undef
+  // eslint-disable-next-line no-undef
+  return (request.userFetch || fetch)(request.url, request).then((res) => {
     const serialized = self.serializeRes(res, url, request).then((_res) => {
       if (request.responseInterceptor) {
         _res = request.responseInterceptor(_res) || _res
@@ -134,6 +135,7 @@ function isFile(obj) {
 }
 
 function formatValue({value, collectionFormat, allowEmptyValue}, skipEncoding) {
+  // REVIEW: OAS3: usage of this fn for compatibility w/ new value formats
   const SEPARATORS = {
     csv: ',',
     ssv: '%20',

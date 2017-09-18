@@ -130,6 +130,37 @@ describe('execute', () => {
       })
     })
 
+    it('should execute a simple get request with user-defined fetch', () => {
+      // Given
+      const spec = {
+        host: 'swagger.io',
+        schemes: ['https'],
+        paths: {
+          '/one': {
+            get: {
+              operationId: 'getMe'
+            }
+          }
+        }
+      }
+
+      const spy = createSpy().andReturn(Promise.resolve())
+
+      execute({
+        userFetch: spy,
+        spec,
+        operationId: 'getMe'
+      })
+      expect(spy.calls.length).toEqual(1)
+      expect(spy.calls[0].arguments[1]).toEqual({
+        method: 'GET',
+        url: 'https://swagger.io/one',
+        credentials: 'same-origin',
+        headers: { },
+        userFetch: spy
+      })
+    })
+
     it('should include values for query parameters', function () {
       // Given
       const spec = {
@@ -548,7 +579,7 @@ describe('execute', () => {
       })
     })
 
-    it('should not add content-type with no form-data or body param', function () {
+    it('should not add Content-Type with no form-data or body param', function () {
       // Given
       const spec = {
         host: 'swagger.io',
@@ -567,7 +598,7 @@ describe('execute', () => {
       })
     })
 
-    it('should add content-type multipart/form-data when param type is file and no other sources of consumes', function () {
+    it('should add Content-Type multipart/form-data when param type is file and no other sources of consumes', function () {
       // Given
       const FormData = require('isomorphic-form-data')
       const spec = {
@@ -590,7 +621,7 @@ describe('execute', () => {
 
       // Then
       expect(req.headers).toEqual({
-        'content-type': 'multipart/form-data'
+        'Content-Type': 'multipart/form-data'
       })
 
       // Would like to do a more thourough test ( ie: ensure the value `foo` exists..
@@ -600,7 +631,7 @@ describe('execute', () => {
       expect(req.body).toBeA(FormData)
     })
 
-    it('should add content-type application/x-www-form-urlencoded when in: formData ', function () {
+    it('should add Content-Type application/x-www-form-urlencoded when in: formData ', function () {
       // Given
       const spec = {
         host: 'swagger.io',
@@ -626,13 +657,13 @@ describe('execute', () => {
         method: 'POST',
         url: 'http://swagger.io/one',
         headers: {
-          'content-type': 'application/x-www-form-urlencoded'
+          'Content-Type': 'application/x-www-form-urlencoded'
         },
         credentials: 'same-origin'
       })
     })
 
-    it('should add content-type from spec when no consumes in operation and no requestContentType passed', function () {
+    it('should add Content-Type from spec when no consumes in operation and no requestContentType passed', function () {
       // Given
       const spec = {
         host: 'swagger.io',
@@ -659,13 +690,13 @@ describe('execute', () => {
         method: 'POST',
         url: 'http://swagger.io/one',
         headers: {
-          'content-type': 'test'
+          'Content-Type': 'test'
         },
         credentials: 'same-origin'
       })
     })
 
-    it('should add content-type from operation when no requestContentType passed', function () {
+    it('should add Content-Type from operation when no requestContentType passed', function () {
       // Given
       const spec = {
         host: 'swagger.io',
@@ -693,7 +724,7 @@ describe('execute', () => {
         method: 'POST',
         url: 'http://swagger.io/one',
         headers: {
-          'content-type': 'test'
+          'Content-Type': 'test'
         },
         credentials: 'same-origin'
       })
@@ -772,7 +803,9 @@ describe('execute', () => {
       })
     })
 
-    it('should NOT stringify the body, if provided with a javascript object (execute alone should do that, allowing us to modify the object in a clean way)', function () {
+    it('should NOT stringify the body, if provided with a javascript object', function () {
+      // execute alone should do that, allowing us to modify the object in a clean way)
+
       // Given
       const spec = {
         host: 'swagger.io',
@@ -793,6 +826,7 @@ describe('execute', () => {
       })
     })
   })
+
 
   // Note: this is to handle requestContentType and responseContentType
   // although more might end up using it.
@@ -1818,7 +1852,7 @@ describe('execute', () => {
         method: 'POST',
         credentials: 'same-origin',
         headers: {
-          'content-type': 'application/x-www-form-urlencoded',
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: 'petId=id'
       })

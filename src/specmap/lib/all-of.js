@@ -17,7 +17,16 @@ export default {
     const parent = fullPath.slice(0, -1)
     let alreadyAddError = false
 
-    return [specmap.replace(parent, {})].concat(val.map((toMerge, index) => {
+    // Find the original definition from the `patch.value` object
+    // Remove the `allOf` property so it doesn't get added to the result of the `allOf` plugin
+    let originalDefinitionObj = patch.value
+    parent.forEach((part) => {
+      originalDefinitionObj = originalDefinitionObj[part]
+    })
+    originalDefinitionObj = Object.assign({}, originalDefinitionObj)
+    delete originalDefinitionObj.allOf
+
+    const allOfPatches = [specmap.replace(parent, {})].concat(val.map((toMerge, index) => {
       if (!specmap.isObject(toMerge)) {
         if (alreadyAddError) {
           return null
@@ -31,5 +40,16 @@ export default {
 
       return specmap.mergeDeep(parent, toMerge)
     }))
+
+    // Merge back the values from the original definition
+    allOfPatches.push(specmap.mergeDeep(parent, originalDefinitionObj))
+
+    // If there was not an original $$ref value, make sure to remove
+    // any $$ref value that may exist from the result of `allOf` merges
+    if (!originalDefinitionObj.$$ref) {
+      allOfPatches.push(specmap.remove([].concat(parent, '$$ref')))
+    }
+
+    return allOfPatches
   }
 }
