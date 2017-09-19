@@ -1412,7 +1412,7 @@ describe('execute', () => {
           method: 'GET',
           credentials: 'same-origin',
           headers: {
-            'content-type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded'
           },
           body: 'name=john'
         })
