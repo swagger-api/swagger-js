@@ -5,8 +5,15 @@ import isArray from 'lodash/isArray'
 import btoa from 'btoa'
 import url from 'url'
 import http, {mergeInQueryOrForm} from '../http'
-import {getOperationRaw, idFromPathMethod, legacyIdFromPathMethod, isOAS3} from '../helpers'
 import createError from '../specmap/lib/create-error'
+import SWAGGER2_PARAMETER_BUILDERS from './swagger2-parameter-builders'
+import OAS3_PARAMETER_BUILDERS from './oas3-parameter-builders'
+import {
+  getOperationRaw,
+  idFromPathMethod,
+  legacyIdFromPathMethod,
+  isOAS3
+} from '../helpers'
 
 const arrayOrEmpty = (ar) => {
   return Array.isArray(ar) ? ar : []
@@ -24,18 +31,6 @@ const findParametersWithName = (name, parameters) => {
 // For stubbing in tests
 export const self = {
   buildRequest
-}
-
-// These functions will update the request.
-// They'll be given {req, value, paramter, spec, operation}.
-
-
-export const PARAMETER_BUILDERS = {
-  body: bodyBuilder,
-  header: headerBuilder,
-  query: queryBuilder,
-  path: pathBuilder,
-  formData: formDataBuilder
 }
 
 // Execute request, with the given operationId and parameters
@@ -77,7 +72,15 @@ export function buildRequest({
 }) {
   const specIsOAS3 = isOAS3(spec)
 
-  parameterBuilders = parameterBuilders || PARAMETER_BUILDERS
+  if (!parameterBuilders) {
+    // user did not provide custom parameter builders
+    if (specIsOAS3) {
+      parameterBuilders = OAS3_PARAMETER_BUILDERS
+    }
+    else {
+      parameterBuilders = SWAGGER2_PARAMETER_BUILDERS
+    }
+  }
 
   // Base Template
   let req = {
@@ -244,68 +247,6 @@ export function buildRequest({
   mergeInQueryOrForm(req)
 
   return req
-}
-
-// Add the body to the request
-export function bodyBuilder({req, value, specIsOAS3}) {
-  if (specIsOAS3) {
-    return
-  }
-  req.body = value
-}
-
-// Add a form data object.
-export function formDataBuilder({req, value, parameter}) {
-  // REVIEW: OAS3: check for any parameter changes that affect the builder
-  req.form = req.form || {}
-  if (value || parameter.allowEmptyValue) {
-    req.form[parameter.name] = {
-      value,
-      allowEmptyValue: parameter.allowEmptyValue,
-      collectionFormat: parameter.collectionFormat,
-    }
-  }
-}
-
-// Add a header to the request
-export function headerBuilder({req, parameter, value}) {
-  // REVIEW: OAS3: check for any parameter changes that affect the builder
-  req.headers = req.headers || {}
-  if (typeof value !== 'undefined') {
-    req.headers[parameter.name] = value
-  }
-}
-
-// Replace path paramters, with values ( ie: the URL )
-export function pathBuilder({req, value, parameter}) {
-  // REVIEW: OAS3: check for any parameter changes that affect the builder
-  req.url = req.url.replace(`{${parameter.name}}`, encodeURIComponent(value))
-}
-
-// Add a query to the `query` object, which will later be stringified into the URL's search
-export function queryBuilder({req, value, parameter}) {
-  // REVIEW: OAS3: check for any parameter changes that affect the builder
-  req.query = req.query || {}
-
-  if (value === false && parameter.type === 'boolean') {
-    value = 'false'
-  }
-
-  if (value === 0 && ['number', 'integer'].indexOf(parameter.type) > -1) {
-    value = '0'
-  }
-
-  if (value) {
-    req.query[parameter.name] = {
-      collectionFormat: parameter.collectionFormat,
-      value
-    }
-  }
-  else if (parameter.allowEmptyValue) {
-    const paramName = parameter.name
-    req.query[paramName] = req.query[paramName] || {}
-    req.query[paramName].allowEmptyValue = true
-  }
 }
 
 const stripNonAlpha = str => (str ? str.replace(/\W/g, '') : null)
