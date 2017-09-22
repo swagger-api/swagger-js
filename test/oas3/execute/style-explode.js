@@ -831,7 +831,7 @@ describe('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0', func
     })
   })
   describe('query parameters', function () {
-    describe.skip('primitive values', function () {
+    describe('primitive values', function () {
       const VALUE = 5
 
       it('default: should build a query parameter in form/explode format', function () {
@@ -946,7 +946,7 @@ describe('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0', func
         })
       })
     })
-    describe.skip('array values', function () {
+    describe('array values', function () {
       const VALUE = [3, 4, 5]
 
       it('default: should build a query parameter in form/explode format', function () {

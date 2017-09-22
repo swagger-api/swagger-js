@@ -1,6 +1,7 @@
 import stylize from './oas3-style-serializer'
 export default {
-  path
+  path,
+  query
 }
 
 function path({req, value, parameter}) {
@@ -13,4 +14,32 @@ function path({req, value, parameter}) {
   })
 
   req.url = req.url.replace(`{${name}}`, styledValue)
+}
+
+function query({req, value, parameter}) {
+  req.query = req.query || {}
+
+  if (value === false) {
+    value = 'false'
+  }
+
+  if (value === 0) {
+    value = '0'
+  }
+
+  if (value) {
+    req.query[parameter.name] = {
+      value: stylize({
+        key: parameter.name,
+        value,
+        style: parameter.style || 'form',
+        explode: parameter.explode || true
+      })
+    }
+  }
+  else if (parameter.allowEmptyValue) {
+    const paramName = parameter.name
+    req.query[paramName] = req.query[paramName] || {}
+    req.query[paramName].allowEmptyValue = true
+  }
 }

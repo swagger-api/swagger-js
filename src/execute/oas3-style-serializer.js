@@ -26,6 +26,9 @@ function encodeArray({key, value, style, explode}) {
       return prev + `,${curr}`
     }, '')
   }
+  if (style === 'form') {
+    return value.join(',')
+  }
 }
 
 function encodeObject({key, value, style, explode}) {
@@ -80,5 +83,8 @@ function encodePrimitive({key, value, style, explode}) {
   }
   if (style === 'matrix') {
     return `;${key}=${value}`
+  }
+  if (style === 'form') {
+    return value
   }
 }
