@@ -4,9 +4,9 @@ import isPlainObject from 'lodash/isPlainObject'
 import isArray from 'lodash/isArray'
 import btoa from 'btoa'
 import url from 'url'
-import http, {mergeInQueryOrForm} from './http'
-import {getOperationRaw, idFromPathMethod, legacyIdFromPathMethod, isOAS3} from './helpers'
-import createError from './specmap/lib/create-error'
+import http, {mergeInQueryOrForm} from '../http'
+import {getOperationRaw, idFromPathMethod, legacyIdFromPathMethod, isOAS3} from '../helpers'
+import createError from '../specmap/lib/create-error'
 
 const arrayOrEmpty = (ar) => {
   return Array.isArray(ar) ? ar : []

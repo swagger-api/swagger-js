@@ -4,14 +4,14 @@ import path from 'path'
 import fs from 'fs'
 import jsYaml from 'js-yaml'
 
-import {execute, buildRequest, baseUrl, applySecurities, self as stubs} from '../../src/execute'
+import {execute, buildRequest, baseUrl, applySecurities, self as stubs} from '../../../src/execute'
 
 const petstoreSpec = jsYaml.safeLoad(fs.readFileSync(path.join('test', 'oas3', 'data', 'petstore-oas3.yaml'), 'utf8'))
 
 // Supported shape...  { spec, operationId, parameters, securities, fetch }
 // One can use operationId or pathItem + method
 
-describe.only('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0', function () {
+describe.skip('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0', function () {
   describe('path parameters', function () {
     describe('primitive values', function () {
       it('default: should build a path parameter in a simple/no-explode format', function () {
@@ -1490,7 +1490,7 @@ describe.only('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0',
           url: '/users',
           credentials: 'same-origin',
           headers: {
-            'X-MyHeader': "3,4,5"
+            'X-MyHeader': '3,4,5'
           },
         })
       })
@@ -1530,7 +1530,7 @@ describe.only('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0',
           url: '/users',
           credentials: 'same-origin',
           headers: {
-            'X-MyHeader': "3,4,5"
+            'X-MyHeader': '3,4,5'
           },
         })
       })
@@ -1570,7 +1570,7 @@ describe.only('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0',
           url: '/users',
           credentials: 'same-origin',
           headers: {
-            'X-MyHeader': "3,4,5"
+            'X-MyHeader': '3,4,5'
           },
         })
       })
@@ -1737,7 +1737,7 @@ describe.only('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0',
           url: '/users',
           credentials: 'same-origin',
           headers: {
-            'Cookie': 'id=5'
+            Cookie: 'id=5'
           },
         })
       })
@@ -1777,7 +1777,7 @@ describe.only('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0',
           url: '/users',
           credentials: 'same-origin',
           headers: {
-            'Cookie': 'id=5'
+            Cookie: 'id=5'
           },
         })
       })
@@ -1817,7 +1817,7 @@ describe.only('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0',
           url: '/users',
           credentials: 'same-origin',
           headers: {
-            'Cookie': 'id=5'
+            Cookie: 'id=5'
           },
         })
       })
@@ -1858,7 +1858,7 @@ describe.only('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0',
           url: '/users',
           credentials: 'same-origin',
           headers: {
-            'Cookie': 'id=3,4,5'
+            Cookie: 'id=3,4,5'
           },
         })
       })
@@ -1898,7 +1898,7 @@ describe.only('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0',
           url: '/users',
           credentials: 'same-origin',
           headers: {
-            'Cookie': 'id=3,4,5'
+            Cookie: 'id=3,4,5'
           },
         })
       })
@@ -1938,7 +1938,7 @@ describe.only('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0',
           url: '/users',
           credentials: 'same-origin',
           headers: {
-            'Cookie': 'id=3&id=4&id=5'
+            Cookie: 'id=3&id=4&id=5'
           },
         })
       })
@@ -1982,7 +1982,7 @@ describe.only('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0',
           url: '/users',
           credentials: 'same-origin',
           headers: {
-            'Cookie': 'id=role,admin,firstName,Alex'
+            Cookie: 'id=role,admin,firstName,Alex'
           },
         })
       })
@@ -2022,7 +2022,7 @@ describe.only('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0',
           url: '/users',
           credentials: 'same-origin',
           headers: {
-            'Cookie': 'id=role,admin,firstName,Alex'
+            Cookie: 'id=role,admin,firstName,Alex'
           },
         })
       })
@@ -2062,7 +2062,7 @@ describe.only('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0',
           url: '/users',
           credentials: 'same-origin',
           headers: {
-            'Cookie': 'role=admin&firstName=Alex'
+            Cookie: 'role=admin&firstName=Alex'
           },
         })
       })
