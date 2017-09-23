@@ -305,7 +305,13 @@ describe('allOf', function () {
               },
               {
                 type: 'object',
-                required: ['a', 'b']
+                required: ['a', 'b'],
+                properties: {
+                  letters: {
+                    type: 'string',
+                    enum: ['a', 'b']
+                  }
+                }
               }
             ]
           },
@@ -313,7 +319,13 @@ describe('allOf', function () {
             allOf: [
               {
                 type: 'object',
-                required: ['c', 'd']
+                required: ['c', 'd'],
+                properties: {
+                  letters: {
+                    type: 'string',
+                    enum: ['c', 'd']
+                  }
+                }
               }
             ]
           }
@@ -325,11 +337,23 @@ describe('allOf', function () {
         definitions: {
           one: {
             type: 'object',
-            required: ['c', 'd', 'a', 'b']
+            required: ['c', 'd', 'a', 'b'],
+            properties: {
+              letters: {
+                type: 'string',
+                enum: ['c', 'd', 'a', 'b']
+              }
+            }
           },
           two: {
             type: 'object',
-            required: ['c', 'd']
+            required: ['c', 'd'],
+            properties: {
+              letters: {
+                type: 'string',
+                enum: ['c', 'd']
+              }
+            }
           }
         },
       })

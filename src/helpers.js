@@ -1,8 +1,18 @@
-import isObject from 'lodash/isObject'
+import {mergeWith, isArray, isObject} from 'lodash'
 
 const toLower = str => String.prototype.toLowerCase.call(str)
 const escapeString = (str) => {
   return str.replace(/[^\w]/gi, '_')
+}
+
+// Deeply merge objects, including merging arrays
+export function mergeDeep(dest, src) {
+  const concatArraysCustomizer = function (objValue, srcValue) {
+    if (isArray(objValue)) {
+      return objValue.concat(srcValue)
+    }
+  }
+  mergeWith(dest, src, concatArraysCustomizer)
 }
 
 // Spec version detection

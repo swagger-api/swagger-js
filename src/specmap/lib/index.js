@@ -1,6 +1,6 @@
 import jsonPatch from 'fast-json-patch'
 import regenerator from 'babel-runtime/regenerator'
-import deepExtend from 'deep-extend'
+import {mergeDeep as mergeDeepHelper} from '../../helpers'
 
 export default {
   add,
@@ -44,19 +44,9 @@ function applyPatch(obj, patch, opts) {
   else if (patch.op === 'mergeDeep') {
     const valPatch = _get(patch.path)
     jsonPatch.apply(obj, [valPatch])
-    const origValPatchValue = Object.assign({}, valPatch.value)
-    deepExtend(valPatch.value, patch.value)
+    const origValPatchValue = {...valPatch.value}
 
-    // deepExtend doesn't merge arrays, so we will do it manually
-    for (const prop in patch.value) {
-      if (Object.prototype.hasOwnProperty.call(patch.value, prop)) {
-        const propVal = patch.value[prop]
-        if (Array.isArray(propVal)) {
-          const existing = origValPatchValue[prop] || []
-          valPatch.value[prop] = existing.concat(propVal)
-        }
-      }
-    }
+    mergeDeepHelper(valPatch.value, patch.value)
   }
   else {
     jsonPatch.apply(obj, [patch])
