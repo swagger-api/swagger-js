@@ -14,6 +14,7 @@ branches:
   only:
   - master
   - /^v\d+\.\d+(\.\d+)?(-\S*)?$/
+  - /^greenkeeper/.*$/
 before_deploy: "npm run build"
 deploy:
   provider: npm
