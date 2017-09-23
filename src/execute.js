@@ -148,6 +148,7 @@ export function buildRequest({
     else if (findParametersWithName(parameter.name, combinedParameters).length > 1) {
       // value came from `parameters[parameter.name]`
       // check to see if this is an ambiguous parameter
+      // eslint-disable-next-line no-console
       console.warn(`Parameter '${parameter.name}' is ambiguous because the defined spec has more than one parameter with the name: '${parameter.name}' and the passed-in parameter values did not define an 'in' value.`)
     }
 
