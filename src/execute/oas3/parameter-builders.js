@@ -1,4 +1,5 @@
-import stylize from './oas3-style-serializer'
+import stylize from './style-serializer'
+
 export default {
   path,
   query

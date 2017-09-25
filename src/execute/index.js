@@ -6,8 +6,11 @@ import btoa from 'btoa'
 import url from 'url'
 import http, {mergeInQueryOrForm} from '../http'
 import createError from '../specmap/lib/create-error'
-import SWAGGER2_PARAMETER_BUILDERS from './swagger2-parameter-builders'
-import OAS3_PARAMETER_BUILDERS from './oas3-parameter-builders'
+
+import SWAGGER2_PARAMETER_BUILDERS from './swagger2/parameter-builders'
+import OAS3_PARAMETER_BUILDERS from './oas3/parameter-builders'
+import oas3BuildRequest from './oas3/build-request'
+import swagger2BuildRequest from './swagger2/build-request'
 import {
   getOperationRaw,
   idFromPathMethod,
@@ -64,12 +67,28 @@ export function execute({
 }
 
 // Build a request, which can be handled by the `http.js` implementation.
-export function buildRequest({
-  spec, operationId, parameters, securities, requestContentType,
-  responseContentType, parameterBuilders, scheme,
-  requestInterceptor, responseInterceptor, contextUrl, userFetch,
-  requestBody, server, serverVariables
-}) {
+export function buildRequest(options) {
+  const {
+    spec,
+    operationId,
+    securities,
+    requestContentType,
+    responseContentType,
+    scheme,
+    requestInterceptor,
+    responseInterceptor,
+    contextUrl,
+    userFetch,
+    requestBody,
+    server,
+    serverVariables
+  } = options
+
+  let {
+    parameters,
+    parameterBuilders
+  } = options
+
   const specIsOAS3 = isOAS3(spec)
 
   if (!parameterBuilders) {
@@ -83,7 +102,7 @@ export function buildRequest({
   }
 
   // Base Template
-  let req = {
+  const req = {
     url: baseUrl({spec, scheme, contextUrl, server, serverVariables}),
     credentials: 'same-origin',
     headers: {
@@ -168,85 +187,15 @@ export function buildRequest({
     }
   })
 
-  const requestBodyDef = operation.requestBody || {}
-  const requestBodyMediaTypes = Object.keys(requestBodyDef.content || {})
+  // Do version-specific tasks, then return those results.
+  const versionSpecificOptions = {...options, operation}
 
-  // for OAS3: set the Content-Type
-  if (specIsOAS3 && requestBody) {
-    // does the passed requestContentType appear in the requestBody definition?
-    const isExplicitContentTypeValid = requestContentType
-      && requestBodyMediaTypes.indexOf(requestContentType) > -1
-
-    if (requestContentType && isExplicitContentTypeValid) {
-      req.headers['Content-Type'] = requestContentType
-    }
-    else if (!requestContentType) {
-      const firstMediaType = requestBodyMediaTypes[0]
-      if (firstMediaType) {
-        req.headers['Content-Type'] = firstMediaType
-        requestContentType = firstMediaType
-      }
-    }
+  if (specIsOAS3) {
+    return oas3BuildRequest(versionSpecificOptions, req)
   }
 
-  // for OAS3: add requestBody to request
-  if (specIsOAS3 && requestBody) {
-    if (requestContentType) {
-      if (requestBodyMediaTypes.indexOf(requestContentType) > -1) {
-        // only attach body if the requestBody has a definition for the
-        // contentType that has been explicitly set
-        if (requestContentType === 'application/x-www-form-urlencoded') {
-          if (typeof requestBody === 'object') {
-            req.form = {}
-            Object.keys(requestBody).forEach((k) => {
-              const val = requestBody[k]
-              req.form[k] = {
-                value: val
-              }
-            })
-          }
-          else {
-            req.form = requestBody
-          }
-        }
-        else {
-          req.body = requestBody
-        }
-      }
-    }
-    else {
-      req.body = requestBody
-    }
-  }
-
-  // Add securities, which are applicable
-  // REVIEW: OAS3: what changed in securities?
-  req = applySecurities({request: req, securities, operation, spec})
-
-  if (!specIsOAS3 && (req.body || req.form)) {
-    // all following conditionals are Swagger2 only
-    if (requestContentType) {
-      req.headers['Content-Type'] = requestContentType
-    }
-    else if (Array.isArray(operation.consumes)) {
-      req.headers['Content-Type'] = operation.consumes[0]
-    }
-    else if (Array.isArray(spec.consumes)) {
-      req.headers['Content-Type'] = spec.consumes[0]
-    }
-    else if (operation.parameters && operation.parameters.filter(p => p.type === 'file').length) {
-      req.headers['Content-Type'] = 'multipart/form-data'
-    }
-    else if (operation.parameters && operation.parameters.filter(p => p.in === 'formData').length) {
-      req.headers['Content-Type'] = 'application/x-www-form-urlencoded'
-    }
-  }
-
-  // Will add the query object into the URL, if it exists
-  // ... will also create a FormData instance, if multipart/form-data (eg: a file)
-  mergeInQueryOrForm(req)
-
-  return req
+  // If not OAS3, then treat as Swagger2.
+  return swagger2BuildRequest(versionSpecificOptions, req)
 }
 
 const stripNonAlpha = str => (str ? str.replace(/\W/g, '') : null)
@@ -329,60 +278,4 @@ function swagger2BaseUrl({spec, scheme, contextUrl = ''}) {
   }
 
   return ''
-}
-
-
-// Add security values, to operations - that declare their need on them
-export function applySecurities({request, securities = {}, operation = {}, spec}) {
-  const result = assign({}, request)
-  const {authorized = {}, specSecurity = []} = securities
-  const security = operation.security || specSecurity
-  const isAuthorized = authorized && !!Object.keys(authorized).length
-  const securityDef = spec.securityDefinitions
-
-  result.headers = result.headers || {}
-  result.query = result.query || {}
-
-  if (!Object.keys(securities).length || !isAuthorized || !security ||
-      (Array.isArray(operation.security) && !operation.security.length)) {
-    return request
-  }
-
-  security.forEach((securityObj, index) => {
-    for (const key in securityObj) {
-      const auth = authorized[key]
-      if (!auth) {
-        continue
-      }
-
-      const token = auth.token
-      const value = auth.value || auth
-      const schema = securityDef[key]
-      const {type} = schema
-      const accessToken = token && token.access_token
-      const tokenType = token && token.token_type
-
-      if (auth) {
-        if (type === 'apiKey') {
-          const inType = schema.in === 'query' ? 'query' : 'headers'
-          result[inType] = result[inType] || {}
-          result[inType][schema.name] = value
-        }
-        else if (type === 'basic') {
-          if (value.header) {
-            result.headers.authorization = value.header
-          }
-          else {
-            value.base64 = btoa(`${value.username}:${value.password}`)
-            result.headers.authorization = `Basic ${value.base64}`
-          }
-        }
-        else if (type === 'oauth2' && accessToken) {
-          result.headers.authorization = `${tokenType || 'Bearer'} ${accessToken}`
-        }
-      }
-    }
-  })
-
-  return result
 }
