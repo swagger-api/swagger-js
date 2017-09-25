@@ -35,10 +35,6 @@ export default function (options, req) {
     }
   }
 
-  // Will add the query object into the URL, if it exists
-  // ... will also create a FormData instance, if multipart/form-data (eg: a file)
-  mergeInQueryOrForm(req)
-
   return req
 }
 

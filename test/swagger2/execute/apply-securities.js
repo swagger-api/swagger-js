@@ -1,5 +1,5 @@
 import expect from 'expect'
-import { applySecurities } from '../../../src/execute/swagger2/build-request'
+import {applySecurities} from '../../../src/execute/swagger2/build-request'
 
 describe('swagger2 - execute - applySecurities', function () {
   it('should NOT add any securities, if the operation does not require it', function () {

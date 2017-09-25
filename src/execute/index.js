@@ -102,7 +102,7 @@ export function buildRequest(options) {
   }
 
   // Base Template
-  const req = {
+  let req = {
     url: baseUrl({spec, scheme, contextUrl, server, serverVariables}),
     credentials: 'same-origin',
     headers: {
@@ -191,11 +191,18 @@ export function buildRequest(options) {
   const versionSpecificOptions = {...options, operation}
 
   if (specIsOAS3) {
-    return oas3BuildRequest(versionSpecificOptions, req)
+    req = oas3BuildRequest(versionSpecificOptions, req)
+  }
+  else {
+    // If not OAS3, then treat as Swagger2.
+    req = swagger2BuildRequest(versionSpecificOptions, req)
   }
 
-  // If not OAS3, then treat as Swagger2.
-  return swagger2BuildRequest(versionSpecificOptions, req)
+  // Will add the query object into the URL, if it exists
+  // ... will also create a FormData instance, if multipart/form-data (eg: a file)
+  mergeInQueryOrForm(req)
+
+  return req
 }
 
 const stripNonAlpha = str => (str ? str.replace(/\W/g, '') : null)

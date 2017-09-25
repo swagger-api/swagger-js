@@ -11,7 +11,7 @@ const petstoreSpec = jsYaml.safeLoad(fs.readFileSync(path.join('test', 'oas3', '
 // Supported shape...  { spec, operationId, parameters, securities, fetch }
 // One can use operationId or pathItem + method
 
-describe.skip('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0', function () {
+describe('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0', function () {
   describe('path parameters', function () {
     describe('primitive values', function () {
       it('default: should build a path parameter in a simple/no-explode format', function () {

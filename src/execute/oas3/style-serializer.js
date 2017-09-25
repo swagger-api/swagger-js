@@ -23,7 +23,7 @@ function encodeArray({key, value, style, explode}) {
       if (!prev || explode) {
         return `${(prev || '')};${key}=${curr}`
       }
-      return prev + `,${curr}`
+      return `${prev},${curr}`
     }, '')
   }
   if (style === 'form') {
