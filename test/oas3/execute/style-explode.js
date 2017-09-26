@@ -1371,7 +1371,7 @@ describe.only('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0',
       })
     })
   })
-  describe.skip('header parameters', function () {
+  describe('header parameters', function () {
     describe('primitive values', function () {
       const VALUE = 5
 

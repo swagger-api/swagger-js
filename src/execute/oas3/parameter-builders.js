@@ -92,7 +92,7 @@ function header({req, parameter, value}) {
       key: parameter.name,
       value,
       style: parameter.style || 'simple',
-      explode: typeof parameter.explode || false
+      explode: typeof parameter.explode === 'undefined' ? false : parameter.explode
     })
   }
 }
