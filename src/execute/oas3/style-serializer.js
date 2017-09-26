@@ -11,13 +11,17 @@ export default function (config) {
   return encodePrimitive(config)
 }
 
-function encodeArray({key, value, style, explode}) {
+const escape = str => encodeURIComponent(str)
+
+function encodeArray({key, value, style, explode, parameter}) {
   if (style === 'simple') {
     return value.join(',')
   }
+
   if (style === 'label') {
     return `.${value.join('.')}`
   }
+
   if (style === 'matrix') {
     return value.reduce((prev, curr) => {
       if (!prev || explode) {
@@ -26,8 +30,20 @@ function encodeArray({key, value, style, explode}) {
       return `${prev},${curr}`
     }, '')
   }
+
   if (style === 'form') {
-    return value.join(',')
+    const after = explode ? `&${key}=` : escape(',')
+    return value.join(after)
+  }
+
+  if (style === 'spaceDelimited') {
+    const after = explode ? `${key}=` : ''
+    return value.join(`${escape(' ')}${after}`)
+  }
+
+  if (style === 'pipeDelimited') {
+    const after = explode ? `${key}=` : ''
+    return value.join(`${escape('|')}${after}`)
   }
 }
 
@@ -72,18 +88,30 @@ function encodeObject({key, value, style, explode}) {
       return `${prefix}${curr},${val}`
     }, '')
   }
+
+  if (style === 'form') {
+    return valueKeys.reduce((prev, curr) => {
+      const val = value[curr]
+      const prefix = prev ? `${prev}&` : ''
+
+      return `${prefix}${curr}=${val}`
+    }, '')
+  }
 }
 
 function encodePrimitive({key, value, style, explode}) {
   if (style === 'simple') {
     return value
   }
+
   if (style === 'label') {
     return `.${value}`
   }
+
   if (style === 'matrix') {
     return `;${key}=${value}`
   }
+
   if (style === 'form') {
     return value
   }

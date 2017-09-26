@@ -2,6 +2,7 @@ import expect, {createSpy, spyOn} from 'expect'
 import xmock from 'xmock'
 import path from 'path'
 import fs from 'fs'
+import qs from 'querystring'
 import jsYaml from 'js-yaml'
 
 import {execute, buildRequest, baseUrl, applySecurities, self as stubs} from '../../../src/execute'
@@ -11,7 +12,7 @@ const petstoreSpec = jsYaml.safeLoad(fs.readFileSync(path.join('test', 'oas3', '
 // Supported shape...  { spec, operationId, parameters, securities, fetch }
 // One can use operationId or pathItem + method
 
-describe('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0', function () {
+describe.only('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0', function () {
   describe('path parameters', function () {
     describe('primitive values', function () {
       it('default: should build a path parameter in a simple/no-explode format', function () {
@@ -1055,7 +1056,7 @@ describe('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0', func
 
         expect(req).toEqual({
           method: 'GET',
-          url: '/users?id=3,4,5',
+          url: '/users?id=3%2C4%2C5',
           credentials: 'same-origin',
           headers: {},
         })
@@ -1169,7 +1170,7 @@ describe('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0', func
 
         expect(req).toEqual({
           method: 'GET',
-          url: '/users?id=3|id=4|id=5',
+          url: '/users?id=3%7Cid=4%7Cid=5',
           credentials: 'same-origin',
           headers: {},
         })
@@ -1207,13 +1208,13 @@ describe('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0', func
 
         expect(req).toEqual({
           method: 'GET',
-          url: '/users?id=3|4|5',
+          url: '/users?id=3%7C4%7C5',
           credentials: 'same-origin',
           headers: {},
         })
       })
     })
-    describe.skip('object values', function () {
+    describe('object values', function () {
       const VALUE = {
         role: 'admin',
         firstName: 'Alex'

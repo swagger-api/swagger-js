@@ -34,8 +34,9 @@ function query({req, value, parameter}) {
         key: parameter.name,
         value,
         style: parameter.style || 'form',
-        explode: parameter.explode || true
-      })
+        explode: typeof parameter.explode === 'undefined' ? true : parameter.explode
+      }),
+      skipEncoding: true
     }
   }
   else if (parameter.allowEmptyValue) {
