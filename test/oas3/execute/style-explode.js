@@ -1062,6 +1062,45 @@ describe('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0', func
         })
       })
 
+      it('should build a query parameter in form/no-explode format with allowReserved', function () {
+        // Given
+        const spec = {
+          openapi: '3.0.0',
+          paths: {
+            '/users': {
+              get: {
+                operationId: 'myOperation',
+                parameters: [
+                  {
+                    name: 'id',
+                    in: 'query',
+                    style: 'form',
+                    explode: false,
+                    allowReserved: true
+                  }
+                ]
+              }
+            }
+          }
+        }
+
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'myOperation',
+          parameters: {
+            id: VALUE
+          }
+        })
+
+        expect(req).toEqual({
+          method: 'GET',
+          url: '/users?id=3,4,5',
+          credentials: 'same-origin',
+          headers: {},
+        })
+      })
+
       it('should build a query parameter in space-delimited/explode format', function () {
         // Given
         const spec = {
@@ -1092,6 +1131,45 @@ describe('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0', func
           }
         })
 
+        expect(req).toEqual({
+          method: 'GET',
+          url: '/users?id=3%20id=4%20id=5',
+          credentials: 'same-origin',
+          headers: {},
+        })
+      })
+
+      it('should build a query parameter in space-delimited/explode format with allowReserved', function () {
+        // Given
+        const spec = {
+          openapi: '3.0.0',
+          paths: {
+            '/users': {
+              get: {
+                operationId: 'myOperation',
+                parameters: [
+                  {
+                    name: 'id',
+                    in: 'query',
+                    style: 'spaceDelimited',
+                    explode: true
+                  }
+                ]
+              }
+            }
+          }
+        }
+
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'myOperation',
+          parameters: {
+            id: VALUE
+          }
+        })
+        // whitespace is _not_ an RFC3986 reserved character,
+        // so it should still be escaped!
         expect(req).toEqual({
           method: 'GET',
           url: '/users?id=3%20id=4%20id=5',
@@ -1176,6 +1254,45 @@ describe('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0', func
         })
       })
 
+      it('should build a query parameter in pipe-delimited/explode format with allowReserved', function () {
+        // Given
+        const spec = {
+          openapi: '3.0.0',
+          paths: {
+            '/users': {
+              get: {
+                operationId: 'myOperation',
+                parameters: [
+                  {
+                    name: 'id',
+                    in: 'query',
+                    style: 'pipeDelimited',
+                    explode: true,
+                    allowReserved: true
+                  }
+                ]
+              }
+            }
+          }
+        }
+
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'myOperation',
+          parameters: {
+            id: VALUE
+          }
+        })
+
+        expect(req).toEqual({
+          method: 'GET',
+          url: '/users?id=3|id=4|id=5',
+          credentials: 'same-origin',
+          headers: {},
+        })
+      })
+
       it('should build a query parameter in pipe-delimited/no-explode format', function () {
         // Given
         const spec = {
@@ -1209,6 +1326,45 @@ describe('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0', func
         expect(req).toEqual({
           method: 'GET',
           url: '/users?id=3%7C4%7C5',
+          credentials: 'same-origin',
+          headers: {},
+        })
+      })
+
+      it('should build a query parameter in pipe-delimited/no-explode format with allowReserved', function () {
+        // Given
+        const spec = {
+          openapi: '3.0.0',
+          paths: {
+            '/users': {
+              get: {
+                operationId: 'myOperation',
+                parameters: [
+                  {
+                    name: 'id',
+                    in: 'query',
+                    style: 'pipeDelimited',
+                    explode: false,
+                    allowReserved: true
+                  }
+                ]
+              }
+            }
+          }
+        }
+
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'myOperation',
+          parameters: {
+            id: VALUE
+          }
+        })
+
+        expect(req).toEqual({
+          method: 'GET',
+          url: '/users?id=3|4|5',
           credentials: 'same-origin',
           headers: {},
         })

@@ -13,7 +13,7 @@ export default function (config) {
 
 const escapeFn = str => encodeURIComponent(str)
 
-function encodeArray({key, value, style, explode, parameter, escape = true}) {
+function encodeArray({key, value, style, explode, escape}) {
   if (style === 'simple') {
     return value.join(',')
   }
@@ -44,7 +44,8 @@ function encodeArray({key, value, style, explode, parameter, escape = true}) {
 
   if (style === 'pipeDelimited') {
     const after = explode ? `${key}=` : ''
-    return value.join(`${escapeFn('|')}${after}`)
+    const separator = escape ? escapeFn('|') : '|'
+    return value.join(`${separator}${after}`)
   }
 }
 

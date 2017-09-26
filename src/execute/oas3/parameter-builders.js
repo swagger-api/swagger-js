@@ -14,6 +14,7 @@ function path({req, value, parameter}) {
     value,
     style: style || 'simple',
     explode: explode || false,
+    escape: !parameter.allowReserved,
   })
 
   req.url = req.url.replace(`{${name}}`, styledValue)
@@ -41,7 +42,8 @@ function query({req, value, parameter}) {
           value: stylize({
             key: k,
             value: v,
-            style: 'deepObject'
+            style: 'deepObject',
+            escape: !parameter.allowReserved,
           }),
           skipEncoding: true
         }
@@ -63,7 +65,8 @@ function query({req, value, parameter}) {
           value: stylize({
             key: k,
             value: v,
-            style: parameter.style || 'form'
+            style: parameter.style || 'form',
+            escape: !parameter.allowReserved,
           })
         }
       })
@@ -73,7 +76,8 @@ function query({req, value, parameter}) {
           key: parameter.name,
           value,
           style: parameter.style || 'form',
-          explode: typeof parameter.explode === 'undefined' ? true : parameter.explode
+          explode: typeof parameter.explode === 'undefined' ? true : parameter.explode,
+          escape: !parameter.allowReserved,
         }),
         skipEncoding: true
       }
@@ -93,7 +97,8 @@ function header({req, parameter, value}) {
       key: parameter.name,
       value,
       style: parameter.style || 'simple',
-      explode: typeof parameter.explode === 'undefined' ? false : parameter.explode
+      explode: typeof parameter.explode === 'undefined' ? false : parameter.explode,
+      escape: !parameter.allowReserved,
     })
   }
 }
