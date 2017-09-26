@@ -3,7 +3,8 @@ import stylize from './style-serializer'
 export default {
   path,
   query,
-  header
+  header,
+  cookie
 }
 
 function path({req, value, parameter}) {
@@ -92,6 +93,27 @@ function header({req, parameter, value}) {
       key: parameter.name,
       value,
       style: parameter.style || 'simple',
+      explode: typeof parameter.explode === 'undefined' ? false : parameter.explode
+    })
+  }
+}
+
+function cookie({req, parameter, value}) {
+  req.headers = req.headers || {}
+  const type = typeof value
+
+  if (type !== 'undefined') {
+    const prefix = (
+      type === "object" &&
+      !Array.isArray(value) &&
+      parameter.explode
+    ) ? '' : `${parameter.name}=`
+
+    req.headers['Cookie'] = prefix + stylize({
+      key: parameter.name,
+      value,
+      escape: false,
+      style: parameter.style || 'form',
       explode: typeof parameter.explode === 'undefined' ? false : parameter.explode
     })
   }

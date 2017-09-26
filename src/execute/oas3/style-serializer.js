@@ -11,9 +11,9 @@ export default function (config) {
   return encodePrimitive(config)
 }
 
-const escape = str => encodeURIComponent(str)
+const escapeFn = str => encodeURIComponent(str)
 
-function encodeArray({key, value, style, explode, parameter}) {
+function encodeArray({key, value, style, explode, parameter, escape = true}) {
   if (style === 'simple') {
     return value.join(',')
   }
@@ -32,18 +32,19 @@ function encodeArray({key, value, style, explode, parameter}) {
   }
 
   if (style === 'form') {
-    const after = explode ? `&${key}=` : escape(',')
+    const commaValue = escape ? escapeFn(',') : ','
+    const after = explode ? `&${key}=` : commaValue
     return value.join(after)
   }
 
   if (style === 'spaceDelimited') {
     const after = explode ? `${key}=` : ''
-    return value.join(`${escape(' ')}${after}`)
+    return value.join(`${escapeFn(' ')}${after}`)
   }
 
   if (style === 'pipeDelimited') {
     const after = explode ? `${key}=` : ''
-    return value.join(`${escape('|')}${after}`)
+    return value.join(`${escapeFn('|')}${after}`)
   }
 }
 
@@ -92,9 +93,10 @@ function encodeObject({key, value, style, explode}) {
   if (style === 'form') {
     return valueKeys.reduce((prev, curr) => {
       const val = value[curr]
-      const prefix = prev ? `${prev},` : ``
+      const prefix = prev ? `${prev}${explode ? '&' : ','}` : ``
+      const separator = explode ? '=' : ','
 
-      return `${prefix}${curr},${val}`
+      return `${prefix}${curr}${separator}${val}`
     }, '')
   }
 }
