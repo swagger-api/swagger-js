@@ -1294,6 +1294,44 @@ describe.only('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0',
         })
       })
 
+      it('should build a query parameter in form/no-explode format', function () {
+        // Given
+        const spec = {
+          openapi: '3.0.0',
+          paths: {
+            '/users': {
+              get: {
+                operationId: 'myOperation',
+                parameters: [
+                  {
+                    name: 'id',
+                    in: 'query',
+                    style: 'form',
+                    explode: false
+                  }
+                ]
+              }
+            }
+          }
+        }
+
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'myOperation',
+          parameters: {
+            id: VALUE
+          }
+        })
+
+        expect(req).toEqual({
+          method: 'GET',
+          url: '/users?id=role,admin,firstName,Alex',
+          credentials: 'same-origin',
+          headers: {},
+        })
+      })
+
       it('should build a query parameter in deepObject/explode format', function () {
         // Given
         const spec = {

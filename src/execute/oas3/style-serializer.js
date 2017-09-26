@@ -92,9 +92,9 @@ function encodeObject({key, value, style, explode}) {
   if (style === 'form') {
     return valueKeys.reduce((prev, curr) => {
       const val = value[curr]
-      const prefix = prev ? `${prev}&` : ''
+      const prefix = prev ? `${prev},` : ``
 
-      return `${prefix}${curr}=${val}`
+      return `${prefix}${curr},${val}`
     }, '')
   }
 }
@@ -113,6 +113,10 @@ function encodePrimitive({key, value, style, explode}) {
   }
 
   if (style === 'form') {
+    return value
+  }
+
+  if (style === 'deepObject') {
     return value
   }
 }

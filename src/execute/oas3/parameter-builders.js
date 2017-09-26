@@ -2,7 +2,8 @@ import stylize from './style-serializer'
 
 export default {
   path,
-  query
+  query,
+  header
 }
 
 function path({req, value, parameter}) {
@@ -29,19 +30,69 @@ function query({req, value, parameter}) {
   }
 
   if (value) {
-    req.query[parameter.name] = {
-      value: stylize({
-        key: parameter.name,
-        value,
-        style: parameter.style || 'form',
-        explode: typeof parameter.explode === 'undefined' ? true : parameter.explode
-      }),
-      skipEncoding: true
+    const type = typeof value
+
+    if (parameter.style === 'deepObject') {
+      const valueKeys = Object.keys(value)
+      valueKeys.forEach(k => {
+        const v = value[k]
+        req.query[`${parameter.name}[${k}]`] = {
+          value: stylize({
+            key: k,
+            value: v,
+            style: 'deepObject'
+          }),
+          skipEncoding: true
+        }
+      })
+    }
+    else if (
+      type === "object" &&
+      !Array.isArray(value) &&
+      (parameter.style === 'form' || !parameter.style) &&
+      (parameter.explode || parameter.explode === undefined)
+    ) {
+      // form explode needs to be handled here,
+      // since we aren't assigning to `req.query[parameter.name]`
+      // like we usually do.
+      const valueKeys = Object.keys(value)
+      valueKeys.forEach(k => {
+        const v = value[k]
+        req.query[k] = {
+          value: stylize({
+            key: k,
+            value: v,
+            style: parameter.style || 'form'
+          })
+        }
+      })
+    } else {
+      req.query[parameter.name] = {
+        value: stylize({
+          key: parameter.name,
+          value,
+          style: parameter.style || 'form',
+          explode: typeof parameter.explode === 'undefined' ? true : parameter.explode
+        }),
+        skipEncoding: true
+      }
     }
   }
   else if (parameter.allowEmptyValue) {
     const paramName = parameter.name
     req.query[paramName] = req.query[paramName] || {}
     req.query[paramName].allowEmptyValue = true
+  }
+}
+
+function header({req, parameter, value}) {
+  req.headers = req.headers || {}
+  if (typeof value !== 'undefined') {
+    req.headers[parameter.name] = stylize({
+      key: parameter.name,
+      value,
+      style: parameter.style || 'simple',
+      explode: typeof parameter.explode || false
+    })
   }
 }

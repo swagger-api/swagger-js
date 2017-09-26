@@ -181,7 +181,7 @@ export function encodeFormOrQuery(data) {
     const isObject = a => a && typeof a === 'object'
     const paramValue = data[parameterName]
     const skipEncoding = !!paramValue.skipEncoding
-    const encodedParameterName = encodeURIComponent(parameterName)
+    const encodedParameterName = skipEncoding ? parameterName : encodeURIComponent(parameterName)
     const notArray = isObject(paramValue) && !Array.isArray(paramValue)
     result[encodedParameterName] = formatValue(notArray ? paramValue : {value: paramValue}, skipEncoding)
     return result
