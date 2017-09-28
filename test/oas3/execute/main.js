@@ -368,16 +368,17 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
     })
   })
   describe('baseUrl', function () {
-    it.skip('should return / if no servers are specified', function () {
+    it('should consider contextUrls correctly with relative server paths', function () {
       const spec = {
         openapi: '3.0.0'
       }
 
       const res = baseUrl({
-        spec
+        spec,
+        contextUrl: 'https://gist.githubusercontent.com/hkosova/d223eb45c5198db09d08f2603cc0e10a/raw/ae22e290b4f21e19bbfc02b97498289792579fec/relative-server.yaml'
       })
 
-      expect(res).toEqual('/')
+      expect(res).toEqual('https://gist.githubusercontent.com')
     })
     it('should default to using the first server if none is explicitly chosen', function () {
       const spec = {
