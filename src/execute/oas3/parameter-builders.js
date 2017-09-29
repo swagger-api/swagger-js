@@ -36,7 +36,7 @@ function query({req, value, parameter}) {
 
     if (parameter.style === 'deepObject') {
       const valueKeys = Object.keys(value)
-      valueKeys.forEach(k => {
+      valueKeys.forEach((k) => {
         const v = value[k]
         req.query[`${parameter.name}[${k}]`] = {
           value: stylize({
@@ -50,7 +50,7 @@ function query({req, value, parameter}) {
       })
     }
     else if (
-      type === "object" &&
+      type === 'object' &&
       !Array.isArray(value) &&
       (parameter.style === 'form' || !parameter.style) &&
       (parameter.explode || parameter.explode === undefined)
@@ -59,7 +59,7 @@ function query({req, value, parameter}) {
       // since we aren't assigning to `req.query[parameter.name]`
       // like we usually do.
       const valueKeys = Object.keys(value)
-      valueKeys.forEach(k => {
+      valueKeys.forEach((k) => {
         const v = value[k]
         req.query[k] = {
           value: stylize({
@@ -70,7 +70,8 @@ function query({req, value, parameter}) {
           })
         }
       })
-    } else {
+    }
+    else {
       req.query[parameter.name] = {
         value: stylize({
           key: parameter.name,
@@ -109,12 +110,12 @@ function cookie({req, parameter, value}) {
 
   if (type !== 'undefined') {
     const prefix = (
-      type === "object" &&
+      type === 'object' &&
       !Array.isArray(value) &&
       parameter.explode
     ) ? '' : `${parameter.name}=`
 
-    req.headers['Cookie'] = prefix + stylize({
+    req.headers.Cookie = prefix + stylize({
       key: parameter.name,
       value,
       escape: false,

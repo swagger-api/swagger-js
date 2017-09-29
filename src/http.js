@@ -183,7 +183,9 @@ export function encodeFormOrQuery(data) {
     const skipEncoding = !!paramValue.skipEncoding
     const encodedParameterName = skipEncoding ? parameterName : encodeURIComponent(parameterName)
     const notArray = isObject(paramValue) && !Array.isArray(paramValue)
-    result[encodedParameterName] = formatValue(notArray ? paramValue : {value: paramValue}, skipEncoding)
+    result[encodedParameterName] = formatValue(
+      notArray ? paramValue : {value: paramValue}, skipEncoding
+    )
     return result
   }, {})
   return qs.stringify(encodedQuery, {encode: false, indices: false}) || ''

@@ -94,7 +94,7 @@ function encodeObject({key, value, style, explode}) {
   if (style === 'form') {
     return valueKeys.reduce((prev, curr) => {
       const val = value[curr]
-      const prefix = prev ? `${prev}${explode ? '&' : ','}` : ``
+      const prefix = prev ? `${prev}${explode ? '&' : ','}` : ''
       const separator = explode ? '=' : ','
 
       return `${prefix}${curr}${separator}${val}`
