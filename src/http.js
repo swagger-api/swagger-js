@@ -180,9 +180,12 @@ export function encodeFormOrQuery(data) {
   const encodedQuery = Object.keys(data).reduce((result, parameterName) => {
     const isObject = a => a && typeof a === 'object'
     const paramValue = data[parameterName]
-    const encodedParameterName = encodeURIComponent(parameterName)
+    const skipEncoding = !!paramValue.skipEncoding
+    const encodedParameterName = skipEncoding ? parameterName : encodeURIComponent(parameterName)
     const notArray = isObject(paramValue) && !Array.isArray(paramValue)
-    result[encodedParameterName] = formatValue(notArray ? paramValue : {value: paramValue})
+    result[encodedParameterName] = formatValue(
+      notArray ? paramValue : {value: paramValue}, skipEncoding
+    )
     return result
   }, {})
   return qs.stringify(encodedQuery, {encode: false, indices: false}) || ''
