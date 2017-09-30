@@ -213,15 +213,11 @@ export function baseUrl(obj) {
   return specIsOAS3 ? oas3BaseUrl(obj) : swagger2BaseUrl(obj)
 }
 
-function oas3BaseUrl({spec, server, serverVariables = {}}) {
+function oas3BaseUrl({spec, server, contextUrl, serverVariables = {}}) {
   const servers = spec.servers
 
   let selectedServerUrl = ''
   let selectedServerObj = null
-
-  if (!servers || !Array.isArray(servers)) {
-    return ''
-  }
 
   if (server) {
     const serverUrls = servers.map(srv => srv.url)
@@ -232,7 +228,7 @@ function oas3BaseUrl({spec, server, serverVariables = {}}) {
     }
   }
 
-  if (!selectedServerUrl) {
+  if (!selectedServerUrl && servers) {
     // default to the first server if we don't have one by now
     selectedServerUrl = servers[0].url
     selectedServerObj = servers[0]
@@ -253,7 +249,25 @@ function oas3BaseUrl({spec, server, serverVariables = {}}) {
     })
   }
 
-  return selectedServerUrl
+  return buildOas3UrlWithContext(selectedServerUrl, contextUrl)
+}
+
+function buildOas3UrlWithContext(ourUrl = '', contextUrl = '') {
+  const parsedUrl = url.parse(ourUrl)
+  const parsedContextUrl = url.parse(contextUrl)
+
+  const computedScheme = stripNonAlpha(parsedUrl.protocol) || stripNonAlpha(parsedContextUrl.protocol) || ''
+  const computedHost = parsedUrl.host || parsedContextUrl.host
+  const computedPath = parsedUrl.pathname || ''
+
+  if (computedScheme && computedHost) {
+    const res = `${computedScheme}://${computedHost + computedPath}`
+
+    // If last character is '/', trim it off
+    return res[res.length - 1] === '/' ? res.slice(0, -1) : res
+  }
+
+  return ''
 }
 
 function getVariableTemplateNames(str) {
