@@ -214,7 +214,6 @@ export function baseUrl(obj) {
 }
 
 function oas3BaseUrl({spec, server, contextUrl, serverVariables = {}}) {
-  console.log('hello')
   const servers = spec.servers
 
   let selectedServerUrl = ''
