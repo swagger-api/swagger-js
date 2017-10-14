@@ -1,4 +1,5 @@
 import isObject from 'lodash/isObject'
+import startsWith from 'lodash/startsWith'
 
 const toLower = str => String.prototype.toLowerCase.call(str)
 const escapeString = (str) => {
@@ -12,7 +13,7 @@ export function isOAS3(spec) {
     return false
   }
 
-  return oasVersion.startsWith('3.0.0')
+  return startsWith(oasVersion, '3')
 }
 
 export function isSwagger2(spec) {
@@ -21,7 +22,7 @@ export function isSwagger2(spec) {
     return false
   }
 
-  return swaggerVersion.startsWith('2')
+  return startsWith(swaggerVersion, '2')
 }
 
 // Strategy for determining operationId
