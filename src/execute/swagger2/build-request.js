@@ -84,7 +84,7 @@ export function applySecurities({request, securities = {}, operation = {}, spec}
           }
         }
         else if (type === 'oauth2' && accessToken) {
-          tokenType = (!tokenType || tokenType === 'bearer') ? 'Bearer' : tokenType
+          tokenType = (!tokenType || tokenType.toLowerCase() === 'bearer') ? 'Bearer' : tokenType
           result.headers.authorization = `${tokenType} ${accessToken}`
         }
       }

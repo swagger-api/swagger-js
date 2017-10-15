@@ -175,7 +175,7 @@ describe('(instance) #execute', function () {
     })
   })
 
-  it('should uppercase the `bearer` token_type', function () {
+  it('should replace any occurrence of `bearer` with `Bearer`', function () {
     const spec = {
       securityDefinitions: {
         testBearer: {
@@ -195,7 +195,7 @@ describe('(instance) #execute', function () {
     const authorizations = {
       testBearer: {
         token: {
-          token_type: 'bearer',
+          token_type: 'BeArEr',
           access_token: 'one two'
         }
       }
