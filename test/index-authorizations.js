@@ -175,6 +175,47 @@ describe('(instance) #execute', function () {
     })
   })
 
+  it('should uppercase the `bearer` token_type', function () {
+    const spec = {
+      securityDefinitions: {
+        testBearer: {
+          type: 'oauth2',
+        }
+      },
+      paths: {
+        '/pet': {
+          get: {
+            operationId: 'getPets',
+            security: [{testBearer: []}]
+          }
+        }
+      }
+    }
+
+    const authorizations = {
+      testBearer: {
+        token: {
+          token_type: 'bearer',
+          access_token: 'one two'
+        }
+      }
+    }
+
+    return Swagger({spec, authorizations}).then((client) => {
+      const http = createSpy()
+      client.execute({http, operationId: 'getPets'})
+      expect(http.calls.length).toEqual(1)
+      expect(http.calls[0].arguments[0]).toEqual({
+        credentials: 'same-origin',
+        headers: {
+          authorization: 'Bearer one two'
+        },
+        method: 'GET',
+        url: '/pet'
+      })
+    })
+  })
+
   it('should add global securites', function () {
     const spec = {
       securityDefinitions: {
