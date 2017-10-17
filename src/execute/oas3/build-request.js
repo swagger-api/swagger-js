@@ -1,6 +1,7 @@
 // This function runs after the common function,
 // `src/execute/index.js#buildRequest`
 import assign from 'lodash/assign'
+import get from 'lodash/get'
 import btoa from 'btoa'
 
 export default function (options, req) {
@@ -74,14 +75,11 @@ export default function (options, req) {
 // Add security values, to operations - that declare their need on them
 // Adapted from the Swagger2 implementation
 export function applySecurities({request, securities = {}, operation = {}, spec}) {
-  console.log({
-    securities, operation
-  })
   const result = assign({}, request)
   const {authorized = {}, specSecurity = []} = securities
   const security = operation.security || specSecurity
   const isAuthorized = authorized && !!Object.keys(authorized).length
-  const securityDef = (spec.components || {}).securitySchemes || {}
+  const securityDef = get(spec, ['components', 'securitySchemes']) || {}
 
   result.headers = result.headers || {}
   result.query = result.query || {}
@@ -94,34 +92,45 @@ export function applySecurities({request, securities = {}, operation = {}, spec}
   security.forEach((securityObj, index) => {
     for (const key in securityObj) {
       const auth = authorized[key]
+      const schema = securityDef[key]
+
       if (!auth) {
         continue
       }
 
-      const token = auth.token
       const value = auth.value || auth
-      const schema = securityDef[key]
       const {type} = schema
-      const accessToken = token && token.access_token
-      const tokenType = token && token.token_type
 
       if (auth) {
         if (type === 'apiKey') {
-          const inType = schema.in === 'query' ? 'query' : 'headers'
-          result[inType] = result[inType] || {}
-          result[inType][schema.name] = value
-        }
-        else if (type === 'basic') {
-          if (value.header) {
-            result.headers.authorization = value.header
+          if (schema.in === 'query') {
+            result.query[schema.name] = value
           }
-          else {
-            value.base64 = btoa(`${value.username}:${value.password}`)
-            result.headers.authorization = `Basic ${value.base64}`
+          if (schema.in === 'header') {
+            result.headers[schema.name] = value
           }
         }
-        else if (type === 'oauth2' && accessToken) {
-          result.headers.Authorization = `${tokenType || 'Bearer'} ${accessToken}`
+        else if (type === 'http') {
+          if (schema.scheme === 'basic') {
+            const {username, password} = value
+            const encoded = btoa(`${username}:${password}`)
+            result.headers.Authorization = `Basic ${encoded}`
+          }
+
+          if (schema.scheme === 'bearer') {
+            result.headers.Authorization = `Bearer ${value}`
+          }
+        }
+        else if (type === 'oauth2') {
+          const token = auth.token || {}
+          const accessToken = token.access_token
+          let tokenType = token.token_type
+
+          if (!tokenType || tokenType.toLowerCase() === 'bearer') {
+            tokenType = 'Bearer'
+          }
+
+          result.headers.Authorization = `${tokenType} ${accessToken}`
         }
       }
     }
