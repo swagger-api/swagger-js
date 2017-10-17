@@ -19,7 +19,7 @@ import {execute, buildRequest, baseUrl, applySecurities, self as stubs} from '..
 // - [ ] HTTP Bearer with credentials in constructor
 // - [ ] HTTP Bearer with credentials through buildRequest/execute
 
-describe.only('Authorization - OpenAPI Specification 3.0', function () {
+describe('Authorization - OpenAPI Specification 3.0', function () {
   it('should ignore a header parameter named `Authorization`', () => {
     const spec = {
       openapi: '3.0.0',

@@ -126,6 +126,11 @@ export function buildRequest(options) {
 
   // Mostly for testing
   if (!operationId) {
+    // Not removing req.cookies causes testing issues and would
+    // change our interface, so we're always sure to remove it.
+    // See the same statement lower down in this function for
+    // more context.
+    delete req.cookies
     return req
   }
 
