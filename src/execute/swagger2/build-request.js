@@ -3,7 +3,7 @@
 
 import btoa from 'btoa'
 import assign from 'lodash/assign'
-import http, {mergeInQueryOrForm} from '../../http'
+import http from '../../http'
 
 
 export default function (options, req) {

@@ -4,6 +4,7 @@ import isPlainObject from 'lodash/isPlainObject'
 import isArray from 'lodash/isArray'
 import btoa from 'btoa'
 import url from 'url'
+import {serialize as serializeCookie} from 'lightcookie'
 import http, {mergeInQueryOrForm} from '../http'
 import createError from '../specmap/lib/create-error'
 
@@ -109,7 +110,8 @@ export function buildRequest(options) {
       // This breaks CORSs... removing this line... probably breaks oAuth. Need to address that
       // This also breaks tests
       // 'access-control-allow-origin': '*'
-    }
+    },
+    cookies: {}
   }
 
   if (requestInterceptor) {
@@ -196,6 +198,21 @@ export function buildRequest(options) {
   else {
     // If not OAS3, then treat as Swagger2.
     req = swagger2BuildRequest(versionSpecificOptions, req)
+  }
+
+
+  // If the cookie convenience object exists in our request,
+  // serialize its content and then delete the cookie object.
+  if (req.cookies && Object.keys(req.cookies).length) {
+    const cookieString = serializeCookie(req.cookies)
+    req.headers.Cookie = cookieString
+  }
+
+  if (req.cookies) {
+    // even if no cookies were defined, we need to remove
+    // the cookies key from our request, or many many legacy
+    // tests will break.
+    delete req.cookies
   }
 
   // Will add the query object into the URL, if it exists

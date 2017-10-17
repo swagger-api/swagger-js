@@ -109,6 +109,9 @@ export function applySecurities({request, securities = {}, operation = {}, spec}
           if (schema.in === 'header') {
             result.headers[schema.name] = value
           }
+          if (schema.in === 'cookie') {
+            result.cookies[schema.name] = value
+          }
         }
         else if (type === 'http') {
           if (schema.scheme === 'basic') {
