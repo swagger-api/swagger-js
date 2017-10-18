@@ -9,15 +9,6 @@ import {execute, buildRequest, baseUrl, applySecurities, self as stubs} from '..
 
 
 // OAS 3.0 Authorization
-//
-// Testing TODO:
-// - [ ] Ignore `Authorization` header parameters
-// - [ ] OAuth2 with credentials in constructor
-// - [ ] OAuth2 with credentials through buildRequest/execute
-// - [ ] HTTP Basic with credentials in constructor
-// - [ ] HTTP Basic with credentials through buildRequest/execute
-// - [ ] HTTP Bearer with credentials in constructor
-// - [ ] HTTP Bearer with credentials through buildRequest/execute
 
 describe('Authorization - OpenAPI Specification 3.0', function () {
   it('should ignore a header parameter named `Authorization`', () => {
@@ -435,119 +426,163 @@ describe('Authorization - OpenAPI Specification 3.0', function () {
     })
   })
 
-  describe.skip('OAuth2', () => {
-    describe('implicit', () => {
-      it('should build a request with constructor credentials', () => {
-        const spec = {
-          openapi: '3.0.0',
-          paths: {
-            '/': {
-              get: {
-                operationId: 'myOperation',
-                parameters: [
-                  {
-                    name: 'Authorization',
-                    in: 'header'
+  describe('OAuth2', () => {
+    it('should build a request with an operation security', () => {
+      const spec = {
+        openapi: '3.0.0',
+        components: {
+          securitySchemes: {
+            myOAuth2Implicit: {
+              type: 'oauth2',
+              flows: {
+                implicit: {
+                  authorizationUrl: 'http://google.com/',
+                  scopes: {
+                    myScope: 'blah blah blah'
                   }
-                ]
+                }
+              }
+            }
+          }
+        },
+        paths: {
+          '/': {
+            get: {
+              operationId: 'myOperation',
+              security: [
+                {myOAuth2Implicit: []}
+              ]
+            }
+          }
+        }
+      }
+
+      // when
+      const req = buildRequest({
+        spec,
+        operationId: 'myOperation',
+        securities: {
+          authorized: {
+            myOAuth2Implicit: {
+              token: {
+                access_token: 'myTokenValue'
               }
             }
           }
         }
-
-        // when
-        const req = buildRequest({
-          spec,
-          operationId: 'myOperation',
-          parameters: {
-            Authorization: 'myAuthValue'
-          }
-        })
-
-        expect(req).toEqual({
-          method: 'GET',
-          url: '/',
-          credentials: 'same-origin',
-          headers: {},
-        })
       })
-      it('should build a request with buildRequest credentials', () => {
-        const spec = {
-          openapi: '3.0.0',
-          paths: {
-            '/': {
-              get: {
-                operationId: 'myOperation',
-                parameters: [
-                  {
-                    name: 'Authorization',
-                    in: 'header'
+
+      expect(req).toEqual({
+        method: 'GET',
+        url: '/',
+        credentials: 'same-origin',
+        headers: {
+          Authorization: 'Bearer myTokenValue'
+        },
+      })
+    })
+    it('should build a request with a global security', () => {
+      const spec = {
+        openapi: '3.0.0',
+        security: [
+          {myOAuth2Implicit: []}
+        ],
+        components: {
+          securitySchemes: {
+            myOAuth2Implicit: {
+              type: 'oauth2',
+              flows: {
+                implicit: {
+                  authorizationUrl: 'http://google.com/',
+                  scopes: {
+                    myScope: 'blah blah blah'
                   }
-                ]
+                }
+              }
+            }
+          }
+        },
+        paths: {
+          '/': {
+            get: {
+              operationId: 'myOperation'
+            }
+          }
+        }
+      }
+
+      // when
+      const req = buildRequest({
+        spec,
+        operationId: 'myOperation',
+        securities: {
+          authorized: {
+            myOAuth2Implicit: {
+              token: {
+                access_token: 'myTokenValue'
               }
             }
           }
         }
-
-        // when
-        const req = buildRequest({
-          spec,
-          operationId: 'myOperation',
-          parameters: {
-            Authorization: 'myAuthValue'
-          }
-        })
-
-        expect(req).toEqual({
-          method: 'GET',
-          url: '/',
-          credentials: 'same-origin',
-          headers: {},
-        })
       })
-      it('should set buildRequest credentials over constructor', () => {
-        const spec = {
-          openapi: '3.0.0',
-          paths: {
-            '/': {
-              get: {
-                operationId: 'myOperation',
-                parameters: [
-                  {
-                    name: 'Authorization',
-                    in: 'header'
+
+      expect(req).toEqual({
+        method: 'GET',
+        url: '/',
+        credentials: 'same-origin',
+        headers: {
+          Authorization: 'Bearer myTokenValue'
+        },
+      })
+    })
+    it('should build a request without authorization when spec does not require it', () => {
+      const spec = {
+        openapi: '3.0.0',
+        components: {
+          securitySchemes: {
+            myOAuth2Implicit: {
+              type: 'oauth2',
+              flows: {
+                implicit: {
+                  authorizationUrl: 'http://google.com/',
+                  scopes: {
+                    myScope: 'blah blah blah'
                   }
-                ]
+                }
+              }
+            }
+          }
+        },
+        paths: {
+          '/': {
+            get: {
+              operationId: 'myOperation'
+            }
+          }
+        }
+      }
+
+      // when
+      const req = buildRequest({
+        spec,
+        operationId: 'myOperation',
+        securities: {
+          authorized: {
+            myOAuth2Implicit: {
+              token: {
+                access_token: 'myTokenValue'
               }
             }
           }
         }
-
-        // when
-        const req = buildRequest({
-          spec,
-          operationId: 'myOperation',
-          parameters: {
-            Authorization: 'myAuthValue'
-          }
-        })
-
-        expect(req).toEqual({
-          method: 'GET',
-          url: '/',
-          credentials: 'same-origin',
-          headers: {},
-        })
       })
-    })
-    describe('password', () => {
 
-    })
-    describe('application', () => {
-
-    })
-    describe('access code', () => {
-
+      expect(req).toEqual({
+        method: 'GET',
+        url: '/',
+        credentials: 'same-origin',
+        headers: {},
+      })
     })
   })
 })

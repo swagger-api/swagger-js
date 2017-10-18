@@ -76,8 +76,8 @@ export default function (options, req) {
 // Adapted from the Swagger2 implementation
 export function applySecurities({request, securities = {}, operation = {}, spec}) {
   const result = assign({}, request)
-  const {authorized = {}, specSecurity = []} = securities
-  const security = operation.security || specSecurity
+  const {authorized = {}} = securities
+  const security = operation.security || spec.security || []
   const isAuthorized = authorized && !!Object.keys(authorized).length
   const securityDef = get(spec, ['components', 'securitySchemes']) || {}
 
