@@ -105,8 +105,8 @@ describe('http', () => {
   describe('serializeHeaders', function () {
     it('should handle FetchAPI Headers object, which is iterable', function () {
       // Given
-      // isomorphic-fetch exposes FetchAPI methods onto global
-      require('isomorphic-fetch')
+      // cross-fetch exposes FetchAPI methods onto global
+      require('cross-fetch/polyfill')
       expect(global.Headers).toBeA(Function)
       const headers = new Headers() // eslint-disable-line no-undef
       headers.append('Authorization', 'Basic hoop-la')
@@ -124,8 +124,8 @@ describe('http', () => {
 
     it('should handle two of the same headers', function () {
       // Given
-      // isomorphic-fetch exposes FetchAPI methods onto global
-      require('isomorphic-fetch')
+      // cross-fetch exposes FetchAPI methods onto global
+      require('cross-fetch/polyfill')
       expect(global.Headers).toBeA(Function)
       const headers = new Headers() // eslint-disable-line no-undef
       headers.append('Authorization', 'Basic hoop-la')
@@ -142,8 +142,8 @@ describe('http', () => {
 
     it('should handle multiple headers', function () {
       // Given
-      // isomorphic-fetch exposes FetchAPI methods onto global
-      require('isomorphic-fetch')
+      // cross-fetch exposes FetchAPI methods onto global
+      require('cross-fetch/polyfill')
       expect(global.Headers).toBeA(Function)
       const headers = new Headers() // eslint-disable-line no-undef
       headers.append('Authorization', 'Basic hoop-la')
