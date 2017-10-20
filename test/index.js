@@ -494,6 +494,7 @@ describe('constructor', () => {
 
   describe('interceptor', function () {
     beforeEach(() => {
+      Swagger.clearCache()
       const xapp = xmock()
       xapp
         .get('http://petstore.swagger.io/v2/swagger.json', () => require('./data/petstore.json'))
@@ -553,6 +554,7 @@ describe('constructor', () => {
       const spy = createSpy().andCall(a => {
         return a
       })
+
       new Swagger({
         url: 'http://petstore.swagger.io/v2/base.json',
         responseInterceptor: spy
