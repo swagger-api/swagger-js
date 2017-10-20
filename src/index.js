@@ -69,7 +69,9 @@ Swagger.prototype = {
     return Swagger.resolve({
       spec: this.spec,
       url: this.url,
-      allowMetaPatches: this.allowMetaPatches
+      allowMetaPatches: this.allowMetaPatches,
+      requestInterceptor: this.requestInterceptor || null,
+      responseInterceptor: this.responseInterceptor || null
     }).then((obj) => {
       this.originalSpec = this.spec
       this.spec = obj.spec
