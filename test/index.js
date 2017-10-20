@@ -492,7 +492,7 @@ describe('constructor', () => {
     })
   })
 
-  describe.only('interceptor', function () {
+  describe('interceptor', function () {
     beforeEach(() => {
       const xapp = xmock()
       xapp
@@ -550,12 +550,28 @@ describe('constructor', () => {
     })
 
     it('should support response interceptor when fetching a spec and remote ref', function (cb) {
-      const spy = createSpy().andCall(a => a)
+      const spy = createSpy().andCall(a => {
+        return a
+      })
       new Swagger({
         url: 'http://petstore.swagger.io/v2/base.json',
         responseInterceptor: spy
       }).then((client) => {
         expect(spy.calls.length).toEqual(2)
+        cb()
+      }).catch(cb)
+    })
+
+    it('should support request and response interceptor when fetching a spec and remote ref', function (cb) {
+      const reqSpy = createSpy().andCall(a => a)
+      const resSpy = createSpy().andCall(a => a)
+      new Swagger({
+        url: 'http://petstore.swagger.io/v2/base.json',
+        responseInterceptor: reqSpy,
+        requestInterceptor: resSpy
+      }).then((client) => {
+        expect(reqSpy.calls.length).toEqual(2)
+        expect(resSpy.calls.length).toEqual(2)
         cb()
       }).catch(cb)
     })

@@ -3,7 +3,7 @@ import mapSpec, {plugins} from './specmap'
 import {normalizeSwagger} from './helpers'
 
 export function makeFetchJSON(http, opts = {}) {
-  const { requestInterceptor, responseInterceptor } = opts
+  const {requestInterceptor, responseInterceptor} = opts
   return (docPath) => {
     return http({
       url: docPath,
@@ -57,7 +57,7 @@ export default function resolve(obj) {
     }
 
     // Build a json-fetcher ( ie: give it a URL and get json out )
-    plugins.refs.fetchJSON = makeFetchJSON(http)
+    plugins.refs.fetchJSON = makeFetchJSON(http, {requestInterceptor, responseInterceptor})
 
     const plugs = [plugins.refs]
 
