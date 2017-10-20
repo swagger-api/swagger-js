@@ -551,7 +551,7 @@ describe('constructor', () => {
     })
 
     it('should support response interceptor when fetching a spec and remote ref', function (cb) {
-      const spy = createSpy().andCall(a => {
+      const spy = createSpy().andCall((a) => {
         return a
       })
 
