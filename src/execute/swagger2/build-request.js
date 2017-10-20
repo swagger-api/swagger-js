@@ -66,7 +66,7 @@ export function applySecurities({request, securities = {}, operation = {}, spec}
       const schema = securityDef[key]
       const {type} = schema
       const accessToken = token && token.access_token
-      const tokenType = token && token.token_type
+      let tokenType = token && token.token_type
 
       if (auth) {
         if (type === 'apiKey') {
@@ -84,7 +84,8 @@ export function applySecurities({request, securities = {}, operation = {}, spec}
           }
         }
         else if (type === 'oauth2' && accessToken) {
-          result.headers.authorization = `${tokenType || 'Bearer'} ${accessToken}`
+          tokenType = (!tokenType || tokenType.toLowerCase() === 'bearer') ? 'Bearer' : tokenType
+          result.headers.authorization = `${tokenType} ${accessToken}`
         }
       }
     }
