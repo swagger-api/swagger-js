@@ -63,6 +63,7 @@
   "dependencies": {
     "babel-runtime": "^6.23.0",
     "btoa": "1.1.2",
+    "cookie": "^0.3.1",
     "deep-extend": "^0.4.1",
     "fast-json-patch": "1.1.8",
     "isomorphic-fetch": "2.2.1",

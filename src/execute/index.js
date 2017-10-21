@@ -4,6 +4,7 @@ import isPlainObject from 'lodash/isPlainObject'
 import isArray from 'lodash/isArray'
 import btoa from 'btoa'
 import url from 'url'
+import cookie from 'cookie'
 import http, {mergeInQueryOrForm} from '../http'
 import createError from '../specmap/lib/create-error'
 
@@ -109,7 +110,8 @@ export function buildRequest(options) {
       // This breaks CORSs... removing this line... probably breaks oAuth. Need to address that
       // This also breaks tests
       // 'access-control-allow-origin': '*'
-    }
+    },
+    cookies: {}
   }
 
   if (requestInterceptor) {
@@ -124,6 +126,11 @@ export function buildRequest(options) {
 
   // Mostly for testing
   if (!operationId) {
+    // Not removing req.cookies causes testing issues and would
+    // change our interface, so we're always sure to remove it.
+    // See the same statement lower down in this function for
+    // more context.
+    delete req.cookies
     return req
   }
 
@@ -196,6 +203,26 @@ export function buildRequest(options) {
   else {
     // If not OAS3, then treat as Swagger2.
     req = swagger2BuildRequest(versionSpecificOptions, req)
+  }
+
+
+  // If the cookie convenience object exists in our request,
+  // serialize its content and then delete the cookie object.
+  if (req.cookies && Object.keys(req.cookies).length) {
+    const cookieString = Object.keys(req.cookies).reduce((prev, cookieName) => {
+      const cookieValue = req.cookies[cookieName]
+      const prefix = prev ? '&' : ''
+      const stringified = cookie.serialize(cookieName, cookieValue)
+      return prev + prefix + stringified
+    }, '')
+    req.headers.Cookie = cookieString
+  }
+
+  if (req.cookies) {
+    // even if no cookies were defined, we need to remove
+    // the cookies key from our request, or many many legacy
+    // tests will break.
+    delete req.cookies
   }
 
   // Will add the query object into the URL, if it exists

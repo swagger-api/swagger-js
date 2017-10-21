@@ -91,8 +91,19 @@ function query({req, value, parameter}) {
   }
 }
 
+const PARAMETER_HEADER_BLACKLIST = [
+  'accept',
+  'authorization',
+  'content-type'
+]
+
 function header({req, parameter, value}) {
   req.headers = req.headers || {}
+
+  if (PARAMETER_HEADER_BLACKLIST.indexOf(parameter.name.toLowerCase()) > -1) {
+    return
+  }
+
   if (typeof value !== 'undefined') {
     req.headers[parameter.name] = stylize({
       key: parameter.name,
