@@ -252,7 +252,7 @@ describe('http', () => {
       return http('http://example.com', req).then((response) => {
         expect(response.url).toEqual('http://example.com?anotherOne=one,two&evenMore=hi&bar=1%202%203')
         expect(response.status).toEqual(200)
-      }).finally(fetchMock.restore)
+      }).then(fetchMock.restore)
     })
   })
 
@@ -268,7 +268,7 @@ describe('http', () => {
         return serializeRes(_res, 'https://swagger.io')
       }).then((resSerialize) => {
         expect(resSerialize.headers).toEqual({authorization: ['Basic hoop-la', 'Advanced hoop-la']})
-      }).finally(fetchMock.restore)
+      }).then(fetchMock.restore)
     })
 
     it('should set .text and .data to body Blob or Buffer for binary response', function () {
@@ -290,7 +290,7 @@ describe('http', () => {
           expect(resSerialize.data).toBeA(Buffer)
           expect(resSerialize.data).toEqual(new Buffer(body))
         }
-      }).finally(fetchMock.restore)
+      }).then(fetchMock.restore)
     })
 
     it('should set .text and .data to body string for text response', function () {
@@ -306,7 +306,7 @@ describe('http', () => {
       }).then((resSerialize) => {
         expect(resSerialize.data).toBe(resSerialize.text)
         expect(resSerialize.data).toBe(body)
-      }).finally(fetchMock.restore)
+      }).then(fetchMock.restore)
     })
   })
 
