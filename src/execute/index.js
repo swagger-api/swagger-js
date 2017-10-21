@@ -4,7 +4,7 @@ import isPlainObject from 'lodash/isPlainObject'
 import isArray from 'lodash/isArray'
 import btoa from 'btoa'
 import url from 'url'
-import {serialize as serializeCookie} from 'lightcookie'
+import cookie from 'cookie'
 import http, {mergeInQueryOrForm} from '../http'
 import createError from '../specmap/lib/create-error'
 
@@ -209,7 +209,12 @@ export function buildRequest(options) {
   // If the cookie convenience object exists in our request,
   // serialize its content and then delete the cookie object.
   if (req.cookies && Object.keys(req.cookies).length) {
-    const cookieString = serializeCookie(req.cookies)
+    const cookieString = Object.keys(req.cookies).reduce((prev, cookieName) => {
+      const cookieValue = req.cookies[cookieName]
+      const prefix = prev ? '&' : ''
+      const stringified = cookie.serialize(cookieName, cookieValue)
+      return prev + prefix + stringified
+    }, '')
     req.headers.Cookie = cookieString
   }
 
