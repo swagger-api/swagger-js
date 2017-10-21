@@ -494,17 +494,27 @@ describe('constructor', () => {
 
   describe('interceptor', function () {
     beforeEach(() => {
+      Swagger.clearCache()
       const xapp = xmock()
       xapp
         .get('http://petstore.swagger.io/v2/swagger.json', () => require('./data/petstore.json'))
         .get('http://petstore.swagger.io/v2/pet/3', () => ({id: 3}))
         .get('http://petstore.swagger.io/v2/pet/4', () => ({id: 4}))
+        .get('http://petstore.swagger.io/v2/ref.json', () => ({b: 2}))
+        .get('http://petstore.swagger.io/v2/base.json', () => (
+          {
+            $ref: 'http://petstore.swagger.io/v2/ref.json#b'
+          }
+        ))
     })
 
     it('should support request interceptor', function (cb) {
       new Swagger({
         url: 'http://petstore.swagger.io/v2/swagger.json',
         requestInterceptor: (req) => {
+          if (req.loadSpec) {
+            return req
+          }
           req.url = 'http://petstore.swagger.io/v2/pet/4'
         }
       }).then((client) => {
@@ -527,6 +537,45 @@ describe('constructor', () => {
           cb()
         })
       }, cb)
+    })
+
+    it('should support request interceptor when fetching a spec and remote ref', function (cb) {
+      const spy = createSpy().andCall(a => a)
+      new Swagger({
+        url: 'http://petstore.swagger.io/v2/base.json',
+        requestInterceptor: spy
+      }).then((client) => {
+        expect(spy.calls.length).toEqual(2)
+        cb()
+      }).catch(cb)
+    })
+
+    it('should support response interceptor when fetching a spec and remote ref', function (cb) {
+      const spy = createSpy().andCall((a) => {
+        return a
+      })
+
+      new Swagger({
+        url: 'http://petstore.swagger.io/v2/base.json',
+        responseInterceptor: spy
+      }).then((client) => {
+        expect(spy.calls.length).toEqual(2)
+        cb()
+      }).catch(cb)
+    })
+
+    it('should support request and response interceptor when fetching a spec and remote ref', function (cb) {
+      const reqSpy = createSpy().andCall(a => a)
+      const resSpy = createSpy().andCall(a => a)
+      new Swagger({
+        url: 'http://petstore.swagger.io/v2/base.json',
+        responseInterceptor: reqSpy,
+        requestInterceptor: resSpy
+      }).then((client) => {
+        expect(reqSpy.calls.length).toEqual(2)
+        expect(resSpy.calls.length).toEqual(2)
+        cb()
+      }).catch(cb)
     })
   })
 })

@@ -1,5 +1,6 @@
 import cloneDeep from 'lodash/cloneDeep'
 import assign from 'lodash/assign'
+import startsWith from 'lodash/startsWith'
 import Url from 'url'
 import Http, {makeHttp, serializeRes, serializeHeaders} from './http'
 import Resolver, {clearCache} from './resolver'
@@ -68,7 +69,9 @@ Swagger.prototype = {
     return Swagger.resolve({
       spec: this.spec,
       url: this.url,
-      allowMetaPatches: this.allowMetaPatches
+      allowMetaPatches: this.allowMetaPatches,
+      requestInterceptor: this.requestInterceptor || null,
+      responseInterceptor: this.responseInterceptor || null
     }).then((obj) => {
       this.originalSpec = this.spec
       this.spec = obj.spec
@@ -82,7 +85,7 @@ Swagger.prototype.applyDefaults = function () {
   const spec = this.spec
   const specUrl = this.url
   // TODO: OAS3: support servers here
-  if (specUrl && specUrl.startsWith('http')) {
+  if (specUrl && startsWith(specUrl, 'http')) {
     const parsed = Url.parse(specUrl)
     if (!spec.host) {
       spec.host = parsed.host

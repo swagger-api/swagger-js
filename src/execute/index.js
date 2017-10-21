@@ -241,7 +241,7 @@ function oas3BaseUrl({spec, server, contextUrl, serverVariables = {}}) {
   let selectedServerUrl = ''
   let selectedServerObj = null
 
-  if (server) {
+  if (server && servers) {
     const serverUrls = servers.map(srv => srv.url)
 
     if (serverUrls.indexOf(server) > -1) {

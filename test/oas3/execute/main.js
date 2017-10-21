@@ -484,5 +484,30 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
 
       expect(res).toEqual('https://petstore.com')
     })
+    it('should fall back to contextUrls if no servers are provided', function () {
+      const spec = {
+        openapi: '3.0.0'
+      }
+
+      const res = baseUrl({
+        spec,
+        server: 'http://some-invalid-server.com/',
+        contextUrl: 'http://google.com/'
+      })
+
+      expect(res).toEqual('http://google.com')
+    })
+    it('should return an empty string if no servers or contextUrl are provided', function () {
+      const spec = {
+        openapi: '3.0.0'
+      }
+
+      const res = baseUrl({
+        spec,
+        server: 'http://some-invalid-server.com/'
+      })
+
+      expect(res).toEqual('')
+    })
   })
 })
