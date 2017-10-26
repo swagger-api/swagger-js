@@ -1,15 +1,22 @@
 // This function runs after the common function,
 // `src/execute/index.js#buildRequest`
+import assign from 'lodash/assign'
+import get from 'lodash/get'
+import btoa from 'btoa'
 
 export default function (options, req) {
   const {
     operation,
-    requestBody
+    requestBody,
+    securities,
+    spec
   } = options
 
   let {
     requestContentType
   } = options
+
+  req = applySecurities({request: req, securities, operation, spec})
 
   const requestBodyDef = operation.requestBody || {}
   const requestBodyMediaTypes = Object.keys(requestBodyDef.content || {})
@@ -63,4 +70,74 @@ export default function (options, req) {
   }
 
   return req
+}
+
+// Add security values, to operations - that declare their need on them
+// Adapted from the Swagger2 implementation
+export function applySecurities({request, securities = {}, operation = {}, spec}) {
+  const result = assign({}, request)
+  const {authorized = {}} = securities
+  const security = operation.security || spec.security || []
+  const isAuthorized = authorized && !!Object.keys(authorized).length
+  const securityDef = get(spec, ['components', 'securitySchemes']) || {}
+
+  result.headers = result.headers || {}
+  result.query = result.query || {}
+
+  if (!Object.keys(securities).length || !isAuthorized || !security ||
+      (Array.isArray(operation.security) && !operation.security.length)) {
+    return request
+  }
+
+  security.forEach((securityObj, index) => {
+    for (const key in securityObj) {
+      const auth = authorized[key]
+      const schema = securityDef[key]
+
+      if (!auth) {
+        continue
+      }
+
+      const value = auth.value || auth
+      const {type} = schema
+
+      if (auth) {
+        if (type === 'apiKey') {
+          if (schema.in === 'query') {
+            result.query[schema.name] = value
+          }
+          if (schema.in === 'header') {
+            result.headers[schema.name] = value
+          }
+          if (schema.in === 'cookie') {
+            result.cookies[schema.name] = value
+          }
+        }
+        else if (type === 'http') {
+          if (schema.scheme === 'basic') {
+            const {username, password} = value
+            const encoded = btoa(`${username}:${password}`)
+            result.headers.Authorization = `Basic ${encoded}`
+          }
+
+          if (schema.scheme === 'bearer') {
+            result.headers.Authorization = `Bearer ${value}`
+          }
+        }
+        else if (type === 'oauth2') {
+          const token = auth.token || {}
+          const accessToken = token.access_token
+          let tokenType = token.token_type
+
+          if (!tokenType || tokenType.toLowerCase() === 'bearer') {
+            tokenType = 'Bearer'
+          }
+
+          result.headers.Authorization = `${tokenType} ${accessToken}`
+        }
+      }
+    }
+  })
+
+  return result
 }

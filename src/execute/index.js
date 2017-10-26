@@ -4,6 +4,7 @@ import isPlainObject from 'lodash/isPlainObject'
 import isArray from 'lodash/isArray'
 import btoa from 'btoa'
 import url from 'url'
+import cookie from 'cookie'
 import http, {mergeInQueryOrForm} from '../http'
 import createError from '../specmap/lib/create-error'
 
@@ -109,7 +110,8 @@ export function buildRequest(options) {
       // This breaks CORSs... removing this line... probably breaks oAuth. Need to address that
       // This also breaks tests
       // 'access-control-allow-origin': '*'
-    }
+    },
+    cookies: {}
   }
 
   if (requestInterceptor) {
@@ -124,6 +126,11 @@ export function buildRequest(options) {
 
   // Mostly for testing
   if (!operationId) {
+    // Not removing req.cookies causes testing issues and would
+    // change our interface, so we're always sure to remove it.
+    // See the same statement lower down in this function for
+    // more context.
+    delete req.cookies
     return req
   }
 
@@ -198,6 +205,26 @@ export function buildRequest(options) {
     req = swagger2BuildRequest(versionSpecificOptions, req)
   }
 
+
+  // If the cookie convenience object exists in our request,
+  // serialize its content and then delete the cookie object.
+  if (req.cookies && Object.keys(req.cookies).length) {
+    const cookieString = Object.keys(req.cookies).reduce((prev, cookieName) => {
+      const cookieValue = req.cookies[cookieName]
+      const prefix = prev ? '&' : ''
+      const stringified = cookie.serialize(cookieName, cookieValue)
+      return prev + prefix + stringified
+    }, '')
+    req.headers.Cookie = cookieString
+  }
+
+  if (req.cookies) {
+    // even if no cookies were defined, we need to remove
+    // the cookies key from our request, or many many legacy
+    // tests will break.
+    delete req.cookies
+  }
+
   // Will add the query object into the URL, if it exists
   // ... will also create a FormData instance, if multipart/form-data (eg: a file)
   mergeInQueryOrForm(req)
@@ -219,7 +246,7 @@ function oas3BaseUrl({spec, server, contextUrl, serverVariables = {}}) {
   let selectedServerUrl = ''
   let selectedServerObj = null
 
-  if (server) {
+  if (server && servers) {
     const serverUrls = servers.map(srv => srv.url)
 
     if (serverUrls.indexOf(server) > -1) {
@@ -259,15 +286,18 @@ function buildOas3UrlWithContext(ourUrl = '', contextUrl = '') {
   const computedScheme = stripNonAlpha(parsedUrl.protocol) || stripNonAlpha(parsedContextUrl.protocol) || ''
   const computedHost = parsedUrl.host || parsedContextUrl.host
   const computedPath = parsedUrl.pathname || ''
+  let res
 
   if (computedScheme && computedHost) {
-    const res = `${computedScheme}://${computedHost + computedPath}`
+    res = `${computedScheme}://${computedHost + computedPath}`
 
     // If last character is '/', trim it off
-    return res[res.length - 1] === '/' ? res.slice(0, -1) : res
+  }
+  else {
+    res = computedPath
   }
 
-  return ''
+  return res[res.length - 1] === '/' ? res.slice(0, -1) : res
 }
 
 function getVariableTemplateNames(str) {
@@ -290,13 +320,17 @@ function swagger2BaseUrl({spec, scheme, contextUrl = ''}) {
   const computedScheme = scheme || firstSchemeInSpec || stripNonAlpha(parsedContextUrl.protocol) || 'http'
   const computedHost = spec.host || parsedContextUrl.host || ''
   const computedPath = spec.basePath || ''
+  let res
 
   if (computedScheme && computedHost) {
-    const res = `${computedScheme}://${computedHost + computedPath}`
-
-    // If last character is '/', trim it off
-    return res[res.length - 1] === '/' ? res.slice(0, -1) : res
+    // we have what we need for an absolute URL
+    res = `${computedScheme}://${computedHost + computedPath}`
+  }
+  else {
+    // if not, a relative URL will have to do
+    res = computedPath
   }
 
-  return ''
+  // If last character is '/', trim it off
+  return res[res.length - 1] === '/' ? res.slice(0, -1) : res
 }
