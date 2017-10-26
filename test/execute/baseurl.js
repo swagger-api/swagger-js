@@ -129,4 +129,15 @@ describe('baseUrl', () => {
 
     expect(res).toEqual('https://example.com:9090')
   })
+
+  it('should include a basePath when no contextUrl is available', () => {
+    const res = baseUrl({
+      spec: {
+        title: 'a spec',
+        basePath: '/mybase'
+      }
+    })
+
+    expect(res).toEqual('/mybase')
+  })
 })

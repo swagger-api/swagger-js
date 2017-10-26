@@ -317,13 +317,17 @@ function swagger2BaseUrl({spec, scheme, contextUrl = ''}) {
   const computedScheme = scheme || firstSchemeInSpec || stripNonAlpha(parsedContextUrl.protocol) || 'http'
   const computedHost = spec.host || parsedContextUrl.host || ''
   const computedPath = spec.basePath || ''
+  let res
 
   if (computedScheme && computedHost) {
-    const res = `${computedScheme}://${computedHost + computedPath}`
-
-    // If last character is '/', trim it off
-    return res[res.length - 1] === '/' ? res.slice(0, -1) : res
+    // we have what we need for an absolute URL
+    res = `${computedScheme}://${computedHost + computedPath}`
+  }
+  else {
+    // if not, a relative URL will have to do
+    res = computedPath
   }
 
-  return ''
+  // If last character is '/', trim it off
+  return res[res.length - 1] === '/' ? res.slice(0, -1) : res
 }
