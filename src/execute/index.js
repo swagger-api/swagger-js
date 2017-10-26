@@ -286,15 +286,18 @@ function buildOas3UrlWithContext(ourUrl = '', contextUrl = '') {
   const computedScheme = stripNonAlpha(parsedUrl.protocol) || stripNonAlpha(parsedContextUrl.protocol) || ''
   const computedHost = parsedUrl.host || parsedContextUrl.host
   const computedPath = parsedUrl.pathname || ''
+  let res
 
   if (computedScheme && computedHost) {
-    const res = `${computedScheme}://${computedHost + computedPath}`
+    res = `${computedScheme}://${computedHost + computedPath}`
 
     // If last character is '/', trim it off
-    return res[res.length - 1] === '/' ? res.slice(0, -1) : res
+  }
+  else {
+    res = computedPath
   }
 
-  return ''
+  return res[res.length - 1] === '/' ? res.slice(0, -1) : res
 }
 
 function getVariableTemplateNames(str) {
