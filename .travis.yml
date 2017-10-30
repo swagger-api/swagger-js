@@ -2,8 +2,6 @@ language: node_js
 node_js:
 - '4.7'
 - '6.9'
-env:
-  - CXX=g++-4.8
 branches:
   only:
   - master
