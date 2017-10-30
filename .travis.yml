@@ -2,10 +2,14 @@ language: node_js
 node_js:
 - '4.7'
 - '6.9'
+cache:
+  directories:
+    - node_modules
 branches:
   only:
   - master
   - /^v\d+\.\d+(\.\d+)?(-\S*)?$/
+before_script: "npm update"
 before_deploy: "npm run build"
 deploy:
   provider: npm
