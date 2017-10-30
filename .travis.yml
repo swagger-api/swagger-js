@@ -4,12 +4,6 @@ node_js:
 - '6.9'
 env:
   - CXX=g++-4.8
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - g++-4.8
 branches:
   only:
   - master
