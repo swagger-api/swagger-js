@@ -279,6 +279,7 @@ npm run test         # run test
 npm run test:watch   # run test with change watching
 npm run lint         # run lint
 npm run build        # package to release
+npm run build-dev    # package with non-minified dist/index.js (for debugging)
 npm run build-bundle # build browser version available at .../browser
 ```
 
