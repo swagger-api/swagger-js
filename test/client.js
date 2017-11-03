@@ -38,6 +38,17 @@ describe('http', () => {
         }
       }
 
+      if (req.headers['x-setcontenttype']) {
+        console.log('here come dat header', req.headers)
+        // Allow the test to explicitly set (or unset) a content type
+        if (req.headers['x-setcontenttype'] === 'none') {
+          res.removeHeader('Content-Type')
+        }
+        else {
+          res.setHeader('Content-Type', req.headers['x-setcontenttype'])
+        }
+      }
+
       fs.exists(filename, function (exists) {
         if (exists) {
           const fileStream = fs.createReadStream(filename)
@@ -61,7 +72,7 @@ describe('http', () => {
   afterEach(function () {
   })
 
-  it.skip('should get the petstore api and build it', (done) => {
+  it('should get the JSON petstore api and build it', (done) => {
     Swagger('http://localhost:8000/petstore.json')
       .then((client) => {
         expect(client).toExist()
@@ -77,6 +88,72 @@ describe('http', () => {
 
         done()
       })
+  })
+
+  it('should get the YAML petstore api and build it', (done) => {
+    Swagger('http://localhost:8000/petstore.json')
+      .then((client) => {
+        expect(client).toExist()
+
+        // we have 3 tags
+        expect(Object.keys(client.apis).length).toBe(3)
+
+        // the pet tag exists
+        expect(client.apis.pet).toExist()
+
+        // the get pet operation
+        expect(client.apis.pet.getPetById).toExist()
+
+        done()
+      })
+  })
+
+  it('should get the JSON petstore api and build it when response lacks a `Content-Type`', (done) => {
+    Swagger('http://localhost:8000/petstore.json', {
+      requestInterceptor: (req) => {
+        req.headers['X-SetContentType'] = 'none'
+        return req
+      }
+    })
+      .then((client) => {
+        expect(client).toExist()
+
+        // we have 3 tags
+        expect(Object.keys(client.apis).length).toBe(3)
+
+        // the pet tag exists
+        expect(client.apis.pet).toExist()
+
+        // the get pet operation
+        expect(client.apis.pet.getPetById).toExist()
+
+        done()
+      })
+      .catch(err => done(err))
+  })
+
+  it('should get the YAML petstore api and build it when response lacks a `Content-Type`', (done) => {
+    Swagger('http://localhost:8000/petstore.yaml', {
+      requestInterceptor: (req) => {
+        req.headers['X-SetContentType'] = 'none'
+        return req
+      }
+    })
+      .then((client) => {
+        expect(client).toExist()
+
+        // we have 3 tags
+        expect(Object.keys(client.apis).length).toBe(3)
+
+        // the pet tag exists
+        expect(client.apis.pet).toExist()
+
+        // the get pet operation
+        expect(client.apis.pet.getPetById).toExist()
+
+        done()
+      })
+      .catch(err => done(err))
   })
 
   /**
