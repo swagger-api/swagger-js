@@ -27,6 +27,9 @@ export function isSwagger2(spec) {
 
 // Strategy for determining operationId
 export function opId(operation, pathName, method = '') {
+  if (!operation || typeof operation !== 'object') {
+    return null
+  }
   const idWithoutWhitespace = (operation.operationId || '').replace(/\s/g, '')
   if (idWithoutWhitespace.length) {
     return escapeString(operation.operationId)
