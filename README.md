@@ -64,7 +64,7 @@ This lib exposes these functionalities:
 HTTP Client
 -----------
 
-`Swagger.http(req)` exposes a [Fetch-like interface](https://github.com/matthew-andrews/isomorphic-fetch) with a twist: allowing `url` in the request object so that it can be passed around and mutated. It extends Fetch to support request and response interceptors and performs response & header serialization. This method could be overridden to change how SwaggerJS performs HTTP requests.
+`Swagger.http(req)` exposes a [Fetch-like interface](https://github.com/lquixada/cross-fetch) with a twist: allowing `url` in the request object so that it can be passed around and mutated. It extends Fetch to support request and response interceptors and performs response & header serialization. This method could be overridden to change how SwaggerJS performs HTTP requests.
 
 ```js
 // Fetch-like, but support `url`, `query` and `xxxInterceptor`
@@ -279,6 +279,7 @@ npm run test         # run test
 npm run test:watch   # run test with change watching
 npm run lint         # run lint
 npm run build        # package to release
+npm run build-dev    # package with non-minified dist/index.js (for debugging)
 npm run build-bundle # build browser version available at .../browser
 ```
 

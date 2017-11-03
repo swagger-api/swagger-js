@@ -1,4 +1,4 @@
-import 'isomorphic-fetch'
+import 'cross-fetch/polyfill'
 import qs from 'qs'
 import jsYaml from 'js-yaml'
 import isString from 'lodash/isString'
