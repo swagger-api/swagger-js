@@ -39,7 +39,6 @@ describe('http', () => {
       }
 
       if (req.headers['x-setcontenttype']) {
-        console.log('here come dat header', req.headers)
         // Allow the test to explicitly set (or unset) a content type
         if (req.headers['x-setcontenttype'] === 'none') {
           res.removeHeader('Content-Type')
