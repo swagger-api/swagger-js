@@ -67,6 +67,13 @@ export default function http(url, request = {}) {
 // exported for testing
 export const shouldDownloadAsText = (contentType = '') => /json|xml|yaml|text/.test(contentType)
 
+function parseBody(body) {
+  if (/^\s*\{/.test(body)) {
+    return JSON.parse(body)
+  }
+  return jsYaml.safeLoad(body)
+}
+
 // Serialize the response, returns a promise with headers and the body part of the hash
 export function serializeRes(oriRes, url, {loadSpec = false} = {}) {
   const res = {
@@ -88,8 +95,7 @@ export function serializeRes(oriRes, url, {loadSpec = false} = {}) {
 
     if (useText) {
       try {
-        // Optimistically try to convert all bodies
-        const obj = jsYaml.safeLoad(body)
+        const obj = parseBody(body)
         res.body = obj
         res.obj = obj
       }
