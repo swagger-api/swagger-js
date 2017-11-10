@@ -1,3 +1,5 @@
+import encodeToRFC3986 from 'encode-3986'
+
 export default function (config) {
   const {value} = config
 
@@ -14,16 +16,18 @@ export default function (config) {
 const escapeFn = str => encodeURIComponent(str)
 
 function encodeArray({key, value, style, explode, escape}) {
+  const valueEncoder = escape ? a => encodeToRFC3986(a) : a => a
+
   if (style === 'simple') {
-    return value.join(',')
+    return value.map(val => valueEncoder(val)).join(',')
   }
 
   if (style === 'label') {
-    return `.${value.join('.')}`
+    return `.${value.map(val => valueEncoder(val)).join('.')}`
   }
 
   if (style === 'matrix') {
-    return value.reduce((prev, curr) => {
+    return value.map(val => valueEncoder(val)).reduce((prev, curr) => {
       if (!prev || explode) {
         return `${(prev || '')};${key}=${curr}`
       }
@@ -34,27 +38,28 @@ function encodeArray({key, value, style, explode, escape}) {
   if (style === 'form') {
     const commaValue = escape ? escapeFn(',') : ','
     const after = explode ? `&${key}=` : commaValue
-    return value.join(after)
+    return value.map(val => valueEncoder(val)).join(after)
   }
 
   if (style === 'spaceDelimited') {
     const after = explode ? `${key}=` : ''
-    return value.join(`${escapeFn(' ')}${after}`)
+    return value.map(val => valueEncoder(val)).join(`${escapeFn(' ')}${after}`)
   }
 
   if (style === 'pipeDelimited') {
     const after = explode ? `${key}=` : ''
     const separator = escape ? escapeFn('|') : '|'
-    return value.join(`${separator}${after}`)
+    return value.map(val => valueEncoder(val)).join(`${separator}${after}`)
   }
 }
 
-function encodeObject({key, value, style, explode}) {
+function encodeObject({key, value, style, explode, escape}) {
+  const valueEncoder = escape ? a => encodeToRFC3986(a) : a => a
   const valueKeys = Object.keys(value)
 
   if (style === 'simple') {
     return valueKeys.reduce((prev, curr) => {
-      const val = value[curr]
+      const val = valueEncoder(value[curr])
       const middleChar = explode ? '=' : ','
       const prefix = prev ? `${prev},` : ''
 
@@ -64,7 +69,7 @@ function encodeObject({key, value, style, explode}) {
 
   if (style === 'label') {
     return valueKeys.reduce((prev, curr) => {
-      const val = value[curr]
+      const val = valueEncoder(value[curr])
       const middleChar = explode ? '=' : '.'
       const prefix = prev ? `${prev}.` : '.'
 
@@ -74,7 +79,7 @@ function encodeObject({key, value, style, explode}) {
 
   if (style === 'matrix' && explode) {
     return valueKeys.reduce((prev, curr) => {
-      const val = value[curr]
+      const val = valueEncoder(value[curr])
       const prefix = prev ? `${prev};` : ';'
 
       return `${prefix}${curr}=${val}`
@@ -84,7 +89,7 @@ function encodeObject({key, value, style, explode}) {
   if (style === 'matrix') {
     // no explode
     return valueKeys.reduce((prev, curr) => {
-      const val = value[curr]
+      const val = valueEncoder(value[curr])
       const prefix = prev ? `${prev},` : `;${key}=`
 
       return `${prefix}${curr},${val}`
@@ -93,7 +98,7 @@ function encodeObject({key, value, style, explode}) {
 
   if (style === 'form') {
     return valueKeys.reduce((prev, curr) => {
-      const val = value[curr]
+      const val = valueEncoder(value[curr])
       const prefix = prev ? `${prev}${explode ? '&' : ','}` : ''
       const separator = explode ? '=' : ','
 
@@ -102,24 +107,26 @@ function encodeObject({key, value, style, explode}) {
   }
 }
 
-function encodePrimitive({key, value, style, explode}) {
+function encodePrimitive({key, value, style, explode, escape}) {
+  const valueEncoder = escape ? a => encodeToRFC3986(a) : a => a
+
   if (style === 'simple') {
-    return value
+    return valueEncoder(value)
   }
 
   if (style === 'label') {
-    return `.${value}`
+    return `.${valueEncoder(value)}`
   }
 
   if (style === 'matrix') {
-    return `;${key}=${value}`
+    return `;${key}=${valueEncoder(value)}`
   }
 
   if (style === 'form') {
-    return value
+    return valueEncoder(value)
   }
 
   if (style === 'deepObject') {
-    return value
+    return valueEncoder(value)
   }
 }
