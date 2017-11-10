@@ -14,7 +14,7 @@ function path({req, value, parameter}) {
     value,
     style: style || 'simple',
     explode: explode || false,
-    escape: !parameter.allowReserved,
+    escape: false,
   })
 
   req.url = req.url.replace(`{${name}}`, styledValue)
@@ -110,7 +110,7 @@ function header({req, parameter, value}) {
       value,
       style: parameter.style || 'simple',
       explode: typeof parameter.explode === 'undefined' ? false : parameter.explode,
-      escape: !parameter.allowReserved,
+      escape: false,
     })
   }
 }
