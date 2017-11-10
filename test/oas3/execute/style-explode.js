@@ -974,13 +974,13 @@ describe('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0', func
           spec,
           operationId: 'myOperation',
           parameters: {
-            id: `:/?#[]@!$&'()*+,;=`
+            id: ':/?#[]@!$&\'()*+,;='
           }
         })
 
         expect(req).toEqual({
           method: 'GET',
-          url: `/users?id=:/?#[]@!$&'()*+,;=`,
+          url: '/users?id=:/?#[]@!$&\'()*+,;=',
           credentials: 'same-origin',
           headers: {},
         })
@@ -1012,13 +1012,13 @@ describe('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0', func
           spec,
           operationId: 'myOperation',
           parameters: {
-            id: `:/?#[]@!$&'()*+,;=`
+            id: ':/?#[]@!$&\'()*+,;='
           }
         })
 
         expect(req).toEqual({
           method: 'GET',
-          url: `/users?id=%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D`,
+          url: '/users?id=%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D',
           credentials: 'same-origin',
           headers: {},
         })
@@ -1167,15 +1167,15 @@ describe('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0', func
           operationId: 'myOperation',
           parameters: {
             id: [
-              ":", "/", "?", "#", "[", "]", "@", "!", "$", "&", "'",
-              "(", ")", "*", "+", ",", ";", "="
+              ':', '/', '?', '#', '[', ']', '@', '!', '$', '&', '\'',
+              '(', ')', '*', '+', ',', ';', '='
             ]
           }
         })
 
         expect(req).toEqual({
           method: 'GET',
-          url: `/users?id=:,/,?,#,[,],@,!,$,&,',(,),*,+,,,;,=`,
+          url: '/users?id=:,/,?,#,[,],@,!,$,&,\',(,),*,+,,,;,=',
           credentials: 'same-origin',
           headers: {},
         })
@@ -1208,15 +1208,15 @@ describe('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0', func
           operationId: 'myOperation',
           parameters: {
             id: [
-              ":", "/", "?", "#", "[", "]", "@", "!", "$", "&", "'",
-              "(", ")", "*", "+", ",", ";", "="
+              ':', '/', '?', '#', '[', ']', '@', '!', '$', '&', '\'',
+              '(', ')', '*', '+', ',', ';', '='
             ]
           }
         })
 
         expect(req).toEqual({
           method: 'GET',
-          url: `/users?id=%3A%2C%2F%2C%3F%2C%23%2C%5B%2C%5D%2C%40%2C%21%2C%24%2C%26%2C%27%2C%28%2C%29%2C%2A%2C%2B%2C%2C%2C%3B%2C%3D`,
+          url: '/users?id=%3A%2C%2F%2C%3F%2C%23%2C%5B%2C%5D%2C%40%2C%21%2C%24%2C%26%2C%27%2C%28%2C%29%2C%2A%2C%2B%2C%2C%2C%3B%2C%3D',
           credentials: 'same-origin',
           headers: {},
         })

@@ -1,4 +1,4 @@
-import encodeToRFC3986 from "encode-3986"
+import encodeToRFC3986 from 'encode-3986'
 
 export default function (config) {
   const {value} = config
