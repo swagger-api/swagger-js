@@ -946,6 +946,83 @@ describe('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0', func
           headers: {},
         })
       })
+
+      it('should build a query parameter in form/no-explode format with allowReserved', function () {
+        // Given
+        const spec = {
+          openapi: '3.0.0',
+          paths: {
+            '/users': {
+              get: {
+                operationId: 'myOperation',
+                parameters: [
+                  {
+                    name: 'id',
+                    in: 'query',
+                    style: 'form',
+                    explode: false,
+                    allowReserved: true
+                  }
+                ]
+              }
+            }
+          }
+        }
+
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'myOperation',
+          parameters: {
+            id: `:/?#[]@!$&'()*+,;=`
+          }
+        })
+
+        expect(req).toEqual({
+          method: 'GET',
+          url: `/users?id=:/?#[]@!$&'()*+,;=`,
+          credentials: 'same-origin',
+          headers: {},
+        })
+      })
+
+      it('should build a query parameter in form/no-explode format with percent-encoding if allowReserved is not set', function () {
+        // Given
+        const spec = {
+          openapi: '3.0.0',
+          paths: {
+            '/users': {
+              get: {
+                operationId: 'myOperation',
+                parameters: [
+                  {
+                    name: 'id',
+                    in: 'query',
+                    style: 'form',
+                    explode: false
+                  }
+                ]
+              }
+            }
+          }
+        }
+
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'myOperation',
+          parameters: {
+            id: `:/?#[]@!$&'()*+,;=`
+          }
+        })
+
+        expect(req).toEqual({
+          method: 'GET',
+          url: `/users?id=%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D`,
+          credentials: 'same-origin',
+          headers: {},
+        })
+      })
     })
     describe('array values', function () {
       const VALUE = [3, 4, 5]
@@ -1089,13 +1166,57 @@ describe('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0', func
           spec,
           operationId: 'myOperation',
           parameters: {
-            id: VALUE
+            id: [
+              ":", "/", "?", "#", "[", "]", "@", "!", "$", "&", "'",
+              "(", ")", "*", "+", ",", ";", "="
+            ]
           }
         })
 
         expect(req).toEqual({
           method: 'GET',
-          url: '/users?id=3,4,5',
+          url: `/users?id=:,/,?,#,[,],@,!,$,&,',(,),*,+,,,;,=`,
+          credentials: 'same-origin',
+          headers: {},
+        })
+      })
+
+      it('should build a query parameter in form/no-explode format without allowReserved', function () {
+        // Given
+        const spec = {
+          openapi: '3.0.0',
+          paths: {
+            '/users': {
+              get: {
+                operationId: 'myOperation',
+                parameters: [
+                  {
+                    name: 'id',
+                    in: 'query',
+                    style: 'form',
+                    explode: false
+                  }
+                ]
+              }
+            }
+          }
+        }
+
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'myOperation',
+          parameters: {
+            id: [
+              ":", "/", "?", "#", "[", "]", "@", "!", "$", "&", "'",
+              "(", ")", "*", "+", ",", ";", "="
+            ]
+          }
+        })
+
+        expect(req).toEqual({
+          method: 'GET',
+          url: `/users?id=%3A%2C%2F%2C%3F%2C%23%2C%5B%2C%5D%2C%40%2C%21%2C%24%2C%26%2C%27%2C%28%2C%29%2C%2A%2C%2B%2C%2C%2C%3B%2C%3D`,
           credentials: 'same-origin',
           headers: {},
         })
@@ -1483,6 +1604,89 @@ describe('buildRequest w/ `style` & `explode` - OpenAPI Specification 3.0', func
         expect(req).toEqual({
           method: 'GET',
           url: '/users?id=role,admin,firstName,Alex',
+          credentials: 'same-origin',
+          headers: {},
+        })
+      })
+
+      it('should build a query parameter in form/no-explode format with allowReserved', function () {
+        // Given
+        const spec = {
+          openapi: '3.0.0',
+          paths: {
+            '/users': {
+              get: {
+                operationId: 'myOperation',
+                parameters: [
+                  {
+                    name: 'id',
+                    in: 'query',
+                    style: 'form',
+                    explode: false,
+                    allowReserved: true
+                  }
+                ]
+              }
+            }
+          }
+        }
+
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'myOperation',
+          parameters: {
+            id: {
+              role: 'admin',
+              firstName: ':/?#[]@!$&\'()*+,;='
+            }
+          }
+        })
+
+        expect(req).toEqual({
+          method: 'GET',
+          url: '/users?id=role,admin,firstName,:/?#[]@!$&\'()*+,;=',
+          credentials: 'same-origin',
+          headers: {},
+        })
+      })
+
+      it('should build a query parameter in form/no-explode format without allowReserved', function () {
+        // Given
+        const spec = {
+          openapi: '3.0.0',
+          paths: {
+            '/users': {
+              get: {
+                operationId: 'myOperation',
+                parameters: [
+                  {
+                    name: 'id',
+                    in: 'query',
+                    style: 'form',
+                    explode: false
+                  }
+                ]
+              }
+            }
+          }
+        }
+
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'myOperation',
+          parameters: {
+            id: {
+              role: 'admin',
+              firstName: ':/?#[]@!$&\'()*+,;='
+            }
+          }
+        })
+
+        expect(req).toEqual({
+          method: 'GET',
+          url: '/users?id=role,admin,firstName,%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D',
           credentials: 'same-origin',
           headers: {},
         })
