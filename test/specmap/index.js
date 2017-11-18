@@ -1,4 +1,4 @@
-import expect from 'expect'
+import expect, {createSpy} from 'expect'
 import clone from 'clone'
 import xmock from 'xmock'
 import traverse from 'traverse'
@@ -416,6 +416,23 @@ describe('specmap', function () {
                   another: {one: 1}
                 }
               })
+            })
+        })
+
+        it('should warn about malformed JSON Pointers', function () {
+          // for https://github.com/swagger-api/swagger-editor/issues/1560
+          const oriWarn = console.warn
+          console.warn = createSpy().andCallThrough()
+          return mapSpec({
+            spec: {
+              nested: {one: 1},
+              another: {$ref: '#nested'}
+            },
+            plugins: [plugins.refs]
+          })
+            .then((res) => {
+              console.warn = oriWarn
+              expect(console.warn).toHaveBeenCalledWith('WARNING: $ref \'http://example.com/doc-a#two\' is malformed, a leading \'/\' is expected after \'#\'')
             })
         })
 
