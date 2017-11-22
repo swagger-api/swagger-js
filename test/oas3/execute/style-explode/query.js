@@ -48,6 +48,85 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters', fun
       })
     })
 
+    it('should build a query parameter with escaped non-RFC3986 characters', function () {
+      // Given
+      const spec = {
+        openapi: '3.0.0',
+        paths: {
+          '/users': {
+            get: {
+              operationId: 'myOperation',
+              parameters: [
+                {
+                  name: 'id',
+                  in: 'query'
+                }
+              ]
+            }
+          }
+        }
+      }
+
+      // when
+      const req = buildRequest({
+        spec,
+        operationId: 'myOperation',
+        parameters: {
+          // these characters taken from RFC1738 Section 2.2
+          // https://tools.ietf.org/html/rfc1738#section-2.2, "Unsafe"
+          id: '<>"#%{}|\\^~[]`'
+        }
+      })
+
+      expect(req).toEqual({
+        method: 'GET',
+        // FIXME: ~ should be encoded as well
+        url: '/users?id=%3C%3E%22%23%25%7B%7D%7C%5C%5E~%5B%5D%60',
+        credentials: 'same-origin',
+        headers: {},
+      })
+    })
+
+    it('should build a query parameter with escaped non-RFC3986 characters with allowReserved', function () {
+      // Given
+      const spec = {
+        openapi: '3.0.0',
+        paths: {
+          '/users': {
+            get: {
+              operationId: 'myOperation',
+              parameters: [
+                {
+                  name: 'id',
+                  in: 'query',
+                  allowReserved: true
+                }
+              ]
+            }
+          }
+        }
+      }
+
+      // when
+      const req = buildRequest({
+        spec,
+        operationId: 'myOperation',
+        parameters: {
+          // these characters taken from RFC1738 Section 2.2
+          // https://tools.ietf.org/html/rfc1738#section-2.2, "Unsafe"
+          id: '<>"#%{}|\\^~[]`'
+        }
+      })
+
+      expect(req).toEqual({
+        method: 'GET',
+        // FIXME: ~ should be encoded as well
+        url: '/users?id=%3C%3E%22%23%25%7B%7D%7C%5C%5E~%5B%5D%60',
+        credentials: 'same-origin',
+        headers: {},
+      })
+    })
+
     it('should build a query parameter in form/explode format', function () {
       // Given
       const spec = {
@@ -239,6 +318,86 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters', fun
         headers: {},
       })
     })
+
+    it('should build a query parameter with escaped non-RFC3986 characters', function () {
+      // Given
+      const spec = {
+        openapi: '3.0.0',
+        paths: {
+          '/users': {
+            get: {
+              operationId: 'myOperation',
+              parameters: [
+                {
+                  name: 'id',
+                  in: 'query'
+                }
+              ]
+            }
+          }
+        }
+      }
+
+      // when
+      const req = buildRequest({
+        spec,
+        operationId: 'myOperation',
+        parameters: {
+          // these characters taken from RFC1738 Section 2.2
+          // https://tools.ietf.org/html/rfc1738#section-2.2, "Unsafe"
+          id: VALUE.concat(['<>"#%{}|\\^~[]`'])
+        }
+      })
+
+      expect(req).toEqual({
+        method: 'GET',
+        // FIXME: ~ should be encoded as well
+        url: '/users?id=3&id=4&id=5&id=%3C%3E%22%23%25%7B%7D%7C%5C%5E~%5B%5D%60',
+        credentials: 'same-origin',
+        headers: {},
+      })
+    })
+
+    it('should build a query parameter with escaped non-RFC3986 characters with allowReserved', function () {
+      // Given
+      const spec = {
+        openapi: '3.0.0',
+        paths: {
+          '/users': {
+            get: {
+              operationId: 'myOperation',
+              parameters: [
+                {
+                  name: 'id',
+                  in: 'query',
+                  allowReserved: true
+                }
+              ]
+            }
+          }
+        }
+      }
+
+      // when
+      const req = buildRequest({
+        spec,
+        operationId: 'myOperation',
+        parameters: {
+          // these characters taken from RFC1738 Section 2.2
+          // https://tools.ietf.org/html/rfc1738#section-2.2, "Unsafe"
+          id: VALUE.concat(['<>"#%{}|\\^~[]`'])
+        }
+      })
+
+      expect(req).toEqual({
+        method: 'GET',
+        // FIXME: ~ should be encoded as well
+        url: '/users?id=3&id=4&id=5&id=%3C%3E%22%23%25%7B%7D%7C%5C%5E~%5B%5D%60',
+        credentials: 'same-origin',
+        headers: {},
+      })
+    })
+
 
     it('should build a query parameter in form/explode format', function () {
       // Given
@@ -705,6 +864,92 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters', fun
       expect(req).toEqual({
         method: 'GET',
         url: '/users?role=admin&firstName=Alex',
+        credentials: 'same-origin',
+        headers: {},
+      })
+    })
+
+    it('should build a query parameter with escaped non-RFC3986 characters', function () {
+      // Given
+      const spec = {
+        openapi: '3.0.0',
+        paths: {
+          '/users': {
+            get: {
+              operationId: 'myOperation',
+              parameters: [
+                {
+                  name: 'id',
+                  in: 'query'
+                }
+              ]
+            }
+          }
+        }
+      }
+
+      // when
+      const req = buildRequest({
+        spec,
+        operationId: 'myOperation',
+        parameters: {
+          // these characters taken from RFC1738 Section 2.2
+          // https://tools.ietf.org/html/rfc1738#section-2.2, "Unsafe"
+          id: {
+            role: 'admin',
+            firstName: '<>"#%{}|\\^~[]`'
+          }
+        }
+      })
+
+      expect(req).toEqual({
+        method: 'GET',
+        // FIXME: ~ should be encoded as well
+        url: '/users?role=admin&firstName=%3C%3E%22%23%25%7B%7D%7C%5C%5E~%5B%5D%60',
+        credentials: 'same-origin',
+        headers: {},
+      })
+    })
+
+    it('should build a query parameter with escaped non-RFC3986 characters with allowReserved', function () {
+      // Given
+
+      const spec = {
+        openapi: '3.0.0',
+        paths: {
+          '/users': {
+            get: {
+              operationId: 'myOperation',
+              parameters: [
+                {
+                  name: 'id',
+                  in: 'query',
+                  allowReserved: true
+                }
+              ]
+            }
+          }
+        }
+      }
+
+      // when
+      const req = buildRequest({
+        spec,
+        operationId: 'myOperation',
+        parameters: {
+          // these characters taken from RFC1738 Section 2.2
+          // https://tools.ietf.org/html/rfc1738#section-2.2, "Unsafe"
+          id: {
+            role: 'admin',
+            firstName: '<>"#%{}|\\^~[]`'
+          }
+        }
+      })
+
+      expect(req).toEqual({
+        method: 'GET',
+        // FIXME: ~ should be encoded as well
+        url: '/users?role=admin&firstName=%3C%3E%22%23%25%7B%7D%7C%5C%5E~%5B%5D%60',
         credentials: 'same-origin',
         headers: {},
       })
