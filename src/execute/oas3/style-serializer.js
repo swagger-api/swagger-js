@@ -1,5 +1,37 @@
 import encodeToRFC3986 from 'encode-3986'
 
+const isRfc3986Reserved = char => ':/?#[]@!$&\'()*+,;='.indexOf(char) > -1
+const isRrc3986Unreserved = (char) => {
+  return (/^[a-z0-9\-._~]+$/i).test(char)
+}
+
+// use global escape
+// call it escapeFn so it doesn't interfere with the escape flag in
+// the encode fns, and so it isn't coupled to a builtin.
+const escapeFn = str => escape(str)
+
+function encodeDisallowedCharacters(str, {allowReserved}) {
+  console.log(str, { allowReserved })
+  if (typeof str === 'number') {
+    str = str.toString()
+  }
+  if (typeof str !== 'string' || !str.length) {
+    return str
+  }
+
+  return str.split('').map((char) => {
+    if (isRrc3986Unreserved(char)) {
+      return char
+    }
+
+    if (isRfc3986Reserved(char) && allowReserved) {
+      return char
+    }
+
+    return escapeFn(char)
+  }).join('')
+}
+
 export default function (config) {
   const {value} = config
 
@@ -13,10 +45,10 @@ export default function (config) {
   return encodePrimitive(config)
 }
 
-const escapeFn = str => encodeURIComponent(str)
-
 function encodeArray({key, value, style, explode, escape}) {
-  const valueEncoder = escape ? a => encodeToRFC3986(a) : a => a
+  const valueEncoder = str => encodeDisallowedCharacters(str, {
+    allowReserved: escape
+  })
 
   if (style === 'simple') {
     return value.map(val => valueEncoder(val)).join(',')
@@ -54,7 +86,10 @@ function encodeArray({key, value, style, explode, escape}) {
 }
 
 function encodeObject({key, value, style, explode, escape}) {
-  const valueEncoder = escape ? a => encodeToRFC3986(a) : a => a
+  const valueEncoder = str => encodeDisallowedCharacters(str, {
+    allowReserved: escape
+  })
+
   const valueKeys = Object.keys(value)
 
   if (style === 'simple') {
@@ -108,7 +143,9 @@ function encodeObject({key, value, style, explode, escape}) {
 }
 
 function encodePrimitive({key, value, style, explode, escape}) {
-  const valueEncoder = escape ? a => encodeToRFC3986(a) : a => a
+  const valueEncoder = str => encodeDisallowedCharacters(str, {
+    allowReserved: escape
+  })
 
   if (style === 'simple') {
     return valueEncoder(value)
