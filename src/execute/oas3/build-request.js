@@ -51,7 +51,7 @@ export default function (options, req) {
             Object.keys(requestBody).forEach((k) => {
               const val = requestBody[k]
               req.form[k] = {
-                value: val
+                value: typeof val === 'object' ? JSON.stringify(val) : val
               }
             })
           }
