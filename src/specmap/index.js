@@ -117,8 +117,8 @@ class SpecMap {
                   if (specmap.allowMetaPatches && objRef) {
                     traversedRefs[objRef] = true
                   }
-                yield* traverse(val, updatedPath, patch)
-              }
+                  yield* traverse(val, updatedPath, patch)
+                }
               }
 
               if (!isRootProperties && key === pluginObj.key) {
