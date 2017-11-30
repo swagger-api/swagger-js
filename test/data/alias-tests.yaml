@@ -1,0 +1,30 @@
+swagger: '2.0'
+
+paths:
+  /postTest:
+    post:
+      tags:
+        - Testing
+      operationId: tryMe
+      parameters:
+        - in: body
+          name: theBody
+          required: false
+          schema:
+            properties:
+              name:
+                type: string
+      responses:
+        200:
+          description: well done
+  /getTest:
+    get:
+      tags:
+        - Testing
+      operationId: getMe
+      parameters: []
+      responses:
+        200:
+          schema:
+            type: object
+          description: it works

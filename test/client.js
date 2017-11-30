@@ -37,6 +37,22 @@ describe('http', () => {
           res.setHeader('Content-Type', 'application/yaml')
         }
       }
+      if(filename === 'test/data/postTest' && req.method === 'POST') {
+        var body = [];
+        req.on('data', function (data) {
+          body.push(data);
+        });
+
+        req.on('end', function () {
+          res.setHeader('Content-Type', 'application/json')
+          res.writeHead(200)
+          body = Buffer.concat(body).toString()
+          res.write(body)
+          res.end()
+          return
+        });
+        return
+      }
 
       if (req.headers['x-setcontenttype']) {
         // Allow the test to explicitly set (or unset) a content type
@@ -50,10 +66,9 @@ describe('http', () => {
 
       fs.exists(filename, function (exists) {
         if (exists) {
-          const fileStream = fs.createReadStream(filename)
-          res.setHeader('Access-Control-Allow-Origin', '*')
-          res.writeHead(200, contentType)
-          fileStream.pipe(res)
+          res.setHeader('Content-Type', contentType)
+          res.writeHead(200)
+          fs.createReadStream(filename).pipe(res)
         }
         else {
           res.writeHead(404, {'Content-Type': 'text/plain'})
@@ -206,6 +221,44 @@ describe('http', () => {
         client.apis.default.tryMe().catch((err) => {
           expect(err.status).toBe(404)
           done()
+        })
+      })
+      .catch((err) => {
+        done(err)
+      })
+  })
+
+  it('gets data from an endpoint using the alias', (done) => {
+    Swagger('http://localhost:8000/alias-tests.yaml')
+      .then((client) => {
+        client.apis.Testing.getMe().then((response) => {
+          expect(response.obj).toBeAn('object');
+          expect(response.obj.foo).toBe('bar')
+          done()
+        }).catch((err) => {
+          done(err)
+        })
+      })
+      .catch((err) => {
+        done(err)
+      })
+  })
+
+  /**
+   Post a value to an endpoint which should be returned directly
+   by this mock server
+   */
+  it('posts data to an endpoint using the alias', (done) => {
+    Swagger('http://localhost:8000/alias-tests.yaml')
+      .then((client) => {
+        client.apis.Testing.tryMe({
+          name: 'tony'
+        }).then((response) => {
+          expect(response.obj).toBeAn('object');
+          expect(response.obj.name).toBe('tony')
+          done()
+        }).catch((err) => {
+          done(err)
         })
       })
       .catch((err) => {
