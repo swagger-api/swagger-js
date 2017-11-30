@@ -169,10 +169,10 @@ export function buildRequest(options) {
     req.headers.accept = responseContentType
   }
 
-  const combinedParameters = deduplicateParameters([
-    ...arrayOrEmpty(operation.parameters), // operation parameters
-    ...arrayOrEmpty(path.parameters), // path parameters
-  ])
+  const combinedParameters = deduplicateParameters([]
+    .concat(arrayOrEmpty(operation.parameters)) // operation parameters
+    .concat(arrayOrEmpty(path.parameters)) // path parameters
+  )
 
   // REVIEW: OAS3: have any key names or parameter shapes changed?
   // Any new features that need to be plugged in here?
