@@ -240,8 +240,11 @@ export function baseUrl(obj) {
   return specIsOAS3 ? oas3BaseUrl(obj) : swagger2BaseUrl(obj)
 }
 
-function oas3BaseUrl({spec, server, contextUrl, serverVariables = {}}) {
-  const servers = spec.servers
+function oas3BaseUrl({spec, pathName, method, server, contextUrl, serverVariables = {}}) {
+  const servers =
+    getIn(spec, ['paths', pathName, method, 'servers']) ||
+    getIn(spec, ['paths', pathName, 'servers']) ||
+    getIn(spec, ['servers'])
 
   let selectedServerUrl = ''
   let selectedServerObj = null

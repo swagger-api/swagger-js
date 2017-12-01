@@ -536,9 +536,9 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
           '/': {
             servers: [
               {
-                url: 'https://petstore-path.net/{asdf}',
+                url: 'https://petstore-path.net/{path}',
                 variables: {
-                  asdf: {
+                  path: {
                     default: 'foobar'
                   }
                 }
@@ -551,14 +551,14 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
 
       const res = baseUrl({
         spec,
-        server: 'https://petstore-path.net/{asdf}',
+        server: 'https://petstore-path.net/{path}',
         pathName: '/',
         method: 'get'
       })
 
       const resWithVariables = baseUrl({
         spec,
-        server: 'https://petstore-path.net/{asdf}',
+        server: 'https://petstore-path.net/{path}',
         serverVariables: {
           path: 'fizzbuzz'
         },
