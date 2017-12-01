@@ -1,6 +1,7 @@
 import expect, {createSpy, spyOn} from 'expect'
 import xmock from 'xmock'
 import {execute, buildRequest, baseUrl, self as stubs} from '../../src/execute'
+import {normalizeSwagger} from '../../src/helpers'
 
 // Supported shape...  { spec, operationId, parameters, securities, fetch }
 // One can use operationId or pathItem + method
@@ -1624,6 +1625,48 @@ describe('execute', () => {
           credentials: 'same-origin',
           method: 'GET'
         })
+      })
+
+      it('should handle duplicate parameter inheritance from normalized swagger specifications', function () {
+        const spec = {
+          spec: {
+            host: 'swagger.io',
+            basePath: '/v1',
+            paths: {
+              '/pet/{id}': {
+                parameters: [
+                  {
+                    name: 'id',
+                    in: 'path',
+                    type: 'number',
+                    required: true
+                  }
+                ],
+                get: {
+                  operationId: 'getPetsById',
+                  parameters: [
+                    {
+                      name: 'test',
+                      in: 'query',
+                      type: 'number'
+                    }
+                  ],
+                }
+              }
+            }
+          }
+        }
+
+        const resultSpec = normalizeSwagger(spec)
+        const warnSpy = expect.spyOn(console, 'warn')
+        const req = buildRequest({spec: resultSpec.spec, operationId: 'getPetsById', parameters: {id: 123, test: 567}})      
+        expect(req).toEqual({
+          url: 'http://swagger.io/v1/pet/123?test=567',
+          headers: {},
+          credentials: 'same-origin',
+          method: 'GET'
+        })
+        expect(warnSpy.calls.length).toEqual(0)
       })
 
       it('should encode path parameter', function () {
