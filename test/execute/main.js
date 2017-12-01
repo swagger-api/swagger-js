@@ -1669,7 +1669,7 @@ describe('execute', () => {
         expect(warnSpy.calls.length).toEqual(0)
       })
 
-      it('should handle warn for ambiguous parameters in normalized swagger specifications', function () {
+      it('should warn for ambiguous parameters in normalized swagger specifications', function () {
         const spec = {
           spec: {
             host: 'swagger.io',
