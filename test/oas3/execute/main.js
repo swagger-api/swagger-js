@@ -471,6 +471,104 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
 
       expect(res).toEqual('https://petstore.net')
     })
+    it('should use an explicitly chosen server at the operation level', function () {
+      const spec = {
+        openapi: '3.0.0',
+        servers: [
+          {
+            url: 'https://petstore.com'
+          },
+          {
+            url: 'https://petstore.net'
+          }
+        ],
+        paths: {
+          '/': {
+            get: {
+              servers: [
+                {
+                  url: 'https://petstore-operation.net/{path}',
+                  variables: {
+                    path: {
+                      default: 'foobar'
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+
+      const res = baseUrl({
+        spec,
+        server: 'https://petstore-operation.net/{path}',
+        pathName: '/',
+        method: 'get'
+      })
+
+      const resWithVariables = baseUrl({
+        spec,
+        server: 'https://petstore-operation.net/{path}',
+        serverVariables: {
+          path: 'fizzbuzz'
+        },
+        pathName: '/',
+        method: 'get'
+      })
+
+      expect(res).toEqual('https://petstore-operation.net/foobar')
+      expect(resWithVariables).toEqual('https://petstore-operation.net/fizzbuzz')
+    })
+
+    it('should use an explicitly chosen server at the path level', function () {
+      const spec = {
+        openapi: '3.0.0',
+        servers: [
+          {
+            url: 'https://petstore.com'
+          },
+          {
+            url: 'https://petstore.net'
+          }
+        ],
+        paths: {
+          '/': {
+            servers: [
+              {
+                url: 'https://petstore-path.net/{asdf}',
+                variables: {
+                  asdf: {
+                    default: 'foobar'
+                  }
+                }
+              }
+            ],
+            get: {}
+          }
+        }
+      }
+
+      const res = baseUrl({
+        spec,
+        server: 'https://petstore-path.net/{asdf}',
+        pathName: '/',
+        method: 'get'
+      })
+
+      const resWithVariables = baseUrl({
+        spec,
+        server: 'https://petstore-path.net/{asdf}',
+        serverVariables: {
+          path: 'fizzbuzz'
+        },
+        pathName: '/',
+        method: 'get'
+      })
+
+      expect(res).toEqual('https://petstore-path.net/foobar')
+      expect(resWithVariables).toEqual('https://petstore-path.net/fizzbuzz')
+    })
     it('should not use an explicitly chosen server that is not present in the spec', function () {
       const spec = {
         openapi: '3.0.0',
