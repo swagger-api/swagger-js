@@ -504,7 +504,7 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
         spec,
         server: 'https://petstore-operation.net/{path}',
         pathName: '/',
-        method: 'get'
+        method: 'GET'
       })
 
       const resWithVariables = baseUrl({
@@ -514,7 +514,7 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
           path: 'fizzbuzz'
         },
         pathName: '/',
-        method: 'get'
+        method: 'GET'
       })
 
       expect(res).toEqual('https://petstore-operation.net/foobar')
@@ -553,7 +553,7 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
         spec,
         server: 'https://petstore-path.net/{path}',
         pathName: '/',
-        method: 'get'
+        method: 'GET'
       })
 
       const resWithVariables = baseUrl({
@@ -563,7 +563,7 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
           path: 'fizzbuzz'
         },
         pathName: '/',
-        method: 'get'
+        method: 'GET'
       })
 
       expect(res).toEqual('https://petstore-path.net/foobar')

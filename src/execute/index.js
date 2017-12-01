@@ -104,7 +104,7 @@ export function buildRequest(options) {
 
   // Base Template
   let req = {
-    url: baseUrl({spec, scheme, contextUrl, server, serverVariables}),
+    url: '',
     credentials: 'same-origin',
     headers: {
       // This breaks CORSs... removing this line... probably breaks oAuth. Need to address that
@@ -124,6 +124,15 @@ export function buildRequest(options) {
     req.userFetch = userFetch
   }
 
+  const operationRaw = getOperationRaw(spec, operationId)
+  if (!operationRaw) {
+    throw new OperationNotFoundError(`Operation ${operationId} not found`)
+  }
+
+  const {operation = {}, method, pathName} = operationRaw
+
+  req.url += baseUrl({spec, scheme, contextUrl, server, serverVariables, pathName, method})
+
   // Mostly for testing
   if (!operationId) {
     // Not removing req.cookies causes testing issues and would
@@ -133,13 +142,6 @@ export function buildRequest(options) {
     delete req.cookies
     return req
   }
-
-  const operationRaw = getOperationRaw(spec, operationId)
-  if (!operationRaw) {
-    throw new OperationNotFoundError(`Operation ${operationId} not found`)
-  }
-
-  const {operation = {}, method, pathName} = operationRaw
 
   req.url += pathName // Have not yet replaced the path parameters
   req.method = (`${method}`).toUpperCase()
@@ -241,8 +243,9 @@ export function baseUrl(obj) {
 }
 
 function oas3BaseUrl({spec, pathName, method, server, contextUrl, serverVariables = {}}) {
+  debugger
   const servers =
-    getIn(spec, ['paths', pathName, method, 'servers']) ||
+    getIn(spec, ['paths', pathName, (method || '').toLowerCase(), 'servers']) ||
     getIn(spec, ['paths', pathName, 'servers']) ||
     getIn(spec, ['servers'])
 
