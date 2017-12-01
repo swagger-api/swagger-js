@@ -1659,7 +1659,7 @@ describe('execute', () => {
 
         const resultSpec = normalizeSwagger(spec)
         const warnSpy = expect.spyOn(console, 'warn')
-        const req = buildRequest({spec: resultSpec.spec, operationId: 'getPetsById', parameters: {id: 123, test: 567}})      
+        const req = buildRequest({spec: resultSpec.spec, operationId: 'getPetsById', parameters: {id: 123, test: 567}})
         expect(req).toEqual({
           url: 'http://swagger.io/v1/pet/123?test=567',
           headers: {},
@@ -1667,6 +1667,53 @@ describe('execute', () => {
           method: 'GET'
         })
         expect(warnSpy.calls.length).toEqual(0)
+      })
+
+      it('should handle warn for ambiguous parameters in normalized swagger specifications', function () {
+        const spec = {
+          spec: {
+            host: 'swagger.io',
+            basePath: '/v1',
+            paths: {
+              '/pet/{id}': {
+                parameters: [
+                  {
+                    name: 'id',
+                    in: 'path',
+                    type: 'number',
+                    required: true
+                  }
+                ],
+                get: {
+                  operationId: 'getPetsById',
+                  parameters: [
+                    {
+                      name: 'test',
+                      in: 'query',
+                      type: 'number'
+                    },
+                    {
+                      name: 'id',
+                      in: 'query',
+                      type: 'number',
+                    }
+                  ],
+                }
+              }
+            }
+          }
+        }
+
+        const resultSpec = normalizeSwagger(spec)
+        const warnSpy = expect.spyOn(console, 'warn')
+        const req = buildRequest({spec: resultSpec.spec, operationId: 'getPetsById', parameters: {id: 123, test: 567}})
+        expect(req).toEqual({
+          url: 'http://swagger.io/v1/pet/123?test=567&id=123',
+          headers: {},
+          credentials: 'same-origin',
+          method: 'GET'
+        })
+        expect(warnSpy.calls.length).toEqual(2)
       })
 
       it('should encode path parameter', function () {
