@@ -243,7 +243,6 @@ export function baseUrl(obj) {
 }
 
 function oas3BaseUrl({spec, pathName, method, server, contextUrl, serverVariables = {}}) {
-  debugger
   const servers =
     getIn(spec, ['paths', pathName, (method || '').toLowerCase(), 'servers']) ||
     getIn(spec, ['paths', pathName, 'servers']) ||
