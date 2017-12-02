@@ -827,7 +827,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters', fun
       })
     })
   })
-  describe.only('object values', function () {
+  describe('object values', function () {
     const VALUE = {
       role: 'admin',
       firstName: 'Alex',

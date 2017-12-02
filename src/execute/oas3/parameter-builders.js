@@ -67,7 +67,8 @@ function query({req, value, parameter}) {
             value: v,
             style: parameter.style || 'form',
             escape: !parameter.allowReserved,
-          })
+          }),
+          skipEncoding: true
         }
       })
     }
