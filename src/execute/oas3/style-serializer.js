@@ -11,7 +11,6 @@ const isRrc3986Unreserved = (char) => {
 const escapeFn = str => escape(str)
 
 function encodeDisallowedCharacters(str, {allowReserved}) {
-  console.log(str, { allowReserved })
   if (typeof str === 'number') {
     str = str.toString()
   }
