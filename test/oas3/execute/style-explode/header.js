@@ -91,6 +91,46 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - header parameters', fu
       })
     })
 
+    it('should build a header parameter in simple/no-explode format with special characters', function () {
+      // Given
+      const spec = {
+        openapi: '3.0.0',
+        paths: {
+          '/users': {
+            get: {
+              operationId: 'myOperation',
+              parameters: [
+                {
+                  name: 'X-MyHeader',
+                  in: 'header',
+                  style: 'simple',
+                  explode: false
+                }
+              ]
+            }
+          }
+        }
+      }
+
+      // when
+      const req = buildRequest({
+        spec,
+        operationId: 'myOperation',
+        parameters: {
+          'X-MyHeader': ' <>"%{}|\\^'
+        }
+      })
+
+      expect(req).toEqual({
+        method: 'GET',
+        url: '/users',
+        credentials: 'same-origin',
+        headers: {
+          'X-MyHeader': ' <>"%{}|\\^'
+        },
+      })
+    })
+
     it('should build a header parameter in simple/explode format', function () {
       // Given
       const spec = {

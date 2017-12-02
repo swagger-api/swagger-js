@@ -5,11 +5,15 @@ const isRrc3986Unreserved = (char) => {
   return (/^[a-z0-9\-._~]+$/i).test(char)
 }
 
-function encodeDisallowedCharacters(str, {allowReserved}) {
+function encodeDisallowedCharacters(str, {escape}) {
   if (typeof str === 'number') {
     str = str.toString()
   }
   if (typeof str !== 'string' || !str.length) {
+    return str
+  }
+
+  if (!escape) {
     return str
   }
 
@@ -18,7 +22,7 @@ function encodeDisallowedCharacters(str, {allowReserved}) {
       return char
     }
 
-    if (isRfc3986Reserved(char) && allowReserved) {
+    if (isRfc3986Reserved(char) && escape === 'unsafe') {
       return char
     }
 
@@ -41,7 +45,7 @@ export default function (config) {
 
 function encodeArray({key, value, style, explode, escape}) {
   const valueEncoder = str => encodeDisallowedCharacters(str, {
-    allowReserved: !escape
+    escape
   })
 
   if (style === 'simple') {
@@ -79,7 +83,7 @@ function encodeArray({key, value, style, explode, escape}) {
 
 function encodeObject({key, value, style, explode, escape}) {
   const valueEncoder = str => encodeDisallowedCharacters(str, {
-    allowReserved: !escape
+    escape
   })
 
   const valueKeys = Object.keys(value)
@@ -136,7 +140,7 @@ function encodeObject({key, value, style, explode, escape}) {
 
 function encodePrimitive({key, value, style, escape}) {
   const valueEncoder = str => encodeDisallowedCharacters(str, {
-    allowReserved: !escape
+    escape
   })
 
   if (style === 'simple') {
