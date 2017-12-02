@@ -10,8 +10,8 @@ const petstoreSpec = jsYaml.safeLoad(fs.readFileSync(path.join('test', 'oas3', '
 
 // Expecting the space to become `%20`, not `+`, because it's just better that way
 // See: https://stackoverflow.com/a/40292688
-const ALWAYS_ENCODE = ' <>”%{}|\\^'
-const ALWAYS_ENCODE_RESULT = '%20%3C%3E%E2%80%9D%25%7B%7D%7C%5C%5C%5E'
+const ALWAYS_ENCODE = ' <>"%{}|\\^'
+const ALWAYS_ENCODE_RESULT = '%20%3C%3E%22%25%7B%7D%7C%5C%5E'
 
 const ENCODE_IF_NOT_ALLOWRESERVED = ':/?#[]@!$&\'()*+,;='
 // !allowReserved
