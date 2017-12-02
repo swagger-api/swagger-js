@@ -1,13 +1,9 @@
 import encodeToRFC3986 from 'encode-3986'
+
 const isRfc3986Reserved = char => ':/?#[]@!$&\'()*+,;='.indexOf(char) > -1
 const isRrc3986Unreserved = (char) => {
   return (/^[a-z0-9\-._~]+$/i).test(char)
 }
-
-// use global escape
-// call it escapeFn so it doesn't interfere with the escape flag in
-// the encode fns, and so it isn't coupled to a builtin.
-const escapeFn = str => escape(str)
 
 function encodeDisallowedCharacters(str, {allowReserved}) {
   if (typeof str === 'number') {
@@ -40,7 +36,6 @@ export default function (config) {
   else if (typeof value === 'object') {
     return encodeObject(config)
   }
-
   return encodePrimitive(config)
 }
 
@@ -84,7 +79,7 @@ function encodeArray({key, value, style, explode, escape}) {
 
 function encodeObject({key, value, style, explode, escape}) {
   const valueEncoder = str => encodeDisallowedCharacters(str, {
-    allowReserved: escape
+    allowReserved: !escape
   })
 
   const valueKeys = Object.keys(value)
@@ -139,7 +134,7 @@ function encodeObject({key, value, style, explode, escape}) {
   }
 }
 
-function encodePrimitive({key, value, style, explode, escape}) {
+function encodePrimitive({key, value, style, escape}) {
   const valueEncoder = str => encodeDisallowedCharacters(str, {
     allowReserved: !escape
   })

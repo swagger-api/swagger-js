@@ -291,7 +291,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters', fun
       })
     })
   })
-  describe.only('array values', function () {
+  describe('array values', function () {
     const VALUE = [3, 4, 5, NEVER_ENCODE]
 
     it('default: should build a query parameter in form/explode format', function () {
@@ -827,7 +827,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters', fun
       })
     })
   })
-  describe('object values', function () {
+  describe.only('object values', function () {
     const VALUE = {
       role: 'admin',
       firstName: 'Alex',
