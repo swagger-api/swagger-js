@@ -46,7 +46,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - header parameters', fu
         url: '/users',
         credentials: 'same-origin',
         headers: {
-          'X-MyHeader': 5
+          'X-MyHeader': '5'
         },
       })
     })
@@ -86,7 +86,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - header parameters', fu
         url: '/users',
         credentials: 'same-origin',
         headers: {
-          'X-MyHeader': 5
+          'X-MyHeader': '5'
         },
       })
     })
@@ -126,7 +126,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - header parameters', fu
         url: '/users',
         credentials: 'same-origin',
         headers: {
-          'X-MyHeader': 5
+          'X-MyHeader': '5'
         },
       })
     })
