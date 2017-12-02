@@ -1,5 +1,4 @@
 import encodeToRFC3986 from 'encode-3986'
-
 const isRfc3986Reserved = char => ':/?#[]@!$&\'()*+,;='.indexOf(char) > -1
 const isRrc3986Unreserved = (char) => {
   return (/^[a-z0-9\-._~]+$/i).test(char)
@@ -27,7 +26,8 @@ function encodeDisallowedCharacters(str, {allowReserved}) {
       return char
     }
 
-    return escapeFn(char)
+    // percent-encode: char -> ASCII code point num -> hex string -> upcase
+    return `%${char.charCodeAt(0).toString(16).toUpperCase()}`
   }).join('')
 }
 
@@ -143,7 +143,7 @@ function encodeObject({key, value, style, explode, escape}) {
 
 function encodePrimitive({key, value, style, explode, escape}) {
   const valueEncoder = str => encodeDisallowedCharacters(str, {
-    allowReserved: escape
+    allowReserved: !escape
   })
 
   if (style === 'simple') {
