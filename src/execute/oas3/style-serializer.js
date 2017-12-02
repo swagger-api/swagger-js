@@ -46,7 +46,7 @@ export default function (config) {
 
 function encodeArray({key, value, style, explode, escape}) {
   const valueEncoder = str => encodeDisallowedCharacters(str, {
-    allowReserved: escape
+    allowReserved: !escape
   })
 
   if (style === 'simple') {
@@ -67,20 +67,18 @@ function encodeArray({key, value, style, explode, escape}) {
   }
 
   if (style === 'form') {
-    const commaValue = escape ? escapeFn(',') : ','
-    const after = explode ? `&${key}=` : commaValue
+    const after = explode ? `&${key}=` : ','
     return value.map(val => valueEncoder(val)).join(after)
   }
 
   if (style === 'spaceDelimited') {
     const after = explode ? `${key}=` : ''
-    return value.map(val => valueEncoder(val)).join(`${escapeFn(' ')}${after}`)
+    return value.map(val => valueEncoder(val)).join(` ${after}`)
   }
 
   if (style === 'pipeDelimited') {
     const after = explode ? `${key}=` : ''
-    const separator = escape ? escapeFn('|') : '|'
-    return value.map(val => valueEncoder(val)).join(`${separator}${after}`)
+    return value.map(val => valueEncoder(val)).join(`|${after}`)
   }
 }
 

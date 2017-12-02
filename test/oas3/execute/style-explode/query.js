@@ -22,7 +22,7 @@ const ENCODE_IF_NOT_ALLOWRESERVED_UNENCODED_RESULT = ENCODE_IF_NOT_ALLOWRESERVED
 const NEVER_ENCODE = 'This.Shouldnt_Be~Encoded-1234'
 const NEVER_ENCODE_RESULT = NEVER_ENCODE // should be the same
 
-describe.only('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters', function () {
+describe('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters', function () {
   describe('primitive values', function () {
     const VALUE = NEVER_ENCODE
 
@@ -291,7 +291,7 @@ describe.only('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters'
       })
     })
   })
-  describe('array values', function () {
+  describe.only('array values', function () {
     const VALUE = [3, 4, 5, NEVER_ENCODE]
 
     it('default: should build a query parameter in form/explode format', function () {
@@ -476,7 +476,7 @@ describe.only('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters'
 
       expect(req).toEqual({
         method: 'GET',
-        url: `/users?id=3&id=4&id=5&id=${NEVER_ENCODE_RESULT}`,
+        url: `/users?id=3,4,5,${NEVER_ENCODE_RESULT}`,
         credentials: 'same-origin',
         headers: {},
       })
@@ -553,7 +553,7 @@ describe.only('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters'
 
       expect(req).toEqual({
         method: 'GET',
-        url: `/users?id=%27,%3A,%2F,%3F,%23,%5B,%5D,%40,%21,%24,%26,%27,%28,%29,%2A,%2B,%2C,%3B,%3D,%27`,
+        url: '/users?id=%3A,%2F,%3F,%23,%5B,%5D,%40,%21,%24,%26,%27,%28,%29,%2A,%2B,%2C,%3B,%3D',
         credentials: 'same-origin',
         headers: {},
       })
