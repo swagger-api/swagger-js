@@ -289,6 +289,10 @@ There has been a complete overhaul of the codebase.
 For notes about how to migrate coming from 2.x,
 please see [Migration from 2.x](docs/MIGRATION_2_X.md)
 
+## Security contact
+
+Please disclose any security-related issues or vulnerabilities by emailing [security@swagger.io](mailto:security@swagger.io), instead of using the public issue tracker.
+
 ### Graveyard
 
 For features known to be missing from 3.x please see [the Graveyard](docs/GRAVEYARD.md)
