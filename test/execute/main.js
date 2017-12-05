@@ -38,37 +38,27 @@ describe('execute', () => {
       })
     })
 
-    it('should include host + http + baseUrl', function () {
-      // Given
-      const spec = {
-        host: 'swagger.io',
-        basePath: '/v1',
-      }
-
-      // When
-      const req = buildRequest({spec})
-
-      // Then
-      expect(req).toEqual({
-        url: 'http://swagger.io/v1',
-        credentials: 'same-origin',
-        headers: { }
-      })
-    })
-
     it('should include host + port', function () {
       // Given
       const spec = {
         host: 'foo.com:8081',
         basePath: '/v1',
+        paths: {
+          '/': {
+            get: {
+              operationId: 'foo'
+            }
+          }
+        }
       }
 
       // When
-      const req = buildRequest({spec})
+      const req = buildRequest({spec, operationId: 'foo'})
 
       // Then
       expect(req).toEqual({
-        url: 'http://foo.com:8081/v1',
+        url: 'http://foo.com:8081/v1/',
+        method: 'GET',
         credentials: 'same-origin',
         headers: { }
       })

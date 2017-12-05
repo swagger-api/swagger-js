@@ -43,7 +43,7 @@ function query({req, value, parameter}) {
             key: k,
             value: v,
             style: 'deepObject',
-            escape: !parameter.allowReserved,
+            escape: parameter.allowReserved ? 'unsafe' : 'reserved',
           }),
           skipEncoding: true
         }
@@ -66,8 +66,9 @@ function query({req, value, parameter}) {
             key: k,
             value: v,
             style: parameter.style || 'form',
-            escape: !parameter.allowReserved,
-          })
+            escape: parameter.allowReserved ? 'unsafe' : 'reserved',
+          }),
+          skipEncoding: true
         }
       })
     }
@@ -78,7 +79,7 @@ function query({req, value, parameter}) {
           value,
           style: parameter.style || 'form',
           explode: typeof parameter.explode === 'undefined' ? true : parameter.explode,
-          escape: !parameter.allowReserved,
+          escape: parameter.allowReserved ? 'unsafe' : 'reserved',
         }),
         skipEncoding: true
       }

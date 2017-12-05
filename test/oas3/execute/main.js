@@ -169,6 +169,58 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
       })
     })
 
+    it('should stringify object values of form data bodies', function () {
+      // Given
+      const spec = {
+        openapi: '3.0.0',
+        servers: [
+          {
+            url: 'http://petstore.swagger.io/v2',
+            name: 'Petstore'
+          }
+        ],
+        paths: {
+          '/one': {
+            get: {
+              operationId: 'getOne',
+              requestBody: {
+                content: {
+                  'application/x-www-form-urlencoded': {
+                    schema: {
+                      type: 'object'
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // when
+      const req = buildRequest({
+        spec,
+        operationId: 'getOne',
+        requestBody: {
+          a: 1,
+          b: {
+            c: 3,
+            d: 4
+          }
+        }
+      })
+
+      expect(req).toEqual({
+        method: 'GET',
+        url: 'http://petstore.swagger.io/v2/one',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'a=1&b=%7B%22c%22%3A3%2C%22d%22%3A4%7D'
+      })
+    })
+
     it('should build a request for the given operationId with a requestBody, and not be overriden by an invalid Swagger2 body parameter value', function () {
       // Given
       const spec = {
@@ -418,6 +470,104 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
       })
 
       expect(res).toEqual('https://petstore.net')
+    })
+    it('should use an explicitly chosen server at the operation level', function () {
+      const spec = {
+        openapi: '3.0.0',
+        servers: [
+          {
+            url: 'https://petstore.com'
+          },
+          {
+            url: 'https://petstore.net'
+          }
+        ],
+        paths: {
+          '/': {
+            get: {
+              servers: [
+                {
+                  url: 'https://petstore-operation.net/{path}',
+                  variables: {
+                    path: {
+                      default: 'foobar'
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+
+      const res = baseUrl({
+        spec,
+        server: 'https://petstore-operation.net/{path}',
+        pathName: '/',
+        method: 'GET'
+      })
+
+      const resWithVariables = baseUrl({
+        spec,
+        server: 'https://petstore-operation.net/{path}',
+        serverVariables: {
+          path: 'fizzbuzz'
+        },
+        pathName: '/',
+        method: 'GET'
+      })
+
+      expect(res).toEqual('https://petstore-operation.net/foobar')
+      expect(resWithVariables).toEqual('https://petstore-operation.net/fizzbuzz')
+    })
+
+    it('should use an explicitly chosen server at the path level', function () {
+      const spec = {
+        openapi: '3.0.0',
+        servers: [
+          {
+            url: 'https://petstore.com'
+          },
+          {
+            url: 'https://petstore.net'
+          }
+        ],
+        paths: {
+          '/': {
+            servers: [
+              {
+                url: 'https://petstore-path.net/{path}',
+                variables: {
+                  path: {
+                    default: 'foobar'
+                  }
+                }
+              }
+            ],
+            get: {}
+          }
+        }
+      }
+
+      const res = baseUrl({
+        spec,
+        server: 'https://petstore-path.net/{path}',
+        pathName: '/',
+        method: 'GET'
+      })
+
+      const resWithVariables = baseUrl({
+        spec,
+        server: 'https://petstore-path.net/{path}',
+        serverVariables: {
+          path: 'fizzbuzz'
+        },
+        pathName: '/',
+        method: 'GET'
+      })
+
+      expect(res).toEqual('https://petstore-path.net/foobar')
+      expect(resWithVariables).toEqual('https://petstore-path.net/fizzbuzz')
     })
     it('should not use an explicitly chosen server that is not present in the spec', function () {
       const spec = {
