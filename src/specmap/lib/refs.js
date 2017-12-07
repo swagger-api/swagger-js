@@ -55,10 +55,6 @@ const plugin = {
     const refPath = splitString[0]
     const pointer = splitString[1] || ''
 
-    if (pointer.length > 0 && pointer[0] !== '/') {
-      console.warn(`WARNING: $ref '${ref}' is malformed, a leading '/' is expected after '#'`)
-    }
-
     let basePath
     try {
       basePath = (baseDoc || refPath) ? absoluteify(refPath, baseDoc) : null
