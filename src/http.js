@@ -140,8 +140,12 @@ function isFile(obj) {
   return obj !== null && typeof obj === 'object' && typeof obj.pipe === 'function'
 }
 
-function formatValue({value, collectionFormat, allowEmptyValue}, skipEncoding) {
-  // REVIEW: OAS3: usage of this fn for compatibility w/ new value formats
+function formatValue(input, skipEncoding) {
+  const {collectionFormat, allowEmptyValue} = input
+
+  // `input` can be string in OAS3 contexts
+  const value = typeof input === 'object' ? input.value : input
+
   const SEPARATORS = {
     csv: ',',
     ssv: '%20',
@@ -163,9 +167,14 @@ function formatValue({value, collectionFormat, allowEmptyValue}, skipEncoding) {
     else encodeFn = obj => JSON.stringify(obj)
   }
 
-  if (value && !Array.isArray(value)) {
+  if (typeof value === 'object' && !Array.isArray(value)) {
+    return ''
+  }
+
+  if (!Array.isArray(value)) {
     return encodeFn(value)
   }
+
   if (Array.isArray(value) && !collectionFormat) {
     return value.map(encodeFn).join(',')
   }

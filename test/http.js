@@ -221,6 +221,16 @@ describe('http', () => {
       expect(encodeFormOrQuery(req.query)).toEqual('one=1&two=2&three=false')
     })
 
+    it('should parse a generic object into a query string', function () {
+      const data = {
+        one: 1,
+        two: 'two',
+        three: false
+      }
+
+      expect(encodeFormOrQuery(data)).toEqual('one=1&two=two&three=false')
+    })
+
     it('should handle arrays', function () {
       const req = {
         query: {
