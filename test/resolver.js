@@ -237,4 +237,169 @@ describe('resolver', () => {
       })
     }
   })
+
+  const DOCUMENT_ORIGINAL = {
+    "swagger": "2.0",
+    "paths": {
+      "/pet": {
+        "post": {
+          "tags": [
+            "pet"
+          ],
+          "summary": "Add a new pet to the store",
+          "operationId": "addPet",
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "Pet object that needs to be added to the store",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/Pet"
+              }
+            }
+          ],
+          "responses": {
+            "405": {
+              "description": "Invalid input"
+            }
+          }
+        }
+      }
+    },
+    "definitions": {
+      "Category": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "Pet": {
+        "type": "object",
+        "required": [
+          "category"
+        ],
+        "properties": {
+          "category": {
+            "$ref": "#/definitions/Category"
+          }
+        }
+      }
+    }
+  }
+
+  const DOCUMENT_RESULT = {
+    "swagger": "2.0",
+    "paths": {
+      "/pet": {
+        "post": {
+          "tags": [
+            "pet"
+          ],
+          "summary": "Add a new pet to the store",
+          "operationId": "addPet",
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "Pet object that needs to be added to the store",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "required": [
+                  "category"
+                ],
+                "properties": {
+                  "category": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "format": "int64"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ],
+          "responses": {
+            "405": {
+              "description": "Invalid input"
+            }
+          }
+        }
+      }
+    },
+    "definitions": {
+      "Category": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "Pet": {
+        "type": "object",
+        "required": [
+          "category"
+        ],
+        "properties": {
+          "category": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "format": "int64"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  it('should be able to resolve a Swagger document with $refs', () => {
+
+    // When
+    return Swagger.resolve({spec: DOCUMENT_ORIGINAL})
+      .then(handleResponse)
+
+    // Then
+    function handleResponse(obj) {
+      expect(obj.errors).toEqual([])
+      expect(obj.spec).toEqual(DOCUMENT_RESULT)
+    }
+  })
+
+  it('should be able to resolve a Swagger document with $refs when allowMetaPatches is enabled', () => {
+
+    // When
+    return Swagger.resolve({spec: DOCUMENT_ORIGINAL, allowMetaPatches: true})
+      .then(handleResponse)
+
+    // Then
+    function handleResponse(obj) {
+      expect(obj.errors).toEqual([])
+      expect(obj.spec).toEqual(DOCUMENT_RESULT)
+    }
+  })
+
 })
