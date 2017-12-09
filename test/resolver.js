@@ -239,64 +239,63 @@ describe('resolver', () => {
   })
 
   const DOCUMENT_ORIGINAL = {
-    "swagger": "2.0",
-    "paths": {
-      "/pet": {
-        "post": {
-          "tags": [
-            "pet"
+    swagger: '2.0',
+    paths: {
+      '/pet': {
+        post: {
+          tags: [
+            'pet'
           ],
-          "summary": "Add a new pet to the store",
-          "operationId": "addPet",
-          "parameters": [
+          summary: 'Add a new pet to the store',
+          operationId: 'addPet',
+          parameters: [
             {
-              "in": "body",
-              "name": "body",
-              "description": "Pet object that needs to be added to the store",
-              "required": true,
-              "schema": {
-                "$ref": "#/definitions/Pet"
+              in: 'body',
+              name: 'body',
+              description: 'Pet object that needs to be added to the store',
+              required: true,
+              schema: {
+                $ref: '#/definitions/Pet'
               }
             }
           ],
-          "responses": {
-            "405": {
-              "description": "Invalid input"
+          responses: {
+            405: {
+              description: 'Invalid input'
             }
           }
         }
       }
     },
-    "definitions": {
-      "Category": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
+    definitions: {
+      Category: {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'integer',
+            format: 'int64'
           },
-          "name": {
-            "type": "string"
+          name: {
+            type: 'string'
           }
         }
       },
-      "Pet": {
-        "type": "object",
-        "required": [
-          "category"
+      Pet: {
+        type: 'object',
+        required: [
+          'category'
         ],
-        "properties": {
-          "category": {
-            "$ref": "#/definitions/Category"
+        properties: {
+          category: {
+            $ref: '#/definitions/Category'
           }
         }
       }
     }
   }
 
-  describe.only('Swagger usage', function() {
+  describe.only('Swagger usage', function () {
     it.skip('should be able to resolve a Swagger document with $refs', () => {
-
       // When
       return Swagger.resolve({spec: DOCUMENT_ORIGINAL, allowMetaPatches: false})
       .then(handleResponse)
@@ -305,37 +304,37 @@ describe('resolver', () => {
       function handleResponse(obj) {
         expect(obj.errors).toEqual([])
         expect(obj.spec).toEqual({
-          "swagger": "2.0",
-          "paths": {
-            "/pet": {
-              "post": {
-                "tags": [
-                  "pet"
+          swagger: '2.0',
+          paths: {
+            '/pet': {
+              post: {
+                tags: [
+                  'pet'
                 ],
-                "summary": "Add a new pet to the store",
-                "operationId": "addPet",
-                "__originalOperationId": "addPet",
-                "parameters": [
+                summary: 'Add a new pet to the store',
+                operationId: 'addPet',
+                __originalOperationId: 'addPet',
+                parameters: [
                   {
-                    "in": "body",
-                    "name": "body",
-                    "description": "Pet object that needs to be added to the store",
-                    "required": true,
-                    "schema": {
-                      "type": "object",
-                      "required": [
-                        "category"
+                    in: 'body',
+                    name: 'body',
+                    description: 'Pet object that needs to be added to the store',
+                    required: true,
+                    schema: {
+                      type: 'object',
+                      required: [
+                        'category'
                       ],
-                      "properties": {
-                        "category": {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "integer",
-                              "format": "int64"
+                      properties: {
+                        category: {
+                          type: 'object',
+                          properties: {
+                            id: {
+                              type: 'integer',
+                              format: 'int64'
                             },
-                            "name": {
-                              "type": "string"
+                            name: {
+                              type: 'string'
                             }
                           }
                         }
@@ -343,42 +342,42 @@ describe('resolver', () => {
                     }
                   }
                 ],
-                "responses": {
-                  "405": {
-                    "description": "Invalid input"
+                responses: {
+                  405: {
+                    description: 'Invalid input'
                   }
                 }
               }
             }
           },
-          "definitions": {
-            "Category": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "integer",
-                  "format": "int64"
+          definitions: {
+            Category: {
+              type: 'object',
+              properties: {
+                id: {
+                  type: 'integer',
+                  format: 'int64'
                 },
-                "name": {
-                  "type": "string"
+                name: {
+                  type: 'string'
                 }
               }
             },
-            "Pet": {
-              "type": "object",
-              "required": [
-                "category"
+            Pet: {
+              type: 'object',
+              required: [
+                'category'
               ],
-              "properties": {
-                "category": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "integer",
-                      "format": "int64"
+              properties: {
+                category: {
+                  type: 'object',
+                  properties: {
+                    id: {
+                      type: 'integer',
+                      format: 'int64'
                     },
-                    "name": {
-                      "type": "string"
+                    name: {
+                      type: 'string'
                     }
                   }
                 }
@@ -390,7 +389,6 @@ describe('resolver', () => {
     })
 
     it('should be able to resolve a Swagger document with $refs when allowMetaPatches is enabled', () => {
-
       // When
       return Swagger.resolve({spec: DOCUMENT_ORIGINAL, allowMetaPatches: true})
       .then(handleResponse)
@@ -399,39 +397,39 @@ describe('resolver', () => {
       function handleResponse(obj) {
         expect(obj.errors).toEqual([])
         expect(obj.spec).toEqual({
-          "swagger": "2.0",
-          "paths": {
-            "/pet": {
-              "post": {
-                "tags": [
-                  "pet"
+          swagger: '2.0',
+          paths: {
+            '/pet': {
+              post: {
+                tags: [
+                  'pet'
                 ],
-                "summary": "Add a new pet to the store",
-                "operationId": "addPet",
-                "__originalOperationId": "addPet",
-                "parameters": [
+                summary: 'Add a new pet to the store',
+                operationId: 'addPet',
+                __originalOperationId: 'addPet',
+                parameters: [
                   {
-                    "in": "body",
-                    "name": "body",
-                    "description": "Pet object that needs to be added to the store",
-                    "required": true,
-                    "schema": {
-                      "$$ref": "#/definitions/Pet",
-                      "type": "object",
-                      "required": [
-                        "category"
+                    in: 'body',
+                    name: 'body',
+                    description: 'Pet object that needs to be added to the store',
+                    required: true,
+                    schema: {
+                      $$ref: '#/definitions/Pet',
+                      type: 'object',
+                      required: [
+                        'category'
                       ],
-                      "properties": {
-                        "category": {
-                          "$$ref": "#/definitions/Category",
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "integer",
-                              "format": "int64"
+                      properties: {
+                        category: {
+                          $$ref: '#/definitions/Category',
+                          type: 'object',
+                          properties: {
+                            id: {
+                              type: 'integer',
+                              format: 'int64'
                             },
-                            "name": {
-                              "type": "string"
+                            name: {
+                              type: 'string'
                             }
                           }
                         }
@@ -439,45 +437,45 @@ describe('resolver', () => {
                     }
                   }
                 ],
-                "responses": {
-                  "405": {
-                    "description": "Invalid input"
+                responses: {
+                  405: {
+                    description: 'Invalid input'
                   }
                 }
               }
             }
           },
-          "definitions": {
-            "Category": {
-              "$$ref": "#/definitions/Category", // FIXME: benign, but this should not be present
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "integer",
-                  "format": "int64"
+          definitions: {
+            Category: {
+              $$ref: '#/definitions/Category', // FIXME: benign, but this should not be present
+              type: 'object',
+              properties: {
+                id: {
+                  type: 'integer',
+                  format: 'int64'
                 },
-                "name": {
-                  "type": "string"
+                name: {
+                  type: 'string'
                 }
               }
             },
-            "Pet": {
-              "$$ref": "#/definitions/Pet",
-              "type": "object",
-              "required": [
-                "category"
+            Pet: {
+              $$ref: '#/definitions/Pet',
+              type: 'object',
+              required: [
+                'category'
               ],
-              "properties": {
-                "category": {
-                  "$$ref": "#/definitions/Category", // FIXME: benign, but this should not be present
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "integer",
-                      "format": "int64"
+              properties: {
+                category: {
+                  $$ref: '#/definitions/Category', // FIXME: benign, but this should not be present
+                  type: 'object',
+                  properties: {
+                    id: {
+                      type: 'integer',
+                      format: 'int64'
                     },
-                    "name": {
-                      "type": "string"
+                    name: {
+                      type: 'string'
                     }
                   }
                 }
@@ -488,6 +486,4 @@ describe('resolver', () => {
       }
     })
   })
-
-
 })
