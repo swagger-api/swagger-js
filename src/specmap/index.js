@@ -83,7 +83,7 @@ class SpecMap {
     // We might consider making this (traversing & application) configurable later.
     function createKeyBasedPlugin(pluginObj) {
       return function* (patches, specmap) {
-        const resultCache = {}
+        const traversedRefs = {}
 
         for (const patch of patches.filter(lib.isAdditiveMutation)) {
           yield* traverse(patch.value, patch.path, patch)
@@ -109,24 +109,20 @@ class SpecMap {
               // If the object has a meta '$$ref' - and store this $$ref
               // in a lookaside to prevent future traversals of this $ref's tree.
               const objRef = obj.$$ref
+              const traversed = specmap.allowMetaPatches && traversedRefs[obj.$$ref]
 
-              if (isObj) {
-                // console.log('recursive case', {obj, path, patch})
-                yield* traverse(val, updatedPath, patch)
+              if (!traversed) {
+                if (isObj) {
+                  // Only store the ref if it exists
+                  if (specmap.allowMetaPatches && objRef) {
+                    traversedRefs[objRef] = true
+                  }
+                  yield* traverse(val, updatedPath, patch)
+                }
               }
 
               if (!isRootProperties && key === pluginObj.key) {
-                // console.log('base case', {obj, path, patch})
-                const stringifiedPath = path.join('/')
-
-                if (resultCache[stringifiedPath]) {
-                  yield resultCache[stringifiedPath]
-                }
-                else {
-                  const res = pluginObj.plugin(val, key, updatedPath, specmap, patch)
-                  resultCache[stringifiedPath] = res
-                  yield res
-                }
+                yield pluginObj.plugin(val, key, updatedPath, specmap, patch)
               }
             }
           }
