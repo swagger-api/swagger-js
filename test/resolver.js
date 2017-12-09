@@ -294,197 +294,200 @@ describe('resolver', () => {
     }
   }
 
-  it('should be able to resolve a Swagger document with $refs', () => {
+  describe.only('Swagger usage', function() {
+    it.skip('should be able to resolve a Swagger document with $refs', () => {
 
-    // When
-    return Swagger.resolve({spec: DOCUMENT_ORIGINAL})
+      // When
+      return Swagger.resolve({spec: DOCUMENT_ORIGINAL, allowMetaPatches: false})
       .then(handleResponse)
 
-    // Then
-    function handleResponse(obj) {
-      expect(obj.errors).toEqual([])
-      expect(obj.spec).toEqual({
-        "swagger": "2.0",
-        "paths": {
-          "/pet": {
-            "post": {
-              "tags": [
-                "pet"
-              ],
-              "summary": "Add a new pet to the store",
-              "operationId": "addPet",
-              "__originalOperationId": "addPet",
-              "parameters": [
-                {
-                  "in": "body",
-                  "name": "body",
-                  "description": "Pet object that needs to be added to the store",
-                  "required": true,
-                  "schema": {
-                    "type": "object",
-                    "required": [
-                      "category"
-                    ],
-                    "properties": {
-                      "category": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "integer",
-                            "format": "int64"
-                          },
-                          "name": {
-                            "type": "string"
+      // Then
+      function handleResponse(obj) {
+        expect(obj.errors).toEqual([])
+        expect(obj.spec).toEqual({
+          "swagger": "2.0",
+          "paths": {
+            "/pet": {
+              "post": {
+                "tags": [
+                  "pet"
+                ],
+                "summary": "Add a new pet to the store",
+                "operationId": "addPet",
+                "__originalOperationId": "addPet",
+                "parameters": [
+                  {
+                    "in": "body",
+                    "name": "body",
+                    "description": "Pet object that needs to be added to the store",
+                    "required": true,
+                    "schema": {
+                      "type": "object",
+                      "required": [
+                        "category"
+                      ],
+                      "properties": {
+                        "category": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "format": "int64"
+                            },
+                            "name": {
+                              "type": "string"
+                            }
                           }
                         }
                       }
                     }
                   }
+                ],
+                "responses": {
+                  "405": {
+                    "description": "Invalid input"
+                  }
                 }
-              ],
-              "responses": {
-                "405": {
-                  "description": "Invalid input"
-                }
-              }
-            }
-          }
-        },
-        "definitions": {
-          "Category": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "integer",
-                "format": "int64"
-              },
-              "name": {
-                "type": "string"
               }
             }
           },
-          "Pet": {
-            "type": "object",
-            "required": [
-              "category"
-            ],
-            "properties": {
-              "category": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "integer",
-                    "format": "int64"
-                  },
-                  "name": {
-                    "type": "string"
+          "definitions": {
+            "Category": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "name": {
+                  "type": "string"
+                }
+              }
+            },
+            "Pet": {
+              "type": "object",
+              "required": [
+                "category"
+              ],
+              "properties": {
+                "category": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "format": "int64"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
                   }
                 }
               }
             }
           }
-        }
-      })
-    }
-  })
+        })
+      }
+    })
 
-  it('should be able to resolve a Swagger document with $refs when allowMetaPatches is enabled', () => {
+    it('should be able to resolve a Swagger document with $refs when allowMetaPatches is enabled', () => {
 
-    // When
-    return Swagger.resolve({spec: DOCUMENT_ORIGINAL, allowMetaPatches: true})
+      // When
+      return Swagger.resolve({spec: DOCUMENT_ORIGINAL, allowMetaPatches: true})
       .then(handleResponse)
 
-    // Then
-    function handleResponse(obj) {
-      expect(obj.errors).toEqual([])
-      expect(obj.spec).toEqual({
-        "swagger": "2.0",
-        "paths": {
-          "/pet": {
-            "post": {
-              "tags": [
-                "pet"
-              ],
-              "summary": "Add a new pet to the store",
-              "operationId": "addPet",
-              "__originalOperationId": "addPet",
-              "parameters": [
-                {
-                  "in": "body",
-                  "name": "body",
-                  "description": "Pet object that needs to be added to the store",
-                  "required": true,
-                  "schema": {
-                    "$$ref": "#/definitions/Pet",
-                    "type": "object",
-                    "required": [
-                      "category"
-                    ],
-                    "properties": {
-                      "category": {
-                        "$$ref": "#/definitions/Category",
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "integer",
-                            "format": "int64"
-                          },
-                          "name": {
-                            "type": "string"
+      // Then
+      function handleResponse(obj) {
+        expect(obj.errors).toEqual([])
+        expect(obj.spec).toEqual({
+          "swagger": "2.0",
+          "paths": {
+            "/pet": {
+              "post": {
+                "tags": [
+                  "pet"
+                ],
+                "summary": "Add a new pet to the store",
+                "operationId": "addPet",
+                "__originalOperationId": "addPet",
+                "parameters": [
+                  {
+                    "in": "body",
+                    "name": "body",
+                    "description": "Pet object that needs to be added to the store",
+                    "required": true,
+                    "schema": {
+                      "$$ref": "#/definitions/Pet",
+                      "type": "object",
+                      "required": [
+                        "category"
+                      ],
+                      "properties": {
+                        "category": {
+                          "$$ref": "#/definitions/Category",
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "format": "int64"
+                            },
+                            "name": {
+                              "type": "string"
+                            }
                           }
                         }
                       }
                     }
                   }
+                ],
+                "responses": {
+                  "405": {
+                    "description": "Invalid input"
+                  }
                 }
-              ],
-              "responses": {
-                "405": {
-                  "description": "Invalid input"
-                }
-              }
-            }
-          }
-        },
-        "definitions": {
-          "Category": {
-            "$$ref": "#/definitions/Category", // FIXME: benign, but this should not be present
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "integer",
-                "format": "int64"
-              },
-              "name": {
-                "type": "string"
               }
             }
           },
-          "Pet": {
-            "$$ref": "#/definitions/Pet",
-            "type": "object",
-            "required": [
-              "category"
-            ],
-            "properties": {
-              "category": {
-                "$$ref": "#/definitions/Category", // FIXME: benign, but this should not be present
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "integer",
-                    "format": "int64"
-                  },
-                  "name": {
-                    "type": "string"
+          "definitions": {
+            "Category": {
+              "$$ref": "#/definitions/Category", // FIXME: benign, but this should not be present
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "name": {
+                  "type": "string"
+                }
+              }
+            },
+            "Pet": {
+              "$$ref": "#/definitions/Pet",
+              "type": "object",
+              "required": [
+                "category"
+              ],
+              "properties": {
+                "category": {
+                  "$$ref": "#/definitions/Category", // FIXME: benign, but this should not be present
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "format": "int64"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
                   }
                 }
               }
             }
           }
-        }
-      })
-    }
+        })
+      }
+    })
   })
+
 
 })
