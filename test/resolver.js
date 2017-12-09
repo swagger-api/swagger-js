@@ -294,7 +294,7 @@ describe('resolver', () => {
     }
   }
 
-  describe.only('Swagger usage', function () {
+  describe('Swagger usage', function () {
     it.skip('should be able to resolve a Swagger document with $refs', () => {
       // When
       return Swagger.resolve({spec: DOCUMENT_ORIGINAL, allowMetaPatches: false})
