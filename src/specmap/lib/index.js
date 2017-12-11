@@ -1,6 +1,6 @@
 import jsonPatch from 'fast-json-patch'
-import regenerator from 'babel-runtime/regenerator'
 import deepExtend from 'deep-extend'
+import {fn as isGeneratorFunction} from 'is-generator'
 
 export default {
   add,
@@ -23,7 +23,7 @@ export default {
   isPatch,
   isMutation,
   isAdditiveMutation,
-  isGenerator,
+  isGeneratorFunction,
   isFunction,
   isObject,
   isError
@@ -307,10 +307,6 @@ function isJsonPatch(patch) {
     return op === 'add' || op === 'remove' || op === 'replace'
   }
   return false
-}
-
-function isGenerator(thing) {
-  return regenerator.isGeneratorFunction(thing)
 }
 
 function isMutation(patch) {
