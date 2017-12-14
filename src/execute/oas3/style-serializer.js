@@ -1,11 +1,12 @@
 import encodeToRFC3986 from 'encode-3986'
+import toUTF8Bytes from 'utf8-bytes'
 
 const isRfc3986Reserved = char => ':/?#[]@!$&\'()*+,;='.indexOf(char) > -1
 const isRrc3986Unreserved = (char) => {
   return (/^[a-z0-9\-._~]+$/i).test(char)
 }
 
-function encodeDisallowedCharacters(str, {escape}) {
+export function encodeDisallowedCharacters(str, {escape} = {}) {
   if (typeof str === 'number') {
     str = str.toString()
   }
@@ -26,8 +27,12 @@ function encodeDisallowedCharacters(str, {escape}) {
       return char
     }
 
-    // percent-encode: char -> ASCII code point num -> hex string -> upcase
-    return `%${char.charCodeAt(0).toString(16).toUpperCase()}`
+    const encoded = (toUTF8Bytes(char) || [])
+      .map(byte => byte.toString(16).toUpperCase())
+      .map(encodedByte => `%${encodedByte}`)
+      .join('')
+
+    return encoded
   }).join('')
 }
 
