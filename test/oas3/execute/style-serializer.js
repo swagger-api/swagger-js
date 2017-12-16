@@ -34,6 +34,9 @@ describe('OAS3 style serializer', function () {
       const tested = str => encodeDisallowedCharacters(str, {escape: true})
       expect(tested('♥')).toEqual('%E2%99%A5')
       expect(tested('テスト')).toEqual('%E3%83%86%E3%82%B9%E3%83%88')
+      expect(tested('𩸽')).toEqual('%F0%A9%B8%BD')
+      expect(tested('🍣')).toEqual('%F0%9F%8D%A3')
+      expect(tested('👩‍👩‍👧‍👧')).toEqual('%F0%9F%91%A9%E2%80%8D%F0%9F%91%A9%E2%80%8D%F0%9F%91%A7%E2%80%8D%F0%9F%91%A7')
     })
 
     it('should skip encoding if `escape` is not set to true', function () {
@@ -61,6 +64,9 @@ describe('OAS3 style serializer', function () {
       // Non-ASCII too!
       expect(tested('♥')).toEqual('♥')
       expect(tested('テスト')).toEqual('テスト')
+      expect(tested('𩸽')).toEqual('𩸽')
+      expect(tested('🍣')).toEqual('🍣')
+      expect(tested('👩‍👩‍👧‍👧')).toEqual('👩‍👩‍👧‍👧')
     })
   })
 })

@@ -1,5 +1,6 @@
 import encodeToRFC3986 from 'encode-3986'
 import toUTF8Bytes from 'utf8-bytes'
+import {stringToCharArray} from 'utfstring'
 
 const isRfc3986Reserved = char => ':/?#[]@!$&\'()*+,;='.indexOf(char) > -1
 const isRrc3986Unreserved = (char) => {
@@ -18,7 +19,7 @@ export function encodeDisallowedCharacters(str, {escape} = {}) {
     return str
   }
 
-  return str.split('').map((char) => {
+  return stringToCharArray(str).map((char) => {
     if (isRrc3986Unreserved(char)) {
       return char
     }
