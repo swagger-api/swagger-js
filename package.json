@@ -1,6 +1,6 @@
 {
   "name": "swagger-client",
-  "version": "3.4.0",
+  "version": "3.4.1",
   "description": "SwaggerJS - a collection of interfaces for OAI specs",
   "main": "dist/index.js",
   "repository": "git@github.com:swagger-api/swagger-js.git",
@@ -73,6 +73,8 @@
     "js-yaml": "^3.8.1",
     "lodash": "^4.16.2",
     "qs": "^6.3.0",
-    "url": "^0.11.0"
+    "url": "^0.11.0",
+    "utf8-bytes": "0.0.1",
+    "utfstring": "^2.0.0"
   }
 }
