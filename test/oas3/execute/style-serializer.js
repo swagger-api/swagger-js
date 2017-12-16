@@ -37,7 +37,6 @@ describe('OAS3 style serializer', function () {
       expect(tested('𩸽')).toEqual('%F0%A9%B8%BD')
       expect(tested('🍣')).toEqual('%F0%9F%8D%A3')
       expect(tested('👩‍👩‍👧‍👧')).toEqual('%F0%9F%91%A9%E2%80%8D%F0%9F%91%A9%E2%80%8D%F0%9F%91%A7%E2%80%8D%F0%9F%91%A7')
-      
     })
 
     it('should skip encoding if `escape` is not set to true', function () {
