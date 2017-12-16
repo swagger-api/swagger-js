@@ -32,6 +32,25 @@ const findParametersWithName = (name, parameters) => {
   return parameters.filter(p => p.name === name)
 }
 
+// removes parameters that have duplicate 'in' and 'name' properties
+const deduplicateParameters = (parameters) => {
+  const paramsMap = {}
+  parameters.forEach((p) => {
+    if (!paramsMap[p.in]) {
+      paramsMap[p.in] = {}
+    }
+    paramsMap[p.in][p.name] = p
+  })
+
+  const dedupedParameters = []
+  Object.keys(paramsMap).forEach((i) => {
+    Object.keys(paramsMap[i]).forEach((p) => {
+      dedupedParameters.push(paramsMap[i][p])
+    })
+  })
+  return dedupedParameters
+}
+
 // For stubbing in tests
 export const self = {
   buildRequest
@@ -91,7 +110,6 @@ export function buildRequest(options) {
   } = options
 
   const specIsOAS3 = isOAS3(spec)
-
   if (!parameterBuilders) {
     // user did not provide custom parameter builders
     if (specIsOAS3) {
@@ -153,9 +171,10 @@ export function buildRequest(options) {
     req.headers.accept = responseContentType
   }
 
-  const combinedParameters = []
+  const combinedParameters = deduplicateParameters([]
     .concat(arrayOrEmpty(operation.parameters)) // operation parameters
     .concat(arrayOrEmpty(path.parameters)) // path parameters
+  )
 
   // REVIEW: OAS3: have any key names or parameter shapes changed?
   // Any new features that need to be plugged in here?
