@@ -4,6 +4,8 @@ import {normalizeSwagger} from './helpers'
 
 export function makeFetchJSON(http, opts = {}) {
   const {requestInterceptor, responseInterceptor} = opts
+  // Set credentials with 'http.withCredentials' value
+  const credentials = (http.withCredentials) ? 'include' : 'same-origin'
   return (docPath) => {
     return http({
       url: docPath,
@@ -13,7 +15,7 @@ export function makeFetchJSON(http, opts = {}) {
       headers: {
         Accept: 'application/json'
       },
-      credentials: 'same-origin' // same-origin to send cookies and auth headers
+      credentials,
     })
     .then((res) => {
       return res.body

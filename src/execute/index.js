@@ -120,10 +120,13 @@ export function buildRequest(options) {
     }
   }
 
+  // Set credentials with 'http.withCredentials' value
+  const credentials = (http.withCredentials) ? 'include' : 'same-origin'
+
   // Base Template
   let req = {
     url: '',
-    credentials: 'same-origin',
+    credentials,
     headers: {
       // This breaks CORSs... removing this line... probably breaks oAuth. Need to address that
       // This also breaks tests
