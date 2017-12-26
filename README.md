@@ -187,7 +187,7 @@ client.pet.addPet({pet: {
 
 ### Calling an API with swagger + the browser!
 
-Download [`browser/swagger-client.min.js`](https://raw.githubusercontent.com/swagger-api/swagger-js/master/browser/swagger-client.min.js) and place it into your webapp:
+Download [`browser/swagger-client.min.js`](https://raw.githubusercontent.com/swagger-api/swagger-js/2.x/browser/swagger-client.min.js) and place it into your webapp:
 
 ```html
 <script src='browser/swagger-client.js' type='text/javascript'></script>
