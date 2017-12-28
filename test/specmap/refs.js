@@ -363,6 +363,43 @@ describe('refs', function () {
       })
     })
 
+    it('should ignore $refs in freely named Swagger positions', function () {
+      return mapSpec({
+        spec: {
+          a: 1234,
+          parameters: {
+            $ref: '#/a'
+          },
+          responses: {
+            $ref: '#/a'
+          },
+          definitions: {
+            $ref: '#/a'
+          },
+          securityDefinitions: {
+            $ref: '#/a'
+          }
+        },
+        plugins: [refs],
+      }).then((res) => {
+        expect(res.spec).toEqual({
+          a: 1234,
+          parameters: {
+            $ref: '#/a'
+          },
+          responses: {
+            $ref: '#/a'
+          },
+          definitions: {
+            $ref: '#/a'
+          },
+          securityDefinitions: {
+            $ref: '#/a'
+          }
+        })
+      })
+    })
+
     it('should include fullPath in invalid $ref type', function () {
       return mapSpec({
         spec: {one: {$ref: 1}},

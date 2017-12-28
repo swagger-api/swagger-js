@@ -192,6 +192,39 @@ describe('allOf', function () {
     })
   })
 
+  it('should ignore "allOf" in freely named Swagger key positions', function () {
+    const spec = {
+      parameters: {
+        allOf: {
+          a: 123
+        }
+      },
+      responses: {
+        allOf: {
+          a: 123
+        }
+      },
+      definitions: {
+        allOf: {
+          a: 123
+        }
+      },
+      securityDefinitions: {
+        allOf: {
+          a: 123
+        }
+      },
+    }
+
+    return mapSpec({
+      spec,
+      plugins: [plugins.allOf]
+    }).then((res) => {
+      expect(res.errors).toEqual([])
+      expect(res.spec).toEqual(spec)
+    })
+  })
+
   it('should throw error if allOf has a non-object item', function () {
     return mapSpec({
       spec: {
