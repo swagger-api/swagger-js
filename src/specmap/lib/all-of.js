@@ -1,3 +1,5 @@
+import {freelyNamedKeyParents} from '../helpers'
+
 export default {
   key: 'allOf',
   plugin: (val, key, fullPath, specmap, patch) => {
@@ -8,13 +10,20 @@ export default {
       return
     }
 
+    const parent = fullPath.slice(0, -1)
+    const parentStr = parent.join('/')
+
+    if (freelyNamedKeyParents.indexOf(parentStr) > -1) {
+      return
+    }
+
     if (!Array.isArray(val)) {
       const err = new TypeError('allOf must be an array')
       err.fullPath = fullPath // This is an array
       return err
     }
 
-    const parent = fullPath.slice(0, -1)
+
     let alreadyAddError = false
 
     // Find the original definition from the `patch.value` object
