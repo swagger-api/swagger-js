@@ -288,8 +288,8 @@ describe('refs', function () {
       const cases = caseFiles
         .sort((f1, f2) => {
           // Sorts by group ('internal', 'external') before test case number
-          const group1 = f1.substring(dir.length).split(path.sep)[1]
-          const group2 = f2.substring(dir.length).split(path.sep)[1]
+          const group1 = f1.replace(/\//g, path.sep).substring(dir.length).split(path.sep)[1]
+          const group2 = f2.replace(/\//g, path.sep).substring(dir.length).split(path.sep)[1]
           const no1 = Number(path.basename(f1).split('.')[0])
           const no2 = Number(path.basename(f2).split('.')[0])
           return group1.localeCompare(group2) || (no1 - no2)
