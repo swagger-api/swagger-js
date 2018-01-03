@@ -42,6 +42,7 @@ function applyPatch(obj, patch, opts) {
     jsonPatch.applyPatch(obj, [replace(patch.path, newValue)])
   }
   else if (patch.op === 'mergeDeep') {
+<<<<<<< HEAD
     const currentValue = getInByJsonPath(obj, patch.path)
     const origValPatchValue = Object.assign({}, currentValue)
     deepExtend(currentValue, patch.value)
@@ -55,7 +56,41 @@ function applyPatch(obj, patch, opts) {
           currentValue[prop] = existing.concat(propVal)
         }
       }
+=======
+    const valPatch = _get(patch.path)
+    jsonPatch.apply(obj, [valPatch])
+    const origValPatchValue = Object.assign({}, valPatch.value)
+
+    const currentProps = Object.keys(valPatch.value.properties || {})
+    const newProps = Object.keys(patch.value.properties || {})
+
+    const hasConflictingProps = currentProps
+      .filter(prop => newProps.indexOf(prop) > -1)
+      .length
+
+    const propsToMerge = Object.assign({}, origValPatchValue.properties, patch.value.properties)
+
+    if (!hasConflictingProps && (currentProps.length || newProps.length) && !propsToMerge.length){
+        // There is a properties object, but all children are different, so don't deep merge
+        Object.assign(valPatch.value, patch.value, { properties: propsToMerge })
+    } else {
+
+      deepExtend(valPatch.value, patch.value)
+
+      // deepExtend doesn't merge arrays, so we will do it manually
+      for (const prop in patch.value) {
+       if (Object.prototype.hasOwnProperty.call(patch.value, prop)) {
+         const propVal = patch.value[prop]
+         if (Array.isArray(propVal)) {
+           const existing = origValPatchValue[prop] || []
+           valPatch.value[prop] = existing.concat(propVal)
+         }
+       }
+     }
+>>>>>>> Limit deep merging for mergeDeep patches when properties do not conflict
     }
+
+
   }
   else if (patch.op === 'add' && patch.path === '' && isObject(patch.value)) {
     // { op: 'add', path: '', value: { a: 1, b: 2 }}
