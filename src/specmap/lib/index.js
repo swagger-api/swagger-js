@@ -55,7 +55,7 @@ function applyPatch(obj, patch, opts) {
 
     const propsToMerge = Object.assign({}, origValPatchValue.properties, patch.value.properties)
 
-    if (!hasConflictingProps && (currentProps.length || newProps.length) && !propsToMerge.length){
+    if (!hasConflictingProps && (currentProps.length || newProps.length)) {
         // There is a properties object, but all children are different, so don't deep merge
         Object.assign(valPatch.value, patch.value, { properties: propsToMerge })
     } else {
