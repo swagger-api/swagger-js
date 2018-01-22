@@ -277,6 +277,30 @@ describe('helpers', function () {
         expect(originalId).toEqual('something with spaces')
       })
 
+      it('should not set __originalOperationId when operationId is not defined', function () {
+        // Given
+        const spec = {spec: {
+          paths: {
+            '/foo': {
+              get: {
+              },
+              post: {
+                operationId: 'myId2'
+              }
+            },
+          }
+        }}
+
+        // When
+        const normalizedSpec = normalizeSwagger(spec)
+        const fooGet = normalizedSpec.spec.paths['/foo'].get
+        const fooPost = normalizedSpec.spec.paths['/foo'].post
+
+        // Then
+        expect(fooPost.__originalOperationId).toEqual('myId2')
+        expect(fooGet.__originalOperationId).toEqual(undefined)
+      })
+
       it('should create unique operationIds when explicit operationIds are effectively the same due to whitespace', function () {
         const spec = {spec: {
           paths: {
