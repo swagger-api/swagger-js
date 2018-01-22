@@ -824,5 +824,43 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', func
         headers: {},
       })
     })
+
+    it('should build a path parameter in a matrix/no-explode format when not present in the path definition', function () {
+      // Given
+      const spec = {
+        openapi: '3.0.0',
+        paths: {
+          '/path/': {
+            get: {
+              operationId: 'myOperation',
+              parameters: [
+                {
+                  name: 'type',
+                  in: 'path',
+                  style: 'matrix',
+                  explode: false
+                }
+              ]
+            }
+          }
+        }
+      }
+
+      // when
+      const req = buildRequest({
+        spec,
+        operationId: 'myOperation',
+        parameters: {
+          type: 'PullTask'
+        }
+      })
+
+      expect(req).toEqual({
+        method: 'GET',
+        url: '/path/;type=PullTask',
+        credentials: 'same-origin',
+        headers: {},
+      })
+    })
   })
 })
