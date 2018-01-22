@@ -65,7 +65,7 @@ export default function http(url, request = {}) {
 }
 
 // exported for testing
-export const shouldDownloadAsText = (contentType = '') => /json|xml|yaml|text/.test(contentType)
+export const shouldDownloadAsText = (contentType = '') => /(json|xml|yaml|text)\b/.test(contentType)
 
 function parseBody(body, contentType) {
   if (contentType === 'application/json') {
