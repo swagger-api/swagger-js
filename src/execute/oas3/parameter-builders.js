@@ -10,14 +10,19 @@ export default {
 function path({req, value, parameter}) {
   const {name, style, explode} = parameter
   const styledValue = stylize({
-    key: parameter.name,
+    key: name,
     value,
     style: style || 'simple',
-    explode: explode || false,
-    escape: false,
+    explode: typeof explode === 'undefined' ? false : explode,
+    escape: style === 'matrix'
   })
 
-  req.url = req.url.replace(`{${name}}`, styledValue)
+  if (style === 'matrix' && req.url.indexOf(`{${name}}`) === -1) {
+    req.url = req.url.concat(styledValue)
+  }
+  else {
+    req.url = req.url.replace(`{${name}}`, styledValue)
+  }
 }
 
 function query({req, value, parameter}) {
