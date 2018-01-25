@@ -259,6 +259,30 @@ describe('constructor', () => {
       })
     })
 
+    it('should respect the `withCredentials` flag on the http agent', function () {
+      const spec = {
+        paths: {
+          '/pet': {
+            get: {
+              operationId: 'getPets'
+            }
+          }
+        }
+      }
+      return Swagger({spec}).then((client) => {
+        const http = createSpy()
+        http.withCredentials = true
+        client.execute({http, operationId: 'getPets'})
+        expect(http.calls.length).toEqual(1)
+        expect(http.calls[0].arguments[0]).toEqual({
+          headers: {},
+          method: 'GET',
+          credentials: 'include',
+          url: '/pet'
+        })
+      })
+    })
+
     it('should add basic auth to a request', function () {
       const spec = {
         securityDefinitions: {
