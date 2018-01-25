@@ -5,7 +5,7 @@ import isArray from 'lodash/isArray'
 import btoa from 'btoa'
 import url from 'url'
 import cookie from 'cookie'
-import http, {mergeInQueryOrForm} from '../http'
+import stockHttp, {mergeInQueryOrForm} from '../http'
 import createError from '../specmap/lib/create-error'
 
 import SWAGGER2_PARAMETER_BUILDERS from './swagger2/parameter-builders'
@@ -70,20 +70,20 @@ export function execute({
   ...extras
 }) {
   // Provide default fetch implementation
-  userHttp = userHttp || fetch || http // Default to _our_ http
+  const http = userHttp || fetch || stockHttp // Default to _our_ http
 
   if (pathName && method && !operationId) {
     operationId = legacyIdFromPathMethod(pathName, method)
   }
 
-  const request = self.buildRequest({spec, operationId, parameters, securities, ...extras})
+  const request = self.buildRequest({spec, operationId, parameters, securities, http, ...extras})
 
   if (request.body && (isPlainObject(request.body) || isArray(request.body))) {
     request.body = JSON.stringify(request.body)
   }
 
   // Build request and execute it
-  return userHttp(request)
+  return http(request)
 }
 
 // Build a request, which can be handled by the `http.js` implementation.
@@ -101,7 +101,8 @@ export function buildRequest(options) {
     userFetch,
     requestBody,
     server,
-    serverVariables
+    serverVariables,
+    http
   } = options
 
   let {
@@ -120,15 +121,14 @@ export function buildRequest(options) {
     }
   }
 
+  // Set credentials with 'http.withCredentials' value
+  const credentials = (http && http.withCredentials) ? 'include' : 'same-origin'
+
   // Base Template
   let req = {
     url: '',
-    credentials: 'same-origin',
-    headers: {
-      // This breaks CORSs... removing this line... probably breaks oAuth. Need to address that
-      // This also breaks tests
-      // 'access-control-allow-origin': '*'
-    },
+    credentials,
+    headers: {},
     cookies: {}
   }
 
