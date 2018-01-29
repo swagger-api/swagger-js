@@ -18,7 +18,7 @@ export function encodeDisallowedCharacters(str, {escape} = {}, parse) {
   if (!escape) {
     return str
   }
-  
+
   if (parse) {
     return JSON.parse(str)
   }
