@@ -30,22 +30,25 @@ export default {
 }
 
 function applyPatch(obj, patch, opts) {
+  console.log('original obj', obj, "\n\n")
+
   opts = opts || {}
 
   patch = Object.assign({}, patch, {
     path: patch.path && normalizeJSONPath(patch.path)
   })
 
+  console.log('patch', patch, "\n\n")
+
   if (patch.op === 'merge') {
-    const valPatch = _get(patch.path)
-    jsonPatch.apply(obj, [valPatch])
-    Object.assign(valPatch.value, patch.value)
+    const newValue = getInByJsonPath(obj, patch.path)
+    Object.assign(newValue, patch.value)
+    jsonPatch.applyPatch(obj, [replace(patch.path, newValue)])
   }
   else if (patch.op === 'mergeDeep') {
-    const valPatch = _get(patch.path)
-    jsonPatch.apply(obj, [valPatch])
-    const origValPatchValue = Object.assign({}, valPatch.value)
-    deepExtend(valPatch.value, patch.value)
+    const currentValue = getInByJsonPath(obj, patch.path)
+    const origValPatchValue = Object.assign({}, currentValue)
+    deepExtend(currentValue, patch.value)
 
     // deepExtend doesn't merge arrays, so we will do it manually
     for (const prop in patch.value) {
@@ -53,22 +56,50 @@ function applyPatch(obj, patch, opts) {
         const propVal = patch.value[prop]
         if (Array.isArray(propVal)) {
           const existing = origValPatchValue[prop] || []
-          valPatch.value[prop] = existing.concat(propVal)
+          currentValue[prop] = existing.concat(propVal)
         }
       }
     }
   }
-  else {
-    jsonPatch.apply(obj, [patch])
+  else if (patch.op === 'add' && patch.path === '' && isObject(patch.value)) {
+    // { op: 'add', path: '', value: { a: 1, b: 2 }}
+    // has no effect: json patch refuses to do anything.
+    // so let's break that patch down into a set of patches,
+    // one for each key in the intended root value.
+
+    const patches = Object.keys(patch.value)
+      .reduce((arr, key) => {
+        arr.push({
+          op: 'add',
+          path: `/${normalizeJSONPath(key)}`,
+          value: patch.value[key]
+        })
+        return arr
+      }, [])
+
+      console.log('segmented patches', patches, "\n\n")
+      jsonPatch.applyPatch(obj, patches)
+  } else if(patch.op === 'replace' && patch.path === '') {
+    let value = patch.value
+
+    if (opts.allowMetaPatches && patch.meta && isAdditiveMutation(patch) &&
+        (Array.isArray(patch.value) || isObject(patch.value))) {
+      value = Object.assign({}, value, patch.meta)
+    }
+    obj = value
+  } else {
+    jsonPatch.applyPatch(obj, [patch])
 
     // Attach metadata to the resulting value.
     if (opts.allowMetaPatches && patch.meta && isAdditiveMutation(patch) &&
         (Array.isArray(patch.value) || isObject(patch.value))) {
-      const valPatch = _get(patch.path)
-      jsonPatch.apply(obj, [valPatch])
-      Object.assign(valPatch.value, patch.meta)
+      const currentValue = getInByJsonPath(obj, patch.path)
+      const newValue = Object.assign({}, currentValue, patch.meta)
+      jsonPatch.applyPatch(obj, [replace(patch.path, newValue)])
     }
   }
+
+  console.log('final obj', obj, "\n\n")
 
   return obj
 }
@@ -301,4 +332,15 @@ function isContextPatch(patch) {
 
 function isPatch(patch) {
   return patch && typeof patch === 'object'
+}
+
+function getInByJsonPath(obj, jsonPath) {
+  console.log('getInByJsonPath', jsonPath)
+  try {
+    return jsonPatch.getValueByPointer(obj, jsonPath)
+  }
+  catch (e) {
+    console.error(e)
+    return {}
+  }
 }
