@@ -30,11 +30,15 @@ export default {
 }
 
 function applyPatch(obj, patch, opts) {
+  console.log('original obj', obj, "\n\n")
+
   opts = opts || {}
 
   patch = Object.assign({}, patch, {
     path: patch.path && normalizeJSONPath(patch.path)
   })
+
+  console.log('patch', patch, "\n\n")
 
   if (patch.op === 'merge') {
     const newValue = getInByJsonPath(obj, patch.path)
