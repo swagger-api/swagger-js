@@ -447,7 +447,6 @@ describe('resolver', () => {
           },
           definitions: {
             Category: {
-              $$ref: '#/definitions/Category', // FIXME: benign, but this should not be present
               type: 'object',
               properties: {
                 id: {
@@ -460,14 +459,13 @@ describe('resolver', () => {
               }
             },
             Pet: {
-              $$ref: '#/definitions/Pet',
               type: 'object',
               required: [
                 'category'
               ],
               properties: {
                 category: {
-                  $$ref: '#/definitions/Category', // FIXME: benign, but this should not be present
+                  $$ref: '#/definitions/Category',
                   type: 'object',
                   properties: {
                     id: {

@@ -128,7 +128,6 @@ describe('allOf', function () {
         errors: [],
         spec: {
           Pet: {
-            $$ref: '#/Pet',
             type: 'object',
             properties: {
               name: {
@@ -137,7 +136,6 @@ describe('allOf', function () {
             }
           },
           Cat: {
-            $$ref: '#/Cat',
             properties: {
               meow: {
                 type: 'string'

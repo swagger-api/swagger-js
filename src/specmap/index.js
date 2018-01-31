@@ -212,8 +212,10 @@ class SpecMap {
   }
 
   updateMutations(patch) {
-    if (lib.applyPatch(this.state, patch, {allowMetaPatches: this.allowMetaPatches})) {
+    const result = lib.applyPatch(this.state, patch, {allowMetaPatches: this.allowMetaPatches})
+    if (result) {
       this.mutations.push(patch)
+      this.state = result
     }
   }
 
