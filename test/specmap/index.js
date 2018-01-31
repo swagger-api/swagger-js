@@ -549,6 +549,7 @@ describe('specmap', function () {
           })
             .then((res) => {
               expect(res.spec.one.$$ref).toEqual('#/two')
+              expect(res.spec.two.$$ref).toEqual(undefined)
             })
         })
 
