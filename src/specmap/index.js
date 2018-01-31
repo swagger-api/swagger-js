@@ -58,6 +58,7 @@ class SpecMap {
   }
 
   wrapPlugin(plugin, name) {
+    const pathDiscriminator = this.pathDiscriminator
     let ctx = null
     let fn
 
@@ -82,6 +83,10 @@ class SpecMap {
     // This strategy should work well for most plugins (including the built-ins).
     // We might consider making this (traversing & application) configurable later.
     function createKeyBasedPlugin(pluginObj) {
+      const isSubPath = (path, tested) => {
+        return path.every((val, i) => val[i] === tested[i])
+      }
+
       return function* (patches, specmap) {
         const refCache = {}
 
@@ -119,7 +124,9 @@ class SpecMap {
               }
 
               if (!isRootProperties && key === pluginObj.key) {
-                yield pluginObj.plugin(val, key, updatedPath, specmap, patch)
+                if(!pathDiscriminator || isSubPath(pathDiscriminator, path)) {
+                  yield pluginObj.plugin(val, key, updatedPath, specmap, patch)
+                }
               }
             }
           }
