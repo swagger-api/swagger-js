@@ -124,7 +124,7 @@ class SpecMap {
               }
 
               if (!isRootProperties && key === pluginObj.key) {
-                if(!pathDiscriminator || isSubPath(pathDiscriminator, path)) {
+                if (!pathDiscriminator || isSubPath(pathDiscriminator, path)) {
                   yield pluginObj.plugin(val, key, updatedPath, specmap, patch)
                 }
               }
