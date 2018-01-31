@@ -4,6 +4,7 @@ import startsWith from 'lodash/startsWith'
 import Url from 'url'
 import Http, {makeHttp, serializeRes, serializeHeaders} from './http'
 import Resolver, {clearCache} from './resolver'
+import resolveSubtree from './subtree-resolver'
 import {makeApisTagOperation} from './interfaces'
 import {execute, buildRequest, PARAMETER_BUILDERS} from './execute'
 import {opId} from './helpers'
@@ -11,6 +12,7 @@ import {opId} from './helpers'
 Swagger.http = Http
 Swagger.makeHttp = makeHttp.bind(null, Swagger.http)
 Swagger.resolve = Resolver
+Swagger.resolveSubtree = resolveSubtree
 Swagger.execute = execute
 Swagger.serializeRes = serializeRes
 Swagger.serializeHeaders = serializeHeaders

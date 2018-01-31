@@ -92,4 +92,5 @@ describe.only('subtree $ref resolver', function () {
   it.skip('should normalize Swagger 2.0 produces')
   it.skip('should normalize Swagger 2.0 consumes')
   it.skip('should resolve allOf correctly')
+  it.skip('should resolve complex allOf correctly')
 })
