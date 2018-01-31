@@ -30,15 +30,11 @@ export default {
 }
 
 function applyPatch(obj, patch, opts) {
-  console.log('original obj', obj, "\n\n")
-
   opts = opts || {}
 
   patch = Object.assign({}, patch, {
     path: patch.path && normalizeJSONPath(patch.path)
   })
-
-  console.log('patch', patch, "\n\n")
 
   if (patch.op === 'merge') {
     const newValue = getInByJsonPath(obj, patch.path)
@@ -77,9 +73,9 @@ function applyPatch(obj, patch, opts) {
         return arr
       }, [])
 
-      console.log('segmented patches', patches, "\n\n")
-      jsonPatch.applyPatch(obj, patches)
-  } else if(patch.op === 'replace' && patch.path === '') {
+    jsonPatch.applyPatch(obj, patches)
+  }
+  else if (patch.op === 'replace' && patch.path === '') {
     let value = patch.value
 
     if (opts.allowMetaPatches && patch.meta && isAdditiveMutation(patch) &&
@@ -87,7 +83,8 @@ function applyPatch(obj, patch, opts) {
       value = Object.assign({}, value, patch.meta)
     }
     obj = value
-  } else {
+  }
+  else {
     jsonPatch.applyPatch(obj, [patch])
 
     // Attach metadata to the resulting value.
@@ -98,8 +95,6 @@ function applyPatch(obj, patch, opts) {
       jsonPatch.applyPatch(obj, [replace(patch.path, newValue)])
     }
   }
-
-  console.log('final obj', obj, "\n\n")
 
   return obj
 }
@@ -335,12 +330,11 @@ function isPatch(patch) {
 }
 
 function getInByJsonPath(obj, jsonPath) {
-  console.log('getInByJsonPath', jsonPath)
   try {
     return jsonPatch.getValueByPointer(obj, jsonPath)
   }
   catch (e) {
-    console.error(e)
+    console.error(e) // eslint-disable-line no-console
     return {}
   }
 }
