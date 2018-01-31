@@ -45,7 +45,8 @@ export default async function resolveSubtree(obj, path, opts = {}) {
   const result = await resolve({
     ...resolveOptions,
     spec: obj,
-    allowMetaPatches: true
+    allowMetaPatches: true,
+    skipNormalization: true // skip conventional normalization
   })
 
   if (!returnEntireTree) {
