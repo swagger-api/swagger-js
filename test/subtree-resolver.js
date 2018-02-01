@@ -28,7 +28,53 @@ describe('subtree $ref resolver', function () {
       }
     })
   })
-  it.skip('should resolve circular $refs')
+  it('should resolve circular $refs when a baseDoc is provided', async function () {
+    const input = {
+      one: {
+        $ref: '#/two'
+      },
+      two: {
+        a: {
+          $ref: '#/three'
+        }
+      },
+      three: {
+        b: {
+          $ref: '#/two'
+        }
+      }
+    }
+
+    const res = await resolve(input, ['one'], {
+      baseDoc: 'http://example.com/swagger.json',
+      returnEntireTree: true
+    })
+
+    expect(res).toEqual({
+      errors: [],
+      spec: {
+        one: {
+          $$ref: '#/two',
+          a: {
+            $$ref: '#/three',
+            b: {
+              $ref: '#/two'
+            }
+          }
+        },
+        two: {
+          a: {
+            $ref: '#/three'
+          }
+        },
+        three: {
+          b: {
+            $ref: '#/two'
+          }
+        }
+      }
+    })
+  })
   it('should return null when the path is invalid', async function () {
     const input = {
       a: {

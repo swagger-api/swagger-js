@@ -28,6 +28,7 @@ import resolve from '../resolver'
 export default async function resolveSubtree(obj, path, opts = {}) {
   const {
     returnEntireTree,
+    baseDoc,
     requestInterceptor,
     responseInterceptor,
     parameterMacro,
@@ -36,6 +37,7 @@ export default async function resolveSubtree(obj, path, opts = {}) {
 
   const resolveOptions = {
     pathDiscriminator: path,
+    baseDoc,
     requestInterceptor,
     responseInterceptor,
     parameterMacro,
