@@ -1122,7 +1122,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters', fun
                   name: 'id',
                   in: 'query',
                   style: 'deepObject',
-                  explode: false
+                  explode: true
                 }
               ]
             }
