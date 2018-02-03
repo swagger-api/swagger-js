@@ -10,7 +10,7 @@ export default {
       return
     }
 
-    const parent = fullPath.slice(0, -1)    
+    const parent = fullPath.slice(0, -1)
     if (isFreelyNamed(parent)) {
       return
     }

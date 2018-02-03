@@ -212,6 +212,11 @@ describe('allOf', function () {
           a: 123
         }
       },
+      properties: {
+        allOf: {
+          a: 123
+        }
+      },
     }
 
     return mapSpec({
