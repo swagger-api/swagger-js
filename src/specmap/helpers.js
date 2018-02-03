@@ -1,4 +1,7 @@
-export const freelyNamedKeyParents = [
+const freelyNamedKeyParents = [
+  'properties',
+]
+const freelyNamedStrParents = [
   // Swagger 2.0
   'definitions',
   'parameters',
@@ -13,9 +16,10 @@ export const freelyNamedKeyParents = [
 ]
 
 export function isFreelyNamed(parent) {
-  const parentStr = parent.join('/')
+  const parentKey = parent[parent.length - 1]
+  const parentStr = parent.join('/')  
   return (
-    (parent[parent.length - 1] === 'properties') ||
-    (freelyNamedKeyParents.indexOf(parentStr) > -1)
+    (freelyNamedKeyParents.indexOf(parentKey) > -1) ||
+    (freelyNamedStrParents.indexOf(parentStr) > -1)
   )
 }
