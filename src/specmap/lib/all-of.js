@@ -1,4 +1,4 @@
-import {freelyNamedKeyParents} from '../helpers'
+import {isFreelyNamed} from '../helpers'
 
 export default {
   key: 'allOf',
@@ -10,10 +10,8 @@ export default {
       return
     }
 
-    const parent = fullPath.slice(0, -1)
-    const parentStr = parent.join('/')
-
-    if (freelyNamedKeyParents.indexOf(parentStr) > -1) {
+    const parent = fullPath.slice(0, -1)    
+    if (isFreelyNamed(parent)) {
       return
     }
 

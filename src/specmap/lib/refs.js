@@ -2,7 +2,7 @@ import {fetch} from 'cross-fetch'
 import url from 'url'
 import lib from '../lib'
 import createError from '../lib/create-error'
-import {freelyNamedKeyParents} from '../helpers'
+import {isFreelyNamed} from '../helpers'
 
 const ABSOLUTE_URL_REGEXP = new RegExp('^([a-z]+://|//)', 'i')
 
@@ -41,14 +41,12 @@ const specmapRefs = new WeakMap()
 const plugin = {
   key: '$ref',
   plugin: (ref, key, fullPath, specmap) => {
-    const parent = fullPath.slice(0, -1)
-    const parentStr = parent.join('/')
-    const baseDoc = specmap.getContext(fullPath).baseDoc
-
-    if (freelyNamedKeyParents.indexOf(parentStr) > -1) {
+    const parent = fullPath.slice(0, -1)  
+    if (isFreelyNamed(parent)) {
       return
     }
 
+    const baseDoc = specmap.getContext(fullPath).baseDoc
     if (typeof ref !== 'string') {
       return new JSONRefError('$ref: must be a string (JSON-Ref)', {
         $ref: ref,

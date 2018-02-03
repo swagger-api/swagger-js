@@ -11,3 +11,11 @@ export const freelyNamedKeyParents = [
   'components/parameters',
   'components/securitySchemes',
 ]
+
+export function isFreelyNamed(parent) {
+  const parentStr = parent.join('/')
+  return (
+    (parent[parent.length - 1] === 'properties') ||
+    (freelyNamedKeyParents.indexOf(parentStr) > -1)
+  )
+}
