@@ -2,6 +2,7 @@ import {fetch} from 'cross-fetch'
 import url from 'url'
 import lib from '../lib'
 import createError from '../lib/create-error'
+import {freelyNamedKeyParents} from '../helpers'
 
 const ABSOLUTE_URL_REGEXP = new RegExp('^([a-z]+://|//)', 'i')
 
@@ -41,7 +42,12 @@ const plugin = {
   key: '$ref',
   plugin: (ref, key, fullPath, specmap) => {
     const parent = fullPath.slice(0, -1)
+    const parentStr = parent.join('/')
     const baseDoc = specmap.getContext(fullPath).baseDoc
+
+    if (freelyNamedKeyParents.indexOf(parentStr) > -1) {
+      return
+    }
 
     if (typeof ref !== 'string') {
       return new JSONRefError('$ref: must be a string (JSON-Ref)', {
@@ -248,7 +254,7 @@ function getDoc(docPath) {
  * @api public
  */
 function fetchJSON(docPath) {
-  return fetch(docPath, {headers: {Accept: 'application/json'}, loadSpec: true}).then(res => res.json())
+  return fetch(docPath, {headers: {Accept: 'application/json, application/yaml'}, loadSpec: true}).then(res => res.json())
 }
 
 /**

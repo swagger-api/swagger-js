@@ -128,7 +128,6 @@ describe('allOf', function () {
         errors: [],
         spec: {
           Pet: {
-            $$ref: '#/Pet',
             type: 'object',
             properties: {
               name: {
@@ -137,7 +136,6 @@ describe('allOf', function () {
             }
           },
           Cat: {
-            $$ref: '#/Cat',
             properties: {
               meow: {
                 type: 'string'
@@ -189,6 +187,39 @@ describe('allOf', function () {
       expect(res.errors[0].message).toEqual('allOf must be an array')
       expect(res.errors[0].fullPath).toEqual(['allOf'])
       expect(res.spec).toEqual({allOf: {}})
+    })
+  })
+
+  it('should ignore "allOf" in freely named Swagger key positions', function () {
+    const spec = {
+      parameters: {
+        allOf: {
+          a: 123
+        }
+      },
+      responses: {
+        allOf: {
+          a: 123
+        }
+      },
+      definitions: {
+        allOf: {
+          a: 123
+        }
+      },
+      securityDefinitions: {
+        allOf: {
+          a: 123
+        }
+      },
+    }
+
+    return mapSpec({
+      spec,
+      plugins: [plugins.allOf]
+    }).then((res) => {
+      expect(res.errors).toEqual([])
+      expect(res.spec).toEqual(spec)
     })
   })
 

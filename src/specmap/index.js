@@ -83,6 +83,8 @@ class SpecMap {
     // We might consider making this (traversing & application) configurable later.
     function createKeyBasedPlugin(pluginObj) {
       return function* (patches, specmap) {
+        const refCache = {}
+
         for (const patch of patches.filter(lib.isAdditiveMutation)) {
           yield* traverse(patch.value, patch.path, patch)
         }
@@ -98,13 +100,22 @@ class SpecMap {
             const parent = path[parentIndex]
             const indexOfFirstProperties = path.indexOf('properties')
             const isRootProperties = parent === 'properties' && parentIndex === indexOfFirstProperties
+            const traversed = specmap.allowMetaPatches && refCache[obj.$$ref]
 
             for (const key of Object.keys(obj)) {
               const val = obj[key]
               const updatedPath = path.concat(key)
+              const isObj = lib.isObject(val)
+              const objRef = obj.$$ref
 
-              if (lib.isObject(val)) {
-                yield* traverse(val, updatedPath, patch)
+              if (!traversed) {
+                if (isObj) {
+                  // Only store the ref if it exists
+                  if (specmap.allowMetaPatches && objRef) {
+                    refCache[objRef] = true
+                  }
+                  yield* traverse(val, updatedPath, patch)
+                }
               }
 
               if (!isRootProperties && key === pluginObj.key) {
@@ -201,8 +212,10 @@ class SpecMap {
   }
 
   updateMutations(patch) {
-    if (lib.applyPatch(this.state, patch, {allowMetaPatches: this.allowMetaPatches})) {
+    const result = lib.applyPatch(this.state, patch, {allowMetaPatches: this.allowMetaPatches})
+    if (result) {
       this.mutations.push(patch)
+      this.state = result
     }
   }
 

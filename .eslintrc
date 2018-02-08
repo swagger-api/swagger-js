@@ -28,6 +28,7 @@
     "no-underscore-dangle": 0,
     "no-unused-expressions": [2, {"allowShortCircuit": true}],
     "object-curly-spacing": [2, "never"],
+    "import/prefer-default-export": 1,
     "import/no-extraneous-dependencies": ["error", {"devDependencies": ["!test/**/*.js"]}]
   }
 }

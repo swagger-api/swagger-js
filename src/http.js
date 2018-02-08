@@ -65,10 +65,10 @@ export default function http(url, request = {}) {
 }
 
 // exported for testing
-export const shouldDownloadAsText = (contentType = '') => /json|xml|yaml|text/.test(contentType)
+export const shouldDownloadAsText = (contentType = '') => /(json|xml|yaml|text)\b/.test(contentType)
 
-function parseBody(body) {
-  if (/^\s*\{/.test(body)) {
+function parseBody(body, contentType) {
+  if (contentType === 'application/json') {
     return JSON.parse(body)
   }
   return jsYaml.safeLoad(body)
@@ -84,7 +84,8 @@ export function serializeRes(oriRes, url, {loadSpec = false} = {}) {
     headers: serializeHeaders(oriRes.headers)
   }
 
-  const useText = loadSpec || shouldDownloadAsText(res.headers['content-type'])
+  const contentType = res.headers['content-type']
+  const useText = loadSpec || shouldDownloadAsText(contentType)
 
   // Note: Response.blob not implemented in node-fetch 1.  Use buffer instead.
   const getBody = useText ? oriRes.text : (oriRes.blob || oriRes.buffer)
@@ -95,7 +96,7 @@ export function serializeRes(oriRes, url, {loadSpec = false} = {}) {
 
     if (useText) {
       try {
-        const obj = parseBody(body)
+        const obj = parseBody(body, contentType)
         res.body = obj
         res.obj = obj
       }
@@ -139,8 +140,12 @@ function isFile(obj) {
   return obj !== null && typeof obj === 'object' && typeof obj.pipe === 'function'
 }
 
-function formatValue({value, collectionFormat, allowEmptyValue}, skipEncoding) {
-  // REVIEW: OAS3: usage of this fn for compatibility w/ new value formats
+function formatValue(input, skipEncoding) {
+  const {collectionFormat, allowEmptyValue} = input
+
+  // `input` can be string in OAS3 contexts
+  const value = typeof input === 'object' ? input.value : input
+
   const SEPARATORS = {
     csv: ',',
     ssv: '%20',
@@ -162,9 +167,14 @@ function formatValue({value, collectionFormat, allowEmptyValue}, skipEncoding) {
     else encodeFn = obj => JSON.stringify(obj)
   }
 
-  if (value && !Array.isArray(value)) {
+  if (typeof value === 'object' && !Array.isArray(value)) {
+    return ''
+  }
+
+  if (!Array.isArray(value)) {
     return encodeFn(value)
   }
+
   if (Array.isArray(value) && !collectionFormat) {
     return value.map(encodeFn).join(',')
   }

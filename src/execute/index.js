@@ -5,7 +5,7 @@ import isArray from 'lodash/isArray'
 import btoa from 'btoa'
 import url from 'url'
 import cookie from 'cookie'
-import http, {mergeInQueryOrForm} from '../http'
+import stockHttp, {mergeInQueryOrForm} from '../http'
 import createError from '../specmap/lib/create-error'
 
 import SWAGGER2_PARAMETER_BUILDERS from './swagger2/parameter-builders'
@@ -32,6 +32,25 @@ const findParametersWithName = (name, parameters) => {
   return parameters.filter(p => p.name === name)
 }
 
+// removes parameters that have duplicate 'in' and 'name' properties
+const deduplicateParameters = (parameters) => {
+  const paramsMap = {}
+  parameters.forEach((p) => {
+    if (!paramsMap[p.in]) {
+      paramsMap[p.in] = {}
+    }
+    paramsMap[p.in][p.name] = p
+  })
+
+  const dedupedParameters = []
+  Object.keys(paramsMap).forEach((i) => {
+    Object.keys(paramsMap[i]).forEach((p) => {
+      dedupedParameters.push(paramsMap[i][p])
+    })
+  })
+  return dedupedParameters
+}
+
 // For stubbing in tests
 export const self = {
   buildRequest
@@ -51,20 +70,20 @@ export function execute({
   ...extras
 }) {
   // Provide default fetch implementation
-  userHttp = userHttp || fetch || http // Default to _our_ http
+  const http = userHttp || fetch || stockHttp // Default to _our_ http
 
   if (pathName && method && !operationId) {
     operationId = legacyIdFromPathMethod(pathName, method)
   }
 
-  const request = self.buildRequest({spec, operationId, parameters, securities, ...extras})
+  const request = self.buildRequest({spec, operationId, parameters, securities, http, ...extras})
 
   if (request.body && (isPlainObject(request.body) || isArray(request.body))) {
     request.body = JSON.stringify(request.body)
   }
 
   // Build request and execute it
-  return userHttp(request)
+  return http(request)
 }
 
 // Build a request, which can be handled by the `http.js` implementation.
@@ -82,7 +101,8 @@ export function buildRequest(options) {
     userFetch,
     requestBody,
     server,
-    serverVariables
+    serverVariables,
+    http
   } = options
 
   let {
@@ -91,7 +111,6 @@ export function buildRequest(options) {
   } = options
 
   const specIsOAS3 = isOAS3(spec)
-
   if (!parameterBuilders) {
     // user did not provide custom parameter builders
     if (specIsOAS3) {
@@ -102,15 +121,14 @@ export function buildRequest(options) {
     }
   }
 
+  // Set credentials with 'http.withCredentials' value
+  const credentials = (http && http.withCredentials) ? 'include' : 'same-origin'
+
   // Base Template
   let req = {
-    url: baseUrl({spec, scheme, contextUrl, server, serverVariables}),
-    credentials: 'same-origin',
-    headers: {
-      // This breaks CORSs... removing this line... probably breaks oAuth. Need to address that
-      // This also breaks tests
-      // 'access-control-allow-origin': '*'
-    },
+    url: '',
+    credentials,
+    headers: {},
     cookies: {}
   }
 
@@ -124,6 +142,15 @@ export function buildRequest(options) {
     req.userFetch = userFetch
   }
 
+  const operationRaw = getOperationRaw(spec, operationId)
+  if (!operationRaw) {
+    throw new OperationNotFoundError(`Operation ${operationId} not found`)
+  }
+
+  const {operation = {}, method, pathName} = operationRaw
+
+  req.url += baseUrl({spec, scheme, contextUrl, server, serverVariables, pathName, method})
+
   // Mostly for testing
   if (!operationId) {
     // Not removing req.cookies causes testing issues and would
@@ -133,13 +160,6 @@ export function buildRequest(options) {
     delete req.cookies
     return req
   }
-
-  const operationRaw = getOperationRaw(spec, operationId)
-  if (!operationRaw) {
-    throw new OperationNotFoundError(`Operation ${operationId} not found`)
-  }
-
-  const {operation = {}, method, pathName} = operationRaw
 
   req.url += pathName // Have not yet replaced the path parameters
   req.method = (`${method}`).toUpperCase()
@@ -151,9 +171,10 @@ export function buildRequest(options) {
     req.headers.accept = responseContentType
   }
 
-  const combinedParameters = []
+  const combinedParameters = deduplicateParameters([]
     .concat(arrayOrEmpty(operation.parameters)) // operation parameters
     .concat(arrayOrEmpty(path.parameters)) // path parameters
+  )
 
   // REVIEW: OAS3: have any key names or parameter shapes changed?
   // Any new features that need to be plugged in here?
@@ -240,8 +261,11 @@ export function baseUrl(obj) {
   return specIsOAS3 ? oas3BaseUrl(obj) : swagger2BaseUrl(obj)
 }
 
-function oas3BaseUrl({spec, server, contextUrl, serverVariables = {}}) {
-  const servers = spec.servers
+function oas3BaseUrl({spec, pathName, method, server, contextUrl, serverVariables = {}}) {
+  const servers =
+    getIn(spec, ['paths', pathName, (method || '').toLowerCase(), 'servers']) ||
+    getIn(spec, ['paths', pathName, 'servers']) ||
+    getIn(spec, ['servers'])
 
   let selectedServerUrl = ''
   let selectedServerObj = null

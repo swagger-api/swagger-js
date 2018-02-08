@@ -1,4 +1,45 @@
 import encodeToRFC3986 from 'encode-3986'
+import toUTF8Bytes from 'utf8-bytes'
+import {stringToCharArray} from 'utfstring'
+
+const isRfc3986Reserved = char => ':/?#[]@!$&\'()*+,;='.indexOf(char) > -1
+const isRrc3986Unreserved = (char) => {
+  return (/^[a-z0-9\-._~]+$/i).test(char)
+}
+
+export function encodeDisallowedCharacters(str, {escape} = {}, parse) {
+  if (typeof str === 'number') {
+    str = str.toString()
+  }
+  if (typeof str !== 'string' || !str.length) {
+    return str
+  }
+
+  if (!escape) {
+    return str
+  }
+
+  if (parse) {
+    return JSON.parse(str)
+  }
+
+  return stringToCharArray(str).map((char) => {
+    if (isRrc3986Unreserved(char)) {
+      return char
+    }
+
+    if (isRfc3986Reserved(char) && escape === 'unsafe') {
+      return char
+    }
+
+    const encoded = (toUTF8Bytes(char) || [])
+      .map(byte => byte.toString(16).toUpperCase())
+      .map(encodedByte => `%${encodedByte}`)
+      .join('')
+
+    return encoded
+  }).join('')
+}
 
 export default function (config) {
   const {value} = config
@@ -9,14 +50,13 @@ export default function (config) {
   else if (typeof value === 'object') {
     return encodeObject(config)
   }
-
   return encodePrimitive(config)
 }
 
-const escapeFn = str => encodeURIComponent(str)
-
 function encodeArray({key, value, style, explode, escape}) {
-  const valueEncoder = escape ? a => encodeToRFC3986(a) : a => a
+  const valueEncoder = str => encodeDisallowedCharacters(str, {
+    escape
+  })
 
   if (style === 'simple') {
     return value.map(val => valueEncoder(val)).join(',')
@@ -36,25 +76,26 @@ function encodeArray({key, value, style, explode, escape}) {
   }
 
   if (style === 'form') {
-    const commaValue = escape ? escapeFn(',') : ','
-    const after = explode ? `&${key}=` : commaValue
+    const after = explode ? `&${key}=` : ','
     return value.map(val => valueEncoder(val)).join(after)
   }
 
   if (style === 'spaceDelimited') {
     const after = explode ? `${key}=` : ''
-    return value.map(val => valueEncoder(val)).join(`${escapeFn(' ')}${after}`)
+    return value.map(val => valueEncoder(val)).join(` ${after}`)
   }
 
   if (style === 'pipeDelimited') {
     const after = explode ? `${key}=` : ''
-    const separator = escape ? escapeFn('|') : '|'
-    return value.map(val => valueEncoder(val)).join(`${separator}${after}`)
+    return value.map(val => valueEncoder(val)).join(`|${after}`)
   }
 }
 
 function encodeObject({key, value, style, explode, escape}) {
-  const valueEncoder = escape ? a => encodeToRFC3986(a) : a => a
+  const valueEncoder = str => encodeDisallowedCharacters(str, {
+    escape
+  })
+
   const valueKeys = Object.keys(value)
 
   if (style === 'simple') {
@@ -107,8 +148,10 @@ function encodeObject({key, value, style, explode, escape}) {
   }
 }
 
-function encodePrimitive({key, value, style, explode, escape}) {
-  const valueEncoder = escape ? a => encodeToRFC3986(a) : a => a
+function encodePrimitive({key, value, style, escape}) {
+  const valueEncoder = str => encodeDisallowedCharacters(str, {
+    escape
+  })
 
   if (style === 'simple') {
     return valueEncoder(value)
@@ -127,6 +170,6 @@ function encodePrimitive({key, value, style, explode, escape}) {
   }
 
   if (style === 'deepObject') {
-    return valueEncoder(value)
+    return valueEncoder(value, {}, true)
   }
 }
