@@ -1,5 +1,8 @@
 import expect from 'expect'
 import xmock from 'xmock'
+import path from 'path'
+import fs from 'fs'
+import jsYaml from 'js-yaml'
 
 import Swagger from '../src'
 
@@ -235,6 +238,24 @@ describe('resolver', () => {
           }
         }
       })
+    }
+  })
+
+  it('should not throw errors on resvered-keywords in freely-named-fields', () => {
+    // Given
+    const ReservedKeywordSpec = jsYaml.safeLoad(fs.readFileSync(path.resolve(__dirname, './data/reserved-keywords.yaml'), 'utf8'))
+
+    // When
+    return Swagger.resolve({spec: ReservedKeywordSpec, allowMetaPatches: false})
+      .then(handleResponse)
+
+    // Then
+    function handleResponse(obj) {
+      // Sanity ( to make sure we're testing the right spec )
+      expect(obj.spec.definitions).toInclude({$ref: {}})
+
+      // The main assertion
+      expect(obj.errors).toEqual([])
     }
   })
 
