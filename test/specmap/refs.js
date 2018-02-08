@@ -378,6 +378,9 @@ describe('refs', function () {
           },
           securityDefinitions: {
             $ref: '#/a'
+          },
+          properties: {
+            $ref: '#/a'
           }
         },
         plugins: [refs],
@@ -394,6 +397,9 @@ describe('refs', function () {
             $ref: '#/a'
           },
           securityDefinitions: {
+            $ref: '#/a'
+          },
+          properties: {
             $ref: '#/a'
           }
         })
