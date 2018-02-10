@@ -1,0 +1,470 @@
+swagger: "2.0"
+
+info:
+  description: all the reserved words I could find
+  version: 1.0.0
+  title: Reserved Words
+
+parameters:
+  $ref: { type: string, in: query, name: test }
+  title: { type: string, in: query, name: test }
+  id: { type: string, in: query, name: test }
+  $schema: { type: string, in: query, name: test }
+  type: { type: string, in: query, name: test }
+  required: { type: string, in: query, name: test }
+  additionalProperties: { type: string, in: query, name: test }
+  patternProperties: { type: string, in: query, name: test }
+  properties: { type: string, in: query, name: test }
+  swagger: { type: string, in: query, name: test }
+  enum: { type: string, in: query, name: test }
+  description: { type: string, in: query, name: test }
+  info: { type: string, in: query, name: test }
+  host: { type: string, in: query, name: test }
+  pattern: { type: string, in: query, name: test }
+  basePath: { type: string, in: query, name: test }
+  schemes: { type: string, in: query, name: test }
+  consumes: { type: string, in: query, name: test }
+  allOf: { type: string, in: query, name: test }
+  produces: { type: string, in: query, name: test }
+  paths: { type: string, in: query, name: test }
+  definitions: { type: string, in: query, name: test }
+  parameters: { type: string, in: query, name: test }
+  responses: { type: string, in: query, name: test }
+  security: { type: string, in: query, name: test }
+  securityDefinitions: { type: string, in: query, name: test }
+  tags: { type: string, in: query, name: test }
+  items: { type: string, in: query, name: test }
+  uniqueItems: { type: string, in: query, name: test }
+  externalDocs: { type: string, in: query, name: test }
+  version: { type: string, in: query, name: test }
+  termsOfService: { type: string, in: query, name: test }
+  contact: { type: string, in: query, name: test }
+  license: { type: string, in: query, name: test }
+  name: { type: string, in: query, name: test }
+  url: { type: string, in: query, name: test }
+  format: { type: string, in: query, name: test }
+  email: { type: string, in: query, name: test }
+  parameterDefinitions: { type: string, in: query, name: test }
+  responseDefinitions: { type: string, in: query, name: test }
+  examples: { type: string, in: query, name: test }
+  mimeType: { type: string, in: query, name: test }
+  operation: { type: string, in: query, name: test }
+  summary: { type: string, in: query, name: test }
+  operationId: { type: string, in: query, name: test }
+  deprecated: { type: string, in: query, name: test }
+  default: { type: string, in: query, name: test }
+  pathItem: { type: string, in: query, name: test }
+  get: { type: string, in: query, name: test }
+  put: { type: string, in: query, name: test }
+  post: { type: string, in: query, name: test }
+  delete: { type: string, in: query, name: test }
+  options: { type: string, in: query, name: test }
+  head: { type: string, in: query, name: test }
+  patch: { type: string, in: query, name: test }
+  minProperties: { type: string, in: query, name: test }
+  not: { type: string, in: query, name: test }
+  responseValue: { type: string, in: query, name: test }
+  oneOf: { type: string, in: query, name: test }
+  response: { type: string, in: query, name: test }
+  schema: { type: string, in: query, name: test }
+  headers: { type: string, in: query, name: test }
+  header: { type: string, in: query, name: test }
+  collectionFormat: { type: string, in: query, name: test }
+  maximum: { type: string, in: query, name: test }
+  exclusiveMaximum: { type: string, in: query, name: test }
+  minimum: { type: string, in: query, name: test }
+  exclusiveMinimum: { type: string, in: query, name: test }
+  maxLength: { type: string, in: query, name: test }
+  minLength: { type: string, in: query, name: test }
+  maxItems: { type: string, in: query, name: test }
+  minItems: { type: string, in: query, name: test }
+  multipleOf: { type: string, in: query, name: test }
+  vendorExtension: { type: string, in: query, name: test }
+  additionalItems: { type: string, in: query, name: test }
+  bodyParameter: { type: string, in: query, name: test }
+  in: { type: string, in: query, name: test }
+  headerParameterSubSchema: { type: string, in: query, name: test }
+  queryParameterSubSchema: { type: string, in: query, name: test }
+  allowEmptyValue: { type: string, in: query, name: test }
+  formDataParameterSubSchema: { type: string, in: query, name: test }
+  pathParameterSubSchema: { type: string, in: query, name: test }
+  nonBodyParameter: { type: string, in: query, name: test }
+  parameter: { type: string, in: query, name: test }
+  maxProperties: { type: string, in: query, name: test }
+  anyOf: { type: string, in: query, name: test }
+  discriminator: { type: string, in: query, name: test }
+  readOnly: { type: string, in: query, name: test }
+  xml: { type: string, in: query, name: test }
+  example: { type: string, in: query, name: test }
+  fileSchema: { type: string, in: query, name: test }
+  primitivesItems: { type: string, in: query, name: test }
+  securityRequirement: { type: string, in: query, name: test }
+  namespace: { type: string, in: query, name: test }
+  prefix: { type: string, in: query, name: test }
+  attribute: { type: string, in: query, name: test }
+  wrapped: { type: string, in: query, name: test }
+  tag: { type: string, in: query, name: test }
+  basicAuthenticationSecurity: { type: string, in: query, name: test }
+  apiKeySecurity: { type: string, in: query, name: test }
+  oauth2ImplicitSecurity: { type: string, in: query, name: test }
+  flow: { type: string, in: query, name: test }
+  scopes: { type: string, in: query, name: test }
+  authorizationUrl: { type: string, in: query, name: test }
+  oauth2PasswordSecurity: { type: string, in: query, name: test }
+  tokenUrl: { type: string, in: query, name: test }
+  oauth2ApplicationSecurity: { type: string, in: query, name: test }
+  oauth2AccessCodeSecurity: { type: string, in: query, name: test }
+  oauth2Scopes: { type: string, in: query, name: test }
+  mediaTypeList: { type: string, in: query, name: test }
+  parametersList: { type: string, in: query, name: test }
+  schemesList: { type: string, in: query, name: test }
+  collectionFormatWithMulti: { type: string, in: query, name: test }
+  jsonReference: { type: string, in: query, name: test }
+
+definitions:
+  $ref: { type: object }
+  title: { type: object }
+  id: { type: object }
+  $schema: { type: object }
+  type: { type: object }
+  required: { type: object }
+  additionalProperties: { type: object }
+  patternProperties: { type: object }
+  properties: { type: object }
+  swagger: { type: object }
+  enum: { type: object }
+  description: { type: object }
+  info: { type: object }
+  host: { type: object }
+  pattern: { type: object }
+  basePath: { type: object }
+  schemes: { type: object }
+  consumes: { type: object }
+  allOf: { type: object }
+  produces: { type: object }
+  paths: { type: object }
+  definitions: { type: object }
+  parameters: { type: object }
+  responses: { type: object }
+  security: { type: object }
+  securityDefinitions: { type: object }
+  tags: { type: object }
+  items: { type: object }
+  uniqueItems: { type: object }
+  externalDocs: { type: object }
+  version: { type: object }
+  termsOfService: { type: object }
+  contact: { type: object }
+  license: { type: object }
+  name: { type: object }
+  url: { type: object }
+  format: { type: object }
+  email: { type: object }
+  parameterDefinitions: { type: object }
+  responseDefinitions: { type: object }
+  examples: { type: object }
+  mimeType: { type: object }
+  operation: { type: object }
+  summary: { type: object }
+  operationId: { type: object }
+  deprecated: { type: object }
+  default: { type: object }
+  pathItem: { type: object }
+  get: { type: object }
+  put: { type: object }
+  post: { type: object }
+  delete: { type: object }
+  options: { type: object }
+  head: { type: object }
+  patch: { type: object }
+  minProperties: { type: object }
+  not: { type: object }
+  responseValue: { type: object }
+  oneOf: { type: object }
+  response: { type: object }
+  schema: { type: object }
+  headers: { type: object }
+  header: { type: object }
+  collectionFormat: { type: object }
+  maximum: { type: object }
+  exclusiveMaximum: { type: object }
+  minimum: { type: object }
+  exclusiveMinimum: { type: object }
+  maxLength: { type: object }
+  minLength: { type: object }
+  maxItems: { type: object }
+  minItems: { type: object }
+  multipleOf: { type: object }
+  vendorExtension: { type: object }
+  additionalItems: { type: object }
+  bodyParameter: { type: object }
+  in: { type: object }
+  headerParameterSubSchema: { type: object }
+  queryParameterSubSchema: { type: object }
+  allowEmptyValue: { type: object }
+  formDataParameterSubSchema: { type: object }
+  pathParameterSubSchema: { type: object }
+  nonBodyParameter: { type: object }
+  parameter: { type: object }
+  maxProperties: { type: object }
+  anyOf: { type: object }
+  discriminator: { type: object }
+  readOnly: { type: object }
+  xml: { type: object }
+  example: { type: object }
+  fileSchema: { type: object }
+  primitivesItems: { type: object }
+  securityRequirement: { type: object }
+  namespace: { type: object }
+  prefix: { type: object }
+  attribute: { type: object }
+  wrapped: { type: object }
+  tag: { type: object }
+  basicAuthenticationSecurity: { type: object }
+  apiKeySecurity: { type: object }
+  oauth2ImplicitSecurity: { type: object }
+  flow: { type: object }
+  scopes: { type: object }
+  authorizationUrl: { type: object }
+  oauth2PasswordSecurity: { type: object }
+  tokenUrl: { type: object }
+  oauth2ApplicationSecurity: { type: object }
+  oauth2AccessCodeSecurity: { type: object }
+  oauth2Scopes: { type: object }
+  mediaTypeList: { type: object }
+  parametersList: { type: object }
+  schemesList: { type: object }
+  collectionFormatWithMulti: { type: object }
+  jsonReference: { type: object }
+
+responses:
+  $ref: { description: ok }
+  title: { description: ok }
+  id: { description: ok }
+  $schema: { description: ok }
+  type: { description: ok }
+  required: { description: ok }
+  additionalProperties: { description: ok }
+  patternProperties: { description: ok }
+  properties: { description: ok }
+  swagger: { description: ok }
+  enum: { description: ok }
+  description: { description: ok }
+  info: { description: ok }
+  host: { description: ok }
+  pattern: { description: ok }
+  basePath: { description: ok }
+  schemes: { description: ok }
+  consumes: { description: ok }
+  allOf: { description: ok }
+  produces: { description: ok }
+  paths: { description: ok }
+  definitions: { description: ok }
+  parameters: { description: ok }
+  responses: { description: ok }
+  security: { description: ok }
+  securityDefinitions: { description: ok }
+  tags: { description: ok }
+  items: { description: ok }
+  uniqueItems: { description: ok }
+  externalDocs: { description: ok }
+  version: { description: ok }
+  termsOfService: { description: ok }
+  contact: { description: ok }
+  license: { description: ok }
+  name: { description: ok }
+  url: { description: ok }
+  format: { description: ok }
+  email: { description: ok }
+  parameterDefinitions: { description: ok }
+  responseDefinitions: { description: ok }
+  examples: { description: ok }
+  mimeType: { description: ok }
+  operation: { description: ok }
+  summary: { description: ok }
+  operationId: { description: ok }
+  deprecated: { description: ok }
+  default: { description: ok }
+  pathItem: { description: ok }
+  get: { description: ok }
+  put: { description: ok }
+  post: { description: ok }
+  delete: { description: ok }
+  options: { description: ok }
+  head: { description: ok }
+  patch: { description: ok }
+  minProperties: { description: ok }
+  not: { description: ok }
+  responseValue: { description: ok }
+  oneOf: { description: ok }
+  response: { description: ok }
+  schema: { description: ok }
+  headers: { description: ok }
+  header: { description: ok }
+  collectionFormat: { description: ok }
+  maximum: { description: ok }
+  exclusiveMaximum: { description: ok }
+  minimum: { description: ok }
+  exclusiveMinimum: { description: ok }
+  maxLength: { description: ok }
+  minLength: { description: ok }
+  maxItems: { description: ok }
+  minItems: { description: ok }
+  multipleOf: { description: ok }
+  vendorExtension: { description: ok }
+  additionalItems: { description: ok }
+  bodyParameter: { description: ok }
+  in: { description: ok }
+  headerParameterSubSchema: { description: ok }
+  queryParameterSubSchema: { description: ok }
+  allowEmptyValue: { description: ok }
+  formDataParameterSubSchema: { description: ok }
+  pathParameterSubSchema: { description: ok }
+  nonBodyParameter: { description: ok }
+  parameter: { description: ok }
+  maxProperties: { description: ok }
+  anyOf: { description: ok }
+  discriminator: { description: ok }
+  readOnly: { description: ok }
+  xml: { description: ok }
+  example: { description: ok }
+  fileSchema: { description: ok }
+  primitivesItems: { description: ok }
+  securityRequirement: { description: ok }
+  namespace: { description: ok }
+  prefix: { description: ok }
+  attribute: { description: ok }
+  wrapped: { description: ok }
+  tag: { description: ok }
+  basicAuthenticationSecurity: { description: ok }
+  apiKeySecurity: { description: ok }
+  oauth2ImplicitSecurity: { description: ok }
+  flow: { description: ok }
+  scopes: { description: ok }
+  authorizationUrl: { description: ok }
+  oauth2PasswordSecurity: { description: ok }
+  tokenUrl: { description: ok }
+  oauth2ApplicationSecurity: { description: ok }
+  oauth2AccessCodeSecurity: { description: ok }
+  oauth2Scopes: { description: ok }
+  mediaTypeList: { description: ok }
+  parametersList: { description: ok }
+  schemesList: { description: ok }
+  collectionFormatWithMulti: { description: ok }
+  jsonReference: { description: ok }
+
+securityDefinitions:
+  $ref: { type: apiKey, in: header, name: test }
+  title: { type: apiKey, in: header, name: test }
+  id: { type: apiKey, in: header, name: test }
+  $schema: { type: apiKey, in: header, name: test }
+  type: { type: apiKey, in: header, name: test }
+  required: { type: apiKey, in: header, name: test }
+  additionalProperties: { type: apiKey, in: header, name: test }
+  patternProperties: { type: apiKey, in: header, name: test }
+  properties: { type: apiKey, in: header, name: test }
+  swagger: { type: apiKey, in: header, name: test }
+  enum: { type: apiKey, in: header, name: test }
+  description: { type: apiKey, in: header, name: test }
+  info: { type: apiKey, in: header, name: test }
+  host: { type: apiKey, in: header, name: test }
+  pattern: { type: apiKey, in: header, name: test }
+  basePath: { type: apiKey, in: header, name: test }
+  schemes: { type: apiKey, in: header, name: test }
+  consumes: { type: apiKey, in: header, name: test }
+  allOf: { type: apiKey, in: header, name: test }
+  produces: { type: apiKey, in: header, name: test }
+  paths: { type: apiKey, in: header, name: test }
+  definitions: { type: apiKey, in: header, name: test }
+  parameters: { type: apiKey, in: header, name: test }
+  responses: { type: apiKey, in: header, name: test }
+  security: { type: apiKey, in: header, name: test }
+  securityDefinitions: { type: apiKey, in: header, name: test }
+  tags: { type: apiKey, in: header, name: test }
+  items: { type: apiKey, in: header, name: test }
+  uniqueItems: { type: apiKey, in: header, name: test }
+  externalDocs: { type: apiKey, in: header, name: test }
+  version: { type: apiKey, in: header, name: test }
+  termsOfService: { type: apiKey, in: header, name: test }
+  contact: { type: apiKey, in: header, name: test }
+  license: { type: apiKey, in: header, name: test }
+  name: { type: apiKey, in: header, name: test }
+  url: { type: apiKey, in: header, name: test }
+  format: { type: apiKey, in: header, name: test }
+  email: { type: apiKey, in: header, name: test }
+  parameterDefinitions: { type: apiKey, in: header, name: test }
+  responseDefinitions: { type: apiKey, in: header, name: test }
+  examples: { type: apiKey, in: header, name: test }
+  mimeType: { type: apiKey, in: header, name: test }
+  operation: { type: apiKey, in: header, name: test }
+  summary: { type: apiKey, in: header, name: test }
+  operationId: { type: apiKey, in: header, name: test }
+  deprecated: { type: apiKey, in: header, name: test }
+  default: { type: apiKey, in: header, name: test }
+  pathItem: { type: apiKey, in: header, name: test }
+  get: { type: apiKey, in: header, name: test }
+  put: { type: apiKey, in: header, name: test }
+  post: { type: apiKey, in: header, name: test }
+  delete: { type: apiKey, in: header, name: test }
+  options: { type: apiKey, in: header, name: test }
+  head: { type: apiKey, in: header, name: test }
+  patch: { type: apiKey, in: header, name: test }
+  minProperties: { type: apiKey, in: header, name: test }
+  not: { type: apiKey, in: header, name: test }
+  responseValue: { type: apiKey, in: header, name: test }
+  oneOf: { type: apiKey, in: header, name: test }
+  response: { type: apiKey, in: header, name: test }
+  schema: { type: apiKey, in: header, name: test }
+  headers: { type: apiKey, in: header, name: test }
+  header: { type: apiKey, in: header, name: test }
+  collectionFormat: { type: apiKey, in: header, name: test }
+  maximum: { type: apiKey, in: header, name: test }
+  exclusiveMaximum: { type: apiKey, in: header, name: test }
+  minimum: { type: apiKey, in: header, name: test }
+  exclusiveMinimum: { type: apiKey, in: header, name: test }
+  maxLength: { type: apiKey, in: header, name: test }
+  minLength: { type: apiKey, in: header, name: test }
+  maxItems: { type: apiKey, in: header, name: test }
+  minItems: { type: apiKey, in: header, name: test }
+  multipleOf: { type: apiKey, in: header, name: test }
+  vendorExtension: { type: apiKey, in: header, name: test }
+  additionalItems: { type: apiKey, in: header, name: test }
+  bodyParameter: { type: apiKey, in: header, name: test }
+  in: { type: apiKey, in: header, name: test }
+  headerParameterSubSchema: { type: apiKey, in: header, name: test }
+  queryParameterSubSchema: { type: apiKey, in: header, name: test }
+  allowEmptyValue: { type: apiKey, in: header, name: test }
+  formDataParameterSubSchema: { type: apiKey, in: header, name: test }
+  pathParameterSubSchema: { type: apiKey, in: header, name: test }
+  nonBodyParameter: { type: apiKey, in: header, name: test }
+  parameter: { type: apiKey, in: header, name: test }
+  maxProperties: { type: apiKey, in: header, name: test }
+  anyOf: { type: apiKey, in: header, name: test }
+  discriminator: { type: apiKey, in: header, name: test }
+  readOnly: { type: apiKey, in: header, name: test }
+  xml: { type: apiKey, in: header, name: test }
+  example: { type: apiKey, in: header, name: test }
+  fileSchema: { type: apiKey, in: header, name: test }
+  primitivesItems: { type: apiKey, in: header, name: test }
+  securityRequirement: { type: apiKey, in: header, name: test }
+  namespace: { type: apiKey, in: header, name: test }
+  prefix: { type: apiKey, in: header, name: test }
+  attribute: { type: apiKey, in: header, name: test }
+  wrapped: { type: apiKey, in: header, name: test }
+  tag: { type: apiKey, in: header, name: test }
+  basicAuthenticationSecurity: { type: apiKey, in: header, name: test }
+  apiKeySecurity: { type: apiKey, in: header, name: test }
+  oauth2ImplicitSecurity: { type: apiKey, in: header, name: test }
+  flow: { type: apiKey, in: header, name: test }
+  scopes: { type: apiKey, in: header, name: test }
+  authorizationUrl: { type: apiKey, in: header, name: test }
+  oauth2PasswordSecurity: { type: apiKey, in: header, name: test }
+  tokenUrl: { type: apiKey, in: header, name: test }
+  oauth2ApplicationSecurity: { type: apiKey, in: header, name: test }
+  oauth2AccessCodeSecurity: { type: apiKey, in: header, name: test }
+  oauth2Scopes: { type: apiKey, in: header, name: test }
+  mediaTypeList: { type: apiKey, in: header, name: test }
+  parametersList: { type: apiKey, in: header, name: test }
+  schemesList: { type: apiKey, in: header, name: test }
+  collectionFormatWithMulti: { type: apiKey, in: header, name: test }
+  jsonReference: { type: apiKey, in: header, name: test }
