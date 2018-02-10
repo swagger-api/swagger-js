@@ -1,4 +1,4 @@
-// https://github.com/swagger-api/swagger-ui/issues/4071
+// https://github.com/swagger-api/swagger-editor/issues/1661
 
 import expect, {createSpy, spyOn} from 'expect'
 import Swagger from '../../src'
