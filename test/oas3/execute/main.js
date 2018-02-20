@@ -412,7 +412,9 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
         method: 'POST',
         url: 'http://petstore.swagger.io/v2/pet',
         credentials: 'same-origin',
-        headers: {},
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: {
           one: 1
         }
