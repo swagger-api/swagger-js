@@ -48,7 +48,6 @@ export default async function resolveSubtree(obj, path, opts = {}) {
     ...resolveOptions,
     spec: obj,
     allowMetaPatches: true,
-    skipNormalization: true // skip conventional normalization
   })
 
   if (!returnEntireTree) {
