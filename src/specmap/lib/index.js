@@ -42,39 +42,41 @@ function applyPatch(obj, patch, opts) {
     jsonPatch.applyPatch(obj, [replace(patch.path, newValue)])
   }
   else if (patch.op === 'mergeDeep') {
-    const valPatch = _get(patch.path)
-    jsonPatch.apply(obj, [valPatch])
-    const origValPatchValue = Object.assign({}, valPatch.value)
+    const currentValue = getInByJsonPath(obj, patch.path)
 
-    const currentProps = Object.keys(valPatch.value.properties || {})
-    const newProps = Object.keys(patch.value.properties || {})
-
-    const hasConflictingProps = currentProps
-      .filter(prop => newProps.indexOf(prop) > -1)
-      .length
-
-    const propsToMerge = Object.assign({}, origValPatchValue.properties, patch.value.properties)
-
-    if (!hasConflictingProps && (currentProps.length || newProps.length)) {
-        // There is a properties object, but all children are different, so don't deep merge
-        Object.assign(valPatch.value, patch.value, { properties: propsToMerge })
-    } else {
-
-      deepExtend(valPatch.value, patch.value)
-
-      // deepExtend doesn't merge arrays, so we will do it manually
-      for (const prop in patch.value) {
-       if (Object.prototype.hasOwnProperty.call(patch.value, prop)) {
-         const propVal = patch.value[prop]
-         if (Array.isArray(propVal)) {
-           const existing = origValPatchValue[prop] || []
-           valPatch.value[prop] = existing.concat(propVal)
-         }
-       }
-     }
+    // Iterate the properties of the patch
+    for (const prop in patch.value) {
+      const propVal = patch.value[prop]
+      const isArray = Array.isArray(propVal)
+      if (isArray) {
+        // deepExtend doesn't merge arrays, so we will do it manually
+        const existing = currentValue[prop] || []
+        currentValue[prop] = existing.concat(propVal)
+      }
+      else if (isObject(propVal) && !isArray) {
+        // If it's an object, iterate it's keys and merge
+        // if there are conflicting keys, merge deep, otherwise shallow merge
+        const existing = currentValue[prop] || {}
+        for (const key in propVal) {
+          if (Object.prototype.hasOwnProperty.call(existing, key)) {
+            // if there is a single conflicting key, just deepExtend the entire value
+            // and break from the loop (since all future keys are also merged)
+            // We do this because we can't deepExtend two primitives 
+            // (existing[key] & propVal[key] may be primitives)
+            deepExtend(existing, propVal)
+            break
+          }
+          else {
+            Object.assign(existing, {[key]: propVal[key]})
+          }
+        }
+        currentValue[prop] = existing
+      }
+      else {
+        // It's a primitive, just replace existing.
+        currentValue[prop] = propVal
+      }
     }
-
-
   }
   else if (patch.op === 'add' && patch.path === '' && isObject(patch.value)) {
     // { op: 'add', path: '', value: { a: 1, b: 2 }}
