@@ -1,7 +1,7 @@
 import expect, {spyOn, createSpy} from 'expect'
 import resolve from '../src/subtree-resolver'
 
-describe.only('subtree $ref resolver', function () {
+describe('subtree $ref resolver', function () {
   it('should resolve a subtree of an object, and return the targeted subtree', async function () {
     const input = {
       a: {
