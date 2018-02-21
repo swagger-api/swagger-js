@@ -206,11 +206,12 @@ If you need activate CORS requests, just enable it by `withCredentials` property
 <head>
 <script src='browser/swagger-client.js' type='text/javascript'></script>
 <script>
+
 var specUrl = 'http://petstore.swagger.io/v2/swagger.json'; // data urls are OK too 'data:application/json;base64,abc...'
+SwaggerClient.http.withCredentials = true; // this activates CORS, if necessary
+
 var swaggerClient = new SwaggerClient(specUrl)
-      .then(function (swaggerClient) {                                            
-          swaggerClient.http.withCredentials = true; // this activates CORS, if necessary
-                   
+      .then(function (swaggerClient) {
           return swaggerClient.apis.pet.addPet({id: 1, name: "bobby"}); // chaining promises
       }, function (reason) {
          console.error("failed to load the spec" + reason);

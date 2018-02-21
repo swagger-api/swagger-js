@@ -7,7 +7,7 @@ const isRrc3986Unreserved = (char) => {
   return (/^[a-z0-9\-._~]+$/i).test(char)
 }
 
-export function encodeDisallowedCharacters(str, {escape} = {}) {
+export function encodeDisallowedCharacters(str, {escape} = {}, parse) {
   if (typeof str === 'number') {
     str = str.toString()
   }
@@ -17,6 +17,10 @@ export function encodeDisallowedCharacters(str, {escape} = {}) {
 
   if (!escape) {
     return str
+  }
+
+  if (parse) {
+    return JSON.parse(str)
   }
 
   return stringToCharArray(str).map((char) => {
@@ -166,6 +170,6 @@ function encodePrimitive({key, value, style, escape}) {
   }
 
   if (style === 'deepObject') {
-    return valueEncoder(value)
+    return valueEncoder(value, {}, true)
   }
 }
