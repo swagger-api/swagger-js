@@ -1,7 +1,7 @@
 import expect, {spyOn, createSpy} from 'expect'
 import resolve from '../src/subtree-resolver'
 
-describe('subtree $ref resolver', function () {
+describe.only('subtree $ref resolver', function () {
   it('should resolve a subtree of an object, and return the targeted subtree', async function () {
     const input = {
       a: {
@@ -134,9 +134,123 @@ describe('subtree $ref resolver', function () {
       }
     })
   })
-  it.skip('should normalize Swagger 2.0 securities')
-  it.skip('should normalize Swagger 2.0 produces')
-  it.skip('should normalize Swagger 2.0 consumes')
-  it.skip('should resolve allOf correctly')
-  it.skip('should resolve complex allOf correctly')
+  it('should normalize Swagger 2.0 consumes', async () => {
+    const input = {
+      swagger: '2.0',
+      consumes: ['application/json'],
+      paths: {
+        '/': {
+          get: {
+            description: 'I should have a consumes value...'
+          }
+        }
+      }
+    }
+
+    const res = await resolve(input, ['b'], {
+      returnEntireTree: true
+    })
+
+    expect(res).toEqual({
+      errors: [],
+      spec: {
+        swagger: '2.0',
+        consumes: ['application/json'],
+        paths: {
+          '/': {
+            get: {
+              consumes: ['application/json'],
+              description: 'I should have a consumes value...'
+            }
+          }
+        }
+      }
+    })
+  })
+  it('should normalize Swagger 2.0 produces', async () => {
+    const input = {
+      swagger: '2.0',
+      produces: ['application/json'],
+      paths: {
+        '/': {
+          get: {
+            description: 'I should have a produces value...'
+          }
+        }
+      }
+    }
+
+    const res = await resolve(input, ['b'], {
+      returnEntireTree: true
+    })
+
+    expect(res).toEqual({
+      errors: [],
+      spec: {
+        swagger: '2.0',
+        produces: ['application/json'],
+        paths: {
+          '/': {
+            get: {
+              produces: ['application/json'],
+              description: 'I should have a produces value...'
+            }
+          }
+        }
+      }
+    })
+  })
+  it('should resolve complex allOf correctly', async () => {
+    const input = {
+      definitions: {
+        Simple1: {
+          type: 'object',
+          properties: {
+            id1: {
+              type: 'integer',
+              format: 'int64'
+            }
+          }
+        },
+        Simple2: {
+          type: 'object',
+          properties: {
+            id2: {
+              type: 'integer',
+              format: 'int64'
+            }
+          }
+        },
+        Composed: {
+          allOf: [
+            {
+              $ref: '#/definitions/Simple1'
+            },
+            {
+              $ref: '#/definitions/Simple2'
+            }
+          ]
+        }
+      }
+    }
+
+    const res = await resolve(input, ['definitions', 'Composed'])
+
+    expect(res).toEqual({
+      errors: [],
+      spec: {
+        type: 'object',
+        properties: {
+          id1: {
+            type: 'integer',
+            format: 'int64'
+          },
+          id2: {
+            type: 'integer',
+            format: 'int64'
+          }
+        }
+      }
+    })
+  })
 })
