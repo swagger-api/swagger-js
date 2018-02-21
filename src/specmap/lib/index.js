@@ -61,7 +61,7 @@ function applyPatch(obj, patch, opts) {
           if (Object.prototype.hasOwnProperty.call(existing, key)) {
             // if there is a single conflicting key, just deepExtend the entire value
             // and break from the loop (since all future keys are also merged)
-            // We do this because we can't deepExtend two primitives 
+            // We do this because we can't deepExtend two primitives
             // (existing[key] & propVal[key] may be primitives)
             deepExtend(existing, propVal)
             break
@@ -73,7 +73,7 @@ function applyPatch(obj, patch, opts) {
         currentValue[prop] = existing
       }
       else {
-        // It's a primitive, just replace existing.
+        // It's a primitive, just replace existing
         currentValue[prop] = propVal
       }
     }
