@@ -566,6 +566,8 @@ describe('constructor', () => {
             $ref: 'http://petstore.swagger.io/v2/ref.json#b'
           }
         ))
+        .get('http://petstore.swagger.io/v2/user/\'', () => ({u: 'quote'}))  // Not hit, this is the URL the interceptor sees.
+        .get('http://petstore.swagger.io/v2/user/%27', () => ({u: 'percent-twentyseven'}))  // We actually get this.
     })
 
     test('should support request interceptor', (cb) => {
@@ -644,6 +646,26 @@ describe('constructor', () => {
           expect(resSpy.mock.calls.length).toEqual(2)
           cb()
         }).catch(cb)
+      }
+    )
+    test(
+      'should give the interceptor the URL which actually hits the network',
+      (cb) => {
+        new Swagger({
+          url: 'http://petstore.swagger.io/v2/swagger.json',
+          requestInterceptor: (req) => {
+            if (req.url === 'http://petstore.swagger.io/v2/swagger.json') {
+              return req // skip this
+            }
+            expect(req.url).toEqual('http://petstore.swagger.io/v2/user/\'') // Not percent-escaped
+            return req
+          }
+        }).then(client =>
+          client.apis.user.getUserByName({username: '\''}).then((data) => {
+            expect(data.body.u).toEqual('quote')  // not percent escaped
+            cb()
+          })
+        ).catch(cb)
       }
     )
   })
