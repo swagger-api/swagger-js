@@ -28,6 +28,52 @@ describe('http', () => {
     })
   })
 
+  it('should fail timeout - total response is not received by deadline', (done) => {
+    xapp = xmock()
+    xapp.get('http://swagger.io', (req, res) => {
+      setTimeout(() => {
+        res.send('hi')
+      }, 250)
+    })
+
+    return http({
+      url: 'http://swagger.io',
+      timeoutDeadline: 200
+    })
+    .then(() => {
+      done(new Error('expected error'))
+    })
+    .catch((e) => {
+      expect(e).toExist()
+      expect(e.message).toEqual('Timeout of 200ms exceeded')
+      expect(e.code).toEqual('ECONNABORTED')
+      done()
+    })
+  })
+
+  it('should fail timeout - TTFB time to first byte response is not received', (done) => {
+    xapp = xmock()
+    xapp.get('http://swagger.io', (req, res) => {
+      setTimeout(() => {
+        res.write('hi')
+      }, 150)
+    })
+
+    return http({
+      url: 'http://swagger.io',
+      timeoutResponse: 100
+    })
+    .then(() => {
+      done(new Error('expected error'))
+    })
+    .catch((e) => {
+      expect(e).toExist()
+      expect(e.message).toEqual('Response timeout of 100ms exceeded')
+      expect(e.code).toEqual('ECONNABORTED')
+      done()
+    })
+  })
+
   it('should always load a spec as text', () => {
     xapp = xmock()
     xapp.get('http://swagger.io/somespec', (req, res) => {

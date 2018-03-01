@@ -2,6 +2,8 @@ import 'cross-fetch/polyfill'
 import qs from 'qs'
 import jsYaml from 'js-yaml'
 import isString from 'lodash/isString'
+import get from 'lodash/get'
+import * as timeout from './timeout'
 
 // For testing
 export const self = {
@@ -36,14 +38,26 @@ export default function http(url, request = {}) {
     delete request.headers['Content-Type']
   }
 
-  // eslint-disable-next-line no-undef
-  return (request.userFetch || fetch)(request.url, request).then((res) => {
-    const serialized = self.serializeRes(res, url, request).then((_res) => {
+  const timeoutResponse = request.timeoutResponse || get(this, 'timeoutResponse', undefined)
+  let timeoutDeadline = request.timeoutDeadline || get(this, 'timeoutDeadline', undefined)
+  if ((timeoutResponse !== undefined) && (timeoutDeadline !== undefined)) {
+    if (timeoutDeadline < timeoutResponse) {
+      timeoutDeadline = timeoutResponse
+    }
+  }
+  const timeStart = Date.now()
+// eslint-disable-next-line no-undef
+  const reqpromise = (request.userFetch || fetch)(request.url, request)
+  return timeout.responseTimeout(timeoutResponse, reqpromise)
+  .then((res) => {
+    const serializePromise = self.serializeRes(res, url, request).then((_res) => {
       if (request.responseInterceptor) {
         _res = request.responseInterceptor(_res) || _res
       }
       return _res
     })
+
+    const serialized = timeout.deadlineTimeout(timeStart, timeoutDeadline, serializePromise)
 
     if (!res.ok) {
       const error = new Error(res.statusText)
