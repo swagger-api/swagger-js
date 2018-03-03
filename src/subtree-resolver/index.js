@@ -50,7 +50,7 @@ export default async function resolveSubtree(obj, path, opts = {}) {
     allowMetaPatches: true,
   })
 
-  if (!returnEntireTree) {
+  if (!returnEntireTree && Array.isArray(path) && path.length) {
     result.spec = get(result.spec, path) || null
   }
 
