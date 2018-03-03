@@ -30,9 +30,9 @@ export function clearCache() {
 
 export default function resolve(obj) {
   const {
-    fetch, spec, url, mode, allowMetaPatches = true,
+    fetch, spec, url, mode, allowMetaPatches = true, pathDiscriminator,
     modelPropertyMacro, parameterMacro, requestInterceptor,
-    responseInterceptor
+    responseInterceptor, skipNormalization
   } = obj
 
   let {http, baseDoc} = obj
@@ -81,8 +81,9 @@ export default function resolve(obj) {
       context: {baseDoc},
       plugins: plugs,
       allowMetaPatches, // allows adding .meta patches, which include adding `$$ref`s to the spec
+      pathDiscriminator, // for lazy resolution
       parameterMacro,
       modelPropertyMacro
-    }).then(normalizeSwagger)
+    }).then(skipNormalization ? async a => a : normalizeSwagger)
   }
 }
