@@ -96,7 +96,7 @@ Swagger.http(request)
 // Interceptors
 Swagger.http({
   requestInterceptor: (req: Request) => Request
-  responseInterceptor: (res: Response) => Response
+  responseInterceptor: (res: Response) => Response | Promise
 })
 
 // Custom Fetch

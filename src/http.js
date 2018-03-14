@@ -43,22 +43,20 @@ export default function http(url, request = {}) {
         _res = request.responseInterceptor(_res) || _res
       }
       return _res
-    })
-
-    if (!res.ok) {
+    }).then((_res) => {
+      if (!_res.ok) {
+        const error = new Error(_res.statusText)
+        error.statusCode = error.status = _res.status
+        error.response = _res
+        throw error
+      }
+      return _res
+    }, (resError) => {
       const error = new Error(res.statusText)
       error.statusCode = error.status = res.status
-      return serialized.then(
-        (_res) => {
-          error.response = _res
-          throw error
-        },
-        (resError) => {
-          error.responseError = resError
-          throw error
-        }
-      )
-    }
+      error.responseError = resError
+      throw error
+    })
 
     return serialized
   })

@@ -80,6 +80,25 @@ describe('http', () => {
     )
   })
 
+  it('should allow the responseInterceptor to return a promise for a final response', () => {
+    xapp = xmock()
+    xapp.get('http://swagger.io', (req, res) => res.status(400).send('doit'))
+    xapp.get('http://example.com', (req, res) => res.send('hi'))
+
+    return http({
+      url: 'http://swagger.io',
+      responseInterceptor: (res) => {
+        return http({
+          url: 'http://example.com'
+        })
+      }
+    })
+      .then((res) => {
+        expect(res.status).toEqual(200)
+        expect(res.text).toEqual('hi')
+      })
+  })
+
   it('should set responseError on responseInterceptor Error', () => {
     xapp = xmock()
     xapp.get('http://swagger.io', (req, res) => res.status(400).send('hi'))
