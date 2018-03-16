@@ -221,8 +221,7 @@ var swaggerClient = new SwaggerClient(specUrl)
          // you may return more promises, if necessary
       }, function (reason) {
           console.error("failed on API call " + reason);
-      });    
-})
+      });
 </script>
 </head>
 <body>
