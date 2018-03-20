@@ -25,7 +25,7 @@ export default async function http(url, request = {}) {
   self.mergeInQueryOrForm(request)
 
   if (request.requestInterceptor) {
-    request = request.requestInterceptor(request) || request
+    request = await request.requestInterceptor(request) || request
   }
 
   // for content-type=multipart\/form-data remove content-type from request before fetch
