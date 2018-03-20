@@ -328,6 +328,68 @@ describe('allOf', function () {
     })
   })
 
+  it('should suppport nested allOfs with $refs', function () {
+    return mapSpec({
+      plugins: [plugins.refs, plugins.allOf],
+      spec: {
+        definitions: {
+          Alpha: {
+            allOf: [{type: 'object'}],
+            properties: {
+              one: {
+                $ref: '#/definitions/Bravo'
+              },
+              two: {
+                type: 'string'
+              }
+            }
+          },
+          Bravo: {
+            allOf: [{
+              type: 'object',
+              properties: {
+                three: {
+                  type: 'string'
+                }
+              }
+            }]
+          }
+        }
+      }
+    }).then((res) => {
+      // To show the error, unfortunately, the expect call doesn't pretty print it nicely
+      // console.log(res.errors[0])
+      expect(res.errors).toEqual([])
+      expect(res.spec).toEqual({
+        definitions: {
+          Alpha: {
+            type: 'object',
+            properties: {
+              one: {
+                type: 'object',
+                properties: {
+                  three: {
+                    type: 'string',
+                  }
+                }
+              },
+              two: {
+                type: 'string'
+              }
+            }
+          },
+          Bravo: {
+            type: 'object',
+            properties: {
+              three: {
+                type: 'string'
+              }
+            }
+          }
+        },
+      })
+    })
+  })
   it('merges arrays inside of an `allOf`', function () {
     return mapSpec({
       plugins: [plugins.refs, plugins.allOf],
