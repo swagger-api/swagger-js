@@ -1,7 +1,22 @@
 import expect, {spyOn, createSpy} from 'expect'
+import xmock from 'xmock'
 import resolve from '../src/subtree-resolver'
 
 describe('subtree $ref resolver', function () {
+  let xapp
+
+  before(() => {
+    xapp = xmock()
+  })
+
+  after(() => {
+    xapp.restore()
+  })
+
+  beforeEach(() => {
+    // refs.clearCache()
+  })
+
   it('should resolve a subtree of an object, and return the targeted subtree', async function () {
     const input = {
       a: {
@@ -248,6 +263,49 @@ describe('subtree $ref resolver', function () {
           id2: {
             type: 'integer',
             format: 'int64'
+          }
+        }
+      }
+    })
+  })
+  it('should fully resolve across remote documents correctly', async () => {
+    const input = {
+      foo: {
+        bar: {
+          $ref: './remote.json'
+        }
+      }
+    }
+
+    xmock().get('http://example.com/remote.json', function (req, res, next) {
+      xmock().restore()
+      return res.send({
+        baz: {
+          $ref: '#/remoteOther'
+        },
+        remoteOther: {
+          result: 'it works!'
+        }
+      })
+    })
+
+    const res = await resolve(input, [], {
+      baseDoc: 'http://example.com/main.json'
+    })
+
+    expect(res).toEqual({
+      errors: [],
+      spec: {
+        foo: {
+          bar: {
+            $$ref: './remote.json',
+            baz: {
+              $$ref: '#/remoteOther',
+              result: 'it works!'
+            },
+            remoteOther: {
+              result: 'it works!'
+            }
           }
         }
       }
