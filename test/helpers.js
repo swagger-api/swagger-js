@@ -349,6 +349,7 @@ describe('helpers', function () {
         const resultSpec = normalizeSwagger(spec)
 
         expect(resultSpec).toEqual({spec: {
+          $$normalized: true,
           consumes: ['application/json'],
           paths: {
             '/two': {
@@ -374,6 +375,7 @@ describe('helpers', function () {
         const resultSpec = normalizeSwagger(spec)
 
         expect(resultSpec).toEqual({spec: {
+          $$normalized: true,
           consumes: ['application/json'],
           paths: {
             '/two': {
@@ -402,6 +404,7 @@ describe('helpers', function () {
         const resultSpec = normalizeSwagger(spec)
 
         expect(resultSpec).toEqual({spec: {
+          $$normalized: true,
           produces: ['application/json'],
           paths: {
             '/two': {
@@ -427,6 +430,7 @@ describe('helpers', function () {
         const resultSpec = normalizeSwagger(spec)
 
         expect(resultSpec).toEqual({spec: {
+          $$normalized: true,
           produces: ['application/json'],
           paths: {
             '/two': {
@@ -455,6 +459,7 @@ describe('helpers', function () {
         const resultSpec = normalizeSwagger(spec)
 
         expect(resultSpec).toEqual({spec: {
+          $$normalized: true,
           security: ['test'],
           paths: {
             '/two': {
@@ -480,6 +485,7 @@ describe('helpers', function () {
         const resultSpec = normalizeSwagger(spec)
 
         expect(resultSpec).toEqual({spec: {
+          $$normalized: true,
           security: ['test1'],
           paths: {
             '/two': {
@@ -506,6 +512,7 @@ describe('helpers', function () {
         const resultSpec = normalizeSwagger(spec)
 
         expect(resultSpec).toEqual({spec: {
+          $$normalized: true,
           paths: {
             '/two': {
               parameters: [{name: 'a', in: 'path'}],
@@ -538,6 +545,7 @@ describe('helpers', function () {
         const resultSpec = normalizeSwagger(spec)
 
         expect(resultSpec).toEqual({spec: {
+          $$normalized: true,
           paths: {
             '/two': {
               parameters: [

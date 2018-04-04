@@ -169,6 +169,7 @@ describe('subtree $ref resolver', function () {
     expect(res).toEqual({
       errors: [],
       spec: {
+        $$normalized: true,
         swagger: '2.0',
         consumes: ['application/json'],
         paths: {
@@ -202,6 +203,7 @@ describe('subtree $ref resolver', function () {
     expect(res).toEqual({
       errors: [],
       spec: {
+        $$normalized: true,
         swagger: '2.0',
         produces: ['application/json'],
         paths: {
@@ -264,6 +266,7 @@ describe('subtree $ref resolver', function () {
     expect(res).toEqual({
       errors: [],
       spec: {
+        $$normalized: true,
         swagger: '2.0',
         parameters: {
           petId: {
