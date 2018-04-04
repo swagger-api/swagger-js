@@ -169,6 +169,7 @@ describe('subtree $ref resolver', function () {
     expect(res).toEqual({
       errors: [],
       spec: {
+        $$normalized: true,
         swagger: '2.0',
         consumes: ['application/json'],
         paths: {
@@ -202,6 +203,7 @@ describe('subtree $ref resolver', function () {
     expect(res).toEqual({
       errors: [],
       spec: {
+        $$normalized: true,
         swagger: '2.0',
         produces: ['application/json'],
         paths: {
@@ -209,6 +211,210 @@ describe('subtree $ref resolver', function () {
             get: {
               produces: ['application/json'],
               description: 'I should have a produces value...'
+            }
+          }
+        }
+      }
+    })
+  })
+  it('should normalize Swagger 2.0 parameters', async () => {
+    const input = {
+      swagger: '2.0',
+      parameters: {
+        petId: {
+          name: 'petId',
+          in: 'path',
+          description: 'ID of pet to return',
+          required: true,
+          type: 'integer',
+          format: 'int64'
+        }
+      },
+      paths: {
+        '/': {
+          parameters: [
+            {
+              $ref: '#/parameters/petId'
+            }
+          ],
+          get: {
+            parameters: [
+              {
+                name: 'name',
+                in: 'formData',
+                description: 'Updated name of the pet',
+                required: false,
+                type: 'string'
+              },
+              {
+                name: 'status',
+                in: 'formData',
+                description: 'Updated status of the pet',
+                required: false,
+                type: 'string'
+              }
+            ]
+          }
+        }
+      }
+    }
+
+    const res = await resolve(input, ['paths', '/', 'get'], {
+      returnEntireTree: true
+    })
+
+    expect(res).toEqual({
+      errors: [],
+      spec: {
+        $$normalized: true,
+        swagger: '2.0',
+        parameters: {
+          petId: {
+            name: 'petId',
+            in: 'path',
+            description: 'ID of pet to return',
+            required: true,
+            type: 'integer',
+            format: 'int64'
+          }
+        },
+        paths: {
+          '/': {
+            parameters: [
+              {
+                $ref: '#/parameters/petId'
+              }
+            ],
+            get: {
+              parameters: [
+                {
+                  name: 'name',
+                  in: 'formData',
+                  description: 'Updated name of the pet',
+                  required: false,
+                  type: 'string'
+                },
+                {
+                  name: 'status',
+                  in: 'formData',
+                  description: 'Updated status of the pet',
+                  required: false,
+                  type: 'string'
+                },
+                {
+                  name: 'petId',
+                  in: 'path',
+                  description: 'ID of pet to return',
+                  required: true,
+                  type: 'integer',
+                  format: 'int64',
+                  $$ref: '#/parameters/petId'
+                }
+              ]
+            }
+          }
+        }
+      }
+    })
+  })
+  it('should normalize idempotently', async () => {
+    const input = {
+      swagger: '2.0',
+      parameters: {
+        petId: {
+          name: 'petId',
+          in: 'path',
+          description: 'ID of pet to return',
+          required: true,
+          type: 'integer',
+          format: 'int64'
+        }
+      },
+      paths: {
+        '/': {
+          parameters: [
+            {
+              $ref: '#/parameters/petId'
+            }
+          ],
+          get: {
+            parameters: [
+              {
+                name: 'name',
+                in: 'formData',
+                description: 'Updated name of the pet',
+                required: false,
+                type: 'string'
+              },
+              {
+                name: 'status',
+                in: 'formData',
+                description: 'Updated status of the pet',
+                required: false,
+                type: 'string'
+              }
+            ]
+          }
+        }
+      }
+    }
+
+    const intermediate = await resolve(input, ['paths', '/', 'get'], {
+      returnEntireTree: true
+    })
+
+    const res = await resolve(intermediate.spec, ['paths', '/', 'get'], {
+      returnEntireTree: true
+    })
+
+    expect(res).toEqual({
+      errors: [],
+      spec: {
+        swagger: '2.0',
+        $$normalized: true,
+        parameters: {
+          petId: {
+            name: 'petId',
+            in: 'path',
+            description: 'ID of pet to return',
+            required: true,
+            type: 'integer',
+            format: 'int64'
+          }
+        },
+        paths: {
+          '/': {
+            parameters: [
+              {
+                $ref: '#/parameters/petId'
+              }
+            ],
+            get: {
+              parameters: [
+                {
+                  name: 'name',
+                  in: 'formData',
+                  description: 'Updated name of the pet',
+                  required: false,
+                  type: 'string'
+                },
+                {
+                  name: 'status',
+                  in: 'formData',
+                  description: 'Updated status of the pet',
+                  required: false,
+                  type: 'string'
+                },
+                {
+                  name: 'petId',
+                  in: 'path',
+                  description: 'ID of pet to return',
+                  required: true,
+                  type: 'integer',
+                  format: 'int64',
+                  $$ref: '#/parameters/petId'
+                }
+              ]
             }
           }
         }
