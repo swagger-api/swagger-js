@@ -43,6 +43,7 @@ describe('subtree $ref resolver', function () {
       }
     })
   })
+
   it('should resolve circular $refs when a baseDoc is provided', async function () {
     const input = {
       one: {
@@ -90,6 +91,7 @@ describe('subtree $ref resolver', function () {
       }
     })
   })
+
   it('should return null when the path is invalid', async function () {
     const input = {
       a: {
@@ -317,6 +319,7 @@ describe('subtree $ref resolver', function () {
       }
     })
   })
+
   it('should normalize idempotently', async () => {
     const input = {
       swagger: '2.0',
@@ -421,6 +424,39 @@ describe('subtree $ref resolver', function () {
       }
     })
   })
+
+  it('should handle this odd $ref/allOf combination', async () => {
+    const input = {
+      definitions: {
+        one: {
+          $ref: '#/definitions/two'
+        },
+        two: {
+          type: 'array',
+          items: {
+            $ref: '#/definitions/three'
+          }
+        },
+        three: {
+          allOf: [
+            {
+              properties: {
+                alternate_product_code: {
+                  $ref: '#/definitions/three'
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+
+    const res = await resolve(input, ['definitions'])
+
+    // console.log(res.errors[0]+'') // Cannot read 0 of undefined
+    expect(res.errors).toEqual([])
+  })
+
   it('should resolve complex allOf correctly', async () => {
     const input = {
       definitions: {
