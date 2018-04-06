@@ -60,6 +60,46 @@ describe('http', () => {
     )
   })
 
+  it('should call request interceptor', () => {
+    xapp = xmock()
+    xapp.get('http://swagger.io', (req, res) => res.status(req.requestHeaders.mystatus).send('hi'))
+
+    return http({
+      url: 'http://swagger.io',
+      requestInterceptor: (req) => {
+        req.headers.mystatus = 200
+        return req
+      }
+    })
+    .then(
+      (res) => {
+        expect(res.status).toEqual(200)
+      }
+    )
+  })
+
+  it('should allow the requestInterceptor to return a promise', () => {
+    xapp = xmock()
+    xapp.get('http://swagger.io', (req, res) => res.status(req.requestHeaders.mystatus).send('hi'))
+
+    return http({
+      url: 'http://swagger.io',
+      requestInterceptor: (req) => {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            req.headers.mystatus = 200
+            resolve(req)
+          }, 20)
+        })
+      }
+    })
+    .then(
+      (res) => {
+        expect(res.status).toEqual(200)
+      }
+    )
+  })
+
   it('should apply responseInterceptor to error responses', () => {
     xapp = xmock()
     xapp.get('http://swagger.io', (req, res) => res.status(400).send('hi'))
@@ -78,6 +118,25 @@ describe('http', () => {
         expect(err.response.testValue).toEqual(5)
       }
     )
+  })
+
+  it('should allow the responseInterceptor to return a promise for a final response', () => {
+    xapp = xmock()
+    xapp.get('http://swagger.io', (req, res) => res.status(400).send('doit'))
+    xapp.get('http://example.com', (req, res) => res.send('hi'))
+
+    return http({
+      url: 'http://swagger.io',
+      responseInterceptor: (res) => {
+        return http({
+          url: 'http://example.com'
+        })
+      }
+    })
+      .then((res) => {
+        expect(res.status).toEqual(200)
+        expect(res.text).toEqual('hi')
+      })
   })
 
   it('should set responseError on responseInterceptor Error', () => {
