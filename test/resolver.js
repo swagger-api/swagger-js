@@ -419,6 +419,7 @@ describe('resolver', () => {
         expect(obj.errors).toEqual([])
         expect(obj.spec).toEqual({
           swagger: '2.0',
+          $$normalized: true,
           paths: {
             '/pet': {
               post: {

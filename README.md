@@ -185,11 +185,42 @@ OperationId's are meant to be unique within spec, if they're not we do the follo
 - If an operationId is duplicated across all operationIds of the spec, we rename all of them with numbers after the ID to keep them unique. You should not rely on this, as the renaming is non-deterministic. See [this test](https://github.com/swagger-api/swagger-js/blob/7da5755fa18791cd114ecfc9587dcd1b5c58ede1/test/helpers.js#L127) for an example.
 
 ```js
+Swagger({ url: "http://petstore.swagger.io/v2/swagger.json" }).then((client) => {
+    client
+      .apis
+      .pet // tag name == `pet`
+      .addPet({ // operationId == `addPet`
+        id: 1, 
+        body: {
+          name: "bobby",
+          status: "available"
+        }
+      })
+      .then(...) 
+})
+```
+
+#### OpenAPI 3.0
+
+OpenAPI 3.0 definitions work in a similar way with the tags interface, but you may need to provide additional data in an `options` object for server variables and request bodies, since these items are not actual parameters:
+
+```js
 Swagger({...}).then((client) => {
     client
       .apis
       .pet // tag name == `pet`
-      .addPet({id: 1, name: "bobby"}) // operationId == `addPet`
+      .addPet({ // operationId == `addPet`
+        id: 1
+      }, {
+        requestBody: {
+          name: "bobby",
+          status: "available"
+        },
+        server: "http://petstore.swagger.io/{apiPrefix}/", // this should exactly match a URL in your `servers`
+        serverVariables: {
+          apiPrefix: "v2"
+        }
+      })
       .then(...) 
 })
 ```

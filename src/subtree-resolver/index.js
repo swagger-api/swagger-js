@@ -24,6 +24,7 @@
 
 import get from 'lodash/get'
 import resolve from '../resolver'
+import {normalizeSwagger} from '../helpers'
 
 export default async function resolveSubtree(obj, path, opts = {}) {
   const {
@@ -44,10 +45,15 @@ export default async function resolveSubtree(obj, path, opts = {}) {
     modelPropertyMacro
   }
 
+  const {spec: normalized} = normalizeSwagger({
+    spec: obj
+  })
+
   const result = await resolve({
     ...resolveOptions,
-    spec: obj,
+    spec: normalized,
     allowMetaPatches: true,
+    skipNormalization: true
   })
 
   if (!returnEntireTree && Array.isArray(path) && path.length) {

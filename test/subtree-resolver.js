@@ -1,7 +1,22 @@
 import expect, {spyOn, createSpy} from 'expect'
+import xmock from 'xmock'
 import resolve from '../src/subtree-resolver'
 
 describe('subtree $ref resolver', function () {
+  let xapp
+
+  before(() => {
+    xapp = xmock()
+  })
+
+  after(() => {
+    xapp.restore()
+  })
+
+  beforeEach(() => {
+    // refs.clearCache()
+  })
+
   it('should resolve a subtree of an object, and return the targeted subtree', async function () {
     const input = {
       a: {
@@ -154,6 +169,7 @@ describe('subtree $ref resolver', function () {
     expect(res).toEqual({
       errors: [],
       spec: {
+        $$normalized: true,
         swagger: '2.0',
         consumes: ['application/json'],
         paths: {
@@ -187,6 +203,7 @@ describe('subtree $ref resolver', function () {
     expect(res).toEqual({
       errors: [],
       spec: {
+        $$normalized: true,
         swagger: '2.0',
         produces: ['application/json'],
         paths: {
@@ -194,6 +211,210 @@ describe('subtree $ref resolver', function () {
             get: {
               produces: ['application/json'],
               description: 'I should have a produces value...'
+            }
+          }
+        }
+      }
+    })
+  })
+  it('should normalize Swagger 2.0 parameters', async () => {
+    const input = {
+      swagger: '2.0',
+      parameters: {
+        petId: {
+          name: 'petId',
+          in: 'path',
+          description: 'ID of pet to return',
+          required: true,
+          type: 'integer',
+          format: 'int64'
+        }
+      },
+      paths: {
+        '/': {
+          parameters: [
+            {
+              $ref: '#/parameters/petId'
+            }
+          ],
+          get: {
+            parameters: [
+              {
+                name: 'name',
+                in: 'formData',
+                description: 'Updated name of the pet',
+                required: false,
+                type: 'string'
+              },
+              {
+                name: 'status',
+                in: 'formData',
+                description: 'Updated status of the pet',
+                required: false,
+                type: 'string'
+              }
+            ]
+          }
+        }
+      }
+    }
+
+    const res = await resolve(input, ['paths', '/', 'get'], {
+      returnEntireTree: true
+    })
+
+    expect(res).toEqual({
+      errors: [],
+      spec: {
+        $$normalized: true,
+        swagger: '2.0',
+        parameters: {
+          petId: {
+            name: 'petId',
+            in: 'path',
+            description: 'ID of pet to return',
+            required: true,
+            type: 'integer',
+            format: 'int64'
+          }
+        },
+        paths: {
+          '/': {
+            parameters: [
+              {
+                $ref: '#/parameters/petId'
+              }
+            ],
+            get: {
+              parameters: [
+                {
+                  name: 'name',
+                  in: 'formData',
+                  description: 'Updated name of the pet',
+                  required: false,
+                  type: 'string'
+                },
+                {
+                  name: 'status',
+                  in: 'formData',
+                  description: 'Updated status of the pet',
+                  required: false,
+                  type: 'string'
+                },
+                {
+                  name: 'petId',
+                  in: 'path',
+                  description: 'ID of pet to return',
+                  required: true,
+                  type: 'integer',
+                  format: 'int64',
+                  $$ref: '#/parameters/petId'
+                }
+              ]
+            }
+          }
+        }
+      }
+    })
+  })
+  it('should normalize idempotently', async () => {
+    const input = {
+      swagger: '2.0',
+      parameters: {
+        petId: {
+          name: 'petId',
+          in: 'path',
+          description: 'ID of pet to return',
+          required: true,
+          type: 'integer',
+          format: 'int64'
+        }
+      },
+      paths: {
+        '/': {
+          parameters: [
+            {
+              $ref: '#/parameters/petId'
+            }
+          ],
+          get: {
+            parameters: [
+              {
+                name: 'name',
+                in: 'formData',
+                description: 'Updated name of the pet',
+                required: false,
+                type: 'string'
+              },
+              {
+                name: 'status',
+                in: 'formData',
+                description: 'Updated status of the pet',
+                required: false,
+                type: 'string'
+              }
+            ]
+          }
+        }
+      }
+    }
+
+    const intermediate = await resolve(input, ['paths', '/', 'get'], {
+      returnEntireTree: true
+    })
+
+    const res = await resolve(intermediate.spec, ['paths', '/', 'get'], {
+      returnEntireTree: true
+    })
+
+    expect(res).toEqual({
+      errors: [],
+      spec: {
+        swagger: '2.0',
+        $$normalized: true,
+        parameters: {
+          petId: {
+            name: 'petId',
+            in: 'path',
+            description: 'ID of pet to return',
+            required: true,
+            type: 'integer',
+            format: 'int64'
+          }
+        },
+        paths: {
+          '/': {
+            parameters: [
+              {
+                $ref: '#/parameters/petId'
+              }
+            ],
+            get: {
+              parameters: [
+                {
+                  name: 'name',
+                  in: 'formData',
+                  description: 'Updated name of the pet',
+                  required: false,
+                  type: 'string'
+                },
+                {
+                  name: 'status',
+                  in: 'formData',
+                  description: 'Updated status of the pet',
+                  required: false,
+                  type: 'string'
+                },
+                {
+                  name: 'petId',
+                  in: 'path',
+                  description: 'ID of pet to return',
+                  required: true,
+                  type: 'integer',
+                  format: 'int64',
+                  $$ref: '#/parameters/petId'
+                }
+              ]
             }
           }
         }
@@ -248,6 +469,49 @@ describe('subtree $ref resolver', function () {
           id2: {
             type: 'integer',
             format: 'int64'
+          }
+        }
+      }
+    })
+  })
+  it('should fully resolve across remote documents correctly', async () => {
+    const input = {
+      foo: {
+        bar: {
+          $ref: './remote.json'
+        }
+      }
+    }
+
+    xmock().get('http://example.com/remote.json', function (req, res, next) {
+      xmock().restore()
+      return res.send({
+        baz: {
+          $ref: '#/remoteOther'
+        },
+        remoteOther: {
+          result: 'it works!'
+        }
+      })
+    })
+
+    const res = await resolve(input, [], {
+      baseDoc: 'http://example.com/main.json'
+    })
+
+    expect(res).toEqual({
+      errors: [],
+      spec: {
+        foo: {
+          bar: {
+            $$ref: './remote.json',
+            baz: {
+              $$ref: '#/remoteOther',
+              result: 'it works!'
+            },
+            remoteOther: {
+              result: 'it works!'
+            }
           }
         }
       }

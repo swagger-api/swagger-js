@@ -435,7 +435,7 @@ describe('refs', function () {
   })
 
   describe('deeply resolved', function () {
-    it('should resolve deeply nested $refs, across documents', function () {
+    it('should resolve deeply serial $refs, across documents', function () {
       xmock().get('http://example.com/doc-a', function (req, res, next) {
         xmock().restore()
         return res.send({
@@ -459,6 +459,58 @@ describe('refs', function () {
       }).then((res) => {
         expect(res.spec).toEqual({
           four: 4
+        })
+      })
+    })
+    it('should resolve deeply nested $refs, across documents', function () {
+      xmock().get('http://example.com/doc-a', function (req, res, next) {
+        xmock().restore()
+        return res.send({
+          two: {
+            innerTwo: {
+              $ref: '#/three'
+            }
+          },
+          three: {
+            innerThree: {
+              $ref: '#/four'
+            }
+          },
+          four: {
+            four: 4,
+          }
+        })
+      })
+
+      return mapSpec({
+        plugins: [plugins.refs],
+        spec: {
+          result: {
+            $ref: 'http://example.com/doc-a#'
+          }
+        },
+        context: {
+          baseDoc: 'http://example.com/main.json'
+        }
+      }).then((res) => {
+        expect(res.spec).toEqual({
+          result: {
+            two: {
+              innerTwo: {
+                innerThree: {
+                  four: 4
+                }
+              }
+            },
+            three: {
+              innerThree: {
+                four: 4
+              }
+            },
+            four: {
+              four: 4
+            }
+          }
         })
       })
     })

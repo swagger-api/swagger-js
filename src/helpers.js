@@ -117,7 +117,7 @@ export function normalizeSwagger(parsedSpec) {
   const {paths} = spec
   const map = {}
 
-  if (!paths) {
+  if (!paths || spec.$$normalized) {
     return parsedSpec
   }
 
@@ -205,6 +205,8 @@ export function normalizeSwagger(parsedSpec) {
       }
     }
   }
+
+  spec.$$normalized = true
 
   return parsedSpec
 }
