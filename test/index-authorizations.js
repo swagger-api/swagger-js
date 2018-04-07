@@ -175,6 +175,48 @@ describe('(instance) #execute', function () {
     })
   })
 
+  it('should use a custom oAuth token name if defined', function () {
+    const spec = {
+      securityDefinitions: {
+        idTokenAuth: {
+          type: 'oauth2',
+          'x-tokenName': 'id_token'
+        }
+      },
+      paths: {
+        '/pet': {
+          get: {
+            operationId: 'getPets',
+            security: [{idTokenAuth: []}]
+          }
+        }
+      }
+    }
+
+    const authorizations = {
+      idTokenAuth: {
+        token: {
+          access_token: 'one two',
+          id_token: 'three four'
+        }
+      }
+    }
+
+    return Swagger({spec, authorizations}).then((client) => {
+      const http = createSpy()
+      client.execute({http, operationId: 'getPets'})
+      expect(http.calls.length).toEqual(1)
+      expect(http.calls[0].arguments[0]).toEqual({
+        credentials: 'same-origin',
+        headers: {
+          authorization: 'Bearer three four'
+        },
+        method: 'GET',
+        url: '/pet'
+      })
+    })
+  })
+
   it('should replace any occurrence of `bearer` with `Bearer`', function () {
     const spec = {
       securityDefinitions: {
