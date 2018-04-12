@@ -58,7 +58,7 @@ export const self = {
 
 // Execute request, with the given operationId and parameters
 // pathName/method or operationId is optional
-export function execute({
+export async function execute({
   http: userHttp,
   fetch, // This is legacy
   spec,

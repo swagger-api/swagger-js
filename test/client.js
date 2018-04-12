@@ -155,6 +155,40 @@ describe('http', () => {
       .catch(err => done(err))
   })
 
+  // https://github.com/swagger-api/swagger-js/issues/1271
+  it('should throw an instance execute error through execute\'s promise', (done) => {
+    Swagger('http://localhost:8000/petstore.json')
+      .then((client) => {
+        return client.execute({
+          operationId: "getPetById"
+        })
+          .then((data) => {
+            done('shoulda thrown an error!')
+          }).catch((err) => {
+            done()
+          })
+      })
+      .catch(e => {
+        console.log(e)
+        done('error was thrown through instance instead of execute promise')
+      })
+  })
+
+  it('should throw an instance execute error through the client\'s catch by default', (done) => {
+    Swagger('http://localhost:8000/petstore.json')
+      .then((client) => {
+        return client.execute({
+          operationId: "getPetById"
+        })
+          .then((data) => {
+            done('shoulda thrown an error!')
+          })
+      })
+      .catch((e) => {
+        done()
+      })
+  })
+
   /**
    * See https://github.com/swagger-api/swagger-js/issues/1005
    */
