@@ -46,6 +46,11 @@ export default async function http(url, request = {}) {
     }
   }
   catch (resError) {
+    if (!res) {
+      // res is completely absent, so we can't construct our own error
+      // so we'll just throw the error we got
+      throw resError
+    }
     const error = new Error(res.statusText)
     error.statusCode = error.status = res.status
     error.responseError = resError
