@@ -28,7 +28,7 @@ export default {
     // Remove the `allOf` property so it doesn't get added to the result of the `allOf` plugin
     let originalDefinitionObj = patch.value
     parent.forEach((part) => {
-      if(!originalDefinitionObj) return // bail out if we've lost sight of our target
+      if (!originalDefinitionObj) return // bail out if we've lost sight of our target
       originalDefinitionObj = originalDefinitionObj[part]
     })
     originalDefinitionObj = Object.assign({}, originalDefinitionObj)
