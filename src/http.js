@@ -1,4 +1,4 @@
-import 'cross-fetch/polyfill'
+import 'cross-fetch/polyfill' /* global fetch */
 import qs from 'qs'
 import jsYaml from 'js-yaml'
 import isString from 'lodash/isString'
@@ -11,7 +11,7 @@ export const self = {
 
 // Handles fetch-like syntax and the case where there is only one object passed-in
 // (which will have the URL as a property). Also serilizes the response.
-export default function http(url, request = {}) {
+export default async function http(url, request = {}) {
   if (typeof url === 'object') {
     request = url
     url = request.url
@@ -25,7 +25,7 @@ export default function http(url, request = {}) {
   self.mergeInQueryOrForm(request)
 
   if (request.requestInterceptor) {
-    request = request.requestInterceptor(request) || request
+    request = await request.requestInterceptor(request) || request
   }
 
   // for content-type=multipart\/form-data remove content-type from request before fetch
@@ -37,31 +37,27 @@ export default function http(url, request = {}) {
   }
 
   // eslint-disable-next-line no-undef
-  return (request.userFetch || fetch)(request.url, request).then((res) => {
-    const serialized = self.serializeRes(res, url, request).then((_res) => {
-      if (request.responseInterceptor) {
-        _res = request.responseInterceptor(_res) || _res
-      }
-      return _res
-    })
-
-    if (!res.ok) {
-      const error = new Error(res.statusText)
-      error.statusCode = error.status = res.status
-      return serialized.then(
-        (_res) => {
-          error.response = _res
-          throw error
-        },
-        (resError) => {
-          error.responseError = resError
-          throw error
-        }
-      )
+  let res
+  try {
+    res = await (request.userFetch || fetch)(request.url, request)
+    res = await self.serializeRes(res, url, request)
+    if (request.responseInterceptor) {
+      res = await request.responseInterceptor(res) || res
     }
-
-    return serialized
-  })
+  }
+  catch (resError) {
+    const error = new Error(res.statusText)
+    error.statusCode = error.status = res.status
+    error.responseError = resError
+    throw error
+  }
+  if (!res.ok) {
+    const error = new Error(res.statusText)
+    error.statusCode = error.status = res.status
+    error.response = res
+    throw error
+  }
+  return res
 }
 
 // exported for testing
