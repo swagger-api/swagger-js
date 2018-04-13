@@ -172,6 +172,20 @@ describe('http', () => {
   })
 
   /**
+   * See https://github.com/swagger-api/swagger-js/issues/1277
+   */
+  it('should return a helpful error when the connection is refused', () => {
+    return Swagger('http://localhost:1/untouchable.yaml')
+      .then((client) => {
+        throw new Error('Expected an error.')
+      })
+      .catch((error) => {
+        expect(error.message).toEqual('request to http://localhost:1/untouchable.yaml failed, reason: connect ECONNREFUSED 127.0.0.1:1')
+        expect(error.name).toEqual('FetchError')
+      })
+  })
+
+  /**
    * See https://github.com/swagger-api/swagger-js/issues/1002
    */
   it.skip('should return an error when a spec doesnt exist', (done) => {
