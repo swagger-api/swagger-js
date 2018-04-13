@@ -200,12 +200,12 @@ Swagger({ url: "http://petstore.swagger.io/v2/swagger.json" }).then((client) => 
 })
 ```
 
-If you'd like to use the operationId formatting logic from Swagger-Client 2.x, set the `v2CompatibilityMode` option:
+If you'd like to use the operationId formatting logic from Swagger-Client 2.x, set the `v2OperationIdCompatibilityMode` option:
 
 ```js
 Swagger({
   url: "http://petstore.swagger.io/v2/swagger.json",
-  v2CompatibilityMode: true
+  v2OperationIdCompatibilityMode: true
 }).then((client) => {
   // do things as usual
 })

@@ -124,7 +124,7 @@ describe('constructor', () => {
       })
     })
 
-    it('should honor `v2CompatibilityMode` when building `apis`', function () {
+    it('should honor `v2OperationIdCompatibilityMode` when building `apis`', function () {
       // Given
       const spec = {
         swagger: '2.0',
@@ -141,7 +141,7 @@ describe('constructor', () => {
       // When
       return Swagger({
         spec,
-        v2CompatibilityMode: true
+        v2OperationIdCompatibilityMode: true
       }).then((swag) => {
         const {apis} = swag
 
