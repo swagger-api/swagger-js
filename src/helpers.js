@@ -26,7 +26,7 @@ export function isSwagger2(spec) {
 }
 
 // Strategy for determining operationId
-export function opId(operation, pathName, method = '') {
+export function opId(operation, pathName, method = '', {v2CompatibilityMode} = {}) {
   if (!operation || typeof operation !== 'object') {
     return null
   }
@@ -34,14 +34,14 @@ export function opId(operation, pathName, method = '') {
   if (idWithoutWhitespace.length) {
     return escapeString(operation.operationId)
   }
-  return idFromPathMethod(pathName, method)
+  return idFromPathMethod(pathName, method, {v2CompatibilityMode})
 }
 
 
 // Create a generated operationId from pathName + method
 export function idFromPathMethod(pathName, method, {v2CompatibilityMode} = {}) {
   if (v2CompatibilityMode) {
-    let res = `${method}_${pathName}`
+    let res = `${method.toLowerCase()}_${pathName}`
       .replace(/[\s!@#$%^&*()_+=[{\]};:<>|./?,\\'""-]/g, '_')
 
     res = res || `${pathName.substring(1)}_${method}`
