@@ -35,7 +35,11 @@ export function makeExecute(swaggerJs = {}) {
 export function makeApisTagOperationsOperationExecute(swaggerJs = {}) {
   // { apis: tag: operations: execute }
   const cb = self.makeExecute(swaggerJs)
-  const tagOperations = self.mapTagOperations({spec: swaggerJs.spec, cb})
+  const tagOperations = self.mapTagOperations({
+    v2OperationIdCompatibilityMode: swaggerJs.v2OperationIdCompatibilityMode,
+    spec: swaggerJs.spec,
+    cb,
+  })
 
   const apis = {}
   for (const tag in tagOperations) {
@@ -54,7 +58,11 @@ export function makeApisTagOperationsOperationExecute(swaggerJs = {}) {
 export function makeApisTagOperation(swaggerJs = {}) {
   const cb = self.makeExecute(swaggerJs)
   return {
-    apis: self.mapTagOperations({spec: swaggerJs.spec, cb})
+    apis: self.mapTagOperations({
+      v2OperationIdCompatibilityMode: swaggerJs.v2OperationIdCompatibilityMode,
+      spec: swaggerJs.spec,
+      cb
+    })
   }
 }
 
@@ -67,7 +75,7 @@ export function makeApisTagOperation(swaggerJs = {}) {
  * `defaultTag` will house all non-tagged operations
  *
  */
-export function mapTagOperations({spec, cb = nullFn, defaultTag = 'default'}) {
+export function mapTagOperations({spec, cb = nullFn, defaultTag = 'default', v2OperationIdCompatibilityMode}) {
   const operationIdCounter = {}
   const tagOperations = {} // Will house all tags + operations
   eachOperation(spec, ({pathName, method, operation}) => {
@@ -78,7 +86,7 @@ export function mapTagOperations({spec, cb = nullFn, defaultTag = 'default'}) {
         return
       }
       const tagObj = tagOperations[tag] = tagOperations[tag] || {}
-      const id = opId(operation, pathName, method)
+      const id = opId(operation, pathName, method, {v2OperationIdCompatibilityMode})
       const cbResult = cb({spec, pathName, method, operation, operationId: id})
 
       if (operationIdCounter[id]) {
