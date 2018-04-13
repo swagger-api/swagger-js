@@ -124,6 +124,35 @@ describe('constructor', () => {
       })
     })
 
+    it('should honor `v2OperationIdCompatibilityMode` when building `apis`', function () {
+      // Given
+      const spec = {
+        swagger: '2.0',
+        paths: {
+          '/foo/{bar}/baz': {
+            get: {
+              description: '',
+              tags: ['myTag']
+            }
+          }
+        }
+      }
+
+      // When
+      return Swagger({
+        spec,
+        v2OperationIdCompatibilityMode: true
+      }).then((swag) => {
+        const {apis} = swag
+
+        // Then
+        expect(apis).toBeAn('object')
+        expect(apis.myTag).toBeAn('object')
+        console.log(apis)
+        expect(apis.myTag.get_foo_bar_baz).toBeA(Function)
+      })
+    })
+
     it('should handle circular $refs when a baseDoc is provided', () => {
       // Given
       const spec = {

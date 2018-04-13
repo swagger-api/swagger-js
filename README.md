@@ -17,11 +17,11 @@ We'll be consolidating that soon. Just giving you the heads up. You may see refe
 ### Usage
 
 ##### Prerequisites
-- Runtime: 
-  - browser: es5 compatible. IE11+ 
+- Runtime:
+  - browser: es5 compatible. IE11+
   - node v4.x.x
 - Building
-  - node v6.x.x 
+  - node v6.x.x
 
 ##### Download via npm
 
@@ -34,7 +34,7 @@ npm install swagger-client
 ```javascript
 import Swagger from 'swagger-client'
 // Or commonjs
-const Swagger = require('swagger-client') 
+const Swagger = require('swagger-client')
 ```
 
 ##### Import in browser
@@ -134,7 +134,7 @@ const params = {
 
   parameters, // _named_ parameters in an object, eg: { petId: 'abc' }
   securities, // _named_ securities, will only be added to the request, if the spec indicates it. eg: {apiKey: 'abc'}
-  requestContentType, 
+  requestContentType,
   responseContentType,
 
   (http), // You can also override the HTTP client completely
@@ -166,11 +166,11 @@ Swagger('http://petstore.swagger.io/v2/swagger.json')
       client.originalSpec // In case you need it
       client.errors // Any resolver errors
 
-      // Tags interface 
+      // Tags interface
       client.apis.pet.addPet({id: 1, name: "bobby"}).then(...)
 
       // TryItOut Executor, with the `spec` already provided
-      client.execute({operationId: 'addPet', parameters: {id: 1, name: "bobby") }).then(...) 
+      client.execute({operationId: 'addPet', parameters: {id: 1, name: "bobby") }).then(...)
    })
 
 ```
@@ -190,13 +190,24 @@ Swagger({ url: "http://petstore.swagger.io/v2/swagger.json" }).then((client) => 
       .apis
       .pet // tag name == `pet`
       .addPet({ // operationId == `addPet`
-        id: 1, 
+        id: 1,
         body: {
           name: "bobby",
           status: "available"
         }
       })
-      .then(...) 
+      .then(...)
+})
+```
+
+If you'd like to use the operationId formatting logic from Swagger-Client 2.x, set the `v2OperationIdCompatibilityMode` option:
+
+```js
+Swagger({
+  url: "http://petstore.swagger.io/v2/swagger.json",
+  v2OperationIdCompatibilityMode: true
+}).then((client) => {
+  // do things as usual
 })
 ```
 
@@ -221,14 +232,14 @@ Swagger({...}).then((client) => {
           apiPrefix: "v2"
         }
       })
-      .then(...) 
+      .then(...)
 })
 ```
 
-In Browser 
+In Browser
 ----------
 
-Prepare swagger-client.js by `npm run build-bundle` 
+Prepare swagger-client.js by `npm run build-bundle`
 Note, browser version exports class `SwaggerClient` to global namespace
 If you need activate CORS requests, just enable it by `withCredentials` property at `http`
 
@@ -248,7 +259,7 @@ var swaggerClient = new SwaggerClient(specUrl)
          console.error("failed to load the spec" + reason);
       })
       .then(function(addPetResult) {
-         console.log(addPetResult.obj); 
+         console.log(addPetResult.obj);
          // you may return more promises, if necessary
       }, function (reason) {
           console.error("failed on API call " + reason);
@@ -316,7 +327,7 @@ npm run build-bundle # build browser version available at .../browser
 
 # Migration from 2.x
 
-There has been a complete overhaul of the codebase. 
+There has been a complete overhaul of the codebase.
 For notes about how to migrate coming from 2.x,
 please see [Migration from 2.x](docs/MIGRATION_2_X.md)
 
