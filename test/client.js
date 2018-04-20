@@ -226,4 +226,18 @@ describe('http', () => {
         done(err)
       })
   })
+
+  it('should err gracefully when requesting https from an http server', () => {
+    return Swagger({
+      url: 'http://localhost:8000/petstore.json',
+      requestInterceptor: (req) => {
+        const u = url.parse(req.url)
+        u.protocol = 'https'
+        req.url = u.format()
+        return req
+      }
+    }).catch((err) => {
+      expect(err.message).toEqual('request to https://localhost:8000/petstore.json failed, reason: socket hang up')
+    })
+  })
 })
