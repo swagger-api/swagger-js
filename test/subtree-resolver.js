@@ -317,6 +317,135 @@ describe('subtree $ref resolver', function () {
       }
     })
   })
+  it('should normalize Swagger 2.0 that use multiple $refs', async () => {
+    const input = {
+      swagger: '2.0',
+      paths: {
+        '/': {
+          parameters: [
+            {
+              $ref: '#/parameters/One'
+            },
+            {
+              $ref: '#/parameters/Two'
+            }
+          ],
+          get: {
+            summary: 'has no operation parameters'
+          },
+          delete: {
+            summary: 'has own operation parameters',
+            parameters: [
+              {
+                name: 'Three',
+                in: 'query'
+              },
+              {
+                name: 'Four',
+                in: 'query'
+              }
+            ]
+          }
+        }
+      },
+      parameters: {
+        One: {
+          type: 'string',
+          name: 'One',
+          in: 'query'
+        },
+        Two: {
+          type: 'string',
+          name: 'Two',
+          in: 'query'
+        }
+      }
+    }
+
+    const res = await resolve(input, ['paths', '/'], {
+      returnEntireTree: true
+    })
+
+    expect(res).toEqual({
+      errors: [],
+      spec: {
+        $$normalized: true,
+        swagger: '2.0',
+        paths: {
+          '/': {
+            parameters: [
+              {
+                type: 'string',
+                name: 'One',
+                in: 'query',
+                $$ref: '#/parameters/One'
+              },
+              {
+                type: 'string',
+                name: 'Two',
+                in: 'query',
+                $$ref: '#/parameters/Two'
+              }
+            ],
+            get: {
+              summary: 'has no operation parameters',
+              parameters: [
+                {
+                  type: 'string',
+                  name: 'One',
+                  in: 'query',
+                  $$ref: '#/parameters/One'
+                },
+                {
+                  type: 'string',
+                  name: 'Two',
+                  in: 'query',
+                  $$ref: '#/parameters/Two'
+                }
+              ]
+            },
+            delete: {
+              summary: 'has own operation parameters',
+              parameters: [
+                {
+                  name: 'Three',
+                  in: 'query'
+                },
+                {
+                  name: 'Four',
+                  in: 'query'
+                },
+                {
+                  type: 'string',
+                  name: 'One',
+                  in: 'query',
+                  $$ref: '#/parameters/One'
+                },
+                {
+                  type: 'string',
+                  name: 'Two',
+                  in: 'query',
+                  $$ref: '#/parameters/Two'
+                }
+              ]
+            }
+          }
+        },
+        parameters: {
+          One: {
+            type: 'string',
+            name: 'One',
+            in: 'query'
+          },
+          Two: {
+            type: 'string',
+            name: 'Two',
+            in: 'query'
+          }
+        }
+      }
+    })
+  })
   it('should normalize idempotently', async () => {
     const input = {
       swagger: '2.0',

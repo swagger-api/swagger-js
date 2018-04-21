@@ -202,7 +202,9 @@ export function normalizeSwagger(parsedSpec) {
               else if (inheritName === 'parameters') {
                 for (const param of inherits[inheritName]) {
                   const exists = operation[inheritName].some((opParam) => {
-                    return opParam.name === param.name
+                    // check for `opParam.name` in case the parameter has
+                    // no name, which is important for $ref'd parameters
+                    return opParam.name && opParam.name === param.name
                   })
 
                   if (!exists) {
