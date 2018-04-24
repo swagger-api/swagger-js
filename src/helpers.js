@@ -205,6 +205,7 @@ export function normalizeSwagger(parsedSpec) {
                     return (opParam.name && opParam.name === param.name)
                       || (opParam.$ref && opParam.$ref === param.$ref)
                       || (opParam.$$ref && opParam.$$ref === param.$$ref)
+                      || (opParam === param)
                   })
 
                   if (!exists) {
