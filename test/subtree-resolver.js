@@ -425,7 +425,7 @@ describe('subtree $ref resolver', function () {
     })
   })
 
-  it('should handle this odd $ref/allOf combination', async () => {
+  it.only('should handle this odd $ref/allOf combination', async () => {
     const input = {
       definitions: {
         one: {
@@ -453,8 +453,41 @@ describe('subtree $ref resolver', function () {
 
     const res = await resolve(input, ['definitions'])
 
-    // console.log(res.errors[0]+'') // Cannot read 0 of undefined
-    expect(res.errors).toEqual([])
+    // throw new Error(res.errors[0])
+    expect(res).toEqual({
+      errors: [],
+      spec: {
+        one: {
+          $$ref: '#/definitions/two',
+          type: 'array',
+          items: {
+            properties: {
+              alternate_product_code: {
+                $ref: '#/definitions/three'
+              }
+            }
+          }
+        },
+        two: {
+          type: 'array',
+          items: {
+            $$ref: '#/definitions/three',
+            properties: {
+              alternate_product_code: {
+                $ref: '#/definitions/three'
+              }
+            }
+          }
+        },
+        three: {
+          properties: {
+            alternate_product_code: {
+              $ref: '#/definitions/three'
+            }
+          }
+        }
+      }
+    })
   })
 
   it('should resolve complex allOf correctly', async () => {

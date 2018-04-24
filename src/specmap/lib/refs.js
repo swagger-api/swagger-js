@@ -41,6 +41,7 @@ const specmapRefs = new WeakMap()
 const plugin = {
   key: '$ref',
   plugin: (ref, key, fullPath, specmap) => {
+    console.log('$ref', fullPath)
     const parent = fullPath.slice(0, -1)
     if (isFreelyNamed(parent)) {
       return

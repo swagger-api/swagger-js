@@ -220,6 +220,7 @@ class SpecMap {
         }
       }
       catch (e) {
+        console.error(e)
         this.errors.push(e)
       }
     })
@@ -367,6 +368,7 @@ class SpecMap {
         }
       }
       catch (e) {
+        console.error(e)
         updatePatches([Object.assign(Object.create(e), {plugin})])
       }
       finally {

@@ -30,6 +30,7 @@ export default {
 }
 
 function applyPatch(obj, patch, opts) {
+  console.log('applyPatch', obj)
   opts = opts || {}
 
   patch = Object.assign({}, patch, {

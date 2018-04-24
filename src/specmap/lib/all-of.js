@@ -3,6 +3,7 @@ import {isFreelyNamed} from '../helpers'
 export default {
   key: 'allOf',
   plugin: (val, key, fullPath, specmap, patch) => {
+    console.log('allOf', fullPath)
     // Ignore replace patches created by $ref because the changes will
     // occur in the original "add" patch and we don't want this plugin
     // to redundantly processes those "relace" patches.
