@@ -37,7 +37,8 @@ export default function (options, req) {
   }
   else if (requestContentType) {
     const isBodyParamPresent = operation.parameters && operation.parameters.filter(p => p.in === 'body').length > 0
-    if (isBodyParamPresent) {
+    const isFormDataParamPresent = operation.parameters && operation.parameters.filter(p => p.in === 'formData').length > 0
+    if (isBodyParamPresent || isFormDataParamPresent) {
       req.headers['Content-Type'] = requestContentType
     }
   }
