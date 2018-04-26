@@ -326,7 +326,7 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
       })
     })
 
-    it('should build a request for the given operationId with a requestBody and a defined requestContentType that the requestBody lacks', function () {
+    it('should build an operation with a provided requestContentType even if the requestBody definition lacks that media type', function () {
       // Given
       const spec = {
         openapi: '3.0.0',
@@ -369,7 +369,74 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
         method: 'GET',
         url: 'http://petstore.swagger.io/v2/one',
         credentials: 'same-origin',
-        headers: {}
+        headers: {
+          'Content-Type': 'application/not-json'
+        }
+      })
+    })
+
+    it('should build a request body-bearing operation with a provided requestContentType even if no payload is present', function () {
+      // Given
+      const spec = {
+        openapi: '3.0.0',
+        servers: [
+          {
+            url: 'http://petstore.swagger.io/v2',
+            name: 'Petstore'
+          }
+        ],
+        paths: {
+          '/one': {
+            get: {
+              operationId: 'getOne',
+              requestBody: {
+                content: {
+                  'application/json': {
+                    schema: {
+                      type: 'object'
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // when
+      const req = buildRequest({
+        spec,
+        operationId: 'getOne',
+        requestContentType: 'application/not-json'
+      })
+
+      expect(req).toEqual({
+        method: 'GET',
+        url: 'http://petstore.swagger.io/v2/one',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/not-json'
+        }
+      })
+    })
+
+    it('should not add a Content-Type when the operation has no OAS3 request body definition', function () {
+          // Given
+      const spec = {
+        openapi: '3.0.0',
+        servers: [{url: 'http://swagger.io/'}],
+        paths: {'/one': {get: {operationId: 'getMe'}}}
+      }
+
+          // When
+      const req = buildRequest({spec, operationId: 'getMe', requestContentType: 'application/josh'})
+
+          // Then
+      expect(req).toEqual({
+        url: 'http://swagger.io/one',
+        headers: {},
+        credentials: 'same-origin',
+        method: 'GET'
       })
     })
   })

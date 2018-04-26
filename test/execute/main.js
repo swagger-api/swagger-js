@@ -570,7 +570,47 @@ describe('execute', () => {
       })
     })
 
-    it('should not add Content-Type with no form-data or body param', function () {
+    it('should add Content-Type if a body param definition is present but there is no payload', function () {
+      // Given
+      const spec = {
+        host: 'swagger.io',
+        paths: {
+          '/one': {
+            get: {
+              operationId: 'getMe',
+              parameters: [
+                {
+                  name: 'body',
+                  in: 'body',
+                  schema: {
+                    type: 'string'
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+
+      // When
+      const req = buildRequest({
+        spec,
+        operationId: 'getMe',
+        requestContentType: 'application/josh'
+      })
+
+      // Then
+      expect(req).toEqual({
+        url: 'http://swagger.io/one',
+        headers: {
+          'Content-Type': 'application/josh'
+        },
+        credentials: 'same-origin',
+        method: 'GET'
+      })
+    })
+
+    it('should not add Content-Type if no form-data or body param definition is present', function () {
       // Given
       const spec = {
         host: 'swagger.io',
