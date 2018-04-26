@@ -785,4 +785,116 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
       expect(res).toEqual('')
     })
   })
+  describe('attachContentTypeForEmptyPayload', () => {
+    it('should attach the first media type as Content-Type to an OAS3 operation with a request body defined but no body provided', function () {
+      const spec = {
+        openapi: '3.0.0',
+        servers: [
+          {
+            url: 'http://swagger.io/'
+          }
+        ],
+        paths: {
+          '/one': {
+            post: {
+              operationId: 'myOp',
+              requestBody: {
+                content: {
+                  'application/json': {
+                    schema: {
+                      type: 'string'
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      const req = buildRequest({
+        spec,
+        operationId: 'myOp',
+        attachContentTypeForEmptyPayload: true
+      })
+
+      expect(req).toEqual({
+        url: 'http://swagger.io/one',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'same-origin',
+        method: 'POST'
+      })
+    })
+    it('should not attach a Content-Type to an OAS3 operation with no request body definition present', function () {
+      const spec = {
+        openapi: '3.0.0',
+        servers: [
+          {
+            url: 'http://swagger.io/'
+          }
+        ],
+        paths: {
+          '/one': {
+            post: {
+              operationId: 'myOp'
+            }
+          }
+        }
+      }
+
+      const req = buildRequest({
+        spec,
+        operationId: 'myOp',
+        attachContentTypeForEmptyPayload: true
+      })
+
+      expect(req).toEqual({
+        url: 'http://swagger.io/one',
+        headers: {},
+        credentials: 'same-origin',
+        method: 'POST'
+      })
+    })
+    it('should not attach the first media type as Content-Type without the option enabled', function () {
+      const spec = {
+        openapi: '3.0.0',
+        servers: [
+          {
+            url: 'http://swagger.io/'
+          }
+        ],
+        paths: {
+          '/one': {
+            post: {
+              operationId: 'myOp',
+              requestBody: {
+                content: {
+                  'application/json': {
+                    schema: {
+                      type: 'string'
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      const req = buildRequest({
+        spec,
+        operationId: 'myOp',
+        // attachContentTypeForEmptyPayload is omitted
+      })
+
+      expect(req).toEqual({
+        url: 'http://swagger.io/one',
+        headers: {},
+        credentials: 'same-origin',
+        method: 'POST'
+      })
+    })
+  })
 })

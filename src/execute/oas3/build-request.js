@@ -9,7 +9,8 @@ export default function (options, req) {
     operation,
     requestBody,
     securities,
-    spec
+    spec,
+    attachContentTypeForEmptyPayload
   } = options
 
   let {
@@ -24,7 +25,7 @@ export default function (options, req) {
   && requestBodyMediaTypes.indexOf(requestContentType) > -1
 
   // for OAS3: set the Content-Type
-  if (requestBody) {
+  if (requestBody || attachContentTypeForEmptyPayload) {
     // does the passed requestContentType appear in the requestBody definition?
 
     if (requestContentType && isExplicitContentTypeValid) {
