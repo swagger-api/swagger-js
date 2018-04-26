@@ -602,6 +602,7 @@ describe('execute', () => {
       // Then
       expect(req).toEqual({
         url: 'http://swagger.io/one',
+        body: undefined,
         headers: {
           'Content-Type': 'application/josh'
         },

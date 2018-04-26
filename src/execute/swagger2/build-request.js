@@ -34,6 +34,12 @@ export default function (options, req) {
       req.headers['Content-Type'] = 'application/x-www-form-urlencoded'
     }
   }
+  else if (requestContentType) {
+    const isBodyParamPresent = operation.parameters && operation.parameters.filter(p => p.in === 'body').length > 0
+    if (isBodyParamPresent) {
+      req.headers['Content-Type'] = requestContentType
+    }
+  }
 
   return req
 }
