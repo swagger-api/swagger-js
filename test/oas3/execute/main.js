@@ -326,7 +326,7 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
       })
     })
 
-    it('should build an operation with a provided requestContentType even if the requestBody definition lacks that media type', function () {
+    it('should build an operation without a body or Content-Type if the requestBody definition lacks the requestContentType', function () {
       // Given
       const spec = {
         openapi: '3.0.0',
@@ -369,9 +369,7 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
         method: 'GET',
         url: 'http://petstore.swagger.io/v2/one',
         credentials: 'same-origin',
-        headers: {
-          'Content-Type': 'application/not-json'
-        }
+        headers: {}
       })
     })
 
