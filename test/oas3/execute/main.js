@@ -373,7 +373,52 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
       })
     })
 
-    it('should build a request body-bearing operation with a provided requestContentType even if no payload is present', function () {
+    it('should build a request body-bearing operation with a provided requestContentType that appears in the requestBody definition even if no payload is present', function () {
+      // Given
+      const spec = {
+        openapi: '3.0.0',
+        servers: [
+          {
+            url: 'http://petstore.swagger.io/v2',
+            name: 'Petstore'
+          }
+        ],
+        paths: {
+          '/one': {
+            get: {
+              operationId: 'getOne',
+              requestBody: {
+                content: {
+                  'application/json': {
+                    schema: {
+                      type: 'object'
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // when
+      const req = buildRequest({
+        spec,
+        operationId: 'getOne',
+        requestContentType: 'application/json'
+      })
+
+      expect(req).toEqual({
+        method: 'GET',
+        url: 'http://petstore.swagger.io/v2/one',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+    })
+
+    it('should build a request body-bearing operation without a provided requestContentType that does not appear in the requestBody definition even if no payload is present', function () {
       // Given
       const spec = {
         openapi: '3.0.0',
@@ -412,9 +457,7 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
         method: 'GET',
         url: 'http://petstore.swagger.io/v2/one',
         credentials: 'same-origin',
-        headers: {
-          'Content-Type': 'application/not-json'
-        }
+        headers: {}
       })
     })
 

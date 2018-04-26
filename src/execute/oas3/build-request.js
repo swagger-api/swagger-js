@@ -20,12 +20,12 @@ export default function (options, req) {
 
   const requestBodyDef = operation.requestBody || {}
   const requestBodyMediaTypes = Object.keys(requestBodyDef.content || {})
+  const isExplicitContentTypeValid = requestContentType
+  && requestBodyMediaTypes.indexOf(requestContentType) > -1
 
   // for OAS3: set the Content-Type
   if (requestBody) {
     // does the passed requestContentType appear in the requestBody definition?
-    const isExplicitContentTypeValid = requestContentType
-      && requestBodyMediaTypes.indexOf(requestContentType) > -1
 
     if (requestContentType && isExplicitContentTypeValid) {
       req.headers['Content-Type'] = requestContentType
@@ -37,6 +37,9 @@ export default function (options, req) {
         requestContentType = firstMediaType
       }
     }
+  }
+  else if (requestContentType && isExplicitContentTypeValid) {
+    req.headers['Content-Type'] = requestContentType
   }
 
   // for OAS3: add requestBody to request
