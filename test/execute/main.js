@@ -857,6 +857,171 @@ describe('execute', () => {
         one: 1
       })
     })
+
+    describe('attachContentTypeForEmptyPayload', () => {
+      it('should attach a Content-Type to a Swagger 2 operation with a body parameter defined but no body provided', () => {
+        const spec = {
+          swagger: '2.0',
+          host: 'swagger.io',
+          consumes: ['application/json'],
+          paths: {
+            '/one': {
+              post: {
+                operationId: 'myOp',
+                parameters: [
+                  {
+                    name: 'body',
+                    in: 'body'
+                  }
+                ]
+              }
+            }
+          }
+        }
+
+        const req = buildRequest({
+          spec,
+          operationId: 'myOp',
+          attachContentTypeForEmptyPayload: true
+        })
+
+        expect(req).toEqual({
+          url: 'http://swagger.io/one',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'same-origin',
+          method: 'POST',
+          body: undefined
+        })
+      })
+      it('should attach a Content-Type to a Swagger 2 operation with a formData parameter defined but no body provided', () => {
+        const spec = {
+          swagger: '2.0',
+          host: 'swagger.io',
+          paths: {
+            '/one': {
+              post: {
+                operationId: 'myOp',
+                parameters: [
+                  {
+                    name: 'data',
+                    in: 'formData',
+                    type: 'string'
+                  }
+                ]
+              }
+            }
+          }
+        }
+
+        const req = buildRequest({
+          spec,
+          operationId: 'myOp',
+          attachContentTypeForEmptyPayload: true
+        })
+
+        expect(req).toEqual({
+          url: 'http://swagger.io/one',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          credentials: 'same-origin',
+          method: 'POST'
+        })
+      })
+      it('should not attach a Content-Type to a Swagger 2 operation with no body or formData parameter definition present', () => {
+        const spec = {
+          swagger: '2.0',
+          host: 'swagger.io',
+          paths: {
+            '/one': {
+              post: {
+                operationId: 'myOp'
+              }
+            }
+          }
+        }
+
+        const req = buildRequest({
+          spec,
+          operationId: 'myOp',
+          attachContentTypeForEmptyPayload: true
+        })
+
+        expect(req).toEqual({
+          url: 'http://swagger.io/one',
+          headers: {},
+          credentials: 'same-origin',
+          method: 'POST'
+        })
+      })
+      it('should not attach a Content-Type to a Swagger 2 operation with a body parameter defined but no body provided if the option is not enabled', () => {
+        const spec = {
+          swagger: '2.0',
+          host: 'swagger.io',
+          consumes: ['application/json'],
+          paths: {
+            '/one': {
+              post: {
+                operationId: 'myOp',
+                parameters: [
+                  {
+                    name: 'body',
+                    in: 'body'
+                  }
+                ]
+              }
+            }
+          }
+        }
+
+        const req = buildRequest({
+          spec,
+          operationId: 'myOp',
+        })
+
+        expect(req).toEqual({
+          url: 'http://swagger.io/one',
+          headers: {},
+          credentials: 'same-origin',
+          method: 'POST',
+          body: undefined
+        })
+      })
+      it('should not attach a Content-Type to a Swagger 2 operation with a formData parameter defined but no body provided if the option is not enabled', () => {
+        const spec = {
+          swagger: '2.0',
+          host: 'swagger.io',
+          paths: {
+            '/one': {
+              post: {
+                operationId: 'myOp',
+                parameters: [
+                  {
+                    name: 'data',
+                    in: 'formData',
+                    type: 'string'
+                  }
+                ]
+              }
+            }
+          }
+        }
+
+        const req = buildRequest({
+          spec,
+          operationId: 'myOp',
+        })
+
+        expect(req).toEqual({
+          url: 'http://swagger.io/one',
+          headers: {},
+          credentials: 'same-origin',
+          method: 'POST'
+        })
+      })
+    })
   })
 
 

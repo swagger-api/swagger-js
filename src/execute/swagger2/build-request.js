@@ -11,12 +11,13 @@ export default function (options, req) {
     spec,
     operation,
     securities,
-    requestContentType
+    requestContentType,
+    attachContentTypeForEmptyPayload
   } = options
   // Add securities, which are applicable
   req = applySecurities({request: req, securities, operation, spec})
 
-  if (req.body || req.form) {
+  if (req.body || req.form || attachContentTypeForEmptyPayload) {
     // all following conditionals are Swagger2 only
     if (requestContentType) {
       req.headers['Content-Type'] = requestContentType
