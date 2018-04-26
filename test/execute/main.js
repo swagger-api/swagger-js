@@ -649,7 +649,7 @@ describe('execute', () => {
       const req = buildRequest({
         spec,
         operationId: 'postMe',
-        parameters: {file: 'test'}})
+        parameters: {foo: 'test'}})
 
       // Then
       expect(req.headers).toEqual({
