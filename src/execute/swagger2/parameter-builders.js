@@ -18,8 +18,8 @@ function bodyBuilder({req, value}) {
 
 // Add a form data object.
 function formDataBuilder({req, value, parameter}) {
-  req.form = req.form || {}
   if (value || parameter.allowEmptyValue) {
+    req.form = req.form || {}
     req.form[parameter.name] = {
       value,
       allowEmptyValue: parameter.allowEmptyValue,
