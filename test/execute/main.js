@@ -1080,12 +1080,14 @@ describe('execute', () => {
       fetch: createSpy().andReturn({then() { }}),
       spec,
       operationId: 'getMe',
-      josh: 1
+      josh: 1,
+      attachContentTypeForEmptyPayload: true
     })
 
     expect(buildRequestSpy.calls.length).toEqual(1)
     expect(buildRequestSpy.calls[0].arguments[0]).toInclude({
-      josh: 1
+      josh: 1,
+      attachContentTypeForEmptyPayload: true
     })
   })
 
