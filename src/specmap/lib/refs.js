@@ -41,7 +41,7 @@ const specmapRefs = new WeakMap()
 const plugin = {
   key: '$ref',
   plugin: (ref, key, fullPath, specmap) => {
-    console.log('$ref', fullPath)
+    console.log('----------------------------------------')
     const parent = fullPath.slice(0, -1)
     if (isFreelyNamed(parent)) {
       return
@@ -77,7 +77,9 @@ const plugin = {
     let tokens
 
     if (pointerAlreadyInPath(pointer, basePath, parent, specmap)) {
-      return // TODO: add some meta data, to indicate its cyclic!
+      console.log('!! pointer is in path; exiting without generating a patch')
+      return
+       // TODO: add some meta data, to indicate its cyclic!
     }
 
     if (basePath == null) {
@@ -354,6 +356,7 @@ function pointerAlreadyInPath(pointer, basePath, parent, specmap) {
     refs = {}
     specmapRefs.set(specmap, refs)
   }
+  console.log('specmap ref cache: ', refs)
 
   const parentPointer = arrayToJsonPointer(parent)
   const fullyQualifiedPointer = `${basePath || '<specmap-base>'}#${pointer}`
@@ -363,6 +366,7 @@ function pointerAlreadyInPath(pointer, basePath, parent, specmap) {
   // This only applies if the pointer is internal, i.e. basePath === rootPath (could be null)
   const rootDoc = specmap.contextTree.get([]).baseDoc
   if (basePath == rootDoc && pointerIsAParent(parentPointer, pointer)) { // eslint-disable-line
+    console.log('!! direct cycle identified')
     return true
   }
 
@@ -383,6 +387,7 @@ function pointerAlreadyInPath(pointer, basePath, parent, specmap) {
     })
   })
   if (hasIndirectCycle) {
+    console.log('!! indirect cycle identified')
     return true
   }
 

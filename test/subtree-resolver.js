@@ -461,6 +461,7 @@ describe('subtree $ref resolver', function () {
           $$ref: '#/definitions/two',
           type: 'array',
           items: {
+            $$ref: '#/definitions/three',
             properties: {
               alternate_product_code: {
                 $ref: '#/definitions/three'

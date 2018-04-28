@@ -97,10 +97,12 @@ class SpecMap {
         const refCache = {}
 
         for (const patch of patches.filter(lib.isAdditiveMutation)) {
+          console.log('patch!', patch)
           yield* traverse(patch.value, patch.path, patch)
         }
 
         function* traverse(obj, path, patch) {
+          console.log('traverse input', patch)
           if (!lib.isObject(obj)) {
             if (pluginObj.key === path[path.length - 1]) {
               yield pluginObj.plugin(obj, pluginObj.key, path, specmap)
@@ -187,6 +189,7 @@ class SpecMap {
   }
 
   updatePatches(patches, plugin) {
+    console.log('updatePatches', patches)
     lib.normalizeArray(patches).forEach((patch) => {
       if (patch instanceof Error) {
         this.errors.push(patch)
@@ -359,11 +362,13 @@ class SpecMap {
       try {
         if (plugin.isGenerator) {
           for (const yieldedPatches of plugin(mutations, that.getLib())) {
+            console.log('generator yieldedPatches', yieldedPatches)
             updatePatches(yieldedPatches)
           }
         }
         else {
           const newPatches = plugin(mutations, that.getLib())
+          console.log('non-gen yieldedPatches', yieldedPatches)
           updatePatches(newPatches)
         }
       }
