@@ -68,7 +68,7 @@
     "btoa": "1.1.2",
     "cookie": "^0.3.1",
     "cross-fetch": "0.0.8",
-    "deep-extend": "^0.4.1",
+    "deep-extend": "^0.5.1",
     "encode-3986": "^1.0.0",
     "fast-json-patch": "^2.0.6",
     "isomorphic-form-data": "0.0.1",
