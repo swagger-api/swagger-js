@@ -425,7 +425,7 @@ describe('subtree $ref resolver', function () {
     })
   })
 
-  it.only('should handle this odd $ref/allOf combination', async () => {
+  it('should handle this odd $ref/allOf combination', async () => {
     const input = {
       definitions: {
         one: {
