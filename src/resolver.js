@@ -37,8 +37,6 @@ export default function resolve(obj) {
 
   let {http, baseDoc} = obj
 
-  // console.log(obj)
-
   // @TODO Swagger-UI uses baseDoc instead of url, this is to allow both
   // need to fix and pick one.
   baseDoc = baseDoc || url
