@@ -230,6 +230,9 @@ class SpecMap {
   }
 
   updateMutations(patch) {
+    if (typeof patch.value === 'object' && !Array.isArray(patch.value)) {
+      patch.value = Object.assign({}, patch.value)
+    }
     const result = lib.applyPatch(this.state, patch, {allowMetaPatches: this.allowMetaPatches})
     if (result) {
       this.mutations.push(patch)
