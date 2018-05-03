@@ -227,7 +227,7 @@ class SpecMap {
   }
 
   updateMutations(patch) {
-    if (typeof patch.value === 'object' && !Array.isArray(patch.value)) {
+    if (typeof patch.value === 'object' && !Array.isArray(patch.value) && this.allowMetaPatches) {
       patch.value = Object.assign({}, patch.value)
     }
 
