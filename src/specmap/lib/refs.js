@@ -76,8 +76,7 @@ const plugin = {
     let tokens
 
     if (pointerAlreadyInPath(pointer, basePath, parent, specmap)) {
-      return
-       // TODO: add some meta data, to indicate its cyclic!
+      return // TODO: add some meta data, to indicate its cyclic!
     }
 
     if (basePath == null) {
