@@ -326,7 +326,7 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
       })
     })
 
-    it('should build a request for the given operationId with a requestBody and a defined requestContentType that the requestBody lacks', function () {
+    it('should build an operation without a body or Content-Type if the requestBody definition lacks the requestContentType', function () {
       // Given
       const spec = {
         openapi: '3.0.0',
@@ -370,6 +370,114 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
         url: 'http://petstore.swagger.io/v2/one',
         credentials: 'same-origin',
         headers: {}
+      })
+    })
+
+    it('should build a request body-bearing operation with a provided requestContentType that appears in the requestBody definition even if no payload is present', function () {
+      // Given
+      const spec = {
+        openapi: '3.0.0',
+        servers: [
+          {
+            url: 'http://petstore.swagger.io/v2',
+            name: 'Petstore'
+          }
+        ],
+        paths: {
+          '/one': {
+            get: {
+              operationId: 'getOne',
+              requestBody: {
+                content: {
+                  'application/json': {
+                    schema: {
+                      type: 'object'
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // when
+      const req = buildRequest({
+        spec,
+        operationId: 'getOne',
+        requestContentType: 'application/json'
+      })
+
+      expect(req).toEqual({
+        method: 'GET',
+        url: 'http://petstore.swagger.io/v2/one',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+    })
+
+    it('should build a request body-bearing operation without a provided requestContentType that does not appear in the requestBody definition even if no payload is present', function () {
+      // Given
+      const spec = {
+        openapi: '3.0.0',
+        servers: [
+          {
+            url: 'http://petstore.swagger.io/v2',
+            name: 'Petstore'
+          }
+        ],
+        paths: {
+          '/one': {
+            get: {
+              operationId: 'getOne',
+              requestBody: {
+                content: {
+                  'application/json': {
+                    schema: {
+                      type: 'object'
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // when
+      const req = buildRequest({
+        spec,
+        operationId: 'getOne',
+        requestContentType: 'application/not-json'
+      })
+
+      expect(req).toEqual({
+        method: 'GET',
+        url: 'http://petstore.swagger.io/v2/one',
+        credentials: 'same-origin',
+        headers: {}
+      })
+    })
+
+    it('should not add a Content-Type when the operation has no OAS3 request body definition', function () {
+          // Given
+      const spec = {
+        openapi: '3.0.0',
+        servers: [{url: 'http://swagger.io/'}],
+        paths: {'/one': {get: {operationId: 'getMe'}}}
+      }
+
+          // When
+      const req = buildRequest({spec, operationId: 'getMe', requestContentType: 'application/josh'})
+
+          // Then
+      expect(req).toEqual({
+        url: 'http://swagger.io/one',
+        headers: {},
+        credentials: 'same-origin',
+        method: 'GET'
       })
     })
   })
@@ -675,6 +783,118 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
       })
 
       expect(res).toEqual('')
+    })
+  })
+  describe('attachContentTypeForEmptyPayload', () => {
+    it('should attach the first media type as Content-Type to an OAS3 operation with a request body defined but no body provided', function () {
+      const spec = {
+        openapi: '3.0.0',
+        servers: [
+          {
+            url: 'http://swagger.io/'
+          }
+        ],
+        paths: {
+          '/one': {
+            post: {
+              operationId: 'myOp',
+              requestBody: {
+                content: {
+                  'application/json': {
+                    schema: {
+                      type: 'string'
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      const req = buildRequest({
+        spec,
+        operationId: 'myOp',
+        attachContentTypeForEmptyPayload: true
+      })
+
+      expect(req).toEqual({
+        url: 'http://swagger.io/one',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'same-origin',
+        method: 'POST'
+      })
+    })
+    it('should not attach a Content-Type to an OAS3 operation with no request body definition present', function () {
+      const spec = {
+        openapi: '3.0.0',
+        servers: [
+          {
+            url: 'http://swagger.io/'
+          }
+        ],
+        paths: {
+          '/one': {
+            post: {
+              operationId: 'myOp'
+            }
+          }
+        }
+      }
+
+      const req = buildRequest({
+        spec,
+        operationId: 'myOp',
+        attachContentTypeForEmptyPayload: true
+      })
+
+      expect(req).toEqual({
+        url: 'http://swagger.io/one',
+        headers: {},
+        credentials: 'same-origin',
+        method: 'POST'
+      })
+    })
+    it('should not attach the first media type as Content-Type without the option enabled', function () {
+      const spec = {
+        openapi: '3.0.0',
+        servers: [
+          {
+            url: 'http://swagger.io/'
+          }
+        ],
+        paths: {
+          '/one': {
+            post: {
+              operationId: 'myOp',
+              requestBody: {
+                content: {
+                  'application/json': {
+                    schema: {
+                      type: 'string'
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      const req = buildRequest({
+        spec,
+        operationId: 'myOp',
+        // attachContentTypeForEmptyPayload is omitted
+      })
+
+      expect(req).toEqual({
+        url: 'http://swagger.io/one',
+        headers: {},
+        credentials: 'same-origin',
+        method: 'POST'
+      })
     })
   })
 })

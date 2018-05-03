@@ -1,6 +1,6 @@
 {
   "name": "swagger-client",
-  "version": "3.7.0",
+  "version": "3.8.0",
   "description": "SwaggerJS - a collection of interfaces for OAI specs",
   "main": "dist/index.js",
   "repository": "git@github.com:swagger-api/swagger-js.git",
@@ -71,7 +71,7 @@
     "btoa": "1.1.2",
     "cookie": "^0.3.1",
     "cross-fetch": "0.0.8",
-    "deep-extend": "^0.4.1",
+    "deep-extend": "^0.5.1",
     "encode-3986": "^1.0.0",
     "fast-json-patch": "^2.0.6",
     "isomorphic-form-data": "0.0.1",
