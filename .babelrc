@@ -13,6 +13,20 @@
   "env": {
     "test": {
       "presets": ["es2015"]
+    },
+    "dev": {
+      "presets": [
+        ["env", {
+          "targets": {
+            "chrome": "60"
+          }
+        }]
+      ],
+      "plugins": [
+        "transform-runtime",
+        "transform-object-rest-spread",
+        "babel-plugin-transform-es2015-destructuring"
+      ],
     }
   }
 }
