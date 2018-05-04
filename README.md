@@ -17,11 +17,11 @@ We'll be consolidating that soon. Just giving you the heads up. You may see refe
 ### Usage
 
 ##### Prerequisites
-- Runtime: 
-  - browser: es5 compatible. IE11+ 
+- Runtime:
+  - browser: es5 compatible. IE11+
   - node v4.x.x
 - Building
-  - node v6.x.x 
+  - node v6.x.x
 
 ##### Download via npm
 
@@ -34,7 +34,7 @@ npm install swagger-client
 ```javascript
 import Swagger from 'swagger-client'
 // Or commonjs
-const Swagger = require('swagger-client') 
+const Swagger = require('swagger-client')
 ```
 
 ##### Import in browser
@@ -95,8 +95,8 @@ Swagger.http(request)
 
 // Interceptors
 Swagger.http({
-  requestInterceptor: (req: Request) => Request
-  responseInterceptor: (res: Response) => Response
+  requestInterceptor: (req: Request) => Request | Promise<Request>
+  responseInterceptor: (res: Response) => Response | Promise<Response>
 })
 
 // Custom Fetch
@@ -134,7 +134,7 @@ const params = {
 
   parameters, // _named_ parameters in an object, eg: { petId: 'abc' }
   securities, // _named_ securities, will only be added to the request, if the spec indicates it. eg: {apiKey: 'abc'}
-  requestContentType, 
+  requestContentType,
   responseContentType,
 
   (http), // You can also override the HTTP client completely
@@ -166,11 +166,11 @@ Swagger('http://petstore.swagger.io/v2/swagger.json')
       client.originalSpec // In case you need it
       client.errors // Any resolver errors
 
-      // Tags interface 
+      // Tags interface
       client.apis.pet.addPet({id: 1, name: "bobby"}).then(...)
 
       // TryItOut Executor, with the `spec` already provided
-      client.execute({operationId: 'addPet', parameters: {id: 1, name: "bobby") }).then(...) 
+      client.execute({operationId: 'addPet', parameters: {id: 1, name: "bobby") }).then(...)
    })
 
 ```
@@ -185,19 +185,61 @@ OperationId's are meant to be unique within spec, if they're not we do the follo
 - If an operationId is duplicated across all operationIds of the spec, we rename all of them with numbers after the ID to keep them unique. You should not rely on this, as the renaming is non-deterministic. See [this test](https://github.com/swagger-api/swagger-js/blob/7da5755fa18791cd114ecfc9587dcd1b5c58ede1/test/helpers.js#L127) for an example.
 
 ```js
+Swagger({ url: "http://petstore.swagger.io/v2/swagger.json" }).then((client) => {
+    client
+      .apis
+      .pet // tag name == `pet`
+      .addPet({ // operationId == `addPet`
+        id: 1,
+        body: {
+          name: "bobby",
+          status: "available"
+        }
+      })
+      .then(...)
+})
+```
+
+If you'd like to use the operationId formatting logic from Swagger-Client 2.x, set the `v2OperationIdCompatibilityMode` option:
+
+```js
+Swagger({
+  url: "http://petstore.swagger.io/v2/swagger.json",
+  v2OperationIdCompatibilityMode: true
+}).then((client) => {
+  // do things as usual
+})
+```
+
+#### OpenAPI 3.0
+
+OpenAPI 3.0 definitions work in a similar way with the tags interface, but you may need to provide additional data in an `options` object for server variables and request bodies, since these items are not actual parameters:
+
+```js
 Swagger({...}).then((client) => {
     client
       .apis
       .pet // tag name == `pet`
-      .addPet({id: 1, name: "bobby"}) // operationId == `addPet`
-      .then(...) 
+      .addPet({ // operationId == `addPet`
+        id: 1
+      }, {
+        requestBody: {
+          name: "bobby",
+          status: "available"
+        },
+        server: "http://petstore.swagger.io/{apiPrefix}/", // this should exactly match a URL in your `servers`
+        serverVariables: {
+          apiPrefix: "v2"
+        }
+      })
+      .then(...)
 })
 ```
 
-In Browser 
+In Browser
 ----------
 
-Prepare swagger-client.js by `npm run build-bundle` 
+Prepare swagger-client.js by `npm run build-bundle`
 Note, browser version exports class `SwaggerClient` to global namespace
 If you need activate CORS requests, just enable it by `withCredentials` property at `http`
 
@@ -217,7 +259,7 @@ var swaggerClient = new SwaggerClient(specUrl)
          console.error("failed to load the spec" + reason);
       })
       .then(function(addPetResult) {
-         console.log(addPetResult.obj); 
+         console.log(addPetResult.obj);
          // you may return more promises, if necessary
       }, function (reason) {
           console.error("failed on API call " + reason);
@@ -285,7 +327,7 @@ npm run build-bundle # build browser version available at .../browser
 
 # Migration from 2.x
 
-There has been a complete overhaul of the codebase. 
+There has been a complete overhaul of the codebase.
 For notes about how to migrate coming from 2.x,
 please see [Migration from 2.x](docs/MIGRATION_2_X.md)
 

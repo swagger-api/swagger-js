@@ -136,3 +136,17 @@ https://github.com/swagger-api/swagger-ui/issues/2793
 
 > NOTE: Cookie authentication is not implemented. 
 
+#### Default Content-Type values
+
+Swagger-Client no longer assumes you want `Content-Type: application/json` if you don't provide any `consumes` values. If you want to preserve that behavior, you'll need to implement it yourself with a `requestInterceptor`:
+
+```js
+Swagger({
+  url: "http://petstore.swagger.io/v2/swagger.json",
+  requestInterceptor: req => {
+    if(req.body && !req.headers["Content-Type"]) {
+      req.headers["Content-Type"] = "application/json"
+    }
+  }
+})
+```

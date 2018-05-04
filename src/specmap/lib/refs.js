@@ -330,8 +330,11 @@ function pointerIsAParent(pointer, parentPointer) {
     return true
   }
   const nextChar = pointer.charAt(parentPointer.length)
+  const lastParentChar = parentPointer.slice(-1)
+
   return pointer.indexOf(parentPointer) === 0
     && (!nextChar || nextChar === '/' || nextChar === '#')
+    && lastParentChar !== '#'
 }
 
 
