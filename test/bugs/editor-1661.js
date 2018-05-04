@@ -54,6 +54,7 @@ it('should resolve a deeply-nested $ref series correctly', async function () {
   expect(res).toEqual({
     errors: [],
     spec: {
+      $$normalized: true,
       paths: {
         '/path1': {
           get: {
