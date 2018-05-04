@@ -227,6 +227,38 @@ describe('http', () => {
       })
   })
 
+  it('use the host from whence the spec was fetched when constructing swagger2 URLs from a basePath', async () => {
+    const client = await Swagger('http://localhost:8000/relative-host.swagger.yaml')
+    try {
+      const res = await client.apis.default.myOp()
+      expect(res.status).toBe(404)
+    }
+    catch (e) {
+      expect(e).toInclude({
+        status: 404,
+        response: {
+          url: 'http://localhost:8000/v1/endpoint'
+        }
+      })
+    }
+  })
+
+  it('use the host from whence the spec was fetched when constructing OAS3 URLs from relative servers entries', async () => {
+    const client = await Swagger('http://localhost:8000/relative-server.openapi.yaml')
+    try {
+      const res = await client.apis.default.myOp()
+      expect(res.status).toBe(404)
+    }
+    catch (e) {
+      expect(e).toInclude({
+        status: 404,
+        response: {
+          url: 'http://localhost:8000/v1/endpoint'
+        }
+      })
+    }
+  })
+
   it('should err gracefully when requesting https from an http server', () => {
     return Swagger({
       url: 'http://localhost:8000/petstore.json',

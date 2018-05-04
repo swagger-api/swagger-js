@@ -1,0 +1,13 @@
+openapi: "3.0.0"
+servers:
+- url: "/v1/"
+paths:
+  /endpoint:
+    get:
+      summary: an operation!
+      operationId: myOp
+      parameters:
+      - name: filter
+        in: query
+        schema:
+          type: string

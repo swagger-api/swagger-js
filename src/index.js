@@ -63,6 +63,7 @@ Swagger.prototype = {
       spec: this.spec,
       http: this.http,
       securities: {authorized: this.authorizations},
+      contextUrl: typeof this.url === 'string' ? this.url : undefined,
       ...argHash
     })
   },
