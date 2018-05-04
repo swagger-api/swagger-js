@@ -1,6 +1,7 @@
 import jsonPatch from 'fast-json-patch'
 import regenerator from 'babel-runtime/regenerator'
 import deepExtend from 'deep-extend'
+import deepAssign from 'object-assign-deep'
 
 export default {
   add,
@@ -56,21 +57,24 @@ function applyPatch(obj, patch, opts) {
       else if (isObject(propVal) && !isArray) {
         // If it's an object, iterate it's keys and merge
         // if there are conflicting keys, merge deep, otherwise shallow merge
-        const existing = currentValue[prop] || {}
+        let currentObj = Object.assign({}, currentValue[prop])
         for (const key in propVal) {
-          if (Object.prototype.hasOwnProperty.call(existing, key)) {
+          if (Object.prototype.hasOwnProperty.call(currentObj, key)) {
             // if there is a single conflicting key, just deepExtend the entire value
             // and break from the loop (since all future keys are also merged)
             // We do this because we can't deepExtend two primitives
-            // (existing[key] & propVal[key] may be primitives)
-            deepExtend(existing, propVal)
+            // (currentObj[key] & propVal[key] may be primitives).
+            //
+            // we also deeply assign here, since we aren't in control of
+            // how deepExtend affects existing nested objects
+            currentObj = deepExtend(deepAssign({}, currentObj), propVal)
             break
           }
           else {
-            Object.assign(existing, {[key]: propVal[key]})
+            Object.assign(currentObj, {[key]: propVal[key]})
           }
         }
-        currentValue[prop] = existing
+        currentValue[prop] = currentObj
       }
       else {
         // It's a primitive, just replace existing
