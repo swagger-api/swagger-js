@@ -1,0 +1,10 @@
+swagger: "2.0"
+basePath: "/v1/"
+paths:
+  /endpoint:
+    get:
+      summary: an operation!
+      operationId: myOp
+      parameters:
+      - name: filter
+        in: query
