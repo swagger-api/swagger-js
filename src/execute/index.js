@@ -270,7 +270,7 @@ function oas3BaseUrl({spec, pathName, method, server, contextUrl, serverVariable
   let selectedServerUrl = ''
   let selectedServerObj = null
 
-  if (server && servers) {
+  if (server && servers && servers.length) {
     const serverUrls = servers.map(srv => srv.url)
 
     if (serverUrls.indexOf(server) > -1) {
@@ -279,7 +279,7 @@ function oas3BaseUrl({spec, pathName, method, server, contextUrl, serverVariable
     }
   }
 
-  if (!selectedServerUrl && servers) {
+  if (!selectedServerUrl && servers && servers.length) {
     // default to the first server if we don't have one by now
     selectedServerUrl = servers[0].url
     selectedServerObj = servers[0]

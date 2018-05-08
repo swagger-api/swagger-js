@@ -755,6 +755,20 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
 
       expect(res).toEqual('http://google.com')
     })
+    it('should fall back to contextUrls if servers list is empty', function () {
+      const spec = {
+        openapi: '3.0.0',
+        servers: []
+      }
+
+      const res = baseUrl({
+        spec,
+        server: 'http://some-invalid-server.com/',
+        contextUrl: 'http://google.com/'
+      })
+
+      expect(res).toEqual('http://google.com')
+    })
     it('should create a relative url based on a relative server if no contextUrl is available', function () {
       const spec = {
         openapi: '3.0.0',
