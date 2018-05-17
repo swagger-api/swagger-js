@@ -210,6 +210,15 @@ export function buildRequest(options) {
       throw new Error(`Required parameter ${parameter.name} is not provided`)
     }
 
+    if (specIsOAS3 && parameter.schema && parameter.schema.type === 'object' && typeof value === 'string') {
+      try {
+        value = JSON.parse(value)
+      }
+      catch (e) {
+        throw new Error('Could not parse object parameter value string as JSON')
+      }
+    }
+
     if (builder) {
       builder({req, parameter, value, operation, spec})
     }

@@ -870,6 +870,45 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters', fun
       })
     })
 
+    it('should handle building a query parameter in form/explode format, with a stringified object provided, if schema type is indicated', function () {
+      // Given
+      const spec = {
+        openapi: '3.0.0',
+        paths: {
+          '/users': {
+            get: {
+              operationId: 'myOperation',
+              parameters: [
+                {
+                  name: 'id',
+                  in: 'query',
+                  schema: {
+                    type: 'object'
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+
+      // when
+      const req = buildRequest({
+        spec,
+        operationId: 'myOperation',
+        parameters: {
+          id: JSON.stringify(VALUE)
+        }
+      })
+
+      expect(req).toEqual({
+        method: 'GET',
+        url: `/users?role=admin&firstName=Alex&greeting=${SAFE_INPUT_RESULT}`,
+        credentials: 'same-origin',
+        headers: {},
+      })
+    })
+
     it('should build a query parameter with escaped non-RFC3986 characters', function () {
       // Given
       const spec = {
