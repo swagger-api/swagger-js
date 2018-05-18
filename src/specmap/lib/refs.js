@@ -1,4 +1,5 @@
 import {fetch} from 'cross-fetch'
+import qs from 'querystring'
 import url from 'url'
 import lib from '../lib'
 import createError from '../lib/create-error'
@@ -303,7 +304,7 @@ function unescapeJsonPointerToken(token) {
   if (typeof token !== 'string') {
     return token
   }
-  return token.replace(/~1/g, '/').replace(/~0/g, '~')
+  return qs.unescape(token.replace(/~1/g, '/').replace(/~0/g, '~'))
 }
 
 /**
@@ -311,7 +312,7 @@ function unescapeJsonPointerToken(token) {
  * @api public
  */
 function escapeJsonPointerToken(token) {
-  return token.replace(/~/g, '~0').replace(/\//g, '~1')
+  return qs.escape(token.replace(/~/g, '~0').replace(/\//g, '~1'))
 }
 
 function arrayToJsonPointer(arr) {
