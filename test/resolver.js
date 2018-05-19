@@ -48,6 +48,69 @@ describe('resolver', () => {
     }
   })
 
+  it('should be able to resolve $refs with percent-encoded values', () => {
+    // Given
+    const spec = {
+      one: {
+        uno: 1,
+        $ref: '#/value%20two'
+      },
+      'value two': {
+        duos: 2
+      }
+    }
+
+    // When
+    return Swagger.resolve({spec, allowMetaPatches: false})
+      .then(handleResponse)
+
+    // Then
+    function handleResponse(obj) {
+      expect(obj.errors).toEqual([])
+      expect(obj.spec).toEqual({
+        one: {
+          duos: 2
+        },
+        'value two': {
+          duos: 2
+        }
+      })
+    }
+  })
+
+  it('should tolerate $refs with raw values that should be percent-encoded', () => {
+    // NOTE: this is for compatibility and can be removed in the next major
+    // REVIEW for v4
+
+    // Given
+    const spec = {
+      one: {
+        uno: 1,
+        $ref: '#/value two'
+      },
+      'value two': {
+        duos: 2
+      }
+    }
+
+    // When
+    return Swagger.resolve({spec, allowMetaPatches: false})
+      .then(handleResponse)
+
+    // Then
+    function handleResponse(obj) {
+      expect(obj.errors).toEqual([])
+      expect(obj.spec).toEqual({
+        one: {
+          duos: 2
+        },
+        'value two': {
+          duos: 2
+        }
+      })
+    }
+  })
+
   it('should be able to resolve circular $refs when a baseDoc is provided', () => {
     // Given
     const spec = {
