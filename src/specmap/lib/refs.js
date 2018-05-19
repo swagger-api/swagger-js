@@ -1,5 +1,5 @@
 import {fetch} from 'cross-fetch'
-import qs from 'querystring'
+import qs from 'querystring-browser'
 import url from 'url'
 import lib from '../lib'
 import createError from '../lib/create-error'

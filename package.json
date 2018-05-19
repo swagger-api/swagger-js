@@ -79,6 +79,7 @@
     "lodash": "^4.16.2",
     "@kyleshockey/object-assign-deep": "^0.4.0",
     "qs": "^6.3.0",
+    "querystring-browser": "^1.0.4",
     "url": "^0.11.0",
     "utf8-bytes": "0.0.1",
     "utfstring": "^2.0.0"
