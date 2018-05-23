@@ -49,7 +49,7 @@ export default function (options, req) {
       if (requestBodyMediaTypes.indexOf(requestContentType) > -1) {
         // only attach body if the requestBody has a definition for the
         // contentType that has been explicitly set
-        if (requestContentType === 'application/x-www-form-urlencoded') {
+        if (requestContentType === 'application/x-www-form-urlencoded' || requestContentType.indexOf('multipart/') === 0) {
           if (typeof requestBody === 'object') {
             req.form = {}
             Object.keys(requestBody).forEach((k) => {
