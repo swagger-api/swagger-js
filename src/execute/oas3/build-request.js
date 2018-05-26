@@ -59,11 +59,11 @@ export default function (options, req) {
               let isFile
 
               if (typeof File !== 'undefined') {
-                isFile = val instanceof File
+                isFile = val instanceof File // eslint-disable-line no-undef
               }
 
               if (typeof Blob !== 'undefined') {
-                isFile = isFile || val instanceof Blob
+                isFile = isFile || val instanceof Blob // eslint-disable-line no-undef
               }
 
               if (typeof Buffer !== 'undefined') {
