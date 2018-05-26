@@ -56,7 +56,21 @@ export default function (options, req) {
               const val = requestBody[k]
               let newVal
 
-              if (typeof val === 'object') {
+              let isFile
+
+              if (typeof File !== 'undefined') {
+                isFile = val instanceof File
+              }
+
+              if (typeof Blob !== 'undefined') {
+                isFile = isFile || val instanceof Blob
+              }
+
+              if (typeof Buffer !== 'undefined') {
+                isFile = isFile || val instanceof Buffer
+              }
+
+              if (typeof val === 'object' && !isFile) {
                 if (Array.isArray(val)) {
                   newVal = val.toString()
                 }

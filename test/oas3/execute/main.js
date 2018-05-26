@@ -911,4 +911,46 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
       })
     })
   })
+  describe('special media types', function () {
+    describe('file-as-body types', function () {
+      it('should preserve blobs for application/octet-stream', () => {
+        const spec = {
+          openapi: '3.0.0',
+          paths: {
+            '/one': {
+              get: {
+                operationId: 'getMe',
+                requestBody: {
+                  content: {
+                    'application/octet-stream': {
+                      schema: {
+                        type: 'string',
+                        format: 'binary'
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'getMe',
+          requestBody: Buffer.from('this is a test')
+        })
+
+        expect(req).toInclude({
+          method: 'GET',
+          url: '/one',
+          credentials: 'same-origin',
+          headers: {},
+        })
+
+        expect(req.body.toString('base64')).toEqual('dGhpcyBpcyBhIHRlc3Q=')
+      })
+    })
+  })
 })
