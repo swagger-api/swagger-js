@@ -3,6 +3,7 @@
 import assign from 'lodash/assign'
 import get from 'lodash/get'
 import btoa from 'btoa'
+import Buffer from 'buffer'
 
 export default function (options, req) {
   const {
