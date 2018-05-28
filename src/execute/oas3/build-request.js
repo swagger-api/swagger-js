@@ -68,7 +68,7 @@ export default function (options, req) {
               }
 
               if (typeof Buffer !== 'undefined') {
-                isFile = isFile || val instanceof Buffer
+                isFile = isFile || Buffer.isBuffer(val)
               }
 
               if (typeof val === 'object' && !isFile) {
