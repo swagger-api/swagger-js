@@ -3,6 +3,7 @@
 import assign from 'lodash/assign'
 import get from 'lodash/get'
 import btoa from 'btoa'
+import {Buffer} from 'buffer/'
 
 export default function (options, req) {
   const {
@@ -67,7 +68,7 @@ export default function (options, req) {
               }
 
               if (typeof Buffer !== 'undefined') {
-                isFile = isFile || val instanceof Buffer
+                isFile = isFile || Buffer.isBuffer(val)
               }
 
               if (typeof val === 'object' && !isFile) {
