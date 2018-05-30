@@ -20,7 +20,10 @@ export default function (options, req) {
 
   req = applySecurities({request: req, securities, operation, spec})
 
-  const requestBodyDef = operation.requestBody || {}
+  let requestBodyDef = operation.requestBody || {}
+  if (requestBodyDef.$ref) {
+    requestBodyDef = get(spec, requestBodyDef.$ref.substr(2).split('/'))
+  }
   const requestBodyMediaTypes = Object.keys(requestBodyDef.content || {})
   const isExplicitContentTypeValid = requestContentType
   && requestBodyMediaTypes.indexOf(requestContentType) > -1
