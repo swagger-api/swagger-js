@@ -1,6 +1,6 @@
 {
   "name": "swagger-client",
-  "version": "3.8.2",
+  "version": "3.8.6",
   "description": "SwaggerJS - a collection of interfaces for OAI specs",
   "main": "dist/index.js",
   "repository": "git@github.com:swagger-api/swagger-js.git",
@@ -67,8 +67,10 @@
     "xmock": "^0.3.0"
   },
   "dependencies": {
+    "@kyleshockey/object-assign-deep": "^0.4.0",
     "babel-runtime": "^6.23.0",
     "btoa": "1.1.2",
+    "buffer": "^5.1.0",
     "cookie": "^0.3.1",
     "cross-fetch": "0.0.8",
     "deep-extend": "^0.5.1",
@@ -77,8 +79,8 @@
     "isomorphic-form-data": "0.0.1",
     "js-yaml": "^3.8.1",
     "lodash": "^4.16.2",
-    "@kyleshockey/object-assign-deep": "^0.4.0",
     "qs": "^6.3.0",
+    "querystring-browser": "^1.0.4",
     "url": "^0.11.0",
     "utf8-bytes": "0.0.1",
     "utfstring": "^2.0.0"

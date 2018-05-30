@@ -3,6 +3,7 @@
 import assign from 'lodash/assign'
 import get from 'lodash/get'
 import btoa from 'btoa'
+import {Buffer} from 'buffer/'
 
 export default function (options, req) {
   const {
@@ -49,14 +50,28 @@ export default function (options, req) {
       if (requestBodyMediaTypes.indexOf(requestContentType) > -1) {
         // only attach body if the requestBody has a definition for the
         // contentType that has been explicitly set
-        if (requestContentType === 'application/x-www-form-urlencoded') {
+        if (requestContentType === 'application/x-www-form-urlencoded' || requestContentType.indexOf('multipart/') === 0) {
           if (typeof requestBody === 'object') {
             req.form = {}
             Object.keys(requestBody).forEach((k) => {
               const val = requestBody[k]
               let newVal
 
-              if (typeof val === 'object') {
+              let isFile
+
+              if (typeof File !== 'undefined') {
+                isFile = val instanceof File // eslint-disable-line no-undef
+              }
+
+              if (typeof Blob !== 'undefined') {
+                isFile = isFile || val instanceof Blob // eslint-disable-line no-undef
+              }
+
+              if (typeof Buffer !== 'undefined') {
+                isFile = isFile || Buffer.isBuffer(val)
+              }
+
+              if (typeof val === 'object' && !isFile) {
                 if (Array.isArray(val)) {
                   newVal = val.toString()
                 }
