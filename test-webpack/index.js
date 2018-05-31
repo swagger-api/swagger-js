@@ -1,6 +1,6 @@
-const expect = require('expect')
+import Swagger from '../src'
 
-const Swagger = require('../src')
+const expect = require('expect')
 
 describe('webpack build', () => {
   it('should export a function', () => {
