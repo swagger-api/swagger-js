@@ -6,6 +6,7 @@
     ]
   ],
   "plugins": [
+    "add-module-exports",
     "transform-runtime",
     "transform-object-rest-spread",
     "transform-async-to-generator"

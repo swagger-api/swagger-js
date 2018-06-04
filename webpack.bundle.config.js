@@ -12,7 +12,6 @@ module.exports = deepMerge(
       path: path.join(__dirname, 'browser'),
       library: 'SwaggerClient',
       libraryTarget: 'umd',
-      libraryExport: "default",
       filename: 'swagger-client.js'
     },
 
