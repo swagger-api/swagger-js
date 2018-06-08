@@ -50,8 +50,6 @@ function Swagger(url, opts = {}) {
   return prom
 }
 
-module.exports = Swagger
-
 Swagger.prototype = {
 
   http: Http,
@@ -101,3 +99,5 @@ Swagger.prototype.applyDefaults = function () {
     }
   }
 }
+
+export default Swagger
