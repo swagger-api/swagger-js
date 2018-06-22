@@ -12,6 +12,25 @@ describe('helpers', function () {
       // Then
       expect(id).toEqual('get_one')
     })
+    it('should return get_one as an operationId', function () {
+      // When
+      const id = idFromPathMethod('/one', 'get')
+
+      // Then
+      expect(id).toEqual('get_one')
+    })
+    it('should handle strange paths/methods correctly when in v2 mode', function () {
+      const fn = (path, method) => {
+        return idFromPathMethod(path, method, {
+          v2OperationIdCompatibilityMode: true
+        })
+      }
+      // https://github.com/swagger-api/swagger-js/issues/1269#issue-309070070
+      expect(fn('/foo/{bar}/baz', 'get')).toEqual('get_foo_bar_baz')
+
+      expect(fn('/one/{foo}/{bar}', 'get')).toEqual('get_one_foo_bar')
+      expect(fn('/one/{bar}/-----{baz}', 'get')).toEqual('get_one_bar_baz')
+    })
   })
 
   describe('getOperationRaw', function () {
@@ -349,6 +368,7 @@ describe('helpers', function () {
         const resultSpec = normalizeSwagger(spec)
 
         expect(resultSpec).toEqual({spec: {
+          $$normalized: true,
           consumes: ['application/json'],
           paths: {
             '/two': {
@@ -374,6 +394,7 @@ describe('helpers', function () {
         const resultSpec = normalizeSwagger(spec)
 
         expect(resultSpec).toEqual({spec: {
+          $$normalized: true,
           consumes: ['application/json'],
           paths: {
             '/two': {
@@ -402,6 +423,7 @@ describe('helpers', function () {
         const resultSpec = normalizeSwagger(spec)
 
         expect(resultSpec).toEqual({spec: {
+          $$normalized: true,
           produces: ['application/json'],
           paths: {
             '/two': {
@@ -427,6 +449,7 @@ describe('helpers', function () {
         const resultSpec = normalizeSwagger(spec)
 
         expect(resultSpec).toEqual({spec: {
+          $$normalized: true,
           produces: ['application/json'],
           paths: {
             '/two': {
@@ -455,6 +478,7 @@ describe('helpers', function () {
         const resultSpec = normalizeSwagger(spec)
 
         expect(resultSpec).toEqual({spec: {
+          $$normalized: true,
           security: ['test'],
           paths: {
             '/two': {
@@ -480,6 +504,7 @@ describe('helpers', function () {
         const resultSpec = normalizeSwagger(spec)
 
         expect(resultSpec).toEqual({spec: {
+          $$normalized: true,
           security: ['test1'],
           paths: {
             '/two': {
@@ -506,6 +531,7 @@ describe('helpers', function () {
         const resultSpec = normalizeSwagger(spec)
 
         expect(resultSpec).toEqual({spec: {
+          $$normalized: true,
           paths: {
             '/two': {
               parameters: [{name: 'a', in: 'path'}],
@@ -538,6 +564,7 @@ describe('helpers', function () {
         const resultSpec = normalizeSwagger(spec)
 
         expect(resultSpec).toEqual({spec: {
+          $$normalized: true,
           paths: {
             '/two': {
               parameters: [

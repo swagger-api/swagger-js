@@ -210,6 +210,15 @@ export function buildRequest(options) {
       throw new Error(`Required parameter ${parameter.name} is not provided`)
     }
 
+    if (specIsOAS3 && parameter.schema && parameter.schema.type === 'object' && typeof value === 'string') {
+      try {
+        value = JSON.parse(value)
+      }
+      catch (e) {
+        throw new Error('Could not parse object parameter value string as JSON')
+      }
+    }
+
     if (builder) {
       builder({req, parameter, value, operation, spec})
     }
@@ -270,7 +279,7 @@ function oas3BaseUrl({spec, pathName, method, server, contextUrl, serverVariable
   let selectedServerUrl = ''
   let selectedServerObj = null
 
-  if (server && servers) {
+  if (server && servers && servers.length) {
     const serverUrls = servers.map(srv => srv.url)
 
     if (serverUrls.indexOf(server) > -1) {
@@ -279,7 +288,7 @@ function oas3BaseUrl({spec, pathName, method, server, contextUrl, serverVariable
     }
   }
 
-  if (!selectedServerUrl && servers) {
+  if (!selectedServerUrl && servers && servers.length) {
     // default to the first server if we don't have one by now
     selectedServerUrl = servers[0].url
     selectedServerObj = servers[0]

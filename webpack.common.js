@@ -8,6 +8,8 @@ module.exports = {
     ]
   },
 
+  devtool: 'source-map',
+
   output: {
     path: path.join(__dirname, 'dist'),
     libraryTarget: 'commonjs2',
@@ -17,7 +19,7 @@ module.exports = {
   module: {
     loaders: [{
       test: /\.js/,
-      loader: 'babel-loader',
+      loader: 'babel-loader?retainLines=true',
       exclude: [
         /node_modules/
       ]
