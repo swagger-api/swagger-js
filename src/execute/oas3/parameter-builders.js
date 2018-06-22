@@ -14,7 +14,7 @@ function path({req, value, parameter}) {
     value,
     style: style || 'simple',
     explode: explode || false,
-    escape: false,
+    escape: true,
   })
 
   req.url = req.url.replace(`{${name}}`, styledValue)
