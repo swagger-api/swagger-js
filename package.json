@@ -90,6 +90,11 @@
     "utfstring": "^2.0.0"
   },
   "jest": {
-    "testMatch": ["**/test/**/*.js?(x)"]
+    "testMatch": ["**/test/**/*.js?(x)"],
+    "testPathIgnorePatterns": [
+      "<rootDir>/node_modules/",
+      "<rootDir>/test/data/",
+      "<rootDir>/test/specmap/data/"
+    ]
   }
 }

@@ -2,20 +2,19 @@ import fs from 'fs'
 import path from 'path'
 import clone from 'clone'
 import glob from 'glob'
-import expect from 'expect'
 import xmock from 'xmock'
 import mapSpec, {plugins} from '../../src/specmap'
 
 const refs = plugins.refs
 
-describe('refs', function () {
+describe('refs', () => {
   let xapp
 
-  before(() => {
+  beforeAll(() => {
     xapp = xmock()
   })
 
-  after(() => {
+  afterAll(() => {
     xapp.restore()
   })
 
@@ -23,8 +22,8 @@ describe('refs', function () {
     refs.clearCache()
   })
 
-  describe('JSONRefError', function () {
-    it('should contain the ref error details', function () {
+  describe('JSONRefError', () => {
+    test('should contain the ref error details', () => {
       try {
         throw new refs.JSONRefError('Failed to download ref', {
           $ref: '#/one',
@@ -38,7 +37,7 @@ describe('refs', function () {
       }
     })
 
-    it('.wrapError should wrap an error in JSONRefError', function () {
+    test('.wrapError should wrap an error in JSONRefError', () => {
       try {
         throw refs.wrapError(new Error('hi'), {$ref: '#/one', basePath: 'localhost'})
       }
@@ -51,106 +50,97 @@ describe('refs', function () {
     })
   })
 
-  describe('absoluteify', function () {
-    it('should find the absolute path for a url', function () {
+  describe('absoluteify', () => {
+    test('should find the absolute path for a url', () => {
       const res = refs.absoluteify('/one', 'http://example.com')
       expect(res).toEqual('http://example.com/one')
     })
 
-    describe('relative paths', function () {
-      it('should think of the basePath as pointing to a document, so use the parent folder for resolution', function () {
-        const res = refs.absoluteify('one.json', 'http://example.com/two.json')
-        expect(res).toEqual('http://example.com/one.json')
-      })
+    describe('relative paths', () => {
+      test(
+        'should think of the basePath as pointing to a document, so use the parent folder for resolution',
+        () => {
+          const res = refs.absoluteify('one.json', 'http://example.com/two.json')
+          expect(res).toEqual('http://example.com/one.json')
+        }
+      )
 
-      it('should handle ../', function () {
+      test('should handle ../', () => {
         const res = refs.absoluteify('../one.json', 'http://example.com/two/three/four.json')
         expect(res).toEqual('http://example.com/two/one.json')
       })
     })
   })
 
-  describe('.extract', function () {
-    it('should extract a JSON-Pointer', function () {
+  describe('.extract', () => {
+    test('should extract a JSON-Pointer', () => {
       const subject = refs.extract('/one', {one: 1})
       expect(subject).toEqual(1)
     })
 
-    it('should extract "" as the root obj', function () {
+    test('should extract "" as the root obj', () => {
       const subject = refs.extract('', {one: 1})
       expect(subject).toEqual({one: 1})
     })
 
-    it('should fail nicely', function () {
+    test('should fail nicely', () => {
       expect(() => {
         refs.extract('/not/here', {one: 1})
       }).toThrow()
     })
   })
 
-  describe('getDoc', function (done) {
-    it('should fetch documents', function () {
-      const url = 'http://example.com/common.json'
-
+  describe('getDoc', () => {
+    test('should fetch documents', () => {
+      const url = 'http://example.com/common.json';
       xapp.get(url, (req, res, next) => {
-        res.send({works: {yay: true}})
-      })
-
+        res.send({ works: { yay: true } });
+      });
       return refs.getDoc(url).then((doc) => {
-        expect(doc).toEqual({works: {yay: true}})
-      })
-    })
-
-    it('should parse YAML docs into JSON', function () {
-      const url = 'http://example.com/common.yaml'
-
+        expect(doc).toEqual({ works: { yay: true } });
+      });
+    });
+    test('should parse YAML docs into JSON', () => {
+      const url = 'http://example.com/common.yaml';
       xapp.get(url, (req, res, next) => {
-        res.set('Content-Type', 'application/yaml')
-        res.send('works:\n  yay: true')
-      })
-
+        res.set('Content-Type', 'application/yaml');
+        res.send('works:\n  yay: true');
+      });
       return refs.getDoc(url).then((doc) => {
-        expect(doc).toEqual({works: {yay: true}})
-      })
-    })
-
-    it('should cache requests', function () {
-      const url = 'http://example.com/common.json'
-
+        expect(doc).toEqual({ works: { yay: true } });
+      });
+    });
+    test('should cache requests', () => {
+      const url = 'http://example.com/common.json';
       xapp.get(url, (req, res, next) => {
-        res.send({works: {yay: true}})
-      })
-
+        res.send({ works: { yay: true } });
+      });
       return refs.getDoc(url).then((doc) => {
-        expect(doc).toEqual({works: {yay: true}})
+        expect(doc).toEqual({ works: { yay: true } });
       }).then(() => {
         expect(refs.docCache).toEqual({
-          [url]: {works: {yay: true}}
-        })
-
+          [url]: { works: { yay: true } }
+        });
         // Change cache to verify we're using it
-        refs.docCache[url].works.yay = false
-
+        refs.docCache[url].works.yay = false;
         return refs.getDoc(url).then((doc) => {
-          expect(doc).toEqual({works: {yay: false}})
-        })
-      })
-    })
-
-    it('should cache pending HTTP requests', function () {
-      const url = 'http://example.com/common.json'
-      xapp.get(url, () => {})
-
-      const p1 = refs.getDoc(url)
-      const p2 = refs.getDoc(url)
-      const p3 = refs.docCache[url]
-
-      expect(p1).toBe(p2).toBe(p3)
-    })
+          expect(doc).toEqual({ works: { yay: false } });
+        });
+      });
+    });
+    test('should cache pending HTTP requests', () => {
+      const url = 'http://example.com/common.json';
+      xapp.get(url, () => { });
+      const p1 = refs.getDoc(url);
+      const p2 = refs.getDoc(url);
+      const p3 = refs.docCache[url];
+      expect(p1).toBe(p2);
+      expect(p1).toBe(p3);
+    });
   })
 
-  describe('.extractFromDoc', function () {
-    it('should extract a value from within a doc', function () {
+  describe('.extractFromDoc', () => {
+    test('should extract a value from within a doc', () => {
       refs.docCache['some-path'] = {
         one: '1'
       }
@@ -160,7 +150,7 @@ describe('refs', function () {
         })
     })
 
-    it('should fail nicely', function () {
+    test('should fail nicely', () => {
       refs.docCache['some-path'] = {
         one: '1'
       }
@@ -171,31 +161,34 @@ describe('refs', function () {
         })
         .catch((e) => {
           expect(e.pointer).toEqual('/two')
-          expect(e.basePath).toNotExist()
-        })
+          expect(e.basePath).toBeFalsy()
+        });
     })
   })
 
-  describe('.absoluteify', function () {
-    it('should return the absolute URL', function () {
+  describe('.absoluteify', () => {
+    test('should return the absolute URL', () => {
       const res = refs.absoluteify('../', '/one/two/three.json')
       expect(res).toEqual('/one/')
     })
 
-    it('should throw if there is no basePath, and we try to resolve a realtive url', function () {
-      expect(() => {
-        refs.absoluteify('../')
-      }).toThrow()
-    })
+    test(
+      'should throw if there is no basePath, and we try to resolve a realtive url',
+      () => {
+        expect(() => {
+          refs.absoluteify('../')
+        }).toThrow()
+      }
+    )
 
-    it('should return the absolute URL, with a different asset', function () {
+    test('should return the absolute URL, with a different asset', () => {
       const res = refs.absoluteify('not-three.json', '/one/two/three.json')
       expect(res).toEqual('/one/two/not-three.json')
     })
   })
 
-  describe('.clearCache', function () {
-    it('should clear the docCache', function () {
+  describe('.clearCache', () => {
+    test('should clear the docCache', () => {
       const url = 'http://example.com/common.json'
 
       xapp.get(url, (req, res, next) => {
@@ -213,7 +206,7 @@ describe('refs', function () {
       })
     })
 
-    it('should clear the docCache, of particular items', function () {
+    test('should clear the docCache, of particular items', () => {
       const url = 'http://example.com/common.json'
       const url2 = 'http://example.com/common2.json'
 
@@ -252,18 +245,21 @@ describe('refs', function () {
     })
   })
 
-  describe('.jsonPointerToArray', function () {
-    it('should parse a JSON-Pointer into an array of tokens', function () {
+  describe('.jsonPointerToArray', () => {
+    test('should parse a JSON-Pointer into an array of tokens', () => {
       const subject = refs.jsonPointerToArray('/one/two/~1three')
       expect(subject).toEqual(['one', 'two', '/three'])
     })
 
-    it('should parse if JSON-Pointer does not start with forward dash', function () {
-      const subject = refs.jsonPointerToArray('one/two/~1three')
-      expect(subject).toEqual(['one', 'two', '/three'])
-    })
+    test(
+      'should parse if JSON-Pointer does not start with forward dash',
+      () => {
+        const subject = refs.jsonPointerToArray('one/two/~1three')
+        expect(subject).toEqual(['one', 'two', '/three'])
+      }
+    )
 
-    it('should return [""] for "" and "/"', function () {
+    test('should return [""] for "" and "/"', () => {
       let subject = refs.jsonPointerToArray('')
       expect(subject).toEqual([])
       subject = refs.jsonPointerToArray('/')
@@ -271,18 +267,18 @@ describe('refs', function () {
     })
   })
 
-  describe('.unescapeJsonPointerToken', function () {
-    it('should parse ~0 and ~1 in the correct order', function () {
+  describe('.unescapeJsonPointerToken', () => {
+    test('should parse ~0 and ~1 in the correct order', () => {
       expect(refs.unescapeJsonPointerToken('~01 ~1 ~0 ~10')).toEqual('~1 / ~ /0')
     })
 
-    it('should handle non-strings', function () {
+    test('should handle non-strings', () => {
       expect(refs.unescapeJsonPointerToken(1)).toEqual(1)
     })
   })
 
-  describe('handle cyclic references', function () {
-    it('should resolve references as deeply as possible', function () {
+  describe('handle cyclic references', () => {
+    test('should resolve references as deeply as possible', () => {
       const dir = path.join(__dirname, 'data', 'cyclic')
       const caseFiles = glob.sync(`${dir}/**/*.js`)
       const cases = caseFiles
@@ -331,7 +327,7 @@ describe('refs', function () {
       })
     })
 
-    it('should handle this weird case', function () {
+    test('should handle this weird case', () => {
       return mapSpec({
         spec: {
           one: {one: 1},
@@ -346,7 +342,7 @@ describe('refs', function () {
       })
     })
 
-    it('should not stop if one $ref has error', function () {
+    test('should not stop if one $ref has error', () => {
       return mapSpec({
         spec: {
           valid: {data: 1},
@@ -363,7 +359,7 @@ describe('refs', function () {
       })
     })
 
-    it('should ignore $refs in freely named Swagger positions', function () {
+    test('should ignore $refs in freely named Swagger positions', () => {
       return mapSpec({
         spec: {
           a: 1234,
@@ -406,7 +402,7 @@ describe('refs', function () {
       })
     })
 
-    it('should include fullPath in invalid $ref type', function () {
+    test('should include fullPath in invalid $ref type', () => {
       return mapSpec({
         spec: {one: {$ref: 1}},
         plugins: [refs],
@@ -415,27 +411,27 @@ describe('refs', function () {
       })
     })
 
-    it('should be able to overwrite fetchJSON', function () {
+    test('should be able to overwrite fetchJSON', () => {
       // This is to allow downstream projects, use some proxy
       // ( or otherwise mutate the request )
       // THIS ISN'T IDEAL, need to find a better way of overwriting fetchJSON
-      const spy = expect.createSpy()
+      const spy = jest.fn()
       const oriFunc = plugins.refs.fetchJSON
-      plugins.refs.fetchJSON = spy.andReturn(Promise.resolve(null))
+      plugins.refs.fetchJSON = spy.mockImplementation(() => Promise.resolve(null))
 
       // When
       plugins.refs.getDoc('hello')
 
       // Then
-      expect(spy.calls.length).toEqual(1)
-      expect(spy.calls[0].arguments).toEqual(['hello'])
+      expect(spy.mock.calls.length).toEqual(1)
+      expect(spy.mock.calls[0]).toEqual(['hello'])
 
       plugins.refs.fetchJSON = oriFunc
     })
   })
 
-  describe('deeply resolved', function () {
-    it('should resolve deeply serial $refs, across documents', function () {
+  describe('deeply resolved', () => {
+    test('should resolve deeply serial $refs, across documents', () => {
       xmock().get('http://example.com/doc-a', function (req, res, next) {
         xmock().restore()
         return res.send({
@@ -462,7 +458,7 @@ describe('refs', function () {
         })
       })
     })
-    it('should resolve deeply nested $refs, across documents', function () {
+    test('should resolve deeply nested $refs, across documents', () => {
       xmock().get('http://example.com/doc-a', function (req, res, next) {
         xmock().restore()
         return res.send({

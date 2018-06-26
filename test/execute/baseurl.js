@@ -1,4 +1,3 @@
-import expect, {createSpy, spyOn} from 'expect'
 import xmock from 'xmock'
 import {execute, buildRequest, baseUrl, applySecurities, self as stubs} from '../../src/execute'
 
@@ -6,20 +5,23 @@ import {execute, buildRequest, baseUrl, applySecurities, self as stubs} from '..
 // One can use operationId or pathItem + method
 
 describe('baseUrl', () => {
-  it('should calculate a valid baseUrl given host, basePath, context, schemes', () => {
-    const res = baseUrl({
-      spec: {
-        schemes: ['https'],
-        host: 'foo.com:8080',
-        basePath: '/bar'
-      },
-      contextUrl: 'http://example.com:9090/hello/swagger.json'
-    })
+  test(
+    'should calculate a valid baseUrl given host, basePath, context, schemes',
+    () => {
+      const res = baseUrl({
+        spec: {
+          schemes: ['https'],
+          host: 'foo.com:8080',
+          basePath: '/bar'
+        },
+        contextUrl: 'http://example.com:9090/hello/swagger.json'
+      })
 
-    expect(res).toEqual('https://foo.com:8080/bar')
-  })
+      expect(res).toEqual('https://foo.com:8080/bar')
+    }
+  )
 
-  it('should calculate a valid baseUrl given host, basePath, context', () => {
+  test('should calculate a valid baseUrl given host, basePath, context', () => {
     const res = baseUrl({
       spec: {
         host: 'foo.com:8080',
@@ -31,7 +33,7 @@ describe('baseUrl', () => {
     expect(res).toEqual('http://foo.com:8080/bar')
   })
 
-  it('should trim the trailing slash when basePath is "/"', () => {
+  test('should trim the trailing slash when basePath is "/"', () => {
     const res = baseUrl({
       spec: {
         host: 'foo.com:8080',
@@ -42,7 +44,7 @@ describe('baseUrl', () => {
     expect(res).toEqual('http://foo.com:8080')
   })
 
-  it('should infer the host and port based on the contextUrl', () => {
+  test('should infer the host and port based on the contextUrl', () => {
     const res = baseUrl({
       spec: {
         basePath: '/bar'
@@ -53,7 +55,7 @@ describe('baseUrl', () => {
     expect(res).toEqual('http://example.com:9090/bar')
   })
 
-  it('should infer the entire url based on the contextUrl', () => {
+  test('should infer the entire url based on the contextUrl', () => {
     const res = baseUrl({
       spec: {},
       contextUrl: 'http://example.com:9090/hello/swagger.json'
@@ -62,7 +64,7 @@ describe('baseUrl', () => {
     expect(res).toEqual('http://example.com:9090')
   })
 
-  it('should infer the host based on the contextUrl', () => {
+  test('should infer the host based on the contextUrl', () => {
     const res = baseUrl({
       spec: {
         schemes: ['https'],
@@ -74,7 +76,7 @@ describe('baseUrl', () => {
     expect(res).toEqual('https://example.com:9090/bar')
   })
 
-  it('should default to an empty basePath', () => {
+  test('should default to an empty basePath', () => {
     const res = baseUrl({
       spec: {
         schemes: ['https'],
@@ -86,7 +88,7 @@ describe('baseUrl', () => {
     expect(res).toEqual('https://foo.com:8080')
   })
 
-  it('should default to the correct scheme based on the spec', () => {
+  test('should default to the correct scheme based on the spec', () => {
     const res = baseUrl({
       spec: {
         schemes: ['https']
@@ -97,7 +99,7 @@ describe('baseUrl', () => {
     expect(res).toEqual('https://example.com:9090')
   })
 
-  it('should default to HTTP scheme based on the contextUrl', () => {
+  test('should default to HTTP scheme based on the contextUrl', () => {
     const res = baseUrl({
       spec: {
         host: 'foo.com:8080'
@@ -108,7 +110,7 @@ describe('baseUrl', () => {
     expect(res).toEqual('http://foo.com:8080')
   })
 
-  it('should default to HTTPS scheme based on the contextUrl', () => {
+  test('should default to HTTPS scheme based on the contextUrl', () => {
     const res = baseUrl({
       spec: {
         host: 'foo.com:8080'
@@ -119,7 +121,7 @@ describe('baseUrl', () => {
     expect(res).toEqual('https://foo.com:8080')
   })
 
-  it('should default to HTTPS scheme and host based on the contextUrl', () => {
+  test('should default to HTTPS scheme and host based on the contextUrl', () => {
     const res = baseUrl({
       spec: {
         title: 'a spec'
@@ -130,7 +132,7 @@ describe('baseUrl', () => {
     expect(res).toEqual('https://example.com:9090')
   })
 
-  it('should include a basePath when no contextUrl is available', () => {
+  test('should include a basePath when no contextUrl is available', () => {
     const res = baseUrl({
       spec: {
         title: 'a spec',

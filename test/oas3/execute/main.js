@@ -1,4 +1,3 @@
-import expect, {createSpy, spyOn} from 'expect'
 import xmock from 'xmock'
 import path from 'path'
 import fs from 'fs'
@@ -11,9 +10,9 @@ const petstoreSpec = jsYaml.safeLoad(fs.readFileSync(path.join('test', 'oas3', '
 // Supported shape...  { spec, operationId, parameters, securities, fetch }
 // One can use operationId or pathItem + method
 
-describe('buildRequest - OpenAPI Specification 3.0', function () {
-  describe('fundamentals', function () {
-    it('should build a request for the given operationId', function () {
+describe('buildRequest - OpenAPI Specification 3.0', () => {
+  describe('fundamentals', () => {
+    test('should build a request for the given operationId', () => {
       // Given
       const spec = {
         openapi: '3.0.0',
@@ -40,7 +39,9 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
       })
     })
 
-    it('should build a request for the given operationId, using the first server by default', function () {
+    test(
+      'should build a request for the given operationId, using the first server by default',
+      () => {
       // Given
       const spec = {
         openapi: '3.0.0',
@@ -72,9 +73,12 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
         credentials: 'same-origin',
         headers: {},
       })
-    })
+      }
+    )
 
-    it('should build a request for the given operationId, using a specfied server', function () {
+    test(
+      'should build a request for the given operationId, using a specfied server',
+      () => {
       // Given
       const spec = {
         openapi: '3.0.0',
@@ -118,9 +122,12 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
         credentials: 'same-origin',
         headers: {},
       })
-    })
+      }
+    )
 
-    it('should build a request for the given operationId with a requestBody', function () {
+    test(
+      'should build a request for the given operationId with a requestBody',
+      () => {
       // Given
       const spec = {
         openapi: '3.0.0',
@@ -167,9 +174,10 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
         },
         body: {a: 1, b: 2}
       })
-    })
+      }
+    )
 
-    it('should stringify object values of form data bodies', function () {
+    test('should stringify object values of form data bodies', () => {
       // Given
       const spec = {
         openapi: '3.0.0',
@@ -221,7 +229,9 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
       })
     })
 
-    it('should build a request for the given operationId with a requestBody, and not be overriden by an invalid Swagger2 body parameter value', function () {
+    test(
+      'should build a request for the given operationId with a requestBody, and not be overriden by an invalid Swagger2 body parameter value',
+      () => {
       // Given
       const spec = {
         openapi: '3.0.0',
@@ -274,9 +284,12 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
         },
         body: {a: 1, b: 2}
       })
-    })
+      }
+    )
 
-    it('should build a request for the given operationId with a requestBody and a defined requestContentType', function () {
+    test(
+      'should build a request for the given operationId with a requestBody and a defined requestContentType',
+      () => {
       // Given
       const spec = {
         openapi: '3.0.0',
@@ -324,9 +337,12 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
         },
         body: {a: 1, b: 2}
       })
-    })
+      }
+    )
 
-    it('should build an operation without a body or Content-Type if the requestBody definition lacks the requestContentType', function () {
+    test(
+      'should build an operation without a body or Content-Type if the requestBody definition lacks the requestContentType',
+      () => {
       // Given
       const spec = {
         openapi: '3.0.0',
@@ -371,9 +387,12 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
         credentials: 'same-origin',
         headers: {}
       })
-    })
+      }
+    )
 
-    it('should build a request body-bearing operation with a provided requestContentType that appears in the requestBody definition even if no payload is present', function () {
+    test(
+      'should build a request body-bearing operation with a provided requestContentType that appears in the requestBody definition even if no payload is present',
+      () => {
       // Given
       const spec = {
         openapi: '3.0.0',
@@ -416,9 +435,12 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
           'Content-Type': 'application/json'
         }
       })
-    })
+      }
+    )
 
-    it('should build a request body-bearing operation without a provided requestContentType that does not appear in the requestBody definition even if no payload is present', function () {
+    test(
+      'should build a request body-bearing operation without a provided requestContentType that does not appear in the requestBody definition even if no payload is present',
+      () => {
       // Given
       const spec = {
         openapi: '3.0.0',
@@ -459,9 +481,12 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
         credentials: 'same-origin',
         headers: {}
       })
-    })
+      }
+    )
 
-    it('should not add a Content-Type when the operation has no OAS3 request body definition', function () {
+    test(
+      'should not add a Content-Type when the operation has no OAS3 request body definition',
+      () => {
           // Given
       const spec = {
         openapi: '3.0.0',
@@ -479,10 +504,11 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
         credentials: 'same-origin',
         method: 'GET'
       })
+      }
+    )
     })
-  })
-  describe('with petstore v3', function () {
-    it('should build updatePetWithForm correctly', function () {
+  describe('with petstore v3', () => {
+    test('should build updatePetWithForm correctly', () => {
       const req = buildRequest({
         spec: petstoreSpec,
         requestContentType: 'application/x-www-form-urlencoded',
@@ -507,7 +533,7 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
       })
     })
 
-    it('should build addPet correctly', function () {
+    test('should build addPet correctly', () => {
       const req = buildRequest({
         spec: petstoreSpec,
         operationId: 'addPet',
@@ -527,8 +553,10 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
       })
     })
   })
-  describe('baseUrl', function () {
-    it('should consider contextUrls correctly with relative server paths', function () {
+  describe('baseUrl', () => {
+    test(
+      'should consider contextUrls correctly with relative server paths',
+      () => {
       const spec = {
         openapi: '3.0.0'
       }
@@ -539,8 +567,11 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
       })
 
       expect(res).toEqual('https://gist.githubusercontent.com')
-    })
-    it('should default to using the first server if none is explicitly chosen', function () {
+      }
+    )
+    test(
+      'should default to using the first server if none is explicitly chosen',
+      () => {
       const spec = {
         openapi: '3.0.0',
         servers: [
@@ -558,8 +589,9 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
       })
 
       expect(res).toEqual('https://petstore.com')
-    })
-    it('should use an explicitly chosen server', function () {
+      }
+    )
+    test('should use an explicitly chosen server', () => {
       const spec = {
         openapi: '3.0.0',
         servers: [
@@ -579,7 +611,9 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
 
       expect(res).toEqual('https://petstore.net')
     })
-    it('should use an explicitly chosen server at the operation level', function () {
+    test(
+      'should use an explicitly chosen server at the operation level',
+      () => {
       const spec = {
         openapi: '3.0.0',
         servers: [
@@ -627,9 +661,10 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
 
       expect(res).toEqual('https://petstore-operation.net/foobar')
       expect(resWithVariables).toEqual('https://petstore-operation.net/fizzbuzz')
-    })
+      }
+    )
 
-    it('should use an explicitly chosen server at the path level', function () {
+    test('should use an explicitly chosen server at the path level', () => {
       const spec = {
         openapi: '3.0.0',
         servers: [
@@ -677,7 +712,9 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
       expect(res).toEqual('https://petstore-path.net/foobar')
       expect(resWithVariables).toEqual('https://petstore-path.net/fizzbuzz')
     })
-    it('should not use an explicitly chosen server that is not present in the spec', function () {
+    test(
+      'should not use an explicitly chosen server that is not present in the spec',
+      () => {
       const spec = {
         openapi: '3.0.0',
         servers: [
@@ -696,8 +733,9 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
       })
 
       expect(res).toEqual('https://petstore.com')
-    })
-    it('should handle server variable substitution', function () {
+      }
+    )
+    test('should handle server variable substitution', () => {
       const spec = {
         openapi: '3.0.0',
         servers: [
@@ -721,7 +759,7 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
 
       expect(res).toEqual('https://petstore.org')
     })
-    it('should handle server variable substitution defaults', function () {
+    test('should handle server variable substitution defaults', () => {
       const spec = {
         openapi: '3.0.0',
         servers: [
@@ -742,7 +780,9 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
 
       expect(res).toEqual('https://petstore.com')
     })
-    it('should fall back to contextUrls if no servers are provided', function () {
+    test(
+      'should fall back to contextUrls if no servers are provided',
+      () => {
       const spec = {
         openapi: '3.0.0'
       }
@@ -754,8 +794,9 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
       })
 
       expect(res).toEqual('http://google.com')
-    })
-    it('should fall back to contextUrls if servers list is empty', function () {
+      }
+    )
+    test('should fall back to contextUrls if servers list is empty', () => {
       const spec = {
         openapi: '3.0.0',
         servers: []
@@ -769,7 +810,9 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
 
       expect(res).toEqual('http://google.com')
     })
-    it('should create a relative url based on a relative server if no contextUrl is available', function () {
+    test(
+      'should create a relative url based on a relative server if no contextUrl is available',
+      () => {
       const spec = {
         openapi: '3.0.0',
         servers: [
@@ -785,8 +828,11 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
       })
 
       expect(res).toEqual('/mypath')
-    })
-    it('should return an empty string if no servers or contextUrl are provided', function () {
+      }
+    )
+    test(
+      'should return an empty string if no servers or contextUrl are provided',
+      () => {
       const spec = {
         openapi: '3.0.0'
       }
@@ -797,10 +843,13 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
       })
 
       expect(res).toEqual('')
-    })
+      }
+    )
   })
   describe('attachContentTypeForEmptyPayload', () => {
-    it('should attach the first media type as Content-Type to an OAS3 operation with a request body defined but no body provided', function () {
+    test(
+      'should attach the first media type as Content-Type to an OAS3 operation with a request body defined but no body provided',
+      () => {
       const spec = {
         openapi: '3.0.0',
         servers: [
@@ -840,8 +889,11 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
         credentials: 'same-origin',
         method: 'POST'
       })
-    })
-    it('should not attach a Content-Type to an OAS3 operation with no request body definition present', function () {
+      }
+    )
+    test(
+      'should not attach a Content-Type to an OAS3 operation with no request body definition present',
+      () => {
       const spec = {
         openapi: '3.0.0',
         servers: [
@@ -870,8 +922,11 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
         credentials: 'same-origin',
         method: 'POST'
       })
-    })
-    it('should not attach the first media type as Content-Type without the option enabled', function () {
+      }
+    )
+    test(
+      'should not attach the first media type as Content-Type without the option enabled',
+      () => {
       const spec = {
         openapi: '3.0.0',
         servers: [
@@ -909,11 +964,12 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
         credentials: 'same-origin',
         method: 'POST'
       })
-    })
+      }
+    )
   })
-  describe('special media types', function () {
-    describe('file-as-body types', function () {
-      it('should preserve blobs for application/octet-stream', () => {
+  describe('special media types', () => {
+    describe('file-as-body types', () => {
+      test('should preserve blobs for application/octet-stream', () => {
         const spec = {
           openapi: '3.0.0',
           paths: {
