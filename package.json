@@ -91,7 +91,7 @@
   },
   "jest": {
     "testEnvironment": "node",
-    "maxWorkers": 4,
+    "runInBand": true,
     "testMatch": [
       "**/test/*.js?(x)",
       "**/test/**/*.js?(x)"
