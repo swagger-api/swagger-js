@@ -94,10 +94,10 @@ describe('refs', () => {
     test('should fetch documents', () => {
       const url = 'http://example.com/common.json'
       xapp.get(url, (req, res, next) => {
-        res.send({ works: { yay: true } })
+        res.send({works: {yay: true}})
       })
       return refs.getDoc(url).then((doc) => {
-        expect(doc).toEqual({ works: { yay: true } })
+        expect(doc).toEqual({works: {yay: true}})
       })
     })
     test('should parse YAML docs into JSON', () => {
@@ -107,24 +107,24 @@ describe('refs', () => {
         res.send('works:\n  yay: true')
       })
       return refs.getDoc(url).then((doc) => {
-        expect(doc).toEqual({ works: { yay: true } })
+        expect(doc).toEqual({works: {yay: true}})
       })
     })
     test('should cache requests', () => {
       const url = 'http://example.com/common.json'
       xapp.get(url, (req, res, next) => {
-        res.send({ works: { yay: true } })
+        res.send({works: {yay: true}})
       })
       return refs.getDoc(url).then((doc) => {
-        expect(doc).toEqual({ works: { yay: true } })
+        expect(doc).toEqual({works: {yay: true}})
       }).then(() => {
         expect(refs.docCache).toEqual({
-          [url]: { works: { yay: true } }
+          [url]: {works: {yay: true}}
         })
         // Change cache to verify we're using it
         refs.docCache[url].works.yay = false
         return refs.getDoc(url).then((doc) => {
-          expect(doc).toEqual({ works: { yay: false } })
+          expect(doc).toEqual({works: {yay: false}})
         })
       })
     })

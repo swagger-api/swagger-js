@@ -24,7 +24,7 @@ describe('specmap', () => {
       })
     })
 
-    test('should call plugins with patches', done => {
+    test('should call plugins with patches', (done) => {
       mapSpec({
         spec: {one: 1},
         plugins: [{specMap: (patches) => {
@@ -45,7 +45,7 @@ describe('specmap', () => {
 
     test(
       'should include a library of functions, including `add` ',
-      done => {
+      (done) => {
         mapSpec({
           spec: {bob: true},
           plugins: [{
@@ -58,7 +58,7 @@ describe('specmap', () => {
       }
     )
 
-    test('should accept simple functions for plugins', done => {
+    test('should accept simple functions for plugins', (done) => {
       mapSpec({
         spec: {one: 1},
         plugins: [
@@ -786,7 +786,7 @@ describe('specmap', () => {
     describe('context', () => {
       test(
         'should allow access to root context (options supplied to SpecMap)',
-        done => {
+        (done) => {
           return mapSpec({
             spec: {
               top: {middle: {leaf: 'hi'}}
@@ -802,7 +802,7 @@ describe('specmap', () => {
         }
       )
 
-      test('should set / get context for a given path', done => {
+      test('should set / get context for a given path', (done) => {
         return mapSpec({
           spec: {},
           patches: [lib.context(['one', 'two'], {hey: 'ho'})],

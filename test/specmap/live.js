@@ -42,9 +42,10 @@ if (process.env.NODE_LIVETESTS === 'true') {
       })
     })
   })
-} else {
+}
+else {
   describe('Live tests against the internet', () => {
-    test("(skipping test suite; `NODE_LIVETESTS` is not enabled", () => {
+    test('(skipping test suite; `NODE_LIVETESTS` is not enabled', () => {
       expect(true).toEqual(true)
     })
   })

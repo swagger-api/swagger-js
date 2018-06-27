@@ -11,7 +11,7 @@ describe('constructor', () => {
     expect(typeof Swagger).toBe('function')
   })
 
-  test('should return an instance, without "new"', cb => {
+  test('should return an instance, without "new"', (cb) => {
     Swagger({spec: {}}).then((instance) => {
       expect(instance).toBeInstanceOf(Swagger)
       cb()
@@ -51,7 +51,7 @@ describe('constructor', () => {
       })
     })
 
-    test('should resolve a cyclic spec when baseDoc is specified', cb => {
+    test('should resolve a cyclic spec when baseDoc is specified', (cb) => {
       const spec = {
         paths: {
           post: {
@@ -194,7 +194,7 @@ describe('constructor', () => {
   })
 
   describe('#http', () => {
-    test('should throw if fetch error', cb => {
+    test('should throw if fetch error', (cb) => {
       const xapp = xmock()
       xapp.get('http://petstore.swagger.io/404', (req, res) => {
         res.status(404)
@@ -569,7 +569,7 @@ describe('constructor', () => {
         ))
     })
 
-    test('should support request interceptor', cb => {
+    test('should support request interceptor', (cb) => {
       new Swagger({
         url: 'http://petstore.swagger.io/v2/swagger.json',
         requestInterceptor: (req) => {
@@ -586,7 +586,7 @@ describe('constructor', () => {
       }, cb)
     })
 
-    test('should support response interceptor', cb => {
+    test('should support response interceptor', (cb) => {
       new Swagger({
         url: 'http://petstore.swagger.io/v2/swagger.json',
         responseInterceptor: (res) => {
@@ -602,7 +602,7 @@ describe('constructor', () => {
 
     test(
       'should support request interceptor when fetching a spec and remote ref',
-      cb => {
+      (cb) => {
         const spy = jest.fn().mockImplementation(a => a)
         new Swagger({
           url: 'http://petstore.swagger.io/v2/base.json',
@@ -616,7 +616,7 @@ describe('constructor', () => {
 
     test(
       'should support response interceptor when fetching a spec and remote ref',
-      cb => {
+      (cb) => {
         const spy = jest.fn().mockImplementation((a) => {
           return a
         })
@@ -633,7 +633,7 @@ describe('constructor', () => {
 
     test(
       'should support request and response interceptor when fetching a spec and remote ref',
-      cb => {
+      (cb) => {
         const reqSpy = jest.fn().mockImplementation(a => a)
         const resSpy = jest.fn().mockImplementation(a => a)
         new Swagger({

@@ -28,7 +28,7 @@ describe('allOf', () => {
 
   test(
     'should return empty object when you pass nothing to allOf',
-    done => {
+    (done) => {
       return mapSpec({
         spec: {allOf: []},
         plugins: [plugins.allOf]
