@@ -6,11 +6,11 @@ import http, {
 } from '../src/http'
 
 describe('http', () => {
-  let testContext;
+  let testContext
 
   beforeEach(() => {
-    testContext = {};
-  });
+    testContext = {}
+  })
 
   let xapp
 
@@ -373,7 +373,7 @@ describe('http', () => {
             expect(resSerialize.data).toBeInstanceOf(Buffer)
             expect(resSerialize.data).toEqual(new Buffer(body))
           }
-        }).then(fetchMock.restore);
+        }).then(fetchMock.restore)
       }
     )
 

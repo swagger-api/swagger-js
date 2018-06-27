@@ -120,7 +120,7 @@ describe('constructor', () => {
         // Then
         expect(typeof apis).toBe('object')
         expect(apis.me.getMe).toBeInstanceOf(Function)
-      });
+      })
     })
 
     test(
@@ -151,7 +151,7 @@ describe('constructor', () => {
           expect(typeof apis.myTag).toBe('object')
           console.log(apis)
           expect(apis.myTag.get_foo_bar_baz).toBeInstanceOf(Function)
-        });
+        })
       }
     )
 
@@ -243,7 +243,7 @@ describe('constructor', () => {
               me: true
             },
           })
-        });
+        })
     })
 
     test('should handle invalid JSON bodies', () => {
@@ -287,7 +287,7 @@ describe('constructor', () => {
           credentials: 'same-origin',
           url: '/pet'
         })
-      });
+      })
     })
 
     test(
@@ -313,7 +313,7 @@ describe('constructor', () => {
             credentials: 'include',
             url: '/pet'
           })
-        });
+        })
       }
     )
 
@@ -353,7 +353,7 @@ describe('constructor', () => {
           method: 'GET',
           url: '/pet'
         })
-      });
+      })
     })
 
     test('should add apiKey (header) auth to a request', () => {
@@ -391,7 +391,7 @@ describe('constructor', () => {
           method: 'GET',
           url: '/pet'
         })
-      });
+      })
     })
 
     test('should add apiKey (query) auth to a request', () => {
@@ -427,7 +427,7 @@ describe('constructor', () => {
           credentials: 'same-origin',
           url: '/pet?petKey=barFoo'
         })
-      });
+      })
     })
 
     test('should add oAuth to a request', () => {
@@ -467,7 +467,7 @@ describe('constructor', () => {
           method: 'GET',
           url: '/pet'
         })
-      });
+      })
     })
 
     test(
@@ -510,7 +510,7 @@ describe('constructor', () => {
             method: 'GET',
             url: '/pet'
           })
-        });
+        })
       }
     )
 
@@ -549,7 +549,7 @@ describe('constructor', () => {
           method: 'GET',
           url: '/pet'
         })
-      });
+      })
     })
   })
 

@@ -21,7 +21,7 @@ describe('(instance) #execute', () => {
         method: 'GET',
         url: '/pet'
       })
-    });
+    })
   })
 
   test('should add basic auth to a request', () => {
@@ -57,7 +57,7 @@ describe('(instance) #execute', () => {
         method: 'GET',
         url: '/pet'
       })
-    });
+    })
   })
 
   test('should add apiKey (header) auth to a request', () => {
@@ -95,7 +95,7 @@ describe('(instance) #execute', () => {
         method: 'GET',
         url: '/pet'
       })
-    });
+    })
   })
 
   test('should add apiKey (query) auth to a request', () => {
@@ -131,7 +131,7 @@ describe('(instance) #execute', () => {
         method: 'GET',
         url: '/pet?petKey=barFoo'
       })
-    });
+    })
   })
 
   test('should add oAuth to a request', () => {
@@ -171,7 +171,7 @@ describe('(instance) #execute', () => {
         method: 'GET',
         url: '/pet'
       })
-    });
+    })
   })
 
   test('should replace any occurrence of `bearer` with `Bearer`', () => {
@@ -212,7 +212,7 @@ describe('(instance) #execute', () => {
         method: 'GET',
         url: '/pet'
       })
-    });
+    })
   })
 
   test('should add global securites', () => {
@@ -250,6 +250,6 @@ describe('(instance) #execute', () => {
         method: 'GET',
         url: '/pet'
       })
-    });
+    })
   })
 })

@@ -5,11 +5,11 @@ import mapSpec, {SpecMap, plugins} from '../../src/specmap'
 import lib from '../../src/specmap/lib'
 
 describe('specmap', () => {
-  let testContext;
+  let testContext
 
   beforeEach(() => {
-    testContext = {};
-  });
+    testContext = {}
+  })
 
   describe('#dispatch', () => {
     test('should pass the spec through', () => {

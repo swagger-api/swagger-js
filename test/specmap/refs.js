@@ -92,51 +92,51 @@ describe('refs', () => {
 
   describe('getDoc', () => {
     test('should fetch documents', () => {
-      const url = 'http://example.com/common.json';
+      const url = 'http://example.com/common.json'
       xapp.get(url, (req, res, next) => {
-        res.send({ works: { yay: true } });
-      });
+        res.send({ works: { yay: true } })
+      })
       return refs.getDoc(url).then((doc) => {
-        expect(doc).toEqual({ works: { yay: true } });
-      });
-    });
+        expect(doc).toEqual({ works: { yay: true } })
+      })
+    })
     test('should parse YAML docs into JSON', () => {
-      const url = 'http://example.com/common.yaml';
+      const url = 'http://example.com/common.yaml'
       xapp.get(url, (req, res, next) => {
-        res.set('Content-Type', 'application/yaml');
-        res.send('works:\n  yay: true');
-      });
+        res.set('Content-Type', 'application/yaml')
+        res.send('works:\n  yay: true')
+      })
       return refs.getDoc(url).then((doc) => {
-        expect(doc).toEqual({ works: { yay: true } });
-      });
-    });
+        expect(doc).toEqual({ works: { yay: true } })
+      })
+    })
     test('should cache requests', () => {
-      const url = 'http://example.com/common.json';
+      const url = 'http://example.com/common.json'
       xapp.get(url, (req, res, next) => {
-        res.send({ works: { yay: true } });
-      });
+        res.send({ works: { yay: true } })
+      })
       return refs.getDoc(url).then((doc) => {
-        expect(doc).toEqual({ works: { yay: true } });
+        expect(doc).toEqual({ works: { yay: true } })
       }).then(() => {
         expect(refs.docCache).toEqual({
           [url]: { works: { yay: true } }
-        });
+        })
         // Change cache to verify we're using it
-        refs.docCache[url].works.yay = false;
+        refs.docCache[url].works.yay = false
         return refs.getDoc(url).then((doc) => {
-          expect(doc).toEqual({ works: { yay: false } });
-        });
-      });
-    });
+          expect(doc).toEqual({ works: { yay: false } })
+        })
+      })
+    })
     test('should cache pending HTTP requests', () => {
-      const url = 'http://example.com/common.json';
-      xapp.get(url, () => { });
-      const p1 = refs.getDoc(url);
-      const p2 = refs.getDoc(url);
-      const p3 = refs.docCache[url];
-      expect(p1).toBe(p2);
-      expect(p1).toBe(p3);
-    });
+      const url = 'http://example.com/common.json'
+      xapp.get(url, () => { })
+      const p1 = refs.getDoc(url)
+      const p2 = refs.getDoc(url)
+      const p3 = refs.docCache[url]
+      expect(p1).toBe(p2)
+      expect(p1).toBe(p3)
+    })
   })
 
   describe('.extractFromDoc', () => {
@@ -162,7 +162,7 @@ describe('refs', () => {
         .catch((e) => {
           expect(e.pointer).toEqual('/two')
           expect(e.basePath).toBeFalsy()
-        });
+        })
     })
   })
 
