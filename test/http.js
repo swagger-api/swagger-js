@@ -163,7 +163,7 @@ describe('http', () => {
         throw new Error('Expected rejection for HTTP status 400')
       },
       (err) => {
-        expect(err.response).toEqual(null)
+        expect(err.response).toBeFalsy()
         expect(err.responseError).toBe(testError)
       }
     )
@@ -249,8 +249,8 @@ describe('http', () => {
       const FormData = require('isomorphic-form-data')
       const _append = FormData.prototype.append
       FormData.prototype.append = function (k, v) {
-        testContext._entries = testContext._entries || {}
-        testContext._entries[k] = v
+        this._entries = this._entries || {}
+        this._entries[k] = v
       }
 
       const req = {
@@ -264,7 +264,6 @@ describe('http', () => {
         }
       }
       mergeInQueryOrForm(req)
-      console.log(req.json)
       expect(req.body._entries.testJson).toEqual('{"name": "John"}')
       FormData.prototype.append = _append
     })
@@ -362,11 +361,14 @@ describe('http', () => {
         const body = 'body data'
         const res = fetchMock.mock('http://swagger.io', {body, headers})
 
+        let originalRes
+
         return fetch('http://swagger.io').then((_res) => { // eslint-disable-line no-undef
+          originalRes = _res
           return serializeRes(_res, 'https://swagger.io')
         }).then((resSerialize) => {
           expect(resSerialize.data).toBe(resSerialize.text)
-          if (typeof Blob !== 'undefined') {
+          if (originalRes.blob) {
             expect(resSerialize.data).toBeInstanceOf(Blob) // eslint-disable-line no-undef
           }
           else {
