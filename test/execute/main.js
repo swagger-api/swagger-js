@@ -1571,7 +1571,6 @@ describe('execute', () => {
 
           expect(console.warn.mock.calls.length).toEqual(2)
           global.console.warn = oriWarn
-
         }
       )
     })
