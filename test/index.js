@@ -149,7 +149,6 @@ describe('constructor', () => {
           // Then
           expect(typeof apis).toBe('object')
           expect(typeof apis.myTag).toBe('object')
-          console.log(apis)
           expect(apis.myTag.get_foo_bar_baz).toBeInstanceOf(Function)
         })
       }
