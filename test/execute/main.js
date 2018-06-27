@@ -1551,6 +1551,10 @@ describe('execute', () => {
             }
           }
 
+          const oriWarn = global.console.warn
+          global.console.warn = jest.fn()
+
+
           // When
           const req = buildRequest({spec, operationId: 'getMe', parameters: {name: 'john'}})
 
@@ -1564,6 +1568,10 @@ describe('execute', () => {
             },
             body: 'name=john'
           })
+
+          expect(console.warn.mock.calls.length).toEqual(2)
+          global.console.warn = oriWarn
+
         }
       )
     })
@@ -2032,8 +2040,10 @@ describe('execute', () => {
             }
           }
 
+          const oriWarn = global.console.warn
+          global.console.warn = jest.fn()
+
           const resultSpec = normalizeSwagger(spec)
-          const warnSpy = jest.spyOn(console, 'warn')
           const req = buildRequest({spec: resultSpec.spec, operationId: 'getPetsById', parameters: {id: 123, test: 567}})
           expect(req).toEqual({
             url: 'http://swagger.io/v1/pet/123?test=567&id=123',
@@ -2041,7 +2051,8 @@ describe('execute', () => {
             credentials: 'same-origin',
             method: 'GET'
           })
-          expect(warnSpy.mock.calls.length).toEqual(2)
+          expect(console.warn.mock.calls.length).toEqual(2)
+          global.console.warn = oriWarn
         }
       )
 
