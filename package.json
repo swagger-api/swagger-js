@@ -22,7 +22,7 @@
     "build-dev-bundle": "cross-env NODE_ENV=development webpack --config ./webpack.bundle.config.js",
     "watch": "webpack --config webpack.config.js --watch --progress",
     "test": "run-s test:unit test:webpack lint",
-    "test:unit": "jest",
+    "test:unit": "jest --runInBand",
     "test:unit:watch": "jest --watch",
     "test:webpack": "mocha-webpack --webpack-config ./webpack.common.js --recursive \"./test-webpack\"",
     "lint": "eslint src/ test/",
@@ -91,7 +91,6 @@
   },
   "jest": {
     "testEnvironment": "node",
-    "runInBand": true,
     "testMatch": [
       "**/test/*.js?(x)",
       "**/test/**/*.js?(x)"
