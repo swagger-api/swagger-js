@@ -1,3 +1,8 @@
+/* eslint-disable import/prefer-default-export */
+//
+// if/when another helper is added to this file,
+// please remove the eslint override and this comment!
+
 const freelyNamedKeyParents = [
   'properties',
 ]
