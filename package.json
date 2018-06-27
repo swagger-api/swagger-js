@@ -24,7 +24,7 @@
     "test": "run-s test:unit test:webpack lint",
     "test:unit": "jest --runInBand",
     "test:unit:watch": "jest --watch",
-    "test:webpack": "mocha-webpack --webpack-config ./webpack.common.js --recursive \"./test-webpack\"",
+    "test:webpack": "mocha-webpack --interactive false --webpack-config ./webpack.common.js --recursive \"./test-webpack\"",
     "lint": "eslint src/ test/",
     "deps-license": "license-checker --production --csv --out $npm_package_config_deps_check_dir/licenses.csv && license-checker --development --csv --out $npm_package_config_deps_check_dir/licenses-dev.csv",
     "deps-size": "webpack -p --config webpack.check.js --json | webpack-bundle-size-analyzer >| $npm_package_config_deps_check_dir/sizes.txt",
