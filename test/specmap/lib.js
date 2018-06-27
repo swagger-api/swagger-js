@@ -1,10 +1,9 @@
-import expect from 'expect'
 import lib from '../../src/specmap/lib'
 import ContextTree from '../../src/specmap/lib/context-tree'
 
-describe('lib', function () {
-  describe('applyPatch', function () {
-    it('should add', function () {
+describe('lib', () => {
+  describe('applyPatch', () => {
+    test('should add', () => {
       const state = {one: 1}
       lib.applyPatch(state, lib.add(['two'], 2))
       expect(state).toEqual({
@@ -86,22 +85,22 @@ describe('lib', function () {
     // })
   })
 
-  describe('parentPathMatch', function () {
-    it('should match an exact path', function () {
+  describe('parentPathMatch', () => {
+    test('should match an exact path', () => {
       expect(lib.parentPathMatch(
         ['one', 'two'],
         ['one', 'two']
       )).toEqual(true)
     })
 
-    it('should NOT match a child path', function () {
+    test('should NOT match a child path', () => {
       expect(lib.parentPathMatch(
         ['one', 'two'],
         ['one', 'two', 'three']
       )).toEqual(false)
     })
 
-    it('should match a parent path', function () {
+    test('should match a parent path', () => {
       expect(lib.parentPathMatch(
         ['one', 'two'],
         ['one']

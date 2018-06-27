@@ -1,6 +1,5 @@
 // https://github.com/swagger-api/swagger-ui/issues/4071
 
-import expect, {createSpy, spyOn} from 'expect'
 import {execute, buildRequest, baseUrl, self as stubs} from '../../src/execute'
 
 const spec = {
@@ -48,26 +47,29 @@ const spec = {
 }
 
 
-it('should generate a request with application/x-www-form-urlencoded', function () {
-  const req = buildRequest({
-    spec,
-    requestContentType: 'application/x-www-form-urlencoded',
-    operationId: 'postJobs',
-    requestBody: {
-      industries: [
-        1,
-        16
-      ]
-    }
-  })
+test(
+  'should generate a request with application/x-www-form-urlencoded',
+  () => {
+    const req = buildRequest({
+      spec,
+      requestContentType: 'application/x-www-form-urlencoded',
+      operationId: 'postJobs',
+      requestBody: {
+        industries: [
+          1,
+          16
+        ]
+      }
+    })
 
-  expect(req).toEqual({
-    url: 'https://workbcjobs.api.gov.bc.ca/v1/jobs',
-    method: 'POST',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: 'industries=1%2C16'
-  })
-})
+    expect(req).toEqual({
+      url: 'https://workbcjobs.api.gov.bc.ca/v1/jobs',
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: 'industries=1%2C16'
+    })
+  }
+)

@@ -1,13 +1,12 @@
-import expect from 'expect'
 import xmock from 'xmock'
 import mapSpec, {plugins} from '../../src/specmap'
 
-describe('allOf', function () {
+describe('allOf', () => {
   afterEach(() => {
     xmock().restore()
   })
 
-  it('should resolve simple allOf', function () {
+  test('should resolve simple allOf', () => {
     return mapSpec({
       spec: {
         allOf: [
@@ -27,20 +26,23 @@ describe('allOf', function () {
     })
   })
 
-  it('should return empty object when you pass nothing to allOf', function (done) {
-    return mapSpec({
-      spec: {allOf: []},
-      plugins: [plugins.allOf]
-    }).then((res) => {
-      expect(res).toEqual({
-        errors: [],
-        spec: {}
+  test(
+    'should return empty object when you pass nothing to allOf',
+    (done) => {
+      return mapSpec({
+        spec: {allOf: []},
+        plugins: [plugins.allOf]
+      }).then((res) => {
+        expect(res).toEqual({
+          errors: [],
+          spec: {}
+        })
+        done()
       })
-      done()
-    })
-  })
+    }
+  )
 
-  it('should resolve local $refs in allOf', function () {
+  test('should resolve local $refs in allOf', () => {
     return mapSpec({
       spec: {
         allOf: [
@@ -62,7 +64,7 @@ describe('allOf', function () {
     })
   })
 
-  it('should not overwrite properties that are already present', function () {
+  test('should not overwrite properties that are already present', () => {
     return mapSpec({
       spec: {
         original: 'yes',
@@ -85,7 +87,7 @@ describe('allOf', function () {
     })
   })
 
-  it('should set $$ref values', function () {
+  test('should set $$ref values', () => {
     return mapSpec({
       allowMetaPatches: true,
       spec: {
@@ -177,7 +179,7 @@ describe('allOf', function () {
     })
   })
 
-  it('should return error if allOf is not an array', function () {
+  test('should return error if allOf is not an array', () => {
     return mapSpec({
       spec: {
         allOf: {}
@@ -190,45 +192,48 @@ describe('allOf', function () {
     })
   })
 
-  it('should ignore "allOf" in freely named Swagger key positions', function () {
-    const spec = {
-      parameters: {
-        allOf: {
-          a: 123
-        }
-      },
-      responses: {
-        allOf: {
-          a: 123
-        }
-      },
-      definitions: {
-        allOf: {
-          a: 123
-        }
-      },
-      securityDefinitions: {
-        allOf: {
-          a: 123
-        }
-      },
-      properties: {
-        allOf: {
-          a: 123
-        }
-      },
+  test(
+    'should ignore "allOf" in freely named Swagger key positions',
+    () => {
+      const spec = {
+        parameters: {
+          allOf: {
+            a: 123
+          }
+        },
+        responses: {
+          allOf: {
+            a: 123
+          }
+        },
+        definitions: {
+          allOf: {
+            a: 123
+          }
+        },
+        securityDefinitions: {
+          allOf: {
+            a: 123
+          }
+        },
+        properties: {
+          allOf: {
+            a: 123
+          }
+        },
+      }
+
+      return mapSpec({
+        spec,
+        plugins: [plugins.allOf]
+      }).then((res) => {
+        expect(res.errors).toEqual([])
+        expect(res.spec).toEqual(spec)
+      })
     }
+  )
 
-    return mapSpec({
-      spec,
-      plugins: [plugins.allOf]
-    }).then((res) => {
-      expect(res.errors).toEqual([])
-      expect(res.spec).toEqual(spec)
-    })
-  })
-
-  it('should throw error if allOf has a non-object item', function () {
+  test('should throw error if allOf has a non-object item', () => {
     return mapSpec({
       spec: {
         allOf: [
@@ -244,7 +249,7 @@ describe('allOf', function () {
     })
   })
 
-  it('should merge allOf items, deeply', function () {
+  test('should merge allOf items, deeply', () => {
     return mapSpec({
       spec: {
         allOf: [
@@ -268,7 +273,7 @@ describe('allOf', function () {
     })
   })
 
-  it('should resolve nested allOf', function () {
+  test('should resolve nested allOf', () => {
     return mapSpec({
       spec: {
         allOf: [
@@ -306,7 +311,7 @@ describe('allOf', function () {
     })
   })
 
-  it('should handle external $refs inside allOf', function () {
+  test('should handle external $refs inside allOf', () => {
     xmock().get('http://example.com', (req, res) => {
       setTimeout(() => res.send({fromRemote: true}), 20)
     })
@@ -328,7 +333,7 @@ describe('allOf', function () {
     })
   })
 
-  it('should suppport nested allOfs with $refs', function () {
+  test('should suppport nested allOfs with $refs', () => {
     return mapSpec({
       plugins: [plugins.refs, plugins.allOf],
       spec: {
@@ -390,7 +395,7 @@ describe('allOf', function () {
       })
     })
   })
-  it('merges arrays inside of an `allOf`', function () {
+  test('merges arrays inside of an `allOf`', () => {
     return mapSpec({
       plugins: [plugins.refs, plugins.allOf],
       showDebug: true,
@@ -434,43 +439,46 @@ describe('allOf', function () {
     })
   })
 
-  it('should handle case, with an `allOf` referencing an `allOf` ', function () {
-    return mapSpec({
-      plugins: [plugins.refs, plugins.allOf],
-      showDebug: true,
-      spec: {
-        definitions: {
-          one: {
-            allOf: [
-              {
-                $ref: '#/definitions/two'
-              },
-              {
-                type: 'object'
-              }
-            ]
-          },
-          two: {
-            allOf: [
-              {
-                type: 'object'
-              }
-            ]
+  test(
+    'should handle case, with an `allOf` referencing an `allOf` ',
+    () => {
+      return mapSpec({
+        plugins: [plugins.refs, plugins.allOf],
+        showDebug: true,
+        spec: {
+          definitions: {
+            one: {
+              allOf: [
+                {
+                  $ref: '#/definitions/two'
+                },
+                {
+                  type: 'object'
+                }
+              ]
+            },
+            two: {
+              allOf: [
+                {
+                  type: 'object'
+                }
+              ]
+            }
           }
         }
-      }
-    }).then((res) => {
-      expect(res.errors).toEqual([])
-      expect(res.spec).toEqual({
-        definitions: {
-          one: {
-            type: 'object',
+      }).then((res) => {
+        expect(res.errors).toEqual([])
+        expect(res.spec).toEqual({
+          definitions: {
+            one: {
+              type: 'object',
+            },
+            two: {
+              type: 'object',
+            }
           },
-          two: {
-            type: 'object',
-          }
-        },
+        })
       })
-    })
-  })
+    }
+  )
 })

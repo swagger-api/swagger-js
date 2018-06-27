@@ -1,4 +1,5 @@
 import {fetch} from 'cross-fetch'
+import jsYaml from 'js-yaml'
 import qs from 'querystring-browser'
 import url from 'url'
 import lib from '../lib'
@@ -253,7 +254,9 @@ function getDoc(docPath) {
  * @api public
  */
 function fetchJSON(docPath) {
-  return fetch(docPath, {headers: {Accept: 'application/json, application/yaml'}, loadSpec: true}).then(res => res.json())
+  return fetch(docPath, {headers: {Accept: 'application/json, application/yaml'}, loadSpec: true})
+    .then(res => res.text())
+    .then(text => jsYaml.safeLoad(text))
 }
 
 /**

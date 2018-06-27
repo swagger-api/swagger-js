@@ -1,6 +1,6 @@
 {
   "env": {
-    "mocha": true
+    "jest": true
   },
   "rules": {
     "prefer-arrow-callback": 0, // don't want to bind lexical `this` to Mocha functions
