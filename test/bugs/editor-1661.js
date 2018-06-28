@@ -1,6 +1,5 @@
 // https://github.com/swagger-api/swagger-editor/issues/1661
 
-import expect, {createSpy, spyOn} from 'expect'
 import Swagger from '../../src'
 
 const spec = {
@@ -46,32 +45,35 @@ const spec = {
 }
 
 
-it('should resolve a deeply-nested $ref series correctly', async function () {
-  const res = await Swagger.resolve({
-    spec
-  })
+test(
+  'should resolve a deeply-nested $ref series correctly',
+  async () => {
+    const res = await Swagger.resolve({
+      spec
+    })
 
-  expect(res).toEqual({
-    errors: [],
-    spec: {
-      $$normalized: true,
-      paths: {
-        '/path1': {
-          get: {
-            responses: {
-              200: {
-                schema: {
-                  $$ref: '#/definitions/DataObjectArray',
-                  items: {
-                    $$ref: '#/definitions/DataObject',
-                    properties: {
-                      modifiers: {
-                        $$ref: '#/definitions/DataModifiers',
-                        items: {
-                          $$ref: '#/definitions/DataModifier',
-                          properties: {
-                            prop1: {
-                              type: 'string'
+    expect(res).toEqual({
+      errors: [],
+      spec: {
+        $$normalized: true,
+        paths: {
+          '/path1': {
+            get: {
+              responses: {
+                200: {
+                  schema: {
+                    $$ref: '#/definitions/DataObjectArray',
+                    items: {
+                      $$ref: '#/definitions/DataObject',
+                      properties: {
+                        modifiers: {
+                          $$ref: '#/definitions/DataModifiers',
+                          items: {
+                            $$ref: '#/definitions/DataModifier',
+                            properties: {
+                              prop1: {
+                                type: 'string'
+                              }
                             }
                           }
                         }
@@ -82,27 +84,9 @@ it('should resolve a deeply-nested $ref series correctly', async function () {
               }
             }
           }
-        }
-      },
-      definitions: {
-        DataObject: {
-          properties: {
-            modifiers: {
-              $$ref: '#/definitions/DataModifiers',
-              items: {
-                $$ref: '#/definitions/DataModifier',
-                properties: {
-                  prop1: {
-                    type: 'string'
-                  }
-                }
-              }
-            }
-          }
         },
-        DataObjectArray: {
-          items: {
-            $$ref: '#/definitions/DataObject',
+        definitions: {
+          DataObject: {
             properties: {
               modifiers: {
                 $$ref: '#/definitions/DataModifiers',
@@ -116,26 +100,44 @@ it('should resolve a deeply-nested $ref series correctly', async function () {
                 }
               }
             }
-          }
-        },
-        DataModifier: {
-          properties: {
-            prop1: {
-              type: 'string'
+          },
+          DataObjectArray: {
+            items: {
+              $$ref: '#/definitions/DataObject',
+              properties: {
+                modifiers: {
+                  $$ref: '#/definitions/DataModifiers',
+                  items: {
+                    $$ref: '#/definitions/DataModifier',
+                    properties: {
+                      prop1: {
+                        type: 'string'
+                      }
+                    }
+                  }
+                }
+              }
             }
-          }
-        },
-        DataModifiers: {
-          items: {
-            $$ref: '#/definitions/DataModifier',
+          },
+          DataModifier: {
             properties: {
               prop1: {
                 type: 'string'
               }
             }
+          },
+          DataModifiers: {
+            items: {
+              $$ref: '#/definitions/DataModifier',
+              properties: {
+                prop1: {
+                  type: 'string'
+                }
+              }
+            }
           }
         }
       }
-    }
-  })
-})
+    })
+  }
+)

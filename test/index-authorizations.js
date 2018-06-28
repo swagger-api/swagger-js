@@ -1,8 +1,7 @@
-import expect, {createSpy} from 'expect'
 import Swagger from '../src/index'
 
-describe('(instance) #execute', function () {
-  it('should be able to execute a simple operation', function () {
+describe('(instance) #execute', () => {
+  test('should be able to execute a simple operation', () => {
     const spec = {
       paths: {
         '/pet': {
@@ -13,10 +12,10 @@ describe('(instance) #execute', function () {
       }
     }
     return Swagger({spec}).then((client) => {
-      const http = createSpy()
+      const http = jest.fn()
       client.execute({http, operationId: 'getPets'})
-      expect(http.calls.length).toEqual(1)
-      expect(http.calls[0].arguments[0]).toEqual({
+      expect(http.mock.calls.length).toEqual(1)
+      expect(http.mock.calls[0][0]).toEqual({
         credentials: 'same-origin',
         headers: {},
         method: 'GET',
@@ -25,7 +24,7 @@ describe('(instance) #execute', function () {
     })
   })
 
-  it('should add basic auth to a request', function () {
+  test('should add basic auth to a request', () => {
     const spec = {
       securityDefinitions: {
         myBasic: {
@@ -47,10 +46,10 @@ describe('(instance) #execute', function () {
     }
 
     return Swagger({spec, authorizations}).then((client) => {
-      const http = createSpy()
+      const http = jest.fn()
       client.execute({http, operationId: 'getPets'})
-      expect(http.calls.length).toEqual(1)
-      expect(http.calls[0].arguments[0]).toEqual({
+      expect(http.mock.calls.length).toEqual(1)
+      expect(http.mock.calls[0][0]).toEqual({
         credentials: 'same-origin',
         headers: {
           authorization: 'Basic Zm9vOmJhcg=='
@@ -61,7 +60,7 @@ describe('(instance) #execute', function () {
     })
   })
 
-  it('should add apiKey (header) auth to a request', function () {
+  test('should add apiKey (header) auth to a request', () => {
     const spec = {
       securityDefinitions: {
         petKey: {
@@ -85,10 +84,10 @@ describe('(instance) #execute', function () {
     }
 
     return Swagger({spec, authorizations}).then((client) => {
-      const http = createSpy()
+      const http = jest.fn()
       client.execute({http, operationId: 'getPets'})
-      expect(http.calls.length).toEqual(1)
-      expect(http.calls[0].arguments[0]).toEqual({
+      expect(http.mock.calls.length).toEqual(1)
+      expect(http.mock.calls[0][0]).toEqual({
         credentials: 'same-origin',
         headers: {
           petKey: 'fooBar'
@@ -99,7 +98,7 @@ describe('(instance) #execute', function () {
     })
   })
 
-  it('should add apiKey (query) auth to a request', function () {
+  test('should add apiKey (query) auth to a request', () => {
     const spec = {
       securityDefinitions: {
         petKey: {
@@ -123,10 +122,10 @@ describe('(instance) #execute', function () {
     }
 
     return Swagger({spec, authorizations}).then((client) => {
-      const http = createSpy()
+      const http = jest.fn()
       client.execute({http, operationId: 'getPets'})
-      expect(http.calls.length).toEqual(1)
-      expect(http.calls[0].arguments[0]).toEqual({
+      expect(http.mock.calls.length).toEqual(1)
+      expect(http.mock.calls[0][0]).toEqual({
         credentials: 'same-origin',
         headers: { },
         method: 'GET',
@@ -135,7 +134,7 @@ describe('(instance) #execute', function () {
     })
   })
 
-  it('should add oAuth to a request', function () {
+  test('should add oAuth to a request', () => {
     const spec = {
       securityDefinitions: {
         ohYou: {
@@ -161,10 +160,10 @@ describe('(instance) #execute', function () {
     }
 
     return Swagger({spec, authorizations}).then((client) => {
-      const http = createSpy()
+      const http = jest.fn()
       client.execute({http, operationId: 'getPets'})
-      expect(http.calls.length).toEqual(1)
-      expect(http.calls[0].arguments[0]).toEqual({
+      expect(http.mock.calls.length).toEqual(1)
+      expect(http.mock.calls[0][0]).toEqual({
         credentials: 'same-origin',
         headers: {
           authorization: 'Bearer one two'
@@ -175,7 +174,7 @@ describe('(instance) #execute', function () {
     })
   })
 
-  it('should replace any occurrence of `bearer` with `Bearer`', function () {
+  test('should replace any occurrence of `bearer` with `Bearer`', () => {
     const spec = {
       securityDefinitions: {
         testBearer: {
@@ -202,10 +201,10 @@ describe('(instance) #execute', function () {
     }
 
     return Swagger({spec, authorizations}).then((client) => {
-      const http = createSpy()
+      const http = jest.fn()
       client.execute({http, operationId: 'getPets'})
-      expect(http.calls.length).toEqual(1)
-      expect(http.calls[0].arguments[0]).toEqual({
+      expect(http.mock.calls.length).toEqual(1)
+      expect(http.mock.calls[0][0]).toEqual({
         credentials: 'same-origin',
         headers: {
           authorization: 'Bearer one two'
@@ -216,7 +215,7 @@ describe('(instance) #execute', function () {
     })
   })
 
-  it('should add global securites', function () {
+  test('should add global securites', () => {
     const spec = {
       securityDefinitions: {
         petKey: {
@@ -240,10 +239,10 @@ describe('(instance) #execute', function () {
     }
 
     return Swagger({spec, authorizations}).then((client) => {
-      const http = createSpy()
+      const http = jest.fn()
       client.execute({http, operationId: 'getPets'})
-      expect(http.calls.length).toEqual(1)
-      expect(http.calls[0].arguments[0]).toEqual({
+      expect(http.mock.calls.length).toEqual(1)
+      expect(http.mock.calls[0][0]).toEqual({
         credentials: 'same-origin',
         headers: {
           Auth: 'yup'

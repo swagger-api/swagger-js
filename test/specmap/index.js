@@ -1,13 +1,18 @@
-import expect from 'expect'
 import clone from 'clone'
 import xmock from 'xmock'
 import traverse from 'traverse'
 import mapSpec, {SpecMap, plugins} from '../../src/specmap'
 import lib from '../../src/specmap/lib'
 
-describe('specmap', function () {
-  describe('#dispatch', function () {
-    it('should pass the spec through', function () {
+describe('specmap', () => {
+  let testContext
+
+  beforeEach(() => {
+    testContext = {}
+  })
+
+  describe('#dispatch', () => {
+    test('should pass the spec through', () => {
       return mapSpec({
         spec: {bob: true},
         plugins: []
@@ -19,7 +24,7 @@ describe('specmap', function () {
       })
     })
 
-    it('should call plugins with patches', function (done) {
+    test('should call plugins with patches', (done) => {
       mapSpec({
         spec: {one: 1},
         plugins: [{specMap: (patches) => {
@@ -38,19 +43,22 @@ describe('specmap', function () {
       })
     })
 
-    it('should include a library of functions, including `add` ', function (done) {
-      mapSpec({
-        spec: {bob: true},
-        plugins: [{
-          specMap(patches, specmap) {
-            expect(specmap.add).toBeA('function')
-            done()
-          }
-        }]
-      })
-    })
+    test(
+      'should include a library of functions, including `add` ',
+      (done) => {
+        mapSpec({
+          spec: {bob: true},
+          plugins: [{
+            specMap(patches, specmap) {
+              expect(typeof specmap.add).toBe('function')
+              done()
+            }
+          }]
+        })
+      }
+    )
 
-    it('should accept simple functions for plugins', function (done) {
+    test('should accept simple functions for plugins', (done) => {
       mapSpec({
         spec: {one: 1},
         plugins: [
@@ -71,7 +79,7 @@ describe('specmap', function () {
       })
     })
 
-    it('allows synchronous calls (no Promise)', function () {
+    test('allows synchronous calls (no Promise)', () => {
       return mapSpec({
         spec: {here: true},
         plugins: [
@@ -90,73 +98,79 @@ describe('specmap', function () {
       })
     })
 
-    it('should block until promises resolve before running next plugin', function () {
-      const p1 = function (patches, specmap) {
-        if (specmap.hasRun()) {
-          return
+    test(
+      'should block until promises resolve before running next plugin',
+      () => {
+        const p1 = function (patches, specmap) {
+          if (specmap.hasRun()) {
+            return
+          }
+          return specmap.replace(['val'], new Promise((resolve, reject) => {
+            setTimeout(() => {
+              resolve('some val')
+            }, 50)
+          }))
         }
-        return specmap.replace(['val'], new Promise((resolve, reject) => {
-          setTimeout(() => {
-            resolve('some val')
-          }, 50)
-        }))
-      }
 
-      const p2 = function (patches, specmap) {
-        if (specmap.hasRun()) {
-          return
-        }
-        if (patches[1].value !== 'some val' &&
-          patches[2].value !== 'some val' &&
-          patches[3].value !== 'some val') {
-          return [new Error('Promises not yet resolved')]
-        }
-      }
-
-      return mapSpec({
-        spec: {},
-        plugins: [p1, p1, p1, p2]
-      }).then((result) => {
-        expect(result).toEqual({
-          errors: [],
-          spec: {val: 'some val'}
-        })
-      })
-    })
-
-    it('should not block the first plugin if it is executed multiple times at once', function () {
-      let hasRunTwice = false
-      const p1 = (patches, specmap) => {
-        if (!specmap.hasRun()) {
-          return [
-            specmap.add(['val1'], 'some val1'),
-            specmap.add(['val2'], new Promise((resolve, reject) => {
-              setTimeout(() => resolve('some val2'), 50)
-            }))
-          ]
-        }
-        else if (!hasRunTwice) {
-          hasRunTwice = true
-          // We expect this to run immediately with the val1 patch,
-          // but without the val2 patch because the promise hasn't been resolved.
-          if (patches[0].value !== 'some val1' || patches[1] != null) {
-            return [new Error('Should not block')]
+        const p2 = function (patches, specmap) {
+          if (specmap.hasRun()) {
+            return
+          }
+          if (patches[1].value !== 'some val' &&
+            patches[2].value !== 'some val' &&
+            patches[3].value !== 'some val') {
+            return [new Error('Promises not yet resolved')]
           }
         }
-      }
 
-      return mapSpec({
-        spec: {},
-        plugins: [p1]
-      }).then((result) => {
-        expect(result).toEqual({
-          errors: [],
-          spec: {val1: 'some val1', val2: 'some val2'}
+        return mapSpec({
+          spec: {},
+          plugins: [p1, p1, p1, p2]
+        }).then((result) => {
+          expect(result).toEqual({
+            errors: [],
+            spec: {val: 'some val'}
+          })
         })
-      })
-    })
+      }
+    )
 
-    it('records errors after each plugin', function () {
+    test(
+      'should not block the first plugin if it is executed multiple times at once',
+      () => {
+        let hasRunTwice = false
+        const p1 = (patches, specmap) => {
+          if (!specmap.hasRun()) {
+            return [
+              specmap.add(['val1'], 'some val1'),
+              specmap.add(['val2'], new Promise((resolve, reject) => {
+                setTimeout(() => resolve('some val2'), 50)
+              }))
+            ]
+          }
+          else if (!hasRunTwice) {
+            hasRunTwice = true
+            // We expect this to run immediately with the val1 patch,
+            // but without the val2 patch because the promise hasn't been resolved.
+            if (patches[0].value !== 'some val1' || patches[1] != null) {
+              return [new Error('Should not block')]
+            }
+          }
+        }
+
+        return mapSpec({
+          spec: {},
+          plugins: [p1]
+        }).then((result) => {
+          expect(result).toEqual({
+            errors: [],
+            spec: {val1: 'some val1', val2: 'some val2'}
+          })
+        })
+      }
+    )
+
+    test('records errors after each plugin', () => {
       return mapSpec({
         spec: {here: true},
         plugins: [
@@ -183,7 +197,7 @@ describe('specmap', function () {
       })
     })
 
-    it('should record errors and mutations', function () {
+    test('should record errors and mutations', () => {
       let hasRun = false
       return mapSpec({
         spec: {two: 1},
@@ -209,7 +223,7 @@ describe('specmap', function () {
       })
     })
 
-    it('should allow a plugin to process its own mutations', function () {
+    test('should allow a plugin to process its own mutations', () => {
       return mapSpec({
         spec: {counter: 1},
         plugins: [incrementIf]
@@ -233,7 +247,7 @@ describe('specmap', function () {
       }
     })
 
-    it('should have a delightful API, exposed through `lib`', function () {
+    test('should have a delightful API, exposed through `lib`', () => {
       function increment(patches, specmap) {
         const newPatches = []
 
@@ -284,16 +298,16 @@ describe('specmap', function () {
       })
     })
 
-    describe('#getLib', function () {
-      it('.add should return a JSON-Patch add object', function () {
+    describe('#getLib', () => {
+      test('.add should return a JSON-Patch add object', () => {
         const map = new SpecMap()
-        expect(map.getLib).toBeA('function')
+        expect(typeof map.getLib).toBe('function')
         expect(map.getLib().add('/one', 1)).toEqual({op: 'add', path: '/one', value: 1})
       })
 
-      describe('.get', function () {
-        beforeEach(function () {
-          this.obj = {
+      describe('.get', () => {
+        beforeEach(() => {
+          testContext.obj = {
             one: 1,
             deep: {
               ly: {
@@ -303,38 +317,38 @@ describe('specmap', function () {
             arrays: ['could', 'alsoWork']
           }
 
-          this.specMap = new SpecMap({
+          testContext.specMap = new SpecMap({
             debugLevel: 'verbose',
-            spec: this.obj
+            spec: testContext.obj
           })
         })
 
-        it('should allow simple queries', function () {
-          expect(this.specMap.getLib().get(['one'])).toEqual(1)
+        test('should allow simple queries', () => {
+          expect(testContext.specMap.getLib().get(['one'])).toEqual(1)
         })
 
-        it('should return `undefined` for invalid queries', function () {
-          expect(this.specMap.getLib().get(['does', 'not', 'exist'])).toEqual(undefined)
+        test('should return `undefined` for invalid queries', () => {
+          expect(testContext.specMap.getLib().get(['does', 'not', 'exist'])).toEqual(undefined)
         })
 
-        it('should allow deep queries', function () {
-          expect(this.specMap.getLib().get(['deep', 'ly'])).toEqual({
+        test('should allow deep queries', () => {
+          expect(testContext.specMap.getLib().get(['deep', 'ly'])).toEqual({
             nested: 'works'
           })
         })
 
-        it('should allow querying arrays', function () {
-          expect(this.specMap.getLib().get(['arrays', 1])).toEqual('alsoWork')
+        test('should allow querying arrays', () => {
+          expect(testContext.specMap.getLib().get(['arrays', 1])).toEqual('alsoWork')
         })
 
-        it('should allow getting the root object, with []', function () {
-          expect(this.specMap.getLib().get([])).toEqual(this.obj)
+        test('should allow getting the root object, with []', () => {
+          expect(testContext.specMap.getLib().get([])).toEqual(testContext.obj)
         })
       })
     })
 
-    describe('#nextPlugin', function () {
-      it('should return a plugin', function () {
+    describe('#nextPlugin', () => {
+      test('should return a plugin', () => {
         const map = new SpecMap({
           plugins: [() => 'josh']
         })
@@ -343,7 +357,7 @@ describe('specmap', function () {
         expect(fn()).toEqual('josh')
       })
 
-      it('should handle multiple plugins', function () {
+      test('should handle multiple plugins', () => {
         return mapSpec({
           spec: {one: 1},
           plugins: [
@@ -368,7 +382,7 @@ describe('specmap', function () {
         })
       })
 
-      it('should handle multiple plugins, with the same key', function () {
+      test('should handle multiple plugins, with the same key', () => {
         return mapSpec({
           spec: {one: 1},
           plugins: [
@@ -398,9 +412,9 @@ describe('specmap', function () {
       })
     })
 
-    describe('plugins', function () {
-      describe('$refs', function () {
-        it('should resolve internal $refs', function () {
+    describe('plugins', () => {
+      describe('$refs', () => {
+        test('should resolve internal $refs', () => {
           return mapSpec({
             spec: {
               nested: {one: 1},
@@ -419,7 +433,7 @@ describe('specmap', function () {
             })
         })
 
-        it('should resolve internal $refs in arrays', function () {
+        test('should resolve internal $refs in arrays', () => {
           return mapSpec({
             spec: {
               nested: {one: 1},
@@ -438,45 +452,51 @@ describe('specmap', function () {
             })
         })
 
-        it('should resolve internal $refs that points to object inside an array', function () {
-          return mapSpec({
-            spec: {
-              nested: [{one: 1}],
-              another: {$ref: '#/nested'}
-            },
-            plugins: [plugins.refs]
-          })
-            .then((res) => {
-              expect(res).toEqual({
-                errors: [],
-                spec: {
-                  nested: [{one: 1}],
-                  another: [{one: 1}]
-                }
-              })
+        test(
+          'should resolve internal $refs that points to object inside an array',
+          () => {
+            return mapSpec({
+              spec: {
+                nested: [{one: 1}],
+                another: {$ref: '#/nested'}
+              },
+              plugins: [plugins.refs]
             })
-        })
-
-        it('should resolve internal $refs that points to item inside an array', function () {
-          return mapSpec({
-            spec: {
-              nested: [{one: 1}],
-              another: {$ref: '#/nested/0/one'}
-            },
-            plugins: [plugins.refs]
-          })
-            .then((res) => {
-              expect(res).toEqual({
-                errors: [],
-                spec: {
-                  nested: [{one: 1}],
-                  another: 1
-                }
+              .then((res) => {
+                expect(res).toEqual({
+                  errors: [],
+                  spec: {
+                    nested: [{one: 1}],
+                    another: [{one: 1}]
+                  }
+                })
               })
-            })
-        })
+          }
+        )
 
-        it('should resolve a $ref without a pointer', function () {
+        test(
+          'should resolve internal $refs that points to item inside an array',
+          () => {
+            return mapSpec({
+              spec: {
+                nested: [{one: 1}],
+                another: {$ref: '#/nested/0/one'}
+              },
+              plugins: [plugins.refs]
+            })
+              .then((res) => {
+                expect(res).toEqual({
+                  errors: [],
+                  spec: {
+                    nested: [{one: 1}],
+                    another: 1
+                  }
+                })
+              })
+          }
+        )
+
+        test('should resolve a $ref without a pointer', () => {
           plugins.refs.docCache['http://some-path'] = {
             one: 1
           }
@@ -497,7 +517,7 @@ describe('specmap', function () {
             })
         })
 
-        it('should fail if we cannot resolve a ref', function () {
+        test('should fail if we cannot resolve a ref', () => {
           return mapSpec({
             spec: {
               nested: {one: 1},
@@ -517,7 +537,7 @@ describe('specmap', function () {
             })
         })
 
-        it('should resolve petstore-simple', function () {
+        test('should resolve petstore-simple', () => {
           const spec = clone(require('./data/specs/petstore-simple.json')) // eslint-disable-line global-require
           const resolvedSpec = clone(require('./data/specs/petstore-simple-resolved.json')) // eslint-disable-line global-require
           const initialRefCount = countRefs(spec)
@@ -538,7 +558,7 @@ describe('specmap', function () {
           })
         })
 
-        it('should retain local $refs', function () {
+        test('should retain local $refs', () => {
           return mapSpec({
             spec: {
               one: {a: 1, $ref: '#/two'},
@@ -553,8 +573,8 @@ describe('specmap', function () {
             })
         })
 
-        describe('allowMetaPatches = true', function () {
-          it('should retain external $refs', function () {
+        describe('allowMetaPatches = true', () => {
+          test('should retain external $refs', () => {
             plugins.refs.clearCache()
             const xapp = xmock()
 
@@ -571,7 +591,7 @@ describe('specmap', function () {
             }).then(() => xapp.restore())
           })
 
-          it('should retain local $refs inside external $refs', function () {
+          test('should retain local $refs inside external $refs', () => {
             plugins.refs.clearCache()
             const xapp = xmock()
 
@@ -595,7 +615,7 @@ describe('specmap', function () {
           })
         })
 
-        it('should resolve external $refs', function () {
+        test('should resolve external $refs', () => {
           plugins.refs.clearCache()
           const xapp = xmock()
 
@@ -612,7 +632,7 @@ describe('specmap', function () {
           }).then(() => xapp.restore())
         })
 
-        it('should store the absolute path, in context', function () {
+        test('should store the absolute path, in context', () => {
           plugins.refs.clearCache()
           const xapp = xmock()
 
@@ -643,7 +663,7 @@ describe('specmap', function () {
           }).then(() => xapp.restore())
         })
 
-        it('should use absPath for the context, not refPath', function () {
+        test('should use absPath for the context, not refPath', () => {
           plugins.refs.clearCache()
 
           const xapp = xmock()
@@ -680,7 +700,7 @@ describe('specmap', function () {
           }).then(() => xapp.restore())
         })
 
-        it('should resolve a complex spec', function () {
+        test('should resolve a complex spec', () => {
           const xapp = xmock()
           const spec = clone(require('./data/specs/example.json')) // eslint-disable-line global-require
           const underten = clone(require('./data/specs/example-underten.json')) // eslint-disable-line global-require
@@ -701,8 +721,8 @@ describe('specmap', function () {
       })
     })
 
-    describe('keywords in properties', function () {
-      it('should ignore $ref and allOf in properties', function () {
+    describe('keywords in properties', () => {
+      test('should ignore $ref and allOf in properties', () => {
         return mapSpec({
           plugins: [plugins.refs, plugins.allOf],
           spec: {
@@ -730,7 +750,7 @@ describe('specmap', function () {
         })
       })
 
-      it('should merge sub-properties', function () {
+      test('should merge sub-properties', () => {
         return mapSpec({
           plugins: [plugins.refs, plugins.allOf],
           spec: {
@@ -763,23 +783,26 @@ describe('specmap', function () {
       })
     })
 
-    describe('context', function () {
-      it('should allow access to root context (options supplied to SpecMap)', function (done) {
-        return mapSpec({
-          spec: {
-            top: {middle: {leaf: 'hi'}}
-          },
-          context: {name: 'root'},
-          plugins: [
-            (patches, inst) => {
-              expect(inst.getContext(['top', 'middle']).name).toEqual('root')
-              done()
-            }
-          ]
-        })
-      })
+    describe('context', () => {
+      test(
+        'should allow access to root context (options supplied to SpecMap)',
+        (done) => {
+          return mapSpec({
+            spec: {
+              top: {middle: {leaf: 'hi'}}
+            },
+            context: {name: 'root'},
+            plugins: [
+              (patches, inst) => {
+                expect(inst.getContext(['top', 'middle']).name).toEqual('root')
+                done()
+              }
+            ]
+          })
+        }
+      )
 
-      it('should set / get context for a given path', function (done) {
+      test('should set / get context for a given path', (done) => {
         return mapSpec({
           spec: {},
           patches: [lib.context(['one', 'two'], {hey: 'ho'})],

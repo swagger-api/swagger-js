@@ -220,7 +220,7 @@ class SpecMap {
         }
       }
       catch (e) {
-        console.error(e)
+        console.error(e) // eslint-disable-line no-console
         this.errors.push(e)
       }
     })
@@ -372,7 +372,7 @@ class SpecMap {
         }
       }
       catch (e) {
-        console.error(e)
+        console.error(e) // eslint-disable-line no-console
         updatePatches([Object.assign(Object.create(e), {plugin})])
       }
       finally {

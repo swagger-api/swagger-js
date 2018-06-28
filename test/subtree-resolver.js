@@ -1,15 +1,14 @@
-import expect, {spyOn, createSpy} from 'expect'
 import xmock from 'xmock'
 import resolve from '../src/subtree-resolver'
 
-describe('subtree $ref resolver', function () {
+describe('subtree $ref resolver', () => {
   let xapp
 
-  before(() => {
+  beforeAll(() => {
     xapp = xmock()
   })
 
-  after(() => {
+  afterAll(() => {
     xapp.restore()
   })
 
@@ -17,66 +16,42 @@ describe('subtree $ref resolver', function () {
     // refs.clearCache()
   })
 
-  it('should resolve a subtree of an object, and return the targeted subtree', async function () {
-    const input = {
-      a: {
-        this: 'is my object'
-      },
-      b: {
-        description: 'here is my stuff!',
-        contents: {
-          $ref: '#/a'
-        }
-      }
-    }
-
-    const res = await resolve(input, ['b'])
-
-    expect(res).toEqual({
-      errors: [],
-      spec: {
-        description: 'here is my stuff!',
-        contents: {
-          this: 'is my object',
-          $$ref: '#/a'
-        }
-      }
-    })
-  })
-
-  it('should resolve circular $refs when a baseDoc is provided', async function () {
-    const input = {
-      one: {
-        $ref: '#/two'
-      },
-      two: {
+  test(
+    'should resolve a subtree of an object, and return the targeted subtree',
+    async () => {
+      const input = {
         a: {
-          $ref: '#/three'
-        }
-      },
-      three: {
+          this: 'is my object'
+        },
         b: {
-          $ref: '#/two'
+          description: 'here is my stuff!',
+          contents: {
+            $ref: '#/a'
+          }
         }
       }
-    }
 
-    const res = await resolve(input, ['one'], {
-      baseDoc: 'http://example.com/swagger.json',
-      returnEntireTree: true
-    })
+      const res = await resolve(input, ['b'])
 
-    expect(res).toEqual({
-      errors: [],
-      spec: {
-        one: {
-          $$ref: '#/two',
-          a: {
-            $$ref: '#/three',
-            b: {
-              $ref: '#/two'
-            }
+      expect(res).toEqual({
+        errors: [],
+        spec: {
+          description: 'here is my stuff!',
+          contents: {
+            this: 'is my object',
+            $$ref: '#/a'
           }
+        }
+      })
+    }
+  )
+
+  test(
+    'should resolve circular $refs when a baseDoc is provided',
+    async () => {
+      const input = {
+        one: {
+          $ref: '#/two'
         },
         two: {
           a: {
@@ -89,10 +64,40 @@ describe('subtree $ref resolver', function () {
           }
         }
       }
-    })
-  })
 
-  it('should return null when the path is invalid', async function () {
+      const res = await resolve(input, ['one'], {
+        baseDoc: 'http://example.com/swagger.json',
+        returnEntireTree: true
+      })
+
+      expect(res).toEqual({
+        errors: [],
+        spec: {
+          one: {
+            $$ref: '#/two',
+            a: {
+              $$ref: '#/three',
+              b: {
+                $ref: '#/two'
+              }
+            }
+          },
+          two: {
+            a: {
+              $ref: '#/three'
+            }
+          },
+          three: {
+            b: {
+              $ref: '#/two'
+            }
+          }
+        }
+      })
+    }
+  )
+
+  test('should return null when the path is invalid', async () => {
     const input = {
       a: {
         this: 'is my object'
@@ -112,7 +117,7 @@ describe('subtree $ref resolver', function () {
       spec: null
     })
   })
-  it('should not resolve an untargeted subtree', async function () {
+  test('should not resolve an untargeted subtree', async () => {
     const input = {
       a: {
         this: 'is my object'
@@ -151,7 +156,7 @@ describe('subtree $ref resolver', function () {
       }
     })
   })
-  it('should normalize Swagger 2.0 consumes', async () => {
+  test('should normalize Swagger 2.0 consumes', async () => {
     const input = {
       swagger: '2.0',
       consumes: ['application/json'],
@@ -185,7 +190,7 @@ describe('subtree $ref resolver', function () {
       }
     })
   })
-  it('should normalize Swagger 2.0 produces', async () => {
+  test('should normalize Swagger 2.0 produces', async () => {
     const input = {
       swagger: '2.0',
       produces: ['application/json'],
@@ -219,7 +224,7 @@ describe('subtree $ref resolver', function () {
       }
     })
   })
-  it('should normalize Swagger 2.0 parameters', async () => {
+  test('should normalize Swagger 2.0 parameters', async () => {
     const input = {
       swagger: '2.0',
       parameters: {
@@ -320,7 +325,7 @@ describe('subtree $ref resolver', function () {
     })
   })
 
-  it('should normalize Swagger 2.0 that use multiple $refs', async () => {
+  test('should normalize Swagger 2.0 that use multiple $refs', async () => {
     const input = {
       swagger: '2.0',
       paths: {
@@ -450,7 +455,7 @@ describe('subtree $ref resolver', function () {
     })
   })
 
-  it('should normalize idempotently', async () => {
+  test('should normalize idempotently', async () => {
     const input = {
       swagger: '2.0',
       parameters: {
@@ -555,7 +560,7 @@ describe('subtree $ref resolver', function () {
     })
   })
 
-  it('should handle this odd $ref/allOf combination', async () => {
+  test('should handle this odd $ref/allOf combination', async () => {
     const input = {
       definitions: {
         one: {
@@ -621,7 +626,7 @@ describe('subtree $ref resolver', function () {
     })
   })
 
-  it('should resolve complex allOf correctly', async () => {
+  test('should resolve complex allOf correctly', async () => {
     const input = {
       definitions: {
         Simple1: {
@@ -674,7 +679,7 @@ describe('subtree $ref resolver', function () {
       }
     })
   })
-  it('should fully resolve across remote documents correctly', async () => {
+  test('should fully resolve across remote documents correctly', async () => {
     const input = {
       foo: {
         bar: {
