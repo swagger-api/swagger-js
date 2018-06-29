@@ -1,141 +1,287 @@
 import {buildRequest} from '../../../src/execute'
 
 describe('buildRequest - swagger 2.0', () => {
-  it('should include empty parameter values for a query param with allowEmptyValue', () => {
-    const spec = {
-      swagger: '2.0',
-      paths: {
-        '/one': {
-          get: {
-            operationId: 'getMe',
-            parameters: [
-              {
-                name: 'name',
-                in: 'query',
-                allowEmptyValue: true
+  describe("allowEmptyValue parameters", () => {
+    describe("query", () => {
+      it('should include empty parameter values for a query param with allowEmptyValue', () => {
+        const spec = {
+          swagger: '2.0',
+          paths: {
+            '/one': {
+              get: {
+                operationId: 'getMe',
+                parameters: [
+                  {
+                    name: 'name',
+                    in: 'query',
+                    allowEmptyValue: true
+                  }
+                ]
               }
-            ]
+            }
           }
         }
-      }
-    }
 
     // when
     const req = buildRequest({
-      spec,
-      operationId: 'getMe',
-      parameters: {
-        name: ''
-      }
-    })
+          spec,
+          operationId: 'getMe',
+          parameters: {
+            name: ''
+          }
+        })
 
     expect(req).toMatchObject({
-      method: 'GET',
-      url: '/one?name=',
-      credentials: 'same-origin',
-      headers: {},
-    })
-  })
+          method: 'GET',
+          url: '/one?name=',
+          credentials: 'same-origin',
+          headers: { },
+        })
+      })
 
-  it('should not include omitted parameter values for a query param with allowEmptyValue', () => {
-    const spec = {
-      swagger: '2.0',
-      paths: {
-        '/one': {
-          get: {
-            operationId: 'getMe',
-            parameters: [
-              {
-                name: 'name',
-                in: 'query',
-                allowEmptyValue: true
+      it('should not include omitted parameter values for a query param with allowEmptyValue', () => {
+        const spec = {
+          swagger: '2.0',
+          paths: {
+            '/one': {
+              get: {
+                operationId: 'getMe',
+                parameters: [
+                  {
+                    name: 'name',
+                    in: 'query',
+                    allowEmptyValue: true
+                  }
+                ]
               }
-            ]
+            }
           }
         }
-      }
-    }
+
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'getMe',
+          parameters: {}
+        })
+
+        expect(req).toMatchObject({
+          method: 'GET',
+          url: '/one',
+          credentials: 'same-origin',
+          headers: {},
+        })
+      })
+
+      it('should not include empty parameter values for a query param lacking allowEmptyValue', () => {
+        const spec = {
+          swagger: '2.0',
+          paths: {
+            '/one': {
+              get: {
+                operationId: 'getMe',
+                parameters: [
+                  {
+                    name: 'name',
+                    in: 'query'
+                  }
+                ]
+              }
+            }
+          }
+        }
+
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'getMe',
+          parameters: {
+            name: ''
+          }
+        })
+
+        expect(req).toMatchObject({
+          method: 'GET',
+          url: '/one',
+          credentials: 'same-origin',
+          headers: {},
+        })
+      })
+
+      it('should not include omitted parameter values for a query param lacking allowEmptyValue', () => {
+        const spec = {
+          swagger: '2.0',
+          paths: {
+            '/one': {
+              get: {
+                operationId: 'getMe',
+                parameters: [
+                  {
+                    name: 'name',
+                    in: 'query'
+                  }
+                ]
+              }
+            }
+          }
+        }
+
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'getMe',
+          parameters: {}
+        })
+
+        expect(req).toMatchObject({
+          method: 'GET',
+          url: '/one',
+          credentials: 'same-origin',
+          headers: {},
+        })
+      })
+    })
+    describe("formData", () => {
+      it('should include empty parameter values for a query param with allowEmptyValue', () => {
+        const spec = {
+          swagger: '2.0',
+          paths: {
+            '/one': {
+              get: {
+                operationId: 'getMe',
+                parameters: [
+                  {
+                    name: 'name',
+                    in: 'formData',
+                    allowEmptyValue: true
+                  }
+                ]
+              }
+            }
+          }
+        }
 
     // when
     const req = buildRequest({
-      spec,
-      operationId: 'getMe',
-      parameters: {}
-    })
+          spec,
+          operationId: 'getMe',
+          parameters: {
+            name: ''
+          }
+        })
 
     expect(req).toMatchObject({
-      method: 'GET',
-      url: '/one',
-      credentials: 'same-origin',
-      headers: {},
-    })
-  })
+          method: 'GET',
+          url: '/one',
+          credentials: 'same-origin',
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          body: "name="
+        })
+      })
 
-  it('should not include empty parameter values for a query param lacking allowEmptyValue', () => {
-    const spec = {
-      swagger: '2.0',
-      paths: {
-        '/one': {
-          get: {
-            operationId: 'getMe',
-            parameters: [
-              {
-                name: 'name',
-                in: 'query'
+      it('should not include omitted parameter values for a query param with allowEmptyValue', () => {
+        const spec = {
+          swagger: '2.0',
+          paths: {
+            '/one': {
+              get: {
+                operationId: 'getMe',
+                parameters: [
+                  {
+                    name: 'name',
+                    in: 'formData',
+                    allowEmptyValue: true
+                  }
+                ]
               }
-            ]
+            }
           }
         }
-      }
-    }
 
-    // when
-    const req = buildRequest({
-      spec,
-      operationId: 'getMe',
-      parameters: {
-        name: ''
-      }
-    })
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'getMe',
+          parameters: {}
+        })
 
-    expect(req).toMatchObject({
-      method: 'GET',
-      url: '/one',
-      credentials: 'same-origin',
-      headers: {},
-    })
-  })
+        expect(req).toMatchObject({
+          method: 'GET',
+          url: '/one',
+          credentials: 'same-origin',
+          headers: {},
+        })
+      })
 
-  it('should not include omitted parameter values for a query param lacking allowEmptyValue', () => {
-    const spec = {
-      swagger: '2.0',
-      paths: {
-        '/one': {
-          get: {
-            operationId: 'getMe',
-            parameters: [
-              {
-                name: 'name',
-                in: 'query'
+      it('should not include empty parameter values for a query param lacking allowEmptyValue', () => {
+        const spec = {
+          swagger: '2.0',
+          paths: {
+            '/one': {
+              get: {
+                operationId: 'getMe',
+                parameters: [
+                  {
+                    name: 'name',
+                    in: 'formData'
+                  }
+                ]
               }
-            ]
+            }
           }
         }
-      }
-    }
 
-    // when
-    const req = buildRequest({
-      spec,
-      operationId: 'getMe',
-      parameters: {}
-    })
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'getMe',
+          parameters: {
+            name: ''
+          }
+        })
 
-    expect(req).toMatchObject({
-      method: 'GET',
-      url: '/one',
-      credentials: 'same-origin',
-      headers: {},
+        expect(req).toMatchObject({
+          method: 'GET',
+          url: '/one',
+          credentials: 'same-origin',
+          headers: {},
+        })
+      })
+
+      it('should not include omitted parameter values for a query param lacking allowEmptyValue', () => {
+        const spec = {
+          swagger: '2.0',
+          paths: {
+            '/one': {
+              get: {
+                operationId: 'getMe',
+                parameters: [
+                  {
+                    name: 'name',
+                    in: 'formData'
+                  }
+                ]
+              }
+            }
+          }
+        }
+
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'getMe',
+          parameters: {}
+        })
+
+        expect(req).toMatchObject({
+          method: 'GET',
+          url: '/one',
+          credentials: 'same-origin',
+          headers: {},
+        })
+      })
     })
   })
 })
