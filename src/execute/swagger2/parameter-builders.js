@@ -59,7 +59,7 @@ function queryBuilder({req, value, parameter}) {
       value
     }
   }
-  else if (parameter.allowEmptyValue) {
+  else if (parameter.allowEmptyValue && value !== undefined) {
     const paramName = parameter.name
     req.query[paramName] = req.query[paramName] || {}
     req.query[paramName].allowEmptyValue = true
