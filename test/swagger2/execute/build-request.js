@@ -1,8 +1,8 @@
 import {buildRequest} from '../../../src/execute'
 
 describe('buildRequest - swagger 2.0', () => {
-  describe("allowEmptyValue parameters", () => {
-    describe("query", () => {
+  describe('allowEmptyValue parameters', () => {
+    describe('query', () => {
       it('should include empty parameter values for a query param with allowEmptyValue', () => {
         const spec = {
           swagger: '2.0',
@@ -23,7 +23,7 @@ describe('buildRequest - swagger 2.0', () => {
         }
 
     // when
-    const req = buildRequest({
+        const req = buildRequest({
           spec,
           operationId: 'getMe',
           parameters: {
@@ -31,7 +31,7 @@ describe('buildRequest - swagger 2.0', () => {
           }
         })
 
-    expect(req).toMatchObject({
+        expect(req).toMatchObject({
           method: 'GET',
           url: '/one?name=',
           credentials: 'same-origin',
@@ -141,7 +141,7 @@ describe('buildRequest - swagger 2.0', () => {
         })
       })
     })
-    describe("formData", () => {
+    describe('formData', () => {
       it('should include empty parameter values for a query param with allowEmptyValue', () => {
         const spec = {
           swagger: '2.0',
@@ -162,7 +162,7 @@ describe('buildRequest - swagger 2.0', () => {
         }
 
     // when
-    const req = buildRequest({
+        const req = buildRequest({
           spec,
           operationId: 'getMe',
           parameters: {
@@ -170,14 +170,14 @@ describe('buildRequest - swagger 2.0', () => {
           }
         })
 
-    expect(req).toMatchObject({
+        expect(req).toMatchObject({
           method: 'GET',
           url: '/one',
           credentials: 'same-origin',
           headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
+            'Content-Type': 'application/x-www-form-urlencoded'
           },
-          body: "name="
+          body: 'name='
         })
       })
 
