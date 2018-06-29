@@ -910,19 +910,19 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
       })
     })
   })
-  describe("allowEmptyValue", () => {
-    describe("query", () => {
-      it("should include empty parameter values for a query param with allowEmptyValue", () => {
+  describe('allowEmptyValue', () => {
+    describe('query', () => {
+      it('should include empty parameter values for a query param with allowEmptyValue', () => {
         const spec = {
           openapi: '3.0.0',
           paths: {
             '/one': {
               get: {
-                operationId: 'getMe', 
+                operationId: 'getMe',
                 parameters: [
                   {
-                    name: "name",
-                    in: "query",
+                    name: 'name',
+                    in: 'query',
                     allowEmptyValue: true
                   }
                 ]
@@ -936,7 +936,7 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
           spec,
           operationId: 'getMe',
           parameters: {
-            name: ""
+            name: ''
           }
         })
 
@@ -947,7 +947,7 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
           headers: {},
         })
       })
-      it("should not include omitted parameter values for a query param with allowEmptyValue", () => {
+      it('should not include omitted parameter values for a query param with allowEmptyValue', () => {
         const spec = {
           openapi: '3.0.0',
           paths: {
@@ -956,8 +956,8 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
                 operationId: 'getMe',
                 parameters: [
                   {
-                    name: "name",
-                    in: "query",
+                    name: 'name',
+                    in: 'query',
                     allowEmptyValue: true
                   }
                 ]
@@ -980,7 +980,7 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
           headers: {},
         })
       })
-      it("should not include empty parameter values for a query param lacking allowEmptyValue", () => {
+      it('should not include empty parameter values for a query param lacking allowEmptyValue', () => {
         const spec = {
           openapi: '3.0.0',
           paths: {
@@ -989,8 +989,8 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
                 operationId: 'getMe',
                 parameters: [
                   {
-                    name: "name",
-                    in: "query"
+                    name: 'name',
+                    in: 'query'
                   }
                 ]
               }
@@ -1003,7 +1003,7 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
           spec,
           operationId: 'getMe',
           parameters: {
-            name: ""
+            name: ''
           }
         })
 
@@ -1014,7 +1014,7 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
           headers: {},
         })
       })
-      it("should not include omitted parameter values for a query param lacking allowEmptyValue", () => {
+      it('should not include omitted parameter values for a query param lacking allowEmptyValue', () => {
         const spec = {
           openapi: '3.0.0',
           paths: {
@@ -1023,8 +1023,8 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
                 operationId: 'getMe',
                 parameters: [
                   {
-                    name: "name",
-                    in: "query"
+                    name: 'name',
+                    in: 'query'
                   }
                 ]
               }

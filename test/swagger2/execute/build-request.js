@@ -1,7 +1,7 @@
-import { buildRequest } from '../../../src/execute'
+import {buildRequest} from '../../../src/execute'
 
-describe("buildRequest - swagger 2.0", () => {
-  it("should include empty parameter values for a query param with allowEmptyValue", () => {
+describe('buildRequest - swagger 2.0', () => {
+  it('should include empty parameter values for a query param with allowEmptyValue', () => {
     const spec = {
       swagger: '2.0',
       paths: {
@@ -10,8 +10,8 @@ describe("buildRequest - swagger 2.0", () => {
             operationId: 'getMe',
             parameters: [
               {
-                name: "name",
-                in: "query",
+                name: 'name',
+                in: 'query',
                 allowEmptyValue: true
               }
             ]
@@ -25,7 +25,7 @@ describe("buildRequest - swagger 2.0", () => {
       spec,
       operationId: 'getMe',
       parameters: {
-        name: ""
+        name: ''
       }
     })
 
@@ -37,7 +37,7 @@ describe("buildRequest - swagger 2.0", () => {
     })
   })
 
-  it("should not include omitted parameter values for a query param with allowEmptyValue", () => {
+  it('should not include omitted parameter values for a query param with allowEmptyValue', () => {
     const spec = {
       swagger: '2.0',
       paths: {
@@ -46,8 +46,8 @@ describe("buildRequest - swagger 2.0", () => {
             operationId: 'getMe',
             parameters: [
               {
-                name: "name",
-                in: "query",
+                name: 'name',
+                in: 'query',
                 allowEmptyValue: true
               }
             ]
@@ -71,7 +71,7 @@ describe("buildRequest - swagger 2.0", () => {
     })
   })
 
-  it("should not include empty parameter values for a query param lacking allowEmptyValue", () => {
+  it('should not include empty parameter values for a query param lacking allowEmptyValue', () => {
     const spec = {
       swagger: '2.0',
       paths: {
@@ -80,8 +80,8 @@ describe("buildRequest - swagger 2.0", () => {
             operationId: 'getMe',
             parameters: [
               {
-                name: "name",
-                in: "query"
+                name: 'name',
+                in: 'query'
               }
             ]
           }
@@ -94,7 +94,7 @@ describe("buildRequest - swagger 2.0", () => {
       spec,
       operationId: 'getMe',
       parameters: {
-        name: ""
+        name: ''
       }
     })
 
@@ -106,7 +106,7 @@ describe("buildRequest - swagger 2.0", () => {
     })
   })
 
-  it("should not include omitted parameter values for a query param lacking allowEmptyValue", () => {
+  it('should not include omitted parameter values for a query param lacking allowEmptyValue', () => {
     const spec = {
       swagger: '2.0',
       paths: {
@@ -115,8 +115,8 @@ describe("buildRequest - swagger 2.0", () => {
             operationId: 'getMe',
             parameters: [
               {
-                name: "name",
-                in: "query"
+                name: 'name',
+                in: 'query'
               }
             ]
           }
