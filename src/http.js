@@ -135,6 +135,9 @@ export function serializeHeaders(headers = {}) {
 }
 
 function isFile(obj) {
+  if (navigator && navigator.product === 'ReactNative') {
+    return obj.uri && typeof obj.uri === 'string'
+  }
   if (typeof File !== 'undefined') {
     return obj instanceof File // eslint-disable-line no-undef
   }
