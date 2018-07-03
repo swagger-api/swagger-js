@@ -38,6 +38,11 @@ function headerBuilder({req, parameter, value}) {
 
 // Replace path paramters, with values ( ie: the URL )
 function pathBuilder({req, value, parameter}) {
+
+  if (req.url.substring(req.url.indexOf('//')).indexOf(':') > 0) {
+    req.url.replace(`:${parameter.name}`, encodeURIComponent(value))
+  }
+  
   req.url = req.url.replace(`{${parameter.name}}`, encodeURIComponent(value))
 }
 
