@@ -16,7 +16,9 @@ function path({req, value, parameter}) {
     explode: explode || false,
     escape: false,
   })
-
+  if (req.url.substring(req.url.indexOf('//')).indexOf(':') > 0) {
+    req.url.replace(`:${name}`, styledValue)
+  }
   req.url = req.url.replace(`{${name}}`, styledValue)
 }
 
