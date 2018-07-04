@@ -165,6 +165,47 @@ describe('resolver', () => {
     }
   )
 
+  test('should resolve this edge case of allOf + items + deep $refs', () => {
+    // Given
+    const spec = {
+      definitions: {
+        First: {
+          allOf: [
+            {
+              $ref: '#/definitions/Second'
+            }
+          ]
+        },
+        Second: {
+          allOf: [
+            {
+              $ref: '#/definitions/Third'
+            }
+          ]
+        },
+        Third: {
+          properties: {
+            children: {
+              type: 'array',
+              items: {
+                $ref: '#/definitions/Third'
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // When
+    return Swagger.resolve({spec, allowMetaPatches: false})
+      .then(handleResponse)
+
+    // Then
+    function handleResponse(obj) {
+      expect(obj.errors).toEqual([])
+    }
+  })
+
   test('should resolve the url, if no spec provided', () => {
     // Given
     const url = 'http://example.com/swagger.json'
