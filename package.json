@@ -51,6 +51,7 @@
     "babel-preset-env": "^1.6.1",
     "babel-preset-es2015": "^6.22.0",
     "babel-preset-stage-3": "^6.24.1",
+    "bundlesize": "^0.17.0",
     "clone": "^2.1.2",
     "cross-env": "^5.1.4",
     "deepmerge": "^1.3.0",
@@ -103,5 +104,12 @@
       "<rootDir>/test/specmap/data/",
       "<rootDir>/test-webpack/"
     ]
-  }
+  },
+  "bundlesize": [
+    {
+      "path": "./browser/swagger-client.js",
+      "maxSize": "400 KB",
+      "compression": "none"
+    }
+  ]
 }
