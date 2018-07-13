@@ -1,4 +1,4 @@
-Swagger-JS
+Swagger-JS is fine
 ===========
 
 [![Build Status](https://travis-ci.org/swagger-api/swagger-js.svg?branch=master)](https://travis-ci.org/swagger-api/swagger-js)
