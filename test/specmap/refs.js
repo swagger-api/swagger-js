@@ -406,48 +406,48 @@ describe('refs', () => {
       test('should ignore root or nested $refs in OAS3 Example Objects', () => {
         const input = {
           spec: {
-            "openapi": "3.0.0",
-            "paths": {
-              "/services": {
-                "get": {
-                  "responses": {
-                    "200": {
-                      "description": "An array of services",
-                      "content": {
-                        "application/json": {
-                          "schema": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "roles": {
-                                  "type": "array",
-                                  "items": {
-                                    "type": "object",
-                                    "properties": {
-                                      "value": {
-                                        "type": "string"
+            openapi: '3.0.0',
+            paths: {
+              '/services': {
+                get: {
+                  responses: {
+                    200: {
+                      description: 'An array of services',
+                      content: {
+                        'application/json': {
+                          schema: {
+                            type: 'array',
+                            items: {
+                              type: 'object',
+                              properties: {
+                                roles: {
+                                  type: 'array',
+                                  items: {
+                                    type: 'object',
+                                    properties: {
+                                      value: {
+                                        type: 'string'
                                       },
-                                      "$ref": {
-                                        "type": "string"
+                                      $ref: {
+                                        type: 'string'
                                       },
-                                      "display": {
-                                        "type": "string"
+                                      display: {
+                                        type: 'string'
                                       }
                                     }
                                   }
                                 }
                               }
                             },
-                            "example": [
+                            example: [
                               {
-                                "id": "1244d92f-332e-4eca-90a9-3e7d4627cf7a",
-                                "name": "Licensing groups",
-                                "roles": [
+                                id: '1244d92f-332e-4eca-90a9-3e7d4627cf7a',
+                                name: 'Licensing groups',
+                                roles: [
                                   {
-                                    "value": "00000000023459FE",
-                                    "$ref": "/http://api.example.org/users/00000000023459FE",
-                                    "display": "Jessica Brandenburg"
+                                    value: '00000000023459FE',
+                                    $ref: '/http://api.example.org/users/00000000023459FE',
+                                    display: 'Jessica Brandenburg'
                                   }
                                 ]
                               }
