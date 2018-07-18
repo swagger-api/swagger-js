@@ -9,6 +9,9 @@ const freelyNamedKeyParents = [
 ]
 
 // This will match if the joined parent path exactly matches an item.
+//
+// This is mostly useful for filtering out root-level reusable item names,
+// for example `["definitions", "$ref"]`
 const freelyNamedPaths = [
   // Swagger 2.0
   'definitions',
@@ -35,10 +38,9 @@ export function isFreelyNamed(parentPath) {
   const parentKey = parentPath[parentPath.length - 1]
   const parentStr = parentPath.join('/')
 
-  const res = (
+  return (
     (freelyNamedKeyParents.indexOf(parentKey) > -1) ||
     (freelyNamedPaths.indexOf(parentStr) > -1) ||
     (freelyNamedAncestors.some(el => parentStr.indexOf(el) > -1))
   )
-  return res
 }
