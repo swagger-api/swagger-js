@@ -21,7 +21,7 @@
     "build-bundle": "cross-env NODE_ENV=production webpack -p --config ./webpack.bundle.config.js",
     "build-dev-bundle": "cross-env NODE_ENV=development webpack --config ./webpack.bundle.config.js",
     "watch": "webpack --config webpack.config.js --watch --progress",
-    "test": "run-s test:unit test:webpack lint",
+    "test": "run-s test:unit test:webpack lint bundlesize",
     "test:unit": "jest --runInBand",
     "test:unit:watch": "jest --watch",
     "test:webpack": "mocha-webpack --interactive false --webpack-config ./webpack.common.js --recursive \"./test-webpack\"",
