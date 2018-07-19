@@ -2,7 +2,7 @@ import xmock from 'xmock'
 import path from 'path'
 import fs from 'fs'
 import qs from 'querystring'
-import jsYaml from 'js-yaml'
+import jsYaml from '@kyleshockey/js-yaml'
 
 import {execute, buildRequest, baseUrl, applySecurities, self as stubs} from '../../../../src/execute'
 
