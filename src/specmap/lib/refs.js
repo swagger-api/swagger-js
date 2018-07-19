@@ -1,5 +1,5 @@
 import {fetch} from 'cross-fetch'
-import jsYaml from 'js-yaml'
+import jsYaml from '@kyleshockey/js-yaml'
 import qs from 'querystring-browser'
 import url from 'url'
 import lib from '../lib'
