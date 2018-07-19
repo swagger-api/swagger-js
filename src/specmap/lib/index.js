@@ -1,6 +1,6 @@
 import jsonPatch from 'fast-json-patch'
 import deepExtend from 'deep-extend'
-import {fn as isGeneratorFunction} from 'is-generator'
+import isGeneratorFunction from 'is-generator-fn'
 import deepAssign from '@kyleshockey/object-assign-deep'
 
 export default {
