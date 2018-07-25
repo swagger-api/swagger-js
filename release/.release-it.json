@@ -4,7 +4,7 @@
   "buildCommand": "npm run build",
   "increment": "conventional:angular",
   "src": {
-    "commitMessage": "v%s",
+    "commitMessage": "release: v%s",
     "tagName": "v%s",
     "push": false,
     "beforeStartCommand": "npm test"
