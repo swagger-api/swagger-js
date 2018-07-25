@@ -1,12 +1,12 @@
 {
-  "requireCleanWorkingDir": false,
   "beforeChangelogCommand": "./build/check-for-breaking-changes.sh ${latestVersion} ${version}",
   "buildCommand": "npm run build",
   "increment": "conventional:angular",
   "src": {
     "commitMessage": "v%s",
     "tagName": "v%s",
-    "push": false
+    "push": false,
+    "beforeStartCommand": "npm test"
   },
   "npm": {
     "tag": null

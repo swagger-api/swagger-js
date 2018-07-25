@@ -31,8 +31,7 @@
     "deps-size": "webpack -p --config webpack.check.js --json | webpack-bundle-size-analyzer >| $npm_package_config_deps_check_dir/sizes.txt",
     "deps-check": "npm run deps-license && npm run deps-size",
     "changelogCommand": "./build/get-changelog.sh",
-    "prerelease": "echo 'tests here someday'",
-    "release": "release-it"
+    "automated-release": "release-it"
   },
   "keywords": [
     "oai",
