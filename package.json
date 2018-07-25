@@ -1,6 +1,6 @@
 {
   "name": "swagger-client",
-  "version": "3.8.10",
+  "version": "4.0.0",
   "description": "SwaggerJS - a collection of interfaces for OAI specs",
   "main": "dist/index.js",
   "repository": "git@github.com:swagger-api/swagger-js.git",
@@ -31,8 +31,8 @@
     "deps-size": "webpack -p --config webpack.check.js --json | webpack-bundle-size-analyzer >| $npm_package_config_deps_check_dir/sizes.txt",
     "deps-check": "npm run deps-license && npm run deps-size",
     "changelogCommand": "./build/get-changelog.sh",
-    "prerelease": "npm test",
-    "release": "semantic-release"
+    "prerelease": "echo 'tests here someday'",
+    "release": "release-it"
   },
   "keywords": [
     "oai",
