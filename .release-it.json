@@ -1,0 +1,19 @@
+{
+  "dry-run": true,
+  "buildCommand": "npm run build",
+  "increment": "conventional:angular",
+  "src": {
+    "commitMessage": "v%s",
+    "tagName": "v%s",
+    "push": false,
+    "beforeStartCommand": "npm test"
+  },
+  "npm": {
+    "tag": null
+  },
+  "github": {
+    "release": true,
+    "releaseName": "Swagger Client v%s Released!",
+    "draft": true
+  }
+}
