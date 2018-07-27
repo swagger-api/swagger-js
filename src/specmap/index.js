@@ -75,7 +75,7 @@ class SpecMap {
 
     return Object.assign(fn.bind(ctx), {
       pluginName: plugin.name || name,
-      isGeneratorFunction: lib.isGeneratorFunction(fn)
+      isGenerator: lib.isGenerator(fn)
     })
 
     // Expected plugin interface: {key: string, plugin: fn*}
@@ -361,7 +361,7 @@ class SpecMap {
       const lastMutationIndex = that.mutations.length - 1
 
       try {
-        if (plugin.isGeneratorFunction) {
+        if (plugin.isGenerator) {
           for (const yieldedPatches of plugin(mutations, that.getLib())) {
             updatePatches(yieldedPatches)
           }
