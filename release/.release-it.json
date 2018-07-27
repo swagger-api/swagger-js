@@ -7,7 +7,6 @@
   "src": {
     "commitMessage": "release: v%s",
     "tagName": "v%s",
-    "push": false,
     "beforeStartCommand": "run-s test:unit test:webpack lint"
   },
   "github": {
