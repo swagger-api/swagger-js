@@ -365,7 +365,7 @@ describe('resolver', () => {
 
       // When
       return Swagger.resolve({spec, allowMetaPatches: false})
-      .then(handleResponse)
+        .then(handleResponse)
 
       // Then
       function handleResponse(obj) {
@@ -466,7 +466,7 @@ describe('resolver', () => {
 
       // When
       return Swagger.resolve({spec, allowMetaPatches: true})
-      .then(handleResponse)
+        .then(handleResponse)
 
       // Then
       function handleResponse(obj) {
@@ -511,6 +511,194 @@ describe('resolver', () => {
           }
         })
       }
+    })
+  })
+
+  describe('complex allOf+$ref+circular-reference', () => {
+    test('should be able to resolve without meta patches', async () => {
+      // Given
+      const spec = {
+        swagger: '2.0',
+        info: {
+          version: '0.2.1',
+          title: 'Resolver Issue, undefind of \'0\'',
+          description: 'Resolver issue'
+        },
+        paths: {
+        },
+        definitions: {
+          First: {
+            allOf: [
+              {
+                $ref: '#/definitions/Second'
+              }
+            ]
+          },
+          Second: {
+            allOf: [
+              {
+                $ref: '#/definitions/Third'
+              }
+            ]
+          },
+          Third: {
+            properties: {
+              children: {
+                type: 'array',
+                items: {
+                  $ref: '#/definitions/Third'
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // When
+      const result = await Swagger.resolve({spec, allowMetaPatches: false})
+
+      // Then
+      if (result.errors && result.errors.length) {
+        // For debugging
+        throw result.errors[0]
+      }
+      expect(result.errors).toEqual([])
+      expect(result.spec).toEqual({
+        $$normalized: true,
+        swagger: '2.0',
+        info: {
+          version: '0.2.1',
+          title: 'Resolver Issue, undefind of \'0\'',
+          description: 'Resolver issue'
+        },
+        paths: {
+        },
+        definitions: {
+          First: {
+            properties: {
+              children: {
+                type: 'array',
+                items: {
+                  $ref: '#/definitions/Third'
+                }
+              }
+            }
+          },
+          Second: {
+            properties: {
+              children: {
+                type: 'array',
+                items: {
+                  $ref: '#/definitions/Third'
+                }
+              }
+            }
+          },
+          Third: {
+            properties: {
+              children: {
+                type: 'array',
+                items: {
+                  $ref: '#/definitions/Third'
+                }
+              }
+            }
+          }
+        }
+      })
+    })
+    test('should be able to resolve with meta patches', async () => {
+      // Given
+      const spec = {
+        swagger: '2.0',
+        info: {
+          version: '0.2.1',
+          title: 'Resolver Issue, undefind of \'0\'',
+          description: 'Resolver issue'
+        },
+        paths: {
+        },
+        definitions: {
+          First: {
+            allOf: [
+              {
+                $ref: '#/definitions/Second'
+              }
+            ]
+          },
+          Second: {
+            allOf: [
+              {
+                $ref: '#/definitions/Third'
+              }
+            ]
+          },
+          Third: {
+            properties: {
+              children: {
+                type: 'array',
+                items: {
+                  $ref: '#/definitions/Third'
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // When
+      const result = await Swagger.resolve({spec, allowMetaPatches: true})
+
+      // Then
+      if (result.errors && result.errors.length) {
+        // For debugging
+        throw result.errors[0]
+      }
+
+      expect(result.errors).toEqual([])
+      expect(result.spec).toEqual({
+        $$normalized: true,
+        swagger: '2.0',
+        info: {
+          version: '0.2.1',
+          title: 'Resolver Issue, undefind of \'0\'',
+          description: 'Resolver issue'
+        },
+        paths: {
+        },
+        definitions: {
+          First: {
+            properties: {
+              children: {
+                type: 'array',
+                items: {
+                  $ref: '#/definitions/Third'
+                }
+              }
+            }
+          },
+          Second: {
+            properties: {
+              children: {
+                type: 'array',
+                items: {
+                  $ref: '#/definitions/Third'
+                }
+              }
+            }
+          },
+          Third: {
+            properties: {
+              children: {
+                type: 'array',
+                items: {
+                  $ref: '#/definitions/Third'
+                }
+              }
+            }
+          }
+        }
+      })
     })
   })
 
