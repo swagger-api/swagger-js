@@ -309,6 +309,211 @@ describe('resolver', () => {
     }
   })
 
+  describe('complex allOf+$ref', () => {
+    test('should be able to resolve without meta patches', () => {
+      // Given
+      const spec = {
+        components: {
+          schemas: {
+            Error: {
+              type: 'object',
+              properties: {
+                message: {
+                  type: 'string'
+                }
+              }
+            },
+            UnauthorizedError: {
+              allOf: [
+                {
+                  $ref: '#/components/schemas/Error'
+                },
+                {
+                  type: 'object',
+                  properties: {
+                    code: {
+                      example: 401
+                    },
+                    message: {
+                      example: 'Unauthorized'
+                    }
+                  }
+                }
+              ]
+            },
+            NotFoundError: {
+              allOf: [
+                {
+                  $ref: '#/components/schemas/Error'
+                },
+                {
+                  type: 'object',
+                  properties: {
+                    code: {
+                      example: 404
+                    },
+                    message: {
+                      example: 'Resource Not Found'
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+
+      // When
+      return Swagger.resolve({spec, allowMetaPatches: false})
+        .then(handleResponse)
+
+      // Then
+      function handleResponse(obj) {
+        expect(obj.errors).toEqual([])
+        expect(obj.spec).toEqual({
+          components: {
+            schemas: {
+              Error: {
+                type: 'object',
+                properties: {
+                  message: {
+                    type: 'string'
+                  }
+                }
+              },
+              UnauthorizedError: {
+                type: 'object',
+                properties: {
+                  message: {
+                    type: 'string',
+                    example: 'Unauthorized'
+
+                  },
+                  code: {
+                    example: 401
+                  },
+                }
+              },
+              NotFoundError: {
+                type: 'object',
+                properties: {
+                  code: {
+                    example: 404
+                  },
+                  message: {
+                    type: 'string',
+                    example: 'Resource Not Found'
+                  }
+                }
+              }
+            }
+          }
+        })
+      }
+    })
+    test('should be able to resolve with meta patches', () => {
+      // Given
+      const spec = {
+        components: {
+          schemas: {
+            Error: {
+              type: 'object',
+              properties: {
+                message: {
+                  type: 'string'
+                }
+              }
+            },
+            UnauthorizedError: {
+              allOf: [
+                {
+                  $ref: '#/components/schemas/Error'
+                },
+                {
+                  type: 'object',
+                  properties: {
+                    code: {
+                      example: 401
+                    },
+                    message: {
+                      example: 'Unauthorized'
+                    }
+                  }
+                }
+              ]
+            },
+            NotFoundError: {
+              allOf: [
+                {
+                  $ref: '#/components/schemas/Error'
+                },
+                {
+                  type: 'object',
+                  properties: {
+                    code: {
+                      example: 404
+                    },
+                    message: {
+                      example: 'Resource Not Found'
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+
+      // When
+      return Swagger.resolve({spec, allowMetaPatches: true})
+        .then(handleResponse)
+
+      // Then
+      function handleResponse(obj) {
+        expect(obj.errors).toEqual([])
+        expect(obj.spec).toEqual({
+          components: {
+            schemas: {
+              Error: {
+                type: 'object',
+                properties: {
+                  message: {
+                    type: 'string'
+                  }
+                }
+              },
+              UnauthorizedError: {
+                type: 'object',
+                properties: {
+                  message: {
+                    type: 'string',
+                    example: 'Unauthorized'
+
+                  },
+                  code: {
+                    example: 401
+                  },
+                }
+              },
+              NotFoundError: {
+                type: 'object',
+                properties: {
+                  code: {
+                    example: 404
+                  },
+                  message: {
+                    type: 'string',
+                    example: 'Resource Not Found'
+                  }
+                }
+              }
+            }
+          }
+        })
+      }
+    })
+  })
+
   describe('complex allOf+$ref+circular-reference', () => {
     test('should be able to resolve without meta patches', async () => {
       // Given
