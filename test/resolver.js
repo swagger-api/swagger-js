@@ -309,208 +309,191 @@ describe('resolver', () => {
     }
   })
 
-  describe('complex allOf+$ref', () => {
-    test('should be able to resolve without meta patches', () => {
+  describe('complex allOf+$ref+circular-reference', () => {
+    test('should be able to resolve without meta patches', async () => {
       // Given
       const spec = {
-        components: {
-          schemas: {
-            Error: {
-              type: 'object',
-              properties: {
-                message: {
-                  type: 'string'
+        swagger: '2.0',
+        info: {
+          version: '0.2.1',
+          title: 'Resolver Issue, undefind of \'0\'',
+          description: 'Resolver issue'
+        },
+        paths: {
+        },
+        definitions: {
+          First: {
+            allOf: [
+              {
+                $ref: '#/definitions/Second'
+              }
+            ]
+          },
+          Second: {
+            allOf: [
+              {
+                $ref: '#/definitions/Third'
+              }
+            ]
+          },
+          Third: {
+            properties: {
+              children: {
+                type: 'array',
+                items: {
+                  $ref: '#/definitions/Third'
                 }
               }
-            },
-            UnauthorizedError: {
-              allOf: [
-                {
-                  $ref: '#/components/schemas/Error'
-                },
-                {
-                  type: 'object',
-                  properties: {
-                    code: {
-                      example: 401
-                    },
-                    message: {
-                      example: 'Unauthorized'
-                    }
-                  }
-                }
-              ]
-            },
-            NotFoundError: {
-              allOf: [
-                {
-                  $ref: '#/components/schemas/Error'
-                },
-                {
-                  type: 'object',
-                  properties: {
-                    code: {
-                      example: 404
-                    },
-                    message: {
-                      example: 'Resource Not Found'
-                    }
-                  }
-                }
-              ]
             }
           }
         }
       }
 
       // When
-      return Swagger.resolve({spec, allowMetaPatches: false})
-      .then(handleResponse)
+      const result = await Swagger.resolve({spec, allowMetaPatches: false})
 
       // Then
-      function handleResponse(obj) {
-        expect(obj.errors).toEqual([])
-        expect(obj.spec).toEqual({
-          components: {
-            schemas: {
-              Error: {
-                type: 'object',
-                properties: {
-                  message: {
-                    type: 'string'
-                  }
+      if (result.errors && result.errors.length) {
+        // For debugging
+        throw result.errors[0]
+      }
+      expect(result.errors).toEqual([])
+      expect(result.spec).toEqual({
+        $$normalized: true,
+        swagger: '2.0',
+        info: {
+          version: '0.2.1',
+          title: 'Resolver Issue, undefind of \'0\'',
+          description: 'Resolver issue'
+        },
+        paths: {
+        },
+        definitions: {
+          First: {
+            properties: {
+              children: {
+                type: 'array',
+                items: {
+                  $ref: '#/definitions/Third'
                 }
-              },
-              UnauthorizedError: {
-                type: 'object',
-                properties: {
-                  message: {
-                    type: 'string',
-                    example: 'Unauthorized'
-
-                  },
-                  code: {
-                    example: 401
-                  },
+              }
+            }
+          },
+          Second: {
+            properties: {
+              children: {
+                type: 'array',
+                items: {
+                  $ref: '#/definitions/Third'
                 }
-              },
-              NotFoundError: {
-                type: 'object',
-                properties: {
-                  code: {
-                    example: 404
-                  },
-                  message: {
-                    type: 'string',
-                    example: 'Resource Not Found'
-                  }
+              }
+            }
+          },
+          Third: {
+            properties: {
+              children: {
+                type: 'array',
+                items: {
+                  $ref: '#/definitions/Third'
                 }
               }
             }
           }
-        })
-      }
+        }
+      })
     })
-    test('should be able to resolve with meta patches', () => {
+    test('should be able to resolve with meta patches', async () => {
       // Given
       const spec = {
-        components: {
-          schemas: {
-            Error: {
-              type: 'object',
-              properties: {
-                message: {
-                  type: 'string'
+        swagger: '2.0',
+        info: {
+          version: '0.2.1',
+          title: 'Resolver Issue, undefind of \'0\'',
+          description: 'Resolver issue'
+        },
+        paths: {
+        },
+        definitions: {
+          First: {
+            allOf: [
+              {
+                $ref: '#/definitions/Second'
+              }
+            ]
+          },
+          Second: {
+            allOf: [
+              {
+                $ref: '#/definitions/Third'
+              }
+            ]
+          },
+          Third: {
+            properties: {
+              children: {
+                type: 'array',
+                items: {
+                  $ref: '#/definitions/Third'
                 }
               }
-            },
-            UnauthorizedError: {
-              allOf: [
-                {
-                  $ref: '#/components/schemas/Error'
-                },
-                {
-                  type: 'object',
-                  properties: {
-                    code: {
-                      example: 401
-                    },
-                    message: {
-                      example: 'Unauthorized'
-                    }
-                  }
-                }
-              ]
-            },
-            NotFoundError: {
-              allOf: [
-                {
-                  $ref: '#/components/schemas/Error'
-                },
-                {
-                  type: 'object',
-                  properties: {
-                    code: {
-                      example: 404
-                    },
-                    message: {
-                      example: 'Resource Not Found'
-                    }
-                  }
-                }
-              ]
             }
           }
         }
       }
 
       // When
-      return Swagger.resolve({spec, allowMetaPatches: true})
-      .then(handleResponse)
+      const result = await Swagger.resolve({spec, allowMetaPatches: true})
 
       // Then
-      function handleResponse(obj) {
-        expect(obj.errors).toEqual([])
-        expect(obj.spec).toEqual({
-          components: {
-            schemas: {
-              Error: {
-                type: 'object',
-                properties: {
-                  message: {
-                    type: 'string'
-                  }
-                }
-              },
-              UnauthorizedError: {
-                type: 'object',
-                properties: {
-                  message: {
-                    type: 'string',
-                    example: 'Unauthorized'
+      if (result.errors && result.errors.length) {
+        // For debugging
+        throw result.errors[0]
+      }
 
-                  },
-                  code: {
-                    example: 401
-                  },
+      expect(result.errors).toEqual([])
+      expect(result.spec).toEqual({
+        $$normalized: true,
+        swagger: '2.0',
+        info: {
+          version: '0.2.1',
+          title: 'Resolver Issue, undefind of \'0\'',
+          description: 'Resolver issue'
+        },
+        paths: {
+        },
+        definitions: {
+          First: {
+            properties: {
+              children: {
+                type: 'array',
+                items: {
+                  $ref: '#/definitions/Third'
                 }
-              },
-              NotFoundError: {
-                type: 'object',
-                properties: {
-                  code: {
-                    example: 404
-                  },
-                  message: {
-                    type: 'string',
-                    example: 'Resource Not Found'
-                  }
+              }
+            }
+          },
+          Second: {
+            properties: {
+              children: {
+                type: 'array',
+                items: {
+                  $ref: '#/definitions/Third'
+                }
+              }
+            }
+          },
+          Third: {
+            properties: {
+              children: {
+                type: 'array',
+                items: {
+                  $ref: '#/definitions/Third'
                 }
               }
             }
           }
-        })
-      }
+        }
+      })
     })
   })
 
