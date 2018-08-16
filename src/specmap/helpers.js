@@ -40,7 +40,8 @@ export function isFreelyNamed(parentPath) {
   const parentStr = parentPath.join('/')
 
   return (
-    ((freelyNamedKeyParents.indexOf(parentKey) > -1) && !(freelyNamedKeyParents.indexOf(parentParentKey) > -1)) ||
+    ((freelyNamedKeyParents.indexOf(parentKey) > -1) &&
+      !(freelyNamedKeyParents.indexOf(parentParentKey) > -1)) ||
     (freelyNamedPaths.indexOf(parentStr) > -1) ||
     (freelyNamedAncestors.some(el => parentStr.indexOf(el) > -1))
   )
