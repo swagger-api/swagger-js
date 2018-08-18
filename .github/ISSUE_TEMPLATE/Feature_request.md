@@ -4,13 +4,6 @@ about: Suggest an new feature or enhancement for this project
 
 ---
 
-### Q&A (please complete the following information)
- - OS: [e.g. macOS]
- - Environment: [e.g. Chrome 59, Node.js v10.0.0]
- - Method of installation: [e.g. npm, unpkg]
- - Swagger-Client version: [e.g. 3.8.0]
- - Swagger/OpenAPI version: [e.g. Swagger 2.0, OpenAPI 3.0]
-
  ### Content & configuration
 
  Swagger/OpenAPI definition:

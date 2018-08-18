@@ -202,6 +202,10 @@ export function buildRequest(options) {
       console.warn(`Parameter '${parameter.name}' is ambiguous because the defined spec has more than one parameter with the name: '${parameter.name}' and the passed-in parameter values did not define an 'in' value.`)
     }
 
+    if (value === null) {
+      return
+    }
+
     if (typeof parameter.default !== 'undefined' && typeof value === 'undefined') {
       value = parameter.default
     }

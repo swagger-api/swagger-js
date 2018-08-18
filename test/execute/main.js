@@ -429,43 +429,6 @@ describe('execute', () => {
       })
     })
 
-    test(
-      'should add an empty query param if the value is empty and allowEmptyValue: true',
-      () => {
-        // Given
-        const spec = {
-          host: 'swagger.io',
-          basePath: '/v1',
-          consumes: ['application/json'],
-          paths: {
-            '/pets/findByStatus': {
-              get: {
-                operationId: 'getMe',
-                parameters: [{
-                  in: 'query',
-                  name: 'status',
-                  type: 'string',
-                  required: false,
-                  allowEmptyValue: true
-                }]
-              }
-            }
-          }
-        }
-
-        // When
-        const req = buildRequest({spec, operationId: 'getMe', parameters: {}})
-
-        // Then
-        expect(req).toEqual({
-          url: 'http://swagger.io/v1/pets/findByStatus?status=',
-          method: 'GET',
-          credentials: 'same-origin',
-          headers: { }
-        })
-      }
-    )
-
     test('should correctly process boolean parameters', () => {
       // Given
       const spec = {

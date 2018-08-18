@@ -19,4 +19,39 @@ describe('webpack build', () => {
     expect(Swagger.buildRequest).toBeA(Function)
     expect(Swagger.helpers).toIncludeKeys(['opId'])
   })
+
+
+  it('should be able to resolve things when minified', () => {
+    const spec = {
+      a: {
+        $ref: "#/b"
+      },
+      b: {
+        value: {
+          $ref: "#/c/value"
+        }
+      },
+      c: {
+        value: 1234
+      }
+    }
+
+    return Swagger.resolve({
+      spec,
+      allowMetaPatches: false
+    }).then((res) => {
+      expect(res.errors).toEqual([])
+      expect(res.spec).toEqual({
+        a: {
+          value: 1234
+        },
+        b: {
+          value: 1234
+        },
+        c: {
+          value: 1234
+        },
+      })
+    })
+  })
 })
