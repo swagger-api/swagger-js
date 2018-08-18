@@ -1,52 +1,95 @@
-import expect, {createSpy, spyOn} from 'expect'
 import xmock from 'xmock'
 import path from 'path'
 import fs from 'fs'
 import qs from 'querystring'
-import jsYaml from 'js-yaml'
+import jsYaml from '@kyleshockey/js-yaml'
 import {execute, buildRequest, baseUrl, applySecurities, self as stubs} from '../../../../src/execute'
 
 const petstoreSpec = jsYaml.safeLoad(fs.readFileSync(path.join('test', 'oas3', 'data', 'petstore-oas3.yaml'), 'utf8'))
 
-describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', function () {
-  describe('primitive values', function () {
-    it('default: should build a path parameter in a simple/no-explode format', function () {
-      // Given
-      const spec = {
-        openapi: '3.0.0',
-        paths: {
-          '/path/{id}': {
-            get: {
-              operationId: 'myOperation',
-              parameters: [
-                {
-                  name: 'id',
-                  in: 'path'
-                }
-              ]
+describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () => {
+  describe('primitive values', () => {
+    test(
+      'default: should build a path parameter in a simple/no-explode format',
+      () => {
+        // Given
+        const spec = {
+          openapi: '3.0.0',
+          paths: {
+            '/path/{id}': {
+              get: {
+                operationId: 'myOperation',
+                parameters: [
+                  {
+                    name: 'id',
+                    in: 'path'
+                  }
+                ]
+              }
             }
           }
         }
+
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'myOperation',
+          parameters: {
+            id: 'wow!'
+          }
+        })
+
+        expect(req).toEqual({
+          method: 'GET',
+          url: '/path/wow%21',
+          credentials: 'same-origin',
+          headers: {},
+        })
       }
+    )
 
-      // when
-      const req = buildRequest({
-        spec,
-        operationId: 'myOperation',
-        parameters: {
-          id: 5
+    test(
+      'should build a path parameter in a simple/no-explode format',
+      () => {
+        // Given
+        const spec = {
+          openapi: '3.0.0',
+          paths: {
+            '/path/{id}': {
+              get: {
+                operationId: 'myOperation',
+                parameters: [
+                  {
+                    name: 'id',
+                    in: 'path',
+                    style: 'simple',
+                    explode: false
+                  }
+                ]
+              }
+            }
+          }
         }
-      })
 
-      expect(req).toEqual({
-        method: 'GET',
-        url: '/path/5',
-        credentials: 'same-origin',
-        headers: {},
-      })
-    })
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'myOperation',
+          parameters: {
+            id: 'wow!'
+          }
+        })
 
-    it('should build a path parameter in a simple/no-explode format', function () {
+        expect(req).toEqual({
+          method: 'GET',
+          url: '/path/wow%21',
+          credentials: 'same-origin',
+          headers: {},
+        })
+      }
+    )
+
+    test('should build a path parameter in a simple/explode format', () => {
       // Given
       const spec = {
         openapi: '3.0.0',
@@ -59,44 +102,6 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', func
                   name: 'id',
                   in: 'path',
                   style: 'simple',
-                  explode: false
-                }
-              ]
-            }
-          }
-        }
-      }
-
-      // when
-      const req = buildRequest({
-        spec,
-        operationId: 'myOperation',
-        parameters: {
-          id: 5
-        }
-      })
-
-      expect(req).toEqual({
-        method: 'GET',
-        url: '/path/5',
-        credentials: 'same-origin',
-        headers: {},
-      })
-    })
-
-    it('should build a path parameter in a simple/explode format', function () {
-      // Given
-      const spec = {
-        openapi: '3.0.0',
-        paths: {
-          '/path/{id}': {
-            get: {
-              operationId: 'myOperation',
-              parameters: [
-                {
-                  name: 'id',
-                  in: 'path',
-                  style: 'simple',
                   explode: true
                 }
               ]
@@ -110,57 +115,60 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', func
         spec,
         operationId: 'myOperation',
         parameters: {
-          id: 5
+          id: 'wow!'
         }
       })
 
       expect(req).toEqual({
         method: 'GET',
-        url: '/path/5',
+        url: '/path/wow%21',
         credentials: 'same-origin',
         headers: {},
       })
     })
 
-    it('should build a path parameter in a label/no-explode format', function () {
-      // Given
-      const spec = {
-        openapi: '3.0.0',
-        paths: {
-          '/path/{id}': {
-            get: {
-              operationId: 'myOperation',
-              parameters: [
-                {
-                  name: 'id',
-                  in: 'path',
-                  style: 'label',
-                  explode: false
-                }
-              ]
+    test(
+      'should build a path parameter in a label/no-explode format',
+      () => {
+        // Given
+        const spec = {
+          openapi: '3.0.0',
+          paths: {
+            '/path/{id}': {
+              get: {
+                operationId: 'myOperation',
+                parameters: [
+                  {
+                    name: 'id',
+                    in: 'path',
+                    style: 'label',
+                    explode: false
+                  }
+                ]
+              }
             }
           }
         }
+
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'myOperation',
+          parameters: {
+            id: 'wow!'
+          }
+        })
+
+        expect(req).toEqual({
+          method: 'GET',
+          url: '/path/.wow%21',
+          credentials: 'same-origin',
+          headers: {},
+        })
       }
+    )
 
-      // when
-      const req = buildRequest({
-        spec,
-        operationId: 'myOperation',
-        parameters: {
-          id: 5
-        }
-      })
-
-      expect(req).toEqual({
-        method: 'GET',
-        url: '/path/.5',
-        credentials: 'same-origin',
-        headers: {},
-      })
-    })
-
-    it('should build a path parameter in a label/explode format', function () {
+    test('should build a path parameter in a label/explode format', () => {
       // Given
       const spec = {
         openapi: '3.0.0',
@@ -186,57 +194,60 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', func
         spec,
         operationId: 'myOperation',
         parameters: {
-          id: 5
+          id: 'wow!'
         }
       })
 
       expect(req).toEqual({
         method: 'GET',
-        url: '/path/.5',
+        url: '/path/.wow%21',
         credentials: 'same-origin',
         headers: {},
       })
     })
 
-    it('should build a path parameter in a matrix/no-explode format', function () {
-      // Given
-      const spec = {
-        openapi: '3.0.0',
-        paths: {
-          '/path/{id}': {
-            get: {
-              operationId: 'myOperation',
-              parameters: [
-                {
-                  name: 'id',
-                  in: 'path',
-                  style: 'matrix',
-                  explode: false
-                }
-              ]
+    test(
+      'should build a path parameter in a matrix/no-explode format',
+      () => {
+        // Given
+        const spec = {
+          openapi: '3.0.0',
+          paths: {
+            '/path/{id}': {
+              get: {
+                operationId: 'myOperation',
+                parameters: [
+                  {
+                    name: 'id',
+                    in: 'path',
+                    style: 'matrix',
+                    explode: false
+                  }
+                ]
+              }
             }
           }
         }
+
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'myOperation',
+          parameters: {
+            id: 'wow!'
+          }
+        })
+
+        expect(req).toEqual({
+          method: 'GET',
+          url: '/path/;id=wow%21',
+          credentials: 'same-origin',
+          headers: {},
+        })
       }
+    )
 
-      // when
-      const req = buildRequest({
-        spec,
-        operationId: 'myOperation',
-        parameters: {
-          id: 5
-        }
-      })
-
-      expect(req).toEqual({
-        method: 'GET',
-        url: '/path/;id=5',
-        credentials: 'same-origin',
-        headers: {},
-      })
-    })
-
-    it('should build a path parameter in a matrix/explode format', function () {
+    test('should build a path parameter in a matrix/explode format', () => {
       // Given
       const spec = {
         openapi: '3.0.0',
@@ -262,94 +273,100 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', func
         spec,
         operationId: 'myOperation',
         parameters: {
-          id: 5
+          id: 'wow!'
         }
       })
 
       expect(req).toEqual({
         method: 'GET',
-        url: '/path/;id=5',
+        url: '/path/;id=wow%21',
         credentials: 'same-origin',
         headers: {},
       })
     })
   })
-  describe('array values', function () {
-    it('default: should build a path parameter in a simple/no-explode format', function () {
-      // Given
-      const spec = {
-        openapi: '3.0.0',
-        paths: {
-          '/path/{id}': {
-            get: {
-              operationId: 'myOperation',
-              parameters: [
-                {
-                  name: 'id',
-                  in: 'path'
-                }
-              ]
+  describe('array values', () => {
+    test(
+      'default: should build a path parameter in a simple/no-explode format',
+      () => {
+        // Given
+        const spec = {
+          openapi: '3.0.0',
+          paths: {
+            '/path/{id}': {
+              get: {
+                operationId: 'myOperation',
+                parameters: [
+                  {
+                    name: 'id',
+                    in: 'path'
+                  }
+                ]
+              }
             }
           }
         }
+
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'myOperation',
+          parameters: {
+            id: [3, 4, 5]
+          }
+        })
+
+        expect(req).toEqual({
+          method: 'GET',
+          url: '/path/3,4,5',
+          credentials: 'same-origin',
+          headers: {},
+        })
       }
+    )
 
-      // when
-      const req = buildRequest({
-        spec,
-        operationId: 'myOperation',
-        parameters: {
-          id: [3, 4, 5]
-        }
-      })
-
-      expect(req).toEqual({
-        method: 'GET',
-        url: '/path/3,4,5',
-        credentials: 'same-origin',
-        headers: {},
-      })
-    })
-
-    it('should build a path parameter in a simple/no-explode format', function () {
-      // Given
-      const spec = {
-        openapi: '3.0.0',
-        paths: {
-          '/path/{id}': {
-            get: {
-              operationId: 'myOperation',
-              parameters: [
-                {
-                  name: 'id',
-                  in: 'path',
-                  style: 'simple',
-                  explode: false
-                }
-              ]
+    test(
+      'should build a path parameter in a simple/no-explode format',
+      () => {
+        // Given
+        const spec = {
+          openapi: '3.0.0',
+          paths: {
+            '/path/{id}': {
+              get: {
+                operationId: 'myOperation',
+                parameters: [
+                  {
+                    name: 'id',
+                    in: 'path',
+                    style: 'simple',
+                    explode: false
+                  }
+                ]
+              }
             }
           }
         }
+
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'myOperation',
+          parameters: {
+            id: [3, 4, 5]
+          }
+        })
+
+        expect(req).toEqual({
+          method: 'GET',
+          url: '/path/3,4,5',
+          credentials: 'same-origin',
+          headers: {},
+        })
       }
+    )
 
-      // when
-      const req = buildRequest({
-        spec,
-        operationId: 'myOperation',
-        parameters: {
-          id: [3, 4, 5]
-        }
-      })
-
-      expect(req).toEqual({
-        method: 'GET',
-        url: '/path/3,4,5',
-        credentials: 'same-origin',
-        headers: {},
-      })
-    })
-
-    it('should build a path parameter in a simple/explode format', function () {
+    test('should build a path parameter in a simple/explode format', () => {
       // Given
       const spec = {
         openapi: '3.0.0',
@@ -387,45 +404,48 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', func
       })
     })
 
-    it('should build a path parameter in a label/no-explode format', function () {
-      // Given
-      const spec = {
-        openapi: '3.0.0',
-        paths: {
-          '/path/{id}': {
-            get: {
-              operationId: 'myOperation',
-              parameters: [
-                {
-                  name: 'id',
-                  in: 'path',
-                  style: 'label',
-                  explode: false
-                }
-              ]
+    test(
+      'should build a path parameter in a label/no-explode format',
+      () => {
+        // Given
+        const spec = {
+          openapi: '3.0.0',
+          paths: {
+            '/path/{id}': {
+              get: {
+                operationId: 'myOperation',
+                parameters: [
+                  {
+                    name: 'id',
+                    in: 'path',
+                    style: 'label',
+                    explode: false
+                  }
+                ]
+              }
             }
           }
         }
+
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'myOperation',
+          parameters: {
+            id: [3, 4, 5]
+          }
+        })
+
+        expect(req).toEqual({
+          method: 'GET',
+          url: '/path/.3.4.5',
+          credentials: 'same-origin',
+          headers: {},
+        })
       }
+    )
 
-      // when
-      const req = buildRequest({
-        spec,
-        operationId: 'myOperation',
-        parameters: {
-          id: [3, 4, 5]
-        }
-      })
-
-      expect(req).toEqual({
-        method: 'GET',
-        url: '/path/.3.4.5',
-        credentials: 'same-origin',
-        headers: {},
-      })
-    })
-
-    it('should build a path parameter in a label/explode format', function () {
+    test('should build a path parameter in a label/explode format', () => {
       // Given
       const spec = {
         openapi: '3.0.0',
@@ -463,45 +483,48 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', func
       })
     })
 
-    it('should build a path parameter in a matrix/no-explode format', function () {
-      // Given
-      const spec = {
-        openapi: '3.0.0',
-        paths: {
-          '/path/{id}': {
-            get: {
-              operationId: 'myOperation',
-              parameters: [
-                {
-                  name: 'id',
-                  in: 'path',
-                  style: 'matrix',
-                  explode: false
-                }
-              ]
+    test(
+      'should build a path parameter in a matrix/no-explode format',
+      () => {
+        // Given
+        const spec = {
+          openapi: '3.0.0',
+          paths: {
+            '/path/{id}': {
+              get: {
+                operationId: 'myOperation',
+                parameters: [
+                  {
+                    name: 'id',
+                    in: 'path',
+                    style: 'matrix',
+                    explode: false
+                  }
+                ]
+              }
             }
           }
         }
+
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'myOperation',
+          parameters: {
+            id: [3, 4, 5]
+          }
+        })
+
+        expect(req).toEqual({
+          method: 'GET',
+          url: '/path/;id=3,4,5',
+          credentials: 'same-origin',
+          headers: {},
+        })
       }
+    )
 
-      // when
-      const req = buildRequest({
-        spec,
-        operationId: 'myOperation',
-        parameters: {
-          id: [3, 4, 5]
-        }
-      })
-
-      expect(req).toEqual({
-        method: 'GET',
-        url: '/path/;id=3,4,5',
-        credentials: 'same-origin',
-        headers: {},
-      })
-    })
-
-    it('should build a path parameter in a matrix/explode format', function () {
+    test('should build a path parameter in a matrix/explode format', () => {
       // Given
       const spec = {
         openapi: '3.0.0',
@@ -539,88 +562,94 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', func
       })
     })
   })
-  describe('object values', function () {
-    it('default: should build a path parameter in a simple/no-explode format', function () {
-      // Given
-      const spec = {
-        openapi: '3.0.0',
-        paths: {
-          '/path/{id}': {
-            get: {
-              operationId: 'myOperation',
-              parameters: [
-                {
-                  name: 'id',
-                  in: 'path'
-                }
-              ]
+  describe('object values', () => {
+    test(
+      'default: should build a path parameter in a simple/no-explode format',
+      () => {
+        // Given
+        const spec = {
+          openapi: '3.0.0',
+          paths: {
+            '/path/{id}': {
+              get: {
+                operationId: 'myOperation',
+                parameters: [
+                  {
+                    name: 'id',
+                    in: 'path'
+                  }
+                ]
+              }
             }
           }
         }
-      }
 
-      // when
-      const req = buildRequest({
-        spec,
-        operationId: 'myOperation',
-        parameters: {
-          id: {
-            role: 'admin',
-            firstName: 'Alex'
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'myOperation',
+          parameters: {
+            id: {
+              role: 'admin',
+              firstName: 'Alex'
+            }
           }
-        }
-      })
+        })
 
-      expect(req).toEqual({
-        method: 'GET',
-        url: '/path/role,admin,firstName,Alex',
-        credentials: 'same-origin',
-        headers: {},
-      })
-    })
+        expect(req).toEqual({
+          method: 'GET',
+          url: '/path/role,admin,firstName,Alex',
+          credentials: 'same-origin',
+          headers: {},
+        })
+      }
+    )
 
-    it('should build a path parameter in a simple/no-explode format', function () {
-      // Given
-      const spec = {
-        openapi: '3.0.0',
-        paths: {
-          '/path/{id}': {
-            get: {
-              operationId: 'myOperation',
-              parameters: [
-                {
-                  name: 'id',
-                  in: 'path',
-                  style: 'simple',
-                  explode: false
-                }
-              ]
+    test(
+      'should build a path parameter in a simple/no-explode format',
+      () => {
+        // Given
+        const spec = {
+          openapi: '3.0.0',
+          paths: {
+            '/path/{id}': {
+              get: {
+                operationId: 'myOperation',
+                parameters: [
+                  {
+                    name: 'id',
+                    in: 'path',
+                    style: 'simple',
+                    explode: false
+                  }
+                ]
+              }
             }
           }
         }
-      }
 
-      // when
-      const req = buildRequest({
-        spec,
-        operationId: 'myOperation',
-        parameters: {
-          id: {
-            role: 'admin',
-            firstName: 'Alex'
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'myOperation',
+          parameters: {
+            id: {
+              role: 'admin',
+              firstName: 'Alex'
+            }
           }
-        }
-      })
+        })
 
-      expect(req).toEqual({
-        method: 'GET',
-        url: '/path/role,admin,firstName,Alex',
-        credentials: 'same-origin',
-        headers: {},
-      })
-    })
+        expect(req).toEqual({
+          method: 'GET',
+          url: '/path/role,admin,firstName,Alex',
+          credentials: 'same-origin',
+          headers: {},
+        })
+      }
+    )
 
-    it('should build a path parameter in a simple/explode format', function () {
+    test('should build a path parameter in a simple/explode format', () => {
       // Given
       const spec = {
         openapi: '3.0.0',
@@ -661,48 +690,51 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', func
       })
     })
 
-    it('should build a path parameter in a label/no-explode format', function () {
-      // Given
-      const spec = {
-        openapi: '3.0.0',
-        paths: {
-          '/path/{id}': {
-            get: {
-              operationId: 'myOperation',
-              parameters: [
-                {
-                  name: 'id',
-                  in: 'path',
-                  style: 'label',
-                  explode: false
-                }
-              ]
+    test(
+      'should build a path parameter in a label/no-explode format',
+      () => {
+        // Given
+        const spec = {
+          openapi: '3.0.0',
+          paths: {
+            '/path/{id}': {
+              get: {
+                operationId: 'myOperation',
+                parameters: [
+                  {
+                    name: 'id',
+                    in: 'path',
+                    style: 'label',
+                    explode: false
+                  }
+                ]
+              }
             }
           }
         }
-      }
 
-      // when
-      const req = buildRequest({
-        spec,
-        operationId: 'myOperation',
-        parameters: {
-          id: {
-            role: 'admin',
-            firstName: 'Alex'
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'myOperation',
+          parameters: {
+            id: {
+              role: 'admin',
+              firstName: 'Alex'
+            }
           }
-        }
-      })
+        })
 
-      expect(req).toEqual({
-        method: 'GET',
-        url: '/path/.role.admin.firstName.Alex',
-        credentials: 'same-origin',
-        headers: {},
-      })
-    })
+        expect(req).toEqual({
+          method: 'GET',
+          url: '/path/.role.admin.firstName.Alex',
+          credentials: 'same-origin',
+          headers: {},
+        })
+      }
+    )
 
-    it('should build a path parameter in a label/explode format', function () {
+    test('should build a path parameter in a label/explode format', () => {
       // Given
       const spec = {
         openapi: '3.0.0',
@@ -743,48 +775,51 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', func
       })
     })
 
-    it('should build a path parameter in a matrix/no-explode format', function () {
-      // Given
-      const spec = {
-        openapi: '3.0.0',
-        paths: {
-          '/path/{id}': {
-            get: {
-              operationId: 'myOperation',
-              parameters: [
-                {
-                  name: 'id',
-                  in: 'path',
-                  style: 'matrix',
-                  explode: false
-                }
-              ]
+    test(
+      'should build a path parameter in a matrix/no-explode format',
+      () => {
+        // Given
+        const spec = {
+          openapi: '3.0.0',
+          paths: {
+            '/path/{id}': {
+              get: {
+                operationId: 'myOperation',
+                parameters: [
+                  {
+                    name: 'id',
+                    in: 'path',
+                    style: 'matrix',
+                    explode: false
+                  }
+                ]
+              }
             }
           }
         }
-      }
 
-      // when
-      const req = buildRequest({
-        spec,
-        operationId: 'myOperation',
-        parameters: {
-          id: {
-            role: 'admin',
-            firstName: 'Alex'
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'myOperation',
+          parameters: {
+            id: {
+              role: 'admin',
+              firstName: 'Alex'
+            }
           }
-        }
-      })
+        })
 
-      expect(req).toEqual({
-        method: 'GET',
-        url: '/path/;id=role,admin,firstName,Alex',
-        credentials: 'same-origin',
-        headers: {},
-      })
-    })
+        expect(req).toEqual({
+          method: 'GET',
+          url: '/path/;id=role,admin,firstName,Alex',
+          credentials: 'same-origin',
+          headers: {},
+        })
+      }
+    )
 
-    it('should build a path parameter in a matrix/explode format', function () {
+    test('should build a path parameter in a matrix/explode format', () => {
       // Given
       const spec = {
         openapi: '3.0.0',

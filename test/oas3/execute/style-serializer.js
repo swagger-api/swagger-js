@@ -1,12 +1,10 @@
-import expect from 'expect'
-
 import {
   encodeDisallowedCharacters
 } from '../../../src/execute/oas3/style-serializer'
 
-describe('OAS3 style serializer', function () {
-  describe('encodeDisallowedCharacters', function () {
-    it('should correctly encode ASCII characters', function () {
+describe('OAS3 style serializer', () => {
+  describe('encodeDisallowedCharacters', () => {
+    test('should correctly encode ASCII characters', () => {
       const tested = str => encodeDisallowedCharacters(str, {escape: true})
 
       expect(tested('!')).toEqual('%21')
@@ -30,7 +28,7 @@ describe('OAS3 style serializer', function () {
       expect(tested('%')).toEqual('%25')
     })
 
-    it('should correctly encode non-ASCII characters', function () {
+    test('should correctly encode non-ASCII characters', () => {
       const tested = str => encodeDisallowedCharacters(str, {escape: true})
       expect(tested('♥')).toEqual('%E2%99%A5')
       expect(tested('テスト')).toEqual('%E3%83%86%E3%82%B9%E3%83%88')
@@ -39,7 +37,7 @@ describe('OAS3 style serializer', function () {
       expect(tested('👩‍👩‍👧‍👧')).toEqual('%F0%9F%91%A9%E2%80%8D%F0%9F%91%A9%E2%80%8D%F0%9F%91%A7%E2%80%8D%F0%9F%91%A7')
     })
 
-    it('should skip encoding if `escape` is not set to true', function () {
+    test('should skip encoding if `escape` is not set to true', () => {
       const tested = str => encodeDisallowedCharacters(str)
 
       expect(tested('!')).toEqual('!')

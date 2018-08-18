@@ -1,10 +1,9 @@
-import expect from 'expect'
 import mapSpec, {plugins} from '../../src/specmap'
 
 if (process.env.NODE_LIVETESTS === 'true') {
-  describe('Live tests against the internet', function () {
-    it('should fetch ponelat/common/1', function () {
-      this.timeout(30 * 1000)
+  describe('Live tests against the internet', () => {
+    test('should fetch ponelat/common/1', () => {
+      jest.setTimeout(30 * 1000)
 
       return mapSpec({
         spec: {
@@ -41,6 +40,13 @@ if (process.env.NODE_LIVETESTS === 'true') {
           }
         })
       })
+    })
+  })
+}
+else {
+  describe('Live tests against the internet', () => {
+    test('(skipping test suite; `NODE_LIVETESTS` is not enabled', () => {
+      expect(true).toEqual(true)
     })
   })
 }

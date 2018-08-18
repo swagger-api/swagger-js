@@ -220,12 +220,17 @@ class SpecMap {
         }
       }
       catch (e) {
+        console.error(e) // eslint-disable-line no-console
         this.errors.push(e)
       }
     })
   }
 
   updateMutations(patch) {
+    if (typeof patch.value === 'object' && !Array.isArray(patch.value) && this.allowMetaPatches) {
+      patch.value = Object.assign({}, patch.value)
+    }
+
     const result = lib.applyPatch(this.state, patch, {allowMetaPatches: this.allowMetaPatches})
     if (result) {
       this.mutations.push(patch)
@@ -367,6 +372,7 @@ class SpecMap {
         }
       }
       catch (e) {
+        console.error(e) // eslint-disable-line no-console
         updatePatches([Object.assign(Object.create(e), {plugin})])
       }
       finally {

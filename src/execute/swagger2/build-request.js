@@ -11,12 +11,13 @@ export default function (options, req) {
     spec,
     operation,
     securities,
-    requestContentType
+    requestContentType,
+    attachContentTypeForEmptyPayload
   } = options
   // Add securities, which are applicable
   req = applySecurities({request: req, securities, operation, spec})
 
-  if (req.body || req.form) {
+  if (req.body || req.form || attachContentTypeForEmptyPayload) {
     // all following conditionals are Swagger2 only
     if (requestContentType) {
       req.headers['Content-Type'] = requestContentType
@@ -32,6 +33,13 @@ export default function (options, req) {
     }
     else if (operation.parameters && operation.parameters.filter(p => p.in === 'formData').length) {
       req.headers['Content-Type'] = 'application/x-www-form-urlencoded'
+    }
+  }
+  else if (requestContentType) {
+    const isBodyParamPresent = operation.parameters && operation.parameters.filter(p => p.in === 'body').length > 0
+    const isFormDataParamPresent = operation.parameters && operation.parameters.filter(p => p.in === 'formData').length > 0
+    if (isBodyParamPresent || isFormDataParamPresent) {
+      req.headers['Content-Type'] = requestContentType
     }
   }
 

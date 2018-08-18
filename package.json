@@ -1,6 +1,6 @@
 {
   "name": "swagger-client",
-  "version": "3.7.0",
+  "version": "3.8.13",
   "description": "SwaggerJS - a collection of interfaces for OAI specs",
   "main": "dist/index.js",
   "repository": "git@github.com:swagger-api/swagger-js.git",
@@ -19,14 +19,18 @@
     "build": "cross-env NODE_ENV=production webpack -p --config ./webpack.config.js",
     "build-dev": "cross-env NODE_ENV=development webpack --config ./webpack.config.js",
     "build-bundle": "cross-env NODE_ENV=production webpack -p --config ./webpack.bundle.config.js",
+    "build-dev-bundle": "cross-env NODE_ENV=development webpack --config ./webpack.bundle.config.js",
     "watch": "webpack --config webpack.config.js --watch --progress",
-    "test": "npm run just-test && npm run lint",
-    "just-test": "cross-env NODE_ENV=test node ./node_modules/mocha/bin/_mocha --recursive --compilers js:babel-core/register",
-    "test:watch": "npm run test -- -w",
+    "test": "run-s test:unit test:webpack lint size-check",
+    "test:unit": "jest --runInBand",
+    "test:unit:watch": "jest --watch",
+    "test:webpack": "mocha-webpack --interactive false --webpack-config ./webpack.test.config.js --recursive \"./test-webpack\"",
+    "size-check": "npm run build-bundle && bundlesize",
     "lint": "eslint src/ test/",
     "deps-license": "license-checker --production --csv --out $npm_package_config_deps_check_dir/licenses.csv && license-checker --development --csv --out $npm_package_config_deps_check_dir/licenses-dev.csv",
     "deps-size": "webpack -p --config webpack.check.js --json | webpack-bundle-size-analyzer >| $npm_package_config_deps_check_dir/sizes.txt",
-    "deps-check": "npm run deps-license && npm run deps-size"
+    "deps-check": "npm run deps-license && npm run deps-size",
+    "automated-release": "release-it --config ./release/.release-it.json"
   },
   "keywords": [
     "oai",
@@ -38,45 +42,78 @@
   ],
   "license": "Apache-2.0",
   "devDependencies": {
-    "babel-core": "^6.23.1",
+    "babel-core": "^6.26.3",
     "babel-eslint": "^6.0.2",
     "babel-loader": "^6.3.2",
+    "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-transform-async-to-generator": "^6.24.1",
+    "babel-plugin-transform-es2015-destructuring": "^6.23.0",
     "babel-plugin-transform-object-rest-spread": "6.16.0",
     "babel-plugin-transform-runtime": "6.15.0",
+    "babel-preset-env": "^1.6.1",
     "babel-preset-es2015": "^6.22.0",
     "babel-preset-stage-3": "^6.24.1",
-    "clone": "^2.1.0",
-    "cross-env": "^5.0.5",
+    "bundlesize": "^0.17.0",
+    "clone": "^2.1.2",
+    "conventional-changelog-angular": "^5.0.0",
+    "conventional-changelog-cli": "^2.0.1",
+    "cross-env": "^5.1.4",
     "deepmerge": "^1.3.0",
     "eslint": "^3.18.0",
     "eslint-config-airbnb-base": "^11.1.1",
-    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-import": "^2.11.0",
     "expect": "^1.20.2",
     "fetch-mock": "^5.12.0",
     "glob": "^7.1.1",
+    "jest": "^23.1.0",
     "json-loader": "^0.5.4",
     "license-checker": "^8.0.3",
     "mocha": "^2.4.5",
+    "mocha-webpack": "^1.1.0",
+    "npm-run-all": "^4.1.3",
+    "release-it": "^7.4.8",
     "traverse": "^0.6.6",
-    "webpack": "^2.2.1",
+    "webpack": "^3.11.0",
     "webpack-bundle-size-analyzer": "^2.2.0",
     "xmock": "^0.3.0"
   },
   "dependencies": {
-    "babel-runtime": "^6.23.0",
+    "@kyleshockey/js-yaml": "^1.0.1",
+    "@kyleshockey/object-assign-deep": "^0.4.0",
+    "babel-runtime": "^6.26.0",
     "btoa": "1.1.2",
+    "buffer": "^5.1.0",
     "cookie": "^0.3.1",
     "cross-fetch": "0.0.8",
-    "deep-extend": "^0.4.1",
+    "deep-extend": "^0.5.1",
     "encode-3986": "^1.0.0",
     "fast-json-patch": "^2.0.6",
     "isomorphic-form-data": "0.0.1",
-    "js-yaml": "^3.8.1",
     "lodash": "^4.16.2",
     "qs": "^6.3.0",
+    "querystring-browser": "^1.0.4",
     "url": "^0.11.0",
     "utf8-bytes": "0.0.1",
     "utfstring": "^2.0.0"
-  }
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/test/*.js?(x)",
+      "**/test/**/*.js?(x)"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/node_modules/",
+      "<rootDir>/test/data/",
+      "<rootDir>/test/specmap/data/",
+      "<rootDir>/test-webpack/"
+    ]
+  },
+  "bundlesize": [
+    {
+      "path": "./browser/swagger-client.js",
+      "maxSize": "400 KB",
+      "compression": "none"
+    }
+  ]
 }
