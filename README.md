@@ -1,11 +1,15 @@
-Swagger-JS
+Swagger Client
 ===========
 
 [![Build Status](https://travis-ci.org/swagger-api/swagger-js.svg?branch=master)](https://travis-ci.org/swagger-api/swagger-js)
 
+**Swagger Client** is a JavaScript module that allows you to fetch, resolve, and interact with Swagger/OpenAPI documents.
+
 ## New!
 
-**This is the new version of swagger-js, 3.x. Want to learn more? Check out our [FAQ](https://github.com/swagger-api/swagger-js/blob/master/docs/MIGRATION_2_X.md).**
+**This is the new version of swagger-js, 3.x.** The new version supports Swagger 2.0 as well as OpenAPI 3.
+
+ Want to learn more? Check out our [FAQ](https://github.com/swagger-api/swagger-js/blob/master/docs/MIGRATION_2_X.md).
 
 For the older version of swagger-js, refer to the [*2.x branch*](https://github.com/swagger-api/swagger-js/tree/2.x).
 
@@ -49,15 +53,15 @@ var swaggerClient = new SwaggerClient(specUrl);
 
 #### API
 
-This lib exposes these functionalities:
+This lib exposes these functionalities for Swagger 2.0 and OpenAPI 3:
 
 - Static functions for...
   -  HTTP Client
-  - Swagger Spec Resolver ( OAS 2.0 )
+  -  Document Resolver (monolithic & subtree)
   - TryItOut Executor
 - A constructor with the methods...
   - HTTP Client, for convenience
-  - Swagger Spec Resolver ( OAS 2.0 ), which will use `url` or `spec` from the instance
+  - Document Resolver, which will use `url` or `spec` from the instance
   - TryItOut Executor, bound to the `http` and `spec` instance properties
   - Tags Interface, also bound to the instance
 
