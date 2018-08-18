@@ -1,4 +1,4 @@
-// https://github.com/swagger-api/swagger-editor/issues/1661
+// https://github.com/swagger-api/swagger-ui/issues/4228
 
 import Swagger from '../../src'
 
@@ -60,7 +60,7 @@ const spec = {
 
 
 test(
-  'should resolve a deeply-nested $ref series correctly',
+  'should resolve "properties" property name in model definition correctly',
   async () => {
     const res = await Swagger.resolve({
       spec
@@ -78,10 +78,12 @@ test(
                 "properties": {
                   "height": {
                     "format": "double",
-                    "type": "number"}
+                    "type": "number"
+                  }
                 },
                 "required": ["height"],
-                "type": "object"}
+                "type": "object"
+              }
             },
             "required": ["properties"],
             "type": "object"
@@ -93,7 +95,8 @@ test(
                 "type": "number"
               }
             }, "required": ["height"],
-            "type": "object"}
+            "type": "object"
+          }
         },
         "paths": {
           "/product/{productId}": {
@@ -106,7 +109,8 @@ test(
                   "in": "path",
                   "name": "productId",
                   "required": true,
-                  "type": "number"}
+                  "type": "number"
+                }
               ],
               "produces": ["application/json"],
               "responses": {
