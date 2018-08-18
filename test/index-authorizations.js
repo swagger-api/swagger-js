@@ -202,10 +202,10 @@ describe('(instance) #execute', () => {
     }
 
     return Swagger({spec, authorizations}).then((client) => {
-      const http = createSpy()
+      const http = jest.fn()
       client.execute({http, operationId: 'getPets'})
-      expect(http.calls.length).toEqual(1)
-      expect(http.calls[0].arguments[0]).toEqual({
+      expect(http.mock.calls.length).toEqual(1)
+      expect(http.mock.calls[0][0]).toEqual({
         credentials: 'same-origin',
         headers: {
           authorization: 'Bearer three four'
