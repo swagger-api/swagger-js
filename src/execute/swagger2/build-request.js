@@ -73,7 +73,8 @@ export function applySecurities({request, securities = {}, operation = {}, spec}
       const value = auth.value || auth
       const schema = securityDef[key]
       const {type} = schema
-      const accessToken = token && token.access_token
+      const tokenName = schema['x-tokenName'] || 'access_token'
+      const oauthToken = token && token[tokenName]
       let tokenType = token && token.token_type
 
       if (auth) {
@@ -91,9 +92,9 @@ export function applySecurities({request, securities = {}, operation = {}, spec}
             result.headers.authorization = `Basic ${value.base64}`
           }
         }
-        else if (type === 'oauth2' && accessToken) {
+        else if (type === 'oauth2' && oauthToken) {
           tokenType = (!tokenType || tokenType.toLowerCase() === 'bearer') ? 'Bearer' : tokenType
-          result.headers.authorization = `${tokenType} ${accessToken}`
+          result.headers.authorization = `${tokenType} ${oauthToken}`
         }
       }
     }
