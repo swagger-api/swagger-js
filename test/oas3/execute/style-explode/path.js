@@ -35,7 +35,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
           spec,
           operationId: 'myOperation',
           parameters: {
-            id: "wow!"
+            id: 'wow!'
           }
         })
 
