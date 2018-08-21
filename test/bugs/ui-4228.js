@@ -94,7 +94,8 @@ test(
                 format: 'double',
                 type: 'number'
               }
-            }, required: ['height'],
+            },
+            required: ['height'],
             type: 'object'
           }
         },
