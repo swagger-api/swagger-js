@@ -8,6 +8,12 @@ const freelyNamedKeyParents = [
   'properties',
 ]
 
+// This will match if the grandparent's key exactly matches an item.
+// NOTE that this is for finding non-free paths!
+const nonFreelyNamedKeyGrandparents = [
+  'properties',
+]
+
 // This will match if the joined parent path exactly matches an item.
 //
 // This is mostly useful for filtering out root-level reusable item names,
@@ -36,10 +42,12 @@ const freelyNamedAncestors = [
 
 export function isFreelyNamed(parentPath) {
   const parentKey = parentPath[parentPath.length - 1]
+  const grandparentKey = parentPath[parentPath.length - 2]
   const parentStr = parentPath.join('/')
 
   return (
-    (freelyNamedKeyParents.indexOf(parentKey) > -1) ||
+    // eslint-disable-next-line max-len
+    (freelyNamedKeyParents.indexOf(parentKey) > -1 && nonFreelyNamedKeyGrandparents.indexOf(grandparentKey) === -1) ||
     (freelyNamedPaths.indexOf(parentStr) > -1) ||
     (freelyNamedAncestors.some(el => parentStr.indexOf(el) > -1))
   )
