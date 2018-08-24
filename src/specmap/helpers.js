@@ -36,12 +36,11 @@ const freelyNamedAncestors = [
 
 export function isFreelyNamed(parentPath) {
   const parentKey = parentPath[parentPath.length - 1]
-  const parentParentKey = parentPath[parentPath.length - 2]
+  const grandparentKey = parentPath[parentPath.length - 2]
   const parentStr = parentPath.join('/')
 
   return (
-    ((freelyNamedKeyParents.indexOf(parentKey) > -1) &&
-      !(freelyNamedKeyParents.indexOf(parentParentKey) > -1)) ||
+    (freelyNamedKeyParents.indexOf(parentKey) > -1 && freelyNamedKeyParents.indexOf(grandparentKey) === -1) ||
     (freelyNamedPaths.indexOf(parentStr) > -1) ||
     (freelyNamedAncestors.some(el => parentStr.indexOf(el) > -1))
   )
