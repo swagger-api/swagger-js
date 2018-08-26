@@ -174,6 +174,49 @@ describe('(instance) #execute', () => {
     })
   })
 
+  test('should use a custom oAuth token name if defined', () => {
+    const spec = {
+      securityDefinitions: {
+        idTokenAuth: {
+          type: 'oauth2',
+          'x-tokenName': 'id_token'
+        }
+      },
+      paths: {
+        '/pet': {
+          get: {
+            operationId: 'getPets',
+            security: [{idTokenAuth: []}]
+          }
+        }
+      }
+    }
+
+    const authorizations = {
+      idTokenAuth: {
+        token: {
+          access_token: 'one two',
+          id_token: 'three four'
+        }
+      }
+    }
+
+    return Swagger({spec, authorizations}).then((client) => {
+      const http = jest.fn()
+      client.execute({http, operationId: 'getPets'})
+      expect(http.mock.calls.length).toEqual(1)
+      expect(http.mock.calls[0][0]).toEqual({
+        credentials: 'same-origin',
+        headers: {
+          authorization: 'Bearer three four'
+        },
+        method: 'GET',
+        url: '/pet'
+      })
+    })
+  })
+
+
   test('should replace any occurrence of `bearer` with `Bearer`', () => {
     const spec = {
       securityDefinitions: {

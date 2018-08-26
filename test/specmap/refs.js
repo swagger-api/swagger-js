@@ -359,45 +359,116 @@ describe('refs', () => {
       })
     })
 
-    test('should ignore $refs in freely named Swagger positions', () => {
-      return mapSpec({
-        spec: {
-          a: 1234,
-          parameters: {
-            $ref: '#/a'
+    describe('freely named key positions', () => {
+      test('should ignore $refs in freely named Swagger positions', () => {
+        return mapSpec({
+          spec: {
+            a: 1234,
+            parameters: {
+              $ref: '#/a'
+            },
+            responses: {
+              $ref: '#/a'
+            },
+            definitions: {
+              $ref: '#/a'
+            },
+            securityDefinitions: {
+              $ref: '#/a'
+            },
+            properties: {
+              $ref: '#/a'
+            }
           },
-          responses: {
-            $ref: '#/a'
-          },
-          definitions: {
-            $ref: '#/a'
-          },
-          securityDefinitions: {
-            $ref: '#/a'
-          },
-          properties: {
-            $ref: '#/a'
+          plugins: [refs],
+        }).then((res) => {
+          expect(res.spec).toEqual({
+            a: 1234,
+            parameters: {
+              $ref: '#/a'
+            },
+            responses: {
+              $ref: '#/a'
+            },
+            definitions: {
+              $ref: '#/a'
+            },
+            securityDefinitions: {
+              $ref: '#/a'
+            },
+            properties: {
+              $ref: '#/a'
+            }
+          })
+          expect(res.errors).toEqual([])
+        })
+      })
+      test('should ignore root or nested $refs in OAS3 Example Objects', () => {
+        const input = {
+          spec: {
+            openapi: '3.0.0',
+            paths: {
+              '/services': {
+                get: {
+                  responses: {
+                    200: {
+                      description: 'An array of services',
+                      content: {
+                        'application/json': {
+                          schema: {
+                            type: 'array',
+                            items: {
+                              type: 'object',
+                              properties: {
+                                roles: {
+                                  type: 'array',
+                                  items: {
+                                    type: 'object',
+                                    properties: {
+                                      value: {
+                                        type: 'string'
+                                      },
+                                      $ref: {
+                                        type: 'string'
+                                      },
+                                      display: {
+                                        type: 'string'
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            example: [
+                              {
+                                id: '1244d92f-332e-4eca-90a9-3e7d4627cf7a',
+                                name: 'Licensing groups',
+                                roles: [
+                                  {
+                                    value: '00000000023459FE',
+                                    $ref: '/http://api.example.org/users/00000000023459FE',
+                                    display: 'Jessica Brandenburg'
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
-        },
-        plugins: [refs],
-      }).then((res) => {
-        expect(res.spec).toEqual({
-          a: 1234,
-          parameters: {
-            $ref: '#/a'
-          },
-          responses: {
-            $ref: '#/a'
-          },
-          definitions: {
-            $ref: '#/a'
-          },
-          securityDefinitions: {
-            $ref: '#/a'
-          },
-          properties: {
-            $ref: '#/a'
-          }
+        }
+
+        return mapSpec({
+          spec: input,
+          plugins: [refs],
+        }).then((res) => {
+          expect(res.spec).toEqual(input)
+          expect(res.errors).toEqual([])
         })
       })
     })

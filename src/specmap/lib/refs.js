@@ -1,5 +1,5 @@
 import {fetch} from 'cross-fetch'
-import jsYaml from 'js-yaml'
+import jsYaml from '@kyleshockey/js-yaml'
 import qs from 'querystring-browser'
 import url from 'url'
 import lib from '../lib'
@@ -120,8 +120,21 @@ const plugin = {
       return [patch, lib.context(parent, {baseDoc: basePath})]
     }
 
-    if (!patchValueAlreadyInPath(specmap.state, patch)) {
-      return patch
+    try {
+      if (!patchValueAlreadyInPath(specmap.state, patch)) {
+        return patch
+      }
+    }
+    catch (e) {
+      // if we're catching here, path traversal failed, so we should
+      // ditch without sending any patches back up.
+      //
+      // this is a narrow fix for the larger problem of patches being queued
+      // and then having the state they were generated against be modified
+      // before they are applied.
+      //
+      // TODO: re-engineer specmap patch/state management to avoid this
+      return null
     }
   }
 }

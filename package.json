@@ -1,6 +1,6 @@
 {
   "name": "swagger-client",
-  "version": "3.8.7",
+  "version": "3.8.14",
   "description": "SwaggerJS - a collection of interfaces for OAI specs",
   "main": "dist/index.js",
   "repository": "git@github.com:swagger-api/swagger-js.git",
@@ -21,14 +21,16 @@
     "build-bundle": "cross-env NODE_ENV=production webpack -p --config ./webpack.bundle.config.js",
     "build-dev-bundle": "cross-env NODE_ENV=development webpack --config ./webpack.bundle.config.js",
     "watch": "webpack --config webpack.config.js --watch --progress",
-    "test": "run-s test:unit test:webpack lint",
+    "test": "run-s test:unit test:webpack lint size-check",
     "test:unit": "jest --runInBand",
     "test:unit:watch": "jest --watch",
-    "test:webpack": "mocha-webpack --interactive false --webpack-config ./webpack.common.js --recursive \"./test-webpack\"",
+    "test:webpack": "mocha-webpack --interactive false --webpack-config ./webpack.test.config.js --recursive \"./test-webpack\"",
+    "size-check": "npm run build-bundle && bundlesize",
     "lint": "eslint src/ test/",
     "deps-license": "license-checker --production --csv --out $npm_package_config_deps_check_dir/licenses.csv && license-checker --development --csv --out $npm_package_config_deps_check_dir/licenses-dev.csv",
     "deps-size": "webpack -p --config webpack.check.js --json | webpack-bundle-size-analyzer >| $npm_package_config_deps_check_dir/sizes.txt",
-    "deps-check": "npm run deps-license && npm run deps-size"
+    "deps-check": "npm run deps-license && npm run deps-size",
+    "automated-release": "release-it --config ./release/.release-it.json"
   },
   "keywords": [
     "oai",
@@ -51,7 +53,10 @@
     "babel-preset-env": "^1.6.1",
     "babel-preset-es2015": "^6.22.0",
     "babel-preset-stage-3": "^6.24.1",
+    "bundlesize": "^0.17.0",
     "clone": "^2.1.2",
+    "conventional-changelog-angular": "^5.0.0",
+    "conventional-changelog-cli": "^2.0.1",
     "cross-env": "^5.1.4",
     "deepmerge": "^1.3.0",
     "eslint": "^3.18.0",
@@ -66,13 +71,16 @@
     "mocha": "^2.4.5",
     "mocha-webpack": "^1.1.0",
     "npm-run-all": "^4.1.3",
+    "release-it": "^7.4.8",
     "traverse": "^0.6.6",
     "webpack": "^3.11.0",
     "webpack-bundle-size-analyzer": "^2.2.0",
     "xmock": "^0.3.0"
   },
   "dependencies": {
+    "@kyleshockey/js-yaml": "^1.0.1",
     "@kyleshockey/object-assign-deep": "^0.4.0",
+    "babel-runtime": "^6.26.0",
     "btoa": "1.1.2",
     "buffer": "^5.1.0",
     "cookie": "^0.3.1",
@@ -80,9 +88,7 @@
     "deep-extend": "^0.5.1",
     "encode-3986": "^1.0.0",
     "fast-json-patch": "^2.0.6",
-    "is-generator": "^1.0.3",
     "isomorphic-form-data": "0.0.1",
-    "js-yaml": "^3.8.1",
     "lodash": "^4.16.2",
     "qs": "^6.3.0",
     "querystring-browser": "^1.0.4",
@@ -102,5 +108,12 @@
       "<rootDir>/test/specmap/data/",
       "<rootDir>/test-webpack/"
     ]
-  }
+  },
+  "bundlesize": [
+    {
+      "path": "./browser/swagger-client.js",
+      "maxSize": "400 KB",
+      "compression": "none"
+    }
+  ]
 }
