@@ -2,7 +2,7 @@ import xmock from 'xmock'
 import fetchMock from 'fetch-mock'
 import http, {
   serializeHeaders, mergeInQueryOrForm, encodeFormOrQuery, serializeRes,
-  shouldDownloadAsText
+  shouldDownloadAsText, isFile
 } from '../src/http'
 
 describe('http', () => {
@@ -423,6 +423,58 @@ describe('http', () => {
 
     test('should fail gracefully when called with no parameters', () => {
       expect(shouldDownloadAsText()).toEqual(false)
+    })
+  })
+
+  describe('isFile', () => {
+    // mock browser File class
+    global.File = class MockBrowserFile {}
+
+    const mockBrowserNavigator = {
+      product: 'Gecko'
+    }
+    const mockReactNativeNavigator = {
+      product: 'ReactNative'
+    }
+    const browserFile = new File()
+    const reactNativeFileObject = {
+      uri: '/mock/path'
+    }
+
+    test('should return true for browser File type', () => {
+      expect(isFile(browserFile)).toEqual(true)
+    })
+    test('should return true for browser File type and browser user agent', () => {
+      expect(isFile(browserFile, mockBrowserNavigator)).toEqual(true)
+    })
+    test('should return false for browser File type and React Native user agent', () => {
+      expect(isFile(browserFile, mockReactNativeNavigator)).toEqual(false)
+    })
+
+    test('should return false for React Native-like file object', () => {
+      expect(isFile(reactNativeFileObject)).toEqual(false)
+    })
+    test('should return false for React Native-like file object and browser user agent', () => {
+      expect(isFile(reactNativeFileObject, mockBrowserNavigator)).toEqual(false)
+    })
+    test('should return true for React Native-like file object and React Native user agent', () => {
+      expect(isFile(reactNativeFileObject, mockReactNativeNavigator)).toEqual(true)
+    })
+
+    test('should return false for non-File type and browser user agent', () => {
+      expect(isFile(undefined, mockBrowserNavigator)).toEqual(false)
+      expect(isFile('', mockBrowserNavigator)).toEqual(false)
+      expect(isFile(123, mockBrowserNavigator)).toEqual(false)
+      expect(isFile([], mockBrowserNavigator)).toEqual(false)
+      expect(isFile({}, mockBrowserNavigator)).toEqual(false)
+    })
+
+    test('should return false for non-object type and React Native user agent', () => {
+      expect(isFile(undefined, mockReactNativeNavigator)).toEqual(false)
+      expect(isFile('', mockReactNativeNavigator)).toEqual(false)
+      expect(isFile(123, mockReactNativeNavigator)).toEqual(false)
+      expect(isFile([], mockReactNativeNavigator)).toEqual(false)
+      expect(isFile({}, mockReactNativeNavigator)).toEqual(false)
     })
   })
 })
