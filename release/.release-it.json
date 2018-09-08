@@ -9,7 +9,7 @@
     "tagName": "v%s",
     "push": false,
     "beforeStartCommand": "run-s test:unit test:webpack lint",
-    "afterReleaseCommand": "export GIT_TAG=${version}"
+    "afterReleaseCommand": "echo ${version} > release/.version"
   },
   "github": {
     "release": true,
