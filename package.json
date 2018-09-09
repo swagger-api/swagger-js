@@ -97,9 +97,6 @@
     "utfstring": "^2.0.0"
   },
   "jest": {
-    "globals": {
-      "navigator": true
-    },
     "testEnvironment": "node",
     "testMatch": [
       "**/test/*.js?(x)",
