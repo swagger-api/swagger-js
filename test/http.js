@@ -436,7 +436,8 @@ describe('http', () => {
     const mockReactNativeNavigator = {
       product: 'ReactNative'
     }
-    const browserFile = new File()
+
+    const browserFile = new global.File()
     const reactNativeFileObject = {
       uri: '/mock/path'
     }

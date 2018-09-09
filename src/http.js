@@ -134,7 +134,11 @@ export function serializeHeaders(headers = {}) {
   return obj
 }
 
-export function isFile(obj, navigatorObj = navigator) {
+export function isFile(obj, navigatorObj) {
+  if (!navigatorObj && typeof navigator !== 'undefined') {
+    // eslint-disable-next-line no-undef
+    navigatorObj = navigator
+  }
   if (navigatorObj && navigatorObj.product === 'ReactNative') {
     if (obj && typeof obj === 'object' && typeof obj.uri === 'string') {
       return true
@@ -142,6 +146,7 @@ export function isFile(obj, navigatorObj = navigator) {
     return false
   }
   if (typeof File !== 'undefined') {
+    // eslint-disable-next-line no-undef
     return obj instanceof File
   }
   return obj !== null && typeof obj === 'object' && typeof obj.pipe === 'function'
