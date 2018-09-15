@@ -26,6 +26,7 @@ describe('OAS3 style serializer', () => {
       expect(tested('[')).toEqual('%5B')
       expect(tested(']')).toEqual('%5D')
       expect(tested('%')).toEqual('%25')
+      expect(tested('\n')).toEqual('%0A')
     })
 
     test('should correctly encode non-ASCII characters', () => {
@@ -58,6 +59,7 @@ describe('OAS3 style serializer', () => {
       expect(tested('@')).toEqual('@')
       expect(tested('[')).toEqual('[')
       expect(tested(']')).toEqual(']')
+      expect(tested('\n')).toEqual('\n')
 
       // Non-ASCII too!
       expect(tested('♥')).toEqual('♥')
