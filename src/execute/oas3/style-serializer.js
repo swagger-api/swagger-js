@@ -33,7 +33,7 @@ export function encodeDisallowedCharacters(str, {escape} = {}, parse) {
     }
 
     const encoded = (toUTF8Bytes(char) || [])
-      .map(byte => ("0"+byte.toString(16).toUpperCase()).slice(-2))
+      .map(byte => (`0${byte.toString(16).toUpperCase()).slice(-2)}`)
       .map(encodedByte => `%${encodedByte}`)
       .join('')
 
