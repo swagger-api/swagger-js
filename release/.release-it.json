@@ -13,7 +13,7 @@
   },
   "github": {
     "release": true,
-    "releaseName": "Swagger Client v%s Released!",
+    "releaseName": "Swagger Client %s Released!",
     "draft": true
   }
 }
