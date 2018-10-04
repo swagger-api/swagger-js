@@ -184,7 +184,16 @@ function absoluteify(path, basePath) {
  * @api public
  */
 function wrapError(e, extra) {
-  return new JSONRefError(`Could not resolve reference because of: ${e.message}`, extra, e)
+  let message
+
+  if (e && e.response && e.response.body) {
+    message = `${e.response.body.code} ${e.response.body.message}`
+  }
+  else {
+    message = e.message
+  }
+
+  return new JSONRefError(`Could not resolve reference: ${message}`, extra, e)
 }
 
 /**
