@@ -21,6 +21,7 @@ notes/
 .deps_check
 test/specmap/data/private
 browser
+umd
 
 # Automated releases
 release/.version

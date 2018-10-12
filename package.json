@@ -30,6 +30,7 @@
     "test:size": "npm run build:bundle && bundlesize",
     "test:unit": "jest --runInBand",
     "test:unit:watch": "jest --watch",
+    "prepublishOnly":"cross-env NODE_ENV=production webpack -p --config ./webpack.prepublish.config.js",
     "test:webpack": "mocha-webpack --interactive false --webpack-config ./webpack.test.config.js --recursive \"./test-webpack\""
   },
   "keywords": [
