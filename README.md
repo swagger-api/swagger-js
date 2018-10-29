@@ -44,7 +44,8 @@ const Swagger = require('swagger-client')
 ##### Import in browser
 
 ```html
-<script src='browser/swagger-client.js' type='text/javascript'></script>
+// 
+<script src='https://unpkg.com/swagger-client/browser/index.js' type='text/javascript'></script>
 <script>
 var swaggerClient = new SwaggerClient(specUrl);
 </script>
@@ -243,14 +244,12 @@ Swagger({...}).then((client) => {
 In Browser
 ----------
 
-Prepare swagger-client.js by `npm run build-bundle`
-Note, browser version exports class `SwaggerClient` to global namespace
 If you need activate CORS requests, just enable it by `withCredentials` property at `http`
 
 ```html
 <html>
 <head>
-<script src='browser/swagger-client.js' type='text/javascript'></script>
+<script src='https://unpkg.com/swagger-client@3.8.21/browser/index.js' type='text/javascript'></script> 
 <script>
 
 var specUrl = 'http://petstore.swagger.io/v2/swagger.json'; // data urls are OK too 'data:application/json;base64,abc...'
@@ -322,11 +321,11 @@ As such we've left the static version of `http` to not perform any serialization
 ```sh
 npm install
 npm run test         # run test
-npm run test:watch   # run test with change watching
-npm run lint         # run lint
+npm run test:unit:watch   # run test with change watching
+npm run test:lint         # run lint
 npm run build        # package to release
-npm run build-dev    # package with non-minified dist/index.js (for debugging)
-npm run build-bundle # build browser version available at .../browser
+npm run build:umd:watch    # package with non-minified dist/index.js (for debugging)
+npm run build:bundle # build browser version available at .../browser/index.js
 ```
 
 # Migration from 2.x
