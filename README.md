@@ -44,7 +44,7 @@ const Swagger = require('swagger-client')
 ##### Import in browser
 
 ```html
-<script src='https://unpkg.com/swagger-client/browser/index.js' type='text/javascript'></script>
+<script src='//unpkg.com/swagger-client' type='text/javascript'></script>
 <script>
 var swaggerClient = new SwaggerClient(specUrl);
 </script>
@@ -248,7 +248,7 @@ If you need activate CORS requests, just enable it by `withCredentials` property
 ```html
 <html>
 <head>
-<script src='https://unpkg.com/swagger-client@3.8.21/browser/index.js' type='text/javascript'></script> 
+<script src='//unpkg.com/swagger-client' type='text/javascript'></script> 
 <script>
 
 var specUrl = 'http://petstore.swagger.io/v2/swagger.json'; // data urls are OK too 'data:application/json;base64,abc...'
