@@ -23,9 +23,10 @@
   },
   "scripts": {
     "automated-release": "release-it --config ./release/.release-it.json",
-    "build": "cross-env NODE_ENV=production webpack -p --config ./webpack.config.js",
-    "build:dev": "cross-env NODE_ENV=development webpack --config ./webpack.config.js",
-    "build:dev:watch": "npm run build:dev -- --watch --progress",
+    "build": "run-s build:umd build:bundle",
+    "build:umd": "cross-env NODE_ENV=production webpack -p --config ./webpack.config.js",
+    "build:umd:dev": "cross-env NODE_ENV=development webpack --config ./webpack.config.js",
+    "build:umd:dev:watch": "npm run build:dev -- --watch --progress",
     "build:bundle": "cross-env NODE_ENV=production webpack -p --config ./webpack.bundle.config.js",
     "build:bundle:dev": "cross-env NODE_ENV=development webpack --config ./webpack.bundle.config.js",
     "deps": "run-s deps:license deps:size",
@@ -36,7 +37,6 @@
     "test:size": "npm run build:bundle && bundlesize",
     "test:unit": "jest --runInBand",
     "test:unit:watch": "jest --watch",
-    "prepublishOnly":"cross-env NODE_ENV=production webpack -p --config ./webpack.prepublish.config.js",
     "test:webpack": "mocha-webpack --interactive false --webpack-config ./webpack.test.config.js --recursive \"./test-webpack\""
   },
   "keywords": [
