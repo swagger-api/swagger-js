@@ -44,7 +44,6 @@ const Swagger = require('swagger-client')
 ##### Import in browser
 
 ```html
-// 
 <script src='https://unpkg.com/swagger-client/browser/index.js' type='text/javascript'></script>
 <script>
 var swaggerClient = new SwaggerClient(specUrl);
