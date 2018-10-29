@@ -3,6 +3,7 @@
   "version": "3.8.21",
   "description": "SwaggerJS - a collection of interfaces for OAI specs",
   "main": "dist/index.js",
+  "unpkg": "browser/index.js",
   "repository": "git@github.com:swagger-api/swagger-js.git",
   "contributors": [
     "(in alphabetical order)",
@@ -12,14 +13,22 @@
     "Kyle Shockey <kyleshockey1@gmail.com>",
     "Sahar Jafari <shr.jafari@gmail.com>"
   ],
+  "files": [
+    "LICENSE",
+    "README.md",
+    "package.json",
+    "dist/index.js",
+    "browser/index.js"
+  ],
   "config": {
     "deps_check_dir": ".deps_check"
   },
   "scripts": {
     "automated-release": "release-it --config ./release/.release-it.json",
-    "build": "cross-env NODE_ENV=production webpack -p --config ./webpack.config.js",
-    "build:dev": "cross-env NODE_ENV=development webpack --config ./webpack.config.js",
-    "build:dev:watch": "npm run build:dev -- --watch --progress",
+    "build": "run-s build:umd build:bundle",
+    "build:umd": "cross-env NODE_ENV=production webpack -p --config ./webpack.config.js",
+    "build:umd:dev": "cross-env NODE_ENV=development webpack --config ./webpack.config.js",
+    "build:umd:dev:watch": "npm run build:dev -- --watch --progress",
     "build:bundle": "cross-env NODE_ENV=production webpack -p --config ./webpack.bundle.config.js",
     "build:bundle:dev": "cross-env NODE_ENV=development webpack --config ./webpack.bundle.config.js",
     "deps": "run-s deps:license deps:size",
