@@ -21,4 +21,6 @@ notes/
 .deps_check
 test/specmap/data/private
 browser
-package-lock.json
+
+# Automated releases
+release/.version

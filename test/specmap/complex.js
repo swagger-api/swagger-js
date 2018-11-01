@@ -2,21 +2,20 @@ import fs from 'fs'
 import path from 'path'
 import clone from 'clone'
 import glob from 'glob'
-import expect from 'expect'
 import xmock from 'xmock'
 import mapSpec, {plugins} from '../../src/specmap'
 
 const refs = plugins.refs
 const allOf = plugins.allOf
 
-describe('complex', function () {
+describe('complex', () => {
   let xapp
 
-  before(() => {
+  beforeAll(() => {
     xapp = xmock()
   })
 
-  after(() => {
+  afterAll(() => {
     xapp.restore()
   })
 
@@ -24,8 +23,8 @@ describe('complex', function () {
     refs.clearCache()
   })
 
-  it('should resolve complex specs', function () {
-    this.timeout(100000)
+  test('should resolve complex specs', () => {
+    jest.setTimeout(100000)
     xapp.restore()
 
     const dir = path.join(__dirname, 'data', 'complex')

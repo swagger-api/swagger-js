@@ -1,17 +1,16 @@
-import expect, {createSpy, spyOn} from 'expect'
 import xmock from 'xmock'
 import path from 'path'
 import fs from 'fs'
 import btoa from 'btoa'
-import jsYaml from 'js-yaml'
+import jsYaml from '@kyleshockey/js-yaml'
 
 import {execute, buildRequest, baseUrl, applySecurities, self as stubs} from '../../../src/execute'
 
 
 // OAS 3.0 Authorization
 
-describe('Authorization - OpenAPI Specification 3.0', function () {
-  it('should ignore a header parameter named `Authorization`', () => {
+describe('Authorization - OpenAPI Specification 3.0', () => {
+  test('should ignore a header parameter named `Authorization`', () => {
     const spec = {
       openapi: '3.0.0',
       paths: {
@@ -49,7 +48,7 @@ describe('Authorization - OpenAPI Specification 3.0', function () {
 
   describe('HTTP', () => {
     describe('Basic', () => {
-      it('should encode credentials into the Authorization header', () => {
+      test('should encode credentials into the Authorization header', () => {
         const spec = {
           openapi: '3.0.0',
           components: {
@@ -96,51 +95,54 @@ describe('Authorization - OpenAPI Specification 3.0', function () {
           },
         })
       })
-      it('should not add credentials to operations without the security requirement', () => {
-        const spec = {
-          openapi: '3.0.0',
-          components: {
-            securitySchemes: {
-              myBasicAuth: {
-                type: 'http',
-                in: 'header',
-                scheme: 'basic'
+      test(
+        'should not add credentials to operations without the security requirement',
+        () => {
+          const spec = {
+            openapi: '3.0.0',
+            components: {
+              securitySchemes: {
+                myBasicAuth: {
+                  type: 'http',
+                  in: 'header',
+                  scheme: 'basic'
+                }
               }
-            }
-          },
-          paths: {
-            '/': {
-              get: {
-                operationId: 'myOperation'
+            },
+            paths: {
+              '/': {
+                get: {
+                  operationId: 'myOperation'
+                }
               }
             }
           }
+
+          // when
+          const req = buildRequest({
+            spec,
+            operationId: 'myOperation',
+            securities: {
+              authorized: {
+                myBasicAuth: {
+                  username: 'somebody',
+                  password: 'goodpass'
+                }
+              }
+            }
+          })
+
+          expect(req).toEqual({
+            method: 'GET',
+            url: '/',
+            credentials: 'same-origin',
+            headers: {},
+          })
         }
-
-        // when
-        const req = buildRequest({
-          spec,
-          operationId: 'myOperation',
-          securities: {
-            authorized: {
-              myBasicAuth: {
-                username: 'somebody',
-                password: 'goodpass'
-              }
-            }
-          }
-        })
-
-        expect(req).toEqual({
-          method: 'GET',
-          url: '/',
-          credentials: 'same-origin',
-          headers: {},
-        })
-      })
+      )
     })
     describe('Bearer', () => {
-      it('should add token to the Authorization header', () => {
+      test('should add token to the Authorization header', () => {
         const spec = {
           openapi: '3.0.0',
           components: {
@@ -186,52 +188,55 @@ describe('Authorization - OpenAPI Specification 3.0', function () {
           },
         })
       })
-      it('should not add credentials to operations without the security requirement', () => {
-        const spec = {
-          openapi: '3.0.0',
-          components: {
-            securitySchemes: {
-              myBearerAuth: {
-                type: 'http',
-                in: 'header',
-                scheme: 'bearer'
+      test(
+        'should not add credentials to operations without the security requirement',
+        () => {
+          const spec = {
+            openapi: '3.0.0',
+            components: {
+              securitySchemes: {
+                myBearerAuth: {
+                  type: 'http',
+                  in: 'header',
+                  scheme: 'bearer'
+                }
               }
-            }
-          },
-          paths: {
-            '/': {
-              get: {
-                operationId: 'myOperation',
+            },
+            paths: {
+              '/': {
+                get: {
+                  operationId: 'myOperation',
+                }
               }
             }
           }
+
+          // when
+          const req = buildRequest({
+            spec,
+            operationId: 'myOperation',
+            securities: {
+              authorized: {
+                myBearerAuth: {
+                  value: 'Asdf1234'
+                }
+              }
+            }
+          })
+
+          expect(req).toEqual({
+            method: 'GET',
+            url: '/',
+            credentials: 'same-origin',
+            headers: {},
+          })
         }
-
-        // when
-        const req = buildRequest({
-          spec,
-          operationId: 'myOperation',
-          securities: {
-            authorized: {
-              myBearerAuth: {
-                value: 'Asdf1234'
-              }
-            }
-          }
-        })
-
-        expect(req).toEqual({
-          method: 'GET',
-          url: '/',
-          credentials: 'same-origin',
-          headers: {},
-        })
-      })
+      )
     })
   })
 
   describe('apiKey', () => {
-    it('should add apiKey credentials as a header', () => {
+    test('should add apiKey credentials as a header', () => {
       const spec = {
         openapi: '3.0.0',
         components: {
@@ -277,7 +282,7 @@ describe('Authorization - OpenAPI Specification 3.0', function () {
         },
       })
     })
-    it('should add apiKey credentials as a query param', () => {
+    test('should add apiKey credentials as a query param', () => {
       const spec = {
         openapi: '3.0.0',
         components: {
@@ -321,7 +326,7 @@ describe('Authorization - OpenAPI Specification 3.0', function () {
         headers: {}
       })
     })
-    it('should add apiKey credentials as a cookie', () => {
+    test('should add apiKey credentials as a cookie', () => {
       const spec = {
         openapi: '3.0.0',
         components: {
@@ -367,67 +372,70 @@ describe('Authorization - OpenAPI Specification 3.0', function () {
         },
       })
     })
-    it('should not add credentials if operation does not call for security', () => {
-      const spec = {
-        openapi: '3.0.0',
-        components: {
-          securitySchemes: {
-            myApiKeyCookie: {
-              type: 'apiKey',
-              name: 'MyApiKeyCookie',
-              in: 'cookie'
-            },
-            MyApiKeyHeader: {
-              type: 'apiKey',
-              name: 'MyApiKeyHeader',
-              in: 'header'
-            },
-            myApiKeyQuery: {
-              type: 'apiKey',
-              name: 'myApiKeyQuery',
-              in: 'query'
+    test(
+      'should not add credentials if operation does not call for security',
+      () => {
+        const spec = {
+          openapi: '3.0.0',
+          components: {
+            securitySchemes: {
+              myApiKeyCookie: {
+                type: 'apiKey',
+                name: 'MyApiKeyCookie',
+                in: 'cookie'
+              },
+              MyApiKeyHeader: {
+                type: 'apiKey',
+                name: 'MyApiKeyHeader',
+                in: 'header'
+              },
+              myApiKeyQuery: {
+                type: 'apiKey',
+                name: 'myApiKeyQuery',
+                in: 'query'
+              }
             }
-          }
-        },
-        paths: {
-          '/': {
-            get: {
-              operationId: 'myOperation'
+          },
+          paths: {
+            '/': {
+              get: {
+                operationId: 'myOperation'
+              }
             }
           }
         }
+
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'myOperation',
+          securities: {
+            authorized: {
+              myApiKeyQuery: {
+                value: 'test'
+              },
+              MyApiKeyHeader: {
+                value: 'test'
+              },
+              myApiKeyCookie: {
+                value: 'test'
+              },
+            }
+          }
+        })
+
+        expect(req).toEqual({
+          method: 'GET',
+          url: '/',
+          credentials: 'same-origin',
+          headers: {},
+        })
       }
-
-      // when
-      const req = buildRequest({
-        spec,
-        operationId: 'myOperation',
-        securities: {
-          authorized: {
-            myApiKeyQuery: {
-              value: 'test'
-            },
-            MyApiKeyHeader: {
-              value: 'test'
-            },
-            myApiKeyCookie: {
-              value: 'test'
-            },
-          }
-        }
-      })
-
-      expect(req).toEqual({
-        method: 'GET',
-        url: '/',
-        credentials: 'same-origin',
-        headers: {},
-      })
-    })
+    )
   })
 
   describe('OAuth2', () => {
-    it('should build a request with an operation security', () => {
+    test('should build a request with an operation security', () => {
       const spec = {
         openapi: '3.0.0',
         components: {
@@ -481,7 +489,7 @@ describe('Authorization - OpenAPI Specification 3.0', function () {
         },
       })
     })
-    it('should build a request with a global security', () => {
+    test('should build a request with a global security', () => {
       const spec = {
         openapi: '3.0.0',
         security: [
@@ -535,54 +543,57 @@ describe('Authorization - OpenAPI Specification 3.0', function () {
         },
       })
     })
-    it('should build a request without authorization when spec does not require it', () => {
-      const spec = {
-        openapi: '3.0.0',
-        components: {
-          securitySchemes: {
-            myOAuth2Implicit: {
-              type: 'oauth2',
-              flows: {
-                implicit: {
-                  authorizationUrl: 'http://google.com/',
-                  scopes: {
-                    myScope: 'blah blah blah'
+    test(
+      'should build a request without authorization when spec does not require it',
+      () => {
+        const spec = {
+          openapi: '3.0.0',
+          components: {
+            securitySchemes: {
+              myOAuth2Implicit: {
+                type: 'oauth2',
+                flows: {
+                  implicit: {
+                    authorizationUrl: 'http://google.com/',
+                    scopes: {
+                      myScope: 'blah blah blah'
+                    }
                   }
                 }
               }
             }
-          }
-        },
-        paths: {
-          '/': {
-            get: {
-              operationId: 'myOperation'
-            }
-          }
-        }
-      }
-
-      // when
-      const req = buildRequest({
-        spec,
-        operationId: 'myOperation',
-        securities: {
-          authorized: {
-            myOAuth2Implicit: {
-              token: {
-                access_token: 'myTokenValue'
+          },
+          paths: {
+            '/': {
+              get: {
+                operationId: 'myOperation'
               }
             }
           }
         }
-      })
 
-      expect(req).toEqual({
-        method: 'GET',
-        url: '/',
-        credentials: 'same-origin',
-        headers: {},
-      })
-    })
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'myOperation',
+          securities: {
+            authorized: {
+              myOAuth2Implicit: {
+                token: {
+                  access_token: 'myTokenValue'
+                }
+              }
+            }
+          }
+        })
+
+        expect(req).toEqual({
+          method: 'GET',
+          url: '/',
+          credentials: 'same-origin',
+          headers: {},
+        })
+      }
+    )
   })
 })

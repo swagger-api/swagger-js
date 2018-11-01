@@ -1,6 +1,6 @@
 // Ensure you've built SwaggerJS
 const Swagger = require('../dist')
-const jsYaml = require('js-yaml')
+const jsYaml = require('@kyleshockey/js-yaml')
 
 /**
  * This is a file, for quickly testing out functionality of SwaggerJS

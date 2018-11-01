@@ -1,4 +1,6 @@
 import {fetch} from 'cross-fetch'
+import jsYaml from '@kyleshockey/js-yaml'
+import qs from 'querystring-browser'
 import url from 'url'
 import lib from '../lib'
 import createError from '../lib/create-error'
@@ -118,8 +120,21 @@ const plugin = {
       return [patch, lib.context(parent, {baseDoc: basePath})]
     }
 
-    if (!patchValueAlreadyInPath(specmap.state, patch)) {
-      return patch
+    try {
+      if (!patchValueAlreadyInPath(specmap.state, patch)) {
+        return patch
+      }
+    }
+    catch (e) {
+      // if we're catching here, path traversal failed, so we should
+      // ditch without sending any patches back up.
+      //
+      // this is a narrow fix for the larger problem of patches being queued
+      // and then having the state they were generated against be modified
+      // before they are applied.
+      //
+      // TODO: re-engineer specmap patch/state management to avoid this
+      return null
     }
   }
 }
@@ -169,7 +184,16 @@ function absoluteify(path, basePath) {
  * @api public
  */
 function wrapError(e, extra) {
-  return new JSONRefError(`Could not resolve reference because of: ${e.message}`, extra, e)
+  let message
+
+  if (e && e.response && e.response.body) {
+    message = `${e.response.body.code} ${e.response.body.message}`
+  }
+  else {
+    message = e.message
+  }
+
+  return new JSONRefError(`Could not resolve reference: ${message}`, extra, e)
 }
 
 /**
@@ -252,7 +276,9 @@ function getDoc(docPath) {
  * @api public
  */
 function fetchJSON(docPath) {
-  return fetch(docPath, {headers: {Accept: 'application/json, application/yaml'}, loadSpec: true}).then(res => res.json())
+  return fetch(docPath, {headers: {Accept: 'application/json, application/yaml'}, loadSpec: true})
+    .then(res => res.text())
+    .then(text => jsYaml.safeLoad(text))
 }
 
 /**
@@ -303,7 +329,7 @@ function unescapeJsonPointerToken(token) {
   if (typeof token !== 'string') {
     return token
   }
-  return token.replace(/~1/g, '/').replace(/~0/g, '~')
+  return qs.unescape(token.replace(/~1/g, '/').replace(/~0/g, '~'))
 }
 
 /**
@@ -311,7 +337,7 @@ function unescapeJsonPointerToken(token) {
  * @api public
  */
 function escapeJsonPointerToken(token) {
-  return token.replace(/~/g, '~0').replace(/\//g, '~1')
+  return qs.escape(token.replace(/~/g, '~0').replace(/\//g, '~1'))
 }
 
 function arrayToJsonPointer(arr) {

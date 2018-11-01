@@ -1,4 +1,3 @@
-import expect from 'expect'
 import http from 'http'
 import url from 'url'
 import path from 'path'
@@ -8,7 +7,7 @@ import Swagger from '../../src/index'
 
 describe('http - OpenAPI Specification 3.0', () => {
   let server
-  before(function () {
+  beforeAll(function () {
     server = http.createServer(function (req, res) {
       const accept = req.headers.accept
       let contentType
@@ -54,26 +53,26 @@ describe('http - OpenAPI Specification 3.0', () => {
     }).listen(8000)
   })
 
-  after(function () {
+  afterAll(function () {
     server.close()
   })
 
-  afterEach(function () {
+  afterEach(() => {
   })
 
-  it('should get the petstore api and build it', (done) => {
+  test('should get the petstore api and build it', (done) => {
     Swagger('http://localhost:8000/petstore-oas3.yaml')
       .then((client) => {
-        expect(client).toExist()
+        expect(client).toBeTruthy()
 
         // we have 3 tags
         expect(Object.keys(client.apis).length).toBe(3)
 
         // the pet tag exists
-        expect(client.apis.pet).toExist()
+        expect(client.apis.pet).toBeTruthy()
 
         // the get pet operation
-        expect(client.apis.pet.getPetById).toExist()
+        expect(client.apis.pet.getPetById).toBeTruthy()
 
         done()
       })

@@ -1,11 +1,15 @@
-Swagger-JS
+Swagger Client
 ===========
 
 [![Build Status](https://travis-ci.org/swagger-api/swagger-js.svg?branch=master)](https://travis-ci.org/swagger-api/swagger-js)
 
+**Swagger Client** is a JavaScript module that allows you to fetch, resolve, and interact with Swagger/OpenAPI documents.
+
 ## New!
 
-**This is the new version of swagger-js, 3.x. Want to learn more? Check out our [FAQ](https://github.com/swagger-api/swagger-js/blob/master/docs/MIGRATION_2_X.md).**
+**This is the new version of swagger-js, 3.x.** The new version supports Swagger 2.0 as well as OpenAPI 3.
+
+ Want to learn more? Check out our [FAQ](https://github.com/swagger-api/swagger-js/blob/master/docs/MIGRATION_2_X.md).
 
 For the older version of swagger-js, refer to the [*2.x branch*](https://github.com/swagger-api/swagger-js/tree/2.x).
 
@@ -17,11 +21,11 @@ We'll be consolidating that soon. Just giving you the heads up. You may see refe
 ### Usage
 
 ##### Prerequisites
-- Runtime: 
-  - browser: es5 compatible. IE11+ 
+- Runtime:
+  - browser: es5 compatible. IE11+
   - node v4.x.x
 - Building
-  - node v6.x.x 
+  - node v6.x.x
 
 ##### Download via npm
 
@@ -34,13 +38,13 @@ npm install swagger-client
 ```javascript
 import Swagger from 'swagger-client'
 // Or commonjs
-const Swagger = require('swagger-client') 
+const Swagger = require('swagger-client')
 ```
 
 ##### Import in browser
 
 ```html
-<script src='browser/swagger-client.js' type='text/javascript'></script>
+<script src='//unpkg.com/swagger-client' type='text/javascript'></script>
 <script>
 var swaggerClient = new SwaggerClient(specUrl);
 </script>
@@ -49,15 +53,15 @@ var swaggerClient = new SwaggerClient(specUrl);
 
 #### API
 
-This lib exposes these functionalities:
+This lib exposes these functionalities for Swagger 2.0 and OpenAPI 3:
 
 - Static functions for...
   -  HTTP Client
-  - Swagger Spec Resolver ( OAS 2.0 )
+  -  Document Resolver (monolithic & subtree)
   - TryItOut Executor
 - A constructor with the methods...
   - HTTP Client, for convenience
-  - Swagger Spec Resolver ( OAS 2.0 ), which will use `url` or `spec` from the instance
+  - Document Resolver, which will use `url` or `spec` from the instance
   - TryItOut Executor, bound to the `http` and `spec` instance properties
   - Tags Interface, also bound to the instance
 
@@ -134,7 +138,7 @@ const params = {
 
   parameters, // _named_ parameters in an object, eg: { petId: 'abc' }
   securities, // _named_ securities, will only be added to the request, if the spec indicates it. eg: {apiKey: 'abc'}
-  requestContentType, 
+  requestContentType,
   responseContentType,
 
   (http), // You can also override the HTTP client completely
@@ -166,11 +170,11 @@ Swagger('http://petstore.swagger.io/v2/swagger.json')
       client.originalSpec // In case you need it
       client.errors // Any resolver errors
 
-      // Tags interface 
+      // Tags interface
       client.apis.pet.addPet({id: 1, name: "bobby"}).then(...)
 
       // TryItOut Executor, with the `spec` already provided
-      client.execute({operationId: 'addPet', parameters: {id: 1, name: "bobby") }).then(...) 
+      client.execute({operationId: 'addPet', parameters: {id: 1, name: "bobby") }).then(...)
    })
 
 ```
@@ -190,13 +194,24 @@ Swagger({ url: "http://petstore.swagger.io/v2/swagger.json" }).then((client) => 
       .apis
       .pet // tag name == `pet`
       .addPet({ // operationId == `addPet`
-        id: 1, 
+        id: 1,
         body: {
           name: "bobby",
           status: "available"
         }
       })
-      .then(...) 
+      .then(...)
+})
+```
+
+If you'd like to use the operationId formatting logic from Swagger-Client 2.x, set the `v2OperationIdCompatibilityMode` option:
+
+```js
+Swagger({
+  url: "http://petstore.swagger.io/v2/swagger.json",
+  v2OperationIdCompatibilityMode: true
+}).then((client) => {
+  // do things as usual
 })
 ```
 
@@ -221,21 +236,19 @@ Swagger({...}).then((client) => {
           apiPrefix: "v2"
         }
       })
-      .then(...) 
+      .then(...)
 })
 ```
 
-In Browser 
+In Browser
 ----------
 
-Prepare swagger-client.js by `npm run build-bundle` 
-Note, browser version exports class `SwaggerClient` to global namespace
 If you need activate CORS requests, just enable it by `withCredentials` property at `http`
 
 ```html
 <html>
 <head>
-<script src='browser/swagger-client.js' type='text/javascript'></script>
+<script src='//unpkg.com/swagger-client' type='text/javascript'></script> 
 <script>
 
 var specUrl = 'http://petstore.swagger.io/v2/swagger.json'; // data urls are OK too 'data:application/json;base64,abc...'
@@ -248,7 +261,7 @@ var swaggerClient = new SwaggerClient(specUrl)
          console.error("failed to load the spec" + reason);
       })
       .then(function(addPetResult) {
-         console.log(addPetResult.obj); 
+         console.log(addPetResult.obj);
          // you may return more promises, if necessary
       }, function (reason) {
           console.error("failed on API call " + reason);
@@ -307,16 +320,16 @@ As such we've left the static version of `http` to not perform any serialization
 ```sh
 npm install
 npm run test         # run test
-npm run test:watch   # run test with change watching
-npm run lint         # run lint
+npm run test:unit:watch   # run test with change watching
+npm run test:lint         # run lint
 npm run build        # package to release
-npm run build-dev    # package with non-minified dist/index.js (for debugging)
-npm run build-bundle # build browser version available at .../browser
+npm run build:umd:watch    # package with non-minified dist/index.js (for debugging)
+npm run build:bundle # build browser version available at .../browser/index.js
 ```
 
 # Migration from 2.x
 
-There has been a complete overhaul of the codebase. 
+There has been a complete overhaul of the codebase.
 For notes about how to migrate coming from 2.x,
 please see [Migration from 2.x](docs/MIGRATION_2_X.md)
 
@@ -327,3 +340,4 @@ Please disclose any security-related issues or vulnerabilities by emailing [secu
 ### Graveyard
 
 For features known to be missing from 3.x please see [the Graveyard](docs/GRAVEYARD.md)
+
