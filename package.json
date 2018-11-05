@@ -120,7 +120,7 @@
   },
   "bundlesize": [
     {
-      "path": "./browser/swagger-client.js",
+      "path": "./browser/index.js",
       "maxSize": "400 KB",
       "compression": "none"
     }
