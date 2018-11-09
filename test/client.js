@@ -2,6 +2,7 @@ import http from 'http'
 import url from 'url'
 import path from 'path'
 import fs from 'fs'
+import {createSpy} from 'expect'
 
 import Swagger from '../src/index'
 
@@ -280,7 +281,38 @@ describe('http', () => {
         return req
       }
     }).catch((err) => {
-      expect(err.message).toEqual('request to https://localhost:8000/petstore.json failed, reason: socket hang up')
+      expect(err.message).toEqual(
+        'request to https://localhost:8000/petstore.json failed, reason: socket hang up'
+      )
+    })
+  })
+
+  test('should use requestInterceptor for resolving nested $refs', () => {
+    const requestInterceptor = createSpy().andCallThrough(req => req)
+    return Swagger({
+      url: 'http://localhost:8000/nested/one.yaml',
+      requestInterceptor
+    }).then((client) => {
+      expect(requestInterceptor.calls.length).toEqual(3)
+      expect(requestInterceptor.calls[0].arguments[0].url).toEqual('http://localhost:8000/nested/one.yaml')
+      expect(requestInterceptor.calls[1].arguments[0].url).toEqual('http://localhost:8000/nested/two.yaml')
+      expect(requestInterceptor.calls[2].arguments[0].url).toEqual('http://localhost:8000/nested/three.yaml')
+
+      expect(client.spec).toEqual({
+        data: {
+          value: 'one!',
+          nested: {
+            $$ref: './two.yaml',
+            data: {
+              value: 'two!',
+              nested: {
+                $$ref: './three.yaml',
+                value: 'three!'
+              }
+            }
+          }
+        }
+      })
     })
   })
 })

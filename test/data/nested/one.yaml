@@ -1,0 +1,4 @@
+data:
+  value: one!
+  nested:
+    $ref: "./two.yaml"
