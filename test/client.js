@@ -2,7 +2,7 @@ import http from 'http'
 import url from 'url'
 import path from 'path'
 import fs from 'fs'
-import { createSpy } from "expect"
+import {createSpy} from 'expect'
 
 import Swagger from '../src/index'
 

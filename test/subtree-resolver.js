@@ -1,5 +1,5 @@
 import xmock from 'xmock'
-import {createSpy} from "expect"
+import {createSpy} from 'expect'
 import resolve from '../src/subtree-resolver'
 
 describe('subtree $ref resolver', () => {
