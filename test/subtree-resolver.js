@@ -1,4 +1,5 @@
 import xmock from 'xmock'
+import {createSpy} from 'expect'
 import resolve from '../src/subtree-resolver'
 
 describe('subtree $ref resolver', () => {
@@ -715,6 +716,78 @@ describe('subtree $ref resolver', () => {
               result: 'it works!'
             },
             remoteOther: {
+              result: 'it works!'
+            }
+          }
+        }
+      }
+    })
+  })
+  test.only('should redirect and resolve nested remote document requests', async () => {
+    const input = {
+      foo: {
+        bar: {
+          $ref: './fake-remote.json'
+        }
+      }
+    }
+
+    const requestInterceptor = createSpy((req) => {
+      req.headers.authorization = 'wow'
+
+      if (req.url === 'http://example.com/fake-remote.json') {
+        req.url = 'http://example.com/remote.json'
+      }
+      if (req.url === 'http://example.com/fake-nested.json') {
+        req.url = 'http://example.com/nested.json'
+      }
+      return req
+    }).andCallThrough()
+
+    xmock()
+      .get('http://example.com/remote.json', function (req, res, next) {
+        if (req.header.authorization !== 'wow') {
+          res.status(403)
+        }
+        res.send({
+          baz: {
+            $ref: '#/remoteOther'
+          },
+          remoteOther: {
+            $ref: './fake-nested.json'
+          }
+        })
+      })
+      .get('http://example.com/nested.json', function (req, res, next) {
+        if (req.header.authorization !== 'wow') {
+          res.status(403)
+        }
+        res.send({
+          result: 'it works!'
+        })
+      })
+
+    const res = await resolve(input, [], {
+      baseDoc: 'http://example.com/main.json',
+      requestInterceptor
+    })
+
+    expect(requestInterceptor.calls.length).toEqual(2)
+    expect(requestInterceptor.calls[0].arguments[0].url).toEqual('http://example.com/remote.json')
+    expect(requestInterceptor.calls[1].arguments[0].url).toEqual('http://example.com/nested.json')
+
+    expect(res).toEqual({
+      errors: [],
+      spec: {
+        foo: {
+          bar: {
+            $$ref: './fake-remote.json',
+            baz: {
+              $$ref: './fake-nested.json',
+              result: 'it works!'
+            },
+            remoteOther: {
+              $$ref: './fake-nested.json',
               result: 'it works!'
             }
           }

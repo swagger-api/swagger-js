@@ -1,6 +1,6 @@
 {
   "name": "swagger-client",
-  "version": "3.8.21",
+  "version": "3.8.22",
   "description": "SwaggerJS - a collection of interfaces for OAI specs",
   "main": "dist/index.js",
   "unpkg": "browser/index.js",
@@ -120,7 +120,7 @@
   },
   "bundlesize": [
     {
-      "path": "./browser/swagger-client.js",
+      "path": "./browser/index.js",
       "maxSize": "400 KB",
       "compression": "none"
     }
