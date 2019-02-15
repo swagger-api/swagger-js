@@ -37,7 +37,8 @@ const freelyNamedPaths = [
 //
 // Warning! These are powerful. Beware of edge cases.
 const freelyNamedAncestors = [
-  'schema/example'
+  'schema/example',
+  'items/example',
 ]
 
 export function isFreelyNamed(parentPath) {

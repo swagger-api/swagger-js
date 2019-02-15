@@ -434,6 +434,9 @@ describe('refs', () => {
                                       display: {
                                         type: 'string'
                                       }
+                                    },
+                                    example: {
+                                      $ref: '#/whatever'
                                     }
                                   }
                                 }
