@@ -39,6 +39,45 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
       })
     })
 
+    it('should build a twice-included path parameter request', function () {
+      // Given
+      const spec = {
+        openapi: '3.0.0',
+        paths: {
+          '/one/{myParam}/{myParam}': {
+            get: {
+              operationId: 'getMe',
+              parameters: [
+                {
+                  name: 'myParam',
+                  in: 'path',
+                  required: true,
+                  schema: {
+                    type: 'string'
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+
+      // when
+      const req = buildRequest({
+        spec,
+        operationId: 'getMe',
+        parameters: {
+          myParam: "hi"
+        }
+      })
+
+      expect(req).toEqual({
+        method: 'GET',
+        url: '/one/hi/hi',
+        credentials: 'same-origin',
+        headers: {},
+      })
+    })
     it('should build a request for the given operationId, using the first server by default', function () {
       // Given
       const spec = {
