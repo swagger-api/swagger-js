@@ -67,7 +67,7 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
         spec,
         operationId: 'getMe',
         parameters: {
-          myParam: "hi"
+          myParam: 'hi'
         }
       })
 
