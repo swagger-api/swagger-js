@@ -17,7 +17,7 @@ function path({req, value, parameter}) {
     escape: true,
   })
 
-  req.url = req.url.replace(`{${name}}`, styledValue)
+  req.url = req.url.split(`{${name}}`).join(styledValue)
 }
 
 function query({req, value, parameter}) {

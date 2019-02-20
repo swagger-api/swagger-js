@@ -2046,6 +2046,35 @@ describe('execute', () => {
           headers: { }
         })
       })
+
+      test('should encode path parameter when it is included twice', () => {
+        const spec = {
+          host: 'swagger.io',
+          basePath: '/v1',
+          paths: {
+            '/{id}/{id}': {
+              delete: {
+                operationId: 'deleteMe',
+                parameters: [{
+                  in: 'path',
+                  name: 'id',
+                  type: 'string',
+                  required: true
+                }]
+              }
+            }
+          }
+        }
+
+        const req = buildRequest({spec, operationId: 'deleteMe', parameters: {id: 'foo/bar'}})
+
+        expect(req).toEqual({
+          url: 'http://swagger.io/v1/foo%2Fbar/foo%2Fbar',
+          method: 'DELETE',
+          credentials: 'same-origin',
+          headers: { }
+        })
+      })
     })
   })
 
