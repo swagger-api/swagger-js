@@ -51,7 +51,7 @@
   ],
   "license": "Apache-2.0",
   "devDependencies": {
-    "@kyleshockey/mocha-webpack": "^1.1.0",
+    "@kyleshockey/mocha-webpack": "^1.1.1",
     "babel-core": "^6.26.3",
     "babel-eslint": "^6.0.2",
     "babel-loader": "^6.3.2",
