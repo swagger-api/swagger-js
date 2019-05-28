@@ -1,0 +1,38 @@
+meta:
+  title: SWOS-109
+cases:
+- documents:
+    a.yaml:
+      openapi: 3.0.2
+      components:
+        schemas:
+          MessageWidgetData:
+            allOf:
+              - $ref: "./b.yaml#/components/schemas/Action"
+    b.yaml:
+      openapi: 3.0.2
+      components:
+        schemas:
+          Action:
+            properties:
+              confirmation:
+                $ref: '#/components/schemas/ActionConfirmation'
+          ActionConfirmation:
+            properties:
+              dismiss_action:
+                $ref: '#/components/schemas/Action'
+  action:
+    type: resolve
+    config:
+      url: "http://mock.swagger.dev/a.yaml"
+  assertions:
+  - equal:
+      openapi: 3.0.2
+      components:
+        schemas:
+          MessageWidgetData:
+            properties:
+              confirmation:
+                properties:
+                  dismiss_action:
+                    $ref: '#/components/schemas/Action'
