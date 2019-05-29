@@ -28,17 +28,17 @@ testDocuments.forEach((doc) => {
 
   const rootDescribe = meta.skip ? describe.skip : describe
 
-  rootDescribe(`declarative resolver case suite - ${meta.title || path}`, function () {
+  rootDescribe(`declarative resolver test suite - ${meta.title || path}`, function () {
     if (cases && cases.length) {
       return cases.forEach((currentCase) => {
         beforeEach(() => {
           nock.disableNetConnect()
 
-          const nockScope = nock(`http://mock.swagger.dev`)
+          const nockScope = nock(`http://mock.swagger.test`)
 
-          if (currentCase.documents) {
-            Object.keys(currentCase.documents).forEach((key) => {
-              const docContent = currentCase.documents[key]
+          if (currentCase.remoteDocuments) {
+            Object.keys(currentCase.remoteDocuments).forEach((key) => {
+              const docContent = currentCase.remoteDocuments[key]
               nockScope
                 .get(`/${key}`)
                 .reply(200, docContent, {
@@ -69,9 +69,11 @@ testDocuments.forEach((doc) => {
 
 async function getValueForAction(action) {
   switch (action.type) {
-    case 'resolve':
+    case 'instantiateResolve':
       const client = await Swagger(action.config)
       return client.spec
+    case 'resolveSubtree':
+      return Swagger.resolveSubtree(action.config.obj, action.config.path, action.config.opts)
     default:
       throw new Error('case did not specify a valid action type')
   }
@@ -79,7 +81,12 @@ async function getValueForAction(action) {
 
 async function assertCaseExpectations(currentCase, resultGetter) {
   currentCase.assertions.forEach((assertion) => {
-    const itFn = assertion.skip ? it.skip : it
+    let itFn
+
+    if (assertion.skip) itFn = it.skip
+    else if (assertion.only) itFn = it.only
+    else itFn = it
+
     // if (assertion.output.match !== undefined) {
     //   itFn('should match expected error output', function () {
     //     expect(result).toMatch(assertion.output.match)

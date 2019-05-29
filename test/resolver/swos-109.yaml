@@ -1,7 +1,45 @@
 meta:
   title: SWOS-109
 cases:
-- documents:
+- name: cross-document $ref in a remote document
+  remoteDocuments:
+    a.yaml:
+      openapi: 3.0.2
+      components:
+        schemas:
+          MessageWidgetData:
+            $ref: "./b.yaml#/components/schemas/Action"
+    b.yaml:
+      openapi: 3.0.2
+      components:
+        schemas:
+          Action:
+            properties:
+              confirmation:
+                $ref: '#/components/schemas/ActionConfirmation'
+          ActionConfirmation:
+            properties:
+              dismiss_action:
+                $ref: '#/components/schemas/Action'
+  action:
+    type: instantiateResolve
+    config:
+      url: "http://mock.swagger.test/a.yaml"
+  assertions:
+  - equal:
+      openapi: 3.0.2
+      components:
+        schemas:
+          MessageWidgetData:
+            $$ref: "./b.yaml#/components/schemas/Action"
+            properties:
+              confirmation:
+                $$ref: "#/components/schemas/ActionConfirmation"
+                properties:
+                  dismiss_action:
+                    $ref: '#/components/schemas/Action'
+- name: cross-document $ref within allOf in a remote document
+  remoteDocuments:
     a.yaml:
       openapi: 3.0.2
       components:
@@ -22,17 +60,62 @@ cases:
               dismiss_action:
                 $ref: '#/components/schemas/Action'
   action:
-    type: resolve
+    type: instantiateResolve
     config:
-      url: "http://mock.swagger.dev/a.yaml"
+      url: "http://mock.swagger.test/a.yaml"
   assertions:
   - equal:
       openapi: 3.0.2
       components:
         schemas:
           MessageWidgetData:
+            $$ref: "./b.yaml#/components/schemas/Action"
             properties:
               confirmation:
+                $$ref: "#/components/schemas/ActionConfirmation"
                 properties:
                   dismiss_action:
                     $ref: '#/components/schemas/Action'
+- name: cross-document $ref to a remote document within allOf, via subtree resolver
+  remoteDocuments:
+    b.yaml:
+      openapi: 3.0.2
+      components:
+        schemas:
+          Action:
+            properties:
+              confirmation:
+                $ref: '#/components/schemas/ActionConfirmation'
+          ActionConfirmation:
+            properties:
+              dismiss_action:
+                $ref: '#/components/schemas/Action'
+  action:
+    type: resolveSubtree
+    config:
+      obj:
+        openapi: 3.0.2
+        components:
+          schemas:
+            MessageWidgetData:
+              allOf:
+                - $ref: "./b.yaml#/components/schemas/Action"
+      path: []
+      opts:
+        returnEntireTree: true
+        baseDoc: "http://mock.swagger.test/a.yaml"
+  assertions:
+  - equal:
+      errors: []
+      spec:
+        openapi: 3.0.2
+        components:
+          schemas:
+            MessageWidgetData:
+              $$ref: "./b.yaml#/components/schemas/Action"
+              properties:
+                confirmation:
+                  $$ref: "#/components/schemas/ActionConfirmation"
+                  properties:
+                    dismiss_action:
+                      $ref: '#/components/schemas/Action'
