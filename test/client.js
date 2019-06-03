@@ -2,7 +2,6 @@ import http from 'http'
 import url from 'url'
 import path from 'path'
 import fs from 'fs'
-import {createSpy} from 'expect'
 
 import Swagger from '../src/index'
 
@@ -288,15 +287,15 @@ describe('http', () => {
   })
 
   test('should use requestInterceptor for resolving nested $refs', () => {
-    const requestInterceptor = createSpy().andCallThrough(req => req)
+    const requestInterceptor = jest.fn()
     return Swagger({
       url: 'http://localhost:8000/nested/one.yaml',
       requestInterceptor
     }).then((client) => {
-      expect(requestInterceptor.calls.length).toEqual(3)
-      expect(requestInterceptor.calls[0].arguments[0].url).toEqual('http://localhost:8000/nested/one.yaml')
-      expect(requestInterceptor.calls[1].arguments[0].url).toEqual('http://localhost:8000/nested/two.yaml')
-      expect(requestInterceptor.calls[2].arguments[0].url).toEqual('http://localhost:8000/nested/three.yaml')
+      expect(requestInterceptor.mock.calls.length).toEqual(3)
+      expect(requestInterceptor.mock.calls[0][0].url).toEqual('http://localhost:8000/nested/one.yaml')
+      expect(requestInterceptor.mock.calls[1][0].url).toEqual('http://localhost:8000/nested/two.yaml')
+      expect(requestInterceptor.mock.calls[2][0].url).toEqual('http://localhost:8000/nested/three.yaml')
 
       expect(client.spec).toEqual({
         data: {
@@ -313,6 +312,6 @@ describe('http', () => {
           }
         }
       })
-    })
+    });
   })
 })

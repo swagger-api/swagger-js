@@ -1,5 +1,4 @@
 import xmock from 'xmock'
-import {createSpy} from 'expect'
 import resolve from '../src/subtree-resolver'
 
 describe('subtree $ref resolver', () => {
@@ -732,7 +731,7 @@ describe('subtree $ref resolver', () => {
       }
     }
 
-    const requestInterceptor = createSpy((req) => {
+    const requestInterceptor = jest.fn((req) => {
       req.headers.authorization = 'wow'
 
       if (req.url === 'http://example.com/fake-remote.json') {
@@ -742,7 +741,7 @@ describe('subtree $ref resolver', () => {
         req.url = 'http://example.com/nested.json'
       }
       return req
-    }).andCallThrough()
+    })
 
     xmock()
       .get('http://example.com/remote.json', function (req, res, next) {
@@ -772,9 +771,9 @@ describe('subtree $ref resolver', () => {
       requestInterceptor
     })
 
-    expect(requestInterceptor.calls.length).toEqual(2)
-    expect(requestInterceptor.calls[0].arguments[0].url).toEqual('http://example.com/remote.json')
-    expect(requestInterceptor.calls[1].arguments[0].url).toEqual('http://example.com/nested.json')
+    expect(requestInterceptor.mock.calls.length).toEqual(2)
+    expect(requestInterceptor.mock.calls[0][0].url).toEqual('http://example.com/remote.json')
+    expect(requestInterceptor.mock.calls[1][0].url).toEqual('http://example.com/nested.json')
 
     expect(res).toEqual({
       errors: [],

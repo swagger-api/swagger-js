@@ -4,7 +4,6 @@
 import YAML from '@kyleshockey/js-yaml'
 import fs from 'fs'
 import Path from 'path'
-import expect from 'expect'
 import nock from "nock"
 
 import Swagger from '../../src/index'
