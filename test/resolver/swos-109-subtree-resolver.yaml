@@ -121,9 +121,10 @@ cases:
         components:
           schemas:
             MessageWidgetData:
-              properties:
+              properties: &circularRefAnchor
                 confirmation:
                   $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/ActionConfirmation"
                   properties:
                     dismiss_action:
-                      $ref: 'http://mock.swagger.test/b.yaml#/components/schemas/Action'
+                      $$ref: 'http://mock.swagger.test/b.yaml#/components/schemas/Action'
+                      properties: *circularRefAnchor
