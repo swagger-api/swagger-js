@@ -114,3 +114,70 @@ cases:
                   dismiss_action:
                     $$ref: 'http://mock.swagger.test/b.yaml#/components/schemas/Action'
                     properties: *circularRefAnchor
+- name: cross-document $refs within multi-member allOf
+  remoteDocuments:
+    a.yaml:
+      openapi: 3.0.2
+      components:
+        schemas:
+          MyThing:
+            allOf:
+              - $ref: "#/components/schemas/AThing"
+              - $ref: "./b.yaml#/components/schemas/BThing"
+              - $ref: "./c.yaml#/components/schemas/CThing"
+          AThing:
+            type: object
+            properties:
+              aContent:
+                $ref: "#/components/schemas/APrivateThing"
+          APrivateThing:
+            type: string
+    b.yaml:
+      openapi: 3.0.2
+      components:
+        schemas:
+          BThing:
+            properties:
+              bContent:
+                $ref: '#/components/schemas/BPrivateThing'
+          BPrivateThing:
+            type: string
+    c.yaml:
+      openapi: 3.0.2
+      components:
+        schemas:
+          CThing:
+            properties:
+              cContent:
+                $ref: '#/components/schemas/CPrivateThing'
+          CPrivateThing:
+            type: string
+  action:
+    type: instantiateResolve
+    config:
+      url: "http://mock.swagger.test/a.yaml"
+  assertions:
+  - equal:
+      openapi: 3.0.2
+      components:
+        schemas:
+          AThing:
+            type: object
+            properties:
+              aContent:
+                $$ref: "http://mock.swagger.test/a.yaml#/components/schemas/APrivateThing"
+                type: string
+          APrivateThing:
+            type: string
+          MyThing:
+            type: object
+            properties:
+              aContent: 
+                $$ref: "http://mock.swagger.test/a.yaml#/components/schemas/APrivateThing"
+                type: string
+              bContent: 
+                $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/BPrivateThing"
+                type: string
+              cContent: 
+                $$ref: "http://mock.swagger.test/c.yaml#/components/schemas/CPrivateThing"
+                type: string
