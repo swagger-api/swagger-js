@@ -57,13 +57,13 @@ export function generateAbsoluteRefPatches(obj, fullPath, specmap) {
 
   traverse(obj).forEach(function () {
     if (this.key === "$ref" || this.key === "$$ref") {
-      const [urlPart, fragmentPart] = this.node.split("#")
+      const [urlPart = '', fragmentPart = ''] = this.node.split("#")
       const nodePath = fullPath.concat(this.path)
       const collapsedNodePath = fullPath
         // slice off `["allOf", n]`, since the allOf will be collapsed when this patch is applied
         .slice(0, -2)
         .concat(this.path)
-      const { baseDoc } = specmap.getContext(nodePath)
+      const { baseDoc = '' } = specmap.getContext(nodePath)
       const newRefUrlPart = URL.resolve(urlPart, baseDoc)
 
       patches.push(specmap.replace(collapsedNodePath, `${newRefUrlPart}#${fragmentPart}`))
