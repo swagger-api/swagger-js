@@ -31,37 +31,29 @@ testDocuments.forEach((doc) => {
   rootDescribe(`declarative resolver test suite - ${meta.title || path}`, function () {
     if (cases && cases.length) {
       return cases.forEach((currentCase) => {
-        beforeEach(() => {
-          nock.disableNetConnect()
+        describe(currentCase.name || '', function () {
+          beforeAll(() => {
+            nock.cleanAll()
+            Swagger.clearCache()
+            nock.disableNetConnect()
 
-          const nockScope = nock(`http://mock.swagger.test`)
+            const nockScope = nock(`http://mock.swagger.test`)
 
-          if (currentCase.remoteDocuments) {
-            Object.keys(currentCase.remoteDocuments).forEach((key) => {
-              const docContent = currentCase.remoteDocuments[key]
-              nockScope
-                .get(`/${key}`)
-                .reply(200, docContent, {
-                  'Content-Type': 'application/yaml'
-                })
-            })
-          }
-        })
-
-        if (currentCase.name) {
-          describe(currentCase.name || '', function () {
-            return assertCaseExpectations(currentCase, async () => getValueForAction(currentCase.action))
+            if (currentCase.remoteDocuments) {
+              Object.keys(currentCase.remoteDocuments).forEach((key) => {
+                const docContent = currentCase.remoteDocuments[key]
+                nockScope
+                  .get(`/${key}`)
+                  .reply(200, docContent, {
+                    'Content-Type': 'application/yaml'
+                  })
+              })
+            }
           })
-        }
-        else {
-          // else, just do the assertions under the root describe block
-          return assertCaseExpectations(currentCase, async () => getValueForAction(currentCase.action))
-        }
 
-        afterEach(() => {
-          nock.cleanAll()
-          nock.enableNetConnect()
+          return assertCaseExpectations(currentCase, async () => getValueForAction(currentCase.action))
         })
+
       })
     }
   })
