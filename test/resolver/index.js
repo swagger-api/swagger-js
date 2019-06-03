@@ -33,8 +33,13 @@ testDocuments.forEach((doc) => {
       return cases.forEach((currentCase) => {
         describe(currentCase.name || '', function () {
           beforeAll(() => {
-            nock.cleanAll()
             Swagger.clearCache()
+            
+            if (!nock.isActive()) {
+              nock.activate()
+            }
+
+            nock.cleanAll()
             nock.disableNetConnect()
 
             const nockScope = nock(`http://mock.swagger.test`)
@@ -50,6 +55,8 @@ testDocuments.forEach((doc) => {
               })
             }
           })
+
+          afterAll(nock.restore)
 
           return assertCaseExpectations(currentCase, async () => getValueForAction(currentCase.action))
         })
