@@ -4,7 +4,7 @@ import qs from 'querystring-browser'
 import url from 'url'
 import lib from '../lib'
 import createError from '../lib/create-error'
-import {isFreelyNamed} from '../helpers'
+import {isFreelyNamed, absolutifyPointer} from '../helpers'
 
 const ABSOLUTE_URL_REGEXP = new RegExp('^([a-z]+://|//)', 'i')
 
@@ -115,7 +115,9 @@ const plugin = {
       return [lib.remove(fullPath), promOrVal]
     }
 
-    const patch = lib.replace(parent, promOrVal, {$$ref: ref})
+    const absolutifiedRef = absolutifyPointer(ref, basePath)
+
+    const patch = lib.replace(parent, promOrVal, { $$ref: absolutifiedRef})
     if (basePath && basePath !== baseDoc) {
       return [patch, lib.context(parent, {baseDoc: basePath})]
     }

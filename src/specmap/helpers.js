@@ -73,3 +73,10 @@ export function generateAbsoluteRefPatches(obj, fullPath, specmap) {
 
   return patches
 }
+
+export function absolutifyPointer(pointer, baseUrl) {
+  const [urlPart, fragmentPart] = pointer.split("#")
+  const newRefUrlPart = URL.resolve(urlPart || '', baseUrl || '')
+
+  return fragmentPart ? `${newRefUrlPart}#${fragmentPart}` : newRefUrlPart
+}
