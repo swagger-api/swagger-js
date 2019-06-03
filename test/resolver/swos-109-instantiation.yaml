@@ -114,7 +114,7 @@ cases:
                   dismiss_action:
                     $$ref: 'http://mock.swagger.test/b.yaml#/components/schemas/Action'
                     properties: *circularRefAnchor
-- name: cross-document $refs within multi-member allOf
+- name: cross-document $refs within nested members of multi-member allOf
   remoteDocuments:
     a.yaml:
       openapi: 3.0.2
@@ -124,7 +124,9 @@ cases:
             allOf:
               - $ref: "#/components/schemas/AThing"
               - $ref: "./b.yaml#/components/schemas/BThing"
-              - $ref: "./c.yaml#/components/schemas/CThing"
+              - properties:
+                  cContent:
+                    $ref: "./c.yaml#/components/schemas/CThing"
           AThing:
             type: object
             properties:
@@ -147,9 +149,7 @@ cases:
       components:
         schemas:
           CThing:
-            properties:
-              cContent:
-                $ref: '#/components/schemas/CPrivateThing'
+            $ref: '#/components/schemas/CPrivateThing'
           CPrivateThing:
             type: string
   action:
