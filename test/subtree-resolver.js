@@ -780,13 +780,13 @@ describe('subtree $ref resolver', () => {
       spec: {
         foo: {
           bar: {
-            $$ref: './fake-remote.json',
+            $$ref: 'http://example.com/fake-remote.json',
             baz: {
-              $$ref: './fake-nested.json',
+              $$ref: 'http://example.com/fake-nested.json',
               result: 'it works!'
             },
             remoteOther: {
-              $$ref: './fake-nested.json',
+              $$ref: 'http://example.com/fake-nested.json',
               result: 'it works!'
             }
           }

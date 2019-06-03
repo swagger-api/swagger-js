@@ -591,7 +591,7 @@ describe('specmap', () => {
             }).then(() => xapp.restore())
           })
 
-          test('should retain local $refs inside external $refs', () => {
+          test('should rewrite $$ref artifacts inside external $refs', () => {
             plugins.refs.clearCache()
             const xapp = xmock()
 
@@ -610,7 +610,7 @@ describe('specmap', () => {
               allowMetaPatches: true,
             }).then((res) => {
               expect(res.spec.$$ref).toEqual('http://example.com/common.json#/works')
-              expect(res.spec.one.$$ref).toEqual('#/works/two')
+              expect(res.spec.one.$$ref).toEqual('http://example.com/common.json#/works/two')
             }).then(() => xapp.restore())
           })
         })

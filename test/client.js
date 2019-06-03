@@ -301,11 +301,11 @@ describe('http', () => {
         data: {
           value: 'one!',
           nested: {
-            $$ref: './two.yaml',
+            $$ref: 'http://localhost:8000/nested/two.yaml',
             data: {
               value: 'two!',
               nested: {
-                $$ref: './three.yaml',
+                $$ref: 'http://localhost:8000/nested/three.yaml',
                 value: 'three!'
               }
             }
