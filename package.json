@@ -1,6 +1,6 @@
 {
   "name": "swagger-client",
-  "version": "3.8.24",
+  "version": "3.8.25",
   "description": "SwaggerJS - a collection of interfaces for OAI specs",
   "main": "dist/index.js",
   "unpkg": "browser/index.js",
@@ -51,6 +51,7 @@
   ],
   "license": "Apache-2.0",
   "devDependencies": {
+    "@kyleshockey/mocha-webpack": "^1.1.1",
     "babel-core": "^6.26.3",
     "babel-eslint": "^6.0.2",
     "babel-loader": "^6.3.2",
@@ -62,7 +63,7 @@
     "babel-preset-env": "^1.6.1",
     "babel-preset-es2015": "^6.22.0",
     "babel-preset-stage-3": "^6.24.1",
-    "bundlesize": "^0.17.0",
+    "bundlesize": "^0.17.2",
     "clone": "^2.1.2",
     "conventional-changelog-angular": "^5.0.0",
     "conventional-changelog-cli": "^2.0.1",
