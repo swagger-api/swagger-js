@@ -76,6 +76,7 @@
     "fetch-mock": "^5.12.0",
     "glob": "^7.1.1",
     "jest": "^23.6.0",
+    "jest-stare": "^1.14.0",
     "json-loader": "^0.5.4",
     "license-checker": "^8.0.3",
     "mocha": "^2.4.5",

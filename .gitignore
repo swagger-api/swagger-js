@@ -22,5 +22,7 @@ notes/
 test/specmap/data/private
 browser
 
+jest-stare
+
 # Automated releases
 release/.version
