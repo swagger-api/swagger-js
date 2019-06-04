@@ -210,7 +210,7 @@ class SpecMap {
         }
 
         if (lib.isContextPatch(patch)) {
-          this.setContext(patch.path, patch.value)
+          // this.setContext(patch.path, patch.value)
           return
         }
 

@@ -76,7 +76,7 @@ export default function resolve(obj) {
     // mapSpec is where the hard work happens, see https://github.com/swagger-api/specmap for more details
     return mapSpec({
       spec: _spec,
-      context: {baseDoc},
+      basePath: baseDoc,
       plugins: plugs,
       allowMetaPatches, // allows adding .meta patches, which include adding `$$ref`s to the spec
       pathDiscriminator, // for lazy resolution

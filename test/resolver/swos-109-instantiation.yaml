@@ -26,7 +26,8 @@ cases:
     config:
       url: "http://mock.swagger.test/a.yaml"
   assertions:
-  - equal:
+  - only: true
+    equal:
       errors: []
       spec:
         openapi: 3.0.2

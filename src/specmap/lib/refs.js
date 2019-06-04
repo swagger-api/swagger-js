@@ -4,7 +4,7 @@ import qs from 'querystring-browser'
 import url from 'url'
 import lib from '../lib'
 import createError from '../lib/create-error'
-import {isFreelyNamed, absolutifyPointer} from '../helpers'
+import {isFreelyNamed, absolutifyPointer, generateAbsoluteRefPatches} from '../helpers'
 
 const ABSOLUTE_URL_REGEXP = new RegExp('^([a-z]+://|//)', 'i')
 
@@ -48,7 +48,7 @@ const plugin = {
       return
     }
 
-    const baseDoc = specmap.getContext(fullPath).baseDoc
+    const baseDoc = specmap.basePath
     if (typeof ref !== 'string') {
       return new JSONRefError('$ref: must be a string (JSON-Ref)', {
         $ref: ref,
@@ -117,14 +117,29 @@ const plugin = {
 
     const absolutifiedRef = absolutifyPointer(ref, basePath)
 
-    const patch = lib.replace(parent, promOrVal, { $$ref: absolutifiedRef})
+    const resolutionPatch = lib.replace(parent, promOrVal, {$$ref: absolutifiedRef})
+
     if (basePath && basePath !== baseDoc) {
-      return [patch, lib.context(parent, {baseDoc: basePath})]
+      return [
+        resolutionPatch,
+        ...generateAbsoluteRefPatches(promOrVal, fullPath.slice(0, -1), {
+          specmap,
+          baseUrl: basePath,
+          targetKeys: ['$ref']
+        })
+      ]
     }
 
     try {
-      if (!patchValueAlreadyInPath(specmap.state, patch)) {
-        return patch
+      if (!patchValueAlreadyInPath(specmap.state, resolutionPatch)) {
+        return [
+          resolutionPatch,
+          ...generateAbsoluteRefPatches(promOrVal, fullPath.slice(0, -1), {
+            specmap,
+            baseUrl: basePath || "IDK",
+            targetKeys: ['$ref']
+          })
+        ]
       }
     }
     catch (e) {

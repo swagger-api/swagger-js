@@ -1,5 +1,6 @@
 meta:
   title: "SWOS-109: subtree resolver cases"
+  skip: true
 cases:
 - name: cross-document $ref
   remoteDocuments:

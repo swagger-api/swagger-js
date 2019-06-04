@@ -52,11 +52,14 @@ export function isFreelyNamed(parentPath) {
   )
 }
 
-export function generateAbsoluteRefPatches(obj, basePath, {
+export async function generateAbsoluteRefPatches(objOrPromise, basePath, {
   specmap,
-  getBaseUrlForNodePath = path => specmap.getContext([...basePath, ...path]).baseDoc,
+  baseUrl,
+  getBaseUrlForNodePath = () => baseUrl,
   targetKeys = ["$ref", "$$ref"]
 } = {}) {
+  const obj = await objOrPromise
+  console.log("GARP obj", obj)
   const patches = []
 
   traverse(obj).forEach(function () {
@@ -64,12 +67,22 @@ export function generateAbsoluteRefPatches(obj, basePath, {
       const nodePath = this.path // this node's path, relative to `obj`
       const fullPath = basePath.concat(this.path)
 
-      const absolutifiedRefValue = absolutifyPointer(this.node, getBaseUrlForNodePath(nodePath))
+      const baseUrlForNode = getBaseUrlForNodePath(nodePath) || baseUrl
 
-      patches.push(specmap.replace(fullPath, absolutifiedRefValue))
+      const absolutifiedRefValue = absolutifyPointer(this.node, baseUrlForNode)
+
+      patches.push({
+        ...specmap.replace(fullPath, absolutifiedRefValue),
+        GARP_DEBUG: {
+          basePath,
+          nodePath,
+          baseUrlForNode,
+          pointer: this.node
+        }
+      })
     }
   })
-
+  console.log("GARP providing", patches.length, "patches")
   return patches
 }
 

@@ -31,6 +31,7 @@ export default {
 }
 
 function applyPatch(obj, patch, opts) {
+  console.log(require('util').inspect(patch, { depth: Infinity, compact: false }))
   opts = opts || {}
 
   patch = Object.assign({}, patch, {
