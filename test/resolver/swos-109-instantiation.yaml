@@ -27,17 +27,19 @@ cases:
       url: "http://mock.swagger.test/a.yaml"
   assertions:
   - equal:
-      openapi: 3.0.2
-      components:
-        schemas:
-          MessageWidgetData:
-            $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/Action"
-            properties:
-              confirmation:
-                $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/ActionConfirmation"
-                properties:
-                  dismiss_action:
-                    type: string
+      errors: []
+      spec:
+        openapi: 3.0.2
+        components:
+          schemas:
+            MessageWidgetData:
+              $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/Action"
+              properties:
+                confirmation:
+                  $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/ActionConfirmation"
+                  properties:
+                    dismiss_action:
+                      type: string
 - name: cross-document $ref within allOf
   remoteDocuments:
     a.yaml:
@@ -65,16 +67,18 @@ cases:
       url: "http://mock.swagger.test/a.yaml"
   assertions:
   - equal:
-      openapi: 3.0.2
-      components:
-        schemas:
-          MessageWidgetData:
-            properties:
-              confirmation:
-                $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/ActionConfirmation"
-                properties:
-                  dismiss_action:
-                    type: string
+      errors: []
+      spec:
+        openapi: 3.0.2
+        components:
+          schemas:
+            MessageWidgetData:
+              properties:
+                confirmation:
+                  $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/ActionConfirmation"
+                  properties:
+                    dismiss_action:
+                      type: string
 - name: cross-document $ref within allOf with a circular reference
   remoteDocuments:
     a.yaml:
@@ -102,18 +106,20 @@ cases:
       url: "http://mock.swagger.test/a.yaml"
   assertions:
   - equal:
-      openapi: 3.0.2
-      components:
-        schemas:
-          MessageWidgetData:
-            # $$ref intentionally omitted here
-            properties: &circularRefAnchor
-              confirmation:
-                $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/ActionConfirmation"
-                properties:
-                  dismiss_action:
-                    $$ref: 'http://mock.swagger.test/b.yaml#/components/schemas/Action'
-                    properties: *circularRefAnchor
+      errors: []
+      spec:
+        openapi: 3.0.2
+        components:
+          schemas:
+            MessageWidgetData:
+              # $$ref intentionally omitted here
+              properties: &circularRefAnchor
+                confirmation:
+                  $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/ActionConfirmation"
+                  properties:
+                    dismiss_action:
+                      $$ref: 'http://mock.swagger.test/b.yaml#/components/schemas/Action'
+                      properties: *circularRefAnchor
 - name: cross-document $refs within nested members of multi-member allOf
   remoteDocuments:
     a.yaml:
@@ -158,29 +164,31 @@ cases:
       url: "http://mock.swagger.test/a.yaml"
   assertions:
   - equal:
-      openapi: 3.0.2
-      components:
-        schemas:
-          AThing:
-            type: object
-            properties:
-              aContent:
-                $$ref: "http://mock.swagger.test/a.yaml#/components/schemas/APrivateThing"
-                type: string
-          APrivateThing:
-            type: string
-          MyThing:
-            type: object
-            properties:
-              aContent: 
-                $$ref: "http://mock.swagger.test/a.yaml#/components/schemas/APrivateThing"
-                type: string
-              bContent: 
-                $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/BPrivateThing"
-                type: string
-              cContent: 
-                $$ref: "http://mock.swagger.test/c.yaml#/components/schemas/CPrivateThing"
-                type: string
+      errors: []
+      spec:
+        openapi: 3.0.2
+        components:
+          schemas:
+            AThing:
+              type: object
+              properties:
+                aContent:
+                  $$ref: "http://mock.swagger.test/a.yaml#/components/schemas/APrivateThing"
+                  type: string
+            APrivateThing:
+              type: string
+            MyThing:
+              type: object
+              properties:
+                aContent: 
+                  $$ref: "http://mock.swagger.test/a.yaml#/components/schemas/APrivateThing"
+                  type: string
+                bContent: 
+                  $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/BPrivateThing"
+                  type: string
+                cContent: 
+                  $$ref: "http://mock.swagger.test/c.yaml#/components/schemas/CPrivateThing"
+                  type: string
 - name: nested cross-document $refs within multi-member allOf
   remoteDocuments:
     a.yaml:
@@ -231,24 +239,26 @@ cases:
       url: "http://mock.swagger.test/a.yaml"
   assertions:
   - equal:
-      openapi: 3.0.2
-      components:
-        schemas:
-          AThing:
-            type: object
-            properties:
-              aContent:
-                $$ref: "http://mock.swagger.test/a.yaml#/components/schemas/APrivateThing"
-                type: string
-          APrivateThing:
-            type: string
-          MyThing:
-            type: object
-            properties:
-              aContent: 
-                $$ref: "http://mock.swagger.test/a.yaml#/components/schemas/APrivateThing"
-                type: string
-              bContent: 
-                type: string
-              cContent: 
-                type: object
+      errors: []
+      spec:
+        openapi: 3.0.2
+        components:
+          schemas:
+            AThing:
+              type: object
+              properties:
+                aContent:
+                  $$ref: "http://mock.swagger.test/a.yaml#/components/schemas/APrivateThing"
+                  type: string
+            APrivateThing:
+              type: string
+            MyThing:
+              type: object
+              properties:
+                aContent: 
+                  $$ref: "http://mock.swagger.test/a.yaml#/components/schemas/APrivateThing"
+                  type: string
+                bContent: 
+                  type: string
+                cContent: 
+                  type: object

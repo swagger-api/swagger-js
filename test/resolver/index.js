@@ -69,7 +69,10 @@ async function getValueForAction(action) {
   switch (action.type) {
     case 'instantiateResolve':
       const client = await Swagger(action.config)
-      return client.spec
+      return {
+        spec: client.spec,
+        errors: client.errors
+      }
     case 'resolveSubtree':
       return Swagger.resolveSubtree(action.config.obj, action.config.path, action.config.opts)
     default:
