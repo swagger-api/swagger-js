@@ -52,21 +52,21 @@ export function isFreelyNamed(parentPath) {
   )
 }
 
-export function generateAbsoluteRefPatches(obj, fullPath, specmap) {
+export function generateAbsoluteRefPatches(obj, basePath, {
+  specmap,
+  getBaseUrlForNodePath = path => specmap.getContext([...basePath, ...path]).baseDoc,
+  targetKeys = ["$ref", "$$ref"]
+} = {}) {
   const patches = []
 
   traverse(obj).forEach(function () {
-    if (this.key === "$ref" || this.key === "$$ref") {
-      const nodePath = fullPath.concat(this.path)
-      const collapsedNodePath = fullPath
-        // slice off `["allOf", n]`, since the allOf will be collapsed when this patch is applied
-        .slice(0, -2)
-        .concat(this.path)
+    if (targetKeys.indexOf(this.key) > -1) {
+      const nodePath = this.path // this node's path, relative to `obj`
+      const fullPath = basePath.concat(this.path)
 
-      const {baseDoc = ''} = specmap.getContext(nodePath)
-      const absolutifiedRefValue = absolutifyPointer(this.node, baseDoc)
+      const absolutifiedRefValue = absolutifyPointer(this.node, getBaseUrlForNodePath(nodePath))
 
-      patches.push(specmap.replace(collapsedNodePath, absolutifiedRefValue))
+      patches.push(specmap.replace(fullPath, absolutifiedRefValue))
     }
   })
 

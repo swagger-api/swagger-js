@@ -55,7 +55,18 @@ export default {
       patches.push(specmap.mergeDeep(parent, toMerge))
 
       // Generate patches that migrate $ref values based on ContextTree information
-      patches.push(...generateAbsoluteRefPatches(toMerge, fullPath.concat([i]), specmap))
+
+      // remove ["allOf"], which will not be present when these patches are applied
+      const collapsedFullPath = fullPath.slice(0, -1)
+
+      const absoluteRefPatches = generateAbsoluteRefPatches(toMerge, collapsedFullPath, {
+        getBaseUrlForNodePath: (nodePath) => {
+          return specmap.getContext([...fullPath, i, ...nodePath]).baseDoc
+        },
+        specmap
+      })
+
+      patches.push(...absoluteRefPatches)
     })
 
     // Merge back the values from the original definition
