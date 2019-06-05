@@ -43,6 +43,7 @@ const specmapRefs = new WeakMap()
 const plugin = {
   key: '$ref',
   plugin: (ref, key, fullPath, specmap) => {
+    const specmapInstance = specmap.getInstance()
     const parent = fullPath.slice(0, -1)
     if (isFreelyNamed(parent)) {
       return
@@ -78,7 +79,20 @@ const plugin = {
     let tokens
 
     if (pointerAlreadyInPath(pointer, basePath, parent, specmap)) {
-      return // TODO: add some meta data, to indicate its cyclic!
+      // Cyclic reference!
+      // if `useCircularStructures` is not set, just leave the reference
+      // unresolved, but absolutify it so that we don't leave an invalid $ref
+      // path in the content
+      if (!specmapInstance.useCircularStructures) {
+        const absolutifiedRef = absolutifyPointer(ref, basePath)
+
+        if (ref === absolutifiedRef) {
+          // avoids endless looping
+          // without this, the ref plugin never stops seeing this $ref
+          return null
+        } 
+        return lib.replace(fullPath, absolutifiedRef)
+      }
     }
 
     if (basePath == null) {
