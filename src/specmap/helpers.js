@@ -1,5 +1,5 @@
-import traverse from "traverse"
-import URL from "url"
+import traverse from 'traverse'
+import URL from 'url'
 
 // This will match if the direct parent's key exactly matches an item.
 const freelyNamedKeyParents = [
@@ -55,7 +55,7 @@ export function isFreelyNamed(parentPath) {
 export function generateAbsoluteRefPatches(obj, basePath, {
   specmap,
   getBaseUrlForNodePath = path => specmap.getContext([...basePath, ...path]).baseDoc,
-  targetKeys = ["$ref", "$$ref"]
+  targetKeys = ['$ref', '$$ref']
 } = {}) {
   const patches = []
 
@@ -74,7 +74,7 @@ export function generateAbsoluteRefPatches(obj, basePath, {
 }
 
 export function absolutifyPointer(pointer, baseUrl) {
-  const [urlPart, fragmentPart] = pointer.split("#")
+  const [urlPart, fragmentPart] = pointer.split('#')
   const newRefUrlPart = URL.resolve(urlPart || '', baseUrl || '')
 
   return fragmentPart ? `${newRefUrlPart}#${fragmentPart}` : newRefUrlPart

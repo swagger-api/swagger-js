@@ -91,7 +91,7 @@ export default {
 // collapsed into one object.
 //
 // ## Example
-// 
+//
 // (a.yaml)
 // myObj:
 //   allOf:
@@ -106,18 +106,18 @@ export default {
 // When the $ref in `a.yaml` is resolved, ContextTree knows that ["myObj",
 // "allOf", 0] is coming from `b.yaml`, but once the allOf plugin collapses the
 // allOf array into a single result object at ["myObj"], that context is lost.
-// 
+//
 // As a result, the resolver incorrectly reads the `#/two` $ref as a local ref
 // within `a.yaml`, and an error is generated.
-// 
+//
 // Furthermore, even if ContextTree could keep up with each $ref, we'd still be
 // *possibly* handing back invalid $ref values to the user, because the resolver
 // is sometimes throttled by path restriction and depth limitations.
-// 
+//
 // ## Solution
 // Generate a set of patches that will rewrite any $refs within an allOf member
 // to be valid within their new position in the root document, using the
 // existing ContentTree data as a basis for rewriting each reference.
-// 
+//
 // Essentially: persist the ContextTree information by writing it into the $ref.
 

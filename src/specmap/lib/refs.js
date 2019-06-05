@@ -117,7 +117,7 @@ const plugin = {
 
     const absolutifiedRef = absolutifyPointer(ref, basePath)
 
-    const patch = lib.replace(parent, promOrVal, { $$ref: absolutifiedRef})
+    const patch = lib.replace(parent, promOrVal, {$$ref: absolutifiedRef})
     if (basePath && basePath !== baseDoc) {
       return [patch, lib.context(parent, {baseDoc: basePath})]
     }

@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-unresolved
 const Swagger = require('./.tmp/swagger-client.js')
 
 describe('webpack build', () => {

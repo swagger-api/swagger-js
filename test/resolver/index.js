@@ -4,7 +4,7 @@
 import YAML from '@kyleshockey/js-yaml'
 import fs from 'fs'
 import Path from 'path'
-import nock from "nock"
+import nock from 'nock'
 
 import Swagger from '../../src/index'
 
@@ -33,7 +33,7 @@ testDocuments.forEach((doc) => {
         describe(currentCase.name || '', function () {
           beforeAll(() => {
             Swagger.clearCache()
-            
+
             if (!nock.isActive()) {
               nock.activate()
             }
@@ -41,7 +41,7 @@ testDocuments.forEach((doc) => {
             nock.cleanAll()
             nock.disableNetConnect()
 
-            const nockScope = nock(`http://mock.swagger.test`)
+            const nockScope = nock('http://mock.swagger.test')
 
             if (currentCase.remoteDocuments) {
               Object.keys(currentCase.remoteDocuments).forEach((key) => {
@@ -57,9 +57,11 @@ testDocuments.forEach((doc) => {
 
           afterAll(nock.restore)
 
-          return assertCaseExpectations(currentCase, async () => getValueForAction(currentCase.action))
+          return assertCaseExpectations(
+            currentCase,
+            async () => getValueForAction(currentCase.action)
+          )
         })
-
       })
     }
   })
@@ -67,14 +69,16 @@ testDocuments.forEach((doc) => {
 
 async function getValueForAction(action) {
   switch (action.type) {
-    case 'instantiateResolve':
+    case 'instantiateResolve': {
       const client = await Swagger(action.config)
       return {
         spec: client.spec,
         errors: client.errors
       }
-    case 'resolveSubtree':
+    }
+    case 'resolveSubtree': {
       return Swagger.resolveSubtree(action.config.obj, action.config.path, action.config.opts)
+    }
     default:
       throw new Error('case did not specify a valid action type')
   }
@@ -107,5 +111,4 @@ async function assertCaseExpectations(currentCase, resultGetter) {
       })
     }
   })
-
 }
