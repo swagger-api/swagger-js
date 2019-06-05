@@ -34,12 +34,14 @@
     "deps": "run-s deps:license deps:size",
     "deps:license": "license-checker --production --csv --out $npm_package_config_deps_check_dir/licenses.csv && license-checker --development --csv --out $npm_package_config_deps_check_dir/licenses-dev.csv",
     "deps:size": "webpack -p --config webpack.check.js --json | webpack-bundle-size-analyzer >| $npm_package_config_deps_check_dir/sizes.txt",
-    "test": "run-s test:unit test:webpack test:lint test:size",
+    "test": "run-s test:unit test:lint test:size",
     "test:lint": "eslint src/ test/",
     "test:size": "npm run build:bundle && bundlesize",
-    "test:unit": "jest --runInBand",
-    "test:unit:watch": "jest --watch",
-    "test:webpack": "mocha-webpack --interactive false --webpack-config ./webpack.test.config.js --recursive \"./test-webpack\""
+    "test:unit": "run-s test:unit:setup test:unit:run test:unit:teardown",
+    "test:unit:setup": "webpack --config webpack.test.config.js --output-path ./test/webpack-bundle/.tmp",
+    "test:unit:run": "jest --runInBand",
+    "test:unit:teardown": "rm -rf ./test-webpack/.tmp",
+    "test:unit:watch": "jest --watch"
   },
   "keywords": [
     "oai",
@@ -51,7 +53,6 @@
   ],
   "license": "Apache-2.0",
   "devDependencies": {
-    "@kyleshockey/mocha-webpack": "^1.1.1",
     "babel-core": "^6.26.3",
     "babel-eslint": "^6.0.2",
     "babel-loader": "^6.3.2",
@@ -78,7 +79,6 @@
     "jest": "^23.1.0",
     "json-loader": "^0.5.4",
     "license-checker": "^8.0.3",
-    "mocha": "^2.4.5",
     "npm-run-all": "^4.1.3",
     "release-it": "^7.4.8",
     "traverse": "^0.6.6",
@@ -115,7 +115,7 @@
       "<rootDir>/node_modules/",
       "<rootDir>/test/data/",
       "<rootDir>/test/specmap/data/",
-      "<rootDir>/test-webpack/"
+      "<rootDir>/test/webpack-bundle/.tmp/"
     ]
   },
   "bundlesize": [
