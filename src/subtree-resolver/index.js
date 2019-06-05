@@ -33,7 +33,8 @@ export default async function resolveSubtree(obj, path, opts = {}) {
     requestInterceptor,
     responseInterceptor,
     parameterMacro,
-    modelPropertyMacro
+    modelPropertyMacro,
+    useCircularStructures,
   } = opts
 
   const resolveOptions = {
@@ -42,7 +43,8 @@ export default async function resolveSubtree(obj, path, opts = {}) {
     requestInterceptor,
     responseInterceptor,
     parameterMacro,
-    modelPropertyMacro
+    modelPropertyMacro,
+    useCircularStructures,
   }
 
   const {spec: normalized} = normalizeSwagger({
