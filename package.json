@@ -37,11 +37,11 @@
     "test": "run-s test:unit test:webpack test:lint test:size",
     "test:lint": "eslint src/ test/",
     "test:size": "npm run build:bundle && bundlesize",
-    "test:unit": "jest --runInBand",
-    "test:unit:watch": "jest --watch",
-    "test:webpack": "run-s test:webpack:build test:webpack:run",
-    "test:webpack:build": "webpack --config webpack.test.config.js --output-path ./test-webpack/.tmp",
-    "test:webpack:run": "jest --runTestsByPath ./test-webpack/index.js"
+    "test:unit": "run-s test:unit:setup test:unit:run test:unit:teardown",
+    "test:unit:setup": "webpack --config webpack.test.config.js --output-path ./test/webpack-bundle/.tmp",
+    "test:unit:run": "jest --runInBand",
+    "test:unit:teardown": "rm -rf ./test-webpack/.tmp",
+    "test:unit:watch": "jest --watch"
   },
   "keywords": [
     "oai",
@@ -109,13 +109,13 @@
     "testEnvironment": "node",
     "testMatch": [
       "**/test/*.js?(x)",
-      "**/test/**/*.js?(x)",
-      "**/test-webpack/*.js"
+      "**/test/**/*.js?(x)"
     ],
     "testPathIgnorePatterns": [
       "<rootDir>/node_modules/",
       "<rootDir>/test/data/",
-      "<rootDir>/test/specmap/data/"
+      "<rootDir>/test/specmap/data/",
+      "<rootDir>/test/webpack-bundle/.tmp/"
     ]
   },
   "bundlesize": [

@@ -20,7 +20,7 @@ notes/
 .DS_Store
 .deps_check
 test/specmap/data/private
-test-webpack/.tmp
+test/webpack-bundle/.tmp
 browser
 
 # Automated releases
