@@ -39,7 +39,9 @@
     "test:size": "npm run build:bundle && bundlesize",
     "test:unit": "jest --runInBand",
     "test:unit:watch": "jest --watch",
-    "test:webpack": "mocha-webpack --interactive false --webpack-config ./webpack.test.config.js --recursive \"./test-webpack\""
+    "test:webpack": "run-s test:webpack:build test:webpack:run",
+    "test:webpack:build": "webpack --config webpack.test.config.js --output-path ./test-webpack/.tmp",
+    "test:webpack:run": "jest --runTestsByPath ./test-webpack/index.js"
   },
   "keywords": [
     "oai",
@@ -78,7 +80,6 @@
     "jest": "^23.1.0",
     "json-loader": "^0.5.4",
     "license-checker": "^8.0.3",
-    "mocha": "^2.4.5",
     "npm-run-all": "^4.1.3",
     "release-it": "^7.4.8",
     "traverse": "^0.6.6",
@@ -114,8 +115,7 @@
     "testPathIgnorePatterns": [
       "<rootDir>/node_modules/",
       "<rootDir>/test/data/",
-      "<rootDir>/test/specmap/data/",
-      "<rootDir>/test-webpack/"
+      "<rootDir>/test/specmap/data/"
     ]
   },
   "bundlesize": [

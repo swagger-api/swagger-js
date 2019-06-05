@@ -1,27 +1,25 @@
-const expect = require('expect')
-
-const Swagger = require('../src')
+const Swagger = require('./.tmp/swagger-client.js')
 
 describe('webpack build', () => {
-  it('should export a function', () => {
-    expect(Swagger).toBeA(Function)
+  test('should export a function', () => {
+    expect(Swagger).toBeInstanceOf(Function)
   })
-  it('should export helpers attached to the default export', () => {
-    expect(Swagger.http).toBeA(Function)
-    expect(Swagger.makeHttp).toBeA(Function)
-    expect(Swagger.resolve).toBeA(Function)
-    expect(Swagger.resolveSubtree).toBeA(Function)
-    expect(Swagger.execute).toBeA(Function)
-    expect(Swagger.serializeRes).toBeA(Function)
-    expect(Swagger.serializeHeaders).toBeA(Function)
-    expect(Swagger.clearCache).toBeA(Function)
-    expect(Swagger.makeApisTagOperation).toBeA(Function)
-    expect(Swagger.buildRequest).toBeA(Function)
-    expect(Swagger.helpers).toIncludeKeys(['opId'])
+  test('should export helpers attached to the default export', () => {
+    expect(Swagger.http).toBeInstanceOf(Function)
+    expect(Swagger.makeHttp).toBeInstanceOf(Function)
+    expect(Swagger.resolve).toBeInstanceOf(Function)
+    expect(Swagger.resolveSubtree).toBeInstanceOf(Function)
+    expect(Swagger.execute).toBeInstanceOf(Function)
+    expect(Swagger.serializeRes).toBeInstanceOf(Function)
+    expect(Swagger.serializeHeaders).toBeInstanceOf(Function)
+    expect(Swagger.clearCache).toBeInstanceOf(Function)
+    expect(Swagger.makeApisTagOperation).toBeInstanceOf(Function)
+    expect(Swagger.buildRequest).toBeInstanceOf(Function)
+    expect(Object.keys(Swagger.helpers)).toContain('opId')
   })
 
 
-  it('should be able to resolve things when minified', () => {
+  test('should be able to resolve things when minified', () => {
     const spec = {
       a: {
         $ref: "#/b"
