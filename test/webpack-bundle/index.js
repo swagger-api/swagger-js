@@ -22,11 +22,11 @@ describe('webpack build', () => {
   test('should be able to resolve things when minified', () => {
     const spec = {
       a: {
-        $ref: "#/b"
+        $ref: '#/b'
       },
       b: {
         value: {
-          $ref: "#/c/value"
+          $ref: '#/c/value'
         }
       },
       c: {
