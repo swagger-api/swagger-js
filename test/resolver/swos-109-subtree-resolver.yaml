@@ -121,13 +121,12 @@ cases:
         components:
           schemas:
             MessageWidgetData:
-              properties: &circularRefAnchor
+              properties:
                 confirmation:
                   $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/ActionConfirmation"
                   properties:
                     dismiss_action:
-                      $$ref: 'http://mock.swagger.test/b.yaml#/components/schemas/Action'
-                      properties: *circularRefAnchor
+                      $ref: 'http://mock.swagger.test/b.yaml#/components/schemas/Action'
 - name: cross-document $refs within nested members of multi-member allOf
   remoteDocuments:
     b.yaml:
