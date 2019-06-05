@@ -110,7 +110,7 @@
     "testMatch": [
       "**/test/*.js?(x)",
       "**/test/**/*.js?(x)",
-      "<rootDir>/test-webpack/"
+      "**/test-webpack/*.js"
     ],
     "testPathIgnorePatterns": [
       "<rootDir>/node_modules/",
