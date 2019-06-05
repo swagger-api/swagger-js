@@ -25,7 +25,11 @@ testDocuments.forEach((doc) => {
   const {path, content} = doc
   const {meta = {}, cases = []} = content
 
-  const rootDescribe = meta.skip ? describe.skip : describe
+  let rootDescribe
+
+  if (meta.skip) rootDescribe = describe.skip
+  else if (meta.only) rootDescribe = describe.only
+  else rootDescribe = describe
 
   rootDescribe(`declarative resolver test suite - ${meta.title || path}`, function () {
     if (cases && cases.length) {
