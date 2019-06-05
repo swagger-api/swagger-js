@@ -1,0 +1,83 @@
+meta:
+  title: "circular references - client instance instantiation"
+cases:
+- name: cross-document circular reference
+  remoteDocuments:
+    a.yaml:
+      openapi: 3.0.2
+      components:
+        schemas:
+          MessageWidgetData:
+            $ref: "./b.yaml#/components/schemas/Action"
+    b.yaml:
+      openapi: 3.0.2
+      components:
+        schemas:
+          Action:
+            properties:
+              confirmation:
+                $ref: '#/components/schemas/ActionConfirmation'
+          ActionConfirmation:
+            properties:
+              dismiss_action:
+                $ref: "#/components/schemas/Action"
+  action:
+    type: instantiateResolve
+    config:
+      url: "http://mock.swagger.test/a.yaml"
+  assertions:
+  - equal:
+      errors: []
+      spec:
+        openapi: 3.0.2
+        components:
+          schemas:
+            MessageWidgetData:
+              $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/Action"
+              properties:
+                confirmation:
+                  $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/ActionConfirmation"
+                  properties:
+                    dismiss_action:
+                      $ref: "http://mock.swagger.test/b.yaml#/components/schemas/Action"
+- name: cross-document circular reference with `useCircularStructures` set
+  remoteDocuments:
+    a.yaml:
+      openapi: 3.0.2
+      components:
+        schemas:
+          MessageWidgetData:
+            $ref: "./b.yaml#/components/schemas/Action"
+    b.yaml:
+      openapi: 3.0.2
+      components:
+        schemas:
+          Action:
+            properties:
+              confirmation:
+                $ref: '#/components/schemas/ActionConfirmation'
+          ActionConfirmation:
+            properties:
+              dismiss_action:
+                $ref: "#/components/schemas/Action"
+  action:
+    type: instantiateResolve
+    config:
+      url: "http://mock.swagger.test/a.yaml"
+      useCircularStructures: true
+  assertions:
+  - equal:
+      errors: []
+      spec:
+        openapi: 3.0.2
+        components:
+          schemas:
+            MessageWidgetData:
+              $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/Action"
+              properties: &circularRefAnchor
+                confirmation:
+                  $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/ActionConfirmation"
+                  properties:
+                    dismiss_action:
+                      $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/Action"
+                      properties: *circularRefAnchor
