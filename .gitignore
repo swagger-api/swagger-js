@@ -23,5 +23,7 @@ test/specmap/data/private
 test/webpack-bundle/.tmp
 browser
 
+jest-stare
+
 # Automated releases
 release/.version

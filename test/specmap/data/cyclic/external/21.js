@@ -31,7 +31,7 @@ module.exports = {
       d1k: {
         d2k: {
           d3k: {
-            $ref: '#/defs/0'
+            $ref: 'http://4/spec#/defs/0'
           }
         }
       }

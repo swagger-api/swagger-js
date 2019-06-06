@@ -32,7 +32,7 @@ export default function resolve(obj) {
   const {
     fetch, spec, url, mode, allowMetaPatches = true, pathDiscriminator,
     modelPropertyMacro, parameterMacro, requestInterceptor,
-    responseInterceptor, skipNormalization
+    responseInterceptor, skipNormalization, useCircularStructures,
   } = obj
 
   let {http, baseDoc} = obj
@@ -81,7 +81,8 @@ export default function resolve(obj) {
       allowMetaPatches, // allows adding .meta patches, which include adding `$$ref`s to the spec
       pathDiscriminator, // for lazy resolution
       parameterMacro,
-      modelPropertyMacro
+      modelPropertyMacro,
+      useCircularStructures,
     }).then(skipNormalization ? async a => a : normalizeSwagger)
   }
 }

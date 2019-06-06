@@ -17,7 +17,7 @@ module.exports = {
   output: {
     x: {
       b: {
-        $ref: '#/a'
+        $ref: 'http://1/spec#/a'
       }
     }
   }

@@ -71,6 +71,7 @@ Swagger.prototype = {
       spec: this.spec,
       url: this.url,
       allowMetaPatches: this.allowMetaPatches,
+      useCircularStructures: this.useCircularStructures,
       requestInterceptor: this.requestInterceptor || null,
       responseInterceptor: this.responseInterceptor || null
     }).then((obj) => {

@@ -1,0 +1,146 @@
+meta:
+  title: "circular references - subtree resolver"
+  only: true
+cases:
+- name: cross-document circular reference
+  remoteDocuments:
+    b.yaml:
+      openapi: 3.0.2
+      components:
+        schemas:
+          Action:
+            properties:
+              confirmation:
+                $ref: '#/components/schemas/ActionConfirmation'
+          ActionConfirmation:
+            properties:
+              dismiss_action:
+                $ref: "#/components/schemas/Action"
+  action:
+    type: resolveSubtree
+    config:
+      obj:
+        openapi: 3.0.2
+        components:
+          schemas:
+            MessageWidgetData:
+              $ref: "./b.yaml#/components/schemas/Action"
+      path: []
+      opts:
+        returnEntireTree: true
+        baseDoc: "http://mock.swagger.test/a.yaml"
+  assertions:
+  - equal:
+      errors: []
+      spec:
+        openapi: 3.0.2
+        components:
+          schemas:
+            MessageWidgetData:
+              $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/Action"
+              properties:
+                confirmation:
+                  $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/ActionConfirmation"
+                  properties:
+                    dismiss_action:
+                      $ref: "http://mock.swagger.test/b.yaml#/components/schemas/Action"
+- name: cross-document circular reference with `useCircularStructures` set
+  remoteDocuments:
+    b.yaml:
+      openapi: 3.0.2
+      components:
+        schemas:
+          Action:
+            properties:
+              confirmation:
+                $ref: '#/components/schemas/ActionConfirmation'
+          ActionConfirmation:
+            properties:
+              dismiss_action:
+                $ref: "#/components/schemas/Action"
+  action:
+    type: resolveSubtree
+    config:
+      obj:
+        openapi: 3.0.2
+        components:
+          schemas:
+            MessageWidgetData:
+              $ref: "./b.yaml#/components/schemas/Action"
+      path: []
+      opts:
+        returnEntireTree: true
+        useCircularStructures: true
+        baseDoc: "http://mock.swagger.test/a.yaml"
+  assertions:
+  - equal:
+      errors: []
+      spec:
+        openapi: 3.0.2
+        components:
+          schemas:
+            MessageWidgetData:
+              $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/Action"
+              properties: &circularRefAnchor
+                confirmation:
+                  $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/ActionConfirmation"
+                  properties:
+                    dismiss_action:
+                      $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/Action"
+                      properties: *circularRefAnchor
+- name: already-resolved circular reference input
+  description: should resolve the document one more level deep
+  remoteDocuments:
+    b.yaml:
+      openapi: 3.0.2
+      components:
+        schemas:
+          Action:
+            properties:
+              confirmation:
+                $ref: '#/components/schemas/ActionConfirmation'
+          ActionConfirmation:
+            properties:
+              dismiss_action:
+                $ref: "#/components/schemas/Action"
+  action:
+    type: resolveSubtree
+    config:
+      obj:
+        openapi: 3.0.2
+        components:
+          schemas:
+            MessageWidgetData:
+              $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/Action"
+              properties:
+                confirmation:
+                  $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/ActionConfirmation"
+                  properties:
+                    dismiss_action:
+                      $ref: "http://mock.swagger.test/b.yaml#/components/schemas/Action"
+      path: []
+      opts:
+        returnEntireTree: true
+        baseDoc: "http://mock.swagger.test/a.yaml"
+  assertions:
+  - only: true
+    equal:
+      errors: []
+      spec:
+        openapi: 3.0.2
+        components:
+          schemas:
+            MessageWidgetData:
+              $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/Action"
+              properties:
+                confirmation:
+                  $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/ActionConfirmation"
+                  properties:
+                    dismiss_action:
+                      $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/Action"
+                      properties:
+                        confirmation:
+                          $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/ActionConfirmation"
+                          properties:
+                            dismiss_action:
+                              $ref: "http://mock.swagger.test/b.yaml#/components/schemas/Action"

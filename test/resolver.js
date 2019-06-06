@@ -144,19 +144,19 @@ describe('resolver', () => {
           one: {
             a: {
               b: {
-                $ref: '#/two'
+                $ref: 'http://example.com/swagger.json#/two'
               }
             }
           },
           three: {
             b: {
-              $ref: '#/two'
+              $ref: 'http://example.com/swagger.json#/two'
             }
           },
           two: {
             a: {
               b: {
-                $ref: '#/two'
+                $ref: 'http://example.com/swagger.json#/two'
               }
             }
           }

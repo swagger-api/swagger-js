@@ -1,0 +1,251 @@
+meta:
+  title: "SWOS-109: subtree resolver cases"
+cases:
+- name: cross-document $ref
+  remoteDocuments:
+    b.yaml:
+      openapi: 3.0.2
+      components:
+        schemas:
+          Action:
+            properties:
+              confirmation:
+                $ref: '#/components/schemas/ActionConfirmation'
+          ActionConfirmation:
+            properties:
+              dismiss_action:
+                type: string
+  action:
+    type: resolveSubtree
+    config:
+      obj:
+        openapi: 3.0.2
+        components:
+          schemas:
+            MessageWidgetData:
+              $ref: "./b.yaml#/components/schemas/Action"
+      path: []
+      opts:
+        returnEntireTree: true
+        baseDoc: "http://mock.swagger.test/a.yaml"
+  assertions:
+  - equal:
+      errors: []
+      spec:
+        openapi: 3.0.2
+        components:
+          schemas:
+            MessageWidgetData:
+              $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/Action"
+              properties:
+                confirmation:
+                  $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/ActionConfirmation"
+                  properties:
+                    dismiss_action:
+                      type: string
+- name: cross-document $ref to a remote document within allOf
+  remoteDocuments:
+    b.yaml:
+      openapi: 3.0.2
+      components:
+        schemas:
+          Action:
+            properties:
+              confirmation:
+                $ref: '#/components/schemas/ActionConfirmation'
+          ActionConfirmation:
+            properties:
+              dismiss_action:
+                type: string
+  action:
+    type: resolveSubtree
+    config:
+      obj:
+        openapi: 3.0.2
+        components:
+          schemas:
+            MessageWidgetData:
+              allOf:
+              - $ref: "./b.yaml#/components/schemas/Action"
+      path: []
+      opts:
+        returnEntireTree: true
+        baseDoc: "http://mock.swagger.test/a.yaml"
+  assertions:
+  - equal:
+      errors: []
+      spec:
+        openapi: 3.0.2
+        components:
+          schemas:
+            MessageWidgetData:
+              properties:
+                confirmation:
+                  $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/ActionConfirmation"
+                  properties:
+                    dismiss_action:
+                      type: string
+- name: cross-document $ref to a remote document within allOf with a circular reference
+  remoteDocuments:
+    b.yaml:
+      openapi: 3.0.2
+      components:
+        schemas:
+          Action:
+            properties:
+              confirmation:
+                $ref: '#/components/schemas/ActionConfirmation'
+          ActionConfirmation:
+            properties:
+              dismiss_action:
+                $ref: '#/components/schemas/Action'
+  action:
+    type: resolveSubtree
+    config:
+      obj:
+        openapi: 3.0.2
+        components:
+          schemas:
+            MessageWidgetData:
+              allOf:
+                - $ref: "./b.yaml#/components/schemas/Action"
+      path: []
+      opts:
+        returnEntireTree: true
+        baseDoc: "http://mock.swagger.test/a.yaml"
+  assertions:
+  - equal:
+      errors: []
+      spec:
+        openapi: 3.0.2
+        components:
+          schemas:
+            MessageWidgetData:
+              properties:
+                confirmation:
+                  $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/ActionConfirmation"
+                  properties:
+                    dismiss_action:
+                      $ref: 'http://mock.swagger.test/b.yaml#/components/schemas/Action'
+- name: cross-document $refs within nested members of multi-member allOf
+  remoteDocuments:
+    b.yaml:
+      openapi: 3.0.2
+      components:
+        schemas:
+          BThing:
+            properties:
+              bContent:
+                $ref: '#/components/schemas/BPrivateThing'
+          BPrivateThing:
+            type: string
+    c.yaml:
+      openapi: 3.0.2
+      components:
+        schemas:
+          CThing:
+            $ref: '#/components/schemas/CPrivateThing'
+          CPrivateThing:
+            type: string
+  action:
+    type: resolveSubtree
+    config:
+      obj:
+        openapi: 3.0.2
+        components:
+          schemas:
+            MyThing:
+              allOf:
+                - $ref: "#/components/schemas/AThing"
+                - $ref: "./b.yaml#/components/schemas/BThing"
+                - properties:
+                    cContent:
+                      $ref: "./c.yaml#/components/schemas/CThing"
+            AThing:
+              type: object
+              properties:
+                aContent:
+                  $ref: "#/components/schemas/APrivateThing"
+            APrivateThing:
+              type: string
+      path: [components, schemas, MyThing]
+      opts:
+        baseDoc: "http://mock.swagger.test/a.yaml"
+  assertions:
+  - equal:
+      errors: []
+      spec:
+        type: object
+        properties:
+          aContent: 
+            $$ref: "http://mock.swagger.test/a.yaml#/components/schemas/APrivateThing"
+            type: string
+          bContent: 
+            $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/BPrivateThing"
+            type: string
+          cContent: 
+            $$ref: "http://mock.swagger.test/c.yaml#/components/schemas/CPrivateThing"
+            type: string
+- name: nested cross-document $refs within multi-member allOf
+  remoteDocuments:
+    documents/b.yaml:
+      openapi: 3.0.2
+      components:
+        schemas:
+          BThing:
+            properties:
+              bContent:
+                allOf:
+                - $ref: '#/components/schemas/BPrivateThing'
+          BPrivateThing:
+            $ref: "../partials/d.yaml"
+    documents/c.yaml:
+      openapi: 3.0.2
+      components:
+        schemas:
+          CThing:
+            properties:
+              cContent:
+                allOf:
+                - $ref: '#/components/schemas/CPrivateThing'
+          CPrivateThing:
+            $ref: "../partials/e.yaml"
+    partials/d.yaml: 
+      type: string
+    partials/e.yaml:
+      type: object
+  action:
+    type: resolveSubtree
+    config:
+      obj:
+        openapi: 3.0.2
+        components:
+          schemas:
+            MyThing:
+              allOf:
+                - $ref: "#/components/schemas/AThing"
+                - $ref: "./documents/b.yaml#/components/schemas/BThing"
+                - $ref: "./documents/c.yaml#/components/schemas/CThing"
+            AThing:
+              type: object
+              properties:
+                aContent:
+                  $ref: "#/components/schemas/APrivateThing"
+            APrivateThing:
+              type: string
+      path: [components, schemas, MyThing]
+      opts:
+        baseDoc: "http://mock.swagger.test/a.yaml"
+  assertions:
+  - equal:
+      errors: []
+      spec:
+        type: object
+        properties:
+          aContent: 
+            $$ref: "http://mock.swagger.test/a.yaml#/components/schemas/APrivateThing"
+            type: string
+          bContent: 
+            type: string
+          cContent: 
+            type: object

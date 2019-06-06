@@ -1,7 +1,5 @@
-/* eslint-disable import/prefer-default-export */
-//
-// if/when another helper is added to this file,
-// please remove the eslint override and this comment!
+import traverse from 'traverse'
+import URL from 'url'
 
 // This will match if the direct parent's key exactly matches an item.
 const freelyNamedKeyParents = [
@@ -52,4 +50,32 @@ export function isFreelyNamed(parentPath) {
     (freelyNamedPaths.indexOf(parentStr) > -1) ||
     (freelyNamedAncestors.some(el => parentStr.indexOf(el) > -1))
   )
+}
+
+export function generateAbsoluteRefPatches(obj, basePath, {
+  specmap,
+  getBaseUrlForNodePath = path => specmap.getContext([...basePath, ...path]).baseDoc,
+  targetKeys = ['$ref', '$$ref']
+} = {}) {
+  const patches = []
+
+  traverse(obj).forEach(function () {
+    if (targetKeys.indexOf(this.key) > -1) {
+      const nodePath = this.path // this node's path, relative to `obj`
+      const fullPath = basePath.concat(this.path)
+
+      const absolutifiedRefValue = absolutifyPointer(this.node, getBaseUrlForNodePath(nodePath))
+
+      patches.push(specmap.replace(fullPath, absolutifiedRefValue))
+    }
+  })
+
+  return patches
+}
+
+export function absolutifyPointer(pointer, baseUrl) {
+  const [urlPart, fragmentPart] = pointer.split('#')
+  const newRefUrlPart = URL.resolve(urlPart || '', baseUrl || '')
+
+  return fragmentPart ? `${newRefUrlPart}#${fragmentPart}` : newRefUrlPart
 }
