@@ -90,7 +90,7 @@ const plugin = {
           // avoids endless looping
           // without this, the ref plugin never stops seeing this $ref
           return null
-        } 
+        }
         return lib.replace(fullPath, absolutifiedRef)
       }
     }
@@ -137,7 +137,9 @@ const plugin = {
     }
 
     try {
-      if (!patchValueAlreadyInPath(specmap.state, patch)) {
+      // prevents circular values from being constructed, unless we specifically
+      // want that to happen
+      if (!patchValueAlreadyInPath(specmap.state, patch) || specmapInstance.useCircularStructures) {
         return patch
       }
     }
@@ -399,11 +401,23 @@ function pointerAlreadyInPath(pointer, basePath, parent, specmap) {
   const parentPointer = arrayToJsonPointer(parent)
   const fullyQualifiedPointer = `${basePath || '<specmap-base>'}#${pointer}`
 
+  // dirty hack to strip `allof/[index]` from the path, in order to avoid cases
+  // where we get false negatives because:
+  // - we resolve a path, then
+  // - allOf plugin collapsed `allOf/[index]` out of the path, then
+  // - we try to work on a child $ref within that collapsed path.
+  //
+  // because of the path collapse, we lose track of it in our specmapRefs hash
+  // solution: always throw the allOf constructs out of paths we store
+  // TODO: solve this with a global register, or by writing more metadata in
+  // either allOf or refs plugin
+  const safeParentPointer = parentPointer.replace(/allOf\/\d+\/?/g, '')
+
   // Case 1: direct cycle, e.g. a.b.c.$ref: '/a.b'
   // Detect by checking that the parent path doesn't start with pointer.
   // This only applies if the pointer is internal, i.e. basePath === rootPath (could be null)
   const rootDoc = specmap.contextTree.get([]).baseDoc
-  if (basePath == rootDoc && pointerIsAParent(parentPointer, pointer)) { // eslint-disable-line
+  if (basePath == rootDoc && pointerIsAParent(safeParentPointer, pointer)) { // eslint-disable-line
     return true
   }
 
@@ -429,7 +443,8 @@ function pointerAlreadyInPath(pointer, basePath, parent, specmap) {
 
   // No cycle, this ref will be resolved, so stores it now for future detection.
   // No need to store if has cycle, as parent path is a dead-end and won't be checked again.
-  refs[parentPointer] = (refs[parentPointer] || []).concat(fullyQualifiedPointer)
+
+  refs[safeParentPointer] = (refs[safeParentPointer] || []).concat(fullyQualifiedPointer)
 }
 
 /**
