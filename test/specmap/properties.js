@@ -1,5 +1,5 @@
 import xmock from 'xmock'
-import mapSpec, {plugins} from '../../src/specmap'
+import mapSpec, { plugins } from '../../src/specmap'
 
 describe('properties', () => {
   afterEach(() => {
@@ -7,7 +7,7 @@ describe('properties', () => {
   })
 
   test('should add default value to each property', () => {
-    const modelPropertyMacro = function (model) {
+    const modelPropertyMacro = function(model) {
       return 'test'
     }
 
@@ -15,65 +15,62 @@ describe('properties', () => {
       spec: {
         properties: {
           one: {},
-          two: {}
-        }
+          two: {},
+        },
       },
       plugins: [plugins.properties],
-      modelPropertyMacro
-    }).then((res) => {
+      modelPropertyMacro,
+    }).then(res => {
       expect(res).toEqual({
         errors: [],
         spec: {
           properties: {
             one: {
-              default: 'test'
+              default: 'test',
             },
             two: {
-              default: 'test'
-            }
-          }
-        }
+              default: 'test',
+            },
+          },
+        },
       })
     })
   })
 
-  test(
-    'should add default value to each property taking to account first parameter (property) passed in modelPropertyMacro',
-    () => {
-      const modelPropertyMacro = function (prop) {
-        return prop.test
-      }
+  test('should add default value to each property taking to account first parameter (property) passed in modelPropertyMacro', () => {
+    const modelPropertyMacro = function(prop) {
+      return prop.test
+    }
 
-      return mapSpec({
+    return mapSpec({
+      spec: {
+        properties: {
+          one: {
+            test: 1,
+          },
+          two: {
+            test: 2,
+          },
+        },
+      },
+      plugins: [plugins.properties],
+      modelPropertyMacro,
+    }).then(res => {
+      expect(res).toEqual({
+        errors: [],
         spec: {
           properties: {
             one: {
-              test: 1
+              default: 1,
+              test: 1,
             },
             two: {
-              test: 2
-            }
-          }
+              default: 2,
+              test: 2,
+            },
+          },
         },
-        plugins: [plugins.properties],
-        modelPropertyMacro
-      }).then((res) => {
-        expect(res).toEqual({
-          errors: [],
-          spec: {
-            properties: {
-              one: {
-                default: 1,
-                test: 1
-              },
-              two: {
-                default: 2,
-                test: 2
-              }
-            }
-          }
-        })
       })
-    }
-  )
+    })
+  })
 })

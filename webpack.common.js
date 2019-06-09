@@ -3,9 +3,7 @@ const path = require('path')
 
 module.exports = {
   entry: {
-    'swagger-client': [
-      './src/index.js'
-    ]
+    'swagger-client': ['./src/index.js'],
   },
 
   devtool: 'source-map',
@@ -13,29 +11,29 @@ module.exports = {
   output: {
     path: path.join(__dirname, 'dist'),
     libraryTarget: 'commonjs2',
-    filename: 'index.js'
+    filename: 'index.js',
   },
 
   module: {
-    loaders: [{
-      test: /\.js/,
-      loader: 'babel-loader?retainLines=true',
-      exclude: [
-        /node_modules/
-      ]
-    }]
+    loaders: [
+      {
+        test: /\.js/,
+        loader: 'babel-loader?retainLines=true',
+        exclude: [/node_modules/],
+      },
+    ],
   },
 
   resolve: {
     modules: ['node_modules'],
-    extensions: ['.js', '.json']
+    extensions: ['.js', '.json'],
   },
 
   plugins: [
     new webpack.DefinePlugin({
       'process.env': {
-        NODE_ENV: JSON.stringify('production')
-      }
-    })
-  ]
+        NODE_ENV: JSON.stringify('production'),
+      },
+    }),
+  ],
 }

@@ -2,7 +2,8 @@ import {
   mapTagOperations,
   makeApisTagOperationsOperationExecute,
   makeApisTagOperation,
-  self as stubs} from '../src/interfaces'
+  self as stubs,
+} from '../src/interfaces'
 
 describe('intefaces', () => {
   afterEach(() => {
@@ -13,10 +14,10 @@ describe('intefaces', () => {
     test('should call mapTagOperations with { spec, cb:Function }', () => {
       // Given
       const spyMapTagOperations = jest.spyOn(stubs, 'mapTagOperations')
-      const spec = { }
+      const spec = {}
 
       // When
-      const interfaceValue = makeApisTagOperation({spec})
+      const interfaceValue = makeApisTagOperation({ spec })
 
       // Then
       expect(spyMapTagOperations.mock.calls.length).toEqual(1)
@@ -29,12 +30,12 @@ describe('intefaces', () => {
       // Given
       const spyMapTagOperations = jest.spyOn(stubs, 'mapTagOperations')
       const spyExecute = jest.fn()
-      const interfaceValue = makeApisTagOperation({execute: spyExecute})
-      const {cb} = spyMapTagOperations.mock.calls[0][0]
+      const interfaceValue = makeApisTagOperation({ execute: spyExecute })
+      const { cb } = spyMapTagOperations.mock.calls[0][0]
 
       // When
-      const executer = cb({pathName: '/one', method: 'GET'})
-      executer(['param'], {option: 1})
+      const executer = cb({ pathName: '/one', method: 'GET' })
+      executer(['param'], { option: 1 })
 
       // Then
       expect(spyExecute.mock.calls.length).toEqual(1)
@@ -44,22 +45,24 @@ describe('intefaces', () => {
         method: 'GET',
         option: 1,
         parameters: ['param'],
-        pathName: '/one'
+        pathName: '/one',
       })
     })
 
     test('should expose the apis[tag][operationId]', () => {
-      const interfaceValue = makeApisTagOperation({spec: {
-        paths: {
-          '/one': {
-            get: {
-              tags: ['me'],
-              operationId: 'getMe'
+      const interfaceValue = makeApisTagOperation({
+        spec: {
+          paths: {
+            '/one': {
+              get: {
+                tags: ['me'],
+                operationId: 'getMe',
+              },
+              put: { operationId: 'putMe' },
             },
-            put: {operationId: 'putMe'}
-          }
-        }
-      }})
+          },
+        },
+      })
 
       expect(interfaceValue.apis.me.getMe).toBeInstanceOf(Function)
       expect(interfaceValue.apis.default.putMe).toBeInstanceOf(Function)
@@ -70,10 +73,10 @@ describe('intefaces', () => {
     test('should call mapTagOperations with { spec, cb:Function }', () => {
       // Given
       const spyMapTagOperations = jest.spyOn(stubs, 'mapTagOperations')
-      const spec = { }
+      const spec = {}
 
       // When
-      const interfaceValue = makeApisTagOperationsOperationExecute({spec})
+      const interfaceValue = makeApisTagOperationsOperationExecute({ spec })
 
       // Then
       expect(spyMapTagOperations.mock.calls.length).toEqual(1)
@@ -86,13 +89,14 @@ describe('intefaces', () => {
       // Given
       const spyMapTagOperations = jest.spyOn(stubs, 'mapTagOperations')
       const spyExecute = jest.fn()
-      const interfaceValue = makeApisTagOperationsOperationExecute({execute: spyExecute})
-      const {cb} = spyMapTagOperations.mock.calls[0][0]
+      const interfaceValue = makeApisTagOperationsOperationExecute({
+        execute: spyExecute,
+      })
+      const { cb } = spyMapTagOperations.mock.calls[0][0]
 
       // When
-      const executer = cb({pathName: '/one', method: 'GET'})
-      executer(['param'], {option: 1})
-
+      const executer = cb({ pathName: '/one', method: 'GET' })
+      executer(['param'], { option: 1 })
 
       // Then
       expect(spyExecute.mock.calls.length).toEqual(1)
@@ -102,34 +106,37 @@ describe('intefaces', () => {
         method: 'GET',
         option: 1,
         parameters: ['param'],
-        pathName: '/one'
+        pathName: '/one',
       })
     })
 
     test('should map tagOperations to execute', () => {
-      const interfaceValue = makeApisTagOperationsOperationExecute({spec: {
-        paths: {
-          '/one': {
-            get: {
-              tags: ['me'],
-              operationId: 'getMe'
+      const interfaceValue = makeApisTagOperationsOperationExecute({
+        spec: {
+          paths: {
+            '/one': {
+              get: {
+                tags: ['me'],
+                operationId: 'getMe',
+              },
+              put: { operationId: 'putMe' },
             },
-            put: {operationId: 'putMe'}
-          }
-        }
-      }})
+          },
+        },
+      })
 
       expect(interfaceValue).toMatchObject({
         apis: {
-          default: {operations: { }},
-          me: {operations: {}}
-        }
+          default: { operations: {} },
+          me: { operations: {} },
+        },
       })
 
-      expect(interfaceValue.apis.me.operations.getMe.execute).toBeInstanceOf(Function)
+      expect(interfaceValue.apis.me.operations.getMe.execute).toBeInstanceOf(
+        Function
+      )
     })
   })
-
 
   describe('mapTagOperations', () => {
     test('should give default tag when there is no tag', () => {
@@ -138,20 +145,20 @@ describe('intefaces', () => {
         paths: {
           one: {
             get: {
-              operationId: 'getOne'
-            }
-          }
-        }
+              operationId: 'getOne',
+            },
+          },
+        },
       }
 
       // With
-      const tags = mapTagOperations({spec, defaultTag: 'default'})
+      const tags = mapTagOperations({ spec, defaultTag: 'default' })
 
       // Then
       expect(tags).toEqual({
         default: {
-          getOne: null
-        }
+          getOne: null,
+        },
       })
     })
 
@@ -162,83 +169,75 @@ describe('intefaces', () => {
           one: {
             get: {
               tags: ['alpha'],
-              operationId: 'getOne'
-            }
-          }
-        }
+              operationId: 'getOne',
+            },
+          },
+        },
       }
 
       // With
-      const tags = mapTagOperations({spec})
+      const tags = mapTagOperations({ spec })
 
       // Then
       expect(tags).toEqual({
         alpha: {
-          getOne: null
-        }
+          getOne: null,
+        },
       })
     })
 
-    test(
-      'should put the result of the `cb` prop into the operation method',
-      () => {
-        // Given
-        const spec = {
-          paths: {
-            one: {
-              get: {
-                tags: ['alpha'],
-                operationId: 'getOne'
-              }
-            }
-          }
-        }
-        const spy = jest.fn().mockImplementation(() => 'hug')
-
-
-          // With
-        const tags = mapTagOperations({spec, cb: spy})
-
-          // Then
-        expect(tags).toEqual({
-          alpha: {
-            getOne: 'hug'
-          }
-        })
+    test('should put the result of the `cb` prop into the operation method', () => {
+      // Given
+      const spec = {
+        paths: {
+          one: {
+            get: {
+              tags: ['alpha'],
+              operationId: 'getOne',
+            },
+          },
+        },
       }
-    )
+      const spy = jest.fn().mockImplementation(() => 'hug')
 
-    test(
-      'should call the `cb` prop with the operation object, the spec and the path and the method ',
-      () => {
-        // Given
-        const spec = {
-          paths: {
-            one: {
-              get: {
-                tags: ['alpha'],
-                operationId: 'getOne'
-              }
-            }
-          }
-        }
-        const spy = jest.fn()
+      // With
+      const tags = mapTagOperations({ spec, cb: spy })
 
+      // Then
+      expect(tags).toEqual({
+        alpha: {
+          getOne: 'hug',
+        },
+      })
+    })
 
-          // With
-        const tags = mapTagOperations({spec, cb: spy})
-
-          // Then
-        expect(spy.mock.calls.length).toEqual(1)
-        expect(spy.mock.calls[0][0]).toEqual({
-          operation: spec.paths.one.get,
-          pathName: 'one',
-          method: 'GET',
-          operationId: 'getOne',
-          spec
-        })
+    test('should call the `cb` prop with the operation object, the spec and the path and the method ', () => {
+      // Given
+      const spec = {
+        paths: {
+          one: {
+            get: {
+              tags: ['alpha'],
+              operationId: 'getOne',
+            },
+          },
+        },
       }
-    )
+      const spy = jest.fn()
+
+      // With
+      const tags = mapTagOperations({ spec, cb: spy })
+
+      // Then
+      expect(spy.mock.calls.length).toEqual(1)
+      expect(spy.mock.calls[0][0]).toEqual({
+        operation: spec.paths.one.get,
+        pathName: 'one',
+        method: 'GET',
+        operationId: 'getOne',
+        spec,
+      })
+    })
 
     test('should group multiple operations with the same tag', () => {
       // Given
@@ -247,25 +246,25 @@ describe('intefaces', () => {
           one: {
             get: {
               tags: ['alpha'],
-              operationId: 'getOne'
+              operationId: 'getOne',
             },
             post: {
               tags: ['alpha'],
-              operationId: 'postOne'
-            }
-          }
-        }
+              operationId: 'postOne',
+            },
+          },
+        },
       }
 
       // With
-      const tags = mapTagOperations({spec})
+      const tags = mapTagOperations({ spec })
 
-        // Then
+      // Then
       expect(tags).toEqual({
         alpha: {
           getOne: null,
-          postOne: null
-        }
+          postOne: null,
+        },
       })
     })
 
@@ -276,28 +275,28 @@ describe('intefaces', () => {
           one: {
             get: {
               tags: ['alpha', 'beta'],
-              operationId: 'getOne'
+              operationId: 'getOne',
             },
             post: {
               tags: ['alpha'],
-              operationId: 'postOne'
-            }
-          }
-        }
+              operationId: 'postOne',
+            },
+          },
+        },
       }
 
       // With
-      const tags = mapTagOperations({spec})
+      const tags = mapTagOperations({ spec })
 
-        // Then
+      // Then
       expect(tags).toEqual({
         alpha: {
           getOne: null,
-          postOne: null
+          postOne: null,
         },
         beta: {
-          getOne: null
-        }
+          getOne: null,
+        },
       })
     })
 
@@ -309,18 +308,18 @@ describe('intefaces', () => {
             get: {
               tags: ['alpha'],
             },
-          }
-        }
+          },
+        },
       }
 
       // With
-      const tags = mapTagOperations({spec})
+      const tags = mapTagOperations({ spec })
 
-        // Then
+      // Then
       expect(tags).toEqual({
         alpha: {
           get_one: null,
-        }
+        },
       })
     })
 
@@ -330,56 +329,57 @@ describe('intefaces', () => {
         paths: {
           one: {
             get: {
-              operationId: 'getOne'
+              operationId: 'getOne',
             },
-          }
-        }
+          },
+        },
       }
 
       // With
-      const tags = mapTagOperations({spec, defaultTag: 'hug'})
+      const tags = mapTagOperations({ spec, defaultTag: 'hug' })
 
-        // Then
+      // Then
       expect(tags).toEqual({
         hug: {
           getOne: null,
-        }
+        },
       })
     })
 
-    test(
-      'should remap duplicate operationId as ${operationId}${count} starting at 1',
-      () => {
-        // Given
-        const spec = {
-          paths: {
-            one: {
-              get: {
-                operationId: 'getOne'
-              },
-              put: {
-                operationId: 'getOne'
-              },
-              post: {
-                operationId: 'getOne'
-              }
-            }
-          }
-        }
-
-        // With
-        let count = 1
-        const tags = mapTagOperations({spec, defaultTag: 'hug', cb: () => count++})
-
-          // Then
-        expect(tags).toEqual({
-          hug: {
-            getOne1: 1,
-            getOne2: 2,
-            getOne3: 3
-          }
-        })
+    test('should remap duplicate operationId as ${operationId}${count} starting at 1', () => {
+      // Given
+      const spec = {
+        paths: {
+          one: {
+            get: {
+              operationId: 'getOne',
+            },
+            put: {
+              operationId: 'getOne',
+            },
+            post: {
+              operationId: 'getOne',
+            },
+          },
+        },
       }
-    )
+
+      // With
+      let count = 1
+      const tags = mapTagOperations({
+        spec,
+        defaultTag: 'hug',
+        cb: () => count++,
+      })
+
+      // Then
+      expect(tags).toEqual({
+        hug: {
+          getOne1: 1,
+          getOne2: 2,
+          getOne3: 3,
+        },
+      })
+    })
   })
 })

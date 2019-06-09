@@ -3,7 +3,7 @@ import path from 'path'
 import clone from 'clone'
 import glob from 'glob'
 import xmock from 'xmock'
-import mapSpec, {plugins} from '../../src/specmap'
+import mapSpec, { plugins } from '../../src/specmap'
 
 const refs = plugins.refs
 const allOf = plugins.allOf
@@ -35,8 +35,8 @@ describe('complex', () => {
         const no2 = Number(path.basename(f2).split('.')[0])
         return no1 - no2
       })
-      .map((filename) => {
-        return {name: path.basename(filename), spec: require(filename)}
+      .map(filename => {
+        return { name: path.basename(filename), spec: require(filename) }
       })
 
     // Runs test serially, just more convenient for debugging if a spec fails
@@ -50,8 +50,8 @@ describe('complex', () => {
         const startTime = new Date()
         console.log('Run', spec.name)
 
-        return mapSpec({spec: spec.spec, plugins: [refs, allOf]})
-          .then((res) => {
+        return mapSpec({ spec: spec.spec, plugins: [refs, allOf] })
+          .then(res => {
             if (res.errors.length) throw res.errors[0]
             expect(res.errors.length).toEqual(0)
             const elapsed = new Date() - startTime

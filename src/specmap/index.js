@@ -11,26 +11,30 @@ const HARD_LIMIT = 100
 
 class SpecMap {
   constructor(opts) {
-    Object.assign(this, {
-      spec: '',
-      debugLevel: 'info',
-      plugins: [],
-      pluginHistory: {},
-      errors: [],
-      mutations: [],
-      promisedPatches: [],
-      state: {},
-      patches: [],
-      context: {},
-      contextTree: new ContextTree(),
-      showDebug: false,
-      allPatches: [], // only populated if showDebug is true
-      pluginProp: 'specMap',
-      libMethods: Object.assign(Object.create(this), lib, {
-        getInstance: () => this
-      }),
-      allowMetaPatches: false,
-    }, opts)
+    Object.assign(
+      this,
+      {
+        spec: '',
+        debugLevel: 'info',
+        plugins: [],
+        pluginHistory: {},
+        errors: [],
+        mutations: [],
+        promisedPatches: [],
+        state: {},
+        patches: [],
+        context: {},
+        contextTree: new ContextTree(),
+        showDebug: false,
+        allPatches: [], // only populated if showDebug is true
+        pluginProp: 'specMap',
+        libMethods: Object.assign(Object.create(this), lib, {
+          getInstance: () => this,
+        }),
+        allowMetaPatches: false,
+      },
+      opts
+    )
 
     // Lib methods bound
     this.get = this._get.bind(this)
@@ -67,17 +71,15 @@ class SpecMap {
     if (plugin[this.pluginProp]) {
       ctx = plugin
       fn = plugin[this.pluginProp]
-    }
-    else if (lib.isFunction(plugin)) {
+    } else if (lib.isFunction(plugin)) {
       fn = plugin
-    }
-    else if (lib.isObject(plugin)) {
+    } else if (lib.isObject(plugin)) {
       fn = createKeyBasedPlugin(plugin)
     }
 
     return Object.assign(fn.bind(ctx), {
       pluginName: plugin.name || name,
-      isGenerator: lib.isGenerator(fn)
+      isGenerator: lib.isGenerator(fn),
     })
 
     // Expected plugin interface: {key: string, plugin: fn*}
@@ -95,7 +97,7 @@ class SpecMap {
         })
       }
 
-      return function* (patches, specmap) {
+      return function*(patches, specmap) {
         const refCache = {}
 
         for (const patch of patches.filter(lib.isAdditiveMutation)) {
@@ -107,12 +109,12 @@ class SpecMap {
             if (pluginObj.key === path[path.length - 1]) {
               yield pluginObj.plugin(obj, pluginObj.key, path, specmap)
             }
-          }
-          else {
+          } else {
             const parentIndex = path.length - 1
             const parent = path[parentIndex]
             const indexOfFirstProperties = path.indexOf('properties')
-            const isRootProperties = parent === 'properties' && parentIndex === indexOfFirstProperties
+            const isRootProperties =
+              parent === 'properties' && parentIndex === indexOfFirstProperties
             const traversed = specmap.allowMetaPatches && refCache[obj.$$ref]
 
             for (const key of Object.keys(obj)) {
@@ -132,7 +134,10 @@ class SpecMap {
               }
 
               if (!isRootProperties && key === pluginObj.key) {
-                const isWithinPathDiscriminator = isSubPath(pathDiscriminator, path)
+                const isWithinPathDiscriminator = isSubPath(
+                  pathDiscriminator,
+                  path
+                )
                 if (!pathDiscriminator || isWithinPathDiscriminator) {
                   yield pluginObj.plugin(val, key, updatedPath, specmap, patch)
                 }
@@ -146,7 +151,7 @@ class SpecMap {
 
   nextPlugin() {
     // Array.prototype.find doesn't work in IE 11 :(
-    return find(this.wrappedPlugins, (plugin) => {
+    return find(this.wrappedPlugins, plugin => {
       const mutations = this.getMutationsForPlugin(plugin)
       return mutations.length > 0
     })
@@ -184,12 +189,12 @@ class SpecMap {
 
   updatePluginHistory(plugin, val) {
     const name = this.getPluginName(plugin)
-    const history = this.pluginHistory[name] = this.pluginHistory[name] || []
+    const history = (this.pluginHistory[name] = this.pluginHistory[name] || [])
     history.push(val)
   }
 
   updatePatches(patches, plugin) {
-    lib.normalizeArray(patches).forEach((patch) => {
+    lib.normalizeArray(patches).forEach(patch => {
       if (patch instanceof Error) {
         this.errors.push(patch)
         return
@@ -220,8 +225,7 @@ class SpecMap {
           this.updateMutations(patch)
           return
         }
-      }
-      catch (e) {
+      } catch (e) {
         console.error(e) // eslint-disable-line no-console
         this.errors.push(e)
       }
@@ -229,11 +233,17 @@ class SpecMap {
   }
 
   updateMutations(patch) {
-    if (typeof patch.value === 'object' && !Array.isArray(patch.value) && this.allowMetaPatches) {
+    if (
+      typeof patch.value === 'object' &&
+      !Array.isArray(patch.value) &&
+      this.allowMetaPatches
+    ) {
       patch.value = Object.assign({}, patch.value)
     }
 
-    const result = lib.applyPatch(this.state, patch, {allowMetaPatches: this.allowMetaPatches})
+    const result = lib.applyPatch(this.state, patch, {
+      allowMetaPatches: this.allowMetaPatches,
+    })
     if (result) {
       this.mutations.push(patch)
       this.state = result
@@ -243,23 +253,23 @@ class SpecMap {
   removePromisedPatch(patch) {
     const index = this.promisedPatches.indexOf(patch)
     if (index < 0) {
-      this.debug('Tried to remove a promisedPatch that isn\'t there!')
+      this.debug("Tried to remove a promisedPatch that isn't there!")
       return
     }
     this.promisedPatches.splice(index, 1)
   }
 
   promisedPatchThen(patch) {
-    const value = patch.value = patch.value
-      .then((val) => {
-        const promisedPatch = Object.assign({}, patch, {value: val})
+    const value = (patch.value = patch.value
+      .then(val => {
+        const promisedPatch = Object.assign({}, patch, { value: val })
         this.removePromisedPatch(patch)
         this.updatePatches(promisedPatch)
       })
-      .catch((e) => {
+      .catch(e => {
         this.removePromisedPatch(patch)
         this.updatePatches(e)
-      })
+      }))
     return value
   }
 
@@ -327,7 +337,7 @@ class SpecMap {
       }
 
       // We're done!
-      const result = {spec: this.state, errors: this.errors}
+      const result = { spec: this.state, errors: this.errors }
       if (this.showDebug) {
         result.patches = this.allPatches
       }
@@ -340,7 +350,9 @@ class SpecMap {
     if (that.pluginCount[plugin] > HARD_LIMIT) {
       return Promise.resolve({
         spec: that.state,
-        errors: that.errors.concat(new Error(`We've reached a hard limit of ${HARD_LIMIT} plugin runs`))
+        errors: that.errors.concat(
+          new Error(`We've reached a hard limit of ${HARD_LIMIT} plugin runs`)
+        ),
       })
     }
 
@@ -349,9 +361,11 @@ class SpecMap {
       const promises = this.promisedPatches.map(p => p.value)
 
       // Waits for all to settle instead of Promise.all which stops on rejection
-      return Promise.all(promises.map((promise) => {
-        return promise.then(Function, Function)
-      })).then(() => this.dispatch())
+      return Promise.all(
+        promises.map(promise => {
+          return promise.then(Function, Function)
+        })
+      ).then(() => this.dispatch())
     }
 
     // Ok, run the plugin
@@ -367,18 +381,15 @@ class SpecMap {
           for (const yieldedPatches of plugin(mutations, that.getLib())) {
             updatePatches(yieldedPatches)
           }
-        }
-        else {
+        } else {
           const newPatches = plugin(mutations, that.getLib())
           updatePatches(newPatches)
         }
-      }
-      catch (e) {
+      } catch (e) {
         console.error(e) // eslint-disable-line no-console
-        updatePatches([Object.assign(Object.create(e), {plugin})])
-      }
-      finally {
-        that.updatePluginHistory(plugin, {mutationIndex: lastMutationIndex})
+        updatePatches([Object.assign(Object.create(e), { plugin })])
+      } finally {
+        that.updatePluginHistory(plugin, { mutationIndex: lastMutationIndex })
       }
 
       return that.dispatch()
@@ -397,5 +408,5 @@ export default function mapSpec(opts) {
   return new SpecMap(opts).dispatch()
 }
 
-const plugins = {refs, allOf, parameters, properties}
-export {SpecMap, plugins}
+const plugins = { refs, allOf, parameters, properties }
+export { SpecMap, plugins }

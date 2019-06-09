@@ -1,14 +1,11 @@
-import {
-  isOAS3,
-  isSwagger2
-} from '../../src/helpers'
+import { isOAS3, isSwagger2 } from '../../src/helpers'
 
 describe('helpers - OpenAPI Specification 3.0', () => {
   describe('isOAS3', () => {
     test('should recognize supported OpenAPI 3.0 versions', () => {
       // When
       const spec = {
-        openapi: '3.0.0'
+        openapi: '3.0.0',
       }
 
       // Then
@@ -17,7 +14,7 @@ describe('helpers - OpenAPI Specification 3.0', () => {
     test('should reject a swagger 2 signature', () => {
       // When
       const spec = {
-        swagger: '2.0'
+        swagger: '2.0',
       }
 
       // Then
@@ -28,7 +25,7 @@ describe('helpers - OpenAPI Specification 3.0', () => {
     test('should recognize supported Swagger 2.0 versions', () => {
       // When
       const spec = {
-        swagger: '2.0'
+        swagger: '2.0',
       }
 
       // Then
@@ -37,7 +34,7 @@ describe('helpers - OpenAPI Specification 3.0', () => {
     test('should reject a swagger 1.0 signature', () => {
       // When
       const spec = {
-        swagger: '1.0'
+        swagger: '1.0',
       }
 
       // Then

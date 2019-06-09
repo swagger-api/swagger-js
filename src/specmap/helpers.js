@@ -2,15 +2,11 @@ import traverse from 'traverse'
 import URL from 'url'
 
 // This will match if the direct parent's key exactly matches an item.
-const freelyNamedKeyParents = [
-  'properties',
-]
+const freelyNamedKeyParents = ['properties']
 
 // This will match if the grandparent's key exactly matches an item.
 // NOTE that this is for finding non-free paths!
-const nonFreelyNamedKeyGrandparents = [
-  'properties',
-]
+const nonFreelyNamedKeyGrandparents = ['properties']
 
 // This will match if the joined parent path exactly matches an item.
 //
@@ -27,17 +23,14 @@ const freelyNamedPaths = [
   'components/schemas',
   'components/responses',
   'components/parameters',
-  'components/securitySchemes'
+  'components/securitySchemes',
 ]
 
 // This will match if any of these items are substrings of the joined
 // parent path.
 //
 // Warning! These are powerful. Beware of edge cases.
-const freelyNamedAncestors = [
-  'schema/example',
-  'items/example',
-]
+const freelyNamedAncestors = ['schema/example', 'items/example']
 
 export function isFreelyNamed(parentPath) {
   const parentKey = parentPath[parentPath.length - 1]
@@ -46,25 +39,34 @@ export function isFreelyNamed(parentPath) {
 
   return (
     // eslint-disable-next-line max-len
-    (freelyNamedKeyParents.indexOf(parentKey) > -1 && nonFreelyNamedKeyGrandparents.indexOf(grandparentKey) === -1) ||
-    (freelyNamedPaths.indexOf(parentStr) > -1) ||
-    (freelyNamedAncestors.some(el => parentStr.indexOf(el) > -1))
+    (freelyNamedKeyParents.indexOf(parentKey) > -1 &&
+      nonFreelyNamedKeyGrandparents.indexOf(grandparentKey) === -1) ||
+    freelyNamedPaths.indexOf(parentStr) > -1 ||
+    freelyNamedAncestors.some(el => parentStr.indexOf(el) > -1)
   )
 }
 
-export function generateAbsoluteRefPatches(obj, basePath, {
-  specmap,
-  getBaseUrlForNodePath = path => specmap.getContext([...basePath, ...path]).baseDoc,
-  targetKeys = ['$ref', '$$ref']
-} = {}) {
+export function generateAbsoluteRefPatches(
+  obj,
+  basePath,
+  {
+    specmap,
+    getBaseUrlForNodePath = path =>
+      specmap.getContext([...basePath, ...path]).baseDoc,
+    targetKeys = ['$ref', '$$ref'],
+  } = {}
+) {
   const patches = []
 
-  traverse(obj).forEach(function () {
+  traverse(obj).forEach(function() {
     if (targetKeys.indexOf(this.key) > -1) {
       const nodePath = this.path // this node's path, relative to `obj`
       const fullPath = basePath.concat(this.path)
 
-      const absolutifiedRefValue = absolutifyPointer(this.node, getBaseUrlForNodePath(nodePath))
+      const absolutifiedRefValue = absolutifyPointer(
+        this.node,
+        getBaseUrlForNodePath(nodePath)
+      )
 
       patches.push(specmap.replace(fullPath, absolutifiedRefValue))
     }

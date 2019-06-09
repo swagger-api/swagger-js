@@ -1,29 +1,34 @@
 import pick from 'lodash/pick'
-import {eachOperation, opId} from './helpers'
+import { eachOperation, opId } from './helpers'
 
 const nullFn = () => null
 
-const normalizeArray = (arg) => {
+const normalizeArray = arg => {
   return Array.isArray(arg) ? arg : [arg]
 }
 
 // To allow stubbing of functions
 export const self = {
   mapTagOperations,
-  makeExecute
+  makeExecute,
 }
 
 // Make an execute, bound to arguments defined in mapTagOperation's callback (cb)
 export function makeExecute(swaggerJs = {}) {
-  return ({pathName, method, operationId}) => (parameters, opts = {}) => {
+  return ({ pathName, method, operationId }) => (parameters, opts = {}) => {
     return swaggerJs.execute({
       spec: swaggerJs.spec,
-      ...pick(swaggerJs, 'requestInterceptor', 'responseInterceptor', 'userFetch'),
+      ...pick(
+        swaggerJs,
+        'requestInterceptor',
+        'responseInterceptor',
+        'userFetch'
+      ),
       pathName,
       method,
       parameters,
       operationId,
-      ...opts
+      ...opts,
     })
   }
 }
@@ -44,14 +49,14 @@ export function makeApisTagOperationsOperationExecute(swaggerJs = {}) {
   const apis = {}
   for (const tag in tagOperations) {
     apis[tag] = {
-      operations: {}
+      operations: {},
     }
     for (const op in tagOperations[tag]) {
-      apis[tag].operations[op] = {execute: tagOperations[tag][op]}
+      apis[tag].operations[op] = { execute: tagOperations[tag][op] }
     }
   }
 
-  return {apis}
+  return { apis }
 }
 
 // .apis[tag][operationId]:ExecuteFunction interface
@@ -61,8 +66,8 @@ export function makeApisTagOperation(swaggerJs = {}) {
     apis: self.mapTagOperations({
       v2OperationIdCompatibilityMode: swaggerJs.v2OperationIdCompatibilityMode,
       spec: swaggerJs.spec,
-      cb
-    })
+      cb,
+    }),
   }
 }
 
@@ -75,27 +80,39 @@ export function makeApisTagOperation(swaggerJs = {}) {
  * `defaultTag` will house all non-tagged operations
  *
  */
-export function mapTagOperations({spec, cb = nullFn, defaultTag = 'default', v2OperationIdCompatibilityMode}) {
+export function mapTagOperations({
+  spec,
+  cb = nullFn,
+  defaultTag = 'default',
+  v2OperationIdCompatibilityMode,
+}) {
   const operationIdCounter = {}
   const tagOperations = {} // Will house all tags + operations
-  eachOperation(spec, ({pathName, method, operation}) => {
+  eachOperation(spec, ({ pathName, method, operation }) => {
     const tags = operation.tags ? normalizeArray(operation.tags) : [defaultTag]
 
-    tags.forEach((tag) => {
+    tags.forEach(tag => {
       if (typeof tag !== 'string') {
         return
       }
-      const tagObj = tagOperations[tag] = tagOperations[tag] || {}
-      const id = opId(operation, pathName, method, {v2OperationIdCompatibilityMode})
-      const cbResult = cb({spec, pathName, method, operation, operationId: id})
+      const tagObj = (tagOperations[tag] = tagOperations[tag] || {})
+      const id = opId(operation, pathName, method, {
+        v2OperationIdCompatibilityMode,
+      })
+      const cbResult = cb({
+        spec,
+        pathName,
+        method,
+        operation,
+        operationId: id,
+      })
 
       if (operationIdCounter[id]) {
         operationIdCounter[id]++
         tagObj[`${id}${operationIdCounter[id]}`] = cbResult
-      }
-      else if (typeof tagObj[id] !== 'undefined') {
+      } else if (typeof tagObj[id] !== 'undefined') {
         // Bump counter ( for this operationId )
-        const originalCounterValue = (operationIdCounter[id] || 1)
+        const originalCounterValue = operationIdCounter[id] || 1
         operationIdCounter[id] = originalCounterValue + 1
         // Append _x to the operationId
         tagObj[`${id}${operationIdCounter[id]}`] = cbResult
@@ -104,8 +121,7 @@ export function mapTagOperations({spec, cb = nullFn, defaultTag = 'default', v2O
         const temp = tagObj[id]
         delete tagObj[id]
         tagObj[`${id}${originalCounterValue}`] = temp
-      }
-      else {
+      } else {
         // Assign callback result ( usually a bound function )
         tagObj[id] = cbResult
       }

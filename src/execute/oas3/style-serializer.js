@@ -1,13 +1,13 @@
 import encodeToRFC3986 from 'encode-3986'
 import toUTF8Bytes from 'utf8-bytes'
-import {stringToCharArray} from 'utfstring'
+import { stringToCharArray } from 'utfstring'
 
-const isRfc3986Reserved = char => ':/?#[]@!$&\'()*+,;='.indexOf(char) > -1
-const isRrc3986Unreserved = (char) => {
-  return (/^[a-z0-9\-._~]+$/i).test(char)
+const isRfc3986Reserved = char => ":/?#[]@!$&'()*+,;=".indexOf(char) > -1
+const isRrc3986Unreserved = char => {
+  return /^[a-z0-9\-._~]+$/i.test(char)
 }
 
-export function encodeDisallowedCharacters(str, {escape} = {}, parse) {
+export function encodeDisallowedCharacters(str, { escape } = {}, parse) {
   if (typeof str === 'number') {
     str = str.toString()
   }
@@ -23,40 +23,42 @@ export function encodeDisallowedCharacters(str, {escape} = {}, parse) {
     return JSON.parse(str)
   }
 
-  return stringToCharArray(str).map((char) => {
-    if (isRrc3986Unreserved(char)) {
-      return char
-    }
+  return stringToCharArray(str)
+    .map(char => {
+      if (isRrc3986Unreserved(char)) {
+        return char
+      }
 
-    if (isRfc3986Reserved(char) && escape === 'unsafe') {
-      return char
-    }
+      if (isRfc3986Reserved(char) && escape === 'unsafe') {
+        return char
+      }
 
-    const encoded = (toUTF8Bytes(char) || [])
-      .map(byte => `0${byte.toString(16).toUpperCase()}`.slice(-2))
-      .map(encodedByte => `%${encodedByte}`)
-      .join('')
+      const encoded = (toUTF8Bytes(char) || [])
+        .map(byte => `0${byte.toString(16).toUpperCase()}`.slice(-2))
+        .map(encodedByte => `%${encodedByte}`)
+        .join('')
 
-    return encoded
-  }).join('')
+      return encoded
+    })
+    .join('')
 }
 
-export default function (config) {
-  const {value} = config
+export default function(config) {
+  const { value } = config
 
   if (Array.isArray(value)) {
     return encodeArray(config)
-  }
-  else if (typeof value === 'object') {
+  } else if (typeof value === 'object') {
     return encodeObject(config)
   }
   return encodePrimitive(config)
 }
 
-function encodeArray({key, value, style, explode, escape}) {
-  const valueEncoder = str => encodeDisallowedCharacters(str, {
-    escape
-  })
+function encodeArray({ key, value, style, explode, escape }) {
+  const valueEncoder = str =>
+    encodeDisallowedCharacters(str, {
+      escape,
+    })
 
   if (style === 'simple') {
     return value.map(val => valueEncoder(val)).join(',')
@@ -67,12 +69,14 @@ function encodeArray({key, value, style, explode, escape}) {
   }
 
   if (style === 'matrix') {
-    return value.map(val => valueEncoder(val)).reduce((prev, curr) => {
-      if (!prev || explode) {
-        return `${(prev || '')};${key}=${curr}`
-      }
-      return `${prev},${curr}`
-    }, '')
+    return value
+      .map(val => valueEncoder(val))
+      .reduce((prev, curr) => {
+        if (!prev || explode) {
+          return `${prev || ''};${key}=${curr}`
+        }
+        return `${prev},${curr}`
+      }, '')
   }
 
   if (style === 'form') {
@@ -91,10 +95,11 @@ function encodeArray({key, value, style, explode, escape}) {
   }
 }
 
-function encodeObject({key, value, style, explode, escape}) {
-  const valueEncoder = str => encodeDisallowedCharacters(str, {
-    escape
-  })
+function encodeObject({ key, value, style, explode, escape }) {
+  const valueEncoder = str =>
+    encodeDisallowedCharacters(str, {
+      escape,
+    })
 
   const valueKeys = Object.keys(value)
 
@@ -148,10 +153,11 @@ function encodeObject({key, value, style, explode, escape}) {
   }
 }
 
-function encodePrimitive({key, value, style, escape}) {
-  const valueEncoder = str => encodeDisallowedCharacters(str, {
-    escape
-  })
+function encodePrimitive({ key, value, style, escape }) {
+  const valueEncoder = str =>
+    encodeDisallowedCharacters(str, {
+      escape,
+    })
 
   if (style === 'simple') {
     return valueEncoder(value)

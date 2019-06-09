@@ -3,27 +3,25 @@
 import assign from 'lodash/assign'
 import get from 'lodash/get'
 import btoa from 'btoa'
-import {Buffer} from 'buffer/'
+import { Buffer } from 'buffer/'
 
-export default function (options, req) {
+export default function(options, req) {
   const {
     operation,
     requestBody,
     securities,
     spec,
-    attachContentTypeForEmptyPayload
+    attachContentTypeForEmptyPayload,
   } = options
 
-  let {
-    requestContentType
-  } = options
+  let { requestContentType } = options
 
-  req = applySecurities({request: req, securities, operation, spec})
+  req = applySecurities({ request: req, securities, operation, spec })
 
   const requestBodyDef = operation.requestBody || {}
   const requestBodyMediaTypes = Object.keys(requestBodyDef.content || {})
-  const isExplicitContentTypeValid = requestContentType
-  && requestBodyMediaTypes.indexOf(requestContentType) > -1
+  const isExplicitContentTypeValid =
+    requestContentType && requestBodyMediaTypes.indexOf(requestContentType) > -1
 
   // for OAS3: set the Content-Type
   if (requestBody || attachContentTypeForEmptyPayload) {
@@ -31,16 +29,14 @@ export default function (options, req) {
 
     if (requestContentType && isExplicitContentTypeValid) {
       req.headers['Content-Type'] = requestContentType
-    }
-    else if (!requestContentType) {
+    } else if (!requestContentType) {
       const firstMediaType = requestBodyMediaTypes[0]
       if (firstMediaType) {
         req.headers['Content-Type'] = firstMediaType
         requestContentType = firstMediaType
       }
     }
-  }
-  else if (requestContentType && isExplicitContentTypeValid) {
+  } else if (requestContentType && isExplicitContentTypeValid) {
     req.headers['Content-Type'] = requestContentType
   }
 
@@ -50,10 +46,13 @@ export default function (options, req) {
       if (requestBodyMediaTypes.indexOf(requestContentType) > -1) {
         // only attach body if the requestBody has a definition for the
         // contentType that has been explicitly set
-        if (requestContentType === 'application/x-www-form-urlencoded' || requestContentType.indexOf('multipart/') === 0) {
+        if (
+          requestContentType === 'application/x-www-form-urlencoded' ||
+          requestContentType.indexOf('multipart/') === 0
+        ) {
           if (typeof requestBody === 'object') {
             req.form = {}
-            Object.keys(requestBody).forEach((k) => {
+            Object.keys(requestBody).forEach(k => {
               const val = requestBody[k]
               let newVal
 
@@ -74,30 +73,25 @@ export default function (options, req) {
               if (typeof val === 'object' && !isFile) {
                 if (Array.isArray(val)) {
                   newVal = val.toString()
-                }
-                else {
+                } else {
                   newVal = JSON.stringify(val)
                 }
-              }
-              else {
+              } else {
                 newVal = val
               }
 
               req.form[k] = {
-                value: newVal
+                value: newVal,
               }
             })
-          }
-          else {
+          } else {
             req.form = requestBody
           }
-        }
-        else {
+        } else {
           req.body = requestBody
         }
       }
-    }
-    else {
+    } else {
       req.body = requestBody
     }
   }
@@ -107,9 +101,14 @@ export default function (options, req) {
 
 // Add security values, to operations - that declare their need on them
 // Adapted from the Swagger2 implementation
-export function applySecurities({request, securities = {}, operation = {}, spec}) {
+export function applySecurities({
+  request,
+  securities = {},
+  operation = {},
+  spec,
+}) {
   const result = assign({}, request)
-  const {authorized = {}} = securities
+  const { authorized = {} } = securities
   const security = operation.security || spec.security || []
   const isAuthorized = authorized && !!Object.keys(authorized).length
   const securityDef = get(spec, ['components', 'securitySchemes']) || {}
@@ -117,8 +116,12 @@ export function applySecurities({request, securities = {}, operation = {}, spec}
   result.headers = result.headers || {}
   result.query = result.query || {}
 
-  if (!Object.keys(securities).length || !isAuthorized || !security ||
-      (Array.isArray(operation.security) && !operation.security.length)) {
+  if (
+    !Object.keys(securities).length ||
+    !isAuthorized ||
+    !security ||
+    (Array.isArray(operation.security) && !operation.security.length)
+  ) {
     return request
   }
 
@@ -132,7 +135,7 @@ export function applySecurities({request, securities = {}, operation = {}, spec}
       }
 
       const value = auth.value || auth
-      const {type} = schema
+      const { type } = schema
 
       if (auth) {
         if (type === 'apiKey') {
@@ -145,10 +148,9 @@ export function applySecurities({request, securities = {}, operation = {}, spec}
           if (schema.in === 'cookie') {
             result.cookies[schema.name] = value
           }
-        }
-        else if (type === 'http') {
+        } else if (type === 'http') {
           if (schema.scheme === 'basic') {
-            const {username, password} = value
+            const { username, password } = value
             const encoded = btoa(`${username}:${password}`)
             result.headers.Authorization = `Basic ${encoded}`
           }
@@ -156,8 +158,7 @@ export function applySecurities({request, securities = {}, operation = {}, spec}
           if (schema.scheme === 'bearer') {
             result.headers.Authorization = `Bearer ${value}`
           }
-        }
-        else if (type === 'oauth2') {
+        } else if (type === 'oauth2') {
           const token = auth.token || {}
           const accessToken = token.access_token
           let tokenType = token.token_type

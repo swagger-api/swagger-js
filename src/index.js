@@ -2,12 +2,12 @@ import cloneDeep from 'lodash/cloneDeep'
 import assign from 'lodash/assign'
 import startsWith from 'lodash/startsWith'
 import Url from 'url'
-import Http, {makeHttp, serializeRes, serializeHeaders} from './http'
-import Resolver, {clearCache} from './resolver'
+import Http, { makeHttp, serializeRes, serializeHeaders } from './http'
+import Resolver, { clearCache } from './resolver'
 import resolveSubtree from './subtree-resolver'
-import {makeApisTagOperation} from './interfaces'
-import {execute, buildRequest, PARAMETER_BUILDERS} from './execute'
-import {opId} from './helpers'
+import { makeApisTagOperation } from './interfaces'
+import { execute, buildRequest, PARAMETER_BUILDERS } from './execute'
+import { opId } from './helpers'
 
 Swagger.http = Http
 Swagger.makeHttp = makeHttp.bind(null, Swagger.http)
@@ -20,14 +20,13 @@ Swagger.clearCache = clearCache
 Swagger.parameterBuilders = PARAMETER_BUILDERS // Add this to the execute call
 Swagger.makeApisTagOperation = makeApisTagOperation
 Swagger.buildRequest = buildRequest
-Swagger.helpers = {opId}
+Swagger.helpers = { opId }
 
 function Swagger(url, opts = {}) {
   // Allow url as a separate argument
   if (typeof url === 'string') {
     opts.url = url
-  }
-  else {
+  } else {
     opts = url
   }
 
@@ -37,13 +36,12 @@ function Swagger(url, opts = {}) {
 
   assign(this, opts)
 
-  const prom = this.resolve()
-    .then(() => {
-      if (!this.disableInterfaces) {
-        assign(this, Swagger.makeApisTagOperation(this))
-      }
-      return this
-    })
+  const prom = this.resolve().then(() => {
+    if (!this.disableInterfaces) {
+      assign(this, Swagger.makeApisTagOperation(this))
+    }
+    return this
+  })
 
   // Expose this instance on the promise that gets returned
   prom.client = this
@@ -51,7 +49,6 @@ function Swagger(url, opts = {}) {
 }
 
 Swagger.prototype = {
-
   http: Http,
 
   execute(argHash) {
@@ -60,9 +57,9 @@ Swagger.prototype = {
     return Swagger.execute({
       spec: this.spec,
       http: this.http,
-      securities: {authorized: this.authorizations},
+      securities: { authorized: this.authorizations },
       contextUrl: typeof this.url === 'string' ? this.url : undefined,
-      ...argHash
+      ...argHash,
     })
   },
 
@@ -73,17 +70,17 @@ Swagger.prototype = {
       allowMetaPatches: this.allowMetaPatches,
       useCircularStructures: this.useCircularStructures,
       requestInterceptor: this.requestInterceptor || null,
-      responseInterceptor: this.responseInterceptor || null
-    }).then((obj) => {
+      responseInterceptor: this.responseInterceptor || null,
+    }).then(obj => {
       this.originalSpec = this.spec
       this.spec = obj.spec
       this.errors = obj.errors
       return this
     })
-  }
+  },
 }
 
-Swagger.prototype.applyDefaults = function () {
+Swagger.prototype.applyDefaults = function() {
   const spec = this.spec
   const specUrl = this.url
   // TODO: OAS3: support servers here

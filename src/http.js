@@ -6,7 +6,7 @@ import isString from 'lodash/isString'
 // For testing
 export const self = {
   serializeRes,
-  mergeInQueryOrForm
+  mergeInQueryOrForm,
 }
 
 // Handles fetch-like syntax and the case where there is only one object passed-in
@@ -25,12 +25,13 @@ export default async function http(url, request = {}) {
   self.mergeInQueryOrForm(request)
 
   if (request.requestInterceptor) {
-    request = await request.requestInterceptor(request) || request
+    request = (await request.requestInterceptor(request)) || request
   }
 
   // for content-type=multipart\/form-data remove content-type from request before fetch
   // so that correct one with `boundary` is set
-  const contentType = request.headers['content-type'] || request.headers['Content-Type']
+  const contentType =
+    request.headers['content-type'] || request.headers['Content-Type']
   if (/multipart\/form-data/i.test(contentType)) {
     delete request.headers['content-type']
     delete request.headers['Content-Type']
@@ -42,10 +43,9 @@ export default async function http(url, request = {}) {
     res = await (request.userFetch || fetch)(request.url, request)
     res = await self.serializeRes(res, url, request)
     if (request.responseInterceptor) {
-      res = await request.responseInterceptor(res) || res
+      res = (await request.responseInterceptor(res)) || res
     }
-  }
-  catch (resError) {
+  } catch (resError) {
     if (!res) {
       // res is completely absent, so we can't construct our own error
       // so we'll just throw the error we got
@@ -66,32 +66,37 @@ export default async function http(url, request = {}) {
 }
 
 // exported for testing
-export const shouldDownloadAsText = (contentType = '') => /(json|xml|yaml|text)\b/.test(contentType)
+export const shouldDownloadAsText = (contentType = '') =>
+  /(json|xml|yaml|text)\b/.test(contentType)
 
 function parseBody(body, contentType) {
-  if (contentType && (contentType.indexOf('application/json') === 0 || contentType.indexOf('+json') > 0)) {
+  if (
+    contentType &&
+    (contentType.indexOf('application/json') === 0 ||
+      contentType.indexOf('+json') > 0)
+  ) {
     return JSON.parse(body)
   }
   return jsYaml.safeLoad(body)
 }
 
 // Serialize the response, returns a promise with headers and the body part of the hash
-export function serializeRes(oriRes, url, {loadSpec = false} = {}) {
+export function serializeRes(oriRes, url, { loadSpec = false } = {}) {
   const res = {
     ok: oriRes.ok,
     url: oriRes.url || url,
     status: oriRes.status,
     statusText: oriRes.statusText,
-    headers: serializeHeaders(oriRes.headers)
+    headers: serializeHeaders(oriRes.headers),
   }
 
   const contentType = res.headers['content-type']
   const useText = loadSpec || shouldDownloadAsText(contentType)
 
   // Note: Response.blob not implemented in node-fetch 1.  Use buffer instead.
-  const getBody = useText ? oriRes.text : (oriRes.blob || oriRes.buffer)
+  const getBody = useText ? oriRes.text : oriRes.blob || oriRes.buffer
 
-  return getBody.call(oriRes).then((body) => {
+  return getBody.call(oriRes).then(body => {
     res.text = body
     res.data = body
 
@@ -100,8 +105,7 @@ export function serializeRes(oriRes, url, {loadSpec = false} = {}) {
         const obj = parseBody(body, contentType)
         res.body = obj
         res.obj = obj
-      }
-      catch (e) {
+      } catch (e) {
         res.parseError = e
       }
     }
@@ -123,8 +127,7 @@ export function serializeHeaders(headers = {}) {
       if (obj[header] !== undefined) {
         obj[header] = Array.isArray(obj[header]) ? obj[header] : [obj[header]]
         obj[header].push(headerValue)
-      }
-      else {
+      } else {
         obj[header] = headerValue
       }
     })
@@ -149,11 +152,13 @@ export function isFile(obj, navigatorObj) {
     // eslint-disable-next-line no-undef
     return obj instanceof File
   }
-  return obj !== null && typeof obj === 'object' && typeof obj.pipe === 'function'
+  return (
+    obj !== null && typeof obj === 'object' && typeof obj.pipe === 'function'
+  )
 }
 
 function formatValue(input, skipEncoding) {
-  const {collectionFormat, allowEmptyValue} = input
+  const { collectionFormat, allowEmptyValue } = input
 
   // `input` can be string in OAS3 contexts
   const value = typeof input === 'object' ? input.value : input
@@ -162,7 +167,7 @@ function formatValue(input, skipEncoding) {
     csv: ',',
     ssv: '%20',
     tsv: '%09',
-    pipes: '|'
+    pipes: '|',
   }
 
   if (typeof value === 'undefined' && allowEmptyValue) {
@@ -208,19 +213,22 @@ export function encodeFormOrQuery(data) {
     const isObject = a => a && typeof a === 'object'
     const paramValue = data[parameterName]
     const skipEncoding = !!paramValue.skipEncoding
-    const encodedParameterName = skipEncoding ? parameterName : encodeURIComponent(parameterName)
+    const encodedParameterName = skipEncoding
+      ? parameterName
+      : encodeURIComponent(parameterName)
     const notArray = isObject(paramValue) && !Array.isArray(paramValue)
     result[encodedParameterName] = formatValue(
-      notArray ? paramValue : {value: paramValue}, skipEncoding
+      notArray ? paramValue : { value: paramValue },
+      skipEncoding
     )
     return result
   }, {})
-  return qs.stringify(encodedQuery, {encode: false, indices: false}) || ''
+  return qs.stringify(encodedQuery, { encode: false, indices: false }) || ''
 }
 
 // If the request has a `query` object, merge it into the request.url, and delete the object
 export function mergeInQueryOrForm(req = {}) {
-  const {url = '', query, form} = req
+  const { url = '', query, form } = req
 
   const joinSearch = (...strs) => {
     const search = strs.filter(a => a).join('&') // Only truthy value
@@ -228,24 +236,24 @@ export function mergeInQueryOrForm(req = {}) {
   }
 
   if (form) {
-    const hasFile = Object.keys(form).some((key) => {
+    const hasFile = Object.keys(form).some(key => {
       return isFile(form[key].value)
     })
 
-    const contentType = req.headers['content-type'] || req.headers['Content-Type']
+    const contentType =
+      req.headers['content-type'] || req.headers['Content-Type']
 
     if (hasFile || /multipart\/form-data/i.test(contentType)) {
       const FormData = require('isomorphic-form-data') // eslint-disable-line global-require
       req.body = new FormData()
-      Object.keys(form).forEach((key) => {
+      Object.keys(form).forEach(key => {
         req.body.append(key, formatValue(form[key], true))
       })
-    }
-    else {
+    } else {
       req.body = encodeFormOrQuery(form)
     }
 
-    delete (req.form)
+    delete req.form
   }
 
   if (query) {
@@ -256,12 +264,12 @@ export function mergeInQueryOrForm(req = {}) {
       const oriQuery = qs.parse(oriSearch)
       const keysToRemove = Object.keys(query)
       keysToRemove.forEach(key => delete oriQuery[key])
-      newStr = qs.stringify(oriQuery, {encode: true})
+      newStr = qs.stringify(oriQuery, { encode: true })
     }
 
     const finalStr = joinSearch(newStr, encodeFormOrQuery(query))
     req.url = baseUrl + finalStr
-    delete (req.query)
+    delete req.query
   }
   return req
 }
@@ -271,9 +279,9 @@ export function makeHttp(httpFn, preFetch, postFetch) {
   postFetch = postFetch || (a => a)
   preFetch = preFetch || (a => a)
 
-  return (req) => {
+  return req => {
     if (typeof req === 'string') {
-      req = {url: req}
+      req = { url: req }
     }
     self.mergeInQueryOrForm(req)
     req = preFetch(req)

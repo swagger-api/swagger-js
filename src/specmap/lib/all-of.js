@@ -1,4 +1,4 @@
-import {isFreelyNamed, generateAbsoluteRefPatches} from '../helpers'
+import { isFreelyNamed, generateAbsoluteRefPatches } from '../helpers'
 
 export default {
   key: 'allOf',
@@ -21,13 +21,12 @@ export default {
       return err
     }
 
-
     let alreadyAddError = false
 
     // Find the original definition from the `patch.value` object
     // Remove the `allOf` property so it doesn't get added to the result of the `allOf` plugin
     let originalDefinitionObj = patch.value
-    parent.forEach((part) => {
+    parent.forEach(part => {
       if (!originalDefinitionObj) return // bail out if we've lost sight of our target
       originalDefinitionObj = originalDefinitionObj[part]
     })
@@ -59,12 +58,16 @@ export default {
       // remove ["allOf"], which will not be present when these patches are applied
       const collapsedFullPath = fullPath.slice(0, -1)
 
-      const absoluteRefPatches = generateAbsoluteRefPatches(toMerge, collapsedFullPath, {
-        getBaseUrlForNodePath: (nodePath) => {
-          return specmap.getContext([...fullPath, i, ...nodePath]).baseDoc
-        },
-        specmap
-      })
+      const absoluteRefPatches = generateAbsoluteRefPatches(
+        toMerge,
+        collapsedFullPath,
+        {
+          getBaseUrlForNodePath: nodePath => {
+            return specmap.getContext([...fullPath, i, ...nodePath]).baseDoc
+          },
+          specmap,
+        }
+      )
 
       patches.push(...absoluteRefPatches)
     })
@@ -79,5 +82,5 @@ export default {
     }
 
     return patches
-  }
+  },
 }

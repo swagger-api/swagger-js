@@ -5,7 +5,7 @@ import isArray from 'lodash/isArray'
 import btoa from 'btoa'
 import url from 'url'
 import cookie from 'cookie'
-import stockHttp, {mergeInQueryOrForm} from '../http'
+import stockHttp, { mergeInQueryOrForm } from '../http'
 import createError from '../specmap/lib/create-error'
 
 import SWAGGER2_PARAMETER_BUILDERS from './swagger2/parameter-builders'
@@ -16,14 +16,18 @@ import {
   getOperationRaw,
   idFromPathMethod,
   legacyIdFromPathMethod,
-  isOAS3
+  isOAS3,
 } from '../helpers'
 
-const arrayOrEmpty = (ar) => {
+const arrayOrEmpty = ar => {
   return Array.isArray(ar) ? ar : []
 }
 
-const OperationNotFoundError = createError('OperationNotFoundError', function (message, extra, oriError) {
+const OperationNotFoundError = createError('OperationNotFoundError', function(
+  message,
+  extra,
+  oriError
+) {
   this.originalError = oriError
   Object.assign(this, extra || {})
 })
@@ -33,9 +37,9 @@ const findParametersWithName = (name, parameters) => {
 }
 
 // removes parameters that have duplicate 'in' and 'name' properties
-const deduplicateParameters = (parameters) => {
+const deduplicateParameters = parameters => {
   const paramsMap = {}
-  parameters.forEach((p) => {
+  parameters.forEach(p => {
     if (!paramsMap[p.in]) {
       paramsMap[p.in] = {}
     }
@@ -43,8 +47,8 @@ const deduplicateParameters = (parameters) => {
   })
 
   const dedupedParameters = []
-  Object.keys(paramsMap).forEach((i) => {
-    Object.keys(paramsMap[i]).forEach((p) => {
+  Object.keys(paramsMap).forEach(i => {
+    Object.keys(paramsMap[i]).forEach(p => {
       dedupedParameters.push(paramsMap[i][p])
     })
   })
@@ -53,7 +57,7 @@ const deduplicateParameters = (parameters) => {
 
 // For stubbing in tests
 export const self = {
-  buildRequest
+  buildRequest,
 }
 
 // Execute request, with the given operationId and parameters
@@ -76,7 +80,14 @@ export function execute({
     operationId = legacyIdFromPathMethod(pathName, method)
   }
 
-  const request = self.buildRequest({spec, operationId, parameters, securities, http, ...extras})
+  const request = self.buildRequest({
+    spec,
+    operationId,
+    parameters,
+    securities,
+    http,
+    ...extras,
+  })
 
   if (request.body && (isPlainObject(request.body) || isArray(request.body))) {
     request.body = JSON.stringify(request.body)
@@ -102,34 +113,30 @@ export function buildRequest(options) {
     requestBody,
     server,
     serverVariables,
-    http
+    http,
   } = options
 
-  let {
-    parameters,
-    parameterBuilders
-  } = options
+  let { parameters, parameterBuilders } = options
 
   const specIsOAS3 = isOAS3(spec)
   if (!parameterBuilders) {
     // user did not provide custom parameter builders
     if (specIsOAS3) {
       parameterBuilders = OAS3_PARAMETER_BUILDERS
-    }
-    else {
+    } else {
       parameterBuilders = SWAGGER2_PARAMETER_BUILDERS
     }
   }
 
   // Set credentials with 'http.withCredentials' value
-  const credentials = (http && http.withCredentials) ? 'include' : 'same-origin'
+  const credentials = http && http.withCredentials ? 'include' : 'same-origin'
 
   // Base Template
   let req = {
     url: '',
     credentials,
     headers: {},
-    cookies: {}
+    cookies: {},
   }
 
   if (requestInterceptor) {
@@ -147,9 +154,17 @@ export function buildRequest(options) {
     throw new OperationNotFoundError(`Operation ${operationId} not found`)
   }
 
-  const {operation = {}, method, pathName} = operationRaw
+  const { operation = {}, method, pathName } = operationRaw
 
-  req.url += baseUrl({spec, scheme, contextUrl, server, serverVariables, pathName, method})
+  req.url += baseUrl({
+    spec,
+    scheme,
+    contextUrl,
+    server,
+    serverVariables,
+    pathName,
+    method,
+  })
 
   // Mostly for testing
   if (!operationId) {
@@ -162,7 +177,7 @@ export function buildRequest(options) {
   }
 
   req.url += pathName // Have not yet replaced the path parameters
-  req.method = (`${method}`).toUpperCase()
+  req.method = `${method}`.toUpperCase()
 
   parameters = parameters || {}
   const path = spec.paths[pathName] || {}
@@ -171,74 +186,93 @@ export function buildRequest(options) {
     req.headers.accept = responseContentType
   }
 
-  const combinedParameters = deduplicateParameters([]
-    .concat(arrayOrEmpty(operation.parameters)) // operation parameters
-    .concat(arrayOrEmpty(path.parameters)) // path parameters
+  const combinedParameters = deduplicateParameters(
+    []
+      .concat(arrayOrEmpty(operation.parameters)) // operation parameters
+      .concat(arrayOrEmpty(path.parameters)) // path parameters
   )
 
   // REVIEW: OAS3: have any key names or parameter shapes changed?
   // Any new features that need to be plugged in here?
 
-
   // Add values to request
-  combinedParameters.forEach((parameter) => {
+  combinedParameters.forEach(parameter => {
     const builder = parameterBuilders[parameter.in]
     let value
 
-    if (parameter.in === 'body' && parameter.schema && parameter.schema.properties) {
+    if (
+      parameter.in === 'body' &&
+      parameter.schema &&
+      parameter.schema.properties
+    ) {
       value = parameters
     }
 
     value = parameter && parameter.name && parameters[parameter.name]
 
     if (typeof value === 'undefined') {
-        // check for `name-in` formatted key
-      value = parameter && parameter.name && parameters[`${parameter.in}.${parameter.name}`]
-    }
-    else if (findParametersWithName(parameter.name, combinedParameters).length > 1) {
+      // check for `name-in` formatted key
+      value =
+        parameter &&
+        parameter.name &&
+        parameters[`${parameter.in}.${parameter.name}`]
+    } else if (
+      findParametersWithName(parameter.name, combinedParameters).length > 1
+    ) {
       // value came from `parameters[parameter.name]`
       // check to see if this is an ambiguous parameter
       // eslint-disable-next-line no-console
-      console.warn(`Parameter '${parameter.name}' is ambiguous because the defined spec has more than one parameter with the name: '${parameter.name}' and the passed-in parameter values did not define an 'in' value.`)
+      console.warn(
+        `Parameter '${parameter.name}' is ambiguous because the defined spec has more than one parameter with the name: '${parameter.name}' and the passed-in parameter values did not define an 'in' value.`
+      )
     }
 
     if (value === null) {
       return
     }
 
-    if (typeof parameter.default !== 'undefined' && typeof value === 'undefined') {
+    if (
+      typeof parameter.default !== 'undefined' &&
+      typeof value === 'undefined'
+    ) {
       value = parameter.default
     }
 
-    if (typeof value === 'undefined' && parameter.required && !parameter.allowEmptyValue) {
+    if (
+      typeof value === 'undefined' &&
+      parameter.required &&
+      !parameter.allowEmptyValue
+    ) {
       throw new Error(`Required parameter ${parameter.name} is not provided`)
     }
 
-    if (specIsOAS3 && parameter.schema && parameter.schema.type === 'object' && typeof value === 'string') {
+    if (
+      specIsOAS3 &&
+      parameter.schema &&
+      parameter.schema.type === 'object' &&
+      typeof value === 'string'
+    ) {
       try {
         value = JSON.parse(value)
-      }
-      catch (e) {
+      } catch (e) {
         throw new Error('Could not parse object parameter value string as JSON')
       }
     }
 
     if (builder) {
-      builder({req, parameter, value, operation, spec})
+      builder({ req, parameter, value, operation, spec })
     }
   })
 
   // Do version-specific tasks, then return those results.
-  const versionSpecificOptions = {...options, operation}
+  const versionSpecificOptions = { ...options, operation }
 
   if (specIsOAS3) {
     req = oas3BuildRequest(versionSpecificOptions, req)
-  }
-  else {
+  } else {
     // If not OAS3, then treat as Swagger2.
     req = swagger2BuildRequest(versionSpecificOptions, req)
   }
-
 
   // If the cookie convenience object exists in our request,
   // serialize its content and then delete the cookie object.
@@ -274,7 +308,14 @@ export function baseUrl(obj) {
   return specIsOAS3 ? oas3BaseUrl(obj) : swagger2BaseUrl(obj)
 }
 
-function oas3BaseUrl({spec, pathName, method, server, contextUrl, serverVariables = {}}) {
+function oas3BaseUrl({
+  spec,
+  pathName,
+  method,
+  server,
+  contextUrl,
+  serverVariables = {},
+}) {
   const servers =
     getIn(spec, ['paths', pathName, (method || '').toLowerCase(), 'servers']) ||
     getIn(spec, ['paths', pathName, 'servers']) ||
@@ -301,11 +342,12 @@ function oas3BaseUrl({spec, pathName, method, server, contextUrl, serverVariable
   if (selectedServerUrl.indexOf('{') > -1) {
     // do variable substitution
     const varNames = getVariableTemplateNames(selectedServerUrl)
-    varNames.forEach((vari) => {
+    varNames.forEach(vari => {
       if (selectedServerObj.variables && selectedServerObj.variables[vari]) {
         // variable is defined in server
         const variableDefinition = selectedServerObj.variables[vari]
-        const variableValue = serverVariables[vari] || variableDefinition.default
+        const variableValue =
+          serverVariables[vari] || variableDefinition.default
 
         const re = new RegExp(`{${vari}}`, 'g')
         selectedServerUrl = selectedServerUrl.replace(re, variableValue)
@@ -320,7 +362,10 @@ function buildOas3UrlWithContext(ourUrl = '', contextUrl = '') {
   const parsedUrl = url.parse(ourUrl)
   const parsedContextUrl = url.parse(contextUrl)
 
-  const computedScheme = stripNonAlpha(parsedUrl.protocol) || stripNonAlpha(parsedContextUrl.protocol) || ''
+  const computedScheme =
+    stripNonAlpha(parsedUrl.protocol) ||
+    stripNonAlpha(parsedContextUrl.protocol) ||
+    ''
   const computedHost = parsedUrl.host || parsedContextUrl.host
   const computedPath = parsedUrl.pathname || ''
   let res
@@ -329,8 +374,7 @@ function buildOas3UrlWithContext(ourUrl = '', contextUrl = '') {
     res = `${computedScheme}://${computedHost + computedPath}`
 
     // If last character is '/', trim it off
-  }
-  else {
+  } else {
     res = computedPath
   }
 
@@ -343,18 +387,22 @@ function getVariableTemplateNames(str) {
   let text
 
   // eslint-disable-next-line no-cond-assign
-  while (text = re.exec(str)) {
+  while ((text = re.exec(str))) {
     results.push(text[1])
   }
   return results
 }
 
 // Compose the baseUrl ( scheme + host + basePath )
-function swagger2BaseUrl({spec, scheme, contextUrl = ''}) {
+function swagger2BaseUrl({ spec, scheme, contextUrl = '' }) {
   const parsedContextUrl = url.parse(contextUrl)
   const firstSchemeInSpec = Array.isArray(spec.schemes) ? spec.schemes[0] : null
 
-  const computedScheme = scheme || firstSchemeInSpec || stripNonAlpha(parsedContextUrl.protocol) || 'http'
+  const computedScheme =
+    scheme ||
+    firstSchemeInSpec ||
+    stripNonAlpha(parsedContextUrl.protocol) ||
+    'http'
   const computedHost = spec.host || parsedContextUrl.host || ''
   const computedPath = spec.basePath || ''
   let res
@@ -362,8 +410,7 @@ function swagger2BaseUrl({spec, scheme, contextUrl = ''}) {
   if (computedScheme && computedHost) {
     // we have what we need for an absolute URL
     res = `${computedScheme}://${computedHost + computedPath}`
-  }
-  else {
+  } else {
     // if not, a relative URL will have to do
     res = computedPath
   }

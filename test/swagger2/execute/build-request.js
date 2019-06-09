@@ -1,4 +1,4 @@
-import {buildRequest} from '../../../src/execute'
+import { buildRequest } from '../../../src/execute'
 
 describe('buildRequest - swagger 2.0', () => {
   describe('allowEmptyValue parameters', () => {
@@ -14,28 +14,28 @@ describe('buildRequest - swagger 2.0', () => {
                   {
                     name: 'name',
                     in: 'query',
-                    allowEmptyValue: true
-                  }
-                ]
-              }
-            }
-          }
+                    allowEmptyValue: true,
+                  },
+                ],
+              },
+            },
+          },
         }
 
-    // when
+        // when
         const req = buildRequest({
           spec,
           operationId: 'getMe',
           parameters: {
-            name: ''
-          }
+            name: '',
+          },
         })
 
         expect(req).toMatchObject({
           method: 'GET',
           url: '/one?name=',
           credentials: 'same-origin',
-          headers: { },
+          headers: {},
         })
       })
 
@@ -50,19 +50,19 @@ describe('buildRequest - swagger 2.0', () => {
                   {
                     name: 'name',
                     in: 'query',
-                    allowEmptyValue: true
-                  }
-                ]
-              }
-            }
-          }
+                    allowEmptyValue: true,
+                  },
+                ],
+              },
+            },
+          },
         }
 
         // when
         const req = buildRequest({
           spec,
           operationId: 'getMe',
-          parameters: {}
+          parameters: {},
         })
 
         expect(req).toMatchObject({
@@ -83,12 +83,12 @@ describe('buildRequest - swagger 2.0', () => {
                 parameters: [
                   {
                     name: 'name',
-                    in: 'query'
-                  }
-                ]
-              }
-            }
-          }
+                    in: 'query',
+                  },
+                ],
+              },
+            },
+          },
         }
 
         // when
@@ -96,8 +96,8 @@ describe('buildRequest - swagger 2.0', () => {
           spec,
           operationId: 'getMe',
           parameters: {
-            name: ''
-          }
+            name: '',
+          },
         })
 
         expect(req).toMatchObject({
@@ -118,19 +118,19 @@ describe('buildRequest - swagger 2.0', () => {
                 parameters: [
                   {
                     name: 'name',
-                    in: 'query'
-                  }
-                ]
-              }
-            }
-          }
+                    in: 'query',
+                  },
+                ],
+              },
+            },
+          },
         }
 
         // when
         const req = buildRequest({
           spec,
           operationId: 'getMe',
-          parameters: {}
+          parameters: {},
         })
 
         expect(req).toMatchObject({
@@ -153,21 +153,21 @@ describe('buildRequest - swagger 2.0', () => {
                   {
                     name: 'name',
                     in: 'formData',
-                    allowEmptyValue: true
-                  }
-                ]
-              }
-            }
-          }
+                    allowEmptyValue: true,
+                  },
+                ],
+              },
+            },
+          },
         }
 
-    // when
+        // when
         const req = buildRequest({
           spec,
           operationId: 'getMe',
           parameters: {
-            name: ''
-          }
+            name: '',
+          },
         })
 
         expect(req).toMatchObject({
@@ -175,9 +175,9 @@ describe('buildRequest - swagger 2.0', () => {
           url: '/one',
           credentials: 'same-origin',
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded',
           },
-          body: 'name='
+          body: 'name=',
         })
       })
 
@@ -192,19 +192,19 @@ describe('buildRequest - swagger 2.0', () => {
                   {
                     name: 'name',
                     in: 'formData',
-                    allowEmptyValue: true
-                  }
-                ]
-              }
-            }
-          }
+                    allowEmptyValue: true,
+                  },
+                ],
+              },
+            },
+          },
         }
 
         // when
         const req = buildRequest({
           spec,
           operationId: 'getMe',
-          parameters: {}
+          parameters: {},
         })
 
         expect(req).toMatchObject({
@@ -225,12 +225,12 @@ describe('buildRequest - swagger 2.0', () => {
                 parameters: [
                   {
                     name: 'name',
-                    in: 'formData'
-                  }
-                ]
-              }
-            }
-          }
+                    in: 'formData',
+                  },
+                ],
+              },
+            },
+          },
         }
 
         // when
@@ -238,8 +238,8 @@ describe('buildRequest - swagger 2.0', () => {
           spec,
           operationId: 'getMe',
           parameters: {
-            name: ''
-          }
+            name: '',
+          },
         })
 
         expect(req).toMatchObject({
@@ -260,19 +260,19 @@ describe('buildRequest - swagger 2.0', () => {
                 parameters: [
                   {
                     name: 'name',
-                    in: 'formData'
-                  }
-                ]
-              }
-            }
-          }
+                    in: 'formData',
+                  },
+                ],
+              },
+            },
+          },
         }
 
         // when
         const req = buildRequest({
           spec,
           operationId: 'getMe',
-          parameters: {}
+          parameters: {},
         })
 
         expect(req).toMatchObject({

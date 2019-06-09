@@ -1,21 +1,24 @@
-import {fetch} from 'cross-fetch'
+import { fetch } from 'cross-fetch'
 import jsYaml from '@kyleshockey/js-yaml'
 import qs from 'querystring-browser'
 import url from 'url'
 import lib from '../lib'
 import createError from '../lib/create-error'
-import {isFreelyNamed, absolutifyPointer} from '../helpers'
+import { isFreelyNamed, absolutifyPointer } from '../helpers'
 
 const ABSOLUTE_URL_REGEXP = new RegExp('^([a-z]+://|//)', 'i')
 
-const JSONRefError = createError('JSONRefError', function (message, extra, oriError) {
+const JSONRefError = createError('JSONRefError', function(
+  message,
+  extra,
+  oriError
+) {
   this.originalError = oriError
   Object.assign(this, extra || {})
 })
 
 const docCache = {}
 const specmapRefs = new WeakMap()
-
 
 // =========================
 // Core
@@ -64,9 +67,8 @@ const plugin = {
 
     let basePath
     try {
-      basePath = (baseDoc || refPath) ? absoluteify(refPath, baseDoc) : null
-    }
-    catch (e) {
+      basePath = baseDoc || refPath ? absoluteify(refPath, baseDoc) : null
+    } catch (e) {
       return wrapError(e, {
         pointer,
         $ref: ref,
@@ -107,14 +109,12 @@ const plugin = {
           fullPath,
         })
       }
-    }
-    else {
+    } else {
       promOrVal = extractFromDoc(basePath, pointer)
       if (promOrVal.__value != null) {
         promOrVal = promOrVal.__value
-      }
-      else {
-        promOrVal = promOrVal.catch((e) => {
+      } else {
+        promOrVal = promOrVal.catch(e => {
           throw wrapError(e, {
             pointer,
             $ref: ref,
@@ -131,19 +131,21 @@ const plugin = {
 
     const absolutifiedRef = absolutifyPointer(ref, basePath)
 
-    const patch = lib.replace(parent, promOrVal, {$$ref: absolutifiedRef})
+    const patch = lib.replace(parent, promOrVal, { $$ref: absolutifiedRef })
     if (basePath && basePath !== baseDoc) {
-      return [patch, lib.context(parent, {baseDoc: basePath})]
+      return [patch, lib.context(parent, { baseDoc: basePath })]
     }
 
     try {
       // prevents circular values from being constructed, unless we specifically
       // want that to happen
-      if (!patchValueAlreadyInPath(specmap.state, patch) || specmapInstance.useCircularStructures) {
+      if (
+        !patchValueAlreadyInPath(specmap.state, patch) ||
+        specmapInstance.useCircularStructures
+      ) {
         return patch
       }
-    }
-    catch (e) {
+    } catch (e) {
       // if we're catching here, path traversal failed, so we should
       // ditch without sending any patches back up.
       //
@@ -154,9 +156,8 @@ const plugin = {
       // TODO: re-engineer specmap patch/state management to avoid this
       return null
     }
-  }
+  },
 }
-
 
 const mod = Object.assign(plugin, {
   docCache,
@@ -170,11 +171,10 @@ const mod = Object.assign(plugin, {
   fetchJSON,
   extract,
   jsonPointerToArray,
-  unescapeJsonPointerToken
+  unescapeJsonPointerToken,
 })
 
 export default mod
-
 
 // =========================
 // Utilities
@@ -187,7 +187,9 @@ export default mod
 function absoluteify(path, basePath) {
   if (!ABSOLUTE_URL_REGEXP.test(path)) {
     if (!basePath) {
-      throw new JSONRefError(`Tried to resolve a relative URL, without having a basePath. path: '${path}' basePath: '${basePath}'`)
+      throw new JSONRefError(
+        `Tried to resolve a relative URL, without having a basePath. path: '${path}' basePath: '${basePath}'`
+      )
     }
     return url.resolve(basePath, path)
   }
@@ -206,8 +208,7 @@ function wrapError(e, extra) {
 
   if (e && e.response && e.response.body) {
     message = `${e.response.body.code} ${e.response.body.message}`
-  }
-  else {
+  } else {
     message = e.message
   }
 
@@ -240,9 +241,8 @@ function extractFromDoc(docPath, pointer) {
     // See test "should resolve a cyclic spec when baseDoc is specified".
     try {
       const v = extract(pointer, doc)
-      return Object.assign(Promise.resolve(v), {__value: v})
-    }
-    catch (e) {
+      return Object.assign(Promise.resolve(v), { __value: v })
+    } catch (e) {
       return Promise.reject(e)
     }
   }
@@ -258,9 +258,8 @@ function extractFromDoc(docPath, pointer) {
 function clearCache(item) {
   if (typeof item !== 'undefined') {
     delete docCache[item]
-  }
-  else {
-    Object.keys(docCache).forEach((key) => {
+  } else {
+    Object.keys(docCache).forEach(key => {
       delete docCache[key]
     })
   }
@@ -280,7 +279,7 @@ function getDoc(docPath) {
 
   // NOTE: we need to use `mod.fetchJSON` in order to be able to overwrite it.
   // Any tips on how to make this cleaner, please ping!
-  docCache[docPath] = mod.fetchJSON(docPath).then((doc) => {
+  docCache[docPath] = mod.fetchJSON(docPath).then(doc => {
     docCache[docPath] = doc
     return doc
   })
@@ -294,7 +293,10 @@ function getDoc(docPath) {
  * @api public
  */
 function fetchJSON(docPath) {
-  return fetch(docPath, {headers: {Accept: 'application/json, application/yaml'}, loadSpec: true})
+  return fetch(docPath, {
+    headers: { Accept: 'application/json, application/yaml' },
+    loadSpec: true,
+  })
     .then(res => res.text())
     .then(text => jsYaml.safeLoad(text))
 }
@@ -314,7 +316,10 @@ function extract(pointer, obj) {
 
   const val = lib.getIn(obj, tokens)
   if (typeof val === 'undefined') {
-    throw new JSONRefError(`Could not resolve pointer: ${pointer} does not exist in document`, {pointer})
+    throw new JSONRefError(
+      `Could not resolve pointer: ${pointer} does not exist in document`,
+      { pointer }
+    )
   }
   return val
 }
@@ -376,11 +381,12 @@ function pointerIsAParent(pointer, parentPointer) {
   const nextChar = pointer.charAt(parentPointer.length)
   const lastParentChar = parentPointer.slice(-1)
 
-  return pointer.indexOf(parentPointer) === 0
-    && (!nextChar || nextChar === '/' || nextChar === '#')
-    && lastParentChar !== '#'
+  return (
+    pointer.indexOf(parentPointer) === 0 &&
+    (!nextChar || nextChar === '/' || nextChar === '#') &&
+    lastParentChar !== '#'
+  )
 }
-
 
 // =========================
 // Private
@@ -417,10 +423,10 @@ function pointerAlreadyInPath(pointer, basePath, parent, specmap) {
   // Detect by checking that the parent path doesn't start with pointer.
   // This only applies if the pointer is internal, i.e. basePath === rootPath (could be null)
   const rootDoc = specmap.contextTree.get([]).baseDoc
-  if (basePath == rootDoc && pointerIsAParent(safeParentPointer, pointer)) { // eslint-disable-line
+  if (basePath == rootDoc && pointerIsAParent(safeParentPointer, pointer)) {
+    // eslint-disable-line
     return true
   }
-
 
   // Case 2: indirect cycle
   //  ex1: a.$ref: '/b'  &  b.c.$ref: '/b/c'
@@ -428,14 +434,17 @@ function pointerAlreadyInPath(pointer, basePath, parent, specmap) {
   // Detect by retrieving all the $refs along the path of parent
   // and checking if any starts with pointer or vice versa.
   let currPath = ''
-  const hasIndirectCycle = parent.some((token) => {
+  const hasIndirectCycle = parent.some(token => {
     currPath = `${currPath}/${escapeJsonPointerToken(token)}`
-    return refs[currPath] && refs[currPath].some((ref) => {
-      return (
-           pointerIsAParent(ref, fullyQualifiedPointer)
-        || pointerIsAParent(fullyQualifiedPointer, ref)
-      )
-    })
+    return (
+      refs[currPath] &&
+      refs[currPath].some(ref => {
+        return (
+          pointerIsAParent(ref, fullyQualifiedPointer) ||
+          pointerIsAParent(fullyQualifiedPointer, ref)
+        )
+      })
+    )
   })
   if (hasIndirectCycle) {
     return true
@@ -444,7 +453,9 @@ function pointerAlreadyInPath(pointer, basePath, parent, specmap) {
   // No cycle, this ref will be resolved, so stores it now for future detection.
   // No need to store if has cycle, as parent path is a dead-end and won't be checked again.
 
-  refs[safeParentPointer] = (refs[safeParentPointer] || []).concat(fullyQualifiedPointer)
+  refs[safeParentPointer] = (refs[safeParentPointer] || []).concat(
+    fullyQualifiedPointer
+  )
 }
 
 /**
@@ -459,8 +470,12 @@ function patchValueAlreadyInPath(root, patch) {
   return pointToAncestor(patch.value)
 
   function pointToAncestor(obj) {
-    return lib.isObject(obj) && (ancestors.indexOf(obj) >= 0 || Object.keys(obj).some((k) => {
-      return pointToAncestor(obj[k])
-    }))
+    return (
+      lib.isObject(obj) &&
+      (ancestors.indexOf(obj) >= 0 ||
+        Object.keys(obj).some(k => {
+          return pointToAncestor(obj[k])
+        }))
+    )
   }
 }

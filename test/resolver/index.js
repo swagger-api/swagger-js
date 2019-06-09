@@ -17,13 +17,12 @@ const testDocuments = fs
   }))
   .map(doc => ({
     path: doc.path,
-    content: YAML.safeLoad(doc.contentString)
+    content: YAML.safeLoad(doc.contentString),
   }))
 
-
-testDocuments.forEach((doc) => {
-  const {path, content} = doc
-  const {meta = {}, cases = []} = content
+testDocuments.forEach(doc => {
+  const { path, content } = doc
+  const { meta = {}, cases = [] } = content
 
   let rootDescribe
 
@@ -31,44 +30,44 @@ testDocuments.forEach((doc) => {
   else if (meta.only) rootDescribe = describe.only
   else rootDescribe = describe
 
-  rootDescribe(`declarative resolver test suite - ${meta.title || path}`, function () {
-    if (cases && cases.length) {
-      return cases.forEach((currentCase) => {
-        describe(currentCase.name || '', function () {
-          beforeAll(() => {
-            Swagger.clearCache()
+  rootDescribe(
+    `declarative resolver test suite - ${meta.title || path}`,
+    function() {
+      if (cases && cases.length) {
+        return cases.forEach(currentCase => {
+          describe(currentCase.name || '', function() {
+            beforeAll(() => {
+              Swagger.clearCache()
 
-            if (!nock.isActive()) {
-              nock.activate()
-            }
+              if (!nock.isActive()) {
+                nock.activate()
+              }
 
-            nock.cleanAll()
-            nock.disableNetConnect()
+              nock.cleanAll()
+              nock.disableNetConnect()
 
-            const nockScope = nock('http://mock.swagger.test')
+              const nockScope = nock('http://mock.swagger.test')
 
-            if (currentCase.remoteDocuments) {
-              Object.keys(currentCase.remoteDocuments).forEach((key) => {
-                const docContent = currentCase.remoteDocuments[key]
-                nockScope
-                  .get(`/${key}`)
-                  .reply(200, docContent, {
-                    'Content-Type': 'application/yaml'
+              if (currentCase.remoteDocuments) {
+                Object.keys(currentCase.remoteDocuments).forEach(key => {
+                  const docContent = currentCase.remoteDocuments[key]
+                  nockScope.get(`/${key}`).reply(200, docContent, {
+                    'Content-Type': 'application/yaml',
                   })
-              })
-            }
+                })
+              }
+            })
+
+            afterAll(nock.restore)
+
+            return assertCaseExpectations(currentCase, async () =>
+              getValueForAction(currentCase.action)
+            )
           })
-
-          afterAll(nock.restore)
-
-          return assertCaseExpectations(
-            currentCase,
-            async () => getValueForAction(currentCase.action)
-          )
         })
-      })
+      }
     }
-  })
+  )
 })
 
 async function getValueForAction(action) {
@@ -77,11 +76,15 @@ async function getValueForAction(action) {
       const client = await Swagger(action.config)
       return {
         spec: client.spec,
-        errors: client.errors
+        errors: client.errors,
       }
     }
     case 'resolveSubtree': {
-      return Swagger.resolveSubtree(action.config.obj, action.config.path, action.config.opts)
+      return Swagger.resolveSubtree(
+        action.config.obj,
+        action.config.path,
+        action.config.opts
+      )
     }
     default:
       throw new Error('case did not specify a valid action type')
@@ -89,7 +92,7 @@ async function getValueForAction(action) {
 }
 
 async function assertCaseExpectations(currentCase, resultGetter) {
-  currentCase.assertions.forEach((assertion) => {
+  currentCase.assertions.forEach(assertion => {
     let itFn
 
     if (assertion.skip) itFn = it.skip
@@ -110,7 +113,7 @@ async function assertCaseExpectations(currentCase, resultGetter) {
     // }
 
     if (assertion.equal !== undefined) {
-      itFn('should equal expected value', async function () {
+      itFn('should equal expected value', async function() {
         expect(await resultGetter()).toEqual(assertion.equal)
       })
     }

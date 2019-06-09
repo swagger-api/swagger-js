@@ -16,144 +16,138 @@ describe('subtree $ref resolver', () => {
     // refs.clearCache()
   })
 
-  test(
-    'should resolve a subtree of an object, and return the targeted subtree',
-    async () => {
-      const input = {
-        a: {
-          this: 'is my object'
-        },
-        b: {
-          description: 'here is my stuff!',
-          contents: {
-            $ref: '#/a'
-          }
-        }
-      }
-
-      const res = await resolve(input, ['b'])
-
-      expect(res).toEqual({
-        errors: [],
-        spec: {
-          description: 'here is my stuff!',
-          contents: {
-            this: 'is my object',
-            $$ref: '#/a'
-          }
-        }
-      })
-    }
-  )
-
-  test(
-    'should resolve circular $refs when a baseDoc is provided',
-    async () => {
-      const input = {
-        one: {
-          $ref: '#/two'
-        },
-        two: {
-          a: {
-            $ref: '#/three'
-          }
-        },
-        three: {
-          b: {
-            $ref: '#/two'
-          }
-        }
-      }
-
-      const res = await resolve(input, ['one'], {
-        baseDoc: 'http://example.com/swagger.json',
-        returnEntireTree: true
-      })
-
-      expect(res).toEqual({
-        errors: [],
-        spec: {
-          one: {
-            $$ref: '#/two',
-            a: {
-              $$ref: '#/three',
-              b: {
-                $ref: '#/two'
-              }
-            }
-          },
-          two: {
-            a: {
-              $ref: '#/three'
-            }
-          },
-          three: {
-            b: {
-              $ref: '#/two'
-            }
-          }
-        }
-      })
-    }
-  )
-
-  test('should return null when the path is invalid', async () => {
+  test('should resolve a subtree of an object, and return the targeted subtree', async () => {
     const input = {
       a: {
-        this: 'is my object'
+        this: 'is my object',
       },
       b: {
         description: 'here is my stuff!',
         contents: {
-          $ref: '#/a'
-        }
-      }
+          $ref: '#/a',
+        },
+      },
+    }
+
+    const res = await resolve(input, ['b'])
+
+    expect(res).toEqual({
+      errors: [],
+      spec: {
+        description: 'here is my stuff!',
+        contents: {
+          this: 'is my object',
+          $$ref: '#/a',
+        },
+      },
+    })
+  })
+
+  test('should resolve circular $refs when a baseDoc is provided', async () => {
+    const input = {
+      one: {
+        $ref: '#/two',
+      },
+      two: {
+        a: {
+          $ref: '#/three',
+        },
+      },
+      three: {
+        b: {
+          $ref: '#/two',
+        },
+      },
+    }
+
+    const res = await resolve(input, ['one'], {
+      baseDoc: 'http://example.com/swagger.json',
+      returnEntireTree: true,
+    })
+
+    expect(res).toEqual({
+      errors: [],
+      spec: {
+        one: {
+          $$ref: '#/two',
+          a: {
+            $$ref: '#/three',
+            b: {
+              $ref: '#/two',
+            },
+          },
+        },
+        two: {
+          a: {
+            $ref: '#/three',
+          },
+        },
+        three: {
+          b: {
+            $ref: '#/two',
+          },
+        },
+      },
+    })
+  })
+
+  test('should return null when the path is invalid', async () => {
+    const input = {
+      a: {
+        this: 'is my object',
+      },
+      b: {
+        description: 'here is my stuff!',
+        contents: {
+          $ref: '#/a',
+        },
+      },
     }
 
     const res = await resolve(input, ['asdfgh'])
 
     expect(res).toEqual({
       errors: [],
-      spec: null
+      spec: null,
     })
   })
   test('should not resolve an untargeted subtree', async () => {
     const input = {
       a: {
-        this: 'is my object'
+        this: 'is my object',
       },
       b: {
         description: 'here is my stuff!',
         contents: {
-          $ref: '#/a'
-        }
+          $ref: '#/a',
+        },
       },
       c: {
-        $ref: '#/a'
-      }
+        $ref: '#/a',
+      },
     }
 
     const res = await resolve(input, ['b'], {
-      returnEntireTree: true
+      returnEntireTree: true,
     })
 
     expect(res).toEqual({
       errors: [],
       spec: {
         a: {
-          this: 'is my object'
+          this: 'is my object',
         },
         b: {
           description: 'here is my stuff!',
           contents: {
             this: 'is my object',
-            $$ref: '#/a'
-          }
+            $$ref: '#/a',
+          },
         },
         c: {
-          $ref: '#/a'
-        }
-      }
+          $ref: '#/a',
+        },
+      },
     })
   })
   test('should normalize Swagger 2.0 consumes', async () => {
@@ -163,14 +157,14 @@ describe('subtree $ref resolver', () => {
       paths: {
         '/': {
           get: {
-            description: 'I should have a consumes value...'
-          }
-        }
-      }
+            description: 'I should have a consumes value...',
+          },
+        },
+      },
     }
 
     const res = await resolve(input, ['b'], {
-      returnEntireTree: true
+      returnEntireTree: true,
     })
 
     expect(res).toEqual({
@@ -183,11 +177,11 @@ describe('subtree $ref resolver', () => {
           '/': {
             get: {
               consumes: ['application/json'],
-              description: 'I should have a consumes value...'
-            }
-          }
-        }
-      }
+              description: 'I should have a consumes value...',
+            },
+          },
+        },
+      },
     })
   })
   test('should normalize Swagger 2.0 produces', async () => {
@@ -197,14 +191,14 @@ describe('subtree $ref resolver', () => {
       paths: {
         '/': {
           get: {
-            description: 'I should have a produces value...'
-          }
-        }
-      }
+            description: 'I should have a produces value...',
+          },
+        },
+      },
     }
 
     const res = await resolve(input, ['b'], {
-      returnEntireTree: true
+      returnEntireTree: true,
     })
 
     expect(res).toEqual({
@@ -217,11 +211,11 @@ describe('subtree $ref resolver', () => {
           '/': {
             get: {
               produces: ['application/json'],
-              description: 'I should have a produces value...'
-            }
-          }
-        }
-      }
+              description: 'I should have a produces value...',
+            },
+          },
+        },
+      },
     })
   })
   test('should normalize Swagger 2.0 parameters', async () => {
@@ -234,15 +228,15 @@ describe('subtree $ref resolver', () => {
           description: 'ID of pet to return',
           required: true,
           type: 'integer',
-          format: 'int64'
-        }
+          format: 'int64',
+        },
       },
       paths: {
         '/': {
           parameters: [
             {
-              $ref: '#/parameters/petId'
-            }
+              $ref: '#/parameters/petId',
+            },
           ],
           get: {
             parameters: [
@@ -251,23 +245,23 @@ describe('subtree $ref resolver', () => {
                 in: 'formData',
                 description: 'Updated name of the pet',
                 required: false,
-                type: 'string'
+                type: 'string',
               },
               {
                 name: 'status',
                 in: 'formData',
                 description: 'Updated status of the pet',
                 required: false,
-                type: 'string'
-              }
-            ]
-          }
-        }
-      }
+                type: 'string',
+              },
+            ],
+          },
+        },
+      },
     }
 
     const res = await resolve(input, ['paths', '/', 'get'], {
-      returnEntireTree: true
+      returnEntireTree: true,
     })
 
     expect(res).toEqual({
@@ -282,15 +276,15 @@ describe('subtree $ref resolver', () => {
             description: 'ID of pet to return',
             required: true,
             type: 'integer',
-            format: 'int64'
-          }
+            format: 'int64',
+          },
         },
         paths: {
           '/': {
             parameters: [
               {
-                $ref: '#/parameters/petId'
-              }
+                $ref: '#/parameters/petId',
+              },
             ],
             get: {
               parameters: [
@@ -299,14 +293,14 @@ describe('subtree $ref resolver', () => {
                   in: 'formData',
                   description: 'Updated name of the pet',
                   required: false,
-                  type: 'string'
+                  type: 'string',
                 },
                 {
                   name: 'status',
                   in: 'formData',
                   description: 'Updated status of the pet',
                   required: false,
-                  type: 'string'
+                  type: 'string',
                 },
                 {
                   name: 'petId',
@@ -315,13 +309,13 @@ describe('subtree $ref resolver', () => {
                   required: true,
                   type: 'integer',
                   format: 'int64',
-                  $$ref: '#/parameters/petId'
-                }
-              ]
-            }
-          }
-        }
-      }
+                  $$ref: '#/parameters/petId',
+                },
+              ],
+            },
+          },
+        },
+      },
     })
   })
 
@@ -332,46 +326,46 @@ describe('subtree $ref resolver', () => {
         '/': {
           parameters: [
             {
-              $ref: '#/parameters/One'
+              $ref: '#/parameters/One',
             },
             {
-              $ref: '#/parameters/Two'
-            }
+              $ref: '#/parameters/Two',
+            },
           ],
           get: {
-            summary: 'has no operation parameters'
+            summary: 'has no operation parameters',
           },
           delete: {
             summary: 'has own operation parameters',
             parameters: [
               {
                 name: 'Three',
-                in: 'query'
+                in: 'query',
               },
               {
                 name: 'Four',
-                in: 'query'
-              }
-            ]
-          }
-        }
+                in: 'query',
+              },
+            ],
+          },
+        },
       },
       parameters: {
         One: {
           type: 'string',
           name: 'One',
-          in: 'query'
+          in: 'query',
         },
         Two: {
           type: 'string',
           name: 'Two',
-          in: 'query'
-        }
-      }
+          in: 'query',
+        },
+      },
     }
 
     const res = await resolve(input, ['paths', '/'], {
-      returnEntireTree: true
+      returnEntireTree: true,
     })
 
     expect(res).toEqual({
@@ -386,14 +380,14 @@ describe('subtree $ref resolver', () => {
                 type: 'string',
                 name: 'One',
                 in: 'query',
-                $$ref: '#/parameters/One'
+                $$ref: '#/parameters/One',
               },
               {
                 type: 'string',
                 name: 'Two',
                 in: 'query',
-                $$ref: '#/parameters/Two'
-              }
+                $$ref: '#/parameters/Two',
+              },
             ],
             get: {
               summary: 'has no operation parameters',
@@ -402,56 +396,56 @@ describe('subtree $ref resolver', () => {
                   type: 'string',
                   name: 'One',
                   in: 'query',
-                  $$ref: '#/parameters/One'
+                  $$ref: '#/parameters/One',
                 },
                 {
                   type: 'string',
                   name: 'Two',
                   in: 'query',
-                  $$ref: '#/parameters/Two'
-                }
-              ]
+                  $$ref: '#/parameters/Two',
+                },
+              ],
             },
             delete: {
               summary: 'has own operation parameters',
               parameters: [
                 {
                   name: 'Three',
-                  in: 'query'
+                  in: 'query',
                 },
                 {
                   name: 'Four',
-                  in: 'query'
+                  in: 'query',
                 },
                 {
                   type: 'string',
                   name: 'One',
                   in: 'query',
-                  $$ref: '#/parameters/One'
+                  $$ref: '#/parameters/One',
                 },
                 {
                   type: 'string',
                   name: 'Two',
                   in: 'query',
-                  $$ref: '#/parameters/Two'
-                }
-              ]
-            }
-          }
+                  $$ref: '#/parameters/Two',
+                },
+              ],
+            },
+          },
         },
         parameters: {
           One: {
             type: 'string',
             name: 'One',
-            in: 'query'
+            in: 'query',
           },
           Two: {
             type: 'string',
             name: 'Two',
-            in: 'query'
-          }
-        }
-      }
+            in: 'query',
+          },
+        },
+      },
     })
   })
 
@@ -465,15 +459,15 @@ describe('subtree $ref resolver', () => {
           description: 'ID of pet to return',
           required: true,
           type: 'integer',
-          format: 'int64'
-        }
+          format: 'int64',
+        },
       },
       paths: {
         '/': {
           parameters: [
             {
-              $ref: '#/parameters/petId'
-            }
+              $ref: '#/parameters/petId',
+            },
           ],
           get: {
             parameters: [
@@ -482,27 +476,27 @@ describe('subtree $ref resolver', () => {
                 in: 'formData',
                 description: 'Updated name of the pet',
                 required: false,
-                type: 'string'
+                type: 'string',
               },
               {
                 name: 'status',
                 in: 'formData',
                 description: 'Updated status of the pet',
                 required: false,
-                type: 'string'
-              }
-            ]
-          }
-        }
-      }
+                type: 'string',
+              },
+            ],
+          },
+        },
+      },
     }
 
     const intermediate = await resolve(input, ['paths', '/', 'get'], {
-      returnEntireTree: true
+      returnEntireTree: true,
     })
 
     const res = await resolve(intermediate.spec, ['paths', '/', 'get'], {
-      returnEntireTree: true
+      returnEntireTree: true,
     })
 
     expect(res).toEqual({
@@ -517,15 +511,15 @@ describe('subtree $ref resolver', () => {
             description: 'ID of pet to return',
             required: true,
             type: 'integer',
-            format: 'int64'
-          }
+            format: 'int64',
+          },
         },
         paths: {
           '/': {
             parameters: [
               {
-                $ref: '#/parameters/petId'
-              }
+                $ref: '#/parameters/petId',
+              },
             ],
             get: {
               parameters: [
@@ -534,14 +528,14 @@ describe('subtree $ref resolver', () => {
                   in: 'formData',
                   description: 'Updated name of the pet',
                   required: false,
-                  type: 'string'
+                  type: 'string',
                 },
                 {
                   name: 'status',
                   in: 'formData',
                   description: 'Updated status of the pet',
                   required: false,
-                  type: 'string'
+                  type: 'string',
                 },
                 {
                   name: 'petId',
@@ -550,13 +544,13 @@ describe('subtree $ref resolver', () => {
                   required: true,
                   type: 'integer',
                   format: 'int64',
-                  $$ref: '#/parameters/petId'
-                }
-              ]
-            }
-          }
-        }
-      }
+                  $$ref: '#/parameters/petId',
+                },
+              ],
+            },
+          },
+        },
+      },
     })
   })
 
@@ -564,26 +558,26 @@ describe('subtree $ref resolver', () => {
     const input = {
       definitions: {
         one: {
-          $ref: '#/definitions/two'
+          $ref: '#/definitions/two',
         },
         two: {
           type: 'array',
           items: {
-            $ref: '#/definitions/three'
-          }
+            $ref: '#/definitions/three',
+          },
         },
         three: {
           allOf: [
             {
               properties: {
                 alternate_product_code: {
-                  $ref: '#/definitions/three'
-                }
-              }
-            }
-          ]
-        }
-      }
+                  $ref: '#/definitions/three',
+                },
+              },
+            },
+          ],
+        },
+      },
     }
 
     const res = await resolve(input, ['definitions'])
@@ -599,10 +593,10 @@ describe('subtree $ref resolver', () => {
             $$ref: '#/definitions/three',
             properties: {
               alternate_product_code: {
-                $ref: '#/definitions/three'
-              }
-            }
-          }
+                $ref: '#/definitions/three',
+              },
+            },
+          },
         },
         two: {
           type: 'array',
@@ -610,19 +604,19 @@ describe('subtree $ref resolver', () => {
             $$ref: '#/definitions/three',
             properties: {
               alternate_product_code: {
-                $ref: '#/definitions/three'
-              }
-            }
-          }
+                $ref: '#/definitions/three',
+              },
+            },
+          },
         },
         three: {
           properties: {
             alternate_product_code: {
-              $ref: '#/definitions/three'
-            }
-          }
-        }
-      }
+              $ref: '#/definitions/three',
+            },
+          },
+        },
+      },
     })
   })
 
@@ -634,30 +628,30 @@ describe('subtree $ref resolver', () => {
           properties: {
             id1: {
               type: 'integer',
-              format: 'int64'
-            }
-          }
+              format: 'int64',
+            },
+          },
         },
         Simple2: {
           type: 'object',
           properties: {
             id2: {
               type: 'integer',
-              format: 'int64'
-            }
-          }
+              format: 'int64',
+            },
+          },
         },
         Composed: {
           allOf: [
             {
-              $ref: '#/definitions/Simple1'
+              $ref: '#/definitions/Simple1',
             },
             {
-              $ref: '#/definitions/Simple2'
-            }
-          ]
-        }
-      }
+              $ref: '#/definitions/Simple2',
+            },
+          ],
+        },
+      },
     }
 
     const res = await resolve(input, ['definitions', 'Composed'])
@@ -669,39 +663,39 @@ describe('subtree $ref resolver', () => {
         properties: {
           id1: {
             type: 'integer',
-            format: 'int64'
+            format: 'int64',
           },
           id2: {
             type: 'integer',
-            format: 'int64'
-          }
-        }
-      }
+            format: 'int64',
+          },
+        },
+      },
     })
   })
   test('should fully resolve across remote documents correctly', async () => {
     const input = {
       foo: {
         bar: {
-          $ref: './remote.json'
-        }
-      }
+          $ref: './remote.json',
+        },
+      },
     }
 
-    xmock().get('http://example.com/remote.json', function (req, res, next) {
+    xmock().get('http://example.com/remote.json', function(req, res, next) {
       xmock().restore()
       return res.send({
         baz: {
-          $ref: '#/remoteOther'
+          $ref: '#/remoteOther',
         },
         remoteOther: {
-          result: 'it works!'
-        }
+          result: 'it works!',
+        },
       })
     })
 
     const res = await resolve(input, [], {
-      baseDoc: 'http://example.com/main.json'
+      baseDoc: 'http://example.com/main.json',
     })
 
     expect(res).toEqual({
@@ -712,26 +706,26 @@ describe('subtree $ref resolver', () => {
             $$ref: './remote.json',
             baz: {
               $$ref: '#/remoteOther',
-              result: 'it works!'
+              result: 'it works!',
             },
             remoteOther: {
-              result: 'it works!'
-            }
-          }
-        }
-      }
+              result: 'it works!',
+            },
+          },
+        },
+      },
     })
   })
   test.only('should redirect and resolve nested remote document requests', async () => {
     const input = {
       foo: {
         bar: {
-          $ref: './fake-remote.json'
-        }
-      }
+          $ref: './fake-remote.json',
+        },
+      },
     }
 
-    const requestInterceptor = jest.fn((req) => {
+    const requestInterceptor = jest.fn(req => {
       req.headers.authorization = 'wow'
 
       if (req.url === 'http://example.com/fake-remote.json') {
@@ -744,36 +738,40 @@ describe('subtree $ref resolver', () => {
     })
 
     xmock()
-      .get('http://example.com/remote.json', function (req, res, next) {
+      .get('http://example.com/remote.json', function(req, res, next) {
         if (req.header.authorization !== 'wow') {
           res.status(403)
         }
         res.send({
           baz: {
-            $ref: '#/remoteOther'
+            $ref: '#/remoteOther',
           },
           remoteOther: {
-            $ref: './fake-nested.json'
-          }
+            $ref: './fake-nested.json',
+          },
         })
       })
-      .get('http://example.com/nested.json', function (req, res, next) {
+      .get('http://example.com/nested.json', function(req, res, next) {
         if (req.header.authorization !== 'wow') {
           res.status(403)
         }
         res.send({
-          result: 'it works!'
+          result: 'it works!',
         })
       })
 
     const res = await resolve(input, [], {
       baseDoc: 'http://example.com/main.json',
-      requestInterceptor
+      requestInterceptor,
     })
 
     expect(requestInterceptor.mock.calls.length).toEqual(2)
-    expect(requestInterceptor.mock.calls[0][0].url).toEqual('http://example.com/remote.json')
-    expect(requestInterceptor.mock.calls[1][0].url).toEqual('http://example.com/nested.json')
+    expect(requestInterceptor.mock.calls[0][0].url).toEqual(
+      'http://example.com/remote.json'
+    )
+    expect(requestInterceptor.mock.calls[1][0].url).toEqual(
+      'http://example.com/nested.json'
+    )
 
     expect(res).toEqual({
       errors: [],
@@ -783,15 +781,15 @@ describe('subtree $ref resolver', () => {
             $$ref: 'http://example.com/fake-remote.json',
             baz: {
               $$ref: 'http://example.com/fake-nested.json',
-              result: 'it works!'
+              result: 'it works!',
             },
             remoteOther: {
               $$ref: 'http://example.com/fake-nested.json',
-              result: 'it works!'
-            }
-          }
-        }
-      }
+              result: 'it works!',
+            },
+          },
+        },
+      },
     })
   })
 })

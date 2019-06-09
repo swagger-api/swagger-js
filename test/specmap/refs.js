@@ -3,7 +3,7 @@ import path from 'path'
 import clone from 'clone'
 import glob from 'glob'
 import xmock from 'xmock'
-import mapSpec, {plugins} from '../../src/specmap'
+import mapSpec, { plugins } from '../../src/specmap'
 
 const refs = plugins.refs
 
@@ -27,10 +27,9 @@ describe('refs', () => {
       try {
         throw new refs.JSONRefError('Failed to download ref', {
           $ref: '#/one',
-          basePath: 'localhost/one.json'
+          basePath: 'localhost/one.json',
         })
-      }
-      catch (e) {
+      } catch (e) {
         expect(e.toString()).toEqual('JSONRefError: Failed to download ref')
         expect(e.$ref).toEqual('#/one')
         expect(e.basePath).toEqual('localhost/one.json')
@@ -39,9 +38,11 @@ describe('refs', () => {
 
     test('.wrapError should wrap an error in JSONRefError', () => {
       try {
-        throw refs.wrapError(new Error('hi'), {$ref: '#/one', basePath: 'localhost'})
-      }
-      catch (e) {
+        throw refs.wrapError(new Error('hi'), {
+          $ref: '#/one',
+          basePath: 'localhost',
+        })
+      } catch (e) {
         expect(e.message).toMatch(/reference/)
         expect(e.message).toMatch(/hi/)
         expect(e.$ref).toEqual('#/one')
@@ -57,16 +58,16 @@ describe('refs', () => {
     })
 
     describe('relative paths', () => {
-      test(
-        'should think of the basePath as pointing to a document, so use the parent folder for resolution',
-        () => {
-          const res = refs.absoluteify('one.json', 'http://example.com/two.json')
-          expect(res).toEqual('http://example.com/one.json')
-        }
-      )
+      test('should think of the basePath as pointing to a document, so use the parent folder for resolution', () => {
+        const res = refs.absoluteify('one.json', 'http://example.com/two.json')
+        expect(res).toEqual('http://example.com/one.json')
+      })
 
       test('should handle ../', () => {
-        const res = refs.absoluteify('../one.json', 'http://example.com/two/three/four.json')
+        const res = refs.absoluteify(
+          '../one.json',
+          'http://example.com/two/three/four.json'
+        )
         expect(res).toEqual('http://example.com/two/one.json')
       })
     })
@@ -74,18 +75,18 @@ describe('refs', () => {
 
   describe('.extract', () => {
     test('should extract a JSON-Pointer', () => {
-      const subject = refs.extract('/one', {one: 1})
+      const subject = refs.extract('/one', { one: 1 })
       expect(subject).toEqual(1)
     })
 
     test('should extract "" as the root obj', () => {
-      const subject = refs.extract('', {one: 1})
-      expect(subject).toEqual({one: 1})
+      const subject = refs.extract('', { one: 1 })
+      expect(subject).toEqual({ one: 1 })
     })
 
     test('should fail nicely', () => {
       expect(() => {
-        refs.extract('/not/here', {one: 1})
+        refs.extract('/not/here', { one: 1 })
       }).toThrow()
     })
   })
@@ -94,10 +95,10 @@ describe('refs', () => {
     test('should fetch documents', () => {
       const url = 'http://example.com/common.json'
       xapp.get(url, (req, res, next) => {
-        res.send({works: {yay: true}})
+        res.send({ works: { yay: true } })
       })
-      return refs.getDoc(url).then((doc) => {
-        expect(doc).toEqual({works: {yay: true}})
+      return refs.getDoc(url).then(doc => {
+        expect(doc).toEqual({ works: { yay: true } })
       })
     })
     test('should parse YAML docs into JSON', () => {
@@ -106,31 +107,34 @@ describe('refs', () => {
         res.set('Content-Type', 'application/yaml')
         res.send('works:\n  yay: true')
       })
-      return refs.getDoc(url).then((doc) => {
-        expect(doc).toEqual({works: {yay: true}})
+      return refs.getDoc(url).then(doc => {
+        expect(doc).toEqual({ works: { yay: true } })
       })
     })
     test('should cache requests', () => {
       const url = 'http://example.com/common.json'
       xapp.get(url, (req, res, next) => {
-        res.send({works: {yay: true}})
+        res.send({ works: { yay: true } })
       })
-      return refs.getDoc(url).then((doc) => {
-        expect(doc).toEqual({works: {yay: true}})
-      }).then(() => {
-        expect(refs.docCache).toEqual({
-          [url]: {works: {yay: true}}
+      return refs
+        .getDoc(url)
+        .then(doc => {
+          expect(doc).toEqual({ works: { yay: true } })
         })
-        // Change cache to verify we're using it
-        refs.docCache[url].works.yay = false
-        return refs.getDoc(url).then((doc) => {
-          expect(doc).toEqual({works: {yay: false}})
+        .then(() => {
+          expect(refs.docCache).toEqual({
+            [url]: { works: { yay: true } },
+          })
+          // Change cache to verify we're using it
+          refs.docCache[url].works.yay = false
+          return refs.getDoc(url).then(doc => {
+            expect(doc).toEqual({ works: { yay: false } })
+          })
         })
-      })
     })
     test('should cache pending HTTP requests', () => {
       const url = 'http://example.com/common.json'
-      xapp.get(url, () => { })
+      xapp.get(url, () => {})
       const p1 = refs.getDoc(url)
       const p2 = refs.getDoc(url)
       const p3 = refs.docCache[url]
@@ -142,24 +146,24 @@ describe('refs', () => {
   describe('.extractFromDoc', () => {
     test('should extract a value from within a doc', () => {
       refs.docCache['some-path'] = {
-        one: '1'
+        one: '1',
       }
-      return refs.extractFromDoc('some-path', '/one')
-        .then((val) => {
-          expect(val).toEqual('1')
-        })
+      return refs.extractFromDoc('some-path', '/one').then(val => {
+        expect(val).toEqual('1')
+      })
     })
 
     test('should fail nicely', () => {
       refs.docCache['some-path'] = {
-        one: '1'
+        one: '1',
       }
 
-      return refs.extractFromDoc('some-path', '/two', '#/two')
-        .then((val) => {
+      return refs
+        .extractFromDoc('some-path', '/two', '#/two')
+        .then(val => {
           throw new Error('Should have failed')
         })
-        .catch((e) => {
+        .catch(e => {
           expect(e.pointer).toEqual('/two')
           expect(e.basePath).toBeFalsy()
         })
@@ -172,14 +176,11 @@ describe('refs', () => {
       expect(res).toEqual('/one/')
     })
 
-    test(
-      'should throw if there is no basePath, and we try to resolve a realtive url',
-      () => {
-        expect(() => {
-          refs.absoluteify('../')
-        }).toThrow()
-      }
-    )
+    test('should throw if there is no basePath, and we try to resolve a realtive url', () => {
+      expect(() => {
+        refs.absoluteify('../')
+      }).toThrow()
+    })
 
     test('should return the absolute URL, with a different asset', () => {
       const res = refs.absoluteify('not-three.json', '/one/two/three.json')
@@ -192,18 +193,21 @@ describe('refs', () => {
       const url = 'http://example.com/common.json'
 
       xapp.get(url, (req, res, next) => {
-        res.send({works: {yay: true}})
+        res.send({ works: { yay: true } })
       })
 
-      return refs.getDoc(url).then((doc) => {
-        expect(doc).toEqual({works: {yay: true}})
-      }).then(() => {
-        expect(refs.docCache).toEqual({
-          [url]: {works: {yay: true}}
+      return refs
+        .getDoc(url)
+        .then(doc => {
+          expect(doc).toEqual({ works: { yay: true } })
         })
-        refs.clearCache()
-        expect(refs.docCache).toEqual({})
-      })
+        .then(() => {
+          expect(refs.docCache).toEqual({
+            [url]: { works: { yay: true } },
+          })
+          refs.clearCache()
+          expect(refs.docCache).toEqual({})
+        })
     })
 
     test('should clear the docCache, of particular items', () => {
@@ -212,36 +216,42 @@ describe('refs', () => {
 
       xapp
         .get(url, (req, res, next) => {
-          res.send({works: {yay: true}})
+          res.send({ works: { yay: true } })
         })
         .get(url2, (req, res, next) => {
-          res.send({works: {yup: true}})
+          res.send({ works: { yup: true } })
         })
 
-      return refs.getDoc(url).then((doc) => {
-        expect(doc).toEqual({works: {yay: true}})
-      }).then(() => {
-        expect(refs.docCache).toEqual({
-          [url]: {works: {yay: true}}
+      return refs
+        .getDoc(url)
+        .then(doc => {
+          expect(doc).toEqual({ works: { yay: true } })
         })
-
-        return refs.getDoc(url2).then((doc) => {
-          expect(doc).toEqual({works: {yup: true}})
-        }).then(() => {
+        .then(() => {
           expect(refs.docCache).toEqual({
-            [url]: {works: {yay: true}},
-            [url2]: {works: {yup: true}}
+            [url]: { works: { yay: true } },
           })
 
-          refs.clearCache(url)
+          return refs
+            .getDoc(url2)
+            .then(doc => {
+              expect(doc).toEqual({ works: { yup: true } })
+            })
+            .then(() => {
+              expect(refs.docCache).toEqual({
+                [url]: { works: { yay: true } },
+                [url2]: { works: { yup: true } },
+              })
 
-          expect(refs.docCache).toEqual({
-            [url2]: {
-              works: {yup: true}
-            }
-          })
+              refs.clearCache(url)
+
+              expect(refs.docCache).toEqual({
+                [url2]: {
+                  works: { yup: true },
+                },
+              })
+            })
         })
-      })
     })
   })
 
@@ -251,13 +261,10 @@ describe('refs', () => {
       expect(subject).toEqual(['one', 'two', '/three'])
     })
 
-    test(
-      'should parse if JSON-Pointer does not start with forward dash',
-      () => {
-        const subject = refs.jsonPointerToArray('one/two/~1three')
-        expect(subject).toEqual(['one', 'two', '/three'])
-      }
-    )
+    test('should parse if JSON-Pointer does not start with forward dash', () => {
+      const subject = refs.jsonPointerToArray('one/two/~1three')
+      expect(subject).toEqual(['one', 'two', '/three'])
+    })
 
     test('should return [""] for "" and "/"', () => {
       let subject = refs.jsonPointerToArray('')
@@ -269,7 +276,9 @@ describe('refs', () => {
 
   describe('.unescapeJsonPointerToken', () => {
     test('should parse ~0 and ~1 in the correct order', () => {
-      expect(refs.unescapeJsonPointerToken('~01 ~1 ~0 ~10')).toEqual('~1 / ~ /0')
+      expect(refs.unescapeJsonPointerToken('~01 ~1 ~0 ~10')).toEqual(
+        '~1 / ~ /0'
+      )
     })
 
     test('should handle non-strings', () => {
@@ -284,16 +293,22 @@ describe('refs', () => {
       const cases = caseFiles
         .sort((f1, f2) => {
           // Sorts by group ('internal', 'external') before test case number
-          const group1 = f1.replace(/\//g, path.sep).substring(dir.length).split(path.sep)[1]
-          const group2 = f2.replace(/\//g, path.sep).substring(dir.length).split(path.sep)[1]
+          const group1 = f1
+            .replace(/\//g, path.sep)
+            .substring(dir.length)
+            .split(path.sep)[1]
+          const group2 = f2
+            .replace(/\//g, path.sep)
+            .substring(dir.length)
+            .split(path.sep)[1]
           const no1 = Number(path.basename(f1).split('.')[0])
           const no2 = Number(path.basename(f2).split('.')[0])
-          return group1.localeCompare(group2) || (no1 - no2)
+          return group1.localeCompare(group2) || no1 - no2
         })
-        .map((filename) => {
-          return Object.assign({name: filename, filename}, require(filename))
+        .map(filename => {
+          return Object.assign({ name: filename, filename }, require(filename))
         })
-        .filter((testCase) => {
+        .filter(testCase => {
           return !testCase.ignore
         })
 
@@ -309,15 +324,15 @@ describe('refs', () => {
           const output = testCase.output || clone(spec)
           const external = testCase.external || {}
 
-          Object.keys(external).forEach((url) => {
+          Object.keys(external).forEach(url => {
             xapp.get(url, () => external[url])
           })
 
-          return mapSpec({spec, plugins: [refs]})
-            .then((res) => {
+          return mapSpec({ spec, plugins: [refs] })
+            .then(res => {
               expect(res.spec).toEqual(output)
             })
-            .then(function () {
+            .then(function() {
               runNextTestCase(idx + 1)
             })
             .catch(reject)
@@ -330,14 +345,14 @@ describe('refs', () => {
     test('should handle this weird case', () => {
       return mapSpec({
         spec: {
-          one: {one: 1},
-          onelike: {$ref: '#/one'}, // Start with `one` and is a sibling of `/one`
+          one: { one: 1 },
+          onelike: { $ref: '#/one' }, // Start with `one` and is a sibling of `/one`
         },
         plugins: [refs],
-      }).then((res) => {
+      }).then(res => {
         expect(res.spec).toEqual({
-          one: {one: 1},
-          onelike: {one: 1},
+          one: { one: 1 },
+          onelike: { one: 1 },
         })
       })
     })
@@ -345,16 +360,16 @@ describe('refs', () => {
     test('should not stop if one $ref has error', () => {
       return mapSpec({
         spec: {
-          valid: {data: 1},
-          two: {$ref: 'invalid'},
-          three: {$ref: '#/valid'}
+          valid: { data: 1 },
+          two: { $ref: 'invalid' },
+          three: { $ref: '#/valid' },
         },
         plugins: [refs],
-      }).then((res) => {
+      }).then(res => {
         expect(res.spec).toEqual({
-          valid: {data: 1},
-          two: {$ref: 'invalid'},
-          three: {data: 1}
+          valid: { data: 1 },
+          two: { $ref: 'invalid' },
+          three: { data: 1 },
         })
       })
     })
@@ -365,40 +380,40 @@ describe('refs', () => {
           spec: {
             a: 1234,
             parameters: {
-              $ref: '#/a'
+              $ref: '#/a',
             },
             responses: {
-              $ref: '#/a'
+              $ref: '#/a',
             },
             definitions: {
-              $ref: '#/a'
+              $ref: '#/a',
             },
             securityDefinitions: {
-              $ref: '#/a'
+              $ref: '#/a',
             },
             properties: {
-              $ref: '#/a'
-            }
+              $ref: '#/a',
+            },
           },
           plugins: [refs],
-        }).then((res) => {
+        }).then(res => {
           expect(res.spec).toEqual({
             a: 1234,
             parameters: {
-              $ref: '#/a'
+              $ref: '#/a',
             },
             responses: {
-              $ref: '#/a'
+              $ref: '#/a',
             },
             definitions: {
-              $ref: '#/a'
+              $ref: '#/a',
             },
             securityDefinitions: {
-              $ref: '#/a'
+              $ref: '#/a',
             },
             properties: {
-              $ref: '#/a'
-            }
+              $ref: '#/a',
+            },
           })
           expect(res.errors).toEqual([])
         })
@@ -426,21 +441,21 @@ describe('refs', () => {
                                     type: 'object',
                                     properties: {
                                       value: {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       $ref: {
-                                        type: 'string'
+                                        type: 'string',
                                       },
                                       display: {
-                                        type: 'string'
-                                      }
+                                        type: 'string',
+                                      },
                                     },
                                     example: {
-                                      $ref: '#/whatever'
-                                    }
-                                  }
-                                }
-                              }
+                                      $ref: '#/whatever',
+                                    },
+                                  },
+                                },
+                              },
                             },
                             example: [
                               {
@@ -449,27 +464,28 @@ describe('refs', () => {
                                 roles: [
                                   {
                                     value: '00000000023459FE',
-                                    $ref: '/http://api.example.org/users/00000000023459FE',
-                                    display: 'Jessica Brandenburg'
-                                  }
-                                ]
-                              }
-                            ]
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
+                                    $ref:
+                                      '/http://api.example.org/users/00000000023459FE',
+                                    display: 'Jessica Brandenburg',
+                                  },
+                                ],
+                              },
+                            ],
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
         }
 
         return mapSpec({
           spec: input,
           plugins: [refs],
-        }).then((res) => {
+        }).then(res => {
           expect(res.spec).toEqual(input)
           expect(res.errors).toEqual([])
         })
@@ -478,9 +494,9 @@ describe('refs', () => {
 
     test('should include fullPath in invalid $ref type', () => {
       return mapSpec({
-        spec: {one: {$ref: 1}},
+        spec: { one: { $ref: 1 } },
         plugins: [refs],
-      }).then((res) => {
+      }).then(res => {
         expect(res.errors[0].fullPath).toEqual(['one', '$ref'])
       })
     })
@@ -491,7 +507,9 @@ describe('refs', () => {
       // THIS ISN'T IDEAL, need to find a better way of overwriting fetchJSON
       const spy = jest.fn()
       const oriFunc = plugins.refs.fetchJSON
-      plugins.refs.fetchJSON = spy.mockImplementation(() => Promise.resolve(null))
+      plugins.refs.fetchJSON = spy.mockImplementation(() =>
+        Promise.resolve(null)
+      )
 
       // When
       plugins.refs.getDoc('hello')
@@ -506,7 +524,7 @@ describe('refs', () => {
 
   describe('deeply resolved', () => {
     test('should resolve deeply serial $refs, across documents', () => {
-      xmock().get('http://example.com/doc-a', function (req, res, next) {
+      xmock().get('http://example.com/doc-a', function(req, res, next) {
         xmock().restore()
         return res.send({
           two: {
@@ -517,38 +535,38 @@ describe('refs', () => {
           },
           four: {
             four: 4,
-          }
+          },
         })
       })
 
       return mapSpec({
         plugins: [plugins.refs],
         spec: {
-          $ref: 'http://example.com/doc-a#two'
-        }
-      }).then((res) => {
+          $ref: 'http://example.com/doc-a#two',
+        },
+      }).then(res => {
         expect(res.spec).toEqual({
-          four: 4
+          four: 4,
         })
       })
     })
     test('should resolve deeply nested $refs, across documents', () => {
-      xmock().get('http://example.com/doc-a', function (req, res, next) {
+      xmock().get('http://example.com/doc-a', function(req, res, next) {
         xmock().restore()
         return res.send({
           two: {
             innerTwo: {
-              $ref: '#/three'
-            }
+              $ref: '#/three',
+            },
           },
           three: {
             innerThree: {
-              $ref: '#/four'
-            }
+              $ref: '#/four',
+            },
           },
           four: {
             four: 4,
-          }
+          },
         })
       })
 
@@ -556,31 +574,31 @@ describe('refs', () => {
         plugins: [plugins.refs],
         spec: {
           result: {
-            $ref: 'http://example.com/doc-a#'
-          }
+            $ref: 'http://example.com/doc-a#',
+          },
         },
         context: {
-          baseDoc: 'http://example.com/main.json'
-        }
-      }).then((res) => {
+          baseDoc: 'http://example.com/main.json',
+        },
+      }).then(res => {
         expect(res.spec).toEqual({
           result: {
             two: {
               innerTwo: {
                 innerThree: {
-                  four: 4
-                }
-              }
+                  four: 4,
+                },
+              },
             },
             three: {
               innerThree: {
-                four: 4
-              }
+                four: 4,
+              },
             },
             four: {
-              four: 4
-            }
-          }
+              four: 4,
+            },
+          },
         })
       })
     })

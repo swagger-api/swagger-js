@@ -73,16 +73,16 @@ export default class ContextTree {
 // =========================
 
 function createNode(value, parent) {
-  return updateNode({children: {}}, value, parent)
+  return updateNode({ children: {} }, value, parent)
 }
 
 function updateNode(node, value, parent) {
   node.value = value || {}
   node.protoValue = parent
-    ? {...parent.protoValue, ...node.value}
+    ? { ...parent.protoValue, ...node.value }
     : node.value
 
-  Object.keys(node.children).forEach((prop) => {
+  Object.keys(node.children).forEach(prop => {
     const child = node.children[prop]
     node.children[prop] = updateNode(child, child.value, node)
   })

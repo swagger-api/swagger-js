@@ -2,7 +2,7 @@ import isObject from 'lodash/isObject'
 import startsWith from 'lodash/startsWith'
 
 const toLower = str => String.prototype.toLowerCase.call(str)
-const escapeString = (str) => {
+const escapeString = str => {
   return str.replace(/[^\w]/gi, '_')
 }
 
@@ -26,7 +26,12 @@ export function isSwagger2(spec) {
 }
 
 // Strategy for determining operationId
-export function opId(operation, pathName, method = '', {v2OperationIdCompatibilityMode} = {}) {
+export function opId(
+  operation,
+  pathName,
+  method = '',
+  { v2OperationIdCompatibilityMode } = {}
+) {
   if (!operation || typeof operation !== 'object') {
     return null
   }
@@ -34,15 +39,20 @@ export function opId(operation, pathName, method = '', {v2OperationIdCompatibili
   if (idWithoutWhitespace.length) {
     return escapeString(operation.operationId)
   }
-  return idFromPathMethod(pathName, method, {v2OperationIdCompatibilityMode})
+  return idFromPathMethod(pathName, method, { v2OperationIdCompatibilityMode })
 }
 
-
 // Create a generated operationId from pathName + method
-export function idFromPathMethod(pathName, method, {v2OperationIdCompatibilityMode} = {}) {
+export function idFromPathMethod(
+  pathName,
+  method,
+  { v2OperationIdCompatibilityMode } = {}
+) {
   if (v2OperationIdCompatibilityMode) {
-    let res = `${method.toLowerCase()}_${pathName}`
-      .replace(/[\s!@#$%^&*()_+=[{\]};:<>|./?,\\'""-]/g, '_')
+    let res = `${method.toLowerCase()}_${pathName}`.replace(
+      /[\s!@#$%^&*()_+=[{\]};:<>|./?,\\'""-]/g,
+      '_'
+    )
 
     res = res || `${pathName.substring(1)}_${method}`
 
@@ -64,8 +74,7 @@ export function getOperationRaw(spec, id) {
     return null
   }
 
-
-  return findOperation(spec, ({pathName, method, operation}) => {
+  return findOperation(spec, ({ pathName, method, operation }) => {
     if (!operation || typeof operation !== 'object') {
       return false
     }
@@ -74,8 +83,9 @@ export function getOperationRaw(spec, id) {
     const operationId = opId(operation, pathName, method)
     const legacyOperationId = legacyIdFromPathMethod(pathName, method)
 
-    return [operationId, legacyOperationId, rawOperationId]
-      .some(val => val && val === id)
+    return [operationId, legacyOperationId, rawOperationId].some(
+      val => val && val === id
+    )
   })
 }
 
@@ -88,11 +98,16 @@ export function findOperation(spec, predicate) {
 // iterate over each operation, and fire a callback with details
 // `find=true` will stop iterating, when the cb returns truthy
 export function eachOperation(spec, cb, find) {
-  if (!spec || typeof spec !== 'object' || !spec.paths || typeof spec.paths !== 'object') {
+  if (
+    !spec ||
+    typeof spec !== 'object' ||
+    !spec.paths ||
+    typeof spec.paths !== 'object'
+  ) {
     return null
   }
 
-  const {paths} = spec
+  const { paths } = spec
 
   // Iterate over the spec, collecting operations
   for (const pathName in paths) {
@@ -109,7 +124,7 @@ export function eachOperation(spec, cb, find) {
         spec,
         pathName,
         method: method.toUpperCase(),
-        operation
+        operation,
       }
       const cbValue = cb(operationObj)
 
@@ -124,8 +139,8 @@ export function eachOperation(spec, cb, find) {
 // ...maybe create `normalizeOAS3`?
 
 export function normalizeSwagger(parsedSpec) {
-  const {spec} = parsedSpec
-  const {paths} = spec
+  const { spec } = parsedSpec
+  const { paths } = spec
   const map = {}
 
   if (!paths || spec.$$normalized) {
@@ -152,8 +167,7 @@ export function normalizeSwagger(parsedSpec) {
       if (oid) {
         if (map[oid]) {
           map[oid].push(operation)
-        }
-        else {
+        } else {
           map[oid] = [operation]
         }
 
@@ -163,13 +177,13 @@ export function normalizeSwagger(parsedSpec) {
             o.__originalOperationId = o.__originalOperationId || o.operationId
             o.operationId = `${oid}${i + 1}`
           })
-        }
-        else if (typeof operation.operationId !== 'undefined') {
+        } else if (typeof operation.operationId !== 'undefined') {
           // Ensure we always add the normalized operation ID if one already exists
           // ( potentially different, given that we normalize our IDs)
           // ... _back_ to the spec. Otherwise, they might not line up
           const obj = opList[0]
-          obj.__originalOperationId = obj.__originalOperationId || operation.operationId
+          obj.__originalOperationId =
+            obj.__originalOperationId || operation.operationId
           obj.operationId = oid
         }
       }
@@ -198,14 +212,15 @@ export function normalizeSwagger(parsedSpec) {
             for (const inheritName in inherits) {
               if (!operation[inheritName]) {
                 operation[inheritName] = inherits[inheritName]
-              }
-              else if (inheritName === 'parameters') {
+              } else if (inheritName === 'parameters') {
                 for (const param of inherits[inheritName]) {
-                  const exists = operation[inheritName].some((opParam) => {
-                    return (opParam.name && opParam.name === param.name)
-                      || (opParam.$ref && opParam.$ref === param.$ref)
-                      || (opParam.$$ref && opParam.$$ref === param.$$ref)
-                      || (opParam === param)
+                  const exists = operation[inheritName].some(opParam => {
+                    return (
+                      (opParam.name && opParam.name === param.name) ||
+                      (opParam.$ref && opParam.$ref === param.$ref) ||
+                      (opParam.$$ref && opParam.$$ref === param.$$ref) ||
+                      opParam === param
+                    )
                   })
 
                   if (!exists) {

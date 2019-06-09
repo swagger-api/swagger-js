@@ -4,11 +4,11 @@ export default {
   path,
   query,
   header,
-  cookie
+  cookie,
 }
 
-function path({req, value, parameter}) {
-  const {name, style, explode} = parameter
+function path({ req, value, parameter }) {
+  const { name, style, explode } = parameter
   const styledValue = stylize({
     key: parameter.name,
     value,
@@ -20,7 +20,7 @@ function path({req, value, parameter}) {
   req.url = req.url.split(`{${name}}`).join(styledValue)
 }
 
-function query({req, value, parameter}) {
+function query({ req, value, parameter }) {
   req.query = req.query || {}
 
   if (value === false) {
@@ -36,7 +36,7 @@ function query({req, value, parameter}) {
 
     if (parameter.style === 'deepObject') {
       const valueKeys = Object.keys(value)
-      valueKeys.forEach((k) => {
+      valueKeys.forEach(k => {
         const v = value[k]
         req.query[`${parameter.name}[${k}]`] = {
           value: stylize({
@@ -45,11 +45,10 @@ function query({req, value, parameter}) {
             style: 'deepObject',
             escape: parameter.allowReserved ? 'unsafe' : 'reserved',
           }),
-          skipEncoding: true
+          skipEncoding: true,
         }
       })
-    }
-    else if (
+    } else if (
       type === 'object' &&
       !Array.isArray(value) &&
       (parameter.style === 'form' || !parameter.style) &&
@@ -59,7 +58,7 @@ function query({req, value, parameter}) {
       // since we aren't assigning to `req.query[parameter.name]`
       // like we usually do.
       const valueKeys = Object.keys(value)
-      valueKeys.forEach((k) => {
+      valueKeys.forEach(k => {
         const v = value[k]
         req.query[k] = {
           value: stylize({
@@ -68,37 +67,32 @@ function query({req, value, parameter}) {
             style: parameter.style || 'form',
             escape: parameter.allowReserved ? 'unsafe' : 'reserved',
           }),
-          skipEncoding: true
+          skipEncoding: true,
         }
       })
-    }
-    else {
+    } else {
       req.query[parameter.name] = {
         value: stylize({
           key: parameter.name,
           value,
           style: parameter.style || 'form',
-          explode: typeof parameter.explode === 'undefined' ? true : parameter.explode,
+          explode:
+            typeof parameter.explode === 'undefined' ? true : parameter.explode,
           escape: parameter.allowReserved ? 'unsafe' : 'reserved',
         }),
-        skipEncoding: true
+        skipEncoding: true,
       }
     }
-  }
-  else if (parameter.allowEmptyValue && value !== undefined) {
+  } else if (parameter.allowEmptyValue && value !== undefined) {
     const paramName = parameter.name
     req.query[paramName] = req.query[paramName] || {}
     req.query[paramName].allowEmptyValue = true
   }
 }
 
-const PARAMETER_HEADER_BLACKLIST = [
-  'accept',
-  'authorization',
-  'content-type'
-]
+const PARAMETER_HEADER_BLACKLIST = ['accept', 'authorization', 'content-type']
 
-function header({req, parameter, value}) {
+function header({ req, parameter, value }) {
   req.headers = req.headers || {}
 
   if (PARAMETER_HEADER_BLACKLIST.indexOf(parameter.name.toLowerCase()) > -1) {
@@ -110,29 +104,32 @@ function header({req, parameter, value}) {
       key: parameter.name,
       value,
       style: parameter.style || 'simple',
-      explode: typeof parameter.explode === 'undefined' ? false : parameter.explode,
+      explode:
+        typeof parameter.explode === 'undefined' ? false : parameter.explode,
       escape: false,
     })
   }
 }
 
-function cookie({req, parameter, value}) {
+function cookie({ req, parameter, value }) {
   req.headers = req.headers || {}
   const type = typeof value
 
   if (type !== 'undefined') {
-    const prefix = (
-      type === 'object' &&
-      !Array.isArray(value) &&
-      parameter.explode
-    ) ? '' : `${parameter.name}=`
+    const prefix =
+      type === 'object' && !Array.isArray(value) && parameter.explode
+        ? ''
+        : `${parameter.name}=`
 
-    req.headers.Cookie = prefix + stylize({
-      key: parameter.name,
-      value,
-      escape: false,
-      style: parameter.style || 'form',
-      explode: typeof parameter.explode === 'undefined' ? false : parameter.explode
-    })
+    req.headers.Cookie =
+      prefix +
+      stylize({
+        key: parameter.name,
+        value,
+        escape: false,
+        style: parameter.style || 'form',
+        explode:
+          typeof parameter.explode === 'undefined' ? false : parameter.explode,
+      })
   }
 }

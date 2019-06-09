@@ -11,8 +11,7 @@ export default {
       parameters.forEach((param, i) => {
         try {
           val[i].default = specmap.parameterMacro(op, param)
-        }
-        catch (e) {
+        } catch (e) {
           const err = new Error(e)
           err.fullPath = fullPath
           return err
@@ -23,5 +22,5 @@ export default {
     }
 
     return lib.replace(fullPath, parameters)
-  }
+  },
 }

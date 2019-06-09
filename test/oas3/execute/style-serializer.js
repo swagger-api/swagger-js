@@ -1,17 +1,15 @@
-import {
-  encodeDisallowedCharacters
-} from '../../../src/execute/oas3/style-serializer'
+import { encodeDisallowedCharacters } from '../../../src/execute/oas3/style-serializer'
 
 describe('OAS3 style serializer', () => {
   describe('encodeDisallowedCharacters', () => {
     test('should correctly encode ASCII characters', () => {
-      const tested = str => encodeDisallowedCharacters(str, {escape: true})
+      const tested = str => encodeDisallowedCharacters(str, { escape: true })
 
       expect(tested('!')).toEqual('%21')
       expect(tested('#')).toEqual('%23')
       expect(tested('$')).toEqual('%24')
       expect(tested('&')).toEqual('%26')
-      expect(tested('\'')).toEqual('%27')
+      expect(tested("'")).toEqual('%27')
       expect(tested('(')).toEqual('%28')
       expect(tested(')')).toEqual('%29')
       expect(tested('*')).toEqual('%2A')
@@ -30,12 +28,14 @@ describe('OAS3 style serializer', () => {
     })
 
     test('should correctly encode non-ASCII characters', () => {
-      const tested = str => encodeDisallowedCharacters(str, {escape: true})
+      const tested = str => encodeDisallowedCharacters(str, { escape: true })
       expect(tested('♥')).toEqual('%E2%99%A5')
       expect(tested('テスト')).toEqual('%E3%83%86%E3%82%B9%E3%83%88')
       expect(tested('𩸽')).toEqual('%F0%A9%B8%BD')
       expect(tested('🍣')).toEqual('%F0%9F%8D%A3')
-      expect(tested('👩‍👩‍👧‍👧')).toEqual('%F0%9F%91%A9%E2%80%8D%F0%9F%91%A9%E2%80%8D%F0%9F%91%A7%E2%80%8D%F0%9F%91%A7')
+      expect(tested('👩‍👩‍👧‍👧')).toEqual(
+        '%F0%9F%91%A9%E2%80%8D%F0%9F%91%A9%E2%80%8D%F0%9F%91%A7%E2%80%8D%F0%9F%91%A7'
+      )
     })
 
     test('should skip encoding if `escape` is not set to true', () => {
@@ -45,7 +45,7 @@ describe('OAS3 style serializer', () => {
       expect(tested('#')).toEqual('#')
       expect(tested('$')).toEqual('$')
       expect(tested('&')).toEqual('&')
-      expect(tested('\'')).toEqual('\'')
+      expect(tested("'")).toEqual("'")
       expect(tested('(')).toEqual('(')
       expect(tested(')')).toEqual(')')
       expect(tested('*')).toEqual('*')

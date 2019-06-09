@@ -1,23 +1,29 @@
 // https://github.com/swagger-api/swagger-ui/issues/4071
 
-import {execute, buildRequest, baseUrl, self as stubs} from '../../src/execute'
+import {
+  execute,
+  buildRequest,
+  baseUrl,
+  self as stubs,
+} from '../../src/execute'
 
 const spec = {
   openapi: '3.0.0',
   servers: [
     {
-      url: 'https://workbcjobs.api.gov.bc.ca/v1'
-    }
+      url: 'https://workbcjobs.api.gov.bc.ca/v1',
+    },
   ],
   paths: {
     '/jobs': {
       post: {
         operationId: 'postJobs',
-        description: 'The job feed endpoint returns an array of job records that satisfy the supplied criteria.',
+        description:
+          'The job feed endpoint returns an array of job records that satisfy the supplied criteria.',
         responses: {
           default: {
-            description: 'Unexpected error'
-          }
+            description: 'Unexpected error',
+          },
         },
         requestBody: {
           content: {
@@ -28,48 +34,41 @@ const spec = {
                   industries: {
                     type: 'array',
                     items: {
-                      type: 'integer'
-                    }
-                  }
-                }
+                      type: 'integer',
+                    },
+                  },
+                },
               },
               encoding: {
                 industries: {
-                  style: 'form'
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
+                  style: 'form',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
 }
 
+test('should generate a request with application/x-www-form-urlencoded', () => {
+  const req = buildRequest({
+    spec,
+    requestContentType: 'application/x-www-form-urlencoded',
+    operationId: 'postJobs',
+    requestBody: {
+      industries: [1, 16],
+    },
+  })
 
-test(
-  'should generate a request with application/x-www-form-urlencoded',
-  () => {
-    const req = buildRequest({
-      spec,
-      requestContentType: 'application/x-www-form-urlencoded',
-      operationId: 'postJobs',
-      requestBody: {
-        industries: [
-          1,
-          16
-        ]
-      }
-    })
-
-    expect(req).toEqual({
-      url: 'https://workbcjobs.api.gov.bc.ca/v1/jobs',
-      method: 'POST',
-      credentials: 'same-origin',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: 'industries=1%2C16'
-    })
-  }
-)
+  expect(req).toEqual({
+    url: 'https://workbcjobs.api.gov.bc.ca/v1/jobs',
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: 'industries=1%2C16',
+  })
+})

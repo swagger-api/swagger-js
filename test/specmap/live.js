@@ -1,4 +1,4 @@
-import mapSpec, {plugins} from '../../src/specmap'
+import mapSpec, { plugins } from '../../src/specmap'
 
 if (process.env.NODE_LIVETESTS === 'true') {
   describe('Live tests against the internet', () => {
@@ -8,10 +8,11 @@ if (process.env.NODE_LIVETESTS === 'true') {
       return mapSpec({
         spec: {
           hello: 'josh',
-          $ref: 'https://swagger.io/domains/ponelat/common/1#/pathitems/EntityOperations'
+          $ref:
+            'https://swagger.io/domains/ponelat/common/1#/pathitems/EntityOperations',
         },
-        plugins: [plugins.refs]
-      }).then((res) => {
+        plugins: [plugins.refs],
+      }).then(res => {
         expect(res).toEqual({
           errors: [],
           spec: {
@@ -27,23 +28,22 @@ if (process.env.NODE_LIVETESTS === 'true') {
                     properties: {
                       code: {
                         type: 'integer',
-                        format: 'int32'
+                        format: 'int32',
                       },
                       message: {
-                        type: 'string'
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
+                        type: 'string',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
         })
       })
     })
   })
-}
-else {
+} else {
   describe('Live tests against the internet', () => {
     test('(skipping test suite; `NODE_LIVETESTS` is not enabled', () => {
       expect(true).toEqual(true)
