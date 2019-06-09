@@ -9,26 +9,23 @@
     "no-plusplus": 0,
     "camelcase": 2,
     "func-names": 0,
-    "brace-style": [2, "stroustrup"],
     "no-param-reassign": 0,
-    "semi": [2, "never"],
     "strict": 0,
-    "quotes": [2, "single"],
-    "comma-dangle": 0,
     "arrow-body-style": 0,
     "guard-for-in": 0,
     "no-unused-vars": 0,
     "vars-on-top": 0,
     "no-continue": 0,
-    "no-multi-spaces": 1,
     "no-multi-assign": 0,
     "no-template-curly-in-string": 0,
     "no-restricted-syntax": 0,
-    "no-use-before-define": [2,"nofunc"],
+    "no-use-before-define": [2, "nofunc"],
     "no-underscore-dangle": 0,
-    "no-unused-expressions": [2, {"allowShortCircuit": true}],
-    "object-curly-spacing": [2, "never"],
+    "no-unused-expressions": [2, { "allowShortCircuit": true }],
     "import/prefer-default-export": 1,
-    "import/no-extraneous-dependencies": ["error", {"devDependencies": ["!test/**/*.js"]}]
+    "import/no-extraneous-dependencies": [
+      "error",
+      { "devDependencies": ["!test/**/*.js"] }
+    ]
   }
 }
