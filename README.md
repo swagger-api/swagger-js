@@ -174,7 +174,7 @@ Swagger('http://petstore.swagger.io/v2/swagger.json')
       client.apis.pet.addPet({id: 1, name: "bobby"}).then(...)
 
       // TryItOut Executor, with the `spec` already provided
-      client.execute({operationId: 'addPet', parameters: {id: 1, name: "bobby") }).then(...)
+      client.execute({operationId: 'addPet', parameters: {id: 1, name: "bobby"}}).then(...)
    })
 
 ```
