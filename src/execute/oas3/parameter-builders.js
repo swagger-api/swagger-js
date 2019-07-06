@@ -20,6 +20,18 @@ function path({req, value, parameter}) {
   req.url = req.url.split(`{${name}}`).join(styledValue)
 }
 
+function flattenForDeepObject(object) {
+  return Object.assign({}, ...(function _flatten(objectBit, prev = '') {
+    return [].concat(
+      ...Object.keys(objectBit).map(
+        key => ((typeof objectBit[key] === 'object' && objectBit[key] !== null) ?
+          _flatten(objectBit[key], `${prev}[${key}]`) :
+          ({[`${prev}[${key}]`]: objectBit[key]}))
+      )
+    )
+  }(object)))
+}
+
 function query({req, value, parameter}) {
   req.query = req.query || {}
 
@@ -35,17 +47,19 @@ function query({req, value, parameter}) {
     const type = typeof value
 
     if (parameter.style === 'deepObject') {
-      const valueKeys = Object.keys(value)
-      valueKeys.forEach((k) => {
-        const v = value[k]
-        req.query[`${parameter.name}[${k}]`] = {
-          value: stylize({
-            key: k,
-            value: v,
-            style: 'deepObject',
-            escape: parameter.allowReserved ? 'unsafe' : 'reserved',
-          }),
-          skipEncoding: true
+      const parsedObj = flattenForDeepObject(value)
+      Object.keys(parsedObj).forEach((k) => {
+        const v = parsedObj[k]
+        if (v !== null && v !== undefined) {
+          req.query[`${parameter.name}${k}`] = {
+            value: stylize({
+              key: k,
+              value: v,
+              style: 'deepObject',
+              escape: parameter.allowReserved ? 'unsafe' : 'reserved',
+            }),
+            skipEncoding: true
+          }
         }
       })
     }
