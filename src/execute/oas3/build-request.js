@@ -3,7 +3,7 @@
 import assign from 'lodash/assign'
 import get from 'lodash/get'
 import btoa from 'btoa'
-import {Buffer} from 'buffer/'
+import {isFile} from '../../http'
 
 export default function (options, req) {
   const {
@@ -57,21 +57,7 @@ export default function (options, req) {
               const val = requestBody[k]
               let newVal
 
-              let isFile
-
-              if (typeof File !== 'undefined') {
-                isFile = val instanceof File // eslint-disable-line no-undef
-              }
-
-              if (typeof Blob !== 'undefined') {
-                isFile = isFile || val instanceof Blob // eslint-disable-line no-undef
-              }
-
-              if (typeof Buffer !== 'undefined') {
-                isFile = isFile || Buffer.isBuffer(val)
-              }
-
-              if (typeof val === 'object' && !isFile) {
+              if (typeof val === 'object' && !isFile(val)) {
                 if (Array.isArray(val)) {
                   newVal = val.toString()
                 }

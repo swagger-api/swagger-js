@@ -1,5 +1,6 @@
 import xmock from 'xmock'
 import fetchMock from 'fetch-mock'
+import {Readable} from 'stream'
 import http, {
   serializeHeaders, mergeInQueryOrForm, encodeFormOrQuery, serializeRes,
   shouldDownloadAsText, isFile
@@ -429,6 +430,7 @@ describe('http', () => {
   describe('isFile', () => {
     // mock browser File class
     global.File = class MockBrowserFile {}
+    global.Blob = class MockBlob {}
 
     const mockBrowserNavigator = {
       product: 'Gecko'
@@ -438,9 +440,11 @@ describe('http', () => {
     }
 
     const browserFile = new global.File()
+    const browserBlobFile = new global.Blob()
     const reactNativeFileObject = {
       uri: '/mock/path'
     }
+    const nodeStream = new Readable()
 
     test('should return true for browser File type', () => {
       expect(isFile(browserFile)).toEqual(true)
@@ -462,6 +466,14 @@ describe('http', () => {
       expect(isFile(reactNativeFileObject, mockReactNativeNavigator)).toEqual(true)
     })
 
+    test('should return true for browser Blob type and browser user agent', () => {
+      expect(isFile(browserBlobFile, mockBrowserNavigator)).toEqual(true)
+    })
+
+    test('should return true for readable node streams', () => {
+      expect(isFile(nodeStream)).toEqual(true)
+    })
+
     test('should return false for non-File type and browser user agent', () => {
       expect(isFile(undefined, mockBrowserNavigator)).toEqual(false)
       expect(isFile('', mockBrowserNavigator)).toEqual(false)
@@ -476,6 +488,14 @@ describe('http', () => {
       expect(isFile(123, mockReactNativeNavigator)).toEqual(false)
       expect(isFile([], mockReactNativeNavigator)).toEqual(false)
       expect(isFile({}, mockReactNativeNavigator)).toEqual(false)
+    })
+
+    test('should return false for non-object type and no user agent', () => {
+      expect(isFile(undefined)).toEqual(false)
+      expect(isFile('')).toEqual(false)
+      expect(isFile(123)).toEqual(false)
+      expect(isFile([])).toEqual(false)
+      expect(isFile({})).toEqual(false)
     })
   })
 })

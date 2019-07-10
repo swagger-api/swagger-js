@@ -139,15 +139,14 @@ export function isFile(obj, navigatorObj) {
     // eslint-disable-next-line no-undef
     navigatorObj = navigator
   }
-  if (navigatorObj && navigatorObj.product === 'ReactNative') {
-    if (obj && typeof obj === 'object' && typeof obj.uri === 'string') {
-      return true
-    }
-    return false
+  if (typeof Blob !== 'undefined' && obj instanceof Blob) { // eslint-disable-line no-undef
+    return true
   }
-  if (typeof File !== 'undefined') {
-    // eslint-disable-next-line no-undef
-    return obj instanceof File
+  if (navigatorObj && navigatorObj.product === 'ReactNative') {
+    return obj && typeof obj === 'object' && typeof obj.uri === 'string'
+  }
+  if (typeof File !== 'undefined' && obj instanceof File) { // eslint-disable-line no-undef
+    return true
   }
   return obj !== null && typeof obj === 'object' && typeof obj.pipe === 'function'
 }
