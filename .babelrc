@@ -1,33 +1,33 @@
 {
   "presets": [
     [
-      "es2015",
-      "stage-3"
+      "@babel/preset-env",
+      {
+        "targets": {
+          "browsers": [
+            /* benefit of C/S/FF/Edge only? */
+            "> 1%",
+            "last 2 versions",
+            "Firefox ESR",
+            "not dead"
+          ],
+          "node": "8"
+        },
+        "useBuiltIns": "entry",
+        "corejs": "2"
+      }
     ]
   ],
   "plugins": [
     "add-module-exports",
-    "transform-runtime",
-    "transform-object-rest-spread",
-    "transform-async-to-generator"
-  ],
-  "env": {
-    "test": {
-      "presets": ["es2015"]
-    },
-    "dev": {
-      "presets": [
-        ["env", {
-          "targets": {
-            "chrome": "60"
-          }
-        }]
-      ],
-      "plugins": [
-        "transform-runtime",
-        "transform-object-rest-spread",
-        "babel-plugin-transform-es2015-destructuring"
-      ],
-    }
-  }
+    [
+      "@babel/plugin-transform-runtime",
+      {
+        "corejs": 2
+      }
+    ],
+    "@babel/plugin-proposal-object-rest-spread",
+    "@babel/plugin-transform-async-to-generator",
+    "@babel/plugin-transform-destructuring"
+  ]
 }
