@@ -65,7 +65,6 @@
     "babel-eslint": "^9.0.0",
     "babel-jest": "^23.4.2",
     "babel-loader": "^8.0.0",
-    "babel-plugin-add-module-exports": "^0.2.1",
     "bundlesize": "^0.17.2",
     "clone": "^2.1.2",
     "conventional-changelog-angular": "^5.0.0",
