@@ -16,7 +16,7 @@ const baseRules = [
 ]
 
 export default function buildConfig(
-  {minimize = true, mangle = true, sourcemaps = true, includeDependencies = true},
+  {minimize = true, mangle = true, sourcemaps = true, includeDependencies = true, umd = false},
   customConfig
 ) {
   const plugins = []
@@ -34,9 +34,16 @@ export default function buildConfig(
 
       output: {
         path: path.join(__dirname, '../dist'),
-        libraryTarget: 'commonjs2',
         library: 'SwaggerClient',
         filename: 'index.js',
+        ...(umd
+          ? {
+            libraryTarget: 'umd',
+            globalObject: 'this',
+          }
+          : {
+            libraryTarget: 'commonjs2',
+          }),
       },
 
       externals: includeDependencies ? [] : [nodeExternals()],

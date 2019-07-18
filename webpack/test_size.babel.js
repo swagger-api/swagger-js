@@ -8,6 +8,7 @@ export default buildConfig({
   mangle: true,
   sourcemaps: true,
   includeDependencies: true,
+  umd: false,
 }, {
   output: {
     path: path.join(__dirname, '..', DEPS_CHECK_DIR)

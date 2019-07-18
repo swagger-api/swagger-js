@@ -8,10 +8,10 @@ export default buildConfig({
   mangle: false,
   sourcemaps: false,
   includeDependencies: false,
+  umd: true,
 }, {
   output: {
     path: path.join(__dirname, '../test/webpack-bundle/.tmp'),
-    libraryTarget: 'umd',
     filename: 'swagger-client.js',
   }
 })

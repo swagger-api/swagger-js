@@ -6,4 +6,5 @@ export default buildConfig({
   mangle: false,
   sourcemaps: true,
   includeDependencies: false,
+  umd: false,
 }, {})

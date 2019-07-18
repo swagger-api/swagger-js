@@ -6,9 +6,9 @@ export default buildConfig({
   mangle: true,
   sourcemaps: true,
   includeDependencies: true,
+  umd: true,
 }, {
   output: {
     path: path.join(__dirname, '../browser'),
-    libraryTarget: 'umd',
   },
 })
