@@ -24,6 +24,8 @@ export default function buildConfig(
   const completeConfig = deepExtend(
     {},
     {
+      mode: 'production',
+
       entry: {
         'swagger-client': ['./src/index.js'],
       },
