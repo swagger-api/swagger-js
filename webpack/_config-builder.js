@@ -35,6 +35,7 @@ export default function buildConfig(
       output: {
         path: path.join(__dirname, '../dist'),
         library: 'SwaggerClient',
+        libraryExport: 'default',
         filename: 'index.js',
         ...(umd
           ? {
