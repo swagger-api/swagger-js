@@ -35,7 +35,7 @@
     "test:lint": "eslint src/ test/",
     "test:size": "npm run build:bundle && bundlesize",
     "test:unit": "run-s test:unit:setup test:unit:run test:unit:teardown",
-    "test:unit:setup": "webpack --config webpack/test_webpack_build.config.js",
+    "test:unit:setup": "webpack --config webpack/test_webpack_build.babel.js",
     "test:unit:run": "jest --runInBand",
     "test:unit:teardown": "rm -rf ./test-webpack/.tmp",
     "test:unit:watch": "jest --watch"
