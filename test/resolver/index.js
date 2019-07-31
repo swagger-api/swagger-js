@@ -1,7 +1,7 @@
 // Test runner
 //
 
-import YAML from '@kyleshockey/js-yaml'
+import YAML from 'js-yaml'
 import fs from 'fs'
 import Path from 'path'
 import nock from 'nock'
