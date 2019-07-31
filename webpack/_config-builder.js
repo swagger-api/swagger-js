@@ -47,7 +47,12 @@ export default function buildConfig(
           }),
       },
 
-      externals: includeDependencies ? [] : [nodeExternals()],
+      externals: includeDependencies
+        ? {
+            // js-yaml includes `esprima` by default, but we don't need it
+          esprima: true,
+        }
+        : [nodeExternals()],
 
       module: {
         rules: baseRules,
