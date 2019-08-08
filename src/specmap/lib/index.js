@@ -1,4 +1,4 @@
-import jsonPatch from 'fast-json-patch'
+import { applyPatch as fastApplyPatch, getValueByPointer} from 'fast-json-patch'
 import regenerator from '@babel/runtime-corejs2/regenerator'
 import deepExtend from 'deep-extend'
 import deepAssign from '@kyleshockey/object-assign-deep'
@@ -40,7 +40,7 @@ function applyPatch(obj, patch, opts) {
   if (patch.op === 'merge') {
     const newValue = getInByJsonPath(obj, patch.path)
     Object.assign(newValue, patch.value)
-    jsonPatch.applyPatch(obj, [replace(patch.path, newValue)])
+    fastApplyPatch(obj, [replace(patch.path, newValue)])
   }
   else if (patch.op === 'mergeDeep') {
     const currentValue = getInByJsonPath(obj, patch.path)
@@ -98,7 +98,7 @@ function applyPatch(obj, patch, opts) {
         return arr
       }, [])
 
-    jsonPatch.applyPatch(obj, patches)
+    fastApplyPatch(obj, patches)
   }
   else if (patch.op === 'replace' && patch.path === '') {
     let value = patch.value
@@ -110,14 +110,14 @@ function applyPatch(obj, patch, opts) {
     obj = value
   }
   else {
-    jsonPatch.applyPatch(obj, [patch])
+    fastApplyPatch(obj, [patch])
 
     // Attach metadata to the resulting value.
     if (opts.allowMetaPatches && patch.meta && isAdditiveMutation(patch) &&
         (Array.isArray(patch.value) || isObject(patch.value))) {
       const currentValue = getInByJsonPath(obj, patch.path)
       const newValue = Object.assign({}, currentValue, patch.meta)
-      jsonPatch.applyPatch(obj, [replace(patch.path, newValue)])
+      fastApplyPatch(obj, [replace(patch.path, newValue)])
     }
   }
 
@@ -356,7 +356,7 @@ function isPatch(patch) {
 
 function getInByJsonPath(obj, jsonPath) {
   try {
-    return jsonPatch.getValueByPointer(obj, jsonPath)
+    return getValueByPointer(obj, jsonPath)
   }
   catch (e) {
     console.error(e) // eslint-disable-line no-console
