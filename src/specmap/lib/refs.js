@@ -16,6 +16,26 @@ const JSONRefError = createError('JSONRefError', function (message, extra, oriEr
 const docCache = {}
 const specmapRefs = new WeakMap()
 
+const skipResolutionTestFns = [
+  path => (
+    // OpenAPI 3.0 Response Media Type Example
+    // ["paths", *, *, "responses", *, "content", *, "example"]
+    path[0] === 'paths'
+    && path[3] === 'responses'
+    && path[5] === 'content'
+    && path[7] === 'example'
+  ),
+  path => (
+    // OpenAPI 3.0 Request Body Media Type Example
+    // ["paths", *, *, "responses", *, "content", *, "example"]
+    path[0] === 'paths'
+    && path[3] === 'requestBody'
+    && path[4] === 'content'
+    && path[6] === 'example'
+  )
+]
+
+const shouldSkipResolution = path => skipResolutionTestFns.some(fn => fn(path))
 
 // =========================
 // Core
@@ -45,7 +65,8 @@ const plugin = {
   plugin: (ref, key, fullPath, specmap) => {
     const specmapInstance = specmap.getInstance()
     const parent = fullPath.slice(0, -1)
-    if (isFreelyNamed(parent)) {
+
+    if (isFreelyNamed(parent) || shouldSkipResolution(parent)) {
       return
     }
 
