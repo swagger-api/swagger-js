@@ -1,10 +1,6 @@
 import stylize from './style-serializer'
 
-export default {
-  path,
-  query,
-  header,
-  cookie
+export function path({req, value, parameter}) {
 }
 
 function path({req, value, parameter}) {
@@ -20,7 +16,7 @@ function path({req, value, parameter}) {
   req.url = req.url.split(`{${name}}`).join(styledValue)
 }
 
-function query({req, value, parameter}) {
+export function query({req, value, parameter}) {
   req.query = req.query || {}
 
   if (value === false) {
@@ -98,7 +94,7 @@ const PARAMETER_HEADER_BLACKLIST = [
   'content-type'
 ]
 
-function header({req, parameter, value}) {
+export function header({req, parameter, value}) {
   req.headers = req.headers || {}
 
   if (PARAMETER_HEADER_BLACKLIST.indexOf(parameter.name.toLowerCase()) > -1) {
@@ -116,7 +112,7 @@ function header({req, parameter, value}) {
   }
 }
 
-function cookie({req, parameter, value}) {
+export function cookie({req, parameter, value}) {
   req.headers = req.headers || {}
   const type = typeof value
 
