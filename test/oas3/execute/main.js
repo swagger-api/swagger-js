@@ -2,9 +2,9 @@ import xmock from 'xmock'
 import path from 'path'
 import fs from 'fs'
 import jsYaml from 'js-yaml'
+import {escape} from 'querystring'
 
 import {execute, buildRequest, baseUrl, applySecurities, self as stubs} from '../../../src/execute'
-import {escape} from 'querystring'
 
 const petstoreSpec = jsYaml.safeLoad(fs.readFileSync(path.join('test', 'oas3', 'data', 'petstore-oas3.yaml'), 'utf8'))
 
