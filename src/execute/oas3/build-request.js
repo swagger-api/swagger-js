@@ -147,13 +147,13 @@ export function applySecurities({request, securities = {}, operation = {}, spec}
           }
         }
         else if (type === 'http') {
-          if ((schema.scheme || "").toLowerCase() === 'basic') {
+          if ((schema.scheme || '').toLowerCase() === 'basic') {
             const {username, password} = value
             const encoded = btoa(`${username}:${password}`)
             result.headers.Authorization = `Basic ${encoded}`
           }
 
-          if ((schema.scheme || "").toLowerCase() === 'bearer') {
+          if ((schema.scheme || '').toLowerCase() === 'bearer') {
             result.headers.Authorization = `Bearer ${value}`
           }
         }
