@@ -5,7 +5,7 @@ import url from 'url'
 import lib from '../lib'
 import createError from '../lib/create-error'
 import {isFreelyNamed, absolutifyPointer} from '../helpers'
-import {ACCEPT_HEADER_VALUE_FOR_DOCUMENTS} from '../constants'
+import {ACCEPT_HEADER_VALUE_FOR_DOCUMENTS} from '../../constants'
 
 const ABSOLUTE_URL_REGEXP = new RegExp('^([a-z]+://|//)', 'i')
 
