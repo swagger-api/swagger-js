@@ -254,7 +254,12 @@ export function mergeInQueryOrForm(req = {}) {
       const FormData = require('isomorphic-form-data') // eslint-disable-line global-require
       req.body = new FormData()
       Object.keys(form).forEach((key) => {
-        req.body.append(key, formatValue(form[key], true))
+        const val = form[key]
+        if (Array.isArray(val.value)){
+          val.value.forEach(v => req.body.append(key, formatValue({value: v}, true)))
+        } else {
+          req.body.append(key, formatValue(val, true))
+        }
       })
     }
     else {

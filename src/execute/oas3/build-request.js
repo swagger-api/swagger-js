@@ -55,36 +55,9 @@ export default function (options, req) {
             req.form = {}
             Object.keys(requestBody).forEach((k) => {
               const val = requestBody[k]
-              let newVal
-
-              let isFile
-
-              if (typeof File !== 'undefined') {
-                isFile = val instanceof File // eslint-disable-line no-undef
-              }
-
-              if (typeof Blob !== 'undefined') {
-                isFile = isFile || val instanceof Blob // eslint-disable-line no-undef
-              }
-
-              if (typeof Buffer !== 'undefined') {
-                isFile = isFile || Buffer.isBuffer(val)
-              }
-
-              if (typeof val === 'object' && !isFile) {
-                if (Array.isArray(val)) {
-                  newVal = val.toString()
-                }
-                else {
-                  newVal = JSON.stringify(val)
-                }
-              }
-              else {
-                newVal = val
-              }
 
               req.form[k] = {
-                value: newVal
+                value: toPartContent(val, true)
               }
             })
           }
@@ -103,6 +76,34 @@ export default function (options, req) {
   }
 
   return req
+}
+
+function toPartContent(val, inspectArrays){
+  if (inspectArrays && Array.isArray(val)) {
+    // setting 'inspectArrays' to false to avoid cycles in arrays that contain themselves
+    return val.map(v => toPartContent(v, false))
+  }
+
+  let isFile
+
+  if (typeof File !== 'undefined') {
+    isFile = val instanceof File // eslint-disable-line no-undef
+  }
+
+  if (typeof Blob !== 'undefined') {
+    isFile = isFile || val instanceof Blob // eslint-disable-line no-undef
+  }
+
+  if (typeof Buffer !== 'undefined') {
+    isFile = isFile || Buffer.isBuffer(val)
+  }
+
+  if (typeof val === 'object' && !isFile) {
+      return JSON.stringify(val)
+  }
+  else {
+    return val
+  }
 }
 
 // Add security values, to operations - that declare their need on them
