@@ -159,14 +159,15 @@ export function applySecurities({request, securities = {}, operation = {}, spec}
         }
         else if (type === 'oauth2') {
           const token = auth.token || {}
-          const accessToken = token.access_token
+          const tokenName = schema['x-tokenName'] || 'access_token'
+          const oauthToken = token[tokenName]
           let tokenType = token.token_type
 
           if (!tokenType || tokenType.toLowerCase() === 'bearer') {
             tokenType = 'Bearer'
           }
 
-          result.headers.Authorization = `${tokenType} ${accessToken}`
+          result.headers.Authorization = `${tokenType} ${oauthToken}`
         }
       }
     }
