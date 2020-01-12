@@ -87,10 +87,10 @@ export function query({req, value, parameter}) {
       })
     }
     else {
-      const paramName = encodeURIComponent(parameter.name)
-      req.query[paramName] = {
+      const encodedParamName = encodeURIComponent(parameter.name)
+      req.query[encodedParamName] = {
         value: stylize({
-          key: paramName,
+          key: encodedParamName,
           value,
           style: parameter.style || 'form',
           explode: typeof parameter.explode === 'undefined' ? true : parameter.explode,
