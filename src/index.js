@@ -6,7 +6,7 @@ import Http, {makeHttp, serializeRes, serializeHeaders} from './http'
 import Resolver, {clearCache} from './resolver'
 import resolveSubtree from './subtree-resolver'
 import {makeApisTagOperation} from './interfaces'
-import {execute, buildRequest} from './execute'
+import {execute, buildRequest, baseUrl} from './execute'
 import {opId} from './helpers'
 
 Swagger.http = Http
@@ -20,6 +20,7 @@ Swagger.clearCache = clearCache
 Swagger.makeApisTagOperation = makeApisTagOperation
 Swagger.buildRequest = buildRequest
 Swagger.helpers = {opId}
+Swagger.baseUrl = baseUrl
 
 function Swagger(url, opts = {}) {
   // Allow url as a separate argument
