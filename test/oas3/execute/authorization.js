@@ -140,6 +140,53 @@ describe('Authorization - OpenAPI Specification 3.0', () => {
           })
         }
       )
+      test(
+        'should allow empty password without casting undefined to string',
+        () => {
+          const spec = {
+            openapi: '3.0.0',
+            components: {
+              securitySchemes: {
+                myBasicAuth: {
+                  type: 'http',
+                  in: 'header',
+                  scheme: 'basic'
+                }
+              }
+            },
+            paths: {
+              '/': {
+                get: {
+                  operationId: 'myOperation'
+                }
+              }
+            }
+          }
+
+          // when
+          const req = buildRequest({
+            spec,
+            operationId: 'myOperation',
+            securities: {
+              authorized: {
+                myBasicAuth: {
+                  username: 'somebody',
+                  password: undefined
+                }
+              }
+            }
+          })
+
+          expect(req).toEqual({
+            method: 'GET',
+            url: '/',
+            credentials: 'same-origin',
+            headers: {
+              Authorization: `Basic ${btoa('somebody:')}`
+            },
+          })
+        }
+      )
     })
     describe('Bearer', () => {
       test('should add token to the Authorization header', () => {
