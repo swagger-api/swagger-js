@@ -157,7 +157,10 @@ describe('Authorization - OpenAPI Specification 3.0', () => {
             paths: {
               '/': {
                 get: {
-                  operationId: 'myOperation'
+                  operationId: 'myOperation',
+                  security: [{
+                    myBasicAuth: []
+                  }],
                 }
               }
             }
