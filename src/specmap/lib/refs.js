@@ -5,6 +5,7 @@ import url from 'url'
 import lib from '../lib'
 import createError from '../lib/create-error'
 import {isFreelyNamed, absolutifyPointer} from '../helpers'
+import {ACCEPT_HEADER_VALUE_FOR_DOCUMENTS} from '../../constants'
 
 const ABSOLUTE_URL_REGEXP = new RegExp('^([a-z]+://|//)', 'i')
 
@@ -16,6 +17,26 @@ const JSONRefError = createError('JSONRefError', function (message, extra, oriEr
 const docCache = {}
 const specmapRefs = new WeakMap()
 
+const skipResolutionTestFns = [
+  path => (
+    // OpenAPI 3.0 Response Media Type Example
+    // ["paths", *, *, "responses", *, "content", *, "example"]
+    path[0] === 'paths'
+    && path[3] === 'responses'
+    && path[5] === 'content'
+    && path[7] === 'example'
+  ),
+  path => (
+    // OpenAPI 3.0 Request Body Media Type Example
+    // ["paths", *, *, "responses", *, "content", *, "example"]
+    path[0] === 'paths'
+    && path[3] === 'requestBody'
+    && path[4] === 'content'
+    && path[6] === 'example'
+  )
+]
+
+const shouldSkipResolution = path => skipResolutionTestFns.some(fn => fn(path))
 
 // =========================
 // Core
@@ -45,7 +66,8 @@ const plugin = {
   plugin: (ref, key, fullPath, specmap) => {
     const specmapInstance = specmap.getInstance()
     const parent = fullPath.slice(0, -1)
-    if (isFreelyNamed(parent)) {
+
+    if (isFreelyNamed(parent) || shouldSkipResolution(parent)) {
       return
     }
 
@@ -294,7 +316,7 @@ function getDoc(docPath) {
  * @api public
  */
 function fetchJSON(docPath) {
-  return fetch(docPath, {headers: {Accept: 'application/json, application/yaml'}, loadSpec: true})
+  return fetch(docPath, {headers: {Accept: ACCEPT_HEADER_VALUE_FOR_DOCUMENTS}, loadSpec: true})
     .then(res => res.text())
     .then(text => jsYaml.safeLoad(text))
 }
