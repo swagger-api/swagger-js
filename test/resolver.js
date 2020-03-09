@@ -1,7 +1,7 @@
 import xmock from 'xmock'
 import path from 'path'
 import fs from 'fs'
-import jsYaml from '@kyleshockey/js-yaml'
+import jsYaml from 'js-yaml'
 
 import Swagger from '../src'
 

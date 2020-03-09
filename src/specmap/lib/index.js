@@ -1,5 +1,5 @@
 import jsonPatch from 'fast-json-patch'
-import regenerator from 'babel-runtime/regenerator'
+import regenerator from '@babel/runtime-corejs2/regenerator'
 import deepExtend from 'deep-extend'
 import deepAssign from '@kyleshockey/object-assign-deep'
 

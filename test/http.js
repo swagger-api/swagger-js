@@ -331,6 +331,29 @@ describe('http', () => {
         expect(response.status).toEqual(200)
       }).then(fetchMock.restore)
     })
+
+    test('should remove newlines from header values', () => {
+      // Given
+      fetchMock.get('*', (url, opts) => {
+        return {
+          body: opts.headers.WilliamCWilliamsHeader
+        }
+      })
+      const req = {
+        url: 'http://example.com',
+        method: 'GET',
+        headers: {
+          WilliamCWilliamsHeader: 'so much depends\nupon\n\na red wheel\nbarrow'
+        }
+      }
+
+      return http('http://example.com', req).then((response) => {
+        expect(response.url).toEqual('http://example.com')
+        expect(response.data.toString()).toEqual(
+          'so much depends upon a red wheel barrow'
+        )
+      }).then(fetchMock.restore)
+    })
   })
 
   describe('serializeRes', () => {

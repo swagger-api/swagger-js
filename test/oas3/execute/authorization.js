@@ -2,7 +2,7 @@ import xmock from 'xmock'
 import path from 'path'
 import fs from 'fs'
 import btoa from 'btoa'
-import jsYaml from '@kyleshockey/js-yaml'
+import jsYaml from 'js-yaml'
 
 import {execute, buildRequest, baseUrl, applySecurities, self as stubs} from '../../../src/execute'
 
@@ -595,5 +595,51 @@ describe('Authorization - OpenAPI Specification 3.0', () => {
         })
       }
     )
+  })
+  test('should use a custom oAuth token name if defined', () => {
+    const spec = {
+      openapi: '3.0.0',
+      components: {
+        securitySchemes: {
+          myOAuth2Implicit: {
+            type: 'oauth2',
+            'x-tokenName': 'id_token'
+          }
+        }
+      },
+      paths: {
+        '/': {
+          get: {
+            operationId: 'myOperation',
+            security: [
+              {myOAuth2Implicit: []}
+            ]
+          }
+        }
+      }
+    }
+
+    const req = buildRequest({
+      spec,
+      operationId: 'myOperation',
+      securities: {
+        authorized: {
+          myOAuth2Implicit: {
+            token: {
+              access_token: 'otherTokenValue',
+              id_token: 'myTokenValue'
+            }
+          }
+        }
+      }
+    })
+    expect(req).toEqual({
+      method: 'GET',
+      url: '/',
+      credentials: 'same-origin',
+      headers: {
+        Authorization: 'Bearer myTokenValue'
+      },
+    })
   })
 })

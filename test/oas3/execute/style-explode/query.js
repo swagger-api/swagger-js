@@ -2,7 +2,7 @@ import xmock from 'xmock'
 import path from 'path'
 import fs from 'fs'
 import qs from 'querystring'
-import jsYaml from '@kyleshockey/js-yaml'
+import jsYaml from 'js-yaml'
 import {execute, buildRequest, baseUrl, applySecurities, self as stubs} from '../../../../src/execute'
 
 const petstoreSpec = jsYaml.safeLoad(fs.readFileSync(path.join('test', 'oas3', 'data', 'petstore-oas3.yaml'), 'utf8'))
@@ -142,6 +142,83 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters', () 
           url: `/users?id=${UNSAFE_INPUT_RESULT}`,
           credentials: 'same-origin',
           headers: {},
+        })
+      }
+    )
+
+    test('should build a query parameter with escaped non-RFC3986 characters in parameter name',
+      () => {
+        // Given
+        const spec = {
+          openapi: '3.0.0',
+          paths: {
+            '/users': {
+              get: {
+                operationId: 'myOperation',
+                parameters: [
+                  {
+                    name: 'id[role]',
+                    in: 'query'
+                  }
+                ]
+              }
+            }
+          }
+        }
+
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'myOperation',
+          parameters: {
+            'id[role]': 'admin'
+          }
+        })
+
+        expect(req).toEqual({
+          method: 'GET',
+          url: '/users?id%5Brole%5D=admin',
+          credentials: 'same-origin',
+          headers: {}
+        })
+      }
+    )
+
+    test('should build an empty query parameter with escaped non-RFC3986 characters in parameter name',
+      () => {
+        // Given
+        const spec = {
+          openapi: '3.0.0',
+          paths: {
+            '/users': {
+              get: {
+                operationId: 'myOperation',
+                parameters: [
+                  {
+                    name: 'id[role]',
+                    in: 'query',
+                    allowEmptyValue: true
+                  }
+                ]
+              }
+            }
+          }
+        }
+
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'myOperation',
+          parameters: {
+            'id[role]': ''
+          }
+        })
+
+        expect(req).toEqual({
+          method: 'GET',
+          url: '/users?id%5Brole%5D=',
+          credentials: 'same-origin',
+          headers: {}
         })
       }
     )
