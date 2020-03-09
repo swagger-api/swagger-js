@@ -1,6 +1,5 @@
 # Swagger Client <img src="https://raw.githubusercontent.com/swagger-api/swagger.io/wordpress/images/assets/SW-logo-clr.png" height="50" align="right">
 
-[![Build Status](https://travis-ci.org/swagger-api/swagger-js.svg?branch=master)](https://travis-ci.org/swagger-api/swagger-js)
 [![Build Status](https://jenkins.swagger.io/view/OSS%20-%20JavaScript/job/oss-swagger-js-master/badge/icon?subject=jenkins%20build)](https://jenkins.swagger.io/view/OSS%20-%20JavaScript/job/oss-swagger-js-master/)
 
 **Swagger Client** is a JavaScript module that allows you to fetch, resolve, and interact with Swagger/OpenAPI documents.
@@ -174,7 +173,7 @@ Swagger('http://petstore.swagger.io/v2/swagger.json')
       client.apis.pet.addPet({id: 1, name: "bobby"}).then(...)
 
       // TryItOut Executor, with the `spec` already provided
-      client.execute({operationId: 'addPet', parameters: {id: 1, name: "bobby") }).then(...)
+      client.execute({operationId: 'addPet', parameters: {id: 1, name: "bobby"}}).then(...)
    })
 
 ```
@@ -340,4 +339,3 @@ Please disclose any security-related issues or vulnerabilities by emailing [secu
 ### Graveyard
 
 For features known to be missing from 3.x please see [the Graveyard](docs/GRAVEYARD.md)
-
