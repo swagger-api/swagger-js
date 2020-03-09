@@ -148,8 +148,8 @@ export function applySecurities({request, securities = {}, operation = {}, spec}
         }
         else if (type === 'http') {
           if (schema.scheme === 'basic') {
-            const username = value.username
-            const password = typeof value.password === "string" || value.password instanceof String ? value.password : ""
+            const username = value.username || ''
+            const password = value.password || ''
             const encoded = btoa(`${username}:${password}`)
             result.headers.Authorization = `Basic ${encoded}`
           }
