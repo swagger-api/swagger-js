@@ -20,7 +20,7 @@ Swagger.clearCache = clearCache
 Swagger.makeApisTagOperation = makeApisTagOperation
 Swagger.buildRequest = buildRequest
 Swagger.helpers = {opId}
-Swagger.baseUrl = baseUrl
+Swagger.getBaseUrl = baseUrl
 
 function Swagger(url, opts = {}) {
   // Allow url as a separate argument
