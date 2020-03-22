@@ -88,7 +88,9 @@ export function applySecurities({request, securities = {}, operation = {}, spec}
             result.headers.authorization = value.header
           }
           else {
-            value.base64 = btoa(`${value.username}:${value.password}`)
+            const username = value.username || ''
+            const password = value.password || ''
+            value.base64 = btoa(`${username}:${password}`)
             result.headers.authorization = `Basic ${value.base64}`
           }
         }
