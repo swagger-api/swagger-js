@@ -699,7 +699,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters', () 
 
         expect(req).toEqual({
           method: 'GET',
-          url: `/users?id=3 id=4 id=5 id=${SAFE_INPUT_RESULT}`,
+          url: `/users?id=3&id=4&id=5&id=${SAFE_INPUT_RESULT}`,
           credentials: 'same-origin',
           headers: {},
         })
@@ -740,7 +740,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters', () 
 
         expect(req).toEqual({
           method: 'GET',
-          url: `/users?id=3 id=4 id=5 id=${SAFE_INPUT_RESULT}`,
+          url: `/users?id=3&id=4&id=5&id=${SAFE_INPUT_RESULT}`,
           credentials: 'same-origin',
           headers: {},
         })
@@ -781,7 +781,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters', () 
 
         expect(req).toEqual({
           method: 'GET',
-          url: `/users?id=3 4 5 ${SAFE_INPUT_RESULT}`,
+          url: `/users?id=3%204%205%20${SAFE_INPUT_RESULT}`,
           credentials: 'same-origin',
           headers: {},
         })
@@ -822,7 +822,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters', () 
 
         expect(req).toEqual({
           method: 'GET',
-          url: `/users?id=3|id=4|id=5|id=${SAFE_INPUT_RESULT}`,
+          url: `/users?id=3&id=4&id=5&id=${SAFE_INPUT_RESULT}`,
           credentials: 'same-origin',
           headers: {},
         })
@@ -864,7 +864,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters', () 
 
         expect(req).toEqual({
           method: 'GET',
-          url: `/users?id=3|id=4|id=5|id=${SAFE_INPUT_RESULT}|id=${RESERVED_INPUT_UNENCODED_RESULT}`,
+          url: `/users?id=3&id=4&id=5&id=${SAFE_INPUT_RESULT}&id=${RESERVED_INPUT_UNENCODED_RESULT}`,
           credentials: 'same-origin',
           headers: {},
         })
@@ -1327,7 +1327,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters', () 
 
         expect(req).toEqual({
           method: 'GET',
-          url: `/users?id[role]=admin&id[firstName]=Alex&id[greeting]=${SAFE_INPUT_RESULT}`,
+          url: `/users?id%5Brole%5D=admin&id%5BfirstName%5D=Alex&id%5Bgreeting%5D=${SAFE_INPUT_RESULT}`,
           credentials: 'same-origin',
           headers: {},
         })

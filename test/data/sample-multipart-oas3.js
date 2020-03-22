@@ -46,6 +46,12 @@ export default {
                     }
                   }
                 }
+              },
+              encoding: {
+                'email[]': {
+                  style: 'form',
+                  explode: true,
+                }
               }
             }
           }
@@ -63,41 +69,41 @@ export default {
           }
         }
       },
-      '/land/content/uploadImage': {
-        post: {
-          summary: 'upload image(s)',
-          requestBody: {
-            content: {
-              'multipart/form-data': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    imageId: {
-                      description: '',
-                      default: 'id',
-                      type: 'string'
-                    },
-                    'images[]': {
-                      description: 'The list of files',
-                      type: 'array',
-                      items: {
-                        type: 'file',
-                        format: 'binary'
-                      }
+    },
+    '/land/content/uploadImage': {
+      post: {
+        summary: 'upload image(s)',
+        requestBody: {
+          content: {
+            'multipart/form-data': {
+              schema: {
+                type: 'object',
+                properties: {
+                  imageId: {
+                    description: '',
+                    default: 'id',
+                    type: 'string'
+                  },
+                  'images[]': {
+                    description: 'The list of files',
+                    type: 'array',
+                    items: {
+                      type: 'file',
+                      format: 'binary'
                     }
                   }
                 }
               }
             }
-          },
-          responses: {
-            200: {
-              description: '',
-              content: {
-                'application/json': {
-                  schema: {
-                    type: 'object'
-                  }
+          }
+        },
+        responses: {
+          200: {
+            description: '',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object'
                 }
               }
             }
