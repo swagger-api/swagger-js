@@ -123,6 +123,47 @@ describe('swagger2 - execute - applySecurities', () => {
     })
   })
 
+  test('should allow empty password without casting undefined to string', () => {
+    const spec = {
+      host: 'swagger.io',
+      basePath: '/v1',
+      security: [{authMe: []}],
+      paths: {
+        '/one': {
+          get: {
+            operationId: 'getMe',
+            security: [{authMe: []}]
+          }
+        }
+      },
+      securityDefinitions: {
+        authMe: {
+          type: 'basic'
+        }
+      }
+    }
+
+    const request = {
+      url: 'http://swagger.io/v1/one',
+      method: 'GET',
+      query: {}
+    }
+    const securities = {
+      authorized: {
+        authMe: {
+          username: 'foo',
+          password: undefined
+        }
+      }
+    }
+
+    const applySecurity = applySecurities({request, securities, operation: spec.paths['/one'].get, spec})
+
+    expect(applySecurity.headers).toEqual({
+      authorization: 'Basic Zm9vOg=='
+    })
+  })
+
   test('should be able to apply multiple auths', () => {
     const spec = {
       host: 'swagger.io',
