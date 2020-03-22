@@ -17,6 +17,7 @@ describe('webpack build', () => {
     expect(Swagger.makeApisTagOperation).toBeInstanceOf(Function)
     expect(Swagger.buildRequest).toBeInstanceOf(Function)
     expect(Object.keys(Swagger.helpers)).toContain('opId')
+    expect(Swagger.getBaseUrl).toBeInstanceOf(Function)
   })
 
 
