@@ -268,6 +268,7 @@ export function buildRequest(options) {
 
 const stripNonAlpha = str => (str ? str.replace(/\W/g, '') : null)
 
+// be careful when modifying this! it is a publicly-exposed method.
 export function baseUrl(obj) {
   const specIsOAS3 = isOAS3(obj.spec)
 
