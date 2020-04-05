@@ -1,7 +1,7 @@
 // Test runner
 //
 
-import YAML from '@kyleshockey/js-yaml'
+import YAML from 'js-yaml'
 import fs from 'fs'
 import Path from 'path'
 import nock from 'nock'
@@ -25,7 +25,11 @@ testDocuments.forEach((doc) => {
   const {path, content} = doc
   const {meta = {}, cases = []} = content
 
-  const rootDescribe = meta.skip ? describe.skip : describe
+  let rootDescribe
+
+  if (meta.skip) rootDescribe = describe.skip
+  else if (meta.only) rootDescribe = describe.only
+  else rootDescribe = describe
 
   rootDescribe(`declarative resolver test suite - ${meta.title || path}`, function () {
     if (cases && cases.length) {
@@ -57,7 +61,10 @@ testDocuments.forEach((doc) => {
 
           afterAll(nock.restore)
 
-          return assertCaseExpectations(currentCase, async () => getValueForAction(currentCase.action))
+          return assertCaseExpectations(
+            currentCase,
+            async () => getValueForAction(currentCase.action)
+          )
         })
       })
     }
@@ -66,14 +73,16 @@ testDocuments.forEach((doc) => {
 
 async function getValueForAction(action) {
   switch (action.type) {
-    case 'instantiateResolve':
+    case 'instantiateResolve': {
       const client = await Swagger(action.config)
       return {
         spec: client.spec,
         errors: client.errors
       }
-    case 'resolveSubtree':
+    }
+    case 'resolveSubtree': {
       return Swagger.resolveSubtree(action.config.obj, action.config.path, action.config.opts)
+    }
     default:
       throw new Error('case did not specify a valid action type')
   }

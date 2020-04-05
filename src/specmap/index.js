@@ -26,7 +26,9 @@ class SpecMap {
       showDebug: false,
       allPatches: [], // only populated if showDebug is true
       pluginProp: 'specMap',
-      libMethods: Object.assign(Object.create(this), lib),
+      libMethods: Object.assign(Object.create(this), lib, {
+        getInstance: () => this
+      }),
       allowMetaPatches: false,
     }, opts)
 

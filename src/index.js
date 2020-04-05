@@ -6,7 +6,7 @@ import Http, {makeHttp, serializeRes, serializeHeaders} from './http'
 import Resolver, {clearCache} from './resolver'
 import resolveSubtree from './subtree-resolver'
 import {makeApisTagOperation} from './interfaces'
-import {execute, buildRequest, PARAMETER_BUILDERS} from './execute'
+import {execute, buildRequest} from './execute'
 import {opId} from './helpers'
 
 Swagger.http = Http
@@ -17,7 +17,6 @@ Swagger.execute = execute
 Swagger.serializeRes = serializeRes
 Swagger.serializeHeaders = serializeHeaders
 Swagger.clearCache = clearCache
-Swagger.parameterBuilders = PARAMETER_BUILDERS // Add this to the execute call
 Swagger.makeApisTagOperation = makeApisTagOperation
 Swagger.buildRequest = buildRequest
 Swagger.helpers = {opId}
@@ -71,6 +70,7 @@ Swagger.prototype = {
       spec: this.spec,
       url: this.url,
       allowMetaPatches: this.allowMetaPatches,
+      useCircularStructures: this.useCircularStructures,
       requestInterceptor: this.requestInterceptor || null,
       responseInterceptor: this.responseInterceptor || null
     }).then((obj) => {

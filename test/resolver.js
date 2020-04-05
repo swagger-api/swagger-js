@@ -1,7 +1,7 @@
 import xmock from 'xmock'
 import path from 'path'
 import fs from 'fs'
-import jsYaml from '@kyleshockey/js-yaml'
+import jsYaml from 'js-yaml'
 
 import Swagger from '../src'
 
@@ -144,19 +144,19 @@ describe('resolver', () => {
           one: {
             a: {
               b: {
-                $ref: '#/two'
+                $ref: 'http://example.com/swagger.json#/two'
               }
             }
           },
           three: {
             b: {
-              $ref: '#/two'
+              $ref: 'http://example.com/swagger.json#/two'
             }
           },
           two: {
             a: {
               b: {
-                $ref: '#/two'
+                $ref: 'http://example.com/swagger.json#/two'
               }
             }
           }
