@@ -4,7 +4,7 @@
 import YAML from '@kyleshockey/js-yaml'
 import fs from 'fs'
 import Path from 'path'
-import nock from "nock"
+import nock from 'nock'
 
 import Swagger from '../../src/index'
 
@@ -33,7 +33,7 @@ testDocuments.forEach((doc) => {
         describe(currentCase.name || '', function () {
           beforeAll(() => {
             Swagger.clearCache()
-            
+
             if (!nock.isActive()) {
               nock.activate()
             }
@@ -41,7 +41,7 @@ testDocuments.forEach((doc) => {
             nock.cleanAll()
             nock.disableNetConnect()
 
-            const nockScope = nock(`http://mock.swagger.test`)
+            const nockScope = nock('http://mock.swagger.test')
 
             if (currentCase.remoteDocuments) {
               Object.keys(currentCase.remoteDocuments).forEach((key) => {
@@ -59,7 +59,6 @@ testDocuments.forEach((doc) => {
 
           return assertCaseExpectations(currentCase, async () => getValueForAction(currentCase.action))
         })
-
       })
     }
   })
@@ -107,5 +106,4 @@ async function assertCaseExpectations(currentCase, resultGetter) {
       })
     }
   })
-
 }

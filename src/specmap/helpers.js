@@ -1,5 +1,5 @@
-import traverse from "traverse"
-import URL from "url"
+import traverse from 'traverse'
+import URL from 'url'
 
 // This will match if the direct parent's key exactly matches an item.
 const freelyNamedKeyParents = [
@@ -56,10 +56,10 @@ export async function generateAbsoluteRefPatches(objOrPromise, basePath, {
   specmap,
   baseUrl,
   getBaseUrlForNodePath = () => baseUrl,
-  targetKeys = ["$ref", "$$ref"]
+  targetKeys = ['$ref', '$$ref']
 } = {}) {
   const obj = await objOrPromise
-  console.log("GARP obj", obj)
+  console.log('GARP obj', obj)
   const patches = []
 
   traverse(obj).forEach(function () {
@@ -82,12 +82,12 @@ export async function generateAbsoluteRefPatches(objOrPromise, basePath, {
       })
     }
   })
-  console.log("GARP providing", patches.length, "patches")
+  console.log('GARP providing', patches.length, 'patches')
   return patches
 }
 
 export function absolutifyPointer(pointer, baseUrl) {
-  const [urlPart, fragmentPart] = pointer.split("#")
+  const [urlPart, fragmentPart] = pointer.split('#')
   const newRefUrlPart = URL.resolve(urlPart || '', baseUrl || '')
 
   return fragmentPart ? `${newRefUrlPart}#${fragmentPart}` : newRefUrlPart

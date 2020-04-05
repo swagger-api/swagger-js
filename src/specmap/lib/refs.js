@@ -136,7 +136,7 @@ const plugin = {
           resolutionPatch,
           ...generateAbsoluteRefPatches(promOrVal, fullPath.slice(0, -1), {
             specmap,
-            baseUrl: basePath || "IDK",
+            baseUrl: basePath || 'IDK',
             targetKeys: ['$ref']
           })
         ]
