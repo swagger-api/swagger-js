@@ -41,7 +41,7 @@ export function encodeDisallowedCharacters(str, {escape} = {}, parse) {
   }).join('')
 }
 
-export default function (config) {
+export default function stylize(config) {
   const {value} = config
 
   if (Array.isArray(value)) {

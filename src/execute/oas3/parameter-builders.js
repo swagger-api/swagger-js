@@ -1,14 +1,21 @@
-import stylize from './style-serializer'
+import stylize, {encodeDisallowedCharacters} from './style-serializer'
+import serialize from './content-serializer'
 
-export default {
-  path,
-  query,
-  header,
-  cookie
-}
+export function path({req, value, parameter}) {
+  const {name, style, explode, content} = parameter
 
-function path({req, value, parameter}) {
-  const {name, style, explode} = parameter
+  if (content) {
+    const effectiveMediaType = Object.keys(content)[0]
+
+    req.url = req.url.split(`{${name}}`).join(
+      encodeDisallowedCharacters(
+        serialize(value, effectiveMediaType),
+        {escape: true}
+      )
+    )
+    return
+  }
+
   const styledValue = stylize({
     key: parameter.name,
     value,
@@ -20,8 +27,15 @@ function path({req, value, parameter}) {
   req.url = req.url.split(`{${name}}`).join(styledValue)
 }
 
-function query({req, value, parameter}) {
+export function query({req, value, parameter}) {
   req.query = req.query || {}
+
+  if (parameter.content) {
+    const effectiveMediaType = Object.keys(parameter.content)[0]
+
+    req.query[parameter.name] = serialize(value, effectiveMediaType)
+    return
+  }
 
   if (value === false) {
     value = 'false'
@@ -73,9 +87,10 @@ function query({req, value, parameter}) {
       })
     }
     else {
-      req.query[parameter.name] = {
+      const encodedParamName = encodeURIComponent(parameter.name)
+      req.query[encodedParamName] = {
         value: stylize({
-          key: parameter.name,
+          key: encodedParamName,
           value,
           style: parameter.style || 'form',
           explode: typeof parameter.explode === 'undefined' ? true : parameter.explode,
@@ -98,10 +113,17 @@ const PARAMETER_HEADER_BLACKLIST = [
   'content-type'
 ]
 
-function header({req, parameter, value}) {
+export function header({req, parameter, value}) {
   req.headers = req.headers || {}
 
   if (PARAMETER_HEADER_BLACKLIST.indexOf(parameter.name.toLowerCase()) > -1) {
+    return
+  }
+
+  if (parameter.content) {
+    const effectiveMediaType = Object.keys(parameter.content)[0]
+
+    req.headers[parameter.name] = serialize(value, effectiveMediaType)
     return
   }
 
@@ -116,9 +138,16 @@ function header({req, parameter, value}) {
   }
 }
 
-function cookie({req, parameter, value}) {
+export function cookie({req, parameter, value}) {
   req.headers = req.headers || {}
   const type = typeof value
+
+  if (parameter.content) {
+    const effectiveMediaType = Object.keys(parameter.content)[0]
+
+    req.headers.Cookie = `${parameter.name}=${serialize(value, effectiveMediaType)}`
+    return
+  }
 
   if (type !== 'undefined') {
     const prefix = (

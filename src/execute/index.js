@@ -9,7 +9,7 @@ import stockHttp, {mergeInQueryOrForm} from '../http'
 import createError from '../specmap/lib/create-error'
 
 import SWAGGER2_PARAMETER_BUILDERS from './swagger2/parameter-builders'
-import OAS3_PARAMETER_BUILDERS from './oas3/parameter-builders'
+import * as OAS3_PARAMETER_BUILDERS from './oas3/parameter-builders'
 import oas3BuildRequest from './oas3/build-request'
 import swagger2BuildRequest from './swagger2/build-request'
 import {
@@ -268,6 +268,7 @@ export function buildRequest(options) {
 
 const stripNonAlpha = str => (str ? str.replace(/\W/g, '') : null)
 
+// be careful when modifying this! it is a publicly-exposed method.
 export function baseUrl(obj) {
   const specIsOAS3 = isOAS3(obj.spec)
 

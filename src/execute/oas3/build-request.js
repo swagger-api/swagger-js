@@ -148,7 +148,8 @@ export function applySecurities({request, securities = {}, operation = {}, spec}
         }
         else if (type === 'http') {
           if (schema.scheme === 'basic') {
-            const {username, password} = value
+            const username = value.username || ''
+            const password = value.password || ''
             const encoded = btoa(`${username}:${password}`)
             result.headers.Authorization = `Basic ${encoded}`
           }
@@ -159,14 +160,15 @@ export function applySecurities({request, securities = {}, operation = {}, spec}
         }
         else if (type === 'oauth2') {
           const token = auth.token || {}
-          const accessToken = token.access_token
+          const tokenName = schema['x-tokenName'] || 'access_token'
+          const tokenValue = token[tokenName]
           let tokenType = token.token_type
 
           if (!tokenType || tokenType.toLowerCase() === 'bearer') {
             tokenType = 'Bearer'
           }
 
-          result.headers.Authorization = `${tokenType} ${accessToken}`
+          result.headers.Authorization = `${tokenType} ${tokenValue}`
         }
       }
     }

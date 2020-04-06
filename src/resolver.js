@@ -1,6 +1,7 @@
 import Http from './http'
 import mapSpec, {plugins} from './specmap'
 import {normalizeSwagger} from './helpers'
+import {ACCEPT_HEADER_VALUE_FOR_DOCUMENTS} from './constants'
 
 export function makeFetchJSON(http, opts = {}) {
   const {requestInterceptor, responseInterceptor} = opts
@@ -13,7 +14,7 @@ export function makeFetchJSON(http, opts = {}) {
       requestInterceptor,
       responseInterceptor,
       headers: {
-        Accept: 'application/json'
+        Accept: ACCEPT_HEADER_VALUE_FOR_DOCUMENTS
       },
       credentials
     })

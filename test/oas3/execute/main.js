@@ -2,6 +2,7 @@ import xmock from 'xmock'
 import path from 'path'
 import fs from 'fs'
 import jsYaml from 'js-yaml'
+import {escape} from 'querystring'
 
 import {execute, buildRequest, baseUrl, applySecurities, self as stubs} from '../../../src/execute'
 
@@ -561,6 +562,86 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
         headers: {},
         body: {
           one: 1
+        }
+      })
+    })
+  })
+
+  describe('`content` parameters', function () {
+    it('should serialize JSON values provided as objects', function () {
+      const req = buildRequest({
+        spec: {
+          openapi: '3.0.0',
+          paths: {
+            '/{pathPartial}': {
+              post: {
+                operationId: 'myOp',
+                parameters: [
+                  {
+                    name: 'query',
+                    in: 'query',
+                    content: {
+                      'application/json': {
+                        schema: {
+                          type: 'object'
+                        }
+                      }
+                    }
+                  },
+                  {
+                    name: 'FooHeader',
+                    in: 'header',
+                    content: {
+                      'application/json': {
+                        schema: {
+                          type: 'object'
+                        }
+                      }
+                    }
+                  },
+                  {
+                    name: 'pathPartial',
+                    in: 'path',
+                    content: {
+                      'application/json': {
+                        schema: {
+                          type: 'object'
+                        }
+                      }
+                    }
+                  },
+                  {
+                    name: 'myCookie',
+                    in: 'cookie',
+                    content: {
+                      'application/json': {
+                        schema: {
+                          type: 'object'
+                        }
+                      }
+                    }
+                  },
+                ]
+              }
+            }
+          }
+        },
+        operationId: 'myOp',
+        parameters: {
+          query: {a: 1, b: '2'},
+          FooHeader: {foo: 'bar'},
+          pathPartial: {baz: 'qux'},
+          myCookie: {flavor: 'chocolate chip'}
+        }
+      })
+
+      expect(req).toEqual({
+        method: 'POST',
+        url: `/${escape('{"baz":"qux"}')}?query=${escape('{"a":1,"b":"2"}')}`,
+        credentials: 'same-origin',
+        headers: {
+          FooHeader: '{"foo":"bar"}',
+          Cookie: 'myCookie={"flavor":"chocolate chip"}'
         }
       })
     })

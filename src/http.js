@@ -24,6 +24,22 @@ export default async function http(url, request = {}) {
   // the search string, but much easier to manipulate the req.query object
   self.mergeInQueryOrForm(request)
 
+  // Newlines in header values cause weird error messages from `window.fetch`,
+  // so let's massage them out.
+  // Context: https://stackoverflow.com/a/50709178
+  if (request.headers) {
+    Object.keys(request.headers).forEach((headerName) => {
+      const value = request.headers[headerName]
+
+      if (typeof value === 'string') {
+        request.headers[headerName] = value.replace(/\n+/g, ' ')
+      }
+    })
+  }
+
+  // Wait for the request interceptor, if it was provided
+  // WARNING: don't put anything between this and the request firing unless
+  // you have a good reason!
   if (request.requestInterceptor) {
     request = await request.requestInterceptor(request) || request
   }
