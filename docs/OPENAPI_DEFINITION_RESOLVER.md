@@ -1,25 +1,25 @@
-#### Swagger specification resolver
+#### OpenAPI definition resolver
 
-Resolves [JSON-References](https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03) ($ref)
-with the values they point to inside Swagger specification. Our API can work with 
-either Swagger specification represented as [POJO](https://en.wikipedia.org/wiki/Plain_old_Java_object)
-or as URL that points to the Swagger specification. 
+Resolves [JSON-References](https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03) (`$ref`)
+with the values they point to inside OpenAPI definition. Our API can work with 
+either OpenAPI Specification represented as [POJO](https://en.wikipedia.org/wiki/Plain_old_Java_object)
+or as URL that points to the OpenAPI definition file. 
 
-*Note: We'll demonstrate the code examples on objects that doesn't represent Swagger specification, to keep the examples short*
+*Note: We'll demonstrate the code examples on objects that doesn't represent OpenAPI Specification, to keep the examples short*
 
 ##### POJO usage
 
 ```js
 import SwaggerClient from 'swagger-client';
 
-const pojoSpec = {
+const pojoDefinition = {
   a: 1,
   b: {
     $ref: '#/a',
   }
 };
 
-SwaggerClient.resolve({ spec: pojoSpec }); 
+SwaggerClient.resolve({ spec: pojoDefinition }); 
 /**
  * Promise({
  *   spec: {
@@ -33,8 +33,8 @@ SwaggerClient.resolve({ spec: pojoSpec });
 
 ##### URL usage
 
-Provided url will be resolved as Swagger specification. The them algorithm works
-recursively and resolves all `JSON-References` inside the resolved Swagger specification.
+Provided url will be resolved as OpenAPI definition. Then the algorithm works
+recursively and resolves all `JSON-References` inside the resolved OpenAPI definition.
 
 ```js
 import SwaggerClient from 'swagger-client';
@@ -49,24 +49,24 @@ SwaggerClient.resolve({ url: 'https://raw.githubusercontent.com/swagger-api/swag
 ```
 
 *Note*: you can provide `Swagger.resolve` both `spec` and `url` options. In that case
-`spec` will be always preferred and `url` will be ignored. 
+`spec` will always be preferred and `url` option will be ignored. 
 
 ##### Errors
 
-Resolver can also produce errors on various problems inside Swagger specification.
+Resolver can also produce errors on various problems inside OpenAPI definition.
 One of those problems can be invalid `JSON-Reference`.
 
 ```js
 import SwaggerClient from 'swagger-client';
 
-const pojoSpec = {
+const pojoDefiniton = {
   a: 1,
   b: {
     $ref: 1,
   }
 };
 
-SwaggerClient.resolve({ spec: pojoSpec }); 
+SwaggerClient.resolve({ spec: pojoDefiniton }); 
 /**
  *  Promise({
  *   "spec": {
@@ -99,14 +99,14 @@ happen during `SwaggerClient` class instantiation.
 ```js
 import SwaggerClient from 'swagger-client';
 
-const pojoSpec = {
+const pojoDefinition = {
   a: 1,
   b: {
     $ref: '#/a',
   }
 };
 
-new SwaggerClient({ spec: pojoSpec }).then(swaggerClient => {
+new SwaggerClient({ spec: pojoDefinition }).then(swaggerClient => {
   swaggerClient.spec;
   swaggerClient.originalSpec;
   swaggerClient.errors;
@@ -150,7 +150,7 @@ Option | Description
 `fetch` | `Function=http`. If provided this function will be used as primary HTTP fetch mechanism for resolution. The provided function must return a `Promise`. Must be compatible with our [Fetch-like interface](https://github.com/lquixada/cross-fetch).
 `http` | `Function=http`. Alias for `fetch`. The option is part of API due to compatibility reasons. 
 `mode` | `String=["nostrict", "strict"]`. If `strict`, don't process `allOf` JSON-References.
-`allowMetaPatches` | `Boolean=true`. Allows adding .meta patches, which include adding `$$ref`s to the spec.
+`allowMetaPatches` | `Boolean=true`. Allows adding `.meta` patches, which include adding `$$ref`s to the definition.
 `pathDiscriminator` | `Array=[]`. Example value can be e.g. `['components', 'schemas']`. This tells the resolver to only resolve all `Json-Reference` on this path and leave the rest untouched. Can be used for lazy resolution.
 `modelPropertyMacro` | `Function=null`. If provided, accepts a `property` object e.g. `{type: 'integer', format: 'int64' }` and computes a default value. That computed value is then assigned into original `property` object under the key `default`; `{type: 'integer', format: 'int64', default: 1 }`
 `parameterMacro` | `Function=null`. If provided, accepts a `parameter` object e.g. `{ name: 'offset', in: 'query' }` and computes a default value. That computed value is then assigned into original `parameter` object under the key `default`; `{ name: 'offset', in: 'query', default: 1 }`
@@ -162,20 +162,20 @@ Option | Description
 
 ##### Sub-Tree resolver
 
-When working with a large JSON Swagger specification, it's often convenient to resolve `JSON-References`
-in only part of Swagger specification tree. Our sub-tree resolver does exactly that.
+When working with a large JSON OpenAPI definition, it's often convenient to resolve `JSON-References`
+in only part of the JSON OpenAPI definition tree. Our sub-tree resolver does exactly that.
 
 ```js
 import SwaggerClient from 'swagger-client';
 
-const pojoSpec = {
+const pojoDefinition = {
   a: 1,
   b: {
     $ref: '#/a',
   }
 };
 
-SwaggerClient.resolveSubtree(pojoSpec, ['b']);
+SwaggerClient.resolveSubtree(pojoDefinition, ['b']);
 /**
  * Promise({
  *   spec: 1,
@@ -184,12 +184,11 @@ SwaggerClient.resolveSubtree(pojoSpec, ['b']);
  */
 ```
 
-*Note: third argument is optional and if provided it must be of the shape of `Options`
-object documented in the previous section with some options added and some removed.*
+*Note: third argument is optional and if provided it must be of the shape of `Options` documented below.
 
 Option | Description
 --- | ---
-`returnEntireTree` | `Boolean=false`. If set to true, returns only resolved part of Swagger specification tree determined by `path` (second argument).
+`returnEntireTree` | `Boolean=false`. If set to true, returns only resolved part of OpenAPI definition tree determined by `path` (second argument).
 `modelPropertyMacro` | `Function=null`. If provided, accepts a `property` object e.g. `{type: 'integer', format: 'int64' }` and computes a default value. That computed value is then assigned into original `property` object under the key `default`; `{type: 'integer', format: 'int64', default: 1 }`
 `parameterMacro` | `Function=null`. If provided, accepts a `parameter` object e.g. `{ name: 'offset', in: 'query' }` and computes a default value. That computed value is then assigned into original `parameter` object under the key `default`; `{ name: 'offset', in: 'query', default: 1 }`
 `requestInterceptor` | `Function=identity`. Intercepts and possibly transform a request before it is handled.
@@ -199,9 +198,8 @@ Option | Description
 
 ##### Cache
 
-Resolver algorithm caches results of remotely fetched and resolved Swagger specifications
-in an internal cache. 
-When using long-running threads that periodically pulls a Swagger specification,
+Resolver algorithm caches results of remotely fetched and resolved OpenAPI definitions in an internal cache. 
+When using long-running threads that periodically pulls a OpenAPI definitions,
 the internal cache may cause a problem. In order to avoid this problem, it is possible
 to explicitly clear the internal cache before doing resolution.
 
