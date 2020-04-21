@@ -157,7 +157,7 @@ Option | Description
 
 ##### Sub-Tree resolver
 
-When working with huge JSON Swagger specification, it's often convenient to resolve `JSON-References`
+When working with a large JSON Swagger specification, it's often convenient to resolve `JSON-References`
 in only part of Swagger specification tree. Our sub-tree resolver does exactly that.
 
 ```js
