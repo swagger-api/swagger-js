@@ -140,6 +140,11 @@ new SwaggerClient({ url: 'https://raw.githubusercontent.com/swagger-api/swagger-
 Along with `spec` and `url`, there are other options that controls the resolution
 algorithm behavior.
 
+Type notations are formatted like so:
+
+- `String=""` means a String type with a default value of `""`.
+- `String=["a"*, "b", "c", "d"]` means a String type that can be `a, b, c, or d`, with the `*` indicating that `a` is the default value.
+
 Option | Description 
 --- | ---
 `fetch` | `Function=http`. If provided this function will be used as primary HTTP fetch mechanism for resolution. The provided function must return a `Promise`. Must be compatible with our [Fetch-like interface](https://github.com/lquixada/cross-fetch).
