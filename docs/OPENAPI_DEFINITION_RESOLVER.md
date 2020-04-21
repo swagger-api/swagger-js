@@ -184,7 +184,7 @@ SwaggerClient.resolveSubtree(pojoDefinition, ['b']);
  */
 ```
 
-*Note: third argument is optional and if provided it must be of the shape of `Options` documented below.
+*Note: third argument is optional and if provided it must be of the shape of `Options` documented below.*
 
 Option | Description
 --- | ---
