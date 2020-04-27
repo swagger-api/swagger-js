@@ -1,8 +1,10 @@
 #### Usage
 
-- [HTTP Client](usage/http-client.md)
-- [OpenAPI Definition Resolver](usage/openapi-definition-resolver.md)
+- [Installation](usage/installation.md)
+- [Tags Interface](usage/tags-interface.md)
 - [TryItOut Executor](usage/try-it-out-executor.md)
+- [OpenAPI Definition Resolver](usage/openapi-definition-resolver.md)
+- [HTTP Client](usage/http-client.md)
 
 #### Migrations 
 
