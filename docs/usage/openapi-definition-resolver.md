@@ -1,13 +1,13 @@
-#### OpenAPI definition resolver
+# OpenAPI definition resolver
 
 Resolves [JSON-References](https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03) (`$ref`)
 with the values they point to inside OpenAPI definition. Our API can work with 
 either OpenAPI Specification represented as [POJO](https://en.wikipedia.org/wiki/Plain_old_Java_object)
 or as URL that points to the OpenAPI definition file. 
 
-*Note: We'll demonstrate the code examples on objects that doesn't represent OpenAPI Specification, to keep the examples short*
+> *__Note:__ We'll demonstrate the code examples on objects that doesn't represent OpenAPI Specification, to keep the examples short*
 
-##### POJO usage
+### POJO usage
 
 ```js
 import SwaggerClient from 'swagger-client';
@@ -31,7 +31,7 @@ SwaggerClient.resolve({ spec: pojoDefinition });
  */
 ```
 
-##### URL usage
+### URL usage
 
 Provided url will be resolved as OpenAPI definition. Then the algorithm works
 recursively and resolves all `JSON-References` inside the resolved OpenAPI definition.
@@ -48,10 +48,10 @@ SwaggerClient.resolve({ url: 'https://raw.githubusercontent.com/swagger-api/swag
  */
 ```
 
-*Note*: you can provide `Swagger.resolve` both `spec` and `url` options. In that case
-`spec` will always be preferred and `url` option will be ignored. 
+> *__Note:__ you can provide `Swagger.resolve` both `spec` and `url` options. In that case
+`spec` will always be preferred and `url` option will be ignored.* 
 
-##### Errors
+#### Errors
 
 Resolver can also produce errors on various problems inside OpenAPI definition.
 One of those problems can be invalid `JSON-Reference`.
@@ -89,7 +89,7 @@ SwaggerClient.resolve({ spec: pojoDefiniton });
  */
 ```
 
-##### Alternate API
+#### Alternate API
 
 Along with calling `resolve` statically from a `SwaggerClient` class, resolution can
 happen during `SwaggerClient` class instantiation.
@@ -160,7 +160,7 @@ Option | Description
 `useCircularStructures` | `Boolean=false`. Prevents circular values from being constructed, unless you specifically want that to happen. If set to `false`, just leave the references unresolved.
 `baseDoc` | `String=null`. If provided in the form of `URL`, will be able to resolve circular `JSON-References`.
 
-##### Sub-Tree resolver
+#### Sub-Tree resolver
 
 When working with a large JSON OpenAPI definition, it's often convenient to resolve `JSON-References`
 in only part of the JSON OpenAPI definition tree. Our sub-tree resolver does exactly that.
@@ -184,7 +184,7 @@ SwaggerClient.resolveSubtree(pojoDefinition, ['b']);
  */
 ```
 
-*Note: third argument is optional and if provided it must be of the shape of `Options` documented below.*
+> *__Note:__ third argument is optional and if provided it must be of the shape of `Options` documented below.*
 
 Option | Description
 --- | ---
@@ -213,4 +213,4 @@ SwaggerClient.resolve({ url: 'https://raw.githubusercontent.com/swagger-api/swag
 });
 ```  
 
-*Note: An internal cache is only involved when doing resolution on remote URLs.*
+> *__Note:__ An internal cache is only involved when doing resolution on remote URLs.*

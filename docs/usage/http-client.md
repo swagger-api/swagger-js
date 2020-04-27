@@ -1,4 +1,4 @@
-#### HTTP Client
+# HTTP Client
 
 Our HTTP Client exposes a [Fetch-like interface](https://github.com/lquixada/cross-fetch) with a twist: making url part of the request object. 
 It extends [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch) to support request and response interceptors and
@@ -41,7 +41,7 @@ const request = {
 SwaggerClient.http(url, request); // => Promise(Response)
 ```
 
-##### Request
+### Request
 
 If you prefer using object literal to represent [Fetch compatible Request](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request)
 here is how you can create a new request.
@@ -88,7 +88,7 @@ Property | Description
 `responseInterceptor` | `Function=identity`. Either synchronous or asynchronous function transformer that accepts `Response` and should return `Response`.
 `userFetch` | `Function=cross-fetch`. Custom **asynchronous** fetch function that accepts two arguments: the `url` and the `Request` object and must return a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response) object.
 
-###### Query support
+##### Query support
 
 HTTP Client support serialization of additional [query parameters](https://developer.mozilla.org/en-US/docs/Web/API/URL/search) provided as a 
 `query` property of a `Request` object. When provided, the query parameters
@@ -138,7 +138,7 @@ SwaggerClient.http(request);
 // Requested URL: https://httpbin.org/?anotherOne=one,two&evenMore=hi&bar=1%202%203
 ```
 
-###### Request Interceptor
+##### Request Interceptor
 
 Request interceptor can be configured via `requestInterceptor` property in `Request` object.
 When set, it intercepts the `Request` object before the actual HTTP request is made and after
@@ -210,10 +210,10 @@ SwaggerClient.http(request);
 // Requested URL: https://httpbin.org/?param1=value1&param2=value2
 ```
 
-*Note:* you can mutate or assign any property of `Request` object as long as your
-interceptor produces a valid `Request` object again. 
+> *__Note:__ you can mutate or assign any property of `Request` object as long as your
+interceptor produces a valid `Request` object again.* 
 
-##### Response
+### Response
 
 Although we internally use [Fetch Compatible Response](https://developer.mozilla.org/en-US/docs/Web/API/Response), 
 we expose a [POJO](https://en.wikipedia.org/wiki/Plain_old_Java_object) compatible in shape with Fetch Compatible Response.
@@ -232,7 +232,7 @@ Property | Description
 `body` | `Object=undefined`. JSON object or `undefined`. 
 `obj` | `Object=undefined`. JSON object or `undefined`. Mirrors `body` property. (`Legacy` property)
 
-###### Response Interceptor
+##### Response Interceptor
 
 Response interceptor can be configured via `responseInterceptor` property in `Request` object.
 When set, it intercepts the `Response` object after the actual HTTP request was made.
@@ -341,10 +341,10 @@ SwaggerClient.http(request);
  */
 ```
 
-*Note:* you can mutate or assign any property of `Response` object as long as your
-interceptor produces a valid `Response` object again. 
+> *__Note:__ you can mutate or assign any property of `Response` object as long as your
+interceptor produces a valid `Response` object again.* 
 
-##### Response serialization
+#### Response serialization
 
 We detect the response `Content-Type` which identifies the payload of the `Response`.
 If the `Content-Type` headers signals that the data can be represented as something we can parse, 
@@ -352,7 +352,7 @@ we parse the data as and expose the result as `Response.body` property.
 
 Supported serialization formats: `json`, `yaml`
 
-##### Headers serialization
+#### Headers serialization
 
 Our headers serialization algorithm serializes headers into an object,
 where mutliple-headers result in an array.
@@ -363,9 +363,9 @@ where mutliple-headers result in an array.
 //  =  { Cookie: [ "one", "two" ]
 ```
 
-##### Errors
+### Errors
 
-###### HTTP Error
+##### HTTP Error
 
 HTTP Client promise will reject with a TypeError when a network error is encountered
 or CORS is misconfigured on the server-side, although this usually means permission issues
@@ -387,7 +387,7 @@ SwaggerClient.http(request); // network problem or CORS misconfiguration
  */
 ```
 
-###### Status Error
+##### Status Error
 
 HTTP Client will reject all responses with `ok` field set to `false` -  status outside of the range 200-299.
 This is another distinction from standard `Fetch API`.
@@ -413,7 +413,7 @@ SwaggerClient.http(request);
  */
 ```
 
-###### Serialization Error
+##### Serialization Error
 
 When there is an error during headers or response serialization, the `Response`
 object will contain one additional property `parseError` and `body`/`obj` properties
@@ -423,7 +423,7 @@ Property | Description
 --- | ---
 `parseError` | `Error=undefined`. Error produced during headers or response serialization.
 
-###### Interceptor Error
+##### Interceptor Error
 
 If you defined `responseInterceptor` on `Request` object, it can theoretically produce an unexpected Error.
 When it happens HTTP Client will produce a rejected promise with following signature:
@@ -450,7 +450,7 @@ SwaggerClient.http(request);
  */
 ```
 
-##### Custom Fetch
+### Custom Fetch
 
 HTTP client allows you to override the behavior of how it makes actual HTTP Request
 by supplying an asynchronous function under the property called `userFetch` in `Request` object.
@@ -479,7 +479,7 @@ const request = {
 SwaggerClient.http(request);
 ```
 
-##### CORS
+### CORS
 
 Cross-Origin Resource Sharing (`CORS`) is a mechanism that uses additional HTTP headers
 to tell browsers to give a web application running at one origin, 
@@ -494,7 +494,7 @@ Property | Description
 `credentials` | `String=["omit", "same-origin"*, "include"]`. Contains the credentials of the request. See more in `Request.credentials` [documentation](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials).
 
 
-##### Alternate API
+#### Alternate API
 
 It's also possible (for convenience) to call HTTP Client from `SwaggerClient` instances.
 
