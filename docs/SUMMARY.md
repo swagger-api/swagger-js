@@ -5,6 +5,7 @@
 - [TryItOut Executor](usage/try-it-out-executor.md)
 - [OpenAPI Definition Resolver](usage/openapi-definition-resolver.md)
 - [HTTP Client](usage/http-client.md)
+- [Swagger Client API](usage/api.md)
 
 #### Development
 

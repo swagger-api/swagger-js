@@ -28,6 +28,7 @@ We'll be consolidating that soon. Just giving you the heads up. You may see refe
 - [TryItOut Executor](docs/usage/try-it-out-executor.md)
 - [OpenAPI Definition Resolver](docs/usage/openapi-definition-resolver.md)
 - [HTTP Client](docs/usage/http-client.md)
+- [Swagger Client API](docs/usage/api.md)
 
 #### Development
 
