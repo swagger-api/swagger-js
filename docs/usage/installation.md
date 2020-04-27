@@ -12,6 +12,18 @@ The npm package contains transpiled and minified ES5 compatible code.
  $ npm install swagger-client
 ``` 
 
+After installed successfully:
+
+[ES6 imports](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import)
+```js
+import SwaggerClient from 'swagger-client'
+```
+
+[CommonJS imports](https://en.wikipedia.org/wiki/CommonJS)
+```js
+const SwaggerClient = require('swagger-client')
+```
+
 ### unpkg
 
 You can embed Swagger UI's code directly in your HTML by using [unpkg's](https://unpkg.com/) interface.
