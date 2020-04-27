@@ -1,4 +1,4 @@
-#### TryItOut Executor
+# TryItOut Executor
 
 TryItOut Executor is an OpenAPI specific HTTP client for OAS operations.
 It maps an OAS operation and values into an HTTP request.
@@ -20,8 +20,8 @@ Property | Description
 `securities` | `Object`. Maps security schemes to a request. Securities not defined in `spec` will be ignored. <br/><br/>*Examples*<br /><br /> *Bearer:* `{ authorized: { BearerAuth: {value: "3492342948239482398"} } }` <br /><br /> *Basic:* `{ authorized: { BasicAuth: { username: 'login', password: 'secret' } } }` <br /><br /> *ApiKey:* `{ authorized: { ApiKey: { value: '234934239' } } }` <br /><br /> *oAuth2:* `{ authorized: { oAuth2: { token: { access_token: '234934239' } } } }`
 `requestContentType` | `String`. Sets [appropriate media type](https://swagger.io/docs/specification/describing-request-body/) for request body, e.g. `application/json`. If supplied media type is not defined for the request body, this property is ignored.
 `responseContentType` | `String`. Expect [appropriate media type](https://swagger.io/docs/specification/describing-responses/) response, e.g. `application/json`. Creates an `Accept` header in `Request` object.
-`http` | `Function=Http`. A function with an interface compatible with [HTTP Client](HTTP_CLIENT.md).
-`userFetch` | `Function=cross-fetch`. Custom **asynchronous** fetch function that accepts two arguments: the `url` and the `Request` object and must return a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response) object. More info in [HTTP Client](HTTP_CLIENT.md) documentation.
+`http` | `Function=Http`. A function with an interface compatible with [HTTP Client](http-client.md).
+`userFetch` | `Function=cross-fetch`. Custom **asynchronous** fetch function that accepts two arguments: the `url` and the `Request` object and must return a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response) object. More info in [HTTP Client](http-client.md) documentation.
 
 For all later references, we will always use following OpenAPI 3.0.0 definition when referring
 to a `spec`.
@@ -111,7 +111,7 @@ const server = http.createServer(requestListener);
 server.listen(8080);
 ```
 
-##### Executing an operation
+### Executing an operation
 
 Executing an OAS operation is as simple as calling `SwaggerClient.execute` static method.
 
@@ -142,7 +142,7 @@ SwaggerClient.execute({
 }); // => Promise.<Response>
 ```
 
-###### Alternate API
+#### Alternate API
 
 It's also possible to call `execute` method from `SwaggerClient` instance.
 
@@ -159,9 +159,9 @@ new SwaggerClient({ spec: pojoDefinition, authorizations: { BearerAuth: "3492342
   ); // => Promise.<Response>
 ```
 
-##### Building a Request
+### Building a Request
 
-You can build a `Request` object from an OAS operation and feed it later to the [HTTP Client](HTTP_CLIENT.md).
+You can build a `Request` object from an OAS operation and feed it later to the [HTTP Client](http-client.md).
 
 ```js
 import SwaggerClient from 'swagger-client';
