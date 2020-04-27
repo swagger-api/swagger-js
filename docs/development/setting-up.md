@@ -24,7 +24,7 @@ Unsupported Node.js LTS that should still work:
 **Runtime**
 
 - Node.js `>=`4.x
-- `>=`ES5 compatible web browsers
+- `>=`ES5 compatible web browsers, IE11+
 
 ### Steps
 
