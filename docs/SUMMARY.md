@@ -6,6 +6,11 @@
 - [OpenAPI Definition Resolver](usage/openapi-definition-resolver.md)
 - [HTTP Client](usage/http-client.md)
 
+#### Development
+
+- [Setting up](development/setting-up.md)
+- [Scripts](development/scripts.md)
+
 #### Migrations 
 
 - [Graveyard](migration/graveyard-3-x.md)
