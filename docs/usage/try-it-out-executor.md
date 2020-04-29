@@ -72,7 +72,11 @@ paths:
           in: query
           description: search query parameter
           schema:
-            type: string
+            type: array
+            items:
+              type: string
+          style: pipeDelimited
+          explode: false  
       responses:
         '200':
           description: List of users
@@ -123,7 +127,10 @@ import SwaggerClient from 'swagger-client';
 SwaggerClient.execute({
   spec: pojoDefinition,
   operationId: 'getUserList',
-  parameters: { q: 'search string' },
+  // Parameters that accepts multiple values are provided as arrays ['search1', 'search2'].
+  // ['search1', 'search2'] will result results in `?q=search1|search2`
+  // depending on serialization options defined by `style` and `explode`.
+  parameters: { q: 'search string' }, 
   securities: { authorized: { BearerAuth: "3492342948239482398" } },
 }); // => Promise.<Response>
 ```
