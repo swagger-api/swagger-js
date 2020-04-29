@@ -91,6 +91,8 @@ SwaggerClient.resolve({ spec: pojoDefiniton });
 
 #### Alternate API
 
+##### Resolve during instantiation
+
 Along with calling `resolve` statically from a `SwaggerClient` class, resolution can
 happen during `SwaggerClient` class instantiation.
 
@@ -135,7 +137,30 @@ new SwaggerClient({ url: 'https://raw.githubusercontent.com/swagger-api/swagger-
 });
 ```
 
-##### Options
+##### Re-resolve the definition
+
+It's possible (as a convenience) to re-resolve your definition from `resolve` instance method.
+
+```js
+import SwaggerClient from 'swagger-client';
+
+const pojoDefinition = {
+  a: 1,
+  b: {
+    $ref: '#/a',
+  }
+};
+
+new SwaggerClient({ spec: pojoDefinition })
+  .then(swaggerClient => swaggerClient.resolve()) // definition will be re-resolved again
+  .then(swaggerClient => {
+    swaggerClient.spec;
+    swaggerClient.originalSpec;
+    swaggerClient.errors;
+  });
+```
+
+#### Options
 
 Along with `spec` and `url`, there are other options that controls the resolution
 algorithm behavior.
