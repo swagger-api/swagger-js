@@ -172,8 +172,8 @@ Type notations are formatted like so:
 
 Option | Description 
 --- | ---
-`fetch` | `Function=http`. If provided this function will be used as primary HTTP fetch mechanism for resolution. The provided function must return a `Promise`. Must be compatible with our [Fetch-like interface](https://github.com/lquixada/cross-fetch).
-`http` | `Function=http`. Alias for `fetch`. The option is part of API due to compatibility reasons. 
+`fetch` | `Function=Http`. If provided this function will be used as primary HTTP fetch mechanism for resolution. The provided function must return a `Promise` and must be compatible with our [HTTP Client](http-client.md).
+`http` | `Function=Http`. Alias for `fetch`. The option is part of API due to compatibility reasons. 
 `mode` | `String=["nostrict", "strict"]`. If `strict`, don't process `allOf` JSON-References.
 `allowMetaPatches` | `Boolean=true`. Allows adding `.meta` patches, which include adding `$$ref`s to the definition.
 `pathDiscriminator` | `Array=[]`. Example value can be e.g. `['components', 'schemas']`. This tells the resolver to only resolve all `Json-Reference` on this path and leave the rest untouched. Can be used for lazy resolution.
