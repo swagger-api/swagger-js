@@ -18,6 +18,8 @@ Property | Description
 `method` | `String=["GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE", "PATCH"]`. OpenAPI defines a unique operation as a combination of a path and an HTTP method. If `operationId` is not provided, this property must be set.
 `parameters` | `Object`. Parameters object, eg: `{ q: 'search string' }`. Parameters not defined in `spec` will be ignored.
 `securities` | `Object`. Maps security schemes to a request. Securities not defined in `spec` will be ignored. <br/><br/>*Examples*<br /><br /> *Bearer:* `{ authorized: { BearerAuth: {value: "3492342948239482398"} } }` <br /><br /> *Basic:* `{ authorized: { BasicAuth: { username: 'login', password: 'secret' } } }` <br /><br /> *ApiKey:* `{ authorized: { ApiKey: { value: '234934239' } } }` <br /><br /> *oAuth2:* `{ authorized: { oAuth2: { token: { access_token: '234934239' } } } }`
+`requestInterceptor` | `Function=identity`. Either synchronous or asynchronous function transformer that accepts `Request` and should return `Request`.  
+`responseInterceptor` | `Function=identity`. Either synchronous or asynchronous function transformer that accepts `Response` and should return `Response`.
 `requestContentType` | `String`. Sets [appropriate media type](https://swagger.io/docs/specification/describing-request-body/) for request body, e.g. `application/json`. If supplied media type is not defined for the request body, this property is ignored.
 `responseContentType` | `String`. Expect [appropriate media type](https://swagger.io/docs/specification/describing-responses/) response, e.g. `application/json`. Creates an `Accept` header in `Request` object.
 `http` | `Function=Http`. A function with an interface compatible with [HTTP Client](http-client.md).
