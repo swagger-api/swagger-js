@@ -350,7 +350,7 @@ class SpecMap {
 
       // Waits for all to settle instead of Promise.all which stops on rejection
       return Promise.all(promises.map((promise) => {
-        return promise.then(Function, Function)
+        return promise.then(function () {}, function () {})
       })).then(() => this.dispatch())
     }
 
