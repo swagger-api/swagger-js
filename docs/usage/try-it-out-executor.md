@@ -22,6 +22,7 @@ Property | Description
 `responseInterceptor` | `Function=identity`. Either synchronous or asynchronous function transformer that accepts `Response` and should return `Response`.
 `requestContentType` | `String`. Sets [appropriate media type](https://swagger.io/docs/specification/describing-request-body/) for request body, e.g. `application/json`. If supplied media type is not defined for the request body, this property is ignored.
 `responseContentType` | `String`. Expect [appropriate media type](https://swagger.io/docs/specification/describing-responses/) response, e.g. `application/json`. Creates an `Accept` header in `Request` object.
+`attachContentTypeForEmptyPayload` | `Boolean=false`. Attaches a `Content-Type` header to a `Request` even when no payload was provided for the `Request`.
 `http` | `Function=Http`. A function with an interface compatible with [HTTP Client](http-client.md).
 `userFetch` | `Function=cross-fetch`. Custom **asynchronous** fetch function that accepts two arguments: the `url` and the `Request` object and must return a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response) object. More info in [HTTP Client](http-client.md) documentation.
 
