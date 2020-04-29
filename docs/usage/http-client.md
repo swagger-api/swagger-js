@@ -493,6 +493,16 @@ Property | Description
 `mode` | `String=["cors"*, "no-cors", "same-origin", "navigate"]`. Contains the mode of the request. See more in `Request.mode` [documentation](https://developer.mozilla.org/en-US/docs/Web/API/Request/mode).
 `credentials` | `String=["omit", "same-origin"*, "include"]`. Contains the credentials of the request. See more in `Request.credentials` [documentation](https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials).
 
+###### CORS enabled globally
+
+If you need to activate CORS globally for every request, just enable it by `withCredentials` on [HTTP Client](http-client.md).
+When enabled, it automatically sets `credentials="include"` on every request implicitly for you.
+
+```js
+import SwaggerClient from 'swagger-client';
+
+SwaggerClient.http.withCredentials = true;
+```
 
 #### Alternate API
 
