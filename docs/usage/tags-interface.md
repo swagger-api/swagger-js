@@ -152,3 +152,44 @@ new SwaggerClient({ spec })
   );
 // => Promise.<Response>
 ```
+
+#### File uploads
+
+##### Node.js
+
+```js
+const fs = require('fs')
+const path = require('path')
+const SwaggerClient = require('swagger-client');
+
+const myPetImage = fs.createReadStream(path.join(__dirname, 'myPet.jpg'))
+
+SwaggerClient({ url: 'http://petstore.swagger.io/v2/swagger.json' })
+  .then(client => client.apis.pet.uploadFile({
+    petId: 256256,
+    file: myPetImage
+  })); // => Promise.<Response>
+```
+
+##### Browser 
+
+```html
+<html>
+  <head>
+    <script src="//unpkg.com/swagger-client"></script>
+    <script>
+      const aFileParts = [93048032489, 98389384239, 23498324239]; // an array consisting of image bytes
+      const myPetImage = new Blob(aFileParts, { type : 'image/jpeg' }); // the blob
+
+      SwaggerClient({ url: 'http://petstore.swagger.io/v2/swagger.json' })
+        .then(client => client.apis.pet.uploadFile({
+          petId: 256256,
+          file: myPetImage.stream()
+        })); // => Promise.<Response>
+    </script>
+  </head>
+  <body>
+    check console in browser's dev. tools
+  </body>
+</html>
+```
