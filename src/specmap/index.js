@@ -1,5 +1,5 @@
 import find from 'lodash/find'
-import noop from 'lodash/noop';
+import noop from 'lodash/noop'
 
 import lib from './lib'
 import refs from './lib/refs'
