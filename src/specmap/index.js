@@ -1,4 +1,5 @@
 import find from 'lodash/find'
+import noop from 'lodash/noop';
 
 import lib from './lib'
 import refs from './lib/refs'
@@ -350,7 +351,7 @@ class SpecMap {
 
       // Waits for all to settle instead of Promise.all which stops on rejection
       return Promise.all(promises.map((promise) => {
-        return promise.then(function () {}, function () {})
+        return promise.then(noop, noop)
       })).then(() => this.dispatch())
     }
 
