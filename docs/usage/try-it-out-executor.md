@@ -18,8 +18,11 @@ Property | Description
 `method` | `String=["GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE", "PATCH"]`. OpenAPI defines a unique operation as a combination of a path and an HTTP method. If `operationId` is not provided, this property must be set.
 `parameters` | `Object`. Parameters object, eg: `{ q: 'search string' }`. Parameters not defined in `spec` will be ignored.
 `securities` | `Object`. Maps security schemes to a request. Securities not defined in `spec` will be ignored. <br/><br/>*Examples*<br /><br /> *Bearer:* `{ authorized: { BearerAuth: {value: "3492342948239482398"} } }` <br /><br /> *Basic:* `{ authorized: { BasicAuth: { username: 'login', password: 'secret' } } }` <br /><br /> *ApiKey:* `{ authorized: { ApiKey: { value: '234934239' } } }` <br /><br /> *oAuth2:* `{ authorized: { oAuth2: { token: { access_token: '234934239' } } } }`
+`requestInterceptor` | `Function=identity`. Either synchronous or asynchronous function transformer that accepts `Request` and should return `Request`.  
+`responseInterceptor` | `Function=identity`. Either synchronous or asynchronous function transformer that accepts `Response` and should return `Response`.
 `requestContentType` | `String`. Sets [appropriate media type](https://swagger.io/docs/specification/describing-request-body/) for request body, e.g. `application/json`. If supplied media type is not defined for the request body, this property is ignored.
 `responseContentType` | `String`. Expect [appropriate media type](https://swagger.io/docs/specification/describing-responses/) response, e.g. `application/json`. Creates an `Accept` header in `Request` object.
+`attachContentTypeForEmptyPayload` | `Boolean=false`. Attaches a `Content-Type` header to a `Request` even when no payload was provided for the `Request`.
 `http` | `Function=Http`. A function with an interface compatible with [HTTP Client](http-client.md).
 `userFetch` | `Function=cross-fetch`. Custom **asynchronous** fetch function that accepts two arguments: the `url` and the `Request` object and must return a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response) object. More info in [HTTP Client](http-client.md) documentation.
 
@@ -72,7 +75,11 @@ paths:
           in: query
           description: search query parameter
           schema:
-            type: string
+            type: array
+            items:
+              type: string
+          style: pipeDelimited
+          explode: false  
       responses:
         '200':
           description: List of users
@@ -123,7 +130,10 @@ import SwaggerClient from 'swagger-client';
 SwaggerClient.execute({
   spec: pojoDefinition,
   operationId: 'getUserList',
-  parameters: { q: 'search string' },
+  // Parameters that accepts multiple values are provided as arrays ['search1', 'search2'].
+  // ['search1', 'search2'] will result results in `?q=search1|search2`
+  // depending on serialization options defined by `style` and `explode`.
+  parameters: { q: 'search string' }, 
   securities: { authorized: { BearerAuth: "3492342948239482398" } },
 }); // => Promise.<Response>
 ```
