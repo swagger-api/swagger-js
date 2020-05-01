@@ -459,6 +459,10 @@ by supplying an asynchronous function under the property called `userFetch` in `
 a compatible object of expected shape or behavior.  After importing the `SwaggerClient`
 in your current module, the `Response` symbol will be available in the current scope. 
 
+###### Example 1.)
+
+*Using [axios](https://github.com/axios/axios) library as override.*
+
 ```js
 import SwaggerClient from 'swagger-client';
 import axios from 'axios';
@@ -467,9 +471,10 @@ const request = {
   url: 'https://httpbin.org/',
   method: 'GET',
   userFetch: async (url, req) => {
-    const response = await axios.get(url, req);
+    const axiosRequest = { ...req, data: req.body };
+    const axiosResponse = await axios(axiosRequest);
 
-    return new Response(response.data, {
+    return new Response(axiosResponse.data.data, {
       status: response.status,
       headers: response.headers,
     });
@@ -477,6 +482,43 @@ const request = {
 };
 
 SwaggerClient.http(request);
+```
+###### Example 2.)
+
+*Using [axios](https://github.com/axios/axios) library as override in browser and tracking upload progress.*
+
+```html
+<html>
+  <head>
+    <script src="//unpkg.com/swagger-client"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.js"></script>
+    <script>
+      const request = {
+        url: 'https://httpbin.org/post',
+        method: 'POST',
+        body: "data".repeat(1000000),
+        userFetch: async (url, req) => {
+          const onUploadProgress = (progressEvent) => {
+            const completed = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            console.log(`${completed}%`);
+          }
+          const axiosRequest = { ...req, data: req.body, onUploadProgress };
+          const axiosResponse = await axios(axiosRequest);
+
+          return new Response(axiosResponse.data.data, {
+            status: response.status,
+            headers: response.headers,
+          });
+        },
+      };
+
+      SwaggerClient.http(request);
+    </script>
+  </head>
+  <body>
+    check console in browser's dev. tools
+  </body>
+</html>
 ```
 
 ### CORS
