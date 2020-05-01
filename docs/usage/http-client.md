@@ -7,7 +7,7 @@ performs response & header serialization.
 Here is a simple example how to make `POST` HTTP request:
 
 ```js
-import SwaggerClient from 'swagger-clinet';
+import SwaggerClient from 'swagger-client';
 
 const request = {
   url: 'https://httpbin.org/post',
@@ -25,7 +25,7 @@ SwaggerClient.http(request); // => Promise(Response)
 Here is an example how to make `POST` HTTP request via [Fetch compatible interface](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API).
 
 ```js
-import SwaggerClient from 'swagger-clinet';
+import SwaggerClient from 'swagger-client';
 
 const url = 'https://httpbin.org/post';
 const request = {
