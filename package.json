@@ -101,7 +101,7 @@
     "btoa": "1.1.2",
     "buffer": "^5.1.0",
     "cookie": "^0.3.1",
-    "cross-fetch": "0.0.8",
+    "cross-fetch": "^3.0.4",
     "deep-extend": "^0.5.1",
     "encode-3986": "^1.0.0",
     "fast-json-patch": "~2.1.0",
@@ -121,9 +121,13 @@
       "**/test/*.js?(x)",
       "**/test/**/*.js?(x)"
     ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/test/jest.setup.js"
+    ],
     "testPathIgnorePatterns": [
       "<rootDir>/node_modules/",
       "<rootDir>/test/data/",
+      "<rootDir>/test/jest.setup.js",
       "<rootDir>/test/specmap/data/",
       "<rootDir>/test/webpack-bundle/.tmp/"
     ]
