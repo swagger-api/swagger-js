@@ -280,9 +280,7 @@ describe('http', () => {
         return req
       }
     }).catch((err) => {
-      expect(err.message).toEqual(
-        'request to https://localhost:8000/petstore.json failed, reason: socket hang up'
-      )
+      expect(err.message).toMatch(/^request to https:\/\/localhost:8000\/petstore\.json failed, reason: (socket hang up|write EPROTO)/)
     })
   })
 
