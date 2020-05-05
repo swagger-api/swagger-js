@@ -107,7 +107,10 @@ Option | Description
 ```js
 import SwaggerClient from 'swagger-client';
 
-new SwaggerClient({ url: 'http://petstore.swagger.io/v2/swagger.json' })
+new SwaggerClient({ 
+  url: 'http://petstore.swagger.io/v2/swagger.json',
+  authorizations: { petstore_auth: { token: { access_token: '234934239' } } },
+ })
   .then(client => 
     client
      .apis
@@ -132,7 +135,7 @@ and request bodies, since these items are not actual parameters:
 ```js
 import SwaggerClient from 'swagger-client';
 
-new SwaggerClient({ spec })
+new SwaggerClient({ spec, authorizations: { petstore_auth: { token: { access_token: '234934239' } } } })
   .then(client => 
     client
      .apis
