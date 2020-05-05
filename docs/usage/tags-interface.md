@@ -95,6 +95,7 @@ Option | Description
 --- | ---
 `disableInterfaces` | `Boolean=false`. Disables the `Tags Interface` and transformation of all operationIds into callables.
 `v2OperationIdCompatibilityMode` | `Boolean=false`. When set to `true`, `SwaggerClient` will use old algorithm for generating unique operationId names (present in version 2.x). Instead of [camel case](https://en.wikipedia.org/wiki/Camel_case) (`getOne`) the algorithm use [kebab case](https://en.wikipedia.org/wiki/Letter_case#Special_case_styles) (`get_one`).
+`authorizations` | `Object=undefined`. Maps security schemes to a request. Securities not defined in `spec` will be ignored. <br/><br/>*Examples*<br /><br /> *Bearer:* `{ BearerAuth: {value: "3492342948239482398"} }` <br /><br /> *Basic:* `{ BasicAuth: { username: 'login', password: 'secret' } }` <br /><br /> *ApiKey:* `{ ApiKey: { value: '234934239' } }` <br /><br /> *oAuth2:* `{ oAuth2: { token: { access_token: '234934239' } } }`
 `requestInterceptor` | `Function=identity`. Either synchronous or asynchronous function transformer that accepts `Request` and should return `Request`.  
 `responseInterceptor` | `Function=identity`. Either synchronous or asynchronous function transformer that accepts `Response` and should return `Response`.
 `userFetch` | `Function=cross-fetch`. Custom **asynchronous** fetch function that accepts two arguments: the `url` and the `Request` object and must return a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response) object.
