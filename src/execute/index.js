@@ -78,8 +78,6 @@ export function execute({
 
   const request = self.buildRequest({spec, operationId, parameters, securities, http, ...extras})
 
-  console.dir(request);
-
   if (request.body && (isPlainObject(request.body) || isArray(request.body))) {
     request.body = JSON.stringify(request.body)
   }
