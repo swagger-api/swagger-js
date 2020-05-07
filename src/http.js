@@ -2,6 +2,7 @@ import 'cross-fetch/polyfill' /* global fetch */
 import qs from 'qs'
 import jsYaml from 'js-yaml'
 import isString from 'lodash/isString'
+import isFunction from 'lodash/isFunction'
 
 // For testing
 export const self = {
@@ -104,7 +105,6 @@ export function serializeRes(oriRes, url, {loadSpec = false} = {}) {
   const contentType = res.headers['content-type']
   const useText = loadSpec || shouldDownloadAsText(contentType)
 
-  // Note: Response.blob not implemented in node-fetch 1.  Use buffer instead.
   const getBody = useText ? oriRes.text : (oriRes.blob || oriRes.buffer)
 
   return getBody.call(oriRes).then((body) => {
@@ -125,29 +125,26 @@ export function serializeRes(oriRes, url, {loadSpec = false} = {}) {
   })
 }
 
+function serializeHeaderValue(value) {
+  const isMulti = value.includes(', ')
+
+  return isMulti ? value.split(', ') : value
+}
+
 // Serialize headers into a hash, where mutliple-headers result in an array.
 //
 // eg: Cookie: one
 //     Cookie: two
 //  =  { Cookie: [ "one", "two" ]
 export function serializeHeaders(headers = {}) {
-  const obj = {}
+  if (!isFunction(headers.entries)) return {}
 
-  // Iterate over headers, making multiple-headers into an array
-  if (typeof headers.forEach === 'function') {
-    headers.forEach((headerValue, header) => {
-      if (obj[header] !== undefined) {
-        obj[header] = Array.isArray(obj[header]) ? obj[header] : [obj[header]]
-        obj[header].push(headerValue)
-      }
-      else {
-        obj[header] = headerValue
-      }
-    })
-    return obj
-  }
-
-  return obj
+  return Array
+    .from(headers.entries())
+    .reduce((acc, [header, value]) => {
+      acc[header] = serializeHeaderValue(value)
+      return acc
+    }, {})
 }
 
 export function isFile(obj, navigatorObj) {

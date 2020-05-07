@@ -310,9 +310,8 @@ describe('http', () => {
       expect(encodeFormOrQuery(req.query)).toEqual('id=1,2')
     })
 
-    test('should handle custom array serilization', () => {
-      // Given
-      fetchMock.get('*', {hello: 'world'})
+    test('should handle custom array serialization', () => {
+      fetchMock.get('*', {body: 'response body'})
       const req = {
         url: 'http://example.com',
         method: 'GET',
@@ -336,6 +335,9 @@ describe('http', () => {
       // Given
       fetchMock.get('*', (url, opts) => {
         return {
+          headers: {
+            'Content-Type': 'text/plain',
+          },
           body: opts.headers.WilliamCWilliamsHeader
         }
       })
@@ -360,23 +362,32 @@ describe('http', () => {
     test(
       'should serialize fetch-like response and call serializeHeaders',
       () => {
-        const headers = {
-          Authorization: ['Basic hoop-la', 'Advanced hoop-la']
-        }
+        // cross-fetch exposes FetchAPI methods onto global
+        require('cross-fetch/polyfill')
+        const response = new Response('data', { // eslint-disable-line no-undef
+          status: 200,
+          headers: {
+            Authorization: 'Basic hoop-la, Advanced hoop-la',
+            'Content-Type': 'text/plain',
+          }
+        })
 
-        const res = fetchMock.mock('http://swagger.io', {headers})
-
-        return fetch('http://swagger.io').then((_res) => { // eslint-disable-line no-undef
-          return serializeRes(_res, 'https://swagger.io')
-        }).then((resSerialize) => {
-          expect(resSerialize.headers).toEqual({authorization: ['Basic hoop-la', 'Advanced hoop-la']})
-        }).then(fetchMock.restore)
+        return serializeRes(response, 'https://swagger.io')
+          .then((serializedResponse) => {
+            expect(serializedResponse.headers).toEqual({
+              authorization: ['Basic hoop-la', 'Advanced hoop-la'],
+              'content-type': 'text/plain'
+            })
+          })
       }
     )
 
     test(
       'should set .text and .data to body Blob or Buffer for binary response',
       () => {
+        // cross-fetch exposes FetchAPI methods onto global
+        require('cross-fetch/polyfill')
+
         const headers = {
           'Content-Type': 'application/octet-stream'
         }
@@ -392,11 +403,11 @@ describe('http', () => {
         }).then((resSerialize) => {
           expect(resSerialize.data).toBe(resSerialize.text)
           if (originalRes.blob) {
-            expect(resSerialize.data).toBeInstanceOf(Blob) // eslint-disable-line no-undef
+            expect(Object.prototype.toString.call(resSerialize.data)).toBe('[object Blob]')
           }
           else {
             expect(resSerialize.data).toBeInstanceOf(Buffer)
-            expect(resSerialize.data).toEqual(new Buffer(body))
+            expect(resSerialize.data).toEqual(Buffer.from(body))
           }
         }).then(fetchMock.restore)
       }
@@ -409,7 +420,7 @@ describe('http', () => {
           'Content-Type': 'application/json'
         }
 
-        const body = 'body data'
+        const body = '{}'
         const res = fetchMock.mock('http://swagger.io', {body, headers})
 
         return fetch('http://swagger.io').then((_res) => { // eslint-disable-line no-undef
