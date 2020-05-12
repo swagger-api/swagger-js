@@ -84,6 +84,7 @@ Type notations are formatted like so:
 Property | Description
 --- | ---
 `query` | `Object=null`. When provided, HTTP Client serialize it and appends the `queryString` to `Request.url` property.
+`loadSpec` | `Boolean=undefined`. This property will be present and set to `true` when the `Request` was constructed internally by `SwaggerClient` to fetch the OAS definition defined by `url` or when resolving remote JSON References.
 `requestInterceptor` | `Function=identity`. Either synchronous or asynchronous function transformer that accepts `Request` and should return `Request`.  
 `responseInterceptor` | `Function=identity`. Either synchronous or asynchronous function transformer that accepts `Response` and should return `Response`.
 `userFetch` | `Function=cross-fetch`. Custom **asynchronous** fetch function that accepts two arguments: the `url` and the `Request` object and must return a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response) object.
@@ -137,6 +138,57 @@ const request = {
 SwaggerClient.http(request);
 // Requested URL: https://httpbin.org/?anotherOne=one,two&evenMore=hi&bar=1%202%203
 ```
+
+##### Loading specification
+
+`loadSpec` property signals when the Request was constructed implicitly by `SwaggerClient`.
+This can happen in only two circumstances.
+
+1. When `SwaggerClient` fetches the OAS definition specified by `url` 
+2. When `SwaggerClient` resolves the OAS definition by fetching remote JSON References
+
+All other requests will not have this property present, or the property will be set to `false`.
+
+*This following code snippet*:
+
+```js
+import SwaggerClient from 'swagger-client';
+
+const requestInterceptor = (request) => {
+  console.log(request);
+
+  return request;
+};
+
+SwaggerClient({ url: 'https://petstore.swagger.io/v2/swagger.json', requestInterceptor })
+  .then(client => client.execute({
+      operationId: "findPetsByStatus",
+      parameters: { status: 3 },
+      requestInterceptor,
+  }));
+```
+
+*Will result in two requests, with only one containing `loadSpec` set to `true`:*
+
+```js
+{
+  url: 'https://petstore.swagger.io/v2/swagger.json',
+  loadSpec: true,
+  requestInterceptor: [Function: requestInterceptor],
+  responseInterceptor: null,
+  headers: { Accept: 'application/json, application/yaml' },
+  credentials: 'same-origin'
+}
+{
+  url: 'https://petstore.swagger.io/v2/pet/findByStatus?status=3',
+  credentials: 'same-origin',
+  headers: {},
+  requestInterceptor: [Function: requestInterceptor],
+  method: 'GET'
+}
+```
+
+
 
 ##### Request Interceptor
 
