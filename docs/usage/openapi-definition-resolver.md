@@ -51,6 +51,36 @@ SwaggerClient.resolve({ url: 'https://raw.githubusercontent.com/swagger-api/swag
 > *__Note:__ you can provide `Swagger.resolve` both `spec` and `url` options. In that case
 `spec` will always be preferred and `url` option will be ignored.* 
 
+#### Authentication
+
+When JSON-References points to a remote document protected by authentication,
+`requestInterceptor` option can be used to provide e.g. an authentication header.
+
+```js
+import SwaggerClient from 'swagger-client';
+
+const requestInterceptor = request => {
+  if (request.url.startsWith('https://raw.githubusercontent.com/swagger-api/')) {
+    request.headers['Authorization'] = 'Bearer Asdf1234ThisIsMyToken';
+  }
+
+  return request;
+};
+
+SwaggerClient.resolve({ 
+  url: 'https://raw.githubusercontent.com/swagger-api/swagger-petstore/master/src/main/resources/openapi.yaml',
+  requestInterceptor,
+});
+
+/**
+ * Promise({
+ *   spec: ...resolved pet store...,
+ *   errors: []
+ * })
+ */
+```
+
+
 #### Errors
 
 Resolver can also produce errors on various problems inside OpenAPI definition.
