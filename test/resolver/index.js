@@ -61,7 +61,7 @@ testDocuments.forEach((doc) => {
 
           afterAll(nock.restore)
 
-          return assertCaseExpectations(
+          assertCaseExpectations(
             currentCase,
             async () => getValueForAction(currentCase.action)
           )
