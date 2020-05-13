@@ -60,7 +60,7 @@ When JSON-References points to a remote document protected by authentication,
 import SwaggerClient from 'swagger-client';
 
 const requestInterceptor = request => {
-  if (request.url.startsWith('https://raw.githubusercontent.com/swagger-api/')) {
+  if (request.loadSpec) {
     request.headers['Authorization'] = 'Bearer Asdf1234ThisIsMyToken';
   }
 
@@ -71,14 +71,10 @@ SwaggerClient.resolve({
   url: 'https://raw.githubusercontent.com/swagger-api/swagger-petstore/master/src/main/resources/openapi.yaml',
   requestInterceptor,
 });
-
-/**
- * Promise({
- *   spec: ...resolved pet store...,
- *   errors: []
- * })
- */
 ```
+
+> *__Note:__ Notice how we use [loadSpec](http-client.md#loading-specification) Request property to determine if the intercepted request was made to fetch the OAS definition.*
+
 
 
 #### Errors
