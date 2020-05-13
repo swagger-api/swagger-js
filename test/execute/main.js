@@ -1,4 +1,4 @@
-import xmock from 'xmock'
+import FormData from '@tim-lai/isomorphic-form-data'
 import {execute, buildRequest, baseUrl, self as stubs} from '../../src/execute'
 import {normalizeSwagger} from '../../src/helpers'
 
@@ -654,7 +654,6 @@ describe('execute', () => {
       'should add Content-Type multipart/form-data when param type is file and no other sources of consumes',
       () => {
         // Given
-        const FormData = require('isomorphic-form-data')
         const spec = {
           host: 'swagger.io',
           paths: {
@@ -1158,7 +1157,6 @@ describe('execute', () => {
 
   test('should NOT stringify body, if its an instance of FormData', () => {
     // Given
-    const FormData = require('isomorphic-form-data')
     const spec = {
       host: 'swagger.io',
       paths: {'/me': {post: {parameters: [{name: 'one', in: 'formData'}], operationId: 'makeMe'}}}

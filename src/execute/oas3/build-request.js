@@ -56,8 +56,8 @@ export default function (options, req) {
             Object.keys(requestBody).forEach((k) => {
               const val = requestBody[k]
               let newVal
-
               let isFile
+              let isOAS3formatArray = false // oas3 query (default false) vs oas3 multipart
 
               if (typeof File !== 'undefined') {
                 isFile = val instanceof File // eslint-disable-line no-undef
@@ -73,7 +73,14 @@ export default function (options, req) {
 
               if (typeof val === 'object' && !isFile) {
                 if (Array.isArray(val)) {
-                  newVal = val.toString()
+                  if (requestContentType === 'application/x-www-form-urlencoded') {
+                    newVal = val.toString()
+                  }
+                  else {
+                    // multipart case
+                    newVal = val // keep as array
+                    isOAS3formatArray = true
+                  }
                 }
                 else {
                   newVal = JSON.stringify(val)
@@ -84,7 +91,8 @@ export default function (options, req) {
               }
 
               req.form[k] = {
-                value: newVal
+                value: newVal,
+                isOAS3formatArray
               }
             })
           }

@@ -246,13 +246,6 @@ describe('http', () => {
     })
 
     test('should not encode form-data', () => {
-      const FormData = require('isomorphic-form-data')
-      const _append = FormData.prototype.append
-      FormData.prototype.append = function (k, v) {
-        this._entries = this._entries || {}
-        this._entries[k] = v
-      }
-
       const req = {
         headers: {
           'Content-Type': 'multipart/form-data'
@@ -264,8 +257,9 @@ describe('http', () => {
         }
       }
       mergeInQueryOrForm(req)
-      expect(req.body._entries.testJson).toEqual('{"name": "John"}')
-      FormData.prototype.append = _append
+      const fdArrayItem = req.body.getAll('testJson')
+      expect(fdArrayItem.length).toEqual(1)
+      expect(fdArrayItem[0]).toEqual('{"name": "John"}')
     })
   })
 

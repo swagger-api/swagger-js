@@ -3,6 +3,7 @@ import qs from 'qs'
 import jsYaml from 'js-yaml'
 import isString from 'lodash/isString'
 import isFunction from 'lodash/isFunction'
+import FormData from '@tim-lai/isomorphic-form-data'
 
 // For testing
 export const self = {
@@ -101,16 +102,12 @@ export function serializeRes(oriRes, url, {loadSpec = false} = {}) {
     statusText: oriRes.statusText,
     headers: serializeHeaders(oriRes.headers)
   }
-
   const contentType = res.headers['content-type']
   const useText = loadSpec || shouldDownloadAsText(contentType)
-
   const getBody = useText ? oriRes.text : (oriRes.blob || oriRes.buffer)
-
   return getBody.call(oriRes).then((body) => {
     res.text = body
     res.data = body
-
     if (useText) {
       try {
         const obj = parseBody(body, contentType)
@@ -167,10 +164,8 @@ export function isFile(obj, navigatorObj) {
 
 function formatValue(input, skipEncoding) {
   const {collectionFormat, allowEmptyValue} = input
-
   // `input` can be string in OAS3 contexts
   const value = typeof input === 'object' ? input.value : input
-
   const SEPARATORS = {
     csv: ',',
     ssv: '%20',
@@ -204,9 +199,30 @@ function formatValue(input, skipEncoding) {
     return value.map(encodeFn).join(',')
   }
   if (collectionFormat === 'multi') {
+    // query case (not multipart/formdata)
     return value.map(encodeFn)
   }
   return value.map(encodeFn).join(SEPARATORS[collectionFormat])
+}
+
+function buildFormData(reqForm) {
+  /**
+   * Build a new FormData instance, support array as field value
+   * OAS2.0 - via collectionFormat in spec definition
+   * OAS3.0 - via oas3BuildRequest, isOAS3formatArray flag
+   * @param {Object} reqForm - ori req.form
+   * @return {FormData} - new FormData instance
+   */
+  return Object.entries(reqForm).reduce((formData, [name, input]) => {
+    if (!input.collectionFormat && !input.isOAS3formatArray) {
+      formData.append(name, formatValue(input, true))
+    }
+    else {
+      input.value.forEach(item =>
+        formData.append(name, formatValue({...input, value: item}, true)))
+    }
+    return formData
+  }, new FormData())
 }
 
 // Encodes an object using appropriate serializer.
@@ -232,9 +248,9 @@ export function encodeFormOrQuery(data) {
 }
 
 // If the request has a `query` object, merge it into the request.url, and delete the object
+// If file and/or multipart, also create FormData instance
 export function mergeInQueryOrForm(req = {}) {
   const {url = '', query, form} = req
-
   const joinSearch = (...strs) => {
     const search = strs.filter(a => a).join('&') // Only truthy value
     return search ? `?${search}` : '' // Only add '?' if there is a str
@@ -248,11 +264,7 @@ export function mergeInQueryOrForm(req = {}) {
     const contentType = req.headers['content-type'] || req.headers['Content-Type']
 
     if (hasFile || /multipart\/form-data/i.test(contentType)) {
-      const FormData = require('isomorphic-form-data') // eslint-disable-line global-require
-      req.body = new FormData()
-      Object.keys(form).forEach((key) => {
-        req.body.append(key, formatValue(form[key], true))
-      })
+      req.body = buildFormData(req.form)
     }
     else {
       req.body = encodeFormOrQuery(form)
@@ -279,11 +291,10 @@ export function mergeInQueryOrForm(req = {}) {
   return req
 }
 
-// Wrap a http function ( there are otherways to do this, conisder this deprecated )
+// Wrap a http function ( there are otherways to do this, consider this deprecated )
 export function makeHttp(httpFn, preFetch, postFetch) {
   postFetch = postFetch || (a => a)
   preFetch = preFetch || (a => a)
-
   return (req) => {
     if (typeof req === 'string') {
       req = {url: req}
