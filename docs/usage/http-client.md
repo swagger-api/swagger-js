@@ -84,7 +84,7 @@ Type notations are formatted like so:
 Property | Description
 --- | ---
 `query` | `Object=null`. When provided, HTTP Client serialize it and appends the `queryString` to `Request.url` property.
-`loadSpec` | `Boolean=undefined`. This property will be present and set to `true` when the `Request` was constructed internally by `SwaggerClient` to fetch the OAS definition befined by `url` or when resolving remote JSON References.
+`loadSpec` | `Boolean=undefined`. This property will be present and set to `true` when the `Request` was constructed internally by `SwaggerClient` to fetch the OAS definition defined by `url` or when resolving remote JSON References.
 `requestInterceptor` | `Function=identity`. Either synchronous or asynchronous function transformer that accepts `Request` and should return `Request`.  
 `responseInterceptor` | `Function=identity`. Either synchronous or asynchronous function transformer that accepts `Response` and should return `Response`.
 `userFetch` | `Function=cross-fetch`. Custom **asynchronous** fetch function that accepts two arguments: the `url` and the `Request` object and must return a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response) object.
