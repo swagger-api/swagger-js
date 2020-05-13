@@ -54,7 +54,7 @@ SwaggerClient.resolve({ url: 'https://raw.githubusercontent.com/swagger-api/swag
 #### Authentication
 
 When JSON-References points to a remote document protected by authentication,
-`requestInterceptor` option can be used to provide e.g. an authentication header.
+`requestInterceptor` option can be used to provide request authentication (e.g. by setting `Authentication` header).
 
 ```js
 import SwaggerClient from 'swagger-client';
