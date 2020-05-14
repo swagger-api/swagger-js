@@ -19,7 +19,6 @@ Current Node.js Maintenance LTS:
 - Node.js 10.x
 - NPM 6.x
 
-`swagger-client` dev setup *might* also work on older Node.js versions, but we don't 
 recommend using ones.
 
 ### Steps
