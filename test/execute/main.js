@@ -120,7 +120,10 @@ describe('execute', () => {
       })
     })
 
-    test('should execute a simple get request with user-defined fetch', () => {
+    test('should execute a simple get request with user-defined fetch', async () => {
+      // cross-fetch exposes FetchAPI methods onto global
+      require('cross-fetch/polyfill')
+
       // Given
       const spec = {
         host: 'swagger.io',
@@ -134,13 +137,15 @@ describe('execute', () => {
         }
       }
 
-      const spy = jest.fn().mockImplementation(() => Promise.resolve())
+      // eslint-disable-next-line no-undef
+      const spy = jest.fn().mockImplementation(() => Promise.resolve(new Response('data')))
 
-      execute({
+      await execute({
         userFetch: spy,
         spec,
         operationId: 'getMe'
       })
+
       expect(spy.mock.calls.length).toEqual(1)
       expect(spy.mock.calls[0][1]).toEqual({
         method: 'GET',
