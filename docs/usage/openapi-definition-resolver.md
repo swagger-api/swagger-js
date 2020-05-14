@@ -201,7 +201,7 @@ Option | Description
 `fetch` | `Function=Http`. If provided this function will be used as primary HTTP fetch mechanism for resolution. The provided function must return a `Promise` and must be compatible with our [HTTP Client](http-client.md).
 `http` | `Function=Http`. Alias for `fetch`. The option is part of API due to compatibility reasons. 
 `mode` | `String=["nostrict", "strict"]`. If `strict`, don't process `allOf` JSON-References.
-`allowMetaPatches` | `Boolean=true`. Allows adding `.meta` patches, which include adding `$$ref`s to the definition.
+`allowMetaPatches` | `Boolean=true`. Allows adding `.meta` patches, which include adding `$$ref`s to the resolved definition. `$$ref` is a meta information created from the original JSON Reference. <br /><br /> **Original definition:** <br /><br /> `{"a":{"val":1},"b":{"$ref":"#/a"}}` <br /><br /> **Resolved definition:** <br /><br /> `{"a":{"val":1},"b":{"val":1,"$$ref":"#/a"}}`
 `pathDiscriminator` | `Array=[]`. Example value can be e.g. `['components', 'schemas']`. This tells the resolver to only resolve all `Json-Reference` on this path and leave the rest untouched. Can be used for lazy resolution.
 `modelPropertyMacro` | `Function=null`. If provided, accepts a `property` object e.g. `{type: 'integer', format: 'int64' }` and computes a default value. That computed value is then assigned into original `property` object under the key `default`; `{type: 'integer', format: 'int64', default: 1 }`
 `parameterMacro` | `Function=null`. If provided, accepts a `parameter` object e.g. `{ name: 'offset', in: 'query' }` and computes a default value. That computed value is then assigned into original `parameter` object under the key `default`; `{ name: 'offset', in: 'query', default: 1 }`
