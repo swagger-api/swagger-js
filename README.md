@@ -40,6 +40,11 @@ We'll be consolidating that soon. Just giving you the heads up. You may see refe
 - [Graveyard](docs/migration/graveyard-3-x.md)
 - [Migration guide](docs/migration/migration-2-x-to-3-x.md)
 
+### Runtime 
+
+- Node.js `>=` 10.x
+- `swagger-client` works in the latest versions of Chrome, Safari, Firefox, and Edge.
+
 ## Security contact
 
 Please disclose any security-related issues or vulnerabilities by emailing [security@swagger.io](mailto:security@swagger.io), instead of using the public issue tracker.
