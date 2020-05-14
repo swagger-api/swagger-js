@@ -19,7 +19,6 @@ Current Node.js Maintenance LTS:
 - Node.js 10.x
 - NPM 6.x
 
-recommend using ones.
 
 ### Steps
 
