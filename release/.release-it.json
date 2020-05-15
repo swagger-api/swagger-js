@@ -1,10 +1,10 @@
 {
-  "scripts": {
-    "beforeBump": [
+  "hooks": {
+    "before:bump": [
       "./release/check-for-breaking-changes.sh ${latestVersion} ${version}"
     ],
-    "beforeStage": ["npm run build"],
-    "afterRelease": "echo GIT_TAG=v${version} > release/.version"
+    "after:bump": ["npm run build"],
+    "after:release": "echo GIT_TAG=v${version} > release/.version"
   },
   "git": {
     "requireUpstream": false,
@@ -24,3 +24,4 @@
     }
   }
 }
+
