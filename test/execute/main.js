@@ -1,4 +1,4 @@
-import FormData from '@tim-lai/isomorphic-form-data'
+import FormData from 'isomorphic-form-data'
 import {execute, buildRequest, baseUrl, self as stubs} from '../../src/execute'
 import {normalizeSwagger} from '../../src/helpers'
 

@@ -1,4 +1,4 @@
-import FormData from '@tim-lai/isomorphic-form-data'
+import FormData from 'isomorphic-form-data'
 import fetchMock from 'fetch-mock'
 import {buildRequest} from '../src/execute'
 import sampleMultipartOpenApi2 from './data/sample-multipart-oas2'

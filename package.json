@@ -106,6 +106,7 @@
     "deep-extend": "^0.5.1",
     "encode-3986": "^1.0.0",
     "fast-json-patch": "~2.1.0",
+    "isomorphic-form-data": "^2.0.0",
     "js-yaml": "^3.13.1",
     "lodash": "^4.17.14",
     "qs": "^6.3.0",
