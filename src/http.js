@@ -3,7 +3,7 @@ import qs from 'qs'
 import jsYaml from 'js-yaml'
 import isString from 'lodash/isString'
 import isFunction from 'lodash/isFunction'
-import FormData from '@tim-lai/isomorphic-form-data'
+import FormData from './internal/form-data-monkey-patch'
 
 // For testing
 export const self = {

@@ -1,5 +1,5 @@
-import FormData from '@tim-lai/isomorphic-form-data'
 import fetchMock from 'fetch-mock'
+import FormData from '../src/internal/form-data-monkey-patch'
 import {buildRequest} from '../src/execute'
 import sampleMultipartOpenApi2 from './data/sample-multipart-oas2'
 import sampleMultipartOpenApi3 from './data/sample-multipart-oas3'
@@ -52,16 +52,15 @@ describe('buildRequest - openapi 2.0', () => {
     test.skip('should (Live) POST multipart-formdata with entry item entries', () => {
       return fetch('http://localhost:3300/api/v1/formdata', { // eslint-disable-line no-undef
         method: 'POST',
-        body: req.body.stream, // per formdata-node docs
-        headers: req.body.headers // per formdata-node docs
+        body: req.body
       })
         .then((res) => {
           return res.json()
         })
         .then((json) => {
-          expect(json.email.length).toEqual(2)
-          expect(json.email[0]).toEqual('person1')
-          expect(json.email[1]).toEqual('person2')
+          expect(json.data.email.length).toEqual(2)
+          expect(json.data.email[0]).toEqual('person1')
+          expect(json.data.email[1]).toEqual('person2')
         })
     })
 
@@ -84,8 +83,7 @@ describe('buildRequest - openapi 2.0', () => {
 
       return fetch('http://localhost:3300/api/v1/formdata', { // eslint-disable-line no-undef
         method: 'POST',
-        body: req.body.stream, // per formdata-node docs
-        headers: req.body.headers // per formdata-node docs
+        body: req.body,
       })
         .then((res) => {
           return res.json()
@@ -94,10 +92,10 @@ describe('buildRequest - openapi 2.0', () => {
           expect(json.data.email.length).toEqual(2)
           expect(json.data.email[0]).toEqual('person1')
           expect(json.data.email[1]).toEqual('person2')
-          // duck typing that fetch received a formdata-node Stream instead of plain object
+          // duck typing that fetch received a FormData instance instead of plain object
           const lastOptions = fetchMock.lastOptions()
           expect(lastOptions.body.readable).toEqual(true)
-          expect(lastOptions.body._readableState).toBeDefined()
+          // expect(lastOptions.body._streams).toBeDefined()
         })
     })
   })
@@ -139,16 +137,15 @@ describe('buildRequest - openapi 3.0', () => {
     test.skip('should (Live) POST multipart-formdata with entry item entries', () => {
       return fetch('http://localhost:3300/api/v1/formdata', { // eslint-disable-line no-undef
         method: 'POST',
-        body: req.body.stream, // per formdata-node docs
-        headers: req.body.headers // per formdata-node docs
+        body: req.body
       })
       .then((res) => {
         return res.json()
       })
       .then((json) => {
-        expect(json.email.length).toEqual(2)
-        expect(json.email[0]).toEqual('person1')
-        expect(json.email[1]).toEqual('person2')
+        expect(json.data.email.length).toEqual(2)
+        expect(json.data.email[0]).toEqual('person1')
+        expect(json.data.email[1]).toEqual('person2')
       })
     })
 
@@ -171,8 +168,7 @@ describe('buildRequest - openapi 3.0', () => {
 
       return fetch('http://localhost:3300/api/v1/formdata', { // eslint-disable-line no-undef
         method: 'POST',
-        body: req.body.stream, // per formdata-node docs
-        headers: req.body.headers // per formdata-node docs
+        body: req.body,
       })
         .then((res) => {
           return res.json()
@@ -181,10 +177,10 @@ describe('buildRequest - openapi 3.0', () => {
           expect(json.data.email.length).toEqual(2)
           expect(json.data.email[0]).toEqual('person1')
           expect(json.data.email[1]).toEqual('person2')
-          // duck typing that fetch received a formdata-node Stream instead of plain object
+          // duck typing that fetch received a FormData instance instead of plain object
           const lastOptions = fetchMock.lastOptions()
           expect(lastOptions.body.readable).toEqual(true)
-          expect(lastOptions.body._readableState).toBeDefined()
+          // expect(lastOptions.body._streams).toBeDefined()
         })
     })
   })

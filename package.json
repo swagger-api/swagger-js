@@ -98,7 +98,6 @@
   "dependencies": {
     "@babel/runtime-corejs2": "^7.0.0",
     "@kyleshockey/object-assign-deep": "^0.4.0",
-    "@tim-lai/isomorphic-form-data": "^1.0.0",
     "btoa": "1.1.2",
     "buffer": "^5.1.0",
     "cookie": "^0.3.1",
@@ -106,6 +105,7 @@
     "deep-extend": "^0.5.1",
     "encode-3986": "^1.0.0",
     "fast-json-patch": "~2.1.0",
+    "isomorphic-form-data": "^2.0.0",
     "js-yaml": "^3.13.1",
     "lodash": "^4.17.14",
     "qs": "^6.3.0",
