@@ -300,7 +300,7 @@ const request = {
   method: 'GET',
   responseInterceptor: res => {
     res.arbitraryProp = 'arbitrary value';
-    return req;
+    return res;
   },
 };
 
@@ -395,6 +395,34 @@ SwaggerClient.http(request);
 
 > *__Note:__ you can mutate or assign any property of `Response` object as long as your
 interceptor produces a valid `Response` object again.* 
+
+###### Accessing request in Response Interceptor
+
+In order to access original `Request` in `responseInterceptor` you have to declare
+`responseInterceptor` either as [function declaration](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function) or [function expression](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/function).
+By doing so, the interceptor will be bound to the original `Request`.
+
+```js
+import SwaggerClient from 'swagger-client';
+
+const request = {
+  url: 'https://httpbin.org/',
+  method: 'GET',
+  responseInterceptor: function(res) {
+    const request = this;
+    console.log(request.url); // https://httpbin.org/
+    console.log(request.method); // GET
+    
+    res.arbitraryProp = 'arbitrary value';
+    return req;
+  },
+};
+
+SwaggerClient.http(request); 
+```
+
+> *__Note:__ this will not work if [arrow functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions) are used to define a `responseInterceptor`.*
+
 
 #### Response serialization
 
