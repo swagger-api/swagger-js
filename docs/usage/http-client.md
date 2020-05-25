@@ -414,7 +414,7 @@ const request = {
     console.log(request.method); // GET
     
     res.arbitraryProp = 'arbitrary value';
-    return req;
+    return res;
   },
 };
 
