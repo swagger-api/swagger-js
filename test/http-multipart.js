@@ -23,11 +23,16 @@ describe('buildRequest - openapi 2.0', () => {
       parameters: {
         'formData.hhlContent:sort': 'id',
         'formData.hhlContent:order': 'desc',
-        'formData.email[]': ["person1", "person2"] // eslint-disable-line quotes
+        'formData.email[]': ["person1", "person2"], // eslint-disable-line quotes
+        'formData.none[]': ['foo', 'bar'],
+        'formData.csv[]': ['foo', 'bar'],
+        'formData.tsv[]': ['foo', 'bar'],
+        'formData.ssv[]': ['foo', 'bar'],
+        'formData.pipes[]': ['foo', 'bar'],
       }
     })
 
-    test('should return FormData entry list and entry item entries (in order)', () => {
+    test('should return appropriate response media type', () => {
       expect(req).toMatchObject({
         method: 'POST',
         url: '/api/v1/land/content/ViewOfAuthOwner',
@@ -36,12 +41,48 @@ describe('buildRequest - openapi 2.0', () => {
           'Content-Type': 'multipart/form-data'
         },
       })
+    })
+
+    test('should build request body as FormData', () => {
       const validateFormDataInstance = req.body instanceof FormData
       expect(validateFormDataInstance).toEqual(true)
+    })
+
+    test('should return "collectionFormat: multi" as FormData entry list and entry item entries (in order)', () => {
       const itemEntries = req.body.getAll('email[]')
       expect(itemEntries.length).toEqual(2)
       expect(itemEntries[0]).toEqual('person1')
       expect(itemEntries[1]).toEqual('person2')
+    })
+
+    test('should return "collectionFormat: none" as single FormData entry in csv format', () => {
+      const itemEntriesNone = req.body.getAll('none[]')
+      expect(itemEntriesNone.length).toEqual(1)
+      expect(itemEntriesNone[0]).toEqual('foo,bar')
+    })
+
+    test('should return "collectionFormat: csv" as single FormData entry in csv format', () => {
+      const itemEntriesCsv = req.body.getAll('csv[]')
+      expect(itemEntriesCsv.length).toEqual(1)
+      expect(itemEntriesCsv[0]).toEqual('foo,bar')
+    })
+
+    test('should return "collectionFormat: tsv" as single FormData entry in tsv format', () => {
+      const itemEntriesTsv = req.body.getAll('tsv[]')
+      expect(itemEntriesTsv.length).toEqual(1)
+      expect(itemEntriesTsv[0]).toEqual('foo%09bar')
+    })
+
+    test('should return "collectionFormat: ssv" as single FormData entry in ssv format', () => {
+      const itemEntriesSsv = req.body.getAll('ssv[]')
+      expect(itemEntriesSsv.length).toEqual(1)
+      expect(itemEntriesSsv[0]).toEqual('foo%20bar')
+    })
+
+    test('should return "collectionFormat: pipes" as single FormData entry in pipes format', () => {
+      const itemEntriesPipes = req.body.getAll('pipes[]')
+      expect(itemEntriesPipes.length).toEqual(1)
+      expect(itemEntriesPipes[0]).toEqual('foo|bar')
     })
 
     /**
@@ -113,7 +154,7 @@ describe('buildRequest - openapi 3.0', () => {
       }
     })
 
-    test('should return FormData entry list and item entries (in order)', () => {
+    test('should return appropriate response media type', () => {
       expect(req).toMatchObject({
         method: 'POST',
         url: '/api/v1/land/content/ViewOfAuthOwner',
@@ -122,13 +163,20 @@ describe('buildRequest - openapi 3.0', () => {
           'Content-Type': 'multipart/form-data'
         },
       })
+    })
+
+    test('should build request body as FormData', () => {
       const validateFormDataInstance = req.body instanceof FormData
       expect(validateFormDataInstance).toEqual(true)
+    })
+
+    test('should return FormData entry list and item entries (in order)', () => {
       const itemEntries = req.body.getAll('email[]')
       expect(itemEntries.length).toEqual(2)
       expect(itemEntries[0]).toEqual('person1')
       expect(itemEntries[1]).toEqual('person2')
     })
+
     /**
      * Dev test only: assumes local server exists for POST
      * Expect server response format: { message: 'ok', data: returnData }

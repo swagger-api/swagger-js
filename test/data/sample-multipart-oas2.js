@@ -56,9 +56,59 @@ export default {
           {
             in: 'formData',
             name: 'email[]',
-            description: 'The list of emails.',
+            description: 'The list of emails as multi.',
             type: 'array',
             collectionFormat: 'multi',
+            items: {
+              type: 'string'
+            }
+          },
+          {
+            in: 'formData',
+            name: 'none[]',
+            description: 'The list of emails as none.',
+            type: 'array',
+            collectionFormat: 'none',
+            items: {
+              type: 'string'
+            }
+          },
+          {
+            in: 'formData',
+            name: 'csv[]',
+            description: 'The list of emails as csv.',
+            type: 'array',
+            collectionFormat: 'csv',
+            items: {
+              type: 'string'
+            }
+          },
+          {
+            in: 'formData',
+            name: 'tsv[]',
+            description: 'The list of emails as tsv.',
+            type: 'array',
+            collectionFormat: 'tsv',
+            items: {
+              type: 'string'
+            }
+          },
+          {
+            in: 'formData',
+            name: 'ssv[]',
+            description: 'The list of emails as ssv.',
+            type: 'array',
+            collectionFormat: 'ssv',
+            items: {
+              type: 'string'
+            }
+          },
+          {
+            in: 'formData',
+            name: 'pipes[]',
+            description: 'The list of emails as pipes.',
+            type: 'array',
+            collectionFormat: 'pipes',
             items: {
               type: 'string'
             }

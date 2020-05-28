@@ -3,6 +3,7 @@ import qs from 'qs'
 import jsYaml from 'js-yaml'
 import isString from 'lodash/isString'
 import isFunction from 'lodash/isFunction'
+import isNil from 'lodash/isNil'
 import FormData from './internal/form-data-monkey-patch'
 
 // For testing
@@ -182,9 +183,16 @@ function formatValue(input, skipEncoding) {
   }
 
   let encodeFn = encodeURIComponent
+  // skipEncoding is an option to skip using the encodeURIComponent
+  // and allow reassignment to a different "encoding" function
+  // we should only use encodeURIComponent for known url strings
   if (skipEncoding) {
-    if (isString(value)) encodeFn = str => str
-    else encodeFn = obj => JSON.stringify(obj)
+    if (isString(value) || Array.isArray(value)) {
+      encodeFn = str => str
+    }
+    else {
+      encodeFn = obj => JSON.stringify(obj)
+    }
   }
 
   if (typeof value === 'object' && !Array.isArray(value)) {
@@ -214,7 +222,7 @@ function buildFormData(reqForm) {
    * @return {FormData} - new FormData instance
    */
   return Object.entries(reqForm).reduce((formData, [name, input]) => {
-    if (!input.collectionFormat && !input.isOAS3formatArray) {
+    if ((isNil(input.collectionFormat) || input.collectionFormat !== 'multi') && !input.isOAS3formatArray) {
       formData.append(name, formatValue(input, true))
     }
     else {
