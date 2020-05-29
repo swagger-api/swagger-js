@@ -1,3 +1,4 @@
+import pick from 'lodash/pick'
 import stylize, {encodeDisallowedCharacters} from './style-serializer'
 import serialize from './content-serializer'
 
@@ -46,58 +47,9 @@ export function query({req, value, parameter}) {
   }
 
   if (value) {
-    const type = typeof value
-
-    if (parameter.style === 'deepObject') {
-      const valueKeys = Object.keys(value)
-      valueKeys.forEach((k) => {
-        const v = value[k]
-        req.query[`${parameter.name}[${k}]`] = {
-          value: stylize({
-            key: k,
-            value: v,
-            style: 'deepObject',
-            escape: parameter.allowReserved ? 'unsafe' : 'reserved',
-          }),
-          skipEncoding: true
-        }
-      })
-    }
-    else if (
-      type === 'object' &&
-      !Array.isArray(value) &&
-      (parameter.style === 'form' || !parameter.style) &&
-      (parameter.explode || parameter.explode === undefined)
-    ) {
-      // form explode needs to be handled here,
-      // since we aren't assigning to `req.query[parameter.name]`
-      // like we usually do.
-      const valueKeys = Object.keys(value)
-      valueKeys.forEach((k) => {
-        const v = value[k]
-        req.query[k] = {
-          value: stylize({
-            key: k,
-            value: v,
-            style: parameter.style || 'form',
-            escape: parameter.allowReserved ? 'unsafe' : 'reserved',
-          }),
-          skipEncoding: true
-        }
-      })
-    }
-    else {
-      const encodedParamName = encodeURIComponent(parameter.name)
-      req.query[encodedParamName] = {
-        value: stylize({
-          key: encodedParamName,
-          value,
-          style: parameter.style || 'form',
-          explode: typeof parameter.explode === 'undefined' ? true : parameter.explode,
-          escape: parameter.allowReserved ? 'unsafe' : 'reserved',
-        }),
-        skipEncoding: true
-      }
+    req.query[parameter.name] = {
+      value,
+      serializationOption: pick(parameter, ['style', 'explode', 'allowReserved'])
     }
   }
   else if (parameter.allowEmptyValue && value !== undefined) {

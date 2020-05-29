@@ -35,7 +35,8 @@ const spec = {
               },
               encoding: {
                 industries: {
-                  style: 'form'
+                  style: 'form',
+                  explode: false
                 }
               }
             }
@@ -69,7 +70,7 @@ test(
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: 'industries=1%2C16'
+      body: 'industries=1,16'
     })
   }
 )

@@ -3,7 +3,6 @@
 import assign from 'lodash/assign'
 import get from 'lodash/get'
 import btoa from 'btoa'
-import {Buffer} from 'buffer/'
 
 export default function (options, req) {
   const {
@@ -50,49 +49,15 @@ export default function (options, req) {
       if (requestBodyMediaTypes.indexOf(requestContentType) > -1) {
         // only attach body if the requestBody has a definition for the
         // contentType that has been explicitly set
-        if (requestContentType === 'application/x-www-form-urlencoded' || requestContentType.indexOf('multipart/') === 0) {
+        if (requestContentType === 'application/x-www-form-urlencoded' || requestContentType === 'multipart/form-data') {
           if (typeof requestBody === 'object') {
+            const encoding = (requestBodyDef.content[requestContentType] || {}).encoding || {}
+
             req.form = {}
             Object.keys(requestBody).forEach((k) => {
-              const val = requestBody[k]
-              let newVal
-              let isFile
-              let isOAS3formatArray = false // oas3 query (default false) vs oas3 multipart
-
-              if (typeof File !== 'undefined') {
-                isFile = val instanceof File // eslint-disable-line no-undef
-              }
-
-              if (typeof Blob !== 'undefined') {
-                isFile = isFile || val instanceof Blob // eslint-disable-line no-undef
-              }
-
-              if (typeof Buffer !== 'undefined') {
-                isFile = isFile || Buffer.isBuffer(val)
-              }
-
-              if (typeof val === 'object' && !isFile) {
-                if (Array.isArray(val)) {
-                  if (requestContentType === 'application/x-www-form-urlencoded') {
-                    newVal = val.toString()
-                  }
-                  else {
-                    // multipart case
-                    newVal = val // keep as array
-                    isOAS3formatArray = true
-                  }
-                }
-                else {
-                  newVal = JSON.stringify(val)
-                }
-              }
-              else {
-                newVal = val
-              }
-
               req.form[k] = {
-                value: newVal,
-                isOAS3formatArray
+                value: requestBody[k],
+                encoding: encoding[k] || {},
               }
             })
           }

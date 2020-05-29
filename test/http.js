@@ -457,6 +457,8 @@ describe('http', () => {
   describe('isFile', () => {
     // mock browser File class
     global.File = class MockBrowserFile {}
+    // mock browser Blob class
+    global.Blob = class MockBrowserBlob {}
 
     const mockBrowserNavigator = {
       product: 'Gecko'
@@ -466,6 +468,7 @@ describe('http', () => {
     }
 
     const browserFile = new global.File()
+    const browserBlob = new global.File()
     const reactNativeFileObject = {
       uri: '/mock/path'
     }
@@ -478,6 +481,26 @@ describe('http', () => {
     })
     test('should return false for browser File type and React Native user agent', () => {
       expect(isFile(browserFile, mockReactNativeNavigator)).toEqual(false)
+    })
+
+    test('should return true for browser Blob type', () => {
+      expect(isFile(browserBlob)).toEqual(true)
+    })
+    test('should return true for browser Blob type and browser user agent', () => {
+      expect(isFile(browserBlob, mockBrowserNavigator)).toEqual(true)
+    })
+    test('should return false for browser Blob type and React Native user agent', () => {
+      expect(isFile(browserBlob, mockReactNativeNavigator)).toEqual(false)
+    })
+
+    test('should return true for browser Buffer type', () => {
+      expect(isFile(new Buffer([]))).toEqual(true)
+    })
+    test('should return true for browser Buffer type and browser user agent', () => {
+      expect(isFile(new Buffer([]), mockBrowserNavigator)).toEqual(true)
+    })
+    test('should return false for browser Buffer type and React Native user agent', () => {
+      expect(isFile(new Buffer([]), mockReactNativeNavigator)).toEqual(false)
     })
 
     test('should return false for React Native-like file object', () => {

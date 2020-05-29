@@ -232,4 +232,96 @@ describe('buildRequest - openapi 3.0', () => {
         })
     })
   })
+
+  describe('formData with file', () => {
+    const file1 = Buffer.from('test file data1')
+    const file2 = Buffer.from('test file data2')
+
+    const req = buildRequest({
+      spec: sampleMultipartOpenApi3,
+      operationId: 'post_land_content_uploadImage',
+      requestBody: {
+        imageId: 'id',
+        'images[]': [file1, file2]
+      }
+    })
+
+    test('should return FormData entry list and item entries (in order)', () => {
+      expect(req).toMatchObject({
+        method: 'POST',
+        url: '/api/v1/land/content/uploadImage',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+      })
+      const validateFormDataInstance = req.body instanceof FormData
+      expect(validateFormDataInstance).toEqual(true)
+      const itemEntries = req.body.getAll('images[]')
+      expect(itemEntries.length).toEqual(2)
+      expect(itemEntries[0]).toEqual(file1)
+      expect(itemEntries[1]).toEqual(file2)
+    })
+  })
+
+  describe('respect Encoding Object', () => {
+    test('Should be set to object in the style of deepObject', () => {
+      const spec = {
+        openapi: '3.0.0',
+        servers: [
+          {
+            url: 'http://petstore.swagger.io/v2',
+            name: 'Petstore'
+          }
+        ],
+        paths: {
+          '/one': {
+            post: {
+              operationId: 'getOne',
+              requestBody: {
+                content: {
+                  'multipart/form-data': {
+                    schema: {
+                      type: 'object',
+                      properties: {
+                        color: {
+                          type: 'object',
+                        },
+                      }
+                    },
+                    encoding: {
+                      color: {
+                        style: 'deepObject',
+                        explode: true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // when
+      const req = buildRequest({
+        spec,
+        operationId: 'getOne',
+        requestBody: {
+          color: {R: 100, G: 200, B: 150}
+        }
+      })
+
+      expect(req).toMatchObject({
+        method: 'POST',
+        url: 'http://petstore.swagger.io/v2/one',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+      })
+
+      expect(Array.from(req.body._entryList)).toEqual([{name: 'color[R]', value: '100'}, {name: 'color[G]', value: '200'}, {name: 'color[B]', value: '150'}])
+    })
+  })
 })

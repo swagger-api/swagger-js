@@ -1,10 +1,11 @@
 import 'cross-fetch/polyfill' /* global fetch */
 import qs from 'qs'
 import jsYaml from 'js-yaml'
-import isString from 'lodash/isString'
+import pick from 'lodash/pick'
 import isFunction from 'lodash/isFunction'
-import isNil from 'lodash/isNil'
 import FormData from './internal/form-data-monkey-patch'
+import {encodeDisallowedCharacters} from './execute/oas3/style-serializer'
+
 
 // For testing
 export const self = {
@@ -156,78 +157,169 @@ export function isFile(obj, navigatorObj) {
     }
     return false
   }
-  if (typeof File !== 'undefined') {
-    // eslint-disable-next-line no-undef
-    return obj instanceof File
+
+  if (typeof File !== 'undefined' && obj instanceof File) { // eslint-disable-line no-undef
+    return true
   }
+  if (typeof Blob !== 'undefined' && obj instanceof Blob) { // eslint-disable-line no-undef
+    return true
+  }
+  if (typeof Buffer !== 'undefined' && obj instanceof Buffer) {
+    return true
+  }
+
   return obj !== null && typeof obj === 'object' && typeof obj.pipe === 'function'
 }
 
-function formatValue(input, skipEncoding) {
-  const {collectionFormat, allowEmptyValue} = input
-  // `input` can be string in OAS3 contexts
-  const value = typeof input === 'object' ? input.value : input
-  const SEPARATORS = {
-    csv: ',',
-    ssv: '%20',
-    tsv: '%09',
-    pipes: '|'
-  }
+function isArrayOfFile(obj, navigatorObj) {
+  return (Array.isArray(obj) && obj.some(v => isFile(v, navigatorObj)))
+}
+
+const STYLE_SEPARATORS = {
+  form: ',',
+  spaceDelimited: '%20',
+  pipeDelimited: '|'
+}
+
+const SEPARATORS = {
+  csv: ',',
+  ssv: '%20',
+  tsv: '%09',
+  pipes: '|'
+}
+
+// Formats a key-value and returns an array of key-value pairs.
+//
+// Return value example 1: [['color', 'blue']]
+// Return value example 2: [['color', 'blue,black,brown']]
+// Return value example 3: [['color', ['blue', 'black', 'brown']]]
+// Return value example 4: [['color', 'R,100,G,200,B,150']]
+// Return value example 5: [['R', '100'], ['G', '200'], ['B', '150']]
+// Return value example 6: [['color[R]', '100'], ['color[G]', '200'], ['color[B]', '150']]
+function formatKeyValue(key, input, skipEncoding = false) {
+  const {collectionFormat, allowEmptyValue, serializationOption, encoding} = input
+  // `input` can be string
+  const value = (typeof input === 'object' && !Array.isArray(input)) ? input.value : input
+  const encodeFn = skipEncoding ? (k => k.toString()) : (k => encodeURIComponent(k))
+  const encodedKey = encodeFn(key)
 
   if (typeof value === 'undefined' && allowEmptyValue) {
-    return ''
+    return [[encodedKey, '']]
   }
 
-  if (isFile(value) || typeof value === 'boolean') {
-    return value
+  // file
+  if (isFile(value) || isArrayOfFile(value)) {
+    return [[encodedKey, value]]
   }
 
-  let encodeFn = encodeURIComponent
-  // skipEncoding is an option to skip using the encodeURIComponent
-  // and allow reassignment to a different "encoding" function
-  // we should only use encodeURIComponent for known url strings
-  if (skipEncoding) {
-    if (isString(value) || Array.isArray(value)) {
-      encodeFn = str => str
+  // for OAS 3 Parameter Object for serialization
+  if (serializationOption) {
+    return formatKeyValueBySerializationOption(key, value, skipEncoding, serializationOption)
+  }
+
+  // for OAS 3 Encoding Object
+  if (encoding) {
+    if ([typeof encoding.style, typeof encoding.explode, typeof encoding.allowReserved].some(type => type !== 'undefined')) {
+      return formatKeyValueBySerializationOption(key, value, skipEncoding, pick(encoding, ['style', 'explode', 'allowReserved']))
     }
-    else {
-      encodeFn = obj => JSON.stringify(obj)
+
+    if (encoding.contentType) {
+      if (encoding.contentType === 'application/json') {
+        // If value is a string, assume value is already a JSON string
+        const json = typeof value === 'string' ? value : JSON.stringify(value)
+        return [[encodedKey, encodeFn(json)]]
+      }
+      return [[encodedKey, encodeFn(value.toString())]]
     }
+
+    // Primitive
+    if (typeof value !== 'object') {
+      return [[encodedKey, encodeFn(value)]]
+    }
+
+    // Array of primitives
+    if (Array.isArray(value) && value.every(v => typeof v !== 'object')) {
+      return [[encodedKey, value.map(encodeFn).join(',')]]
+    }
+
+    // Array or object
+    return [[encodedKey, encodeFn(JSON.stringify(value))]]
   }
 
-  if (typeof value === 'object' && !Array.isArray(value)) {
-    return ''
+  // for OAS 2 Parameter Object
+  // Primitive
+  if (typeof value !== 'object') {
+    return [[encodedKey, encodeFn(value)]]
   }
 
-  if (!Array.isArray(value)) {
-    return encodeFn(value)
+  // Array
+  if (Array.isArray(value)) {
+    if (collectionFormat === 'multi') {
+      // In case of multipart/formdata, it is used as array.
+      // Otherwise, the caller will convert it to a query by qs.stringify.
+      return [[encodedKey, value.map(encodeFn)]]
+    }
+
+    return [[encodedKey, value.map(encodeFn).join(SEPARATORS[collectionFormat || 'csv'])]]
   }
 
-  if (Array.isArray(value) && !collectionFormat) {
-    return value.map(encodeFn).join(',')
+  // Object
+  return [[encodedKey, '']]
+}
+
+function formatKeyValueBySerializationOption(key, value, skipEncoding, serializationOption) {
+  const style = serializationOption.style || 'form'
+  const explode = typeof serializationOption.explode === 'undefined' ? style === 'form' : serializationOption.explode
+  // eslint-disable-next-line no-nested-ternary
+  const escape = skipEncoding ? false : (serializationOption && serializationOption.allowReserved ? 'unsafe' : 'reserved')
+  const encodeFn = v => encodeDisallowedCharacters(v, {escape})
+  const encodeKeyFn = skipEncoding ? (k => k) : (k => encodeDisallowedCharacters(k, {escape}))
+
+  // Primitive
+  if (typeof value !== 'object') {
+    return [[encodeKeyFn(key), encodeFn(value)]]
   }
-  if (collectionFormat === 'multi') {
-    // query case (not multipart/formdata)
-    return value.map(encodeFn)
+
+  // Array
+  if (Array.isArray(value)) {
+    if (explode) {
+      // In case of multipart/formdata, it is used as array.
+      // Otherwise, the caller will convert it to a query by qs.stringify.
+      return [[encodeKeyFn(key), value.map(encodeFn)]]
+    }
+    return [[encodeKeyFn(key), value.map(encodeFn).join(STYLE_SEPARATORS[style])]]
   }
-  return value.map(encodeFn).join(SEPARATORS[collectionFormat])
+
+  // Object
+  if (style === 'deepObject') {
+    return Object.keys(value).map(valueKey => [encodeKeyFn(`${key}[${valueKey}]`), encodeFn(value[valueKey])])
+  }
+
+  if (explode) {
+    return Object.keys(value).map(valueKey => [encodeKeyFn(valueKey), encodeFn(value[valueKey])])
+  }
+
+  return [[encodeKeyFn(key), Object.keys(value).map(valueKey => [`${encodeKeyFn(valueKey)},${encodeFn(value[valueKey])}`]).join(',')]]
 }
 
 function buildFormData(reqForm) {
   /**
    * Build a new FormData instance, support array as field value
-   * OAS2.0 - via collectionFormat in spec definition
-   * OAS3.0 - via oas3BuildRequest, isOAS3formatArray flag
+   * OAS2.0 - when collectionFormat is multi
+   * OAS3.0 - when explode of Encoding Object is true
    * @param {Object} reqForm - ori req.form
    * @return {FormData} - new FormData instance
    */
   return Object.entries(reqForm).reduce((formData, [name, input]) => {
-    if ((isNil(input.collectionFormat) || input.collectionFormat !== 'multi') && !input.isOAS3formatArray) {
-      formData.append(name, formatValue(input, true))
-    }
-    else {
-      input.value.forEach(item =>
-        formData.append(name, formatValue({...input, value: item}, true)))
+    for (const [key, value] of formatKeyValue(name, input, true)) {
+      if (Array.isArray(value)) {
+        for (const v of value) {
+          formData.append(key, v)
+        }
+      }
+      else {
+        formData.append(key, value)
+      }
     }
     return formData
   }, new FormData())
@@ -242,14 +334,9 @@ export function encodeFormOrQuery(data) {
    * @return {object} encoded parameter names and values
    */
   const encodedQuery = Object.keys(data).reduce((result, parameterName) => {
-    const isObject = a => a && typeof a === 'object'
-    const paramValue = data[parameterName]
-    const skipEncoding = !!paramValue.skipEncoding
-    const encodedParameterName = skipEncoding ? parameterName : encodeURIComponent(parameterName)
-    const notArray = isObject(paramValue) && !Array.isArray(paramValue)
-    result[encodedParameterName] = formatValue(
-      notArray ? paramValue : {value: paramValue}, skipEncoding
-    )
+    for (const [key, value] of formatKeyValue(parameterName, data[parameterName])) {
+      result[key] = value
+    }
     return result
   }, {})
   return qs.stringify(encodedQuery, {encode: false, indices: false}) || ''
@@ -266,7 +353,8 @@ export function mergeInQueryOrForm(req = {}) {
 
   if (form) {
     const hasFile = Object.keys(form).some((key) => {
-      return isFile(form[key].value)
+      const value = form[key].value
+      return isFile(value) || isArrayOfFile(value)
     })
 
     const contentType = req.headers['content-type'] || req.headers['Content-Type']
