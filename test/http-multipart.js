@@ -259,7 +259,7 @@ describe('buildRequest - openapi 3.0', () => {
       expect(validateFormDataInstance).toEqual(true)
       const itemEntries = req.body.getAll('images[]')
       expect(itemEntries.length).toEqual(2)
-      expect(itemEntries[0].__content).toEqual(file1)
+      expect(itemEntries[0]).toEqual(file1)
       expect(itemEntries[1].__content).toEqual(file2)
     })
   })
