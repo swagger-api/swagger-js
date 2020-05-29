@@ -1,5 +1,5 @@
-import FormData from '@tim-lai/isomorphic-form-data'
 import fetchMock from 'fetch-mock'
+import FormData from '../src/internal/form-data-monkey-patch'
 import {buildRequest} from '../src/execute'
 import sampleMultipartOpenApi2 from './data/sample-multipart-oas2'
 import sampleMultipartOpenApi3 from './data/sample-multipart-oas3'
@@ -23,11 +23,16 @@ describe('buildRequest - openapi 2.0', () => {
       parameters: {
         'formData.hhlContent:sort': 'id',
         'formData.hhlContent:order': 'desc',
-        'formData.email[]': ["person1", "person2"] // eslint-disable-line quotes
+        'formData.email[]': ["person1", "person2"], // eslint-disable-line quotes
+        'formData.none[]': ['foo', 'bar'],
+        'formData.csv[]': ['foo', 'bar'],
+        'formData.tsv[]': ['foo', 'bar'],
+        'formData.ssv[]': ['foo', 'bar'],
+        'formData.pipes[]': ['foo', 'bar'],
       }
     })
 
-    test('should return FormData entry list and entry item entries (in order)', () => {
+    test('should return appropriate response media type', () => {
       expect(req).toMatchObject({
         method: 'POST',
         url: '/api/v1/land/content/ViewOfAuthOwner',
@@ -36,12 +41,48 @@ describe('buildRequest - openapi 2.0', () => {
           'Content-Type': 'multipart/form-data'
         },
       })
+    })
+
+    test('should build request body as FormData', () => {
       const validateFormDataInstance = req.body instanceof FormData
       expect(validateFormDataInstance).toEqual(true)
+    })
+
+    test('should return "collectionFormat: multi" as FormData entry list and entry item entries (in order)', () => {
       const itemEntries = req.body.getAll('email[]')
       expect(itemEntries.length).toEqual(2)
       expect(itemEntries[0]).toEqual('person1')
       expect(itemEntries[1]).toEqual('person2')
+    })
+
+    test('should return "collectionFormat: none" as single FormData entry in csv format', () => {
+      const itemEntriesNone = req.body.getAll('none[]')
+      expect(itemEntriesNone.length).toEqual(1)
+      expect(itemEntriesNone[0]).toEqual('foo,bar')
+    })
+
+    test('should return "collectionFormat: csv" as single FormData entry in csv format', () => {
+      const itemEntriesCsv = req.body.getAll('csv[]')
+      expect(itemEntriesCsv.length).toEqual(1)
+      expect(itemEntriesCsv[0]).toEqual('foo,bar')
+    })
+
+    test('should return "collectionFormat: tsv" as single FormData entry in tsv format', () => {
+      const itemEntriesTsv = req.body.getAll('tsv[]')
+      expect(itemEntriesTsv.length).toEqual(1)
+      expect(itemEntriesTsv[0]).toEqual('foo%09bar')
+    })
+
+    test('should return "collectionFormat: ssv" as single FormData entry in ssv format', () => {
+      const itemEntriesSsv = req.body.getAll('ssv[]')
+      expect(itemEntriesSsv.length).toEqual(1)
+      expect(itemEntriesSsv[0]).toEqual('foo%20bar')
+    })
+
+    test('should return "collectionFormat: pipes" as single FormData entry in pipes format', () => {
+      const itemEntriesPipes = req.body.getAll('pipes[]')
+      expect(itemEntriesPipes.length).toEqual(1)
+      expect(itemEntriesPipes[0]).toEqual('foo|bar')
     })
 
     /**
@@ -52,16 +93,15 @@ describe('buildRequest - openapi 2.0', () => {
     test.skip('should (Live) POST multipart-formdata with entry item entries', () => {
       return fetch('http://localhost:3300/api/v1/formdata', { // eslint-disable-line no-undef
         method: 'POST',
-        body: req.body.stream, // per formdata-node docs
-        headers: req.body.headers // per formdata-node docs
+        body: req.body
       })
         .then((res) => {
           return res.json()
         })
         .then((json) => {
-          expect(json.email.length).toEqual(2)
-          expect(json.email[0]).toEqual('person1')
-          expect(json.email[1]).toEqual('person2')
+          expect(json.data.email.length).toEqual(2)
+          expect(json.data.email[0]).toEqual('person1')
+          expect(json.data.email[1]).toEqual('person2')
         })
     })
 
@@ -84,8 +124,7 @@ describe('buildRequest - openapi 2.0', () => {
 
       return fetch('http://localhost:3300/api/v1/formdata', { // eslint-disable-line no-undef
         method: 'POST',
-        body: req.body.stream, // per formdata-node docs
-        headers: req.body.headers // per formdata-node docs
+        body: req.body,
       })
         .then((res) => {
           return res.json()
@@ -94,10 +133,10 @@ describe('buildRequest - openapi 2.0', () => {
           expect(json.data.email.length).toEqual(2)
           expect(json.data.email[0]).toEqual('person1')
           expect(json.data.email[1]).toEqual('person2')
-          // duck typing that fetch received a formdata-node Stream instead of plain object
+          // duck typing that fetch received a FormData instance instead of plain object
           const lastOptions = fetchMock.lastOptions()
           expect(lastOptions.body.readable).toEqual(true)
-          expect(lastOptions.body._readableState).toBeDefined()
+          // expect(lastOptions.body._streams).toBeDefined()
         })
     })
   })
@@ -115,7 +154,7 @@ describe('buildRequest - openapi 3.0', () => {
       }
     })
 
-    test('should return FormData entry list and item entries (in order)', () => {
+    test('should return appropriate response media type', () => {
       expect(req).toMatchObject({
         method: 'POST',
         url: '/api/v1/land/content/ViewOfAuthOwner',
@@ -124,13 +163,20 @@ describe('buildRequest - openapi 3.0', () => {
           'Content-Type': 'multipart/form-data'
         },
       })
+    })
+
+    test('should build request body as FormData', () => {
       const validateFormDataInstance = req.body instanceof FormData
       expect(validateFormDataInstance).toEqual(true)
+    })
+
+    test('should return FormData entry list and item entries (in order)', () => {
       const itemEntries = req.body.getAll('email[]')
       expect(itemEntries.length).toEqual(2)
       expect(itemEntries[0]).toEqual('person1')
       expect(itemEntries[1]).toEqual('person2')
     })
+
     /**
      * Dev test only: assumes local server exists for POST
      * Expect server response format: { message: 'ok', data: returnData }
@@ -139,16 +185,15 @@ describe('buildRequest - openapi 3.0', () => {
     test.skip('should (Live) POST multipart-formdata with entry item entries', () => {
       return fetch('http://localhost:3300/api/v1/formdata', { // eslint-disable-line no-undef
         method: 'POST',
-        body: req.body.stream, // per formdata-node docs
-        headers: req.body.headers // per formdata-node docs
+        body: req.body
       })
       .then((res) => {
         return res.json()
       })
       .then((json) => {
-        expect(json.email.length).toEqual(2)
-        expect(json.email[0]).toEqual('person1')
-        expect(json.email[1]).toEqual('person2')
+        expect(json.data.email.length).toEqual(2)
+        expect(json.data.email[0]).toEqual('person1')
+        expect(json.data.email[1]).toEqual('person2')
       })
     })
 
@@ -171,8 +216,7 @@ describe('buildRequest - openapi 3.0', () => {
 
       return fetch('http://localhost:3300/api/v1/formdata', { // eslint-disable-line no-undef
         method: 'POST',
-        body: req.body.stream, // per formdata-node docs
-        headers: req.body.headers // per formdata-node docs
+        body: req.body,
       })
         .then((res) => {
           return res.json()
@@ -181,10 +225,10 @@ describe('buildRequest - openapi 3.0', () => {
           expect(json.data.email.length).toEqual(2)
           expect(json.data.email[0]).toEqual('person1')
           expect(json.data.email[1]).toEqual('person2')
-          // duck typing that fetch received a formdata-node Stream instead of plain object
+          // duck typing that fetch received a FormData instance instead of plain object
           const lastOptions = fetchMock.lastOptions()
           expect(lastOptions.body.readable).toEqual(true)
-          expect(lastOptions.body._readableState).toBeDefined()
+          // expect(lastOptions.body._streams).toBeDefined()
         })
     })
   })
