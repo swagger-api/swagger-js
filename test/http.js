@@ -494,13 +494,13 @@ describe('http', () => {
     })
 
     test('should return true for browser Buffer type', () => {
-      expect(isFile(new Buffer([]))).toEqual(true)
+      expect(isFile(Buffer.from([]))).toEqual(true)
     })
     test('should return true for browser Buffer type and browser user agent', () => {
-      expect(isFile(new Buffer([]), mockBrowserNavigator)).toEqual(true)
+      expect(isFile(Buffer.from([]), mockBrowserNavigator)).toEqual(true)
     })
     test('should return false for browser Buffer type and React Native user agent', () => {
-      expect(isFile(new Buffer([]), mockReactNativeNavigator)).toEqual(false)
+      expect(isFile(Buffer.from([]), mockReactNativeNavigator)).toEqual(false)
     })
 
     test('should return false for React Native-like file object', () => {
