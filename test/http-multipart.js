@@ -321,7 +321,7 @@ describe('buildRequest - openapi 3.0', () => {
         },
       })
 
-      expect(Array.from(req.body.entries())).toEqual([['color[R]', '100'], ['color[G]', '200'], ['color[B]', '150']])
+      expect(Array.from(req.body.entries())).toEqual([{name: 'color[R]', value: '100'}, {name: 'color[G]', value: '200'}, {name: 'color[B]', value: '150'}])
     })
   })
 })
