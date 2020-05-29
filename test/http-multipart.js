@@ -260,7 +260,7 @@ describe('buildRequest - openapi 3.0', () => {
       const itemEntries = req.body.getAll('images[]')
       expect(itemEntries.length).toEqual(2)
       expect(itemEntries[0]).toEqual(file1)
-      expect(itemEntries[1].__content).toEqual(file2)
+      expect(itemEntries[1]).toEqual(file2)
     })
   })
 
