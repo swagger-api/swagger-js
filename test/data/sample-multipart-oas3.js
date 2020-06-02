@@ -88,7 +88,7 @@ export default {
                     description: 'The list of files',
                     type: 'array',
                     items: {
-                      type: 'file',
+                      type: 'string',
                       format: 'binary'
                     }
                   }
