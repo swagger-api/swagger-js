@@ -550,6 +550,42 @@ describe('constructor', () => {
         })
       })
     })
+
+    test('should add global request interceptor', async () => {
+      const spec = {
+        paths: {
+          '/pet': {
+            get: {
+              operationId: 'getPets',
+            }
+          }
+        }
+      }
+      const http = jest.fn()
+      const requestInterceptor = jest.fn(request => request)
+      const client = await Swagger({spec, requestInterceptor})
+      await client.execute({http, operationId: 'getPets'})
+
+      expect(http.mock.calls[0][0].requestInterceptor).toStrictEqual(requestInterceptor)
+    })
+
+    test('should add global response interceptor', async () => {
+      const spec = {
+        paths: {
+          '/pet': {
+            get: {
+              operationId: 'getPets',
+            }
+          }
+        }
+      }
+      const http = jest.fn()
+      const responseInterceptor = jest.fn(request => request)
+      const client = await Swagger({spec, responseInterceptor})
+      await client.execute({http, operationId: 'getPets'})
+
+      expect(http.mock.calls[0][0].responseInterceptor).toStrictEqual(responseInterceptor)
+    })
   })
 
   describe('interceptor', () => {
