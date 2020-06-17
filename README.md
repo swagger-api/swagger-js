@@ -32,6 +32,7 @@ We'll be consolidating that soon. Just giving you the heads up. You may see refe
 
 #### Development
 
+- [Contributing](https://github.com/swagger-api/.github/blob/master/CONTRIBUTING.md)
 - [Setting up](docs/development/setting-up.md)
 - [Scripts](docs/development/scripts.md)
 
