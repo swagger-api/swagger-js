@@ -293,7 +293,6 @@ describe('Authorization - OpenAPI Specification 3.0', () => {
             securitySchemes: {
               myBearerAuth: {
                 type: 'http',
-                in: 'header',
                 scheme: 'Bearer'
               }
             }
