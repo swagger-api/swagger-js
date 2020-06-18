@@ -103,7 +103,6 @@ describe('Authorization - OpenAPI Specification 3.0', () => {
             securitySchemes: {
               myBasicAuth: {
                 type: 'http',
-                in: 'header',
                 scheme: 'Basic'
               }
             }
