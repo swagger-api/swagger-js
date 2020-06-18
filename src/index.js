@@ -1,4 +1,3 @@
-import cloneDeep from 'lodash/cloneDeep'
 import assign from 'lodash/assign'
 import startsWith from 'lodash/startsWith'
 import Url from 'url'
@@ -54,7 +53,7 @@ Swagger.prototype = {
 
   http: Http,
 
-  execute(argHash) {
+  execute(options) {
     this.applyDefaults()
 
     return Swagger.execute({
@@ -64,18 +63,20 @@ Swagger.prototype = {
       contextUrl: typeof this.url === 'string' ? this.url : undefined,
       requestInterceptor: this.requestInterceptor || null,
       responseInterceptor: this.responseInterceptor || null,
-      ...argHash
+      ...options
     })
   },
 
-  resolve() {
+  resolve(options = {}) {
     return Swagger.resolve({
       spec: this.spec,
       url: this.url,
+      http: this.http,
       allowMetaPatches: this.allowMetaPatches,
       useCircularStructures: this.useCircularStructures,
       requestInterceptor: this.requestInterceptor || null,
-      responseInterceptor: this.responseInterceptor || null
+      responseInterceptor: this.responseInterceptor || null,
+      ...options,
     }).then((obj) => {
       this.originalSpec = this.spec
       this.spec = obj.spec

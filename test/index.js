@@ -588,6 +588,54 @@ describe('constructor', () => {
     })
   })
 
+  describe('#resolve', () => {
+    let originalResolveFn
+
+    beforeEach(() => {
+      originalResolveFn = Swagger.resolve
+      Swagger.resolve = jest.fn(async obj => obj)
+    })
+
+    afterEach(() => {
+      Swagger.resolve = originalResolveFn
+    })
+
+    test('should use global http option', async () => {
+      const spec = {
+        paths: {
+          '/pet': {
+            get: {
+              operationId: 'getPets',
+            }
+          }
+        }
+      }
+      const http = jest.fn()
+      const client = await Swagger({spec, http})
+      await client.resolve()
+
+      expect(Swagger.resolve.mock.calls[0][0].http).toStrictEqual(http)
+    })
+
+    test('should support passing additional options', async () => {
+      const spec = {
+        paths: {
+          '/pet': {
+            get: {
+              operationId: 'getPets',
+            }
+          }
+        }
+      }
+      const http = jest.fn()
+      const requestInterceptor = jest.fn()
+      const client = await Swagger({spec, http})
+      await client.resolve({requestInterceptor})
+
+      expect(Swagger.resolve.mock.calls[1][0].requestInterceptor).toStrictEqual(requestInterceptor)
+    })
+  })
+
   describe('interceptor', () => {
     beforeEach(() => {
       Swagger.clearCache()
