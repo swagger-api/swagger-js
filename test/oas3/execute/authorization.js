@@ -1,10 +1,6 @@
-import xmock from 'xmock'
-import path from 'path'
-import fs from 'fs'
 import btoa from 'btoa'
-import jsYaml from 'js-yaml'
 
-import {execute, buildRequest, baseUrl, applySecurities, self as stubs} from '../../../src/execute'
+import {buildRequest} from '../../../src/execute'
 
 
 // OAS 3.0 Authorization
@@ -55,7 +51,6 @@ describe('Authorization - OpenAPI Specification 3.0', () => {
             securitySchemes: {
               myBasicAuth: {
                 type: 'http',
-                in: 'header',
                 scheme: 'basic'
               }
             }
@@ -104,7 +99,6 @@ describe('Authorization - OpenAPI Specification 3.0', () => {
               securitySchemes: {
                 myBasicAuth: {
                   type: 'http',
-                  in: 'header',
                   scheme: 'basic'
                 }
               }
@@ -149,7 +143,6 @@ describe('Authorization - OpenAPI Specification 3.0', () => {
               securitySchemes: {
                 myBasicAuth: {
                   type: 'http',
-                  in: 'header',
                   scheme: 'basic'
                 }
               }
@@ -199,7 +192,6 @@ describe('Authorization - OpenAPI Specification 3.0', () => {
             securitySchemes: {
               myBearerAuth: {
                 type: 'http',
-                in: 'header',
                 scheme: 'bearer'
               }
             }
@@ -247,7 +239,6 @@ describe('Authorization - OpenAPI Specification 3.0', () => {
               securitySchemes: {
                 myBearerAuth: {
                   type: 'http',
-                  in: 'header',
                   scheme: 'bearer'
                 }
               }
