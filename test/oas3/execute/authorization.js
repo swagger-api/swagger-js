@@ -95,6 +95,54 @@ describe('Authorization - OpenAPI Specification 3.0', () => {
           },
         })
       })
+
+      test('should consider scheme to be case insensitive', () => {
+        const spec = {
+          openapi: '3.0.0',
+          components: {
+            securitySchemes: {
+              myBasicAuth: {
+                type: 'http',
+                in: 'header',
+                scheme: 'Basic'
+              }
+            }
+          },
+          paths: {
+            '/': {
+              get: {
+                operationId: 'myOperation',
+                security: [{
+                  myBasicAuth: []
+                }],
+              }
+            }
+          }
+        }
+
+        const req = buildRequest({
+          spec,
+          operationId: 'myOperation',
+          securities: {
+            authorized: {
+              myBasicAuth: {
+                username: 'somebody',
+                password: 'goodpass'
+              }
+            }
+          }
+        })
+
+        expect(req).toEqual({
+          method: 'GET',
+          url: '/',
+          credentials: 'same-origin',
+          headers: {
+            Authorization: `Basic ${btoa('somebody:goodpass')}`
+          },
+        })
+      })
+
       test(
         'should not add credentials to operations without the security requirement',
         () => {
@@ -238,6 +286,54 @@ describe('Authorization - OpenAPI Specification 3.0', () => {
           },
         })
       })
+
+      test('should consider scheme to be case insensitive', () => {
+        const spec = {
+          openapi: '3.0.0',
+          components: {
+            securitySchemes: {
+              myBearerAuth: {
+                type: 'http',
+                in: 'header',
+                scheme: 'Bearer'
+              }
+            }
+          },
+          paths: {
+            '/': {
+              get: {
+                operationId: 'myOperation',
+                security: [{
+                  myBearerAuth: []
+                }]
+              }
+            }
+          }
+        }
+
+        // when
+        const req = buildRequest({
+          spec,
+          operationId: 'myOperation',
+          securities: {
+            authorized: {
+              myBearerAuth: {
+                value: 'Asdf1234'
+              }
+            }
+          }
+        })
+
+        expect(req).toEqual({
+          method: 'GET',
+          url: '/',
+          credentials: 'same-origin',
+          headers: {
+            Authorization: 'Bearer Asdf1234'
+          },
+        })
+      })
+
       test(
         'should not add credentials to operations without the security requirement',
         () => {
