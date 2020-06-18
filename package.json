@@ -1,6 +1,6 @@
 {
   "name": "swagger-client",
-  "version": "3.10.7",
+  "version": "3.10.8",
   "description": "SwaggerJS - a collection of interfaces for OAI specs",
   "engines": {
     "node": ">=10.13.0",
