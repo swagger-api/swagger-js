@@ -1,7 +1,7 @@
 import * as jsonPatch from 'fast-json-patch'
 import regenerator from '@babel/runtime-corejs2/regenerator'
 import deepExtend from 'deep-extend'
-import deepAssign from '@kyleshockey/object-assign-deep'
+import cloneDeep from 'lodash/cloneDeep'
 
 export default {
   add,
@@ -67,7 +67,7 @@ function applyPatch(obj, patch, opts) {
             //
             // we also deeply assign here, since we aren't in control of
             // how deepExtend affects existing nested objects
-            currentObj = deepExtend(deepAssign({}, currentObj), propVal)
+            currentObj = deepExtend(cloneDeep(currentObj), propVal)
             break
           }
           else {

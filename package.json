@@ -104,7 +104,6 @@
   },
   "dependencies": {
     "@babel/runtime-corejs2": "^7.5.5",
-    "@kyleshockey/object-assign-deep": "^0.4.0",
     "btoa": "1.1.2",
     "buffer": "^5.1.0",
     "cookie": "^0.3.1",
