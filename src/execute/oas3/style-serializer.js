@@ -1,6 +1,4 @@
-import encodeToRFC3986 from 'encode-3986'
-import toUTF8Bytes from 'utf8-bytes'
-import {stringToCharArray} from 'utfstring'
+const {Buffer} = require('buffer')
 
 const isRfc3986Reserved = char => ':/?#[]@!$&\'()*+,;='.indexOf(char) > -1
 const isRrc3986Unreserved = (char) => {
@@ -23,7 +21,11 @@ export function encodeDisallowedCharacters(str, {escape} = {}, parse) {
     return JSON.parse(str)
   }
 
-  return stringToCharArray(str).map((char) => {
+  // In ES6 you can do this quite easily by using the new ... spread operator.
+  // This causes the string iterator (another new ES6 feature) to be used internally,
+  // and because that iterator is designed to deal with
+  // code points rather than UCS-2/UTF-16 code units.
+  return [...str].map((char) => {
     if (isRrc3986Unreserved(char)) {
       return char
     }
@@ -32,7 +34,7 @@ export function encodeDisallowedCharacters(str, {escape} = {}, parse) {
       return char
     }
 
-    const encoded = (toUTF8Bytes(char) || [])
+    const encoded = (Buffer.from(char).toJSON().data || [])
       .map(byte => `0${byte.toString(16).toUpperCase()}`.slice(-2))
       .map(encodedByte => `%${encodedByte}`)
       .join('')
