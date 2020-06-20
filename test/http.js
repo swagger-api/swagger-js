@@ -320,7 +320,7 @@ describe('http', () => {
       }
 
       return http('http://example.com', req).then((response) => {
-        expect(response.url).toEqual('http://example.com?anotherOne=one,two&evenMore=hi&bar=1%202%203')
+        expect(response.url).toEqual('http://example.com/?anotherOne=one,two&evenMore=hi&bar=1%202%203')
         expect(response.status).toEqual(200)
       }).then(fetchMock.restore)
     })
@@ -344,7 +344,7 @@ describe('http', () => {
       }
 
       return http('http://example.com', req).then((response) => {
-        expect(response.url).toEqual('http://example.com')
+        expect(response.url).toEqual('http://example.com/')
         expect(response.data.toString()).toEqual(
           'so much depends upon a red wheel barrow'
         )

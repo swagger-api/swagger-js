@@ -109,14 +109,14 @@ describe('buildRequest - openapi 2.0', () => {
       // Given
       fetchMock.post('http://localhost:3300/api/v1/formdata', {
         status: 200,
-        body: {
+        body: JSON.stringify({
           message: 'post received',
           data: {
             'hhlContent:sort': 'id',
             'hhlContent:order': 'desc',
             email: ['person1', 'person2']
           }
-        }
+        })
       },
         {
           sendAsJson: false
@@ -201,14 +201,14 @@ describe('buildRequest - openapi 3.0', () => {
       // Given
       fetchMock.post('http://localhost:3300/api/v1/formdata', {
         status: 200,
-        body: {
+        body: JSON.stringify({
           message: 'post received',
           data: {
             'hhlContent:sort': 'id',
             'hhlContent:order': 'desc',
             email: ['person1', 'person2']
           }
-        }
+        })
       },
         {
           sendAsJson: false

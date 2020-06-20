@@ -1,9 +1,7 @@
 import fetchMock from 'fetch-mock'
-import {Headers, Request, Response} from 'cross-fetch'
+import fetch, {Headers, Request, Response} from 'cross-fetch'
 
-fetchMock.setImplementations({
-  Promise,
-  Request,
-  Response,
-  Headers
-})
+fetchMock.config['fetch'] = fetch;
+fetchMock.config['Request'] = Request
+fetchMock.config['Response'] = Response
+fetchMock.config['Headers'] = Headers
