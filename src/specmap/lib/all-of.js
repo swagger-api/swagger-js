@@ -21,7 +21,6 @@ export default {
       return err
     }
 
-
     let alreadyAddError = false
 
     // Find the original definition from the `patch.value` object
@@ -31,7 +30,7 @@ export default {
       if (!originalDefinitionObj) return // bail out if we've lost sight of our target
       originalDefinitionObj = originalDefinitionObj[part]
     })
-    originalDefinitionObj = Object.assign({}, originalDefinitionObj)
+    originalDefinitionObj = {...originalDefinitionObj}
     delete originalDefinitionObj.allOf
 
     const patches = []

@@ -216,7 +216,6 @@ describe('(instance) #execute', () => {
     })
   })
 
-
   test('should replace any occurrence of `bearer` with `Bearer`', () => {
     const spec = {
       securityDefinitions: {

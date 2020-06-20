@@ -1,5 +1,5 @@
 import {
-  normalizeSwagger, getOperationRaw, idFromPathMethod, pathMethodFromId
+  normalizeSwagger, getOperationRaw, idFromPathMethod
 } from '../src/helpers'
 
 describe('helpers', () => {
@@ -157,31 +157,32 @@ describe('helpers', () => {
     )
   })
 
-
   describe('normalizeSwagger', () => {
     describe('operationId', () => {
       test(
         'should create unique operationIds when explicit operationIds are duplicates, and preserve originals',
         () => {
-          const input = {spec: {
-            paths: {
-              '/foo': {
-                get: {
-                  operationId: 'test'
-                }
-              },
-              '/bar': {
-                get: {
-                  operationId: 'test'
-                }
-              },
-              '/baz': {
-                get: {
-                  operationId: 'test'
+          const input = {
+            spec: {
+              paths: {
+                '/foo': {
+                  get: {
+                    operationId: 'test'
+                  }
+                },
+                '/bar': {
+                  get: {
+                    operationId: 'test'
+                  }
+                },
+                '/baz': {
+                  get: {
+                    operationId: 'test'
+                  }
                 }
               }
             }
-          }}
+          }
 
           const res = normalizeSwagger(input)
           const fooRes = res.spec.paths['/foo'].get
@@ -202,15 +203,17 @@ describe('helpers', () => {
         'should add the normalized operation id to the spec, if a non-normalized id exists',
         () => {
           // Given
-          const spec = {spec: {
-            paths: {
-              '/foo': {
-                get: {
-                  operationId: 'something with spaces'
-                }
-              },
+          const spec = {
+            spec: {
+              paths: {
+                '/foo': {
+                  get: {
+                    operationId: 'something with spaces'
+                  }
+                },
+              }
             }
-          }}
+          }
 
           // When
           const normalizedSpec = normalizeSwagger(spec)
@@ -225,25 +228,27 @@ describe('helpers', () => {
         'should add __originalOperationId for non-duplicate, normal operationIds',
         () => {
           // Given
-          const input = {spec: {
-            paths: {
-              '/foo': {
-                get: {
-                  operationId: 'fooOperation'
-                }
-              },
-              '/bar': {
-                get: {
-                  operationId: 'barOperation'
-                }
-              },
-              '/baz': {
-                get: {
-                  operationId: 'bazOperation'
-                }
-              },
+          const input = {
+            spec: {
+              paths: {
+                '/foo': {
+                  get: {
+                    operationId: 'fooOperation'
+                  }
+                },
+                '/bar': {
+                  get: {
+                    operationId: 'barOperation'
+                  }
+                },
+                '/baz': {
+                  get: {
+                    operationId: 'bazOperation'
+                  }
+                },
+              }
             }
-          }}
+          }
 
           // When
           const result = normalizeSwagger(input)
@@ -267,25 +272,27 @@ describe('helpers', () => {
         'should add __originalOperationId for non-duplicate, abnormal operationIds',
         () => {
           // Given
-          const input = {spec: {
-            paths: {
-              '/foo': {
-                get: {
-                  operationId: 'foo!Operation'
-                }
-              },
-              '/bar': {
-                get: {
-                  operationId: 'bar!Operation'
-                }
-              },
-              '/baz': {
-                get: {
-                  operationId: 'baz!Operation'
-                }
-              },
+          const input = {
+            spec: {
+              paths: {
+                '/foo': {
+                  get: {
+                    operationId: 'foo!Operation'
+                  }
+                },
+                '/bar': {
+                  get: {
+                    operationId: 'bar!Operation'
+                  }
+                },
+                '/baz': {
+                  get: {
+                    operationId: 'baz!Operation'
+                  }
+                },
+              }
             }
-          }}
+          }
 
           // When
           const result = normalizeSwagger(input)
@@ -309,15 +316,17 @@ describe('helpers', () => {
         'should add the original operation id to the spec, if a non-normalized id exists',
         () => {
           // Given
-          const spec = {spec: {
-            paths: {
-              '/foo': {
-                get: {
-                  operationId: 'something with spaces'
-                }
-              },
+          const spec = {
+            spec: {
+              paths: {
+                '/foo': {
+                  get: {
+                    operationId: 'something with spaces'
+                  }
+                },
+              }
             }
-          }}
+          }
 
           // When
           const normalizedSpec = normalizeSwagger(spec)
@@ -332,17 +341,19 @@ describe('helpers', () => {
         'should not set __originalOperationId when operationId is not defined',
         () => {
           // Given
-          const spec = {spec: {
-            paths: {
-              '/foo': {
-                get: {
+          const spec = {
+            spec: {
+              paths: {
+                '/foo': {
+                  get: {
+                  },
+                  post: {
+                    operationId: 'myId2'
+                  }
                 },
-                post: {
-                  operationId: 'myId2'
-                }
-              },
+              }
             }
-          }}
+          }
 
           // When
           const normalizedSpec = normalizeSwagger(spec)
@@ -358,25 +369,27 @@ describe('helpers', () => {
       test(
         'should create unique operationIds when explicit operationIds are effectively the same due to whitespace',
         () => {
-          const spec = {spec: {
-            paths: {
-              '/foo': {
-                get: {
-                  operationId: 'test'
-                }
-              },
-              '/bar': {
-                get: {
-                  operationId: 'te st'
-                }
-              },
-              '/bat': {
-                get: {
-                  operationId: 'te/st'
+          const spec = {
+            spec: {
+              paths: {
+                '/foo': {
+                  get: {
+                    operationId: 'test'
+                  }
+                },
+                '/bar': {
+                  get: {
+                    operationId: 'te st'
+                  }
+                },
+                '/bat': {
+                  get: {
+                    operationId: 'te/st'
+                  }
                 }
               }
             }
-          }}
+          }
 
           const id = normalizeSwagger(spec)
           const id1 = id.spec.paths['/foo'].get.operationId
@@ -394,59 +407,67 @@ describe('helpers', () => {
       test(
         'should not overwrite consumes values from the global-level when exists in operation',
         () => {
-          const spec = {spec: {
-            consumes: ['application/json'],
-            paths: {
-              '/two': {
-                get: {
-                  consumes: ['application/moar-test']
+          const spec = {
+            spec: {
+              consumes: ['application/json'],
+              paths: {
+                '/two': {
+                  get: {
+                    consumes: ['application/moar-test']
+                  }
                 }
               }
             }
-          }}
+          }
 
           const resultSpec = normalizeSwagger(spec)
 
-          expect(resultSpec).toEqual({spec: {
-            $$normalized: true,
-            consumes: ['application/json'],
-            paths: {
-              '/two': {
-                get: {
-                  consumes: ['application/moar-test']
+          expect(resultSpec).toEqual({
+            spec: {
+              $$normalized: true,
+              consumes: ['application/json'],
+              paths: {
+                '/two': {
+                  get: {
+                    consumes: ['application/moar-test']
+                  }
                 }
               }
             }
-          }})
+          })
         }
       )
 
       test(
         'should add consumes values from the global-level when no consumes in operation',
         () => {
-          const spec = {spec: {
-            consumes: ['application/json'],
-            paths: {
-              '/two': {
-                get: {
+          const spec = {
+            spec: {
+              consumes: ['application/json'],
+              paths: {
+                '/two': {
+                  get: {
+                  }
                 }
               }
             }
-          }}
+          }
 
           const resultSpec = normalizeSwagger(spec)
 
-          expect(resultSpec).toEqual({spec: {
-            $$normalized: true,
-            consumes: ['application/json'],
-            paths: {
-              '/two': {
-                get: {
-                  consumes: ['application/json']
+          expect(resultSpec).toEqual({
+            spec: {
+              $$normalized: true,
+              consumes: ['application/json'],
+              paths: {
+                '/two': {
+                  get: {
+                    consumes: ['application/json']
+                  }
                 }
               }
             }
-          }})
+          })
         }
       )
     })
@@ -455,59 +476,67 @@ describe('helpers', () => {
       test(
         'should not overwrite produces values from the global-level when exists in operation',
         () => {
-          const spec = {spec: {
-            produces: ['application/json'],
-            paths: {
-              '/two': {
-                get: {
-                  produces: ['application/moar-test']
+          const spec = {
+            spec: {
+              produces: ['application/json'],
+              paths: {
+                '/two': {
+                  get: {
+                    produces: ['application/moar-test']
+                  }
                 }
               }
             }
-          }}
+          }
 
           const resultSpec = normalizeSwagger(spec)
 
-          expect(resultSpec).toEqual({spec: {
-            $$normalized: true,
-            produces: ['application/json'],
-            paths: {
-              '/two': {
-                get: {
-                  produces: ['application/moar-test']
+          expect(resultSpec).toEqual({
+            spec: {
+              $$normalized: true,
+              produces: ['application/json'],
+              paths: {
+                '/two': {
+                  get: {
+                    produces: ['application/moar-test']
+                  }
                 }
               }
             }
-          }})
+          })
         }
       )
 
       test(
         'should add produces values from the global-level when no produces in operation',
         () => {
-          const spec = {spec: {
-            produces: ['application/json'],
-            paths: {
-              '/two': {
-                get: {
+          const spec = {
+            spec: {
+              produces: ['application/json'],
+              paths: {
+                '/two': {
+                  get: {
+                  }
                 }
               }
             }
-          }}
+          }
 
           const resultSpec = normalizeSwagger(spec)
 
-          expect(resultSpec).toEqual({spec: {
-            $$normalized: true,
-            produces: ['application/json'],
-            paths: {
-              '/two': {
-                get: {
-                  produces: ['application/json']
+          expect(resultSpec).toEqual({
+            spec: {
+              $$normalized: true,
+              produces: ['application/json'],
+              paths: {
+                '/two': {
+                  get: {
+                    produces: ['application/json']
+                  }
                 }
               }
             }
-          }})
+          })
         }
       )
     })
@@ -516,59 +545,67 @@ describe('helpers', () => {
       test(
         'should not overwrite security values from the global-level when exists in operation',
         () => {
-          const spec = {spec: {
-            security: ['test'],
-            paths: {
-              '/two': {
-                get: {
-                  security: ['test1']
+          const spec = {
+            spec: {
+              security: ['test'],
+              paths: {
+                '/two': {
+                  get: {
+                    security: ['test1']
+                  }
                 }
               }
             }
-          }}
+          }
 
           const resultSpec = normalizeSwagger(spec)
 
-          expect(resultSpec).toEqual({spec: {
-            $$normalized: true,
-            security: ['test'],
-            paths: {
-              '/two': {
-                get: {
-                  security: ['test1']
+          expect(resultSpec).toEqual({
+            spec: {
+              $$normalized: true,
+              security: ['test'],
+              paths: {
+                '/two': {
+                  get: {
+                    security: ['test1']
+                  }
                 }
               }
             }
-          }})
+          })
         }
       )
 
       test(
         'should add security values from the global-level when no security in operation',
         () => {
-          const spec = {spec: {
-            security: ['test1'],
-            paths: {
-              '/two': {
-                get: {
+          const spec = {
+            spec: {
+              security: ['test1'],
+              paths: {
+                '/two': {
+                  get: {
+                  }
                 }
               }
             }
-          }}
+          }
 
           const resultSpec = normalizeSwagger(spec)
 
-          expect(resultSpec).toEqual({spec: {
-            $$normalized: true,
-            security: ['test1'],
-            paths: {
-              '/two': {
-                get: {
-                  security: ['test1']
+          expect(resultSpec).toEqual({
+            spec: {
+              $$normalized: true,
+              security: ['test1'],
+              paths: {
+                '/two': {
+                  get: {
+                    security: ['test1']
+                  }
                 }
               }
             }
-          }})
+          })
         }
       )
     })
@@ -577,71 +614,79 @@ describe('helpers', () => {
       test(
         'should add parameters from path when no parameters in operation',
         () => {
-          const spec = {spec: {
-            paths: {
-              '/two': {
-                parameters: [{name: 'a', in: 'path'}],
-                get: {}
-              }
-            }
-          }}
-
-          const resultSpec = normalizeSwagger(spec)
-
-          expect(resultSpec).toEqual({spec: {
-            $$normalized: true,
-            paths: {
-              '/two': {
-                parameters: [{name: 'a', in: 'path'}],
-                get: {
-                  parameters: [{name: 'a', in: 'path'}]
+          const spec = {
+            spec: {
+              paths: {
+                '/two': {
+                  parameters: [{name: 'a', in: 'path'}],
+                  get: {}
                 }
               }
             }
-          }})
+          }
+
+          const resultSpec = normalizeSwagger(spec)
+
+          expect(resultSpec).toEqual({
+            spec: {
+              $$normalized: true,
+              paths: {
+                '/two': {
+                  parameters: [{name: 'a', in: 'path'}],
+                  get: {
+                    parameters: [{name: 'a', in: 'path'}]
+                  }
+                }
+              }
+            }
+          })
         }
       )
 
       test(
         'should add parameters from path but not override parameters in operation',
         () => {
-          const spec = {spec: {
-            paths: {
-              '/two': {
-                parameters: [
-                  {name: 'a', in: 'path'},
-                  {name: 'b', in: 'path'}
-                ],
-                get: {
+          const spec = {
+            spec: {
+              paths: {
+                '/two': {
                   parameters: [
-                    {name: 'a', in: 'query'},
-                    {name: 'c', in: 'query'}
-                  ]
+                    {name: 'a', in: 'path'},
+                    {name: 'b', in: 'path'}
+                  ],
+                  get: {
+                    parameters: [
+                      {name: 'a', in: 'query'},
+                      {name: 'c', in: 'query'}
+                    ]
+                  }
                 }
               }
             }
-          }}
+          }
 
           const resultSpec = normalizeSwagger(spec)
 
-          expect(resultSpec).toEqual({spec: {
-            $$normalized: true,
-            paths: {
-              '/two': {
-                parameters: [
-                  {name: 'a', in: 'path'},
-                  {name: 'b', in: 'path'}
-                ],
-                get: {
+          expect(resultSpec).toEqual({
+            spec: {
+              $$normalized: true,
+              paths: {
+                '/two': {
                   parameters: [
-                    {name: 'a', in: 'query'},
-                    {name: 'c', in: 'query'},
+                    {name: 'a', in: 'path'},
                     {name: 'b', in: 'path'}
-                  ]
+                  ],
+                  get: {
+                    parameters: [
+                      {name: 'a', in: 'query'},
+                      {name: 'c', in: 'query'},
+                      {name: 'b', in: 'path'}
+                    ]
+                  }
                 }
               }
             }
-          }})
+          })
         }
       )
     })

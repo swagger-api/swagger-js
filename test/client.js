@@ -9,7 +9,7 @@ describe('http', () => {
   let server
   beforeAll(function () {
     server = http.createServer(function (req, res) {
-      const accept = req.headers.accept
+      const {accept} = req.headers
       let contentType
       const uri = url.parse(req.url).pathname
       const filename = path.join('test', 'data', uri)
@@ -129,7 +129,7 @@ describe('http', () => {
 
           done()
         })
-        .catch(err => done(err))
+        .catch((err) => done(err))
     }
   )
 
@@ -156,7 +156,7 @@ describe('http', () => {
 
           done()
         })
-        .catch(err => done(err))
+        .catch((err) => done(err))
     }
   )
 

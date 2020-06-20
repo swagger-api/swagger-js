@@ -5,8 +5,8 @@ import glob from 'glob'
 import xmock from 'xmock'
 import mapSpec, {plugins} from '../../src/specmap'
 
-const refs = plugins.refs
-const allOf = plugins.allOf
+const {refs} = plugins
+const {allOf} = plugins
 
 describe('complex', () => {
   let xapp

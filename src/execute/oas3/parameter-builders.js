@@ -3,7 +3,9 @@ import stylize, {encodeDisallowedCharacters} from './style-serializer'
 import serialize from './content-serializer'
 
 export function path({req, value, parameter}) {
-  const {name, style, explode, content} = parameter
+  const {
+    name, style, explode, content
+  } = parameter
 
   if (content) {
     const effectiveMediaType = Object.keys(content)[0]
@@ -103,9 +105,9 @@ export function cookie({req, parameter, value}) {
 
   if (type !== 'undefined') {
     const prefix = (
-      type === 'object' &&
-      !Array.isArray(value) &&
-      parameter.explode
+      type === 'object'
+      && !Array.isArray(value)
+      && parameter.explode
     ) ? '' : `${parameter.name}=`
 
     req.headers.Cookie = prefix + stylize({

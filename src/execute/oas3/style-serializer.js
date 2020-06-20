@@ -1,6 +1,6 @@
 const {Buffer} = require('buffer')
 
-const isRfc3986Reserved = char => ':/?#[]@!$&\'()*+,;='.indexOf(char) > -1
+const isRfc3986Reserved = (char) => ':/?#[]@!$&\'()*+,;='.indexOf(char) > -1
 const isRrc3986Unreserved = (char) => {
   return (/^[a-z0-9\-._~]+$/i).test(char)
 }
@@ -35,8 +35,8 @@ export function encodeDisallowedCharacters(str, {escape} = {}, parse) {
     }
 
     const encoded = (Buffer.from(char).toJSON().data || [])
-      .map(byte => `0${byte.toString(16).toUpperCase()}`.slice(-2))
-      .map(encodedByte => `%${encodedByte}`)
+      .map((byte) => `0${byte.toString(16).toUpperCase()}`.slice(-2))
+      .map((encodedByte) => `%${encodedByte}`)
       .join('')
 
     return encoded
@@ -49,27 +49,29 @@ export default function stylize(config) {
   if (Array.isArray(value)) {
     return encodeArray(config)
   }
-  else if (typeof value === 'object') {
+  if (typeof value === 'object') {
     return encodeObject(config)
   }
   return encodePrimitive(config)
 }
 
-function encodeArray({key, value, style, explode, escape}) {
-  const valueEncoder = str => encodeDisallowedCharacters(str, {
+function encodeArray({
+  key, value, style, explode, escape
+}) {
+  const valueEncoder = (str) => encodeDisallowedCharacters(str, {
     escape
   })
 
   if (style === 'simple') {
-    return value.map(val => valueEncoder(val)).join(',')
+    return value.map((val) => valueEncoder(val)).join(',')
   }
 
   if (style === 'label') {
-    return `.${value.map(val => valueEncoder(val)).join('.')}`
+    return `.${value.map((val) => valueEncoder(val)).join('.')}`
   }
 
   if (style === 'matrix') {
-    return value.map(val => valueEncoder(val)).reduce((prev, curr) => {
+    return value.map((val) => valueEncoder(val)).reduce((prev, curr) => {
       if (!prev || explode) {
         return `${(prev || '')};${key}=${curr}`
       }
@@ -79,22 +81,24 @@ function encodeArray({key, value, style, explode, escape}) {
 
   if (style === 'form') {
     const after = explode ? `&${key}=` : ','
-    return value.map(val => valueEncoder(val)).join(after)
+    return value.map((val) => valueEncoder(val)).join(after)
   }
 
   if (style === 'spaceDelimited') {
     const after = explode ? `${key}=` : ''
-    return value.map(val => valueEncoder(val)).join(` ${after}`)
+    return value.map((val) => valueEncoder(val)).join(` ${after}`)
   }
 
   if (style === 'pipeDelimited') {
     const after = explode ? `${key}=` : ''
-    return value.map(val => valueEncoder(val)).join(`|${after}`)
+    return value.map((val) => valueEncoder(val)).join(`|${after}`)
   }
 }
 
-function encodeObject({key, value, style, explode, escape}) {
-  const valueEncoder = str => encodeDisallowedCharacters(str, {
+function encodeObject({
+  key, value, style, explode, escape
+}) {
+  const valueEncoder = (str) => encodeDisallowedCharacters(str, {
     escape
   })
 
@@ -150,8 +154,10 @@ function encodeObject({key, value, style, explode, escape}) {
   }
 }
 
-function encodePrimitive({key, value, style, escape}) {
-  const valueEncoder = str => encodeDisallowedCharacters(str, {
+function encodePrimitive({
+  key, value, style, escape
+}) {
+  const valueEncoder = (str) => encodeDisallowedCharacters(str, {
     escape
   })
 

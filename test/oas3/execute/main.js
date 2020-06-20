@@ -1,10 +1,9 @@
-import xmock from 'xmock'
 import path from 'path'
 import fs from 'fs'
 import jsYaml from 'js-yaml'
 import {escape} from 'querystring'
 
-import {execute, buildRequest, baseUrl, applySecurities, self as stubs} from '../../../src/execute'
+import {buildRequest, baseUrl} from '../../../src/execute'
 
 const petstoreSpec = jsYaml.safeLoad(fs.readFileSync(path.join('test', 'oas3', 'data', 'petstore-oas3.yaml'), 'utf8'))
 
@@ -501,17 +500,17 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
     })
 
     it('should not add a Content-Type when the operation has no OAS3 request body definition', function () {
-          // Given
+      // Given
       const spec = {
         openapi: '3.0.0',
         servers: [{url: 'http://swagger.io/'}],
         paths: {'/one': {get: {operationId: 'getMe'}}}
       }
 
-          // When
+      // When
       const req = buildRequest({spec, operationId: 'getMe', requestContentType: 'application/josh'})
 
-          // Then
+      // Then
       expect(req).toEqual({
         url: 'http://swagger.io/one',
         headers: {},

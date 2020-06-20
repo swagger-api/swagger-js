@@ -7,7 +7,6 @@ import {Buffer} from 'buffer'
 import FormData from './internal/form-data-monkey-patch'
 import {encodeDisallowedCharacters} from './execute/oas3/style-serializer'
 
-
 // For testing
 export const self = {
   serializeRes,
@@ -173,7 +172,7 @@ export function isFile(obj, navigatorObj) {
 }
 
 function isArrayOfFile(obj, navigatorObj) {
-  return (Array.isArray(obj) && obj.some(v => isFile(v, navigatorObj)))
+  return (Array.isArray(obj) && obj.some((v) => isFile(v, navigatorObj)))
 }
 
 const STYLE_SEPARATORS = {
@@ -198,10 +197,12 @@ const SEPARATORS = {
 // Return value example 5: [['R', '100'], ['G', '200'], ['B', '150']]
 // Return value example 6: [['color[R]', '100'], ['color[G]', '200'], ['color[B]', '150']]
 function formatKeyValue(key, input, skipEncoding = false) {
-  const {collectionFormat, allowEmptyValue, serializationOption, encoding} = input
+  const {
+    collectionFormat, allowEmptyValue, serializationOption, encoding
+  } = input
   // `input` can be string
   const value = (typeof input === 'object' && !Array.isArray(input)) ? input.value : input
-  const encodeFn = skipEncoding ? (k => k.toString()) : (k => encodeURIComponent(k))
+  const encodeFn = skipEncoding ? ((k) => k.toString()) : ((k) => encodeURIComponent(k))
   const encodedKey = encodeFn(key)
 
   if (typeof value === 'undefined' && allowEmptyValue) {
@@ -220,7 +221,7 @@ function formatKeyValue(key, input, skipEncoding = false) {
 
   // for OAS 3 Encoding Object
   if (encoding) {
-    if ([typeof encoding.style, typeof encoding.explode, typeof encoding.allowReserved].some(type => type !== 'undefined')) {
+    if ([typeof encoding.style, typeof encoding.explode, typeof encoding.allowReserved].some((type) => type !== 'undefined')) {
       return formatKeyValueBySerializationOption(key, value, skipEncoding, pick(encoding, ['style', 'explode', 'allowReserved']))
     }
 
@@ -239,7 +240,7 @@ function formatKeyValue(key, input, skipEncoding = false) {
     }
 
     // Array of primitives
-    if (Array.isArray(value) && value.every(v => typeof v !== 'object')) {
+    if (Array.isArray(value) && value.every((v) => typeof v !== 'object')) {
       return [[encodedKey, value.map(encodeFn).join(',')]]
     }
 
@@ -273,8 +274,8 @@ function formatKeyValueBySerializationOption(key, value, skipEncoding, serializa
   const explode = typeof serializationOption.explode === 'undefined' ? style === 'form' : serializationOption.explode
   // eslint-disable-next-line no-nested-ternary
   const escape = skipEncoding ? false : (serializationOption && serializationOption.allowReserved ? 'unsafe' : 'reserved')
-  const encodeFn = v => encodeDisallowedCharacters(v, {escape})
-  const encodeKeyFn = skipEncoding ? (k => k) : (k => encodeDisallowedCharacters(k, {escape}))
+  const encodeFn = (v) => encodeDisallowedCharacters(v, {escape})
+  const encodeKeyFn = skipEncoding ? ((k) => k) : ((k) => encodeDisallowedCharacters(k, {escape}))
 
   // Primitive
   if (typeof value !== 'object') {
@@ -293,14 +294,14 @@ function formatKeyValueBySerializationOption(key, value, skipEncoding, serializa
 
   // Object
   if (style === 'deepObject') {
-    return Object.keys(value).map(valueKey => [encodeKeyFn(`${key}[${valueKey}]`), encodeFn(value[valueKey])])
+    return Object.keys(value).map((valueKey) => [encodeKeyFn(`${key}[${valueKey}]`), encodeFn(value[valueKey])])
   }
 
   if (explode) {
-    return Object.keys(value).map(valueKey => [encodeKeyFn(valueKey), encodeFn(value[valueKey])])
+    return Object.keys(value).map((valueKey) => [encodeKeyFn(valueKey), encodeFn(value[valueKey])])
   }
 
-  return [[encodeKeyFn(key), Object.keys(value).map(valueKey => [`${encodeKeyFn(valueKey)},${encodeFn(value[valueKey])}`]).join(',')]]
+  return [[encodeKeyFn(key), Object.keys(value).map((valueKey) => [`${encodeKeyFn(valueKey)},${encodeFn(value[valueKey])}`]).join(',')]]
 }
 
 function buildFormData(reqForm) {
@@ -348,13 +349,13 @@ export function encodeFormOrQuery(data) {
 export function mergeInQueryOrForm(req = {}) {
   const {url = '', query, form} = req
   const joinSearch = (...strs) => {
-    const search = strs.filter(a => a).join('&') // Only truthy value
+    const search = strs.filter((a) => a).join('&') // Only truthy value
     return search ? `?${search}` : '' // Only add '?' if there is a str
   }
 
   if (form) {
     const hasFile = Object.keys(form).some((key) => {
-      const value = form[key].value
+      const {value} = form[key]
       return isFile(value) || isArrayOfFile(value)
     })
 
@@ -377,7 +378,7 @@ export function mergeInQueryOrForm(req = {}) {
     if (oriSearch) {
       const oriQuery = qs.parse(oriSearch)
       const keysToRemove = Object.keys(query)
-      keysToRemove.forEach(key => delete oriQuery[key])
+      keysToRemove.forEach((key) => delete oriQuery[key])
       newStr = qs.stringify(oriQuery, {encode: true})
     }
 
@@ -390,8 +391,8 @@ export function mergeInQueryOrForm(req = {}) {
 
 // Wrap a http function ( there are otherways to do this, consider this deprecated )
 export function makeHttp(httpFn, preFetch, postFetch) {
-  postFetch = postFetch || (a => a)
-  preFetch = preFetch || (a => a)
+  postFetch = postFetch || ((a) => a)
+  preFetch = preFetch || ((a) => a)
   return (req) => {
     if (typeof req === 'string') {
       req = {url: req}

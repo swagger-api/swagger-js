@@ -30,7 +30,9 @@ describe('swagger2 - execute - applySecurities', () => {
         method: 'GET'
       }
 
-      const applySecurity = applySecurities({request, securities, operation: spec.paths['/one'].get, spec})
+      const applySecurity = applySecurities({
+        request, securities, operation: spec.paths['/one'].get, spec
+      })
 
       expect(applySecurity).toEqual({
         url: 'http://swagger.io/v1/one',
@@ -74,7 +76,9 @@ describe('swagger2 - execute - applySecurities', () => {
         }
       }
 
-      const applySecurity = applySecurities({request, securities, operation: spec.paths['/one'].get, spec})
+      const applySecurity = applySecurities({
+        request, securities, operation: spec.paths['/one'].get, spec
+      })
 
       expect(applySecurity.headers).toEqual({
         authorization: 'Basic Zm9vOmJhcg=='
@@ -116,7 +120,9 @@ describe('swagger2 - execute - applySecurities', () => {
       }
     }
 
-    const applySecurity = applySecurities({request, securities, operation: spec.paths['/one'].get, spec})
+    const applySecurity = applySecurities({
+      request, securities, operation: spec.paths['/one'].get, spec
+    })
 
     expect(applySecurity.headers).toEqual({
       authorization: 'Basic Zm9vOmJhcg=='
@@ -157,7 +163,9 @@ describe('swagger2 - execute - applySecurities', () => {
       }
     }
 
-    const applySecurity = applySecurities({request, securities, operation: spec.paths['/one'].get, spec})
+    const applySecurity = applySecurities({
+      request, securities, operation: spec.paths['/one'].get, spec
+    })
 
     expect(applySecurity.headers).toEqual({
       authorization: 'Basic Zm9vOg=='
@@ -204,7 +212,9 @@ describe('swagger2 - execute - applySecurities', () => {
       }
     }
 
-    const applySecurity = applySecurities({request, securities, operation: spec.paths['/one'].get, spec})
+    const applySecurity = applySecurities({
+      request, securities, operation: spec.paths['/one'].get, spec
+    })
 
     expect(applySecurity.headers).toEqual({
       authorization: 'Basic Zm9vOmJhcg==',

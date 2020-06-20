@@ -1,4 +1,4 @@
-import lib from '../lib'
+import lib from '.'
 
 export default {
   key: 'parameters',
@@ -6,7 +6,7 @@ export default {
     if (Array.isArray(parameters) && parameters.length) {
       const val = Object.assign([], parameters)
       const opPath = fullPath.slice(0, -1)
-      const op = Object.assign({}, lib.getIn(specmap.spec, opPath))
+      const op = {...lib.getIn(specmap.spec, opPath)}
 
       parameters.forEach((param, i) => {
         try {

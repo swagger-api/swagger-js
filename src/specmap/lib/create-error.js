@@ -6,7 +6,7 @@ export default function createErrorType(name, init) {
     else {
       Error.captureStackTrace(this, this.constructor)
     }
-    this.message = args[0]
+    [this.message] = args
     init && init.apply(this, args)
   }
 

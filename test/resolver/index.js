@@ -10,16 +10,15 @@ import Swagger from '../../src/index'
 
 const testDocuments = fs
   .readdirSync(Path.join(__dirname))
-  .filter(path => path.endsWith('yaml'))
-  .map(path => ({
+  .filter((path) => path.endsWith('yaml'))
+  .map((path) => ({
     path: `${path}`,
     contentString: fs.readFileSync(`${__dirname}/${path}`, 'utf8'),
   }))
-  .map(doc => ({
+  .map((doc) => ({
     path: doc.path,
     content: YAML.safeLoad(doc.contentString)
   }))
-
 
 testDocuments.forEach((doc) => {
   const {path, content} = doc

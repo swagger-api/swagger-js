@@ -51,8 +51,8 @@ describe('parameters', () => {
           test: {
             test: 'pet',
             parameters: [
-                {one: 1},
-                {two: 2}
+              {one: 1},
+              {two: 2}
             ]
           }
         },
@@ -91,8 +91,8 @@ describe('parameters', () => {
       return mapSpec({
         spec: {
           parameters: [
-              {test: 1},
-              {test: 2}
+            {test: 1},
+            {test: 2}
           ]
         },
         plugins: [plugins.parameters],

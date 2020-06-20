@@ -22,7 +22,7 @@ describe('buildRequest - swagger 2.0', () => {
           }
         }
 
-    // when
+        // when
         const req = buildRequest({
           spec,
           operationId: 'getMe',
@@ -161,7 +161,7 @@ describe('buildRequest - swagger 2.0', () => {
           }
         }
 
-    // when
+        // when
         const req = buildRequest({
           spec,
           operationId: 'getMe',

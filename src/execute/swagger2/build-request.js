@@ -5,7 +5,6 @@ import btoa from 'btoa'
 import assign from 'lodash/assign'
 import http from '../../http'
 
-
 export default function (options, req) {
   const {
     spec,
@@ -15,7 +14,9 @@ export default function (options, req) {
     attachContentTypeForEmptyPayload
   } = options
   // Add securities, which are applicable
-  req = applySecurities({request: req, securities, operation, spec})
+  req = applySecurities({
+    request: req, securities, operation, spec
+  })
 
   if (req.body || req.form || attachContentTypeForEmptyPayload) {
     // all following conditionals are Swagger2 only
@@ -23,21 +24,21 @@ export default function (options, req) {
       req.headers['Content-Type'] = requestContentType
     }
     else if (Array.isArray(operation.consumes)) {
-      req.headers['Content-Type'] = operation.consumes[0]
+      [req.headers['Content-Type']] = operation.consumes
     }
     else if (Array.isArray(spec.consumes)) {
-      req.headers['Content-Type'] = spec.consumes[0]
+      [req.headers['Content-Type']] = spec.consumes
     }
-    else if (operation.parameters && operation.parameters.filter(p => p.type === 'file').length) {
+    else if (operation.parameters && operation.parameters.filter((p) => p.type === 'file').length) {
       req.headers['Content-Type'] = 'multipart/form-data'
     }
-    else if (operation.parameters && operation.parameters.filter(p => p.in === 'formData').length) {
+    else if (operation.parameters && operation.parameters.filter((p) => p.in === 'formData').length) {
       req.headers['Content-Type'] = 'application/x-www-form-urlencoded'
     }
   }
   else if (requestContentType) {
-    const isBodyParamPresent = operation.parameters && operation.parameters.filter(p => p.in === 'body').length > 0
-    const isFormDataParamPresent = operation.parameters && operation.parameters.filter(p => p.in === 'formData').length > 0
+    const isBodyParamPresent = operation.parameters && operation.parameters.filter((p) => p.in === 'body').length > 0
+    const isFormDataParamPresent = operation.parameters && operation.parameters.filter((p) => p.in === 'formData').length > 0
     if (isBodyParamPresent || isFormDataParamPresent) {
       req.headers['Content-Type'] = requestContentType
     }
@@ -47,7 +48,9 @@ export default function (options, req) {
 }
 
 // Add security values, to operations - that declare their need on them
-export function applySecurities({request, securities = {}, operation = {}, spec}) {
+export function applySecurities({
+  request, securities = {}, operation = {}, spec
+}) {
   const result = assign({}, request)
   const {authorized = {}, specSecurity = []} = securities
   const security = operation.security || specSecurity
@@ -57,8 +60,8 @@ export function applySecurities({request, securities = {}, operation = {}, spec}
   result.headers = result.headers || {}
   result.query = result.query || {}
 
-  if (!Object.keys(securities).length || !isAuthorized || !security ||
-      (Array.isArray(operation.security) && !operation.security.length)) {
+  if (!Object.keys(securities).length || !isAuthorized || !security
+      || (Array.isArray(operation.security) && !operation.security.length)) {
     return request
   }
 
@@ -69,7 +72,7 @@ export function applySecurities({request, securities = {}, operation = {}, spec}
         continue
       }
 
-      const token = auth.token
+      const {token} = auth
       const value = auth.value || auth
       const schema = securityDef[key]
       const {type} = schema

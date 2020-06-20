@@ -2,7 +2,6 @@ import btoa from 'btoa'
 
 import {buildRequest} from '../../../src/execute'
 
-
 // OAS 3.0 Authorization
 
 describe('Authorization - OpenAPI Specification 3.0', () => {

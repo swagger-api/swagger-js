@@ -1,5 +1,7 @@
 import FormData from '../../src/internal/form-data-monkey-patch'
-import {execute, buildRequest, baseUrl, self as stubs} from '../../src/execute'
+import {
+  execute, buildRequest, baseUrl, self as stubs
+} from '../../src/execute'
 import {normalizeSwagger} from '../../src/helpers'
 
 // Supported shape...  { spec, operationId, parameters, securities, fetch }
@@ -675,7 +677,8 @@ describe('execute', () => {
         const req = buildRequest({
           spec,
           operationId: 'postMe',
-          parameters: {foo: 'test'}})
+          parameters: {foo: 'test'}
+        })
 
         // Then
         expect(req.headers).toEqual({
@@ -710,7 +713,8 @@ describe('execute', () => {
         const req = buildRequest({
           spec,
           operationId: 'postMe',
-          parameters: {file: 'test'}})
+          parameters: {file: 'test'}
+        })
 
         // Then
         expect(req).toEqual({
@@ -746,7 +750,8 @@ describe('execute', () => {
         const req = buildRequest({
           spec,
           operationId: 'postMe',
-          parameters: {file: 'test'}})
+          parameters: {file: 'test'}
+        })
 
         // Then
         expect(req).toEqual({
@@ -783,7 +788,8 @@ describe('execute', () => {
         const req = buildRequest({
           spec,
           operationId: 'postMe',
-          parameters: {file: 'test'}})
+          parameters: {file: 'test'}
+        })
 
         // Then
         expect(req).toEqual({
@@ -848,14 +854,16 @@ describe('execute', () => {
       }
 
       // When
-      const req = buildRequest({spec,
+      const req = buildRequest({
+        spec,
         operationId: 'getMe',
         parameters: {
           head: 'justTheHead',
           two: '2',
           body: {json: 'rulez'},
           question: 'answer'
-        }})
+        }
+      })
 
       // Then
       expect(req).toEqual({
@@ -889,7 +897,8 @@ describe('execute', () => {
             body: {
               one: 1,
             }
-          }})
+          }
+        })
 
         expect(req.body).toEqual({
           one: 1
@@ -1077,7 +1086,6 @@ describe('execute', () => {
       )
     })
   })
-
 
   // Note: this is to handle requestContentType and responseContentType
   // although more might end up using it.
@@ -1520,7 +1528,6 @@ describe('execute', () => {
           const oriWarn = global.console.warn
           global.console.warn = jest.fn()
 
-
           // When
           const req = buildRequest({spec, operationId: 'getMe', parameters: {name: 'john'}})
 
@@ -1602,8 +1609,8 @@ describe('execute', () => {
                 id: '123'
               },
               someQuery: 'foo',
-            }})
-
+            }
+          })
 
           expect(req).toEqual({
             url: 'http://swagger.io/v1/blob/image.png?someQuery=foo',
@@ -1620,7 +1627,6 @@ describe('execute', () => {
         test('should not add values of body parameters to the URL', () => {
           const req = buildRequest({spec, operationId: 'postMe', parameters: {petId: 123}})
 
-
           expect(req).toEqual({
             url: 'http://swagger.io/v1/one',
             method: 'POST',
@@ -1632,7 +1638,6 @@ describe('execute', () => {
 
         test('should generate a request with an empty body parameter', () => {
           const req = buildRequest({spec, operationId: 'postMe', parameters: {}})
-
 
           expect(req).toEqual({
             url: 'http://swagger.io/v1/one',
@@ -1800,7 +1805,9 @@ describe('execute', () => {
           }
         }
 
-        const req = buildRequest({spec, operationId: 'getMe', responseContentType: 'application/json', parameters: {}})
+        const req = buildRequest({
+          spec, operationId: 'getMe', responseContentType: 'application/json', parameters: {}
+        })
 
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one',
@@ -2102,10 +2109,12 @@ describe('execute', () => {
     test(
       'should generate a request with application/x-www-form-urlencoded',
       () => {
-        const req = buildRequest({spec,
+        const req = buildRequest({
+          spec,
           requestContentType: 'application/x-www-form-urlencoded',
           operationId: 'postMe',
-          parameters: {petId: 'id'}})
+          parameters: {petId: 'id'}
+        })
 
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one',

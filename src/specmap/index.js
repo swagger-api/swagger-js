@@ -61,7 +61,7 @@ class SpecMap {
   }
 
   wrapPlugin(plugin, name) {
-    const pathDiscriminator = this.pathDiscriminator
+    const {pathDiscriminator} = this
     let ctx = null
     let fn
 
@@ -155,7 +155,7 @@ class SpecMap {
 
   nextPromisedPatch() {
     if (this.promisedPatches.length > 0) {
-      return Promise.race(this.promisedPatches.map(patch => patch.value))
+      return Promise.race(this.promisedPatches.map((patch) => patch.value))
     }
   }
 
@@ -231,7 +231,7 @@ class SpecMap {
 
   updateMutations(patch) {
     if (typeof patch.value === 'object' && !Array.isArray(patch.value) && this.allowMetaPatches) {
-      patch.value = Object.assign({}, patch.value)
+      patch.value = {...patch.value}
     }
 
     const result = lib.applyPatch(this.state, patch, {allowMetaPatches: this.allowMetaPatches})
@@ -253,7 +253,7 @@ class SpecMap {
   promisedPatchThen(patch) {
     const value = patch.value = patch.value
       .then((val) => {
-        const promisedPatch = Object.assign({}, patch, {value: val})
+        const promisedPatch = {...patch, value: val}
         this.removePromisedPatch(patch)
         this.updatePatches(promisedPatch)
       })
@@ -347,7 +347,7 @@ class SpecMap {
 
     // A different plugin runs, wait for all promises to resolve, then retry
     if (plugin !== this.currentPlugin && this.promisedPatches.length) {
-      const promises = this.promisedPatches.map(p => p.value)
+      const promises = this.promisedPatches.map((p) => p.value)
 
       // Waits for all to settle instead of Promise.all which stops on rejection
       return Promise.all(promises.map((promise) => {
@@ -398,5 +398,7 @@ export default function mapSpec(opts) {
   return new SpecMap(opts).dispatch()
 }
 
-const plugins = {refs, allOf, parameters, properties}
+const plugins = {
+  refs, allOf, parameters, properties
+}
 export {SpecMap, plugins}

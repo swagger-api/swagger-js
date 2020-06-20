@@ -11,7 +11,7 @@ export default class ContextTree {
     }
 
     const key = path[path.length - 1]
-    const children = parent.children
+    const {children} = parent
     if (children[key]) {
       updateNode(children[key], value, parent)
       return
@@ -57,7 +57,7 @@ export default class ContextTree {
         return branch
       }
 
-      const children = branch.children
+      const {children} = branch
 
       if (!children[token] && ensureExists) {
         children[token] = createNode(null, branch)

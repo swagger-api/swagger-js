@@ -1,5 +1,4 @@
-import xmock from 'xmock'
-import {execute, buildRequest, baseUrl, applySecurities, self as stubs} from '../../src/execute'
+import {baseUrl} from '../../src/execute'
 
 // Supported shape...  { spec, operationId, parameters, securities, fetch }
 // One can use operationId or pathItem + method

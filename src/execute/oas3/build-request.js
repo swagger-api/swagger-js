@@ -17,7 +17,9 @@ export default function (options, req) {
     requestContentType
   } = options
 
-  req = applySecurities({request: req, securities, operation, spec})
+  req = applySecurities({
+    request: req, securities, operation, spec
+  })
 
   const requestBodyDef = operation.requestBody || {}
   const requestBodyMediaTypes = Object.keys(requestBodyDef.content || {})
@@ -80,7 +82,9 @@ export default function (options, req) {
 
 // Add security values, to operations - that declare their need on them
 // Adapted from the Swagger2 implementation
-export function applySecurities({request, securities = {}, operation = {}, spec}) {
+export function applySecurities({
+  request, securities = {}, operation = {}, spec
+}) {
   const result = assign({}, request)
   const {authorized = {}} = securities
   const security = operation.security || spec.security || []
@@ -90,8 +94,8 @@ export function applySecurities({request, securities = {}, operation = {}, spec}
   result.headers = result.headers || {}
   result.query = result.query || {}
 
-  if (!Object.keys(securities).length || !isAuthorized || !security ||
-      (Array.isArray(operation.security) && !operation.security.length)) {
+  if (!Object.keys(securities).length || !isAuthorized || !security
+      || (Array.isArray(operation.security) && !operation.security.length)) {
     return request
   }
 
