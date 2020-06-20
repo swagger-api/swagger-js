@@ -82,7 +82,6 @@ describe('constructor', () => {
       })
     })
 
-
     test('should keep resolve errors in #errors', () => {
       // Given
       const spec = {
@@ -562,7 +561,7 @@ describe('constructor', () => {
         }
       }
       const http = jest.fn()
-      const requestInterceptor = jest.fn(request => request)
+      const requestInterceptor = jest.fn((request) => request)
       const client = await Swagger({spec, requestInterceptor})
       await client.execute({http, operationId: 'getPets'})
 
@@ -580,7 +579,7 @@ describe('constructor', () => {
         }
       }
       const http = jest.fn()
-      const responseInterceptor = jest.fn(request => request)
+      const responseInterceptor = jest.fn((request) => request)
       const client = await Swagger({spec, responseInterceptor})
       await client.execute({http, operationId: 'getPets'})
 
@@ -593,7 +592,7 @@ describe('constructor', () => {
 
     beforeEach(() => {
       originalResolveFn = Swagger.resolve
-      Swagger.resolve = jest.fn(async obj => obj)
+      Swagger.resolve = jest.fn(async (obj) => obj)
     })
 
     afterEach(() => {
@@ -686,7 +685,7 @@ describe('constructor', () => {
     test(
       'should support request interceptor when fetching a spec and remote ref',
       (cb) => {
-        const spy = jest.fn().mockImplementation(a => a)
+        const spy = jest.fn().mockImplementation((a) => a)
         new Swagger({
           url: 'http://petstore.swagger.io/v2/base.json',
           requestInterceptor: spy
@@ -717,8 +716,8 @@ describe('constructor', () => {
     test(
       'should support request and response interceptor when fetching a spec and remote ref',
       (cb) => {
-        const reqSpy = jest.fn().mockImplementation(a => a)
-        const resSpy = jest.fn().mockImplementation(a => a)
+        const reqSpy = jest.fn().mockImplementation((a) => a)
+        const resSpy = jest.fn().mockImplementation((a) => a)
         new Swagger({
           url: 'http://petstore.swagger.io/v2/base.json',
           responseInterceptor: reqSpy,

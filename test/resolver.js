@@ -824,7 +824,7 @@ describe('resolver', () => {
     test.skip('should be able to resolve a Swagger document with $refs', () => {
       // When
       return Swagger.resolve({spec: DOCUMENT_ORIGINAL, allowMetaPatches: false})
-      .then(handleResponse)
+        .then(handleResponse)
 
       // Then
       function handleResponse(obj) {
@@ -919,7 +919,7 @@ describe('resolver', () => {
       () => {
         // When
         return Swagger.resolve({spec: DOCUMENT_ORIGINAL, allowMetaPatches: true})
-        .then(handleResponse)
+          .then(handleResponse)
 
         // Then
         function handleResponse(obj) {

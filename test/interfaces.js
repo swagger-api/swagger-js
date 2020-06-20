@@ -2,7 +2,8 @@ import {
   mapTagOperations,
   makeApisTagOperationsOperationExecute,
   makeApisTagOperation,
-  self as stubs} from '../src/interfaces'
+  self as stubs
+} from '../src/interfaces'
 
 describe('intefaces', () => {
   afterEach(() => {
@@ -49,17 +50,19 @@ describe('intefaces', () => {
     })
 
     test('should expose the apis[tag][operationId]', () => {
-      const interfaceValue = makeApisTagOperation({spec: {
-        paths: {
-          '/one': {
-            get: {
-              tags: ['me'],
-              operationId: 'getMe'
-            },
-            put: {operationId: 'putMe'}
+      const interfaceValue = makeApisTagOperation({
+        spec: {
+          paths: {
+            '/one': {
+              get: {
+                tags: ['me'],
+                operationId: 'getMe'
+              },
+              put: {operationId: 'putMe'}
+            }
           }
         }
-      }})
+      })
 
       expect(interfaceValue.apis.me.getMe).toBeInstanceOf(Function)
       expect(interfaceValue.apis.default.putMe).toBeInstanceOf(Function)
@@ -93,7 +96,6 @@ describe('intefaces', () => {
       const executer = cb({pathName: '/one', method: 'GET'})
       executer(['param'], {option: 1})
 
-
       // Then
       expect(spyExecute.mock.calls.length).toEqual(1)
       expect(spyExecute.mock.calls[0][0]).toEqual({
@@ -107,17 +109,19 @@ describe('intefaces', () => {
     })
 
     test('should map tagOperations to execute', () => {
-      const interfaceValue = makeApisTagOperationsOperationExecute({spec: {
-        paths: {
-          '/one': {
-            get: {
-              tags: ['me'],
-              operationId: 'getMe'
-            },
-            put: {operationId: 'putMe'}
+      const interfaceValue = makeApisTagOperationsOperationExecute({
+        spec: {
+          paths: {
+            '/one': {
+              get: {
+                tags: ['me'],
+                operationId: 'getMe'
+              },
+              put: {operationId: 'putMe'}
+            }
           }
         }
-      }})
+      })
 
       expect(interfaceValue).toMatchObject({
         apis: {
@@ -129,7 +133,6 @@ describe('intefaces', () => {
       expect(interfaceValue.apis.me.operations.getMe.execute).toBeInstanceOf(Function)
     })
   })
-
 
   describe('mapTagOperations', () => {
     test('should give default tag when there is no tag', () => {
@@ -195,11 +198,10 @@ describe('intefaces', () => {
         }
         const spy = jest.fn().mockImplementation(() => 'hug')
 
-
-          // With
+        // With
         const tags = mapTagOperations({spec, cb: spy})
 
-          // Then
+        // Then
         expect(tags).toEqual({
           alpha: {
             getOne: 'hug'
@@ -224,11 +226,10 @@ describe('intefaces', () => {
         }
         const spy = jest.fn()
 
-
-          // With
+        // With
         const tags = mapTagOperations({spec, cb: spy})
 
-          // Then
+        // Then
         expect(spy.mock.calls.length).toEqual(1)
         expect(spy.mock.calls[0][0]).toEqual({
           operation: spec.paths.one.get,
@@ -260,7 +261,7 @@ describe('intefaces', () => {
       // With
       const tags = mapTagOperations({spec})
 
-        // Then
+      // Then
       expect(tags).toEqual({
         alpha: {
           getOne: null,
@@ -289,7 +290,7 @@ describe('intefaces', () => {
       // With
       const tags = mapTagOperations({spec})
 
-        // Then
+      // Then
       expect(tags).toEqual({
         alpha: {
           getOne: null,
@@ -316,7 +317,7 @@ describe('intefaces', () => {
       // With
       const tags = mapTagOperations({spec})
 
-        // Then
+      // Then
       expect(tags).toEqual({
         alpha: {
           get_one: null,
@@ -339,7 +340,7 @@ describe('intefaces', () => {
       // With
       const tags = mapTagOperations({spec, defaultTag: 'hug'})
 
-        // Then
+      // Then
       expect(tags).toEqual({
         hug: {
           getOne: null,
@@ -371,7 +372,7 @@ describe('intefaces', () => {
         let count = 1
         const tags = mapTagOperations({spec, defaultTag: 'hug', cb: () => count++})
 
-          // Then
+        // Then
         expect(tags).toEqual({
           hug: {
             getOne1: 1,

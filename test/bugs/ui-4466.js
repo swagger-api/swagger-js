@@ -48,7 +48,6 @@ const spec = {
   }
 }
 
-
 test(
   'should resolve test case from UI-4466 and UI-4467 correctly',
   async () => {

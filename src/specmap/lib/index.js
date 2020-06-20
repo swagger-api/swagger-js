@@ -33,9 +33,7 @@ export default {
 function applyPatch(obj, patch, opts) {
   opts = opts || {}
 
-  patch = Object.assign({}, patch, {
-    path: patch.path && normalizeJSONPath(patch.path)
-  })
+  patch = {...patch, path: patch.path && normalizeJSONPath(patch.path)}
 
   if (patch.op === 'merge') {
     const newValue = getInByJsonPath(obj, patch.path)
@@ -57,7 +55,7 @@ function applyPatch(obj, patch, opts) {
       else if (isObject(propVal) && !isArray) {
         // If it's an object, iterate it's keys and merge
         // if there are conflicting keys, merge deep, otherwise shallow merge
-        let currentObj = Object.assign({}, currentValue[prop])
+        let currentObj = {...currentValue[prop]}
         for (const key in propVal) {
           if (Object.prototype.hasOwnProperty.call(currentObj, key)) {
             // if there is a single conflicting key, just deepExtend the entire value
@@ -101,11 +99,11 @@ function applyPatch(obj, patch, opts) {
     jsonPatch.applyPatch(obj, patches)
   }
   else if (patch.op === 'replace' && patch.path === '') {
-    let value = patch.value
+    let {value} = patch
 
-    if (opts.allowMetaPatches && patch.meta && isAdditiveMutation(patch) &&
-        (Array.isArray(patch.value) || isObject(patch.value))) {
-      value = Object.assign({}, value, patch.meta)
+    if (opts.allowMetaPatches && patch.meta && isAdditiveMutation(patch)
+        && (Array.isArray(patch.value) || isObject(patch.value))) {
+      value = {...value, ...patch.meta}
     }
     obj = value
   }
@@ -113,10 +111,10 @@ function applyPatch(obj, patch, opts) {
     jsonPatch.applyPatch(obj, [patch])
 
     // Attach metadata to the resulting value.
-    if (opts.allowMetaPatches && patch.meta && isAdditiveMutation(patch) &&
-        (Array.isArray(patch.value) || isObject(patch.value))) {
+    if (opts.allowMetaPatches && patch.meta && isAdditiveMutation(patch)
+        && (Array.isArray(patch.value) || isObject(patch.value))) {
       const currentValue = getInByJsonPath(obj, patch.path)
-      const newValue = Object.assign({}, currentValue, patch.meta)
+      const newValue = {...currentValue, ...patch.meta}
       jsonPatch.applyPatch(obj, [replace(patch.path, newValue)])
     }
   }
@@ -138,7 +136,6 @@ function normalizeJSONPath(path) {
   return path
 }
 
-
 // =========================
 // JSON-Patch Wrappers
 // =========================
@@ -152,7 +149,9 @@ function _get(path) {
 }
 
 function replace(path, value, meta) {
-  return {op: 'replace', path, value, meta}
+  return {
+    op: 'replace', path, value, meta
+  }
 }
 
 function remove(path, value) {
@@ -161,18 +160,21 @@ function remove(path, value) {
 
 // Custom wrappers
 function merge(path, value) {
-  return {type: 'mutation', op: 'merge', path, value}
+  return {
+    type: 'mutation', op: 'merge', path, value
+  }
 }
 
 // Custom wrappers
 function mergeDeep(path, value) {
-  return {type: 'mutation', op: 'mergeDeep', path, value}
+  return {
+    type: 'mutation', op: 'mergeDeep', path, value
+  }
 }
 
 function context(path, value) {
   return {type: 'context', path, value}
 }
-
 
 // =========================
 // Iterators
@@ -255,7 +257,6 @@ function forEach(obj, fn, basePath) {
   return results
 }
 
-
 // =========================
 // Paths
 // =========================
@@ -302,9 +303,8 @@ function flatten(arr) {
 }
 
 function cleanArray(arr) {
-  return arr.filter(elm => typeof elm !== 'undefined')
+  return arr.filter((elm) => typeof elm !== 'undefined')
 }
-
 
 // =========================
 // Is-Thing.
@@ -328,7 +328,7 @@ function isError(patch) {
 
 function isJsonPatch(patch) {
   if (isPatch(patch)) {
-    const op = patch.op
+    const {op} = patch
     return op === 'add' || op === 'remove' || op === 'replace'
   }
   return false

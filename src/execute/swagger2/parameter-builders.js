@@ -1,7 +1,6 @@
 // These functions will update the request.
 // They'll be given {req, value, paramter, spec, operation}.
 
-
 export default {
   body: bodyBuilder,
   header: headerBuilder,
@@ -9,7 +8,6 @@ export default {
   path: pathBuilder,
   formData: formDataBuilder
 }
-
 
 // Add the body to the request
 function bodyBuilder({req, value}) {

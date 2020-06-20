@@ -29,7 +29,7 @@ const OperationNotFoundError = createError('OperationNotFoundError', function (m
 })
 
 const findParametersWithName = (name, parameters) => {
-  return parameters.filter(p => p.name === name)
+  return parameters.filter((p) => p.name === name)
 }
 
 // removes parameters that have duplicate 'in' and 'name' properties
@@ -76,7 +76,9 @@ export function execute({
     operationId = legacyIdFromPathMethod(pathName, method)
   }
 
-  const request = self.buildRequest({spec, operationId, parameters, securities, http, ...extras})
+  const request = self.buildRequest({
+    spec, operationId, parameters, securities, http, ...extras
+  })
 
   if (request.body && (isPlainObject(request.body) || isArray(request.body))) {
     request.body = JSON.stringify(request.body)
@@ -149,7 +151,9 @@ export function buildRequest(options) {
 
   const {operation = {}, method, pathName} = operationRaw
 
-  req.url += baseUrl({spec, scheme, contextUrl, server, serverVariables, pathName, method})
+  req.url += baseUrl({
+    spec, scheme, contextUrl, server, serverVariables, pathName, method
+  })
 
   // Mostly for testing
   if (!operationId) {
@@ -173,12 +177,10 @@ export function buildRequest(options) {
 
   const combinedParameters = deduplicateParameters([]
     .concat(arrayOrEmpty(operation.parameters)) // operation parameters
-    .concat(arrayOrEmpty(path.parameters)) // path parameters
-  )
+    .concat(arrayOrEmpty(path.parameters))) // path parameters
 
   // REVIEW: OAS3: have any key names or parameter shapes changed?
   // Any new features that need to be plugged in here?
-
 
   // Add values to request
   combinedParameters.forEach((parameter) => {
@@ -192,7 +194,7 @@ export function buildRequest(options) {
     value = parameter && parameter.name && parameters[parameter.name]
 
     if (typeof value === 'undefined') {
-        // check for `name-in` formatted key
+      // check for `name-in` formatted key
       value = parameter && parameter.name && parameters[`${parameter.in}.${parameter.name}`]
     }
     else if (findParametersWithName(parameter.name, combinedParameters).length > 1) {
@@ -224,7 +226,9 @@ export function buildRequest(options) {
     }
 
     if (builder) {
-      builder({req, parameter, value, operation, spec})
+      builder({
+        req, parameter, value, operation, spec
+      })
     }
   })
 
@@ -238,7 +242,6 @@ export function buildRequest(options) {
     // If not OAS3, then treat as Swagger2.
     req = swagger2BuildRequest(versionSpecificOptions, req)
   }
-
 
   // If the cookie convenience object exists in our request,
   // serialize its content and then delete the cookie object.
@@ -266,7 +269,7 @@ export function buildRequest(options) {
   return req
 }
 
-const stripNonAlpha = str => (str ? str.replace(/\W/g, '') : null)
+const stripNonAlpha = (str) => (str ? str.replace(/\W/g, '') : null)
 
 // be careful when modifying this! it is a publicly-exposed method.
 export function baseUrl(obj) {
@@ -275,17 +278,18 @@ export function baseUrl(obj) {
   return specIsOAS3 ? oas3BaseUrl(obj) : swagger2BaseUrl(obj)
 }
 
-function oas3BaseUrl({spec, pathName, method, server, contextUrl, serverVariables = {}}) {
-  const servers =
-    getIn(spec, ['paths', pathName, (method || '').toLowerCase(), 'servers']) ||
-    getIn(spec, ['paths', pathName, 'servers']) ||
-    getIn(spec, ['servers'])
+function oas3BaseUrl({
+  spec, pathName, method, server, contextUrl, serverVariables = {}
+}) {
+  const servers = getIn(spec, ['paths', pathName, (method || '').toLowerCase(), 'servers'])
+    || getIn(spec, ['paths', pathName, 'servers'])
+    || getIn(spec, ['servers'])
 
   let selectedServerUrl = ''
   let selectedServerObj = null
 
   if (server && servers && servers.length) {
-    const serverUrls = servers.map(srv => srv.url)
+    const serverUrls = servers.map((srv) => srv.url)
 
     if (serverUrls.indexOf(server) > -1) {
       selectedServerUrl = server
@@ -295,8 +299,8 @@ function oas3BaseUrl({spec, pathName, method, server, contextUrl, serverVariable
 
   if (!selectedServerUrl && servers && servers.length) {
     // default to the first server if we don't have one by now
-    selectedServerUrl = servers[0].url
-    selectedServerObj = servers[0]
+    selectedServerUrl = servers[0].url; // eslint-disable-line semi
+    [selectedServerObj] = servers
   }
 
   if (selectedServerUrl.indexOf('{') > -1) {

@@ -5,7 +5,7 @@ import glob from 'glob'
 import xmock from 'xmock'
 import mapSpec, {plugins} from '../../src/specmap'
 
-const refs = plugins.refs
+const {refs} = plugins
 
 describe('refs', () => {
   let xapp
@@ -291,7 +291,7 @@ describe('refs', () => {
           return group1.localeCompare(group2) || (no1 - no2)
         })
         .map((filename) => {
-          return Object.assign({name: filename, filename}, require(filename))
+          return {name: filename, filename, ...require(filename)}
         })
         .filter((testCase) => {
           return !testCase.ignore
@@ -305,7 +305,7 @@ describe('refs', () => {
           }
 
           const testCase = cases[idx]
-          const spec = testCase.spec
+          const {spec} = testCase
           const output = testCase.output || clone(spec)
           const external = testCase.external || {}
 

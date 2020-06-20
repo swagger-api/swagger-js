@@ -87,7 +87,7 @@ Swagger.prototype = {
 }
 
 Swagger.prototype.applyDefaults = function () {
-  const spec = this.spec
+  const {spec} = this
   const specUrl = this.url
   // TODO: OAS3: support servers here
   if (specUrl && startsWith(specUrl, 'http')) {

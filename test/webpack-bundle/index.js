@@ -20,7 +20,6 @@ describe('webpack build', () => {
     expect(Swagger.getBaseUrl).toBeInstanceOf(Function)
   })
 
-
   test('should be able to resolve things when minified', () => {
     const spec = {
       a: {

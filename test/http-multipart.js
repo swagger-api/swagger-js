@@ -118,9 +118,9 @@ describe('buildRequest - openapi 2.0', () => {
           }
         })
       },
-        {
-          sendAsJson: false
-        })
+      {
+        sendAsJson: false
+      })
 
       return fetch('http://localhost:3300/api/v1/formdata', { // eslint-disable-line no-undef
         method: 'POST',
@@ -187,14 +187,14 @@ describe('buildRequest - openapi 3.0', () => {
         method: 'POST',
         body: req.body
       })
-      .then((res) => {
-        return res.json()
-      })
-      .then((json) => {
-        expect(json.data.email.length).toEqual(2)
-        expect(json.data.email[0]).toEqual('person1')
-        expect(json.data.email[1]).toEqual('person2')
-      })
+        .then((res) => {
+          return res.json()
+        })
+        .then((json) => {
+          expect(json.data.email.length).toEqual(2)
+          expect(json.data.email[0]).toEqual('person1')
+          expect(json.data.email[1]).toEqual('person2')
+        })
     })
 
     test('should Mock POST multipart-formdata with entry item entries', () => {
@@ -210,9 +210,9 @@ describe('buildRequest - openapi 3.0', () => {
           }
         })
       },
-        {
-          sendAsJson: false
-        })
+      {
+        sendAsJson: false
+      })
 
       return fetch('http://localhost:3300/api/v1/formdata', { // eslint-disable-line no-undef
         method: 'POST',

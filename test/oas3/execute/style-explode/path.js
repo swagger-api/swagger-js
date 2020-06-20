@@ -1,11 +1,6 @@
-import xmock from 'xmock'
 import path from 'path'
-import fs from 'fs'
-import qs from 'querystring'
-import jsYaml from 'js-yaml'
-import {execute, buildRequest, baseUrl, applySecurities, self as stubs} from '../../../../src/execute'
 
-const petstoreSpec = jsYaml.safeLoad(fs.readFileSync(path.join('test', 'oas3', 'data', 'petstore-oas3.yaml'), 'utf8'))
+import {buildRequest} from '../../../../src/execute'
 
 describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () => {
   describe('primitive values', () => {

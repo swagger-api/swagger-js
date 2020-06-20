@@ -27,10 +27,10 @@ describe('http', () => {
     return http({
       url: 'http://swagger.io'
     })
-    .then((res) => {
-      expect(res.status).toEqual(200)
-      expect(res.text).toEqual('hi')
-    })
+      .then((res) => {
+        expect(res.status).toEqual(200)
+        expect(res.text).toEqual('hi')
+      })
   })
 
   test('should always load a spec as text', () => {
@@ -53,16 +53,16 @@ describe('http', () => {
     return http({
       url: 'http://swagger.io'
     })
-    .then(
-      (res) => {
-        throw new Error('Expected rejection for HTTP status 400')
-      },
-      (err) => {
-        expect(err.status).toEqual(400)
-        expect(err.statusCode).toEqual(400)
-        expect(err.response.text).toEqual('hi')
-      }
-    )
+      .then(
+        (res) => {
+          throw new Error('Expected rejection for HTTP status 400')
+        },
+        (err) => {
+          expect(err.status).toEqual(400)
+          expect(err.statusCode).toEqual(400)
+          expect(err.response.text).toEqual('hi')
+        }
+      )
   })
 
   test('should call request interceptor', () => {
@@ -76,11 +76,11 @@ describe('http', () => {
         return req
       }
     })
-    .then(
-      (res) => {
-        expect(res.status).toEqual(200)
-      }
-    )
+      .then(
+        (res) => {
+          expect(res.status).toEqual(200)
+        }
+      )
   })
 
   test('should allow the requestInterceptor to return a promise', () => {
@@ -98,11 +98,11 @@ describe('http', () => {
         })
       }
     })
-    .then(
-      (res) => {
-        expect(res.status).toEqual(200)
-      }
-    )
+      .then(
+        (res) => {
+          expect(res.status).toEqual(200)
+        }
+      )
   })
 
   test('should apply responseInterceptor to error responses', () => {
@@ -115,14 +115,14 @@ describe('http', () => {
         res.testValue = 5
       }
     })
-    .then(
-      (res) => {
-        throw new Error('Expected rejection for HTTP status 400')
-      },
-      (err) => {
-        expect(err.response.testValue).toEqual(5)
-      }
-    )
+      .then(
+        (res) => {
+          throw new Error('Expected rejection for HTTP status 400')
+        },
+        (err) => {
+          expect(err.response.testValue).toEqual(5)
+        }
+      )
   })
 
   test(
@@ -158,15 +158,15 @@ describe('http', () => {
         throw testError
       }
     })
-    .then(
-      (res) => {
-        throw new Error('Expected rejection for HTTP status 400')
-      },
-      (err) => {
-        expect(err.response).toBeFalsy()
-        expect(err.responseError).toBe(testError)
-      }
-    )
+      .then(
+        (res) => {
+          throw new Error('Expected rejection for HTTP status 400')
+        },
+        (err) => {
+          expect(err.response).toBeFalsy()
+          expect(err.responseError).toBe(testError)
+        }
+      )
   })
 
   describe('serializeHeaders', () => {

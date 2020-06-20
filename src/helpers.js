@@ -1,7 +1,7 @@
 import isObject from 'lodash/isObject'
 import startsWith from 'lodash/startsWith'
 
-const toLower = str => String.prototype.toLowerCase.call(str)
+const toLower = (str) => String.prototype.toLowerCase.call(str)
 const escapeString = (str) => {
   return str.replace(/[^\w]/gi, '_')
 }
@@ -37,7 +37,6 @@ export function opId(operation, pathName, method = '', {v2OperationIdCompatibili
   return idFromPathMethod(pathName, method, {v2OperationIdCompatibilityMode})
 }
 
-
 // Create a generated operationId from pathName + method
 export function idFromPathMethod(pathName, method, {v2OperationIdCompatibilityMode} = {}) {
   if (v2OperationIdCompatibilityMode) {
@@ -64,7 +63,6 @@ export function getOperationRaw(spec, id) {
     return null
   }
 
-
   return findOperation(spec, ({pathName, method, operation}) => {
     if (!operation || typeof operation !== 'object') {
       return false
@@ -75,7 +73,7 @@ export function getOperationRaw(spec, id) {
     const legacyOperationId = legacyIdFromPathMethod(pathName, method)
 
     return [operationId, legacyOperationId, rawOperationId]
-      .some(val => val && val === id)
+      .some((val) => val && val === id)
   })
 }
 

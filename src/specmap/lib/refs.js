@@ -2,8 +2,8 @@ import {fetch} from 'cross-fetch'
 import jsYaml from 'js-yaml'
 import qs from 'querystring-browser'
 import url from 'url'
-import lib from '../lib'
-import createError from '../lib/create-error'
+import lib from '.'
+import createError from './create-error'
 import {isFreelyNamed, absolutifyPointer} from '../helpers'
 import {ACCEPT_HEADER_VALUE_FOR_DOCUMENTS} from '../../constants'
 
@@ -18,7 +18,7 @@ const docCache = {}
 const specmapRefs = new WeakMap()
 
 const skipResolutionTestFns = [
-  path => (
+  (path) => (
     // OpenAPI 3.0 Response Media Type Example
     // ["paths", *, *, "responses", *, "content", *, "example"]
     path[0] === 'paths'
@@ -26,7 +26,7 @@ const skipResolutionTestFns = [
     && path[5] === 'content'
     && path[7] === 'example'
   ),
-  path => (
+  (path) => (
     // OpenAPI 3.0 Request Body Media Type Example
     // ["paths", *, *, "responses", *, "content", *, "example"]
     path[0] === 'paths'
@@ -36,7 +36,7 @@ const skipResolutionTestFns = [
   )
 ]
 
-const shouldSkipResolution = path => skipResolutionTestFns.some(fn => fn(path))
+const shouldSkipResolution = (path) => skipResolutionTestFns.some((fn) => fn(path))
 
 // =========================
 // Core
@@ -71,7 +71,7 @@ const plugin = {
       return
     }
 
-    const baseDoc = specmap.getContext(fullPath).baseDoc
+    const {baseDoc} = specmap.getContext(fullPath)
     if (typeof ref !== 'string') {
       return new JSONRefError('$ref: must be a string (JSON-Ref)', {
         $ref: ref,
@@ -179,7 +179,6 @@ const plugin = {
   }
 }
 
-
 const mod = Object.assign(plugin, {
   docCache,
   absoluteify,
@@ -196,7 +195,6 @@ const mod = Object.assign(plugin, {
 })
 
 export default mod
-
 
 // =========================
 // Utilities
@@ -269,7 +267,7 @@ function extractFromDoc(docPath, pointer) {
     }
   }
 
-  return getDoc(docPath).then(_doc => extract(pointer, _doc))
+  return getDoc(docPath).then((_doc) => extract(pointer, _doc))
 }
 
 /**
@@ -317,8 +315,8 @@ function getDoc(docPath) {
  */
 function fetchJSON(docPath) {
   return fetch(docPath, {headers: {Accept: ACCEPT_HEADER_VALUE_FOR_DOCUMENTS}, loadSpec: true})
-    .then(res => res.text())
-    .then(text => jsYaml.safeLoad(text))
+    .then((res) => res.text())
+    .then((text) => jsYaml.safeLoad(text))
 }
 
 /**
@@ -388,7 +386,7 @@ function arrayToJsonPointer(arr) {
   return `/${arr.map(escapeJsonPointerToken).join('/')}`
 }
 
-const pointerBoundaryChar = c => !c || c === '/' || c === '#'
+const pointerBoundaryChar = (c) => !c || c === '/' || c === '#'
 
 function pointerIsAParent(pointer, parentPointer) {
   if (pointerBoundaryChar(parentPointer)) {
@@ -402,7 +400,6 @@ function pointerIsAParent(pointer, parentPointer) {
     && (!nextChar || nextChar === '/' || nextChar === '#')
     && lastParentChar !== '#'
 }
-
 
 // =========================
 // Private
@@ -443,7 +440,6 @@ function pointerAlreadyInPath(pointer, basePath, parent, specmap) {
     return true
   }
 
-
   // Case 2: indirect cycle
   //  ex1: a.$ref: '/b'  &  b.c.$ref: '/b/c'
   //  ex2: a.$ref: '/b/c'  &  b.c.$ref: '/b'
@@ -454,7 +450,7 @@ function pointerAlreadyInPath(pointer, basePath, parent, specmap) {
     currPath = `${currPath}/${escapeJsonPointerToken(token)}`
     return refs[currPath] && refs[currPath].some((ref) => {
       return (
-           pointerIsAParent(ref, fullyQualifiedPointer)
+        pointerIsAParent(ref, fullyQualifiedPointer)
         || pointerIsAParent(fullyQualifiedPointer, ref)
       )
     })

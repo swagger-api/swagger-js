@@ -50,7 +50,6 @@ const spec = {
   }
 }
 
-
 test(
   'should not resolve $ref pointers within OpenAPI RequestBody/Response media type examples',
   async () => {

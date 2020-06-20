@@ -18,9 +18,9 @@ export function makeFetchJSON(http, opts = {}) {
       },
       credentials
     })
-    .then((res) => {
-      return res.body
-    })
+      .then((res) => {
+        return res.body
+      })
   }
 }
 
@@ -84,6 +84,6 @@ export default function resolve(obj) {
       parameterMacro,
       modelPropertyMacro,
       useCircularStructures,
-    }).then(skipNormalization ? async a => a : normalizeSwagger)
+    }).then(skipNormalization ? async (a) => a : normalizeSwagger)
   }
 }

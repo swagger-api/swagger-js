@@ -46,15 +46,15 @@ export function isFreelyNamed(parentPath) {
 
   return (
     // eslint-disable-next-line max-len
-    (freelyNamedKeyParents.indexOf(parentKey) > -1 && nonFreelyNamedKeyGrandparents.indexOf(grandparentKey) === -1) ||
-    (freelyNamedPaths.indexOf(parentStr) > -1) ||
-    (freelyNamedAncestors.some(el => parentStr.indexOf(el) > -1))
+    (freelyNamedKeyParents.indexOf(parentKey) > -1 && nonFreelyNamedKeyGrandparents.indexOf(grandparentKey) === -1)
+    || (freelyNamedPaths.indexOf(parentStr) > -1)
+    || (freelyNamedAncestors.some((el) => parentStr.indexOf(el) > -1))
   )
 }
 
 export function generateAbsoluteRefPatches(obj, basePath, {
   specmap,
-  getBaseUrlForNodePath = path => specmap.getContext([...basePath, ...path]).baseDoc,
+  getBaseUrlForNodePath = (path) => specmap.getContext([...basePath, ...path]).baseDoc,
   targetKeys = ['$ref', '$$ref']
 } = {}) {
   const patches = []

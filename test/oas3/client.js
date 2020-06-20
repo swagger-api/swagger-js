@@ -9,7 +9,7 @@ describe('http - OpenAPI Specification 3.0', () => {
   let server
   beforeAll(function () {
     server = http.createServer(function (req, res) {
-      const accept = req.headers.accept
+      const {accept} = req.headers
       let contentType
       const uri = url.parse(req.url).pathname
       const filename = path.join('test', 'oas3', 'data', uri)
@@ -76,6 +76,6 @@ describe('http - OpenAPI Specification 3.0', () => {
 
         done()
       })
-      .catch(e => done(e))
+      .catch((e) => done(e))
   })
 })

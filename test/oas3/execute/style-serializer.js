@@ -5,7 +5,7 @@ import {
 describe('OAS3 style serializer', () => {
   describe('encodeDisallowedCharacters', () => {
     test('should correctly encode ASCII characters', () => {
-      const tested = str => encodeDisallowedCharacters(str, {escape: true})
+      const tested = (str) => encodeDisallowedCharacters(str, {escape: true})
 
       expect(tested('!')).toEqual('%21')
       expect(tested('#')).toEqual('%23')
@@ -30,7 +30,7 @@ describe('OAS3 style serializer', () => {
     })
 
     test('should correctly encode non-ASCII characters', () => {
-      const tested = str => encodeDisallowedCharacters(str, {escape: true})
+      const tested = (str) => encodeDisallowedCharacters(str, {escape: true})
       expect(tested('♥')).toEqual('%E2%99%A5')
       expect(tested('テスト')).toEqual('%E3%83%86%E3%82%B9%E3%83%88')
       expect(tested('𩸽')).toEqual('%F0%A9%B8%BD')
@@ -39,7 +39,7 @@ describe('OAS3 style serializer', () => {
     })
 
     test('should skip encoding if `escape` is not set to true', () => {
-      const tested = str => encodeDisallowedCharacters(str)
+      const tested = (str) => encodeDisallowedCharacters(str)
 
       expect(tested('!')).toEqual('!')
       expect(tested('#')).toEqual('#')

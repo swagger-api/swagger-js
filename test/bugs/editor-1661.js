@@ -44,7 +44,6 @@ const spec = {
   }
 }
 
-
 test(
   'should resolve a deeply-nested $ref series correctly',
   async () => {

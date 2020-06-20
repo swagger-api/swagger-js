@@ -27,19 +27,21 @@ describe('specmap', () => {
     test('should call plugins with patches', (done) => {
       mapSpec({
         spec: {one: 1},
-        plugins: [{specMap: (patches) => {
-          try {
-            expect(patches).toEqual([{
-              op: 'add',
-              path: [],
-              value: {one: 1}
-            }])
-            done()
+        plugins: [{
+          specMap: (patches) => {
+            try {
+              expect(patches).toEqual([{
+                op: 'add',
+                path: [],
+                value: {one: 1}
+              }])
+              done()
+            }
+            catch (e) {
+              return done(e)
+            }
           }
-          catch (e) {
-            return done(e)
-          }
-        }}]
+        }]
       })
     })
 
@@ -116,9 +118,9 @@ describe('specmap', () => {
           if (specmap.hasRun()) {
             return
           }
-          if (patches[1].value !== 'some val' &&
-            patches[2].value !== 'some val' &&
-            patches[3].value !== 'some val') {
+          if (patches[1].value !== 'some val'
+            && patches[2].value !== 'some val'
+            && patches[3].value !== 'some val') {
             return [new Error('Promises not yet resolved')]
           }
         }
@@ -148,7 +150,7 @@ describe('specmap', () => {
               }))
             ]
           }
-          else if (!hasRunTwice) {
+          if (!hasRunTwice) {
             hasRunTwice = true
             // We expect this to run immediately with the val1 patch,
             // but without the val2 patch because the promise hasn't been resolved.

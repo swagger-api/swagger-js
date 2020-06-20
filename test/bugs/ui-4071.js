@@ -1,6 +1,8 @@
 // https://github.com/swagger-api/swagger-ui/issues/4071
 
-import {execute, buildRequest, baseUrl, self as stubs} from '../../src/execute'
+import {
+  execute, buildRequest, baseUrl, self as stubs
+} from '../../src/execute'
 
 const spec = {
   openapi: '3.0.0',
@@ -46,7 +48,6 @@ const spec = {
     }
   }
 }
-
 
 test(
   'should generate a request with application/x-www-form-urlencoded',

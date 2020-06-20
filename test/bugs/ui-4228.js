@@ -58,7 +58,6 @@ const spec = {
   }
 }
 
-
 test(
   'should resolve "properties" property name in model definition correctly',
   async () => {

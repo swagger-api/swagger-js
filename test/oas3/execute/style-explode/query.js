@@ -1,11 +1,4 @@
-import xmock from 'xmock'
-import path from 'path'
-import fs from 'fs'
-import qs from 'querystring'
-import jsYaml from 'js-yaml'
-import {execute, buildRequest, baseUrl, applySecurities, self as stubs} from '../../../../src/execute'
-
-const petstoreSpec = jsYaml.safeLoad(fs.readFileSync(path.join('test', 'oas3', 'data', 'petstore-oas3.yaml'), 'utf8'))
+import {buildRequest} from '../../../../src/execute'
 
 // Expecting the space to become `%20`, not `+`, because it's just better that way
 // See: https://stackoverflow.com/a/40292688
@@ -181,8 +174,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters', () 
           credentials: 'same-origin',
           headers: {}
         })
-      }
-    )
+      })
 
     test('should build an empty query parameter with escaped non-RFC3986 characters in parameter name',
       () => {
@@ -220,8 +212,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters', () 
           credentials: 'same-origin',
           headers: {}
         })
-      }
-    )
+      })
 
     test('should build a query parameter in form/explode format', () => {
       // Given
@@ -504,7 +495,6 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters', () 
         })
       }
     )
-
 
     test('should build a query parameter in form/explode format', () => {
       // Given
