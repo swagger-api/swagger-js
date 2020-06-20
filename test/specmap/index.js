@@ -1,4 +1,4 @@
-import clone from 'clone'
+import cloneDeep from 'lodash/cloneDeep'
 import xmock from 'xmock'
 import traverse from 'traverse'
 import mapSpec, {SpecMap, plugins} from '../../src/specmap'
@@ -540,8 +540,8 @@ describe('specmap', () => {
         })
 
         test('should resolve petstore-simple', () => {
-          const spec = clone(require('./data/specs/petstore-simple.json')) // eslint-disable-line global-require
-          const resolvedSpec = clone(require('./data/specs/petstore-simple-resolved.json')) // eslint-disable-line global-require
+          const spec = cloneDeep(require('./data/specs/petstore-simple.json')) // eslint-disable-line global-require
+          const resolvedSpec = cloneDeep(require('./data/specs/petstore-simple-resolved.json')) // eslint-disable-line global-require
           const initialRefCount = countRefs(spec)
           expect(initialRefCount).toEqual(9)
 
@@ -704,9 +704,9 @@ describe('specmap', () => {
 
         test('should resolve a complex spec', () => {
           const xapp = xmock()
-          const spec = clone(require('./data/specs/example.json')) // eslint-disable-line global-require
-          const underten = clone(require('./data/specs/example-underten.json')) // eslint-disable-line global-require
-          const resolved = clone(require('./data/specs/example.resolved.json')) // eslint-disable-line global-require
+          const spec = cloneDeep(require('./data/specs/example.json')) // eslint-disable-line global-require
+          const underten = cloneDeep(require('./data/specs/example-underten.json')) // eslint-disable-line global-require
+          const resolved = cloneDeep(require('./data/specs/example.resolved.json')) // eslint-disable-line global-require
 
           xapp.get('http://example.com/underten', () => underten)
 
