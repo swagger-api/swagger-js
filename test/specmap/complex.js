@@ -1,6 +1,4 @@
-import fs from 'fs'
 import path from 'path'
-import clone from 'clone'
 import glob from 'glob'
 import xmock from 'xmock'
 import mapSpec, {plugins} from '../../src/specmap'

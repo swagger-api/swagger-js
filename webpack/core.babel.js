@@ -1,4 +1,3 @@
-import path from 'path'
 import buildConfig from './_config-builder'
 
 export default buildConfig({

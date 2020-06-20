@@ -1,6 +1,5 @@
-import fs from 'fs'
 import path from 'path'
-import clone from 'clone'
+import cloneDeep from 'lodash/cloneDeep'
 import glob from 'glob'
 import xmock from 'xmock'
 import mapSpec, {plugins} from '../../src/specmap'
@@ -306,7 +305,7 @@ describe('refs', () => {
 
           const testCase = cases[idx]
           const {spec} = testCase
-          const output = testCase.output || clone(spec)
+          const output = testCase.output || cloneDeep(spec)
           const external = testCase.external || {}
 
           Object.keys(external).forEach((url) => {
