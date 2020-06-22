@@ -41,7 +41,7 @@
     "test": "run-s test:unit test:lint test:size",
     "test:lint": "eslint src/ test/",
     "test:lint:fix": "eslint src/ test/ --fix",
-    "test:size": "npm run build:bundle && bundlesize",
+    "test:size": "npm run build:bundle && bundlesize --config ./bundlesize.config.json",
     "test:unit": "run-s test:unit:setup test:unit:run test:unit:teardown",
     "test:unit:setup": "webpack --config webpack/test_webpack_build.babel.js",
     "test:unit:run": "jest --runInBand",
@@ -104,12 +104,5 @@
     "querystring-browser": "=1.0.4",
     "traverse": "=0.6.6",
     "url": "=0.11.0"
-  },
-  "bundlesize": [
-    {
-      "path": "./browser/index.js",
-      "maxSize": "400 KB",
-      "compression": "none"
-    }
-  ]
+  }
 }
