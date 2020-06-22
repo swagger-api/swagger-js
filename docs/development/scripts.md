@@ -13,6 +13,7 @@ Script name | Description
 `build` | Build a new set of JS assets, and output them to `/dist` and `/browser`.
 `build:bundle` | Build `/browser/index.js` only.
 `build:umd` | Build `/dist/index.js` only.
+`build:bundlesize` | Check if the bundle size is within allowed size range
 
 ### Testing
 Script name | Description
