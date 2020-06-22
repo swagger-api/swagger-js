@@ -29,8 +29,8 @@ jobs:
       run: git log -1 --pretty=format:"%s" | npx commitlint
     - name: Run all tests
       run: npm test
-        env:
-          CI: true
+      env:
+        CI: true
     - name: Build swagger-js
       run: npm run build
     - name: Check bundlesize
