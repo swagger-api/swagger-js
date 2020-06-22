@@ -1,0 +1,39 @@
+version: 1
+update_configs:
+  - package_manager: "javascript"
+    directory: "/"
+    update_schedule: "daily"
+    commit_message:
+      prefix: "chore"
+      include_scope: true
+    automerged_updates:
+      - match:
+          dependency_type: "development"
+          # Supported dependency types:
+          # - "development"
+          # - "production"
+          # - "all"
+          update_type: "all"
+            # Supported updates to automerge:
+            # - "security:patch"
+            #   SemVer patch update that fixes a known security vulnerability
+            # - "semver:patch"
+            #   SemVer patch update, e.g. > 1.x && 1.0.1 to 1.0.3
+            # - "semver:minor"
+            #   SemVer minor update, e.g. > 1.x && 2.1.4 to 2.3.1
+            # - "in_range"
+            #   matching the version requirement in your package manifest
+            # - "all"
+            - match:
+                dependency_type: "production"
+                update_type: "semver:patch"
+    ignored_updates:
+      # cross-fetch and node-fetch must be synced manually
+      - match:
+          dependency_name: "cross-fetch"
+      - match:
+          dependency_name: "node-fetch"
+      - match:
+          dependency_name: "release-it"
+      - match:
+          dependency_name: "@release-it/conventional-changelog"
