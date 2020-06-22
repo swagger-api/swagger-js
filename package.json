@@ -105,23 +105,6 @@
     "traverse": "=0.6.6",
     "url": "=0.11.0"
   },
-  "jest": {
-    "testEnvironment": "node",
-    "testMatch": [
-      "**/test/*.js?(x)",
-      "**/test/**/*.js?(x)"
-    ],
-    "setupFilesAfterEnv": [
-      "<rootDir>/test/jest.setup.js"
-    ],
-    "testPathIgnorePatterns": [
-      "<rootDir>/node_modules/",
-      "<rootDir>/test/data/",
-      "<rootDir>/test/jest.setup.js",
-      "<rootDir>/test/specmap/data/",
-      "<rootDir>/test/webpack-bundle/.tmp/"
-    ]
-  },
   "bundlesize": [
     {
       "path": "./browser/index.js",
