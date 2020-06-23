@@ -1,15 +1,12 @@
 // https://github.com/swagger-api/swagger-ui/issues/4071
-
-import {
-  execute, buildRequest, baseUrl, self as stubs
-} from '../../src/execute'
+import { buildRequest } from '../../src/execute';
 
 const spec = {
   openapi: '3.0.0',
   servers: [
     {
-      url: 'https://workbcjobs.api.gov.bc.ca/v1'
-    }
+      url: 'https://workbcjobs.api.gov.bc.ca/v1',
+    },
   ],
   paths: {
     '/jobs': {
@@ -18,8 +15,8 @@ const spec = {
         description: 'The job feed endpoint returns an array of job records that satisfy the supplied criteria.',
         responses: {
           default: {
-            description: 'Unexpected error'
-          }
+            description: 'Unexpected error',
+          },
         },
         requestBody: {
           content: {
@@ -30,24 +27,24 @@ const spec = {
                   industries: {
                     type: 'array',
                     items: {
-                      type: 'integer'
-                    }
-                  }
-                }
+                      type: 'integer',
+                    },
+                  },
+                },
               },
               encoding: {
                 industries: {
                   style: 'form',
-                  explode: false
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
+                  explode: false,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
 
 test(
   'should generate a request with application/x-www-form-urlencoded',
@@ -59,10 +56,10 @@ test(
       requestBody: {
         industries: [
           1,
-          16
-        ]
-      }
-    })
+          16,
+        ],
+      },
+    });
 
     expect(req).toEqual({
       url: 'https://workbcjobs.api.gov.bc.ca/v1/jobs',
@@ -71,7 +68,7 @@ test(
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: 'industries=1,16'
-    })
-  }
-)
+      body: 'industries=1,16',
+    });
+  },
+);

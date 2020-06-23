@@ -21,9 +21,9 @@
 //
 // TODO: move the remarks above into project documentation
 
-import get from 'lodash/get'
-import resolve from '../resolver'
-import {normalizeSwagger} from '../helpers'
+import get from 'lodash/get';
+import resolve from '../resolver';
+import { normalizeSwagger } from '../helpers';
 
 export default async function resolveSubtree(obj, path, opts = {}) {
   const {
@@ -34,7 +34,7 @@ export default async function resolveSubtree(obj, path, opts = {}) {
     parameterMacro,
     modelPropertyMacro,
     useCircularStructures,
-  } = opts
+  } = opts;
 
   const resolveOptions = {
     pathDiscriminator: path,
@@ -44,22 +44,22 @@ export default async function resolveSubtree(obj, path, opts = {}) {
     parameterMacro,
     modelPropertyMacro,
     useCircularStructures,
-  }
+  };
 
-  const {spec: normalized} = normalizeSwagger({
-    spec: obj
-  })
+  const { spec: normalized } = normalizeSwagger({
+    spec: obj,
+  });
 
   const result = await resolve({
     ...resolveOptions,
     spec: normalized,
     allowMetaPatches: true,
-    skipNormalization: true
-  })
+    skipNormalization: true,
+  });
 
   if (!returnEntireTree && Array.isArray(path) && path.length) {
-    result.spec = get(result.spec, path) || null
+    result.spec = get(result.spec, path) || null;
   }
 
-  return result
+  return result;
 }

@@ -1,25 +1,23 @@
-import xmock from 'xmock'
-import mapSpec, {plugins} from '../../src/specmap'
+import xmock from 'xmock';
+import mapSpec, { plugins } from '../../src/specmap';
 
 describe('parameters', () => {
   afterEach(() => {
-    xmock().restore()
-  })
+    xmock().restore();
+  });
 
   test('should add default value to parameter', () => {
-    const parameterMacro = function (operation, parameter) {
-      return 'test'
-    }
+    const parameterMacro = () => 'test';
 
     return mapSpec({
       spec: {
         parameters: [
-          {one: 1},
-          {two: 2}
-        ]
+          { one: 1 },
+          { two: 2 },
+        ],
       },
       plugins: [plugins.parameters],
-      parameterMacro
+      parameterMacro,
     }).then((res) => {
       expect(res).toEqual({
         errors: [],
@@ -27,37 +25,35 @@ describe('parameters', () => {
           parameters: [
             {
               one: 1,
-              default: 'test'
+              default: 'test',
             },
             {
               two: 2,
-              default: 'test'
-            }
-          ]
-        }
-      })
-    })
-  })
+              default: 'test',
+            },
+          ],
+        },
+      });
+    });
+  });
 
   test(
     'should add default value to parameter taking to account first parameter (operation) passed in parameterMacro',
     () => {
-      const parameterMacro = function (operation, parameter) {
-        return operation.test
-      }
+      const parameterMacro = (operation) => operation.test;
 
       return mapSpec({
         spec: {
           test: {
             test: 'pet',
             parameters: [
-              {one: 1},
-              {two: 2}
-            ]
-          }
+              { one: 1 },
+              { two: 2 },
+            ],
+          },
         },
         plugins: [plugins.parameters],
-        parameterMacro
+        parameterMacro,
       }).then((res) => {
         expect(res).toEqual({
           errors: [],
@@ -67,36 +63,34 @@ describe('parameters', () => {
               parameters: [
                 {
                   one: 1,
-                  default: 'pet'
+                  default: 'pet',
                 },
                 {
                   two: 2,
-                  default: 'pet'
-                }
-              ]
-            }
-          }
-        })
-      })
-    }
-  )
+                  default: 'pet',
+                },
+              ],
+            },
+          },
+        });
+      });
+    },
+  );
 
   test(
     'should add default value to parameter taking to account second parameter (parameter itself) passed in parameterMacro',
     () => {
-      const parameterMacro = function (operation, parameter) {
-        return parameter.test
-      }
+      const parameterMacro = (operation, parameter) => parameter.test;
 
       return mapSpec({
         spec: {
           parameters: [
-            {test: 1},
-            {test: 2}
-          ]
+            { test: 1 },
+            { test: 2 },
+          ],
         },
         plugins: [plugins.parameters],
-        parameterMacro
+        parameterMacro,
       }).then((res) => {
         expect(res).toEqual({
           errors: [],
@@ -104,16 +98,16 @@ describe('parameters', () => {
             parameters: [
               {
                 test: 1,
-                default: 1
+                default: 1,
               },
               {
                 test: 2,
-                default: 2
-              }
-            ]
-          }
-        })
-      })
-    }
-  )
-})
+                default: 2,
+              },
+            ],
+          },
+        });
+      });
+    },
+  );
+});

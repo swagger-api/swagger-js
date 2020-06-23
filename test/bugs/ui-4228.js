@@ -1,6 +1,6 @@
 // https://github.com/swagger-api/swagger-ui/issues/4228
 
-import Swagger from '../../src'
+import Swagger from '../../src';
 
 const spec = {
   paths: {
@@ -8,15 +8,15 @@ const spec = {
       get: {
         operationId: 'Get',
         produces: [
-          'application/json'
+          'application/json',
         ],
         responses: {
           200: {
             description: 'Ok',
             schema: {
-              $ref: '#/definitions/ProductModel'
-            }
-          }
+              $ref: '#/definitions/ProductModel',
+            },
+          },
         },
         security: [],
         parameters: [
@@ -25,10 +25,10 @@ const spec = {
             name: 'productId',
             required: true,
             format: 'double',
-            type: 'number'
-          }
-        ]
-      }
+            type: 'number',
+          },
+        ],
+      },
     },
   },
   definitions: {
@@ -36,34 +36,34 @@ const spec = {
       properties: {
         height: {
           type: 'number',
-          format: 'double'
-        }
+          format: 'double',
+        },
       },
       required: [
-        'height'
+        'height',
       ],
-      type: 'object'
+      type: 'object',
     },
     ProductModel: {
       properties: {
         properties: {
-          $ref: '#/definitions/Props'
-        }
+          $ref: '#/definitions/Props',
+        },
       },
       required: [
-        'properties'
+        'properties',
       ],
-      type: 'object'
-    }
-  }
-}
+      type: 'object',
+    },
+  },
+};
 
 test(
   'should resolve "properties" property name in model definition correctly',
   async () => {
     const res = await Swagger.resolve({
-      spec
-    })
+      spec,
+    });
 
     expect(res).toEqual({
       errors: [],
@@ -77,26 +77,26 @@ test(
                 properties: {
                   height: {
                     format: 'double',
-                    type: 'number'
-                  }
+                    type: 'number',
+                  },
                 },
                 required: ['height'],
-                type: 'object'
-              }
+                type: 'object',
+              },
             },
             required: ['properties'],
-            type: 'object'
+            type: 'object',
           },
           Props: {
             properties: {
               height: {
                 format: 'double',
-                type: 'number'
-              }
+                type: 'number',
+              },
             },
             required: ['height'],
-            type: 'object'
-          }
+            type: 'object',
+          },
         },
         paths: {
           '/product/{productId}': {
@@ -109,8 +109,8 @@ test(
                   in: 'path',
                   name: 'productId',
                   required: true,
-                  type: 'number'
-                }
+                  type: 'number',
+                },
               ],
               produces: ['application/json'],
               responses: {
@@ -124,23 +124,23 @@ test(
                         properties: {
                           height: {
                             format: 'double',
-                            type: 'number'
-                          }
+                            type: 'number',
+                          },
                         },
                         required: ['height'],
-                        type: 'object'
-                      }
+                        type: 'object',
+                      },
                     },
                     required: ['properties'],
-                    type: 'object'
-                  }
-                }
+                    type: 'object',
+                  },
+                },
               },
-              security: []
-            }
-          }
-        }
-      }
-    })
-  }
-)
+              security: [],
+            },
+          },
+        },
+      },
+    });
+  },
+);

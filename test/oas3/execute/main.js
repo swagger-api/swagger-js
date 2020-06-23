@@ -1,45 +1,45 @@
-import path from 'path'
-import fs from 'fs'
-import jsYaml from 'js-yaml'
-import {escape} from 'querystring'
+import path from 'path';
+import fs from 'fs';
+import jsYaml from 'js-yaml';
+import { escape } from 'querystring';
 
-import {buildRequest, baseUrl} from '../../../src/execute'
+import { buildRequest, baseUrl } from '../../../src/execute';
 
-const petstoreSpec = jsYaml.safeLoad(fs.readFileSync(path.join('test', 'oas3', 'data', 'petstore-oas3.yaml'), 'utf8'))
+const petstoreSpec = jsYaml.safeLoad(fs.readFileSync(path.join('test', 'oas3', 'data', 'petstore-oas3.yaml'), 'utf8'));
 
 // Supported shape...  { spec, operationId, parameters, securities, fetch }
 // One can use operationId or pathItem + method
 
-describe('buildRequest - OpenAPI Specification 3.0', function () {
-  describe('fundamentals', function () {
-    it('should build a request for the given operationId', function () {
+describe('buildRequest - OpenAPI Specification 3.0', () => {
+  describe('fundamentals', () => {
+    it('should build a request for the given operationId', () => {
       // Given
       const spec = {
         openapi: '3.0.0',
         paths: {
           '/one': {
             get: {
-              operationId: 'getMe'
-            }
-          }
-        }
-      }
+              operationId: 'getMe',
+            },
+          },
+        },
+      };
 
       // when
       const req = buildRequest({
         spec,
-        operationId: 'getMe'
-      })
+        operationId: 'getMe',
+      });
 
       expect(req).toEqual({
         method: 'GET',
         url: '/one',
         credentials: 'same-origin',
         headers: {},
-      })
-    })
+      });
+    });
 
-    it('should build a twice-included path parameter request', function () {
+    it('should build a twice-included path parameter request', () => {
       // Given
       const spec = {
         openapi: '3.0.0',
@@ -53,92 +53,92 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
                   in: 'path',
                   required: true,
                   schema: {
-                    type: 'string'
-                  }
-                }
-              ]
-            }
-          }
-        }
-      }
+                    type: 'string',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      };
 
       // when
       const req = buildRequest({
         spec,
         operationId: 'getMe',
         parameters: {
-          myParam: 'hi'
-        }
-      })
+          myParam: 'hi',
+        },
+      });
 
       expect(req).toEqual({
         method: 'GET',
         url: '/one/hi/hi',
         credentials: 'same-origin',
         headers: {},
-      })
-    })
-    it('should build a request for the given operationId, using the first server by default', function () {
+      });
+    });
+    it('should build a request for the given operationId, using the first server by default', () => {
       // Given
       const spec = {
         openapi: '3.0.0',
         servers: [
           {
             url: 'http://petstore.swagger.io/v2',
-            name: 'Petstore'
+            name: 'Petstore',
           },
           {
             url: 'http://not-real-petstore.swagger.io/v2',
-            name: 'Fake Petstore (should not be selected)'
+            name: 'Fake Petstore (should not be selected)',
           },
         ],
         paths: {
           '/one': {
             get: {
-              operationId: 'getMe'
-            }
-          }
-        }
-      }
+              operationId: 'getMe',
+            },
+          },
+        },
+      };
 
       // when
-      const req = buildRequest({spec, operationId: 'getMe'})
+      const req = buildRequest({ spec, operationId: 'getMe' });
 
       expect(req).toEqual({
         method: 'GET',
         url: 'http://petstore.swagger.io/v2/one',
         credentials: 'same-origin',
         headers: {},
-      })
-    })
+      });
+    });
 
-    it('should build a request for the given operationId, using a specfied server', function () {
+    it('should build a request for the given operationId, using a specfied server', () => {
       // Given
       const spec = {
         openapi: '3.0.0',
         servers: [
           {
             url: 'http://not-real-petstore.swagger.io/v2',
-            name: 'Fake Petstore (should not be selected)'
+            name: 'Fake Petstore (should not be selected)',
           },
           {
             url: 'http://petstore.swagger.io/{version}',
             name: 'Petstore',
             variables: {
               version: {
-                default: 'v1'
-              }
-            }
-          }
+                default: 'v1',
+              },
+            },
+          },
         ],
         paths: {
           '/one': {
             get: {
-              operationId: 'getMe'
-            }
-          }
-        }
-      }
+              operationId: 'getMe',
+            },
+          },
+        },
+      };
 
       // when
       const req = buildRequest({
@@ -146,27 +146,27 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
         operationId: 'getMe',
         server: 'http://petstore.swagger.io/{version}',
         serverVariables: {
-          version: 'v2'
-        }
-      })
+          version: 'v2',
+        },
+      });
 
       expect(req).toEqual({
         method: 'GET',
         url: 'http://petstore.swagger.io/v2/one',
         credentials: 'same-origin',
         headers: {},
-      })
-    })
+      });
+    });
 
-    it('should build a request for the given operationId with a requestBody', function () {
+    it('should build a request for the given operationId with a requestBody', () => {
       // Given
       const spec = {
         openapi: '3.0.0',
         servers: [
           {
             url: 'http://petstore.swagger.io/v2',
-            name: 'Petstore'
-          }
+            name: 'Petstore',
+          },
         ],
         paths: {
           '/one': {
@@ -176,15 +176,15 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
                 content: {
                   'application/json': {
                     schema: {
-                      type: 'object'
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+                      type: 'object',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
 
       // when
       const req = buildRequest({
@@ -192,30 +192,30 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
         operationId: 'getOne',
         requestBody: {
           a: 1,
-          b: 2
-        }
-      })
+          b: 2,
+        },
+      });
 
       expect(req).toEqual({
         method: 'GET',
         url: 'http://petstore.swagger.io/v2/one',
         credentials: 'same-origin',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: {a: 1, b: 2}
-      })
-    })
+        body: { a: 1, b: 2 },
+      });
+    });
 
-    it('should stringify object values of form data bodies', function () {
+    it('should stringify object values of form data bodies', () => {
       // Given
       const spec = {
         openapi: '3.0.0',
         servers: [
           {
             url: 'http://petstore.swagger.io/v2',
-            name: 'Petstore'
-          }
+            name: 'Petstore',
+          },
         ],
         paths: {
           '/one': {
@@ -225,15 +225,15 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
                 content: {
                   'application/x-www-form-urlencoded': {
                     schema: {
-                      type: 'object'
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+                      type: 'object',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
 
       // when
       const req = buildRequest({
@@ -243,31 +243,31 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
           a: 1,
           b: {
             c: 3,
-            d: 4
-          }
-        }
-      })
+            d: 4,
+          },
+        },
+      });
 
       expect(req).toEqual({
         method: 'GET',
         url: 'http://petstore.swagger.io/v2/one',
         credentials: 'same-origin',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: 'a=1&b=%7B%22c%22%3A3%2C%22d%22%3A4%7D'
-      })
-    })
+        body: 'a=1&b=%7B%22c%22%3A3%2C%22d%22%3A4%7D',
+      });
+    });
 
-    it('should build a request for the given operationId with a requestBody, and not be overriden by an invalid Swagger2 body parameter value', function () {
+    it('should build a request for the given operationId with a requestBody, and not be overriden by an invalid Swagger2 body parameter value', () => {
       // Given
       const spec = {
         openapi: '3.0.0',
         servers: [
           {
             url: 'http://petstore.swagger.io/v2',
-            name: 'Petstore'
-          }
+            name: 'Petstore',
+          },
         ],
         paths: {
           '/one': {
@@ -277,15 +277,15 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
                 content: {
                   'application/json': {
                     schema: {
-                      type: 'object'
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+                      type: 'object',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
 
       // when
       const req = buildRequest({
@@ -293,36 +293,36 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
         operationId: 'getOne',
         requestBody: {
           a: 1,
-          b: 2
+          b: 2,
         },
         parameters: {
           body: {
             c: 3,
-            d: 4
-          }
-        }
-      })
+            d: 4,
+          },
+        },
+      });
 
       expect(req).toEqual({
         method: 'GET',
         url: 'http://petstore.swagger.io/v2/one',
         credentials: 'same-origin',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: {a: 1, b: 2}
-      })
-    })
+        body: { a: 1, b: 2 },
+      });
+    });
 
-    it('should build a request for the given operationId with a requestBody and a defined requestContentType', function () {
+    it('should build a request for the given operationId with a requestBody and a defined requestContentType', () => {
       // Given
       const spec = {
         openapi: '3.0.0',
         servers: [
           {
             url: 'http://petstore.swagger.io/v2',
-            name: 'Petstore'
-          }
+            name: 'Petstore',
+          },
         ],
         paths: {
           '/one': {
@@ -332,15 +332,15 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
                 content: {
                   'application/json': {
                     schema: {
-                      type: 'object'
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+                      type: 'object',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
 
       // when
       const req = buildRequest({
@@ -348,31 +348,31 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
         operationId: 'getOne',
         requestBody: {
           a: 1,
-          b: 2
+          b: 2,
         },
-        requestContentType: 'application/json'
-      })
+        requestContentType: 'application/json',
+      });
 
       expect(req).toEqual({
         method: 'GET',
         url: 'http://petstore.swagger.io/v2/one',
         credentials: 'same-origin',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: {a: 1, b: 2}
-      })
-    })
+        body: { a: 1, b: 2 },
+      });
+    });
 
-    it('should build an operation without a body or Content-Type if the requestBody definition lacks the requestContentType', function () {
+    it('should build an operation without a body or Content-Type if the requestBody definition lacks the requestContentType', () => {
       // Given
       const spec = {
         openapi: '3.0.0',
         servers: [
           {
             url: 'http://petstore.swagger.io/v2',
-            name: 'Petstore'
-          }
+            name: 'Petstore',
+          },
         ],
         paths: {
           '/one': {
@@ -382,15 +382,15 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
                 content: {
                   'application/json': {
                     schema: {
-                      type: 'object'
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+                      type: 'object',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
 
       // when
       const req = buildRequest({
@@ -398,28 +398,28 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
         operationId: 'getOne',
         requestBody: {
           a: 1,
-          b: 2
+          b: 2,
         },
-        requestContentType: 'application/not-json'
-      })
+        requestContentType: 'application/not-json',
+      });
 
       expect(req).toEqual({
         method: 'GET',
         url: 'http://petstore.swagger.io/v2/one',
         credentials: 'same-origin',
-        headers: {}
-      })
-    })
+        headers: {},
+      });
+    });
 
-    it('should build a request body-bearing operation with a provided requestContentType that appears in the requestBody definition even if no payload is present', function () {
+    it('should build a request body-bearing operation with a provided requestContentType that appears in the requestBody definition even if no payload is present', () => {
       // Given
       const spec = {
         openapi: '3.0.0',
         servers: [
           {
             url: 'http://petstore.swagger.io/v2',
-            name: 'Petstore'
-          }
+            name: 'Petstore',
+          },
         ],
         paths: {
           '/one': {
@@ -429,42 +429,42 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
                 content: {
                   'application/json': {
                     schema: {
-                      type: 'object'
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+                      type: 'object',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
 
       // when
       const req = buildRequest({
         spec,
         operationId: 'getOne',
-        requestContentType: 'application/json'
-      })
+        requestContentType: 'application/json',
+      });
 
       expect(req).toEqual({
         method: 'GET',
         url: 'http://petstore.swagger.io/v2/one',
         credentials: 'same-origin',
         headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-    })
+          'Content-Type': 'application/json',
+        },
+      });
+    });
 
-    it('should build a request body-bearing operation without a provided requestContentType that does not appear in the requestBody definition even if no payload is present', function () {
+    it('should build a request body-bearing operation without a provided requestContentType that does not appear in the requestBody definition even if no payload is present', () => {
       // Given
       const spec = {
         openapi: '3.0.0',
         servers: [
           {
             url: 'http://petstore.swagger.io/v2',
-            name: 'Petstore'
-          }
+            name: 'Petstore',
+          },
         ],
         paths: {
           '/one': {
@@ -474,85 +474,85 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
                 content: {
                   'application/json': {
                     schema: {
-                      type: 'object'
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+                      type: 'object',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
 
       // when
       const req = buildRequest({
         spec,
         operationId: 'getOne',
-        requestContentType: 'application/not-json'
-      })
+        requestContentType: 'application/not-json',
+      });
 
       expect(req).toEqual({
         method: 'GET',
         url: 'http://petstore.swagger.io/v2/one',
         credentials: 'same-origin',
-        headers: {}
-      })
-    })
+        headers: {},
+      });
+    });
 
-    it('should not add a Content-Type when the operation has no OAS3 request body definition', function () {
+    it('should not add a Content-Type when the operation has no OAS3 request body definition', () => {
       // Given
       const spec = {
         openapi: '3.0.0',
-        servers: [{url: 'http://swagger.io/'}],
-        paths: {'/one': {get: {operationId: 'getMe'}}}
-      }
+        servers: [{ url: 'http://swagger.io/' }],
+        paths: { '/one': { get: { operationId: 'getMe' } } },
+      };
 
       // When
-      const req = buildRequest({spec, operationId: 'getMe', requestContentType: 'application/josh'})
+      const req = buildRequest({ spec, operationId: 'getMe', requestContentType: 'application/josh' });
 
       // Then
       expect(req).toEqual({
         url: 'http://swagger.io/one',
         headers: {},
         credentials: 'same-origin',
-        method: 'GET'
-      })
-    })
-  })
-  describe('with petstore v3', function () {
-    it('should build updatePetWithForm correctly', function () {
+        method: 'GET',
+      });
+    });
+  });
+  describe('with petstore v3', () => {
+    it('should build updatePetWithForm correctly', () => {
       const req = buildRequest({
         spec: petstoreSpec,
         requestContentType: 'application/x-www-form-urlencoded',
         operationId: 'updatePetWithForm',
         parameters: {
-          petId: 1234
+          petId: 1234,
         },
         requestBody: {
           thePetId: 1234,
-          name: 'OAS3 pet'
-        }
-      })
+          name: 'OAS3 pet',
+        },
+      });
 
       expect(req).toEqual({
         method: 'POST',
         url: 'http://petstore.swagger.io/v2/pet/1234',
         credentials: 'same-origin',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: 'thePetId=1234&name=OAS3%20pet'
-      })
-    })
+        body: 'thePetId=1234&name=OAS3%20pet',
+      });
+    });
 
-    it('should build addPet correctly', function () {
+    it('should build addPet correctly', () => {
       const req = buildRequest({
         spec: petstoreSpec,
         operationId: 'addPet',
         requestBody: {
           one: 1,
-        }
-      })
+        },
+      });
 
       expect(req).toEqual({
         method: 'POST',
@@ -560,14 +560,14 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
         credentials: 'same-origin',
         headers: {},
         body: {
-          one: 1
-        }
-      })
-    })
-  })
+          one: 1,
+        },
+      });
+    });
+  });
 
-  describe('`content` parameters', function () {
-    it('should serialize JSON values provided as objects', function () {
+  describe('`content` parameters', () => {
+    it('should serialize JSON values provided as objects', () => {
       const req = buildRequest({
         spec: {
           openapi: '3.0.0',
@@ -582,10 +582,10 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
                     content: {
                       'application/json': {
                         schema: {
-                          type: 'object'
-                        }
-                      }
-                    }
+                          type: 'object',
+                        },
+                      },
+                    },
                   },
                   {
                     name: 'FooHeader',
@@ -593,10 +593,10 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
                     content: {
                       'application/json': {
                         schema: {
-                          type: 'object'
-                        }
-                      }
-                    }
+                          type: 'object',
+                        },
+                      },
+                    },
                   },
                   {
                     name: 'pathPartial',
@@ -604,10 +604,10 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
                     content: {
                       'application/json': {
                         schema: {
-                          type: 'object'
-                        }
-                      }
-                    }
+                          type: 'object',
+                        },
+                      },
+                    },
                   },
                   {
                     name: 'myCookie',
@@ -615,24 +615,24 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
                     content: {
                       'application/json': {
                         schema: {
-                          type: 'object'
-                        }
-                      }
-                    }
+                          type: 'object',
+                        },
+                      },
+                    },
                   },
-                ]
-              }
-            }
-          }
+                ],
+              },
+            },
+          },
         },
         operationId: 'myOp',
         parameters: {
-          query: {a: 1, b: '2'},
-          FooHeader: {foo: 'bar'},
-          pathPartial: {baz: 'qux'},
-          myCookie: {flavor: 'chocolate chip'}
-        }
-      })
+          query: { a: 1, b: '2' },
+          FooHeader: { foo: 'bar' },
+          pathPartial: { baz: 'qux' },
+          myCookie: { flavor: 'chocolate chip' },
+        },
+      });
 
       expect(req).toEqual({
         method: 'POST',
@@ -640,73 +640,73 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
         credentials: 'same-origin',
         headers: {
           FooHeader: '{"foo":"bar"}',
-          Cookie: 'myCookie={"flavor":"chocolate chip"}'
-        }
-      })
-    })
-  })
-  describe('baseUrl', function () {
-    it('should consider contextUrls correctly with relative server paths', function () {
+          Cookie: 'myCookie={"flavor":"chocolate chip"}',
+        },
+      });
+    });
+  });
+  describe('baseUrl', () => {
+    it('should consider contextUrls correctly with relative server paths', () => {
       const spec = {
-        openapi: '3.0.0'
-      }
+        openapi: '3.0.0',
+      };
 
       const res = baseUrl({
         spec,
-        contextUrl: 'https://gist.githubusercontent.com/hkosova/d223eb45c5198db09d08f2603cc0e10a/raw/ae22e290b4f21e19bbfc02b97498289792579fec/relative-server.yaml'
-      })
+        contextUrl: 'https://gist.githubusercontent.com/hkosova/d223eb45c5198db09d08f2603cc0e10a/raw/ae22e290b4f21e19bbfc02b97498289792579fec/relative-server.yaml',
+      });
 
-      expect(res).toEqual('https://gist.githubusercontent.com')
-    })
-    it('should default to using the first server if none is explicitly chosen', function () {
+      expect(res).toEqual('https://gist.githubusercontent.com');
+    });
+    it('should default to using the first server if none is explicitly chosen', () => {
       const spec = {
         openapi: '3.0.0',
         servers: [
           {
-            url: 'https://petstore.com'
+            url: 'https://petstore.com',
           },
           {
-            url: 'https://petstore.net'
-          }
-        ]
-      }
-
-      const res = baseUrl({
-        spec
-      })
-
-      expect(res).toEqual('https://petstore.com')
-    })
-    it('should use an explicitly chosen server', function () {
-      const spec = {
-        openapi: '3.0.0',
-        servers: [
-          {
-            url: 'https://petstore.com'
+            url: 'https://petstore.net',
           },
-          {
-            url: 'https://petstore.net'
-          }
-        ]
-      }
+        ],
+      };
 
       const res = baseUrl({
         spec,
-        server: 'https://petstore.net'
-      })
+      });
 
-      expect(res).toEqual('https://petstore.net')
-    })
-    it('should use an explicitly chosen server at the operation level', function () {
+      expect(res).toEqual('https://petstore.com');
+    });
+    it('should use an explicitly chosen server', () => {
       const spec = {
         openapi: '3.0.0',
         servers: [
           {
-            url: 'https://petstore.com'
+            url: 'https://petstore.com',
           },
           {
-            url: 'https://petstore.net'
-          }
+            url: 'https://petstore.net',
+          },
+        ],
+      };
+
+      const res = baseUrl({
+        spec,
+        server: 'https://petstore.net',
+      });
+
+      expect(res).toEqual('https://petstore.net');
+    });
+    it('should use an explicitly chosen server at the operation level', () => {
+      const spec = {
+        openapi: '3.0.0',
+        servers: [
+          {
+            url: 'https://petstore.com',
+          },
+          {
+            url: 'https://petstore.net',
+          },
         ],
         paths: {
           '/': {
@@ -716,47 +716,47 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
                   url: 'https://petstore-operation.net/{path}',
                   variables: {
                     path: {
-                      default: 'foobar'
-                    }
-                  }
-                }
-              ]
-            }
-          }
-        }
-      }
+                      default: 'foobar',
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        },
+      };
 
       const res = baseUrl({
         spec,
         server: 'https://petstore-operation.net/{path}',
         pathName: '/',
-        method: 'GET'
-      })
+        method: 'GET',
+      });
 
       const resWithVariables = baseUrl({
         spec,
         server: 'https://petstore-operation.net/{path}',
         serverVariables: {
-          path: 'fizzbuzz'
+          path: 'fizzbuzz',
         },
         pathName: '/',
-        method: 'GET'
-      })
+        method: 'GET',
+      });
 
-      expect(res).toEqual('https://petstore-operation.net/foobar')
-      expect(resWithVariables).toEqual('https://petstore-operation.net/fizzbuzz')
-    })
+      expect(res).toEqual('https://petstore-operation.net/foobar');
+      expect(resWithVariables).toEqual('https://petstore-operation.net/fizzbuzz');
+    });
 
-    it('should use an explicitly chosen server at the path level', function () {
+    it('should use an explicitly chosen server at the path level', () => {
       const spec = {
         openapi: '3.0.0',
         servers: [
           {
-            url: 'https://petstore.com'
+            url: 'https://petstore.com',
           },
           {
-            url: 'https://petstore.net'
-          }
+            url: 'https://petstore.net',
+          },
         ],
         paths: {
           '/': {
@@ -765,57 +765,57 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
                 url: 'https://petstore-path.net/{path}',
                 variables: {
                   path: {
-                    default: 'foobar'
-                  }
-                }
-              }
+                    default: 'foobar',
+                  },
+                },
+              },
             ],
-            get: {}
-          }
-        }
-      }
+            get: {},
+          },
+        },
+      };
 
       const res = baseUrl({
         spec,
         server: 'https://petstore-path.net/{path}',
         pathName: '/',
-        method: 'GET'
-      })
+        method: 'GET',
+      });
 
       const resWithVariables = baseUrl({
         spec,
         server: 'https://petstore-path.net/{path}',
         serverVariables: {
-          path: 'fizzbuzz'
+          path: 'fizzbuzz',
         },
         pathName: '/',
-        method: 'GET'
-      })
+        method: 'GET',
+      });
 
-      expect(res).toEqual('https://petstore-path.net/foobar')
-      expect(resWithVariables).toEqual('https://petstore-path.net/fizzbuzz')
-    })
-    it('should not use an explicitly chosen server that is not present in the spec', function () {
+      expect(res).toEqual('https://petstore-path.net/foobar');
+      expect(resWithVariables).toEqual('https://petstore-path.net/fizzbuzz');
+    });
+    it('should not use an explicitly chosen server that is not present in the spec', () => {
       const spec = {
         openapi: '3.0.0',
         servers: [
           {
-            url: 'https://petstore.com'
+            url: 'https://petstore.com',
           },
           {
-            url: 'https://petstore.net'
-          }
-        ]
-      }
+            url: 'https://petstore.net',
+          },
+        ],
+      };
 
       const res = baseUrl({
         spec,
-        server: 'https://petstore.org'
-      })
+        server: 'https://petstore.org',
+      });
 
-      expect(res).toEqual('https://petstore.com')
-    })
-    it('should handle server variable substitution', function () {
+      expect(res).toEqual('https://petstore.com');
+    });
+    it('should handle server variable substitution', () => {
       const spec = {
         openapi: '3.0.0',
         servers: [
@@ -823,23 +823,23 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
             url: 'https://petstore.{tld}',
             variables: {
               tld: {
-                default: 'com'
-              }
-            }
-          }
-        ]
-      }
+                default: 'com',
+              },
+            },
+          },
+        ],
+      };
 
       const res = baseUrl({
         spec,
         serverVariables: {
-          tld: 'org'
-        }
-      })
+          tld: 'org',
+        },
+      });
 
-      expect(res).toEqual('https://petstore.org')
-    })
-    it('should handle server variable substitution defaults', function () {
+      expect(res).toEqual('https://petstore.org');
+    });
+    it('should handle server variable substitution defaults', () => {
       const spec = {
         openapi: '3.0.0',
         servers: [
@@ -847,84 +847,84 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
             url: 'https://petstore.{tld}',
             variables: {
               tld: {
-                default: 'com'
-              }
-            }
-          }
-        ]
-      }
-
-      const res = baseUrl({
-        spec
-      })
-
-      expect(res).toEqual('https://petstore.com')
-    })
-    it('should fall back to contextUrls if no servers are provided', function () {
-      const spec = {
-        openapi: '3.0.0'
-      }
+                default: 'com',
+              },
+            },
+          },
+        ],
+      };
 
       const res = baseUrl({
         spec,
-        server: 'http://some-invalid-server.com/',
-        contextUrl: 'http://google.com/'
-      })
+      });
 
-      expect(res).toEqual('http://google.com')
-    })
-    it('should fall back to contextUrls if servers list is empty', function () {
+      expect(res).toEqual('https://petstore.com');
+    });
+    it('should fall back to contextUrls if no servers are provided', () => {
       const spec = {
         openapi: '3.0.0',
-        servers: []
-      }
+      };
 
       const res = baseUrl({
         spec,
         server: 'http://some-invalid-server.com/',
-        contextUrl: 'http://google.com/'
-      })
+        contextUrl: 'http://google.com/',
+      });
 
-      expect(res).toEqual('http://google.com')
-    })
-    it('should create a relative url based on a relative server if no contextUrl is available', function () {
+      expect(res).toEqual('http://google.com');
+    });
+    it('should fall back to contextUrls if servers list is empty', () => {
+      const spec = {
+        openapi: '3.0.0',
+        servers: [],
+      };
+
+      const res = baseUrl({
+        spec,
+        server: 'http://some-invalid-server.com/',
+        contextUrl: 'http://google.com/',
+      });
+
+      expect(res).toEqual('http://google.com');
+    });
+    it('should create a relative url based on a relative server if no contextUrl is available', () => {
       const spec = {
         openapi: '3.0.0',
         servers: [
           {
-            url: '/mypath'
-          }
-        ]
-      }
+            url: '/mypath',
+          },
+        ],
+      };
 
       const res = baseUrl({
         spec,
-        server: '/mypath'
-      })
+        server: '/mypath',
+      });
 
-      expect(res).toEqual('/mypath')
-    })
-    it('should return an empty string if no servers or contextUrl are provided', function () {
+      expect(res).toEqual('/mypath');
+    });
+    it('should return an empty string if no servers or contextUrl are provided', () => {
       const spec = {
-        openapi: '3.0.0'
-      }
+        openapi: '3.0.0',
+      };
 
       const res = baseUrl({
         spec,
-        server: 'http://some-invalid-server.com/'
-      })
+        server: 'http://some-invalid-server.com/',
+      });
 
-      expect(res).toEqual('')
-    })
-  })
+      expect(res).toEqual('');
+    });
+  });
   describe('attachContentTypeForEmptyPayload', () => {
-    it('should attach the first media type as Content-Type to an OAS3 operation with a request body defined but no body provided', function () {
+    it('should attach the first media type as Content-Type to an OAS3 operation with a request body defined but no body provided', () => {
       const spec = {
         openapi: '3.0.0',
         servers: [
           {
-            url: 'http://swagger.io/'
-          }
+            url: 'http://swagger.io/',
+          },
         ],
         paths: {
           '/one': {
@@ -934,68 +934,68 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
                 content: {
                   'application/json': {
                     schema: {
-                      type: 'string'
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+                      type: 'string',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
 
       const req = buildRequest({
         spec,
         operationId: 'myOp',
-        attachContentTypeForEmptyPayload: true
-      })
+        attachContentTypeForEmptyPayload: true,
+      });
 
       expect(req).toEqual({
         url: 'http://swagger.io/one',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         credentials: 'same-origin',
-        method: 'POST'
-      })
-    })
-    it('should not attach a Content-Type to an OAS3 operation with no request body definition present', function () {
+        method: 'POST',
+      });
+    });
+    it('should not attach a Content-Type to an OAS3 operation with no request body definition present', () => {
       const spec = {
         openapi: '3.0.0',
         servers: [
           {
-            url: 'http://swagger.io/'
-          }
+            url: 'http://swagger.io/',
+          },
         ],
         paths: {
           '/one': {
             post: {
-              operationId: 'myOp'
-            }
-          }
-        }
-      }
+              operationId: 'myOp',
+            },
+          },
+        },
+      };
 
       const req = buildRequest({
         spec,
         operationId: 'myOp',
-        attachContentTypeForEmptyPayload: true
-      })
+        attachContentTypeForEmptyPayload: true,
+      });
 
       expect(req).toEqual({
         url: 'http://swagger.io/one',
         headers: {},
         credentials: 'same-origin',
-        method: 'POST'
-      })
-    })
-    it('should not attach the first media type as Content-Type without the option enabled', function () {
+        method: 'POST',
+      });
+    });
+    it('should not attach the first media type as Content-Type without the option enabled', () => {
       const spec = {
         openapi: '3.0.0',
         servers: [
           {
-            url: 'http://swagger.io/'
-          }
+            url: 'http://swagger.io/',
+          },
         ],
         paths: {
           '/one': {
@@ -1005,30 +1005,30 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
                 content: {
                   'application/json': {
                     schema: {
-                      type: 'string'
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+                      type: 'string',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
 
       const req = buildRequest({
         spec,
         operationId: 'myOp',
         // attachContentTypeForEmptyPayload is omitted
-      })
+      });
 
       expect(req).toEqual({
         url: 'http://swagger.io/one',
         headers: {},
         credentials: 'same-origin',
-        method: 'POST'
-      })
-    })
-  })
+        method: 'POST',
+      });
+    });
+  });
   describe('allowEmptyValue', () => {
     describe('query', () => {
       it('should include empty parameter values for a query param with allowEmptyValue', () => {
@@ -1042,30 +1042,30 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
                   {
                     name: 'name',
                     in: 'query',
-                    allowEmptyValue: true
-                  }
-                ]
-              }
-            }
-          }
-        }
+                    allowEmptyValue: true,
+                  },
+                ],
+              },
+            },
+          },
+        };
 
         // when
         const req = buildRequest({
           spec,
           operationId: 'getMe',
           parameters: {
-            name: ''
-          }
-        })
+            name: '',
+          },
+        });
 
         expect(req).toMatchObject({
           method: 'GET',
           url: '/one?name=',
           credentials: 'same-origin',
           headers: {},
-        })
-      })
+        });
+      });
       it('should not include omitted parameter values for a query param with allowEmptyValue', () => {
         const spec = {
           openapi: '3.0.0',
@@ -1077,28 +1077,28 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
                   {
                     name: 'name',
                     in: 'query',
-                    allowEmptyValue: true
-                  }
-                ]
-              }
-            }
-          }
-        }
+                    allowEmptyValue: true,
+                  },
+                ],
+              },
+            },
+          },
+        };
 
         // when
         const req = buildRequest({
           spec,
           operationId: 'getMe',
-          parameters: {}
-        })
+          parameters: {},
+        });
 
         expect(req).toMatchObject({
           method: 'GET',
           url: '/one',
           credentials: 'same-origin',
           headers: {},
-        })
-      })
+        });
+      });
       it('should not include empty parameter values for a query param lacking allowEmptyValue', () => {
         const spec = {
           openapi: '3.0.0',
@@ -1109,30 +1109,30 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
                 parameters: [
                   {
                     name: 'name',
-                    in: 'query'
-                  }
-                ]
-              }
-            }
-          }
-        }
+                    in: 'query',
+                  },
+                ],
+              },
+            },
+          },
+        };
 
         // when
         const req = buildRequest({
           spec,
           operationId: 'getMe',
           parameters: {
-            name: ''
-          }
-        })
+            name: '',
+          },
+        });
 
         expect(req).toMatchObject({
           method: 'GET',
           url: '/one',
           credentials: 'same-origin',
           headers: {},
-        })
-      })
+        });
+      });
       it('should not include omitted parameter values for a query param lacking allowEmptyValue', () => {
         const spec = {
           openapi: '3.0.0',
@@ -1143,32 +1143,32 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
                 parameters: [
                   {
                     name: 'name',
-                    in: 'query'
-                  }
-                ]
-              }
-            }
-          }
-        }
+                    in: 'query',
+                  },
+                ],
+              },
+            },
+          },
+        };
 
         // when
         const req = buildRequest({
           spec,
           operationId: 'getMe',
-          parameters: {}
-        })
+          parameters: {},
+        });
 
         expect(req).toMatchObject({
           method: 'GET',
           url: '/one',
           credentials: 'same-origin',
           headers: {},
-        })
-      })
-    })
-  })
-  describe('special media types', function () {
-    describe('file-as-body types', function () {
+        });
+      });
+    });
+  });
+  describe('special media types', () => {
+    describe('file-as-body types', () => {
       it('should preserve blobs for application/octet-stream', () => {
         const spec = {
           openapi: '3.0.0',
@@ -1181,32 +1181,32 @@ describe('buildRequest - OpenAPI Specification 3.0', function () {
                     'application/octet-stream': {
                       schema: {
                         type: 'string',
-                        format: 'binary'
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+                        format: 'binary',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        };
 
         // when
         const req = buildRequest({
           spec,
           operationId: 'getMe',
-          requestBody: Buffer.from('this is a test')
-        })
+          requestBody: Buffer.from('this is a test'),
+        });
 
         expect(req).toMatchObject({
           method: 'GET',
           url: '/one',
           credentials: 'same-origin',
           headers: {},
-        })
+        });
 
-        expect(req.body.toString('base64')).toEqual('dGhpcyBpcyBhIHRlc3Q=')
-      })
-    })
-  })
-})
+        expect(req.body.toString('base64')).toEqual('dGhpcyBpcyBhIHRlc3Q=');
+      });
+    });
+  });
+});

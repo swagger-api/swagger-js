@@ -1,6 +1,6 @@
 // https://github.com/swagger-api/swagger-editor/issues/1661
 
-import Swagger from '../../src'
+import Swagger from '../../src';
 
 const spec = {
   paths: {
@@ -9,47 +9,47 @@ const spec = {
         responses: {
           200: {
             schema: {
-              $ref: '#/definitions/DataObjectArray'
-            }
-          }
-        }
-      }
-    }
+              $ref: '#/definitions/DataObjectArray',
+            },
+          },
+        },
+      },
+    },
   },
   definitions: {
     DataObject: {
       properties: {
         modifiers: {
-          $ref: '#/definitions/DataModifiers'
-        }
-      }
+          $ref: '#/definitions/DataModifiers',
+        },
+      },
     },
     DataObjectArray: {
       items: {
-        $ref: '#/definitions/DataObject'
-      }
+        $ref: '#/definitions/DataObject',
+      },
     },
     DataModifier: {
       properties: {
         prop1: {
-          type: 'string'
-        }
-      }
+          type: 'string',
+        },
+      },
     },
     DataModifiers: {
       items: {
-        $ref: '#/definitions/DataModifier'
-      }
-    }
-  }
-}
+        $ref: '#/definitions/DataModifier',
+      },
+    },
+  },
+};
 
 test(
   'should resolve a deeply-nested $ref series correctly',
   async () => {
     const res = await Swagger.resolve({
-      spec
-    })
+      spec,
+    });
 
     expect(res).toEqual({
       errors: [],
@@ -71,18 +71,18 @@ test(
                             $$ref: '#/definitions/DataModifier',
                             properties: {
                               prop1: {
-                                type: 'string'
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
+                                type: 'string',
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
         definitions: {
           DataObject: {
@@ -93,12 +93,12 @@ test(
                   $$ref: '#/definitions/DataModifier',
                   properties: {
                     prop1: {
-                      type: 'string'
-                    }
-                  }
-                }
-              }
-            }
+                      type: 'string',
+                    },
+                  },
+                },
+              },
+            },
           },
           DataObjectArray: {
             items: {
@@ -110,33 +110,33 @@ test(
                     $$ref: '#/definitions/DataModifier',
                     properties: {
                       prop1: {
-                        type: 'string'
-                      }
-                    }
-                  }
-                }
-              }
-            }
+                        type: 'string',
+                      },
+                    },
+                  },
+                },
+              },
+            },
           },
           DataModifier: {
             properties: {
               prop1: {
-                type: 'string'
-              }
-            }
+                type: 'string',
+              },
+            },
           },
           DataModifiers: {
             items: {
               $$ref: '#/definitions/DataModifier',
               properties: {
                 prop1: {
-                  type: 'string'
-                }
-              }
-            }
-          }
-        }
-      }
-    })
-  }
-)
+                  type: 'string',
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+  },
+);

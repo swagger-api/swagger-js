@@ -1,8 +1,8 @@
-import {buildRequest} from '../../../../src/execute'
+import { buildRequest } from '../../../../src/execute';
 
 describe('OAS 3.0 - buildRequest w/ `style` & `explode` - cookie parameters', () => {
   describe('primitive values', () => {
-    const VALUE = 5
+    const VALUE = 5;
 
     test(
       'default: should build a cookie parameter in form/no-explode format',
@@ -17,33 +17,33 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - cookie parameters', ()
                 parameters: [
                   {
                     name: 'id',
-                    in: 'cookie'
-                  }
-                ]
-              }
-            }
-          }
-        }
+                    in: 'cookie',
+                  },
+                ],
+              },
+            },
+          },
+        };
 
         // when
         const req = buildRequest({
           spec,
           operationId: 'myOperation',
           parameters: {
-            id: VALUE
-          }
-        })
+            id: VALUE,
+          },
+        });
 
         expect(req).toEqual({
           method: 'GET',
           url: '/users',
           credentials: 'same-origin',
           headers: {
-            Cookie: 'id=5'
+            Cookie: 'id=5',
           },
-        })
-      }
-    )
+        });
+      },
+    );
 
     test('should build a cookie parameter in form/no-explode format', () => {
       // Given
@@ -58,32 +58,32 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - cookie parameters', ()
                   name: 'id',
                   in: 'cookie',
                   style: 'form',
-                  explode: false
-                }
-              ]
-            }
-          }
-        }
-      }
+                  explode: false,
+                },
+              ],
+            },
+          },
+        },
+      };
 
       // when
       const req = buildRequest({
         spec,
         operationId: 'myOperation',
         parameters: {
-          id: VALUE
-        }
-      })
+          id: VALUE,
+        },
+      });
 
       expect(req).toEqual({
         method: 'GET',
         url: '/users',
         credentials: 'same-origin',
         headers: {
-          Cookie: 'id=5'
+          Cookie: 'id=5',
         },
-      })
-    })
+      });
+    });
 
     test('should build a cookie parameter in form/explode format', () => {
       // Given
@@ -98,35 +98,35 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - cookie parameters', ()
                   name: 'id',
                   in: 'cookie',
                   style: 'form',
-                  explode: true
-                }
-              ]
-            }
-          }
-        }
-      }
+                  explode: true,
+                },
+              ],
+            },
+          },
+        },
+      };
 
       // when
       const req = buildRequest({
         spec,
         operationId: 'myOperation',
         parameters: {
-          id: VALUE
-        }
-      })
+          id: VALUE,
+        },
+      });
 
       expect(req).toEqual({
         method: 'GET',
         url: '/users',
         credentials: 'same-origin',
         headers: {
-          Cookie: 'id=5'
+          Cookie: 'id=5',
         },
-      })
-    })
-  })
+      });
+    });
+  });
   describe('array values', () => {
-    const VALUE = [3, 4, 5]
+    const VALUE = [3, 4, 5];
 
     test(
       'default: should build a cookie parameter in form/no-explode format',
@@ -141,33 +141,33 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - cookie parameters', ()
                 parameters: [
                   {
                     name: 'id',
-                    in: 'cookie'
-                  }
-                ]
-              }
-            }
-          }
-        }
+                    in: 'cookie',
+                  },
+                ],
+              },
+            },
+          },
+        };
 
         // when
         const req = buildRequest({
           spec,
           operationId: 'myOperation',
           parameters: {
-            id: VALUE
-          }
-        })
+            id: VALUE,
+          },
+        });
 
         expect(req).toEqual({
           method: 'GET',
           url: '/users',
           credentials: 'same-origin',
           headers: {
-            Cookie: 'id=3,4,5'
+            Cookie: 'id=3,4,5',
           },
-        })
-      }
-    )
+        });
+      },
+    );
 
     test('should build a cookie parameter in form/no-explode format', () => {
       // Given
@@ -182,32 +182,32 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - cookie parameters', ()
                   name: 'id',
                   in: 'cookie',
                   style: 'form',
-                  explode: false
-                }
-              ]
-            }
-          }
-        }
-      }
+                  explode: false,
+                },
+              ],
+            },
+          },
+        },
+      };
 
       // when
       const req = buildRequest({
         spec,
         operationId: 'myOperation',
         parameters: {
-          id: VALUE
-        }
-      })
+          id: VALUE,
+        },
+      });
 
       expect(req).toEqual({
         method: 'GET',
         url: '/users',
         credentials: 'same-origin',
         headers: {
-          Cookie: 'id=3,4,5'
+          Cookie: 'id=3,4,5',
         },
-      })
-    })
+      });
+    });
 
     test('should build a cookie parameter in form/explode format', () => {
       // Given
@@ -222,38 +222,38 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - cookie parameters', ()
                   name: 'id',
                   in: 'cookie',
                   style: 'form',
-                  explode: true
-                }
-              ]
-            }
-          }
-        }
-      }
+                  explode: true,
+                },
+              ],
+            },
+          },
+        },
+      };
 
       // when
       const req = buildRequest({
         spec,
         operationId: 'myOperation',
         parameters: {
-          id: VALUE
-        }
-      })
+          id: VALUE,
+        },
+      });
 
       expect(req).toEqual({
         method: 'GET',
         url: '/users',
         credentials: 'same-origin',
         headers: {
-          Cookie: 'id=3&id=4&id=5'
+          Cookie: 'id=3&id=4&id=5',
         },
-      })
-    })
-  })
+      });
+    });
+  });
   describe('object values', () => {
     const VALUE = {
       role: 'admin',
-      firstName: 'Alex'
-    }
+      firstName: 'Alex',
+    };
 
     test(
       'default: should build a cookie parameter in form/no-explode format',
@@ -268,33 +268,33 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - cookie parameters', ()
                 parameters: [
                   {
                     name: 'id',
-                    in: 'cookie'
-                  }
-                ]
-              }
-            }
-          }
-        }
+                    in: 'cookie',
+                  },
+                ],
+              },
+            },
+          },
+        };
 
         // when
         const req = buildRequest({
           spec,
           operationId: 'myOperation',
           parameters: {
-            id: VALUE
-          }
-        })
+            id: VALUE,
+          },
+        });
 
         expect(req).toEqual({
           method: 'GET',
           url: '/users',
           credentials: 'same-origin',
           headers: {
-            Cookie: 'id=role,admin,firstName,Alex'
+            Cookie: 'id=role,admin,firstName,Alex',
           },
-        })
-      }
-    )
+        });
+      },
+    );
 
     test('should build a cookie parameter in form/no-explode format', () => {
       // Given
@@ -309,32 +309,32 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - cookie parameters', ()
                   name: 'id',
                   in: 'cookie',
                   style: 'form',
-                  explode: false
-                }
-              ]
-            }
-          }
-        }
-      }
+                  explode: false,
+                },
+              ],
+            },
+          },
+        },
+      };
 
       // when
       const req = buildRequest({
         spec,
         operationId: 'myOperation',
         parameters: {
-          id: VALUE
-        }
-      })
+          id: VALUE,
+        },
+      });
 
       expect(req).toEqual({
         method: 'GET',
         url: '/users',
         credentials: 'same-origin',
         headers: {
-          Cookie: 'id=role,admin,firstName,Alex'
+          Cookie: 'id=role,admin,firstName,Alex',
         },
-      })
-    })
+      });
+    });
 
     test('should build a cookie parameter in form/explode format', () => {
       // Given
@@ -349,31 +349,31 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - cookie parameters', ()
                   name: 'id',
                   in: 'cookie',
                   style: 'form',
-                  explode: true
-                }
-              ]
-            }
-          }
-        }
-      }
+                  explode: true,
+                },
+              ],
+            },
+          },
+        },
+      };
 
       // when
       const req = buildRequest({
         spec,
         operationId: 'myOperation',
         parameters: {
-          id: VALUE
-        }
-      })
+          id: VALUE,
+        },
+      });
 
       expect(req).toEqual({
         method: 'GET',
         url: '/users',
         credentials: 'same-origin',
         headers: {
-          Cookie: 'role=admin&firstName=Alex'
+          Cookie: 'role=admin&firstName=Alex',
         },
-      })
-    })
-  })
-})
+      });
+    });
+  });
+});

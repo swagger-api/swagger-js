@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 module.exports = {
   testEnvironment: 'node',
@@ -16,4 +16,4 @@ module.exports = {
     '<rootDir>/test/specmap/data/',
     '<rootDir>/test/webpack-bundle/.tmp/'
   ]
-}
+};

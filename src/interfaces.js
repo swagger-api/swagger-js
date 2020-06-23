@@ -1,21 +1,21 @@
-import pick from 'lodash/pick'
-import {eachOperation, opId} from './helpers'
+import pick from 'lodash/pick';
+import { eachOperation, opId } from './helpers';
 
-const nullFn = () => null
+const nullFn = () => null;
 
 const normalizeArray = (arg) => {
-  return Array.isArray(arg) ? arg : [arg]
-}
+  return Array.isArray(arg) ? arg : [arg];
+};
 
 // To allow stubbing of functions
 export const self = {
   mapTagOperations,
-  makeExecute
-}
+  makeExecute,
+};
 
 // Make an execute, bound to arguments defined in mapTagOperation's callback (cb)
 export function makeExecute(swaggerJs = {}) {
-  return ({pathName, method, operationId}) => (parameters, opts = {}) => {
+  return ({ pathName, method, operationId }) => (parameters, opts = {}) => {
     return swaggerJs.execute({
       spec: swaggerJs.spec,
       ...pick(swaggerJs, 'requestInterceptor', 'responseInterceptor', 'userFetch'),
@@ -23,9 +23,9 @@ export function makeExecute(swaggerJs = {}) {
       method,
       parameters,
       operationId,
-      ...opts
-    })
-  }
+      ...opts,
+    });
+  };
 }
 
 // Creates an interface with tags+operations = execute
@@ -34,36 +34,38 @@ export function makeExecute(swaggerJs = {}) {
 // NOTE: this is mostly for compatibility
 export function makeApisTagOperationsOperationExecute(swaggerJs = {}) {
   // { apis: tag: operations: execute }
-  const cb = self.makeExecute(swaggerJs)
+  const cb = self.makeExecute(swaggerJs);
   const tagOperations = self.mapTagOperations({
     v2OperationIdCompatibilityMode: swaggerJs.v2OperationIdCompatibilityMode,
     spec: swaggerJs.spec,
     cb,
-  })
+  });
 
-  const apis = {}
+  const apis = {};
+  // eslint-disable-next-line no-restricted-syntax, guard-for-in
   for (const tag in tagOperations) {
     apis[tag] = {
-      operations: {}
-    }
+      operations: {},
+    };
+    // eslint-disable-next-line no-restricted-syntax, guard-for-in
     for (const op in tagOperations[tag]) {
-      apis[tag].operations[op] = {execute: tagOperations[tag][op]}
+      apis[tag].operations[op] = { execute: tagOperations[tag][op] };
     }
   }
 
-  return {apis}
+  return { apis };
 }
 
 // .apis[tag][operationId]:ExecuteFunction interface
 export function makeApisTagOperation(swaggerJs = {}) {
-  const cb = self.makeExecute(swaggerJs)
+  const cb = self.makeExecute(swaggerJs);
   return {
     apis: self.mapTagOperations({
       v2OperationIdCompatibilityMode: swaggerJs.v2OperationIdCompatibilityMode,
       spec: swaggerJs.spec,
-      cb
-    })
-  }
+      cb,
+    }),
+  };
 }
 
 /**
@@ -76,45 +78,44 @@ export function makeApisTagOperation(swaggerJs = {}) {
  *
  */
 export function mapTagOperations({
-  spec, cb = nullFn, defaultTag = 'default', v2OperationIdCompatibilityMode
+  spec, cb = nullFn, defaultTag = 'default', v2OperationIdCompatibilityMode,
 }) {
-  const operationIdCounter = {}
-  const tagOperations = {} // Will house all tags + operations
-  eachOperation(spec, ({pathName, method, operation}) => {
-    const tags = operation.tags ? normalizeArray(operation.tags) : [defaultTag]
+  const operationIdCounter = {};
+  const tagOperations = {}; // Will house all tags + operations
+  eachOperation(spec, ({ pathName, method, operation }) => {
+    const tags = operation.tags ? normalizeArray(operation.tags) : [defaultTag];
 
     tags.forEach((tag) => {
       if (typeof tag !== 'string') {
-        return
+        return;
       }
-      const tagObj = tagOperations[tag] = tagOperations[tag] || {}
-      const id = opId(operation, pathName, method, {v2OperationIdCompatibilityMode})
+      tagOperations[tag] = tagOperations[tag] || {};
+      const tagObj = tagOperations[tag];
+      const id = opId(operation, pathName, method, { v2OperationIdCompatibilityMode });
       const cbResult = cb({
-        spec, pathName, method, operation, operationId: id
-      })
+        spec, pathName, method, operation, operationId: id,
+      });
 
       if (operationIdCounter[id]) {
-        operationIdCounter[id]++
-        tagObj[`${id}${operationIdCounter[id]}`] = cbResult
-      }
-      else if (typeof tagObj[id] !== 'undefined') {
+        operationIdCounter[id] += 1;
+        tagObj[`${id}${operationIdCounter[id]}`] = cbResult;
+      } else if (typeof tagObj[id] !== 'undefined') {
         // Bump counter ( for this operationId )
-        const originalCounterValue = (operationIdCounter[id] || 1)
-        operationIdCounter[id] = originalCounterValue + 1
+        const originalCounterValue = (operationIdCounter[id] || 1);
+        operationIdCounter[id] = originalCounterValue + 1;
         // Append _x to the operationId
-        tagObj[`${id}${operationIdCounter[id]}`] = cbResult
+        tagObj[`${id}${operationIdCounter[id]}`] = cbResult;
 
         // Rename the first operationId
-        const temp = tagObj[id]
-        delete tagObj[id]
-        tagObj[`${id}${originalCounterValue}`] = temp
-      }
-      else {
+        const temp = tagObj[id];
+        delete tagObj[id];
+        tagObj[`${id}${originalCounterValue}`] = temp;
+      } else {
         // Assign callback result ( usually a bound function )
-        tagObj[id] = cbResult
+        tagObj[id] = cbResult;
       }
-    })
-  })
+    });
+  });
 
-  return tagOperations
+  return tagOperations;
 }

@@ -13,21 +13,21 @@ export default {
   info: {
     version: '1',
     title: 'MULTI PART TEST',
-    description: ''
+    description: '',
   },
   host: '',
   basePath: '/api/v1',
   schemes: [
-    'http'
+    'http',
   ],
   paths: {
     '/land/content/ViewOfAuthOwner': {
       post: {
         consumes: [
-          'multipart/form-data'
+          'multipart/form-data',
         ],
         produces: [
-          'application/json'
+          'application/json',
         ],
         summary: '',
         parameters: [
@@ -39,8 +39,8 @@ export default {
             type: 'string',
             enum: [
               'id',
-              'title'
-            ]
+              'title',
+            ],
           },
           {
             in: 'formData',
@@ -50,8 +50,8 @@ export default {
             type: 'string',
             enum: [
               'asc',
-              'desc'
-            ]
+              'desc',
+            ],
           },
           {
             in: 'formData',
@@ -60,8 +60,8 @@ export default {
             type: 'array',
             collectionFormat: 'multi',
             items: {
-              type: 'string'
-            }
+              type: 'string',
+            },
           },
           {
             in: 'formData',
@@ -70,8 +70,8 @@ export default {
             type: 'array',
             collectionFormat: 'none',
             items: {
-              type: 'string'
-            }
+              type: 'string',
+            },
           },
           {
             in: 'formData',
@@ -80,8 +80,8 @@ export default {
             type: 'array',
             collectionFormat: 'csv',
             items: {
-              type: 'string'
-            }
+              type: 'string',
+            },
           },
           {
             in: 'formData',
@@ -90,8 +90,8 @@ export default {
             type: 'array',
             collectionFormat: 'tsv',
             items: {
-              type: 'string'
-            }
+              type: 'string',
+            },
           },
           {
             in: 'formData',
@@ -100,8 +100,8 @@ export default {
             type: 'array',
             collectionFormat: 'ssv',
             items: {
-              type: 'string'
-            }
+              type: 'string',
+            },
           },
           {
             in: 'formData',
@@ -110,27 +110,27 @@ export default {
             type: 'array',
             collectionFormat: 'pipes',
             items: {
-              type: 'string'
-            }
-          }
+              type: 'string',
+            },
+          },
         ],
         responses: {
           200: {
             description: '',
             schema: {
-              type: 'object'
-            }
-          }
-        }
+              type: 'object',
+            },
+          },
+        },
       },
     },
     '/land/content/uploadImage': {
       post: {
         consumes: [
-          'multipart/form-data'
+          'multipart/form-data',
         ],
         produces: [
-          'application/json'
+          'application/json',
         ],
         summary: 'upload image(s)',
         parameters: [
@@ -139,7 +139,7 @@ export default {
             name: 'imageId',
             description: '',
             default: 'id',
-            type: 'string'
+            type: 'string',
           },
           {
             in: 'formData',
@@ -148,19 +148,19 @@ export default {
             type: 'array',
             items: {
               type: 'string',
-              format: 'binary'
-            }
-          }
+              format: 'binary',
+            },
+          },
         ],
         responses: {
           200: {
             description: '',
             schema: {
-              type: 'object'
-            }
-          }
-        }
-      }
-    }
-  }
-}
+              type: 'object',
+            },
+          },
+        },
+      },
+    },
+  },
+};

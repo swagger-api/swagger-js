@@ -7,10 +7,10 @@ export default function serialize(value, mediaType) {
   if (mediaType.includes('application/json')) {
     if (typeof value === 'string') {
       // Assume the user has a JSON string
-      return value
+      return value;
     }
-    return JSON.stringify(value)
+    return JSON.stringify(value);
   }
 
-  return value.toString()
+  return value.toString();
 }

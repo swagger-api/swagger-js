@@ -1,24 +1,24 @@
-const {Buffer} = require('buffer')
+const { Buffer } = require('buffer');
 
-const isRfc3986Reserved = (char) => ':/?#[]@!$&\'()*+,;='.indexOf(char) > -1
+const isRfc3986Reserved = (char) => ':/?#[]@!$&\'()*+,;='.indexOf(char) > -1;
 const isRrc3986Unreserved = (char) => {
-  return (/^[a-z0-9\-._~]+$/i).test(char)
-}
+  return (/^[a-z0-9\-._~]+$/i).test(char);
+};
 
-export function encodeDisallowedCharacters(str, {escape} = {}, parse) {
+export function encodeDisallowedCharacters(str, { escape } = {}, parse) {
   if (typeof str === 'number') {
-    str = str.toString()
+    str = str.toString();
   }
   if (typeof str !== 'string' || !str.length) {
-    return str
+    return str;
   }
 
   if (!escape) {
-    return str
+    return str;
   }
 
   if (parse) {
-    return JSON.parse(str)
+    return JSON.parse(str);
   }
 
   // In ES6 you can do this quite easily by using the new ... spread operator.
@@ -27,157 +27,163 @@ export function encodeDisallowedCharacters(str, {escape} = {}, parse) {
   // code points rather than UCS-2/UTF-16 code units.
   return [...str].map((char) => {
     if (isRrc3986Unreserved(char)) {
-      return char
+      return char;
     }
 
     if (isRfc3986Reserved(char) && escape === 'unsafe') {
-      return char
+      return char;
     }
 
     const encoded = (Buffer.from(char).toJSON().data || [])
       .map((byte) => `0${byte.toString(16).toUpperCase()}`.slice(-2))
       .map((encodedByte) => `%${encodedByte}`)
-      .join('')
+      .join('');
 
-    return encoded
-  }).join('')
+    return encoded;
+  }).join('');
 }
 
 export default function stylize(config) {
-  const {value} = config
+  const { value } = config;
 
   if (Array.isArray(value)) {
-    return encodeArray(config)
+    return encodeArray(config);
   }
   if (typeof value === 'object') {
-    return encodeObject(config)
+    return encodeObject(config);
   }
-  return encodePrimitive(config)
+  return encodePrimitive(config);
 }
 
 function encodeArray({
-  key, value, style, explode, escape
+  key, value, style, explode, escape,
 }) {
   const valueEncoder = (str) => encodeDisallowedCharacters(str, {
-    escape
-  })
+    escape,
+  });
 
   if (style === 'simple') {
-    return value.map((val) => valueEncoder(val)).join(',')
+    return value.map((val) => valueEncoder(val)).join(',');
   }
 
   if (style === 'label') {
-    return `.${value.map((val) => valueEncoder(val)).join('.')}`
+    return `.${value.map((val) => valueEncoder(val)).join('.')}`;
   }
 
   if (style === 'matrix') {
     return value.map((val) => valueEncoder(val)).reduce((prev, curr) => {
       if (!prev || explode) {
-        return `${(prev || '')};${key}=${curr}`
+        return `${(prev || '')};${key}=${curr}`;
       }
-      return `${prev},${curr}`
-    }, '')
+      return `${prev},${curr}`;
+    }, '');
   }
 
   if (style === 'form') {
-    const after = explode ? `&${key}=` : ','
-    return value.map((val) => valueEncoder(val)).join(after)
+    const after = explode ? `&${key}=` : ',';
+    return value.map((val) => valueEncoder(val)).join(after);
   }
 
   if (style === 'spaceDelimited') {
-    const after = explode ? `${key}=` : ''
-    return value.map((val) => valueEncoder(val)).join(` ${after}`)
+    const after = explode ? `${key}=` : '';
+    return value.map((val) => valueEncoder(val)).join(` ${after}`);
   }
 
   if (style === 'pipeDelimited') {
-    const after = explode ? `${key}=` : ''
-    return value.map((val) => valueEncoder(val)).join(`|${after}`)
+    const after = explode ? `${key}=` : '';
+    return value.map((val) => valueEncoder(val)).join(`|${after}`);
   }
+
+  return undefined;
 }
 
 function encodeObject({
-  key, value, style, explode, escape
+  key, value, style, explode, escape,
 }) {
   const valueEncoder = (str) => encodeDisallowedCharacters(str, {
-    escape
-  })
+    escape,
+  });
 
-  const valueKeys = Object.keys(value)
+  const valueKeys = Object.keys(value);
 
   if (style === 'simple') {
     return valueKeys.reduce((prev, curr) => {
-      const val = valueEncoder(value[curr])
-      const middleChar = explode ? '=' : ','
-      const prefix = prev ? `${prev},` : ''
+      const val = valueEncoder(value[curr]);
+      const middleChar = explode ? '=' : ',';
+      const prefix = prev ? `${prev},` : '';
 
-      return `${prefix}${curr}${middleChar}${val}`
-    }, '')
+      return `${prefix}${curr}${middleChar}${val}`;
+    }, '');
   }
 
   if (style === 'label') {
     return valueKeys.reduce((prev, curr) => {
-      const val = valueEncoder(value[curr])
-      const middleChar = explode ? '=' : '.'
-      const prefix = prev ? `${prev}.` : '.'
+      const val = valueEncoder(value[curr]);
+      const middleChar = explode ? '=' : '.';
+      const prefix = prev ? `${prev}.` : '.';
 
-      return `${prefix}${curr}${middleChar}${val}`
-    }, '')
+      return `${prefix}${curr}${middleChar}${val}`;
+    }, '');
   }
 
   if (style === 'matrix' && explode) {
     return valueKeys.reduce((prev, curr) => {
-      const val = valueEncoder(value[curr])
-      const prefix = prev ? `${prev};` : ';'
+      const val = valueEncoder(value[curr]);
+      const prefix = prev ? `${prev};` : ';';
 
-      return `${prefix}${curr}=${val}`
-    }, '')
+      return `${prefix}${curr}=${val}`;
+    }, '');
   }
 
   if (style === 'matrix') {
     // no explode
     return valueKeys.reduce((prev, curr) => {
-      const val = valueEncoder(value[curr])
-      const prefix = prev ? `${prev},` : `;${key}=`
+      const val = valueEncoder(value[curr]);
+      const prefix = prev ? `${prev},` : `;${key}=`;
 
-      return `${prefix}${curr},${val}`
-    }, '')
+      return `${prefix}${curr},${val}`;
+    }, '');
   }
 
   if (style === 'form') {
     return valueKeys.reduce((prev, curr) => {
-      const val = valueEncoder(value[curr])
-      const prefix = prev ? `${prev}${explode ? '&' : ','}` : ''
-      const separator = explode ? '=' : ','
+      const val = valueEncoder(value[curr]);
+      const prefix = prev ? `${prev}${explode ? '&' : ','}` : '';
+      const separator = explode ? '=' : ',';
 
-      return `${prefix}${curr}${separator}${val}`
-    }, '')
+      return `${prefix}${curr}${separator}${val}`;
+    }, '');
   }
+
+  return undefined;
 }
 
 function encodePrimitive({
-  key, value, style, escape
+  key, value, style, escape,
 }) {
   const valueEncoder = (str) => encodeDisallowedCharacters(str, {
-    escape
-  })
+    escape,
+  });
 
   if (style === 'simple') {
-    return valueEncoder(value)
+    return valueEncoder(value);
   }
 
   if (style === 'label') {
-    return `.${valueEncoder(value)}`
+    return `.${valueEncoder(value)}`;
   }
 
   if (style === 'matrix') {
-    return `;${key}=${valueEncoder(value)}`
+    return `;${key}=${valueEncoder(value)}`;
   }
 
   if (style === 'form') {
-    return valueEncoder(value)
+    return valueEncoder(value);
   }
 
   if (style === 'deepObject') {
-    return valueEncoder(value, {}, true)
+    return valueEncoder(value, {}, true);
   }
+
+  return undefined;
 }

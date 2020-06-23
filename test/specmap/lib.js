@@ -1,16 +1,15 @@
-import lib from '../../src/specmap/lib'
-import ContextTree from '../../src/specmap/lib/context-tree'
+import lib from '../../src/specmap/lib';
 
 describe('lib', () => {
   describe('applyPatch', () => {
     test('should add', () => {
-      const state = {one: 1}
-      lib.applyPatch(state, lib.add(['two'], 2))
+      const state = { one: 1 };
+      lib.applyPatch(state, lib.add(['two'], 2));
       expect(state).toEqual({
         one: 1,
-        two: 2
-      })
-    })
+        two: 2,
+      });
+    });
 
     // describe.skip('need to migrate these tests', function () {
     //   it.skip('should NOT add, deep', function () {
@@ -83,28 +82,28 @@ describe('lib', () => {
     //     })
     //   })
     // })
-  })
+  });
 
   describe('parentPathMatch', () => {
     test('should match an exact path', () => {
       expect(lib.parentPathMatch(
         ['one', 'two'],
-        ['one', 'two']
-      )).toEqual(true)
-    })
+        ['one', 'two'],
+      )).toEqual(true);
+    });
 
     test('should NOT match a child path', () => {
       expect(lib.parentPathMatch(
         ['one', 'two'],
-        ['one', 'two', 'three']
-      )).toEqual(false)
-    })
+        ['one', 'two', 'three'],
+      )).toEqual(false);
+    });
 
     test('should match a parent path', () => {
       expect(lib.parentPathMatch(
         ['one', 'two'],
-        ['one']
-      )).toEqual(true)
-    })
-  })
-})
+        ['one'],
+      )).toEqual(true);
+    });
+  });
+});

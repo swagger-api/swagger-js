@@ -1,39 +1,39 @@
 import {
-  normalizeSwagger, getOperationRaw, idFromPathMethod
-} from '../src/helpers'
+  normalizeSwagger, getOperationRaw, idFromPathMethod,
+} from '../src/helpers';
 
 describe('helpers', () => {
   describe('idFromPathMethod', () => {
     test('should return get_one as an operationId', () => {
       // When
-      const id = idFromPathMethod('/one', 'get')
+      const id = idFromPathMethod('/one', 'get');
 
       // Then
-      expect(id).toEqual('get_one')
-    })
+      expect(id).toEqual('get_one');
+    });
     test('should return get_one as an operationId', () => {
       // When
-      const id = idFromPathMethod('/one', 'get')
+      const id = idFromPathMethod('/one', 'get');
 
       // Then
-      expect(id).toEqual('get_one')
-    })
+      expect(id).toEqual('get_one');
+    });
     test(
       'should handle strange paths/methods correctly when in v2 mode',
       () => {
         const fn = (path, method) => {
           return idFromPathMethod(path, method, {
-            v2OperationIdCompatibilityMode: true
-          })
-        }
+            v2OperationIdCompatibilityMode: true,
+          });
+        };
         // https://github.com/swagger-api/swagger-js/issues/1269#issue-309070070
-        expect(fn('/foo/{bar}/baz', 'get')).toEqual('get_foo_bar_baz')
+        expect(fn('/foo/{bar}/baz', 'get')).toEqual('get_foo_bar_baz');
 
-        expect(fn('/one/{foo}/{bar}', 'get')).toEqual('get_one_foo_bar')
-        expect(fn('/one/{bar}/-----{baz}', 'get')).toEqual('get_one_bar_baz')
-      }
-    )
-  })
+        expect(fn('/one/{foo}/{bar}', 'get')).toEqual('get_one_foo_bar');
+        expect(fn('/one/{bar}/-----{baz}', 'get')).toEqual('get_one_bar_baz');
+      },
+    );
+  });
 
   describe('getOperationRaw', () => {
     test(
@@ -43,22 +43,22 @@ describe('helpers', () => {
         const spec = {
           paths: {
             '/one': {
-              get: {operationId: 'op1'}
-            }
-          }
-        }
+              get: { operationId: 'op1' },
+            },
+          },
+        };
 
         // When
-        const op = getOperationRaw(spec, 'op1')
+        const op = getOperationRaw(spec, 'op1');
 
         // Then
         expect(op).toMatchObject({
           operation: spec.paths['/one'].get,
           pathName: '/one',
-          method: 'GET'
-        })
-      }
-    )
+          method: 'GET',
+        });
+      },
+    );
 
     test(
       'should return the operation object, given an explicit operationId with special characters',
@@ -67,22 +67,22 @@ describe('helpers', () => {
         const spec = {
           paths: {
             '/one': {
-              get: {operationId: 'A.Very_Special-operationID!'}
-            }
-          }
-        }
+              get: { operationId: 'A.Very_Special-operationID!' },
+            },
+          },
+        };
 
         // When
-        const op = getOperationRaw(spec, 'A.Very_Special-operationID!')
+        const op = getOperationRaw(spec, 'A.Very_Special-operationID!');
 
         // Then
         expect(op).toMatchObject({
           operation: spec.paths['/one'].get,
           pathName: '/one',
-          method: 'GET'
-        })
-      }
-    )
+          method: 'GET',
+        });
+      },
+    );
 
     test(
       'should return null, given an explicit operationId that does not exist',
@@ -91,18 +91,18 @@ describe('helpers', () => {
         const spec = {
           paths: {
             '/one': {
-              get: {operationId: 'getOne'}
-            }
-          }
-        }
+              get: { operationId: 'getOne' },
+            },
+          },
+        };
 
         // When
-        const op = getOperationRaw(spec, 'ThisOperationIdDoesNotExist')
+        const op = getOperationRaw(spec, 'ThisOperationIdDoesNotExist');
 
         // Then
-        expect(op).toEqual(null)
-      }
-    )
+        expect(op).toEqual(null);
+      },
+    );
 
     test(
       'should return the operationObj, given a generated operationId',
@@ -112,23 +112,23 @@ describe('helpers', () => {
           paths: {
             '/two': {
               get: {
-                description: 'an operation'
-              }
+                description: 'an operation',
+              },
             },
-          }
-        }
+          },
+        };
 
         // When
-        const op = getOperationRaw(spec, 'get_two')
+        const op = getOperationRaw(spec, 'get_two');
 
         // Then
         expect(op).toMatchObject({
           operation: spec.paths['/two'].get,
           pathName: '/two',
-          method: 'GET'
-        })
-      }
-    )
+          method: 'GET',
+        });
+      },
+    );
 
     test(
       'should return the operationObj, given a generated legacy operationId',
@@ -138,24 +138,24 @@ describe('helpers', () => {
           paths: {
             '/two': {
               get: {
-                description: 'an operation'
-              }
+                description: 'an operation',
+              },
             },
-          }
-        }
+          },
+        };
 
         // When
-        const op = getOperationRaw(spec, 'get-/two')
+        const op = getOperationRaw(spec, 'get-/two');
 
         // Then
         expect(op).toMatchObject({
           operation: spec.paths['/two'].get,
           pathName: '/two',
-          method: 'GET'
-        })
-      }
-    )
-  })
+          method: 'GET',
+        });
+      },
+    );
+  });
 
   describe('normalizeSwagger', () => {
     describe('operationId', () => {
@@ -167,37 +167,37 @@ describe('helpers', () => {
               paths: {
                 '/foo': {
                   get: {
-                    operationId: 'test'
-                  }
+                    operationId: 'test',
+                  },
                 },
                 '/bar': {
                   get: {
-                    operationId: 'test'
-                  }
+                    operationId: 'test',
+                  },
                 },
                 '/baz': {
                   get: {
-                    operationId: 'test'
-                  }
-                }
-              }
-            }
-          }
+                    operationId: 'test',
+                  },
+                },
+              },
+            },
+          };
 
-          const res = normalizeSwagger(input)
-          const fooRes = res.spec.paths['/foo'].get
-          const barRes = res.spec.paths['/bar'].get
-          const bazRes = res.spec.paths['/baz'].get
+          const res = normalizeSwagger(input);
+          const fooRes = res.spec.paths['/foo'].get;
+          const barRes = res.spec.paths['/bar'].get;
+          const bazRes = res.spec.paths['/baz'].get;
 
           // Then
-          expect(fooRes.operationId).toEqual('test1')
-          expect(barRes.operationId).toEqual('test2')
-          expect(bazRes.operationId).toEqual('test3')
-          expect(fooRes.__originalOperationId).toEqual('test')
-          expect(barRes.__originalOperationId).toEqual('test')
-          expect(bazRes.__originalOperationId).toEqual('test')
-        }
-      )
+          expect(fooRes.operationId).toEqual('test1');
+          expect(barRes.operationId).toEqual('test2');
+          expect(bazRes.operationId).toEqual('test3');
+          expect(fooRes.__originalOperationId).toEqual('test');
+          expect(barRes.__originalOperationId).toEqual('test');
+          expect(bazRes.__originalOperationId).toEqual('test');
+        },
+      );
 
       test(
         'should add the normalized operation id to the spec, if a non-normalized id exists',
@@ -208,21 +208,21 @@ describe('helpers', () => {
               paths: {
                 '/foo': {
                   get: {
-                    operationId: 'something with spaces'
-                  }
+                    operationId: 'something with spaces',
+                  },
                 },
-              }
-            }
-          }
+              },
+            },
+          };
 
           // When
-          const normalizedSpec = normalizeSwagger(spec)
-          const id = normalizedSpec.spec.paths['/foo'].get.operationId
+          const normalizedSpec = normalizeSwagger(spec);
+          const id = normalizedSpec.spec.paths['/foo'].get.operationId;
 
           // Then
-          expect(id).toEqual('something_with_spaces')
-        }
-      )
+          expect(id).toEqual('something_with_spaces');
+        },
+      );
 
       test(
         'should add __originalOperationId for non-duplicate, normal operationIds',
@@ -233,40 +233,40 @@ describe('helpers', () => {
               paths: {
                 '/foo': {
                   get: {
-                    operationId: 'fooOperation'
-                  }
+                    operationId: 'fooOperation',
+                  },
                 },
                 '/bar': {
                   get: {
-                    operationId: 'barOperation'
-                  }
+                    operationId: 'barOperation',
+                  },
                 },
                 '/baz': {
                   get: {
-                    operationId: 'bazOperation'
-                  }
+                    operationId: 'bazOperation',
+                  },
                 },
-              }
-            }
-          }
+              },
+            },
+          };
 
           // When
-          const result = normalizeSwagger(input)
-          const fooOperation = input.spec.paths['/foo'].get
-          const barOperation = input.spec.paths['/bar'].get
-          const bazOperation = input.spec.paths['/baz'].get
+          normalizeSwagger(input);
+          const fooOperation = input.spec.paths['/foo'].get;
+          const barOperation = input.spec.paths['/bar'].get;
+          const bazOperation = input.spec.paths['/baz'].get;
 
           // Then
-          expect(fooOperation.operationId).toEqual('fooOperation')
-          expect(fooOperation.__originalOperationId).toEqual('fooOperation')
+          expect(fooOperation.operationId).toEqual('fooOperation');
+          expect(fooOperation.__originalOperationId).toEqual('fooOperation');
 
-          expect(barOperation.operationId).toEqual('barOperation')
-          expect(barOperation.__originalOperationId).toEqual('barOperation')
+          expect(barOperation.operationId).toEqual('barOperation');
+          expect(barOperation.__originalOperationId).toEqual('barOperation');
 
-          expect(bazOperation.operationId).toEqual('bazOperation')
-          expect(bazOperation.__originalOperationId).toEqual('bazOperation')
-        }
-      )
+          expect(bazOperation.operationId).toEqual('bazOperation');
+          expect(bazOperation.__originalOperationId).toEqual('bazOperation');
+        },
+      );
 
       test(
         'should add __originalOperationId for non-duplicate, abnormal operationIds',
@@ -277,40 +277,40 @@ describe('helpers', () => {
               paths: {
                 '/foo': {
                   get: {
-                    operationId: 'foo!Operation'
-                  }
+                    operationId: 'foo!Operation',
+                  },
                 },
                 '/bar': {
                   get: {
-                    operationId: 'bar!Operation'
-                  }
+                    operationId: 'bar!Operation',
+                  },
                 },
                 '/baz': {
                   get: {
-                    operationId: 'baz!Operation'
-                  }
+                    operationId: 'baz!Operation',
+                  },
                 },
-              }
-            }
-          }
+              },
+            },
+          };
 
           // When
-          const result = normalizeSwagger(input)
-          const fooOperation = input.spec.paths['/foo'].get
-          const barOperation = input.spec.paths['/bar'].get
-          const bazOperation = input.spec.paths['/baz'].get
+          normalizeSwagger(input);
+          const fooOperation = input.spec.paths['/foo'].get;
+          const barOperation = input.spec.paths['/bar'].get;
+          const bazOperation = input.spec.paths['/baz'].get;
 
           // Then
-          expect(fooOperation.operationId).toEqual('foo_Operation')
-          expect(fooOperation.__originalOperationId).toEqual('foo!Operation')
+          expect(fooOperation.operationId).toEqual('foo_Operation');
+          expect(fooOperation.__originalOperationId).toEqual('foo!Operation');
 
-          expect(barOperation.operationId).toEqual('bar_Operation')
-          expect(barOperation.__originalOperationId).toEqual('bar!Operation')
+          expect(barOperation.operationId).toEqual('bar_Operation');
+          expect(barOperation.__originalOperationId).toEqual('bar!Operation');
 
-          expect(bazOperation.operationId).toEqual('baz_Operation')
-          expect(bazOperation.__originalOperationId).toEqual('baz!Operation')
-        }
-      )
+          expect(bazOperation.operationId).toEqual('baz_Operation');
+          expect(bazOperation.__originalOperationId).toEqual('baz!Operation');
+        },
+      );
 
       test(
         'should add the original operation id to the spec, if a non-normalized id exists',
@@ -321,21 +321,21 @@ describe('helpers', () => {
               paths: {
                 '/foo': {
                   get: {
-                    operationId: 'something with spaces'
-                  }
+                    operationId: 'something with spaces',
+                  },
                 },
-              }
-            }
-          }
+              },
+            },
+          };
 
           // When
-          const normalizedSpec = normalizeSwagger(spec)
-          const originalId = normalizedSpec.spec.paths['/foo'].get.__originalOperationId
+          const normalizedSpec = normalizeSwagger(spec);
+          const originalId = normalizedSpec.spec.paths['/foo'].get.__originalOperationId;
 
           // Then
-          expect(originalId).toEqual('something with spaces')
-        }
-      )
+          expect(originalId).toEqual('something with spaces');
+        },
+      );
 
       test(
         'should not set __originalOperationId when operationId is not defined',
@@ -348,23 +348,23 @@ describe('helpers', () => {
                   get: {
                   },
                   post: {
-                    operationId: 'myId2'
-                  }
+                    operationId: 'myId2',
+                  },
                 },
-              }
-            }
-          }
+              },
+            },
+          };
 
           // When
-          const normalizedSpec = normalizeSwagger(spec)
-          const fooGet = normalizedSpec.spec.paths['/foo'].get
-          const fooPost = normalizedSpec.spec.paths['/foo'].post
+          const normalizedSpec = normalizeSwagger(spec);
+          const fooGet = normalizedSpec.spec.paths['/foo'].get;
+          const fooPost = normalizedSpec.spec.paths['/foo'].post;
 
           // Then
-          expect(fooPost.__originalOperationId).toEqual('myId2')
-          expect(fooGet.__originalOperationId).toEqual(undefined)
-        }
-      )
+          expect(fooPost.__originalOperationId).toEqual('myId2');
+          expect(fooGet.__originalOperationId).toEqual(undefined);
+        },
+      );
 
       test(
         'should create unique operationIds when explicit operationIds are effectively the same due to whitespace',
@@ -374,35 +374,35 @@ describe('helpers', () => {
               paths: {
                 '/foo': {
                   get: {
-                    operationId: 'test'
-                  }
+                    operationId: 'test',
+                  },
                 },
                 '/bar': {
                   get: {
-                    operationId: 'te st'
-                  }
+                    operationId: 'te st',
+                  },
                 },
                 '/bat': {
                   get: {
-                    operationId: 'te/st'
-                  }
-                }
-              }
-            }
-          }
+                    operationId: 'te/st',
+                  },
+                },
+              },
+            },
+          };
 
-          const id = normalizeSwagger(spec)
-          const id1 = id.spec.paths['/foo'].get.operationId
-          const id2 = id.spec.paths['/bar'].get.operationId
-          const id3 = id.spec.paths['/bat'].get.operationId
+          const id = normalizeSwagger(spec);
+          const id1 = id.spec.paths['/foo'].get.operationId;
+          const id2 = id.spec.paths['/bar'].get.operationId;
+          const id3 = id.spec.paths['/bat'].get.operationId;
 
           // Then
-          expect(id1).toEqual('test')
-          expect(id2).toEqual('te_st1')
-          expect(id3).toEqual('te_st2')
-        }
-      )
-    })
+          expect(id1).toEqual('test');
+          expect(id2).toEqual('te_st1');
+          expect(id3).toEqual('te_st2');
+        },
+      );
+    });
     describe('consumes', () => {
       test(
         'should not overwrite consumes values from the global-level when exists in operation',
@@ -413,14 +413,14 @@ describe('helpers', () => {
               paths: {
                 '/two': {
                   get: {
-                    consumes: ['application/moar-test']
-                  }
-                }
-              }
-            }
-          }
+                    consumes: ['application/moar-test'],
+                  },
+                },
+              },
+            },
+          };
 
-          const resultSpec = normalizeSwagger(spec)
+          const resultSpec = normalizeSwagger(spec);
 
           expect(resultSpec).toEqual({
             spec: {
@@ -429,14 +429,14 @@ describe('helpers', () => {
               paths: {
                 '/two': {
                   get: {
-                    consumes: ['application/moar-test']
-                  }
-                }
-              }
-            }
-          })
-        }
-      )
+                    consumes: ['application/moar-test'],
+                  },
+                },
+              },
+            },
+          });
+        },
+      );
 
       test(
         'should add consumes values from the global-level when no consumes in operation',
@@ -447,13 +447,13 @@ describe('helpers', () => {
               paths: {
                 '/two': {
                   get: {
-                  }
-                }
-              }
-            }
-          }
+                  },
+                },
+              },
+            },
+          };
 
-          const resultSpec = normalizeSwagger(spec)
+          const resultSpec = normalizeSwagger(spec);
 
           expect(resultSpec).toEqual({
             spec: {
@@ -462,15 +462,15 @@ describe('helpers', () => {
               paths: {
                 '/two': {
                   get: {
-                    consumes: ['application/json']
-                  }
-                }
-              }
-            }
-          })
-        }
-      )
-    })
+                    consumes: ['application/json'],
+                  },
+                },
+              },
+            },
+          });
+        },
+      );
+    });
 
     describe('produces', () => {
       test(
@@ -482,14 +482,14 @@ describe('helpers', () => {
               paths: {
                 '/two': {
                   get: {
-                    produces: ['application/moar-test']
-                  }
-                }
-              }
-            }
-          }
+                    produces: ['application/moar-test'],
+                  },
+                },
+              },
+            },
+          };
 
-          const resultSpec = normalizeSwagger(spec)
+          const resultSpec = normalizeSwagger(spec);
 
           expect(resultSpec).toEqual({
             spec: {
@@ -498,14 +498,14 @@ describe('helpers', () => {
               paths: {
                 '/two': {
                   get: {
-                    produces: ['application/moar-test']
-                  }
-                }
-              }
-            }
-          })
-        }
-      )
+                    produces: ['application/moar-test'],
+                  },
+                },
+              },
+            },
+          });
+        },
+      );
 
       test(
         'should add produces values from the global-level when no produces in operation',
@@ -516,13 +516,13 @@ describe('helpers', () => {
               paths: {
                 '/two': {
                   get: {
-                  }
-                }
-              }
-            }
-          }
+                  },
+                },
+              },
+            },
+          };
 
-          const resultSpec = normalizeSwagger(spec)
+          const resultSpec = normalizeSwagger(spec);
 
           expect(resultSpec).toEqual({
             spec: {
@@ -531,15 +531,15 @@ describe('helpers', () => {
               paths: {
                 '/two': {
                   get: {
-                    produces: ['application/json']
-                  }
-                }
-              }
-            }
-          })
-        }
-      )
-    })
+                    produces: ['application/json'],
+                  },
+                },
+              },
+            },
+          });
+        },
+      );
+    });
 
     describe('security', () => {
       test(
@@ -551,14 +551,14 @@ describe('helpers', () => {
               paths: {
                 '/two': {
                   get: {
-                    security: ['test1']
-                  }
-                }
-              }
-            }
-          }
+                    security: ['test1'],
+                  },
+                },
+              },
+            },
+          };
 
-          const resultSpec = normalizeSwagger(spec)
+          const resultSpec = normalizeSwagger(spec);
 
           expect(resultSpec).toEqual({
             spec: {
@@ -567,14 +567,14 @@ describe('helpers', () => {
               paths: {
                 '/two': {
                   get: {
-                    security: ['test1']
-                  }
-                }
-              }
-            }
-          })
-        }
-      )
+                    security: ['test1'],
+                  },
+                },
+              },
+            },
+          });
+        },
+      );
 
       test(
         'should add security values from the global-level when no security in operation',
@@ -585,13 +585,13 @@ describe('helpers', () => {
               paths: {
                 '/two': {
                   get: {
-                  }
-                }
-              }
-            }
-          }
+                  },
+                },
+              },
+            },
+          };
 
-          const resultSpec = normalizeSwagger(spec)
+          const resultSpec = normalizeSwagger(spec);
 
           expect(resultSpec).toEqual({
             spec: {
@@ -600,15 +600,15 @@ describe('helpers', () => {
               paths: {
                 '/two': {
                   get: {
-                    security: ['test1']
-                  }
-                }
-              }
-            }
-          })
-        }
-      )
-    })
+                    security: ['test1'],
+                  },
+                },
+              },
+            },
+          });
+        },
+      );
+    });
 
     describe('parameters', () => {
       test(
@@ -618,30 +618,30 @@ describe('helpers', () => {
             spec: {
               paths: {
                 '/two': {
-                  parameters: [{name: 'a', in: 'path'}],
-                  get: {}
-                }
-              }
-            }
-          }
+                  parameters: [{ name: 'a', in: 'path' }],
+                  get: {},
+                },
+              },
+            },
+          };
 
-          const resultSpec = normalizeSwagger(spec)
+          const resultSpec = normalizeSwagger(spec);
 
           expect(resultSpec).toEqual({
             spec: {
               $$normalized: true,
               paths: {
                 '/two': {
-                  parameters: [{name: 'a', in: 'path'}],
+                  parameters: [{ name: 'a', in: 'path' }],
                   get: {
-                    parameters: [{name: 'a', in: 'path'}]
-                  }
-                }
-              }
-            }
-          })
-        }
-      )
+                    parameters: [{ name: 'a', in: 'path' }],
+                  },
+                },
+              },
+            },
+          });
+        },
+      );
 
       test(
         'should add parameters from path but not override parameters in operation',
@@ -651,21 +651,21 @@ describe('helpers', () => {
               paths: {
                 '/two': {
                   parameters: [
-                    {name: 'a', in: 'path'},
-                    {name: 'b', in: 'path'}
+                    { name: 'a', in: 'path' },
+                    { name: 'b', in: 'path' },
                   ],
                   get: {
                     parameters: [
-                      {name: 'a', in: 'query'},
-                      {name: 'c', in: 'query'}
-                    ]
-                  }
-                }
-              }
-            }
-          }
+                      { name: 'a', in: 'query' },
+                      { name: 'c', in: 'query' },
+                    ],
+                  },
+                },
+              },
+            },
+          };
 
-          const resultSpec = normalizeSwagger(spec)
+          const resultSpec = normalizeSwagger(spec);
 
           expect(resultSpec).toEqual({
             spec: {
@@ -673,22 +673,22 @@ describe('helpers', () => {
               paths: {
                 '/two': {
                   parameters: [
-                    {name: 'a', in: 'path'},
-                    {name: 'b', in: 'path'}
+                    { name: 'a', in: 'path' },
+                    { name: 'b', in: 'path' },
                   ],
                   get: {
                     parameters: [
-                      {name: 'a', in: 'query'},
-                      {name: 'c', in: 'query'},
-                      {name: 'b', in: 'path'}
-                    ]
-                  }
-                }
-              }
-            }
-          })
-        }
-      )
-    })
-  })
-})
+                      { name: 'a', in: 'query' },
+                      { name: 'c', in: 'query' },
+                      { name: 'b', in: 'path' },
+                    ],
+                  },
+                },
+              },
+            },
+          });
+        },
+      );
+    });
+  });
+});

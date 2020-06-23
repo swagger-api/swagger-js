@@ -2,13 +2,13 @@ export default {
   openapi: '3.0.0',
   servers: [
     {
-      url: '/api/v1'
-    }
+      url: '/api/v1',
+    },
   ],
   info: {
     version: '1',
     title: 'MULTI PART TEST - OAS3',
-    description: ''
+    description: '',
   },
   paths: {
     '/land/content/ViewOfAuthOwner': {
@@ -26,8 +26,8 @@ export default {
                     type: 'string',
                     enum: [
                       'id',
-                      'title'
-                    ]
+                      'title',
+                    ],
                   },
                   'hhlContent:order': {
                     description: '',
@@ -35,26 +35,26 @@ export default {
                     type: 'string',
                     enum: [
                       'asc',
-                      'desc'
-                    ]
+                      'desc',
+                    ],
                   },
                   'email[]': {
                     description: 'The list of emails.',
                     type: 'array',
                     items: {
-                      type: 'string'
-                    }
-                  }
-                }
+                      type: 'string',
+                    },
+                  },
+                },
               },
               encoding: {
                 'email[]': {
                   style: 'form',
                   explode: true,
-                }
-              }
-            }
-          }
+                },
+              },
+            },
+          },
         },
         responses: {
           200: {
@@ -62,12 +62,12 @@ export default {
             content: {
               'application/json': {
                 schema: {
-                  type: 'object'
-                }
-              }
-            }
-          }
-        }
+                  type: 'object',
+                },
+              },
+            },
+          },
+        },
       },
     },
     '/land/content/uploadImage': {
@@ -82,20 +82,20 @@ export default {
                   imageId: {
                     description: '',
                     default: 'id',
-                    type: 'string'
+                    type: 'string',
                   },
                   'images[]': {
                     description: 'The list of files',
                     type: 'array',
                     items: {
                       type: 'string',
-                      format: 'binary'
-                    }
-                  }
-                }
-              }
-            }
-          }
+                      format: 'binary',
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
         responses: {
           200: {
@@ -103,13 +103,13 @@ export default {
             content: {
               'application/json': {
                 schema: {
-                  type: 'object'
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
+                  type: 'object',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
