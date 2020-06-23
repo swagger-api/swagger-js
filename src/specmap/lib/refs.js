@@ -2,6 +2,7 @@ import { fetch } from 'cross-fetch';
 import jsYaml from 'js-yaml';
 import qs from 'querystring-browser';
 import url from 'url';
+
 import lib from '.';
 import createError from './create-error';
 import { isFreelyNamed, absolutifyPointer } from '../helpers';
@@ -18,22 +19,20 @@ const docCache = {};
 const specmapRefs = new WeakMap();
 
 const skipResolutionTestFns = [
-  (path) => (
+  (path) =>
     // OpenAPI 3.0 Response Media Type Example
     // ["paths", *, *, "responses", *, "content", *, "example"]
-    path[0] === 'paths'
-    && path[3] === 'responses'
-    && path[5] === 'content'
-    && path[7] === 'example'
-  ),
-  (path) => (
+    path[0] === 'paths' &&
+    path[3] === 'responses' &&
+    path[5] === 'content' &&
+    path[7] === 'example',
+  (path) =>
     // OpenAPI 3.0 Request Body Media Type Example
     // ["paths", *, *, "responses", *, "content", *, "example"]
-    path[0] === 'paths'
-    && path[3] === 'requestBody'
-    && path[4] === 'content'
-    && path[6] === 'example'
-  ),
+    path[0] === 'paths' &&
+    path[3] === 'requestBody' &&
+    path[4] === 'content' &&
+    path[6] === 'example',
 ];
 
 const shouldSkipResolution = (path) => skipResolutionTestFns.some((fn) => fn(path));
@@ -86,7 +85,7 @@ const plugin = {
 
     let basePath;
     try {
-      basePath = (baseDoc || refPath) ? absoluteify(refPath, baseDoc) : null;
+      basePath = baseDoc || refPath ? absoluteify(refPath, baseDoc) : null;
     } catch (e) {
       return wrapError(e, {
         pointer,
@@ -130,7 +129,8 @@ const plugin = {
       }
     } else {
       promOrVal = extractFromDoc(basePath, pointer);
-      if (promOrVal.__value != null) { // eslint-disable-line no-underscore-dangle
+      // eslint-disable-next-line no-underscore-dangle
+      if (promOrVal.__value != null) {
         promOrVal = promOrVal.__value; // eslint-disable-line no-underscore-dangle
       } else {
         promOrVal = promOrVal.catch((e) => {
@@ -205,7 +205,9 @@ export default mod;
 function absoluteify(path, basePath) {
   if (!ABSOLUTE_URL_REGEXP.test(path)) {
     if (!basePath) {
-      throw new JSONRefError(`Tried to resolve a relative URL, without having a basePath. path: '${path}' basePath: '${basePath}'`);
+      throw new JSONRefError(
+        `Tried to resolve a relative URL, without having a basePath. path: '${path}' basePath: '${basePath}'`
+      );
     }
     return url.resolve(basePath, path);
   }
@@ -329,7 +331,9 @@ function extract(pointer, obj) {
 
   const val = lib.getIn(obj, tokens);
   if (typeof val === 'undefined') {
-    throw new JSONRefError(`Could not resolve pointer: ${pointer} does not exist in document`, { pointer });
+    throw new JSONRefError(`Could not resolve pointer: ${pointer} does not exist in document`, {
+      pointer,
+    });
   }
   return val;
 }
@@ -391,9 +395,11 @@ function pointerIsAParent(pointer, parentPointer) {
   const nextChar = pointer.charAt(parentPointer.length);
   const lastParentChar = parentPointer.slice(-1);
 
-  return pointer.indexOf(parentPointer) === 0
-    && (!nextChar || nextChar === '/' || nextChar === '#')
-    && lastParentChar !== '#';
+  return (
+    pointer.indexOf(parentPointer) === 0 &&
+    (!nextChar || nextChar === '/' || nextChar === '#') &&
+    lastParentChar !== '#'
+  );
 }
 
 // =========================
@@ -443,12 +449,15 @@ function pointerAlreadyInPath(pointer, basePath, parent, specmap) {
   let currPath = '';
   const hasIndirectCycle = parent.some((token) => {
     currPath = `${currPath}/${escapeJsonPointerToken(token)}`;
-    return refs[currPath] && refs[currPath].some((ref) => {
-      return (
-        pointerIsAParent(ref, fullyQualifiedPointer)
-        || pointerIsAParent(fullyQualifiedPointer, ref)
-      );
-    });
+    return (
+      refs[currPath] &&
+      refs[currPath].some((ref) => {
+        return (
+          pointerIsAParent(ref, fullyQualifiedPointer) ||
+          pointerIsAParent(fullyQualifiedPointer, ref)
+        );
+      })
+    );
   });
   if (hasIndirectCycle) {
     return true;
@@ -474,8 +483,12 @@ function patchValueAlreadyInPath(root, patch) {
   return pointToAncestor(patch.value);
 
   function pointToAncestor(obj) {
-    return lib.isObject(obj) && (ancestors.indexOf(obj) >= 0 || Object.keys(obj).some((k) => {
-      return pointToAncestor(obj[k]);
-    }));
+    return (
+      lib.isObject(obj) &&
+      (ancestors.indexOf(obj) >= 0 ||
+        Object.keys(obj).some((k) => {
+          return pointToAncestor(obj[k]);
+        }))
+    );
   }
 }

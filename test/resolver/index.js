@@ -49,21 +49,16 @@ testDocuments.forEach((doc) => {
             if (currentCase.remoteDocuments) {
               Object.keys(currentCase.remoteDocuments).forEach((key) => {
                 const docContent = currentCase.remoteDocuments[key];
-                nockScope
-                  .get(`/${key}`)
-                  .reply(200, docContent, {
-                    'Content-Type': 'application/yaml',
-                  });
+                nockScope.get(`/${key}`).reply(200, docContent, {
+                  'Content-Type': 'application/yaml',
+                });
               });
             }
           });
 
           afterAll(nock.restore);
 
-          assertCaseExpectations(
-            currentCase,
-            async () => getValueForAction(currentCase.action),
-          );
+          assertCaseExpectations(currentCase, async () => getValueForAction(currentCase.action));
         });
       });
     }

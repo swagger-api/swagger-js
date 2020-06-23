@@ -20,35 +20,37 @@ class SpecMap {
   }
 
   constructor(opts) {
-    Object.assign(this, {
-      spec: '',
-      debugLevel: 'info',
-      plugins: [],
-      pluginHistory: {},
-      errors: [],
-      mutations: [],
-      promisedPatches: [],
-      state: {},
-      patches: [],
-      context: {},
-      contextTree: new ContextTree(),
-      showDebug: false,
-      allPatches: [], // only populated if showDebug is true
-      pluginProp: 'specMap',
-      libMethods: Object.assign(Object.create(this), lib, {
-        getInstance: () => this,
-      }),
-      allowMetaPatches: false,
-    }, opts);
+    Object.assign(
+      this,
+      {
+        spec: '',
+        debugLevel: 'info',
+        plugins: [],
+        pluginHistory: {},
+        errors: [],
+        mutations: [],
+        promisedPatches: [],
+        state: {},
+        patches: [],
+        context: {},
+        contextTree: new ContextTree(),
+        showDebug: false,
+        allPatches: [], // only populated if showDebug is true
+        pluginProp: 'specMap',
+        libMethods: Object.assign(Object.create(this), lib, {
+          getInstance: () => this,
+        }),
+        allowMetaPatches: false,
+      },
+      opts
+    );
 
     // Lib methods bound
     this.get = this._get.bind(this); // eslint-disable-line no-underscore-dangle
     this.getContext = this._getContext.bind(this); // eslint-disable-line no-underscore-dangle
     this.hasRun = this._hasRun.bind(this); // eslint-disable-line no-underscore-dangle
 
-    this.wrappedPlugins = this.plugins
-      .map(this.wrapPlugin.bind(this))
-      .filter(lib.isFunction);
+    this.wrappedPlugins = this.plugins.map(this.wrapPlugin.bind(this)).filter(lib.isFunction);
 
     // Initial patch(s)
     this.patches.push(lib.add([], this.spec));
@@ -119,7 +121,8 @@ class SpecMap {
             const parentIndex = path.length - 1;
             const parent = path[parentIndex];
             const indexOfFirstProperties = path.indexOf('properties');
-            const isRootProperties = parent === 'properties' && parentIndex === indexOfFirstProperties;
+            const isRootProperties =
+              parent === 'properties' && parentIndex === indexOfFirstProperties;
             const traversed = specmap.allowMetaPatches && refCache[obj.$$ref];
 
             // eslint-disable-next-line no-restricted-syntax
@@ -247,7 +250,7 @@ class SpecMap {
   removePromisedPatch(patch) {
     const index = this.promisedPatches.indexOf(patch);
     if (index < 0) {
-      this.debug('Tried to remove a promisedPatch that isn\'t there!');
+      this.debug("Tried to remove a promisedPatch that isn't there!");
       return;
     }
     this.promisedPatches.splice(index, 1);
@@ -292,11 +295,13 @@ class SpecMap {
     return this.libMethods;
   }
 
-  _get(path) { // eslint-disable-line no-underscore-dangle
+  // eslint-disable-next-line no-underscore-dangle
+  _get(path) {
     return lib.getIn(this.state, path);
   }
 
-  _getContext(path) { // eslint-disable-line no-underscore-dangle
+  // eslint-disable-next-line no-underscore-dangle
+  _getContext(path) {
     return this.contextTree.get(path);
   }
 
@@ -304,7 +309,8 @@ class SpecMap {
     return this.contextTree.set(path, value);
   }
 
-  _hasRun(count) { // eslint-disable-line no-underscore-dangle
+  // eslint-disable-next-line no-underscore-dangle
+  _hasRun(count) {
     const times = this.getPluginRunCount(this.getCurrentPlugin());
     return times > (count || 0);
   }
@@ -316,9 +322,7 @@ class SpecMap {
     if (!plugin) {
       const nextPromise = this.nextPromisedPatch();
       if (nextPromise) {
-        return nextPromise
-          .then(() => this.dispatch())
-          .catch(() => this.dispatch());
+        return nextPromise.then(() => this.dispatch()).catch(() => this.dispatch());
       }
 
       // We're done!
@@ -335,7 +339,9 @@ class SpecMap {
     if (that.pluginCount[plugin] > HARD_LIMIT) {
       return Promise.resolve({
         spec: that.state,
-        errors: that.errors.concat(new Error(`We've reached a hard limit of ${HARD_LIMIT} plugin runs`)),
+        errors: that.errors.concat(
+          new Error(`We've reached a hard limit of ${HARD_LIMIT} plugin runs`)
+        ),
       });
     }
 
@@ -344,9 +350,11 @@ class SpecMap {
       const promises = this.promisedPatches.map((p) => p.value);
 
       // Waits for all to settle instead of Promise.all which stops on rejection
-      return Promise.all(promises.map((promise) => {
-        return promise.then(noop, noop);
-      })).then(() => this.dispatch());
+      return Promise.all(
+        promises.map((promise) => {
+          return promise.then(noop, noop);
+        })
+      ).then(() => this.dispatch());
     }
 
     // Ok, run the plugin
@@ -391,6 +399,9 @@ export default function mapSpec(opts) {
 }
 
 const plugins = {
-  refs, allOf, parameters, properties,
+  refs,
+  allOf,
+  parameters,
+  properties,
 };
 export { SpecMap, plugins };

@@ -15,10 +15,10 @@ export const patch = (FormData) => {
    * monkey-patch code should then compensate the library changes easily.
    */
   if (
-    isFunction(FormData.prototype.set)
-    || isFunction(FormData.prototype.get)
-    || isFunction(FormData.prototype.getAll)
-    || isFunction(FormData.prototype.has)
+    isFunction(FormData.prototype.set) ||
+    isFunction(FormData.prototype.get) ||
+    isFunction(FormData.prototype.getAll) ||
+    isFunction(FormData.prototype.has)
   ) {
     return FormData;
   }

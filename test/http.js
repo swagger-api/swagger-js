@@ -1,8 +1,13 @@
 import xmock from 'xmock';
 import fetchMock from 'fetch-mock';
+
 import http, {
-  serializeHeaders, mergeInQueryOrForm, encodeFormOrQuery, serializeRes,
-  shouldDownloadAsText, isFile,
+  serializeHeaders,
+  mergeInQueryOrForm,
+  encodeFormOrQuery,
+  serializeRes,
+  shouldDownloadAsText,
+  isFile,
 } from '../src/http';
 
 describe('http', () => {
@@ -20,11 +25,10 @@ describe('http', () => {
 
     return http({
       url: 'http://swagger.io',
-    })
-      .then((res) => {
-        expect(res.status).toEqual(200);
-        expect(res.text).toEqual('hi');
-      });
+    }).then((res) => {
+      expect(res.status).toEqual(200);
+      expect(res.text).toEqual('hi');
+    });
   });
 
   test('should always load a spec as text', () => {
@@ -46,17 +50,16 @@ describe('http', () => {
 
     return http({
       url: 'http://swagger.io',
-    })
-      .then(
-        () => {
-          throw new Error('Expected rejection for HTTP status 400');
-        },
-        (err) => {
-          expect(err.status).toEqual(400);
-          expect(err.statusCode).toEqual(400);
-          expect(err.response.text).toEqual('hi');
-        },
-      );
+    }).then(
+      () => {
+        throw new Error('Expected rejection for HTTP status 400');
+      },
+      (err) => {
+        expect(err.status).toEqual(400);
+        expect(err.statusCode).toEqual(400);
+        expect(err.response.text).toEqual('hi');
+      }
+    );
   });
 
   test('should call request interceptor', () => {
@@ -69,12 +72,9 @@ describe('http', () => {
         req.headers.mystatus = 200;
         return req;
       },
-    })
-      .then(
-        (res) => {
-          expect(res.status).toEqual(200);
-        },
-      );
+    }).then((res) => {
+      expect(res.status).toEqual(200);
+    });
   });
 
   test('should allow the requestInterceptor to return a promise', () => {
@@ -91,12 +91,9 @@ describe('http', () => {
           }, 20);
         });
       },
-    })
-      .then(
-        (res) => {
-          expect(res.status).toEqual(200);
-        },
-      );
+    }).then((res) => {
+      expect(res.status).toEqual(200);
+    });
   });
 
   test('should apply responseInterceptor to error responses', () => {
@@ -108,38 +105,33 @@ describe('http', () => {
       responseInterceptor: (res) => {
         res.testValue = 5;
       },
-    })
-      .then(
-        () => {
-          throw new Error('Expected rejection for HTTP status 400');
-        },
-        (err) => {
-          expect(err.response.testValue).toEqual(5);
-        },
-      );
+    }).then(
+      () => {
+        throw new Error('Expected rejection for HTTP status 400');
+      },
+      (err) => {
+        expect(err.response.testValue).toEqual(5);
+      }
+    );
   });
 
-  test(
-    'should allow the responseInterceptor to return a promise for a final response',
-    () => {
-      xapp = xmock();
-      xapp.get('http://swagger.io', (req, res) => res.status(400).send('doit'));
-      xapp.get('http://example.com', (req, res) => res.send('hi'));
+  test('should allow the responseInterceptor to return a promise for a final response', () => {
+    xapp = xmock();
+    xapp.get('http://swagger.io', (req, res) => res.status(400).send('doit'));
+    xapp.get('http://example.com', (req, res) => res.send('hi'));
 
-      return http({
-        url: 'http://swagger.io',
-        responseInterceptor: () => {
-          return http({
-            url: 'http://example.com',
-          });
-        },
-      })
-        .then((res) => {
-          expect(res.status).toEqual(200);
-          expect(res.text).toEqual('hi');
+    return http({
+      url: 'http://swagger.io',
+      responseInterceptor: () => {
+        return http({
+          url: 'http://example.com',
         });
-    },
-  );
+      },
+    }).then((res) => {
+      expect(res.status).toEqual(200);
+      expect(res.text).toEqual('hi');
+    });
+  });
 
   test('should set responseError on responseInterceptor Error', () => {
     xapp = xmock();
@@ -151,16 +143,15 @@ describe('http', () => {
       responseInterceptor: () => {
         throw testError;
       },
-    })
-      .then(
-        () => {
-          throw new Error('Expected rejection for HTTP status 400');
-        },
-        (err) => {
-          expect(err.response).toBeFalsy();
-          expect(err.responseError).toBe(testError);
-        },
-      );
+    }).then(
+      () => {
+        throw new Error('Expected rejection for HTTP status 400');
+      },
+      (err) => {
+        expect(err.response).toBeFalsy();
+        expect(err.responseError).toBe(testError);
+      }
+    );
   });
 
   describe('serializeHeaders', () => {
@@ -306,17 +297,22 @@ describe('http', () => {
         query: {
           anotherOne: ['one', 'two'], // No collection format
           evenMore: 'hi', // string, not an array
-          bar: { // has a collectionFormat, so we need a way of indicating it
+          bar: {
+            // has a collectionFormat, so we need a way of indicating it
             collectionFormat: 'ssv',
             value: [1, 2, 3],
           },
         },
       };
 
-      return http('http://example.com', req).then((response) => {
-        expect(response.url).toEqual('http://example.com/?anotherOne=one,two&evenMore=hi&bar=1%202%203');
-        expect(response.status).toEqual(200);
-      }).then(fetchMock.restore);
+      return http('http://example.com', req)
+        .then((response) => {
+          expect(response.url).toEqual(
+            'http://example.com/?anotherOne=one,two&evenMore=hi&bar=1%202%203'
+          );
+          expect(response.status).toEqual(200);
+        })
+        .then(fetchMock.restore);
     });
 
     test('should remove newlines from header values', () => {
@@ -337,58 +333,56 @@ describe('http', () => {
         },
       };
 
-      return http('http://example.com', req).then((response) => {
-        expect(response.url).toEqual('http://example.com/');
-        expect(response.data.toString()).toEqual(
-          'so much depends upon a red wheel barrow',
-        );
-      }).then(fetchMock.restore);
+      return http('http://example.com', req)
+        .then((response) => {
+          expect(response.url).toEqual('http://example.com/');
+          expect(response.data.toString()).toEqual('so much depends upon a red wheel barrow');
+        })
+        .then(fetchMock.restore);
     });
   });
 
   describe('serializeRes', () => {
-    test(
-      'should serialize fetch-like response and call serializeHeaders',
-      () => {
-        // cross-fetch exposes FetchAPI methods onto global
-        require('cross-fetch/polyfill');
-        const response = new Response('data', { // eslint-disable-line no-undef
-          status: 200,
-          headers: {
-            Authorization: 'Basic hoop-la, Advanced hoop-la',
-            'Content-Type': 'text/plain',
-          },
+    test('should serialize fetch-like response and call serializeHeaders', () => {
+      // cross-fetch exposes FetchAPI methods onto global
+      require('cross-fetch/polyfill');
+      const response = new Response('data', {
+        // eslint-disable-line no-undef
+        status: 200,
+        headers: {
+          Authorization: 'Basic hoop-la, Advanced hoop-la',
+          'Content-Type': 'text/plain',
+        },
+      });
+
+      return serializeRes(response, 'https://swagger.io').then((serializedResponse) => {
+        expect(serializedResponse.headers).toEqual({
+          authorization: ['Basic hoop-la', 'Advanced hoop-la'],
+          'content-type': 'text/plain',
         });
+      });
+    });
 
-        return serializeRes(response, 'https://swagger.io')
-          .then((serializedResponse) => {
-            expect(serializedResponse.headers).toEqual({
-              authorization: ['Basic hoop-la', 'Advanced hoop-la'],
-              'content-type': 'text/plain',
-            });
-          });
-      },
-    );
+    test('should set .text and .data to body Blob or Buffer for binary response', () => {
+      // cross-fetch exposes FetchAPI methods onto global
+      require('cross-fetch/polyfill');
 
-    test(
-      'should set .text and .data to body Blob or Buffer for binary response',
-      () => {
-        // cross-fetch exposes FetchAPI methods onto global
-        require('cross-fetch/polyfill');
+      const headers = {
+        'Content-Type': 'application/octet-stream',
+      };
 
-        const headers = {
-          'Content-Type': 'application/octet-stream',
-        };
+      const body = 'body data';
+      fetchMock.mock('http://swagger.io', { body, headers });
 
-        const body = 'body data';
-        fetchMock.mock('http://swagger.io', { body, headers });
+      let originalRes;
 
-        let originalRes;
-
-        return fetch('http://swagger.io').then((_res) => { // eslint-disable-line no-undef
+      return fetch('http://swagger.io')
+        .then((_res) => {
+          // eslint-disable-line no-undef
           originalRes = _res;
           return serializeRes(_res, 'https://swagger.io');
-        }).then((resSerialize) => {
+        })
+        .then((resSerialize) => {
           expect(resSerialize.data).toBe(resSerialize.text);
           if (originalRes.blob) {
             expect(Object.prototype.toString.call(resSerialize.data)).toBe('[object Blob]');
@@ -396,34 +390,38 @@ describe('http', () => {
             expect(resSerialize.data).toBeInstanceOf(Buffer);
             expect(resSerialize.data).toEqual(Buffer.from(body));
           }
-        }).then(fetchMock.restore);
-      },
-    );
+        })
+        .then(fetchMock.restore);
+    });
 
-    test(
-      'should set .text and .data to body string for text response',
-      () => {
-        const headers = {
-          'Content-Type': 'application/json',
-        };
+    test('should set .text and .data to body string for text response', () => {
+      const headers = {
+        'Content-Type': 'application/json',
+      };
 
-        const body = '{}';
-        fetchMock.mock('http://swagger.io', { body, headers });
+      const body = '{}';
+      fetchMock.mock('http://swagger.io', { body, headers });
 
-        return fetch('http://swagger.io').then((_res) => { // eslint-disable-line no-undef
+      return fetch('http://swagger.io')
+        .then((_res) => {
+          // eslint-disable-line no-undef
           return serializeRes(_res, 'https://swagger.io');
-        }).then((resSerialize) => {
+        })
+        .then((resSerialize) => {
           expect(resSerialize.data).toBe(resSerialize.text);
           expect(resSerialize.data).toBe(body);
-        }).then(fetchMock.restore);
-      },
-    );
+        })
+        .then(fetchMock.restore);
+    });
   });
 
   describe('shouldDownloadAsText', () => {
     test('should return true for json, xml, yaml, and text types', () => {
       const types = [
-        'text/x-yaml', 'application/xml', 'text/xml', 'application/json',
+        'text/x-yaml',
+        'application/xml',
+        'text/xml',
+        'application/json',
         'text/plain',
       ];
 
@@ -433,9 +431,7 @@ describe('http', () => {
     });
 
     test('should return false for other common types', () => {
-      const types = [
-        'application/octet-stream', 'application/x-binary',
-      ];
+      const types = ['application/octet-stream', 'application/x-binary'];
 
       types.forEach((v) => {
         expect(`${v} ${shouldDownloadAsText(v)}`).toEqual(`${v} false`);

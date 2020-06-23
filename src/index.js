@@ -1,6 +1,7 @@
 import assign from 'lodash/assign';
 import startsWith from 'lodash/startsWith';
 import Url from 'url';
+
 import Http, { makeHttp, serializeRes, serializeHeaders } from './http';
 import Resolver, { clearCache } from './resolver';
 import resolveSubtree from './subtree-resolver';
@@ -35,13 +36,12 @@ function Swagger(url, opts = {}) {
 
   assign(this, opts);
 
-  const prom = this.resolve()
-    .then(() => {
-      if (!this.disableInterfaces) {
-        assign(this, Swagger.makeApisTagOperation(this));
-      }
-      return this;
-    });
+  const prom = this.resolve().then(() => {
+    if (!this.disableInterfaces) {
+      assign(this, Swagger.makeApisTagOperation(this));
+    }
+    return this;
+  });
 
   // Expose this instance on the promise that gets returned
   prom.client = this;
@@ -49,7 +49,6 @@ function Swagger(url, opts = {}) {
 }
 
 Swagger.prototype = {
-
   http: Http,
 
   execute(options) {

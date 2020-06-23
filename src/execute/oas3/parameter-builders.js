@@ -1,21 +1,17 @@
 import pick from 'lodash/pick';
+
 import stylize, { encodeDisallowedCharacters } from './style-serializer';
 import serialize from './content-serializer';
 
 export function path({ req, value, parameter }) {
-  const {
-    name, style, explode, content,
-  } = parameter;
+  const { name, style, explode, content } = parameter;
 
   if (content) {
     const effectiveMediaType = Object.keys(content)[0];
 
-    req.url = req.url.split(`{${name}}`).join(
-      encodeDisallowedCharacters(
-        serialize(value, effectiveMediaType),
-        { escape: true },
-      ),
-    );
+    req.url = req.url
+      .split(`{${name}}`)
+      .join(encodeDisallowedCharacters(serialize(value, effectiveMediaType), { escape: true }));
     return;
   }
 
@@ -60,11 +56,7 @@ export function query({ req, value, parameter }) {
   }
 }
 
-const PARAMETER_HEADER_BLACKLIST = [
-  'accept',
-  'authorization',
-  'content-type',
-];
+const PARAMETER_HEADER_BLACKLIST = ['accept', 'authorization', 'content-type'];
 
 export function header({ req, parameter, value }) {
   req.headers = req.headers || {};
@@ -103,18 +95,17 @@ export function cookie({ req, parameter, value }) {
   }
 
   if (type !== 'undefined') {
-    const prefix = (
-      type === 'object'
-      && !Array.isArray(value)
-      && parameter.explode
-    ) ? '' : `${parameter.name}=`;
+    const prefix =
+      type === 'object' && !Array.isArray(value) && parameter.explode ? '' : `${parameter.name}=`;
 
-    req.headers.Cookie = prefix + stylize({
-      key: parameter.name,
-      value,
-      escape: false,
-      style: parameter.style || 'form',
-      explode: typeof parameter.explode === 'undefined' ? false : parameter.explode,
-    });
+    req.headers.Cookie =
+      prefix +
+      stylize({
+        key: parameter.name,
+        value,
+        escape: false,
+        style: parameter.style || 'form',
+        explode: typeof parameter.explode === 'undefined' ? false : parameter.explode,
+      });
   }
 }

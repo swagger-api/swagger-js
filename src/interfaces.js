@@ -1,4 +1,5 @@
 import pick from 'lodash/pick';
+
 import { eachOperation, opId } from './helpers';
 
 const nullFn = () => null;
@@ -78,7 +79,10 @@ export function makeApisTagOperation(swaggerJs = {}) {
  *
  */
 export function mapTagOperations({
-  spec, cb = nullFn, defaultTag = 'default', v2OperationIdCompatibilityMode,
+  spec,
+  cb = nullFn,
+  defaultTag = 'default',
+  v2OperationIdCompatibilityMode,
 }) {
   const operationIdCounter = {};
   const tagOperations = {}; // Will house all tags + operations
@@ -93,7 +97,11 @@ export function mapTagOperations({
       const tagObj = tagOperations[tag];
       const id = opId(operation, pathName, method, { v2OperationIdCompatibilityMode });
       const cbResult = cb({
-        spec, pathName, method, operation, operationId: id,
+        spec,
+        pathName,
+        method,
+        operation,
+        operationId: id,
       });
 
       if (operationIdCounter[id]) {
@@ -101,7 +109,7 @@ export function mapTagOperations({
         tagObj[`${id}${operationIdCounter[id]}`] = cbResult;
       } else if (typeof tagObj[id] !== 'undefined') {
         // Bump counter ( for this operationId )
-        const originalCounterValue = (operationIdCounter[id] || 1);
+        const originalCounterValue = operationIdCounter[id] || 1;
         operationIdCounter[id] = originalCounterValue + 1;
         // Append _x to the operationId
         tagObj[`${id}${operationIdCounter[id]}`] = cbResult;

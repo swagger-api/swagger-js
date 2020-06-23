@@ -1,4 +1,5 @@
 import fetchMock from 'fetch-mock';
+
 import FormData from '../src/internal/form-data-monkey-patch';
 import { buildRequest } from '../src/execute';
 import sampleMultipartOpenApi2 from './data/sample-multipart-oas2';
@@ -23,7 +24,7 @@ describe('buildRequest - openapi 2.0', () => {
       parameters: {
         'formData.hhlContent:sort': 'id',
         'formData.hhlContent:order': 'desc',
-        'formData.email[]': ["person1", "person2"], // eslint-disable-line quotes
+        'formData.email[]': ['person1', 'person2'], // eslint-disable-line quotes
         'formData.none[]': ['foo', 'bar'],
         'formData.csv[]': ['foo', 'bar'],
         'formData.tsv[]': ['foo', 'bar'],
@@ -91,7 +92,7 @@ describe('buildRequest - openapi 2.0', () => {
      * where returnData = req.body/req.files/req.file
      */
     test.skip('should (Live) POST multipart-formdata with entry item entries', () => {
-      return fetch('http://localhost:3300/api/v1/formdata', { // eslint-disable-line no-undef
+      return fetch('http://localhost:3300/api/v1/formdata', {
         method: 'POST',
         body: req.body,
       })
@@ -107,22 +108,25 @@ describe('buildRequest - openapi 2.0', () => {
 
     test('should Mock POST multipart-formdata with entry item entries', () => {
       // Given
-      fetchMock.post('http://localhost:3300/api/v1/formdata', {
-        status: 200,
-        body: JSON.stringify({
-          message: 'post received',
-          data: {
-            'hhlContent:sort': 'id',
-            'hhlContent:order': 'desc',
-            email: ['person1', 'person2'],
-          },
-        }),
-      },
-      {
-        sendAsJson: false,
-      });
+      fetchMock.post(
+        'http://localhost:3300/api/v1/formdata',
+        {
+          status: 200,
+          body: JSON.stringify({
+            message: 'post received',
+            data: {
+              'hhlContent:sort': 'id',
+              'hhlContent:order': 'desc',
+              email: ['person1', 'person2'],
+            },
+          }),
+        },
+        {
+          sendAsJson: false,
+        }
+      );
 
-      return fetch('http://localhost:3300/api/v1/formdata', { // eslint-disable-line no-undef
+      return fetch('http://localhost:3300/api/v1/formdata', {
         method: 'POST',
         body: req.body,
       })
@@ -150,7 +154,7 @@ describe('buildRequest - openapi 3.0', () => {
       requestBody: {
         'hhlContent:sort': 'id',
         'hhlContent:order': 'desc',
-        'email[]': ["person1", "person2"], // eslint-disable-line quotes
+        'email[]': ['person1', 'person2'], // eslint-disable-line quotes
       },
     });
 
@@ -183,7 +187,7 @@ describe('buildRequest - openapi 3.0', () => {
      * where returnData = req.body/req.files/req.file
      */
     test.skip('should (Live) POST multipart-formdata with entry item entries', () => {
-      return fetch('http://localhost:3300/api/v1/formdata', { // eslint-disable-line no-undef
+      return fetch('http://localhost:3300/api/v1/formdata', {
         method: 'POST',
         body: req.body,
       })
@@ -199,22 +203,25 @@ describe('buildRequest - openapi 3.0', () => {
 
     test('should Mock POST multipart-formdata with entry item entries', () => {
       // Given
-      fetchMock.post('http://localhost:3300/api/v1/formdata', {
-        status: 200,
-        body: JSON.stringify({
-          message: 'post received',
-          data: {
-            'hhlContent:sort': 'id',
-            'hhlContent:order': 'desc',
-            email: ['person1', 'person2'],
-          },
-        }),
-      },
-      {
-        sendAsJson: false,
-      });
+      fetchMock.post(
+        'http://localhost:3300/api/v1/formdata',
+        {
+          status: 200,
+          body: JSON.stringify({
+            message: 'post received',
+            data: {
+              'hhlContent:sort': 'id',
+              'hhlContent:order': 'desc',
+              email: ['person1', 'person2'],
+            },
+          }),
+        },
+        {
+          sendAsJson: false,
+        }
+      );
 
-      return fetch('http://localhost:3300/api/v1/formdata', { // eslint-disable-line no-undef
+      return fetch('http://localhost:3300/api/v1/formdata', {
         method: 'POST',
         body: req.body,
       })
@@ -321,7 +328,11 @@ describe('buildRequest - openapi 3.0', () => {
         },
       });
 
-      expect(Array.from(req.body.entryList)).toEqual([{ name: 'color[R]', value: '100' }, { name: 'color[G]', value: '200' }, { name: 'color[B]', value: '150' }]);
+      expect(Array.from(req.body.entryList)).toEqual([
+        { name: 'color[R]', value: '100' },
+        { name: 'color[G]', value: '200' },
+        { name: 'color[B]', value: '150' },
+      ]);
     });
   });
 });

@@ -8,85 +8,107 @@ import Swagger from '../src/index';
 describe('http', () => {
   let server;
   beforeAll(() => {
-    server = http.createServer((req, res) => {
-      const { accept } = req.headers;
-      let contentType;
-      const uri = url.parse(req.url).pathname;
-      const filename = path.join('test', 'data', uri);
+    server = http
+      .createServer((req, res) => {
+        const { accept } = req.headers;
+        let contentType;
+        const uri = url.parse(req.url).pathname;
+        const filename = path.join('test', 'data', uri);
 
-      if (filename.indexOf('.yaml') > 0) {
-        contentType = 'application/yaml';
-      } else {
-        contentType = 'application/json';
-      }
-
-      if (typeof accept !== 'undefined') {
-        if (accept === 'invalid') {
-          res.writeHead(500);
-          res.end();
-          return;
-        }
-
-        if (accept.indexOf('application/json') >= 0) {
-          contentType = accept;
-          res.setHeader('Content-Type', contentType);
-        }
         if (filename.indexOf('.yaml') > 0) {
-          res.setHeader('Content-Type', 'application/yaml');
-        }
-      }
-
-      if (req.headers['x-setcontenttype']) {
-        // Allow the test to explicitly set (or unset) a content type
-        if (req.headers['x-setcontenttype'] === 'none') {
-          res.removeHeader('Content-Type');
+          contentType = 'application/yaml';
         } else {
-          res.setHeader('Content-Type', req.headers['x-setcontenttype']);
+          contentType = 'application/json';
         }
-      }
 
-      fs.exists(filename, (exists) => {
-        if (exists) {
-          const fileStream = fs.createReadStream(filename);
-          res.setHeader('Access-Control-Allow-Origin', '*');
-          res.writeHead(200, contentType);
-          fileStream.pipe(res);
-        } else {
-          res.writeHead(404, { 'Content-Type': 'text/plain' });
-          res.write('404 Not Found\n');
-          res.end();
+        if (typeof accept !== 'undefined') {
+          if (accept === 'invalid') {
+            res.writeHead(500);
+            res.end();
+            return;
+          }
+
+          if (accept.indexOf('application/json') >= 0) {
+            contentType = accept;
+            res.setHeader('Content-Type', contentType);
+          }
+          if (filename.indexOf('.yaml') > 0) {
+            res.setHeader('Content-Type', 'application/yaml');
+          }
         }
-      });
-    }).listen(8000);
+
+        if (req.headers['x-setcontenttype']) {
+          // Allow the test to explicitly set (or unset) a content type
+          if (req.headers['x-setcontenttype'] === 'none') {
+            res.removeHeader('Content-Type');
+          } else {
+            res.setHeader('Content-Type', req.headers['x-setcontenttype']);
+          }
+        }
+
+        fs.exists(filename, (exists) => {
+          if (exists) {
+            const fileStream = fs.createReadStream(filename);
+            res.setHeader('Access-Control-Allow-Origin', '*');
+            res.writeHead(200, contentType);
+            fileStream.pipe(res);
+          } else {
+            res.writeHead(404, { 'Content-Type': 'text/plain' });
+            res.write('404 Not Found\n');
+            res.end();
+          }
+        });
+      })
+      .listen(8000);
   });
 
   afterAll(() => {
     server.close();
   });
 
-  afterEach(() => {
-  });
+  afterEach(() => {});
 
   test('should get the JSON petstore api and build it', (done) => {
-    Swagger('http://localhost:8000/petstore.json')
-      .then((client) => {
-        expect(client).toBeTruthy();
+    Swagger('http://localhost:8000/petstore.json').then((client) => {
+      expect(client).toBeTruthy();
 
-        // we have 3 tags
-        expect(Object.keys(client.apis).length).toBe(3);
+      // we have 3 tags
+      expect(Object.keys(client.apis).length).toBe(3);
 
-        // the pet tag exists
-        expect(client.apis.pet).toBeTruthy();
+      // the pet tag exists
+      expect(client.apis.pet).toBeTruthy();
 
-        // the get pet operation
-        expect(client.apis.pet.getPetById).toBeTruthy();
+      // the get pet operation
+      expect(client.apis.pet.getPetById).toBeTruthy();
 
-        done();
-      });
+      done();
+    });
   });
 
   test('should get the YAML petstore api and build it', (done) => {
-    Swagger('http://localhost:8000/petstore.json')
+    Swagger('http://localhost:8000/petstore.json').then((client) => {
+      expect(client).toBeTruthy();
+
+      // we have 3 tags
+      expect(Object.keys(client.apis).length).toBe(3);
+
+      // the pet tag exists
+      expect(client.apis.pet).toBeTruthy();
+
+      // the get pet operation
+      expect(client.apis.pet.getPetById).toBeTruthy();
+
+      done();
+    });
+  });
+
+  test('should get the JSON petstore api and build it when response lacks a `Content-Type`', (done) => {
+    Swagger('http://localhost:8000/petstore.json', {
+      requestInterceptor: (req) => {
+        req.headers['X-SetContentType'] = 'none';
+        return req;
+      },
+    })
       .then((client) => {
         expect(client).toBeTruthy();
 
@@ -100,77 +122,48 @@ describe('http', () => {
         expect(client.apis.pet.getPetById).toBeTruthy();
 
         done();
-      });
+      })
+      .catch((err) => done(err));
   });
 
-  test(
-    'should get the JSON petstore api and build it when response lacks a `Content-Type`',
-    (done) => {
-      Swagger('http://localhost:8000/petstore.json', {
-        requestInterceptor: (req) => {
-          req.headers['X-SetContentType'] = 'none';
-          return req;
-        },
+  test('should get the YAML petstore api and build it when response lacks a `Content-Type`', (done) => {
+    Swagger('http://localhost:8000/petstore.yaml', {
+      requestInterceptor: (req) => {
+        req.headers['X-SetContentType'] = 'none';
+        return req;
+      },
+    })
+      .then((client) => {
+        expect(client).toBeTruthy();
+
+        // we have 3 tags
+        expect(Object.keys(client.apis).length).toBe(3);
+
+        // the pet tag exists
+        expect(client.apis.pet).toBeTruthy();
+
+        // the get pet operation
+        expect(client.apis.pet.getPetById).toBeTruthy();
+
+        done();
       })
-        .then((client) => {
-          expect(client).toBeTruthy();
-
-          // we have 3 tags
-          expect(Object.keys(client.apis).length).toBe(3);
-
-          // the pet tag exists
-          expect(client.apis.pet).toBeTruthy();
-
-          // the get pet operation
-          expect(client.apis.pet.getPetById).toBeTruthy();
-
-          done();
-        })
-        .catch((err) => done(err));
-    },
-  );
-
-  test(
-    'should get the YAML petstore api and build it when response lacks a `Content-Type`',
-    (done) => {
-      Swagger('http://localhost:8000/petstore.yaml', {
-        requestInterceptor: (req) => {
-          req.headers['X-SetContentType'] = 'none';
-          return req;
-        },
-      })
-        .then((client) => {
-          expect(client).toBeTruthy();
-
-          // we have 3 tags
-          expect(Object.keys(client.apis).length).toBe(3);
-
-          // the pet tag exists
-          expect(client.apis.pet).toBeTruthy();
-
-          // the get pet operation
-          expect(client.apis.pet.getPetById).toBeTruthy();
-
-          done();
-        })
-        .catch((err) => done(err));
-    },
-  );
+      .catch((err) => done(err));
+  });
 
   /**
    * See https://github.com/swagger-api/swagger-js/issues/1005
    */
   test.skip('should get a pet from the petstore', (done) => {
-    Swagger('http://localhost:8000/petstore.json')
-      .then((client) => {
-        client.apis.pet.getPetById({ petId: -1 })
-          .then(() => {
-            done('shoulda thrown an error!');
-          })
-          .catch((error) => {
-            done(error);
-          });
-      });
+    Swagger('http://localhost:8000/petstore.json').then((client) => {
+      client.apis.pet
+        .getPetById({ petId: -1 })
+        .then(() => {
+          done('shoulda thrown an error!');
+        })
+        .catch((error) => {
+          done(error);
+        });
+    });
   });
 
   /**
@@ -182,7 +175,9 @@ describe('http', () => {
         throw new Error('Expected an error.');
       })
       .catch((error) => {
-        expect(error.message).toEqual('request to http://localhost:1/untouchable.yaml failed, reason: connect ECONNREFUSED 127.0.0.1:1');
+        expect(error.message).toEqual(
+          'request to http://localhost:1/untouchable.yaml failed, reason: connect ECONNREFUSED 127.0.0.1:1'
+        );
         expect(error.name).toEqual('FetchError');
       });
   });
@@ -204,12 +199,11 @@ describe('http', () => {
    * See https://github.com/swagger-api/swagger-js/issues/1004
    */
   test.skip('fail with invalid verbs', (done) => {
-    Swagger('http://localhost:8000/invalid-operation.yaml')
-      .then((client) => {
-        expect(client.apis.default).toBeTruthy();
-        expect(typeof client.apis.default['not-a-valid-verb']).toBe('undefined');
-        done();
-      });
+    Swagger('http://localhost:8000/invalid-operation.yaml').then((client) => {
+      expect(client.apis.default).toBeTruthy();
+      expect(typeof client.apis.default['not-a-valid-verb']).toBe('undefined');
+      done();
+    });
   });
 
   /**
@@ -229,41 +223,35 @@ describe('http', () => {
       });
   });
 
-  test(
-    'use the host from whence the spec was fetched when constructing swagger2 URLs from a basePath',
-    async () => {
-      const client = await Swagger('http://localhost:8000/relative-host.swagger.yaml');
-      try {
-        const res = await client.apis.default.myOp();
-        expect(res.status).toBe(404);
-      } catch (e) {
-        expect(e).toMatchObject({
-          status: 404,
-          response: {
-            url: 'http://localhost:8000/v1/endpoint',
-          },
-        });
-      }
-    },
-  );
+  test('use the host from whence the spec was fetched when constructing swagger2 URLs from a basePath', async () => {
+    const client = await Swagger('http://localhost:8000/relative-host.swagger.yaml');
+    try {
+      const res = await client.apis.default.myOp();
+      expect(res.status).toBe(404);
+    } catch (e) {
+      expect(e).toMatchObject({
+        status: 404,
+        response: {
+          url: 'http://localhost:8000/v1/endpoint',
+        },
+      });
+    }
+  });
 
-  test(
-    'use the host from whence the spec was fetched when constructing OAS3 URLs from relative servers entries',
-    async () => {
-      const client = await Swagger('http://localhost:8000/relative-server.openapi.yaml');
-      try {
-        const res = await client.apis.default.myOp();
-        expect(res.status).toBe(404);
-      } catch (e) {
-        expect(e).toMatchObject({
-          status: 404,
-          response: {
-            url: 'http://localhost:8000/v1/endpoint',
-          },
-        });
-      }
-    },
-  );
+  test('use the host from whence the spec was fetched when constructing OAS3 URLs from relative servers entries', async () => {
+    const client = await Swagger('http://localhost:8000/relative-server.openapi.yaml');
+    try {
+      const res = await client.apis.default.myOp();
+      expect(res.status).toBe(404);
+    } catch (e) {
+      expect(e).toMatchObject({
+        status: 404,
+        response: {
+          url: 'http://localhost:8000/v1/endpoint',
+        },
+      });
+    }
+  });
 
   test('should err gracefully when requesting https from an http server', () => {
     return Swagger({
@@ -275,7 +263,9 @@ describe('http', () => {
         return req;
       },
     }).catch((err) => {
-      expect(err.message).toMatch(/^request to https:\/\/localhost:8000\/petstore\.json failed, reason: (socket hang up|write EPROTO)/);
+      expect(err.message).toMatch(
+        /^request to https:\/\/localhost:8000\/petstore\.json failed, reason: (socket hang up|write EPROTO)/
+      );
     });
   });
 
@@ -286,9 +276,15 @@ describe('http', () => {
       requestInterceptor,
     }).then((client) => {
       expect(requestInterceptor.mock.calls.length).toEqual(3);
-      expect(requestInterceptor.mock.calls[0][0].url).toEqual('http://localhost:8000/nested/one.yaml');
-      expect(requestInterceptor.mock.calls[1][0].url).toEqual('http://localhost:8000/nested/two.yaml');
-      expect(requestInterceptor.mock.calls[2][0].url).toEqual('http://localhost:8000/nested/three.yaml');
+      expect(requestInterceptor.mock.calls[0][0].url).toEqual(
+        'http://localhost:8000/nested/one.yaml'
+      );
+      expect(requestInterceptor.mock.calls[1][0].url).toEqual(
+        'http://localhost:8000/nested/two.yaml'
+      );
+      expect(requestInterceptor.mock.calls[2][0].url).toEqual(
+        'http://localhost:8000/nested/three.yaml'
+      );
 
       expect(client.spec).toEqual({
         data: {

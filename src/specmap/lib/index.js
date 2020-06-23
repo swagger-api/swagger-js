@@ -55,7 +55,8 @@ function applyPatch(obj, patch, opts) {
         // If it's an object, iterate it's keys and merge
         // if there are conflicting keys, merge deep, otherwise shallow merge
         let currentObj = { ...currentValue[prop] };
-        for (const key in propVal) { // eslint-disable-line no-restricted-syntax
+        // eslint-disable-next-line no-restricted-syntax
+        for (const key in propVal) {
           if (Object.prototype.hasOwnProperty.call(currentObj, key)) {
             // if there is a single conflicting key, just deepExtend the entire value
             // and break from the loop (since all future keys are also merged)
@@ -82,22 +83,25 @@ function applyPatch(obj, patch, opts) {
     // so let's break that patch down into a set of patches,
     // one for each key in the intended root value.
 
-    const patches = Object.keys(patch.value)
-      .reduce((arr, key) => {
-        arr.push({
-          op: 'add',
-          path: `/${normalizeJSONPath(key)}`,
-          value: patch.value[key],
-        });
-        return arr;
-      }, []);
+    const patches = Object.keys(patch.value).reduce((arr, key) => {
+      arr.push({
+        op: 'add',
+        path: `/${normalizeJSONPath(key)}`,
+        value: patch.value[key],
+      });
+      return arr;
+    }, []);
 
     jsonPatch.applyPatch(obj, patches);
   } else if (patch.op === 'replace' && patch.path === '') {
     let { value } = patch;
 
-    if (opts.allowMetaPatches && patch.meta && isAdditiveMutation(patch)
-        && (Array.isArray(patch.value) || isObject(patch.value))) {
+    if (
+      opts.allowMetaPatches &&
+      patch.meta &&
+      isAdditiveMutation(patch) &&
+      (Array.isArray(patch.value) || isObject(patch.value))
+    ) {
       value = { ...value, ...patch.meta };
     }
     obj = value;
@@ -105,8 +109,12 @@ function applyPatch(obj, patch, opts) {
     jsonPatch.applyPatch(obj, [patch]);
 
     // Attach metadata to the resulting value.
-    if (opts.allowMetaPatches && patch.meta && isAdditiveMutation(patch)
-        && (Array.isArray(patch.value) || isObject(patch.value))) {
+    if (
+      opts.allowMetaPatches &&
+      patch.meta &&
+      isAdditiveMutation(patch) &&
+      (Array.isArray(patch.value) || isObject(patch.value))
+    ) {
       const currentValue = getInByJsonPath(obj, patch.path);
       const newValue = { ...currentValue, ...patch.meta };
       jsonPatch.applyPatch(obj, [replace(patch.path, newValue)]);
@@ -122,9 +130,12 @@ function normalizeJSONPath(path) {
       return '';
     }
 
-    return '/' + path.map((item) => { // eslint-disable-line prefer-template
-      return (item + '').replace(/~/g, '~0').replace(/\//g, '~1'); // eslint-disable-line prefer-template
-    }).join('/');
+    return `/${path
+      .map((item) => {
+        // eslint-disable-line prefer-template
+        return (item + '').replace(/~/g, '~0').replace(/\//g, '~1'); // eslint-disable-line prefer-template
+      })
+      .join('/')}`;
   }
 
   return path;
@@ -144,7 +155,10 @@ function add(path, value) {
 
 function replace(path, value, meta) {
   return {
-    op: 'replace', path, value, meta,
+    op: 'replace',
+    path,
+    value,
+    meta,
   };
 }
 
@@ -155,14 +169,20 @@ function remove(path) {
 // Custom wrappers
 function merge(path, value) {
   return {
-    type: 'mutation', op: 'merge', path, value,
+    type: 'mutation',
+    op: 'merge',
+    path,
+    value,
   };
 }
 
 // Custom wrappers
 function mergeDeep(path, value) {
   return {
-    type: 'mutation', op: 'mergeDeep', path, value,
+    type: 'mutation',
+    op: 'mergeDeep',
+    path,
+    value,
   };
 }
 
@@ -191,9 +211,10 @@ function forEachNewPrimitive(mutations, fn) {
 }
 
 function forEachNewPatch(mutations, fn, callback) {
-  const res = mutations.filter(isAdditiveMutation).map((mutation) => {
-    return fn(mutation.value, callback, mutation.path);
-  }) || [];
+  const res =
+    mutations.filter(isAdditiveMutation).map((mutation) => {
+      return fn(mutation.value, callback, mutation.path);
+    }) || [];
   const flat = flatten(res);
   const clean = cleanArray(flat);
   return clean;
@@ -288,9 +309,11 @@ function normalizeArray(arr) {
 }
 
 function flatten(arr) {
-  return [].concat(...arr.map((val) => {
-    return Array.isArray(val) ? flatten(val) : val;
-  }));
+  return [].concat(
+    ...arr.map((val) => {
+      return Array.isArray(val) ? flatten(val) : val;
+    })
+  );
 }
 
 function cleanArray(arr) {
@@ -334,7 +357,13 @@ function isMutation(patch) {
 }
 
 function isAdditiveMutation(patch) {
-  return isMutation(patch) && (patch.op === 'add' || patch.op === 'replace' || patch.op === 'merge' || patch.op === 'mergeDeep');
+  return (
+    isMutation(patch) &&
+    (patch.op === 'add' ||
+      patch.op === 'replace' ||
+      patch.op === 'merge' ||
+      patch.op === 'mergeDeep')
+  );
 }
 
 function isContextPatch(patch) {

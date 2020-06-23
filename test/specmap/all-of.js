@@ -1,4 +1,5 @@
 import xmock from 'xmock';
+
 import mapSpec, { plugins } from '../../src/specmap';
 
 describe('allOf', () => {
@@ -9,10 +10,7 @@ describe('allOf', () => {
   test('should resolve simple allOf', () => {
     return mapSpec({
       spec: {
-        allOf: [
-          { one: 1 },
-          { two: 2 },
-        ],
+        allOf: [{ one: 1 }, { two: 2 }],
       },
       plugins: [plugins.allOf],
     }).then((res) => {
@@ -26,29 +24,23 @@ describe('allOf', () => {
     });
   });
 
-  test(
-    'should return empty object when you pass nothing to allOf',
-    (done) => {
-      return mapSpec({
-        spec: { allOf: [] },
-        plugins: [plugins.allOf],
-      }).then((res) => {
-        expect(res).toEqual({
-          errors: [],
-          spec: {},
-        });
-        done();
+  test('should return empty object when you pass nothing to allOf', (done) => {
+    return mapSpec({
+      spec: { allOf: [] },
+      plugins: [plugins.allOf],
+    }).then((res) => {
+      expect(res).toEqual({
+        errors: [],
+        spec: {},
       });
-    },
-  );
+      done();
+    });
+  });
 
   test('should resolve local $refs in allOf', () => {
     return mapSpec({
       spec: {
-        allOf: [
-          { one: { $ref: '#/bar' } },
-          { two: 2 },
-        ],
+        allOf: [{ one: { $ref: '#/bar' } }, { two: 2 }],
         bar: { baz: 4 },
       },
       plugins: [plugins.refs, plugins.allOf],
@@ -192,54 +184,48 @@ describe('allOf', () => {
     });
   });
 
-  test(
-    'should ignore "allOf" in freely named Swagger key positions',
-    () => {
-      const spec = {
-        parameters: {
-          allOf: {
-            a: 123,
-          },
+  test('should ignore "allOf" in freely named Swagger key positions', () => {
+    const spec = {
+      parameters: {
+        allOf: {
+          a: 123,
         },
-        responses: {
-          allOf: {
-            a: 123,
-          },
+      },
+      responses: {
+        allOf: {
+          a: 123,
         },
-        definitions: {
-          allOf: {
-            a: 123,
-          },
+      },
+      definitions: {
+        allOf: {
+          a: 123,
         },
-        securityDefinitions: {
-          allOf: {
-            a: 123,
-          },
+      },
+      securityDefinitions: {
+        allOf: {
+          a: 123,
         },
-        properties: {
-          allOf: {
-            a: 123,
-          },
+      },
+      properties: {
+        allOf: {
+          a: 123,
         },
-      };
+      },
+    };
 
-      return mapSpec({
-        spec,
-        plugins: [plugins.allOf],
-      }).then((res) => {
-        expect(res.errors).toEqual([]);
-        expect(res.spec).toEqual(spec);
-      });
-    },
-  );
+    return mapSpec({
+      spec,
+      plugins: [plugins.allOf],
+    }).then((res) => {
+      expect(res.errors).toEqual([]);
+      expect(res.spec).toEqual(spec);
+    });
+  });
 
   test('should throw error if allOf has a non-object item', () => {
     return mapSpec({
       spec: {
-        allOf: [
-          { one: 1 },
-          2,
-        ],
+        allOf: [{ one: 1 }, 2],
       },
       plugins: [plugins.allOf],
     }).then((res) => {
@@ -253,8 +239,8 @@ describe('allOf', () => {
     return mapSpec({
       spec: {
         allOf: [
-          { one: { two: { half: true }}}, // eslint-disable-line object-curly-spacing
-          { one: { two: { otherHalf: true }}}, // eslint-disable-line object-curly-spacing
+          { one: { two: { half: true } } }, // eslint-disable-line object-curly-spacing
+          { one: { two: { otherHalf: true } } }, // eslint-disable-line object-curly-spacing
         ],
       },
       plugins: [plugins.allOf],
@@ -278,19 +264,14 @@ describe('allOf', () => {
       spec: {
         allOf: [
           {
-            allOf: [
-              { two: 2 },
-            ],
+            allOf: [{ two: 2 }],
           },
           { one: 1 },
           {
             allOf: [
               { three: 3 },
               {
-                allOf: [
-                  { four: 4 },
-                  { five: 5 },
-                ],
+                allOf: [{ four: 4 }, { five: 5 }],
               },
             ],
           },
@@ -319,10 +300,7 @@ describe('allOf', () => {
     return mapSpec({
       plugins: [plugins.refs, plugins.allOf],
       spec: {
-        allOf: [
-          { $ref: 'http://example.com/' },
-          { fromLocal: true },
-        ],
+        allOf: [{ $ref: 'http://example.com/' }, { fromLocal: true }],
       },
     }).then((res) => {
       expect(res.errors).toEqual([]);
@@ -350,14 +328,16 @@ describe('allOf', () => {
             },
           },
           Bravo: {
-            allOf: [{
-              type: 'object',
-              properties: {
-                three: {
-                  type: 'string',
+            allOf: [
+              {
+                type: 'object',
+                properties: {
+                  three: {
+                    type: 'string',
+                  },
                 },
               },
-            }],
+            ],
           },
         },
       },
@@ -439,46 +419,43 @@ describe('allOf', () => {
     });
   });
 
-  test(
-    'should handle case, with an `allOf` referencing an `allOf` ',
-    () => {
-      return mapSpec({
-        plugins: [plugins.refs, plugins.allOf],
-        showDebug: true,
-        spec: {
-          definitions: {
-            one: {
-              allOf: [
-                {
-                  $ref: '#/definitions/two',
-                },
-                {
-                  type: 'object',
-                },
-              ],
-            },
-            two: {
-              allOf: [
-                {
-                  type: 'object',
-                },
-              ],
-            },
+  test('should handle case, with an `allOf` referencing an `allOf` ', () => {
+    return mapSpec({
+      plugins: [plugins.refs, plugins.allOf],
+      showDebug: true,
+      spec: {
+        definitions: {
+          one: {
+            allOf: [
+              {
+                $ref: '#/definitions/two',
+              },
+              {
+                type: 'object',
+              },
+            ],
+          },
+          two: {
+            allOf: [
+              {
+                type: 'object',
+              },
+            ],
           },
         },
-      }).then((res) => {
-        expect(res.errors).toEqual([]);
-        expect(res.spec).toEqual({
-          definitions: {
-            one: {
-              type: 'object',
-            },
-            two: {
-              type: 'object',
-            },
+      },
+    }).then((res) => {
+      expect(res.errors).toEqual([]);
+      expect(res.spec).toEqual({
+        definitions: {
+          one: {
+            type: 'object',
           },
-        });
+          two: {
+            type: 'object',
+          },
+        },
       });
-    },
-  );
+    });
+  });
 });

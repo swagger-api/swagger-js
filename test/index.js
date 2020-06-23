@@ -1,4 +1,5 @@
 import xmock from 'xmock';
+
 import Swagger from '../src/index';
 
 describe('constructor', () => {
@@ -122,36 +123,33 @@ describe('constructor', () => {
       });
     });
 
-    test(
-      'should honor `v2OperationIdCompatibilityMode` when building `apis`',
-      () => {
-        // Given
-        const spec = {
-          swagger: '2.0',
-          paths: {
-            '/foo/{bar}/baz': {
-              get: {
-                description: '',
-                tags: ['myTag'],
-              },
+    test('should honor `v2OperationIdCompatibilityMode` when building `apis`', () => {
+      // Given
+      const spec = {
+        swagger: '2.0',
+        paths: {
+          '/foo/{bar}/baz': {
+            get: {
+              description: '',
+              tags: ['myTag'],
             },
           },
-        };
+        },
+      };
 
-        // When
-        return Swagger({
-          spec,
-          v2OperationIdCompatibilityMode: true,
-        }).then((swag) => {
-          const { apis } = swag;
+      // When
+      return Swagger({
+        spec,
+        v2OperationIdCompatibilityMode: true,
+      }).then((swag) => {
+        const { apis } = swag;
 
-          // Then
-          expect(typeof apis).toBe('object');
-          expect(typeof apis.myTag).toBe('object');
-          expect(apis.myTag.get_foo_bar_baz).toBeInstanceOf(Function);
-        });
-      },
-    );
+        // Then
+        expect(typeof apis).toBe('object');
+        expect(typeof apis.myTag).toBe('object');
+        expect(apis.myTag.get_foo_bar_baz).toBeInstanceOf(Function);
+      });
+    });
 
     test('should handle circular $refs when a baseDoc is provided', () => {
       // Given
@@ -199,12 +197,11 @@ describe('constructor', () => {
         res.send('not found');
       });
 
-      new Swagger({ url: 'http://petstore.swagger.io/404' })
-        .catch((err) => {
-          expect(err.status).toBe(404);
-          expect(err.message).toBe('Not Found');
-          cb();
-        });
+      new Swagger({ url: 'http://petstore.swagger.io/404' }).catch((err) => {
+        expect(err.status).toBe(404);
+        expect(err.message).toBe('Not Found');
+        cb();
+      });
     });
 
     test('should serialize the response', () => {
@@ -219,29 +216,28 @@ describe('constructor', () => {
         url: 'https://swagger.io/one',
       };
 
-      return Swagger.http(req)
-        .then((res) => {
-          expect(res).toMatchObject({
-            url: req.url,
-            ok: true,
-            status: 200,
-            headers: {
-              connection: 'close',
-              'content-type': 'application/json',
+      return Swagger.http(req).then((res) => {
+        expect(res).toMatchObject({
+          url: req.url,
+          ok: true,
+          status: 200,
+          headers: {
+            connection: 'close',
+            'content-type': 'application/json',
 
-              hi: 'ho',
-            },
-            statusText: 'OK',
-            data: '{"me":true}',
-            text: '{"me":true}',
-            body: {
-              me: true,
-            },
-            obj: {
-              me: true,
-            },
-          });
+            hi: 'ho',
+          },
+          statusText: 'OK',
+          data: '{"me":true}',
+          text: '{"me":true}',
+          body: {
+            me: true,
+          },
+          obj: {
+            me: true,
+          },
         });
+      });
     });
 
     test('should handle invalid JSON bodies', () => {
@@ -254,13 +250,12 @@ describe('constructor', () => {
         url: 'https://swagger.io/one',
       };
 
-      return Swagger.http(req)
-        .then((res) => {
-          const { body, text, status } = res;
-          expect(status).toEqual(200);
-          expect(text).toEqual('[');
-          expect(body).toEqual();
-        });
+      return Swagger.http(req).then((res) => {
+        const { body, text, status } = res;
+        expect(status).toEqual(200);
+        expect(text).toEqual('[');
+        expect(body).toEqual();
+      });
     });
   });
 
@@ -288,32 +283,29 @@ describe('constructor', () => {
       });
     });
 
-    test(
-      'should respect the `withCredentials` flag on the http agent',
-      () => {
-        const spec = {
-          paths: {
-            '/pet': {
-              get: {
-                operationId: 'getPets',
-              },
+    test('should respect the `withCredentials` flag on the http agent', () => {
+      const spec = {
+        paths: {
+          '/pet': {
+            get: {
+              operationId: 'getPets',
             },
           },
-        };
-        return Swagger({ spec }).then((client) => {
-          const http = jest.fn();
-          http.withCredentials = true;
-          client.execute({ http, operationId: 'getPets' });
-          expect(http.mock.calls.length).toEqual(1);
-          expect(http.mock.calls[0][0]).toEqual({
-            headers: {},
-            method: 'GET',
-            credentials: 'include',
-            url: '/pet',
-          });
+        },
+      };
+      return Swagger({ spec }).then((client) => {
+        const http = jest.fn();
+        http.withCredentials = true;
+        client.execute({ http, operationId: 'getPets' });
+        expect(http.mock.calls.length).toEqual(1);
+        expect(http.mock.calls[0][0]).toEqual({
+          headers: {},
+          method: 'GET',
+          credentials: 'include',
+          url: '/pet',
         });
-      },
-    );
+      });
+    });
 
     test('should add basic auth to a request', () => {
       const spec = {
@@ -420,7 +412,7 @@ describe('constructor', () => {
         client.execute({ http, operationId: 'getPets' });
         expect(http.mock.calls.length).toEqual(1);
         expect(http.mock.calls[0][0]).toEqual({
-          headers: { },
+          headers: {},
           method: 'GET',
           credentials: 'same-origin',
           url: '/pet?petKey=barFoo',
@@ -468,49 +460,46 @@ describe('constructor', () => {
       });
     });
 
-    test(
-      'should not add an empty oAuth2 Bearer token header to a request',
-      () => {
-        const spec = {
-          securityDefinitions: {
-            bearer: {
-              description: 'Bearer authorization token',
-              type: 'oauth2',
-              name: 'Authorization',
-              in: 'header',
-            },
-          },
-          security: [{ bearer: [] }],
-          paths: {
-            '/pet': {
-              get: {
-                operationId: 'getPets',
-              },
-            },
-          },
-        };
-
-        const authorizations = {
+    test('should not add an empty oAuth2 Bearer token header to a request', () => {
+      const spec = {
+        securityDefinitions: {
           bearer: {
-            token: {
-              access_token: '',
+            description: 'Bearer authorization token',
+            type: 'oauth2',
+            name: 'Authorization',
+            in: 'header',
+          },
+        },
+        security: [{ bearer: [] }],
+        paths: {
+          '/pet': {
+            get: {
+              operationId: 'getPets',
             },
           },
-        };
+        },
+      };
 
-        return Swagger({ spec, authorizations }).then((client) => {
-          const http = jest.fn();
-          client.execute({ http, operationId: 'getPets' });
-          expect(http.mock.calls.length).toEqual(1);
-          expect(http.mock.calls[0][0]).toEqual({
-            headers: {},
-            credentials: 'same-origin',
-            method: 'GET',
-            url: '/pet',
-          });
+      const authorizations = {
+        bearer: {
+          token: {
+            access_token: '',
+          },
+        },
+      };
+
+      return Swagger({ spec, authorizations }).then((client) => {
+        const http = jest.fn();
+        client.execute({ http, operationId: 'getPets' });
+        expect(http.mock.calls.length).toEqual(1);
+        expect(http.mock.calls[0][0]).toEqual({
+          headers: {},
+          credentials: 'same-origin',
+          method: 'GET',
+          url: '/pet',
         });
-      },
-    );
+      });
+    });
 
     test('should add global securites', () => {
       const spec = {
@@ -644,11 +633,9 @@ describe('constructor', () => {
         .get('http://petstore.swagger.io/v2/pet/3', () => ({ id: 3 }))
         .get('http://petstore.swagger.io/v2/pet/4', () => ({ id: 4 }))
         .get('http://petstore.swagger.io/v2/ref.json', () => ({ b: 2 }))
-        .get('http://petstore.swagger.io/v2/base.json', () => (
-          {
-            $ref: 'http://petstore.swagger.io/v2/ref.json#b',
-          }
-        ));
+        .get('http://petstore.swagger.io/v2/base.json', () => ({
+          $ref: 'http://petstore.swagger.io/v2/ref.json#b',
+        }));
     });
 
     test('should support request interceptor', (cb) => {
@@ -683,52 +670,49 @@ describe('constructor', () => {
       }, cb);
     });
 
-    test(
-      'should support request interceptor when fetching a spec and remote ref',
-      (cb) => {
-        const spy = jest.fn().mockImplementation((a) => a);
-        new Swagger({
-          url: 'http://petstore.swagger.io/v2/base.json',
-          requestInterceptor: spy,
-        }).then(() => {
+    test('should support request interceptor when fetching a spec and remote ref', (cb) => {
+      const spy = jest.fn().mockImplementation((a) => a);
+      new Swagger({
+        url: 'http://petstore.swagger.io/v2/base.json',
+        requestInterceptor: spy,
+      })
+        .then(() => {
           expect(spy.mock.calls.length).toEqual(2);
           cb();
-        }).catch(cb);
-      },
-    );
+        })
+        .catch(cb);
+    });
 
-    test(
-      'should support response interceptor when fetching a spec and remote ref',
-      (cb) => {
-        const spy = jest.fn().mockImplementation((a) => {
-          return a;
-        });
+    test('should support response interceptor when fetching a spec and remote ref', (cb) => {
+      const spy = jest.fn().mockImplementation((a) => {
+        return a;
+      });
 
-        new Swagger({
-          url: 'http://petstore.swagger.io/v2/base.json',
-          responseInterceptor: spy,
-        }).then(() => {
+      new Swagger({
+        url: 'http://petstore.swagger.io/v2/base.json',
+        responseInterceptor: spy,
+      })
+        .then(() => {
           expect(spy.mock.calls.length).toEqual(2);
           cb();
-        }).catch(cb);
-      },
-    );
+        })
+        .catch(cb);
+    });
 
-    test(
-      'should support request and response interceptor when fetching a spec and remote ref',
-      (cb) => {
-        const reqSpy = jest.fn().mockImplementation((a) => a);
-        const resSpy = jest.fn().mockImplementation((a) => a);
-        new Swagger({
-          url: 'http://petstore.swagger.io/v2/base.json',
-          responseInterceptor: reqSpy,
-          requestInterceptor: resSpy,
-        }).then(() => {
+    test('should support request and response interceptor when fetching a spec and remote ref', (cb) => {
+      const reqSpy = jest.fn().mockImplementation((a) => a);
+      const resSpy = jest.fn().mockImplementation((a) => a);
+      new Swagger({
+        url: 'http://petstore.swagger.io/v2/base.json',
+        responseInterceptor: reqSpy,
+        requestInterceptor: resSpy,
+      })
+        .then(() => {
           expect(reqSpy.mock.calls.length).toEqual(2);
           expect(resSpy.mock.calls.length).toEqual(2);
           cb();
-        }).catch(cb);
-      },
-    );
+        })
+        .catch(cb);
+    });
   });
 });

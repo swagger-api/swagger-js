@@ -6,7 +6,7 @@ import { ACCEPT_HEADER_VALUE_FOR_DOCUMENTS } from './constants';
 export function makeFetchJSON(http, opts = {}) {
   const { requestInterceptor, responseInterceptor } = opts;
   // Set credentials with 'http.withCredentials' value
-  const credentials = (http.withCredentials) ? 'include' : 'same-origin';
+  const credentials = http.withCredentials ? 'include' : 'same-origin';
   return (docPath) => {
     return http({
       url: docPath,
@@ -17,10 +17,9 @@ export function makeFetchJSON(http, opts = {}) {
         Accept: ACCEPT_HEADER_VALUE_FOR_DOCUMENTS,
       },
       credentials,
-    })
-      .then((res) => {
-        return res.body;
-      });
+    }).then((res) => {
+      return res.body;
+    });
   };
 }
 
@@ -31,9 +30,18 @@ export function clearCache() {
 
 export default function resolve(obj) {
   const {
-    fetch, spec, url, mode, allowMetaPatches = true, pathDiscriminator,
-    modelPropertyMacro, parameterMacro, requestInterceptor,
-    responseInterceptor, skipNormalization, useCircularStructures,
+    fetch,
+    spec,
+    url,
+    mode,
+    allowMetaPatches = true,
+    pathDiscriminator,
+    modelPropertyMacro,
+    parameterMacro,
+    requestInterceptor,
+    responseInterceptor,
+    skipNormalization,
+    useCircularStructures,
   } = obj;
 
   let { http, baseDoc } = obj;
@@ -47,8 +55,9 @@ export default function resolve(obj) {
   http = fetch || http || Http;
 
   if (!spec) {
-    return makeFetchJSON(http, { requestInterceptor, responseInterceptor })(baseDoc)
-      .then(doResolve);
+    return makeFetchJSON(http, { requestInterceptor, responseInterceptor })(baseDoc).then(
+      doResolve
+    );
   }
 
   return doResolve(spec);

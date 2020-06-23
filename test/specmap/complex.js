@@ -1,6 +1,7 @@
 import path from 'path';
 import glob from 'glob';
 import xmock from 'xmock';
+
 import mapSpec, { plugins } from '../../src/specmap';
 
 const { refs } = plugins;

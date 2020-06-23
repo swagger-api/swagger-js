@@ -1,6 +1,7 @@
 import cloneDeep from 'lodash/cloneDeep';
 import xmock from 'xmock';
 import traverse from 'traverse';
+
 import mapSpec, { SpecMap, plugins } from '../../src/specmap';
 import lib from '../../src/specmap/lib';
 
@@ -27,37 +28,40 @@ describe('specmap', () => {
     test('should call plugins with patches', (done) => {
       mapSpec({
         spec: { one: 1 },
-        plugins: [{
-          specMap: (patches) => {
-            try {
-              expect(patches).toEqual([{
-                op: 'add',
-                path: [],
-                value: { one: 1 },
-              }]);
-              done();
-            } catch (e) {
-              done(e);
-            }
+        plugins: [
+          {
+            specMap: (patches) => {
+              try {
+                expect(patches).toEqual([
+                  {
+                    op: 'add',
+                    path: [],
+                    value: { one: 1 },
+                  },
+                ]);
+                done();
+              } catch (e) {
+                done(e);
+              }
+            },
           },
-        }],
+        ],
       });
     });
 
-    test(
-      'should include a library of functions, including `add` ',
-      (done) => {
-        mapSpec({
-          spec: { bob: true },
-          plugins: [{
+    test('should include a library of functions, including `add` ', (done) => {
+      mapSpec({
+        spec: { bob: true },
+        plugins: [
+          {
             specMap(patches, specmap) {
               expect(typeof specmap.add).toBe('function');
               done();
             },
-          }],
-        });
-      },
-    );
+          },
+        ],
+      });
+    });
 
     test('should accept simple functions for plugins', (done) => {
       mapSpec({
@@ -65,11 +69,13 @@ describe('specmap', () => {
         plugins: [
           (patches) => {
             try {
-              expect(patches).toEqual([{
-                op: 'add',
-                path: [],
-                value: { one: 1 },
-              }]);
+              expect(patches).toEqual([
+                {
+                  op: 'add',
+                  path: [],
+                  value: { one: 1 },
+                },
+              ]);
             } catch (e) {
               done(e);
             }
@@ -98,81 +104,83 @@ describe('specmap', () => {
       });
     });
 
-    test(
-      'should block until promises resolve before running next plugin',
-      () => {
-        const p1 = (patches, specmap) => {
-          if (specmap.hasRun()) {
-            return undefined;
-          }
-          return specmap.replace(['val'], new Promise((resolve) => {
+    test('should block until promises resolve before running next plugin', () => {
+      const p1 = (patches, specmap) => {
+        if (specmap.hasRun()) {
+          return undefined;
+        }
+        return specmap.replace(
+          ['val'],
+          new Promise((resolve) => {
             setTimeout(() => {
               resolve('some val');
             }, 50);
-          }));
-        };
+          })
+        );
+      };
 
-        const p2 = (patches, specmap) => {
-          if (specmap.hasRun()) {
-            return undefined;
-          }
-          if (patches[1].value !== 'some val'
-            && patches[2].value !== 'some val'
-            && patches[3].value !== 'some val') {
-            return [new Error('Promises not yet resolved')];
-          }
-
+      const p2 = (patches, specmap) => {
+        if (specmap.hasRun()) {
           return undefined;
-        };
+        }
+        if (
+          patches[1].value !== 'some val' &&
+          patches[2].value !== 'some val' &&
+          patches[3].value !== 'some val'
+        ) {
+          return [new Error('Promises not yet resolved')];
+        }
 
-        return mapSpec({
-          spec: {},
-          plugins: [p1, p1, p1, p2],
-        }).then((result) => {
-          expect(result).toEqual({
-            errors: [],
-            spec: { val: 'some val' },
-          });
+        return undefined;
+      };
+
+      return mapSpec({
+        spec: {},
+        plugins: [p1, p1, p1, p2],
+      }).then((result) => {
+        expect(result).toEqual({
+          errors: [],
+          spec: { val: 'some val' },
         });
-      },
-    );
+      });
+    });
 
-    test(
-      'should not block the first plugin if it is executed multiple times at once',
-      () => {
-        let hasRunTwice = false;
-        const p1 = (patches, specmap) => {
-          if (!specmap.hasRun()) {
-            return [
-              specmap.add(['val1'], 'some val1'),
-              specmap.add(['val2'], new Promise((resolve) => {
+    test('should not block the first plugin if it is executed multiple times at once', () => {
+      let hasRunTwice = false;
+      const p1 = (patches, specmap) => {
+        if (!specmap.hasRun()) {
+          return [
+            specmap.add(['val1'], 'some val1'),
+            specmap.add(
+              ['val2'],
+              new Promise((resolve) => {
                 setTimeout(() => resolve('some val2'), 50);
-              })),
-            ];
+              })
+            ),
+          ];
+        }
+        if (!hasRunTwice) {
+          hasRunTwice = true;
+          // We expect this to run immediately with the val1 patch,
+          // but without the val2 patch because the promise hasn't been resolved.
+          if (patches[0].value !== 'some val1' || patches[1] != null) {
+            return [new Error('Should not block')];
           }
-          if (!hasRunTwice) {
-            hasRunTwice = true;
-            // We expect this to run immediately with the val1 patch,
-            // but without the val2 patch because the promise hasn't been resolved.
-            if (patches[0].value !== 'some val1' || patches[1] != null) {
-              return [new Error('Should not block')];
-            }
-          }
+        }
 
-          return undefined;
-        };
+        return undefined;
+      };
 
-        return mapSpec({
-          spec: {},
-          plugins: [p1],
-        }).then((result) => {
-          expect(result).toEqual({
-            errors: [],
-            spec: { val1: 'some val1', val2: 'some val2' },
-          });
+      return mapSpec({
+        spec: {},
+        plugins: [p1],
+      }).then((result) => {
+        expect(result).toEqual({
+          errors: [],
+          spec: { val1: 'some val1', val2: 'some val2' },
         });
-      },
-    );
+      });
+    });
 
     test('records errors after each plugin', () => {
       return mapSpec({
@@ -193,10 +201,7 @@ describe('specmap', () => {
         ],
       }).then((result) => {
         expect(result).toEqual({
-          errors: [
-            new Error('This is not working'),
-            new TypeError('wrong type'),
-          ],
+          errors: [new Error('This is not working'), new TypeError('wrong type')],
           spec: { here: true },
         });
       });
@@ -212,10 +217,7 @@ describe('specmap', () => {
               return undefined;
             }
             hasRun = true;
-            return [
-              new Error('This is not working'),
-              specmap.replace(['two'], 2),
-            ];
+            return [new Error('This is not working'), specmap.replace(['two'], 2)];
           },
         ],
       }).then((result) => {
@@ -282,10 +284,7 @@ describe('specmap', () => {
             },
           },
         },
-        plugins: [
-          addFour,
-          increment,
-        ],
+        plugins: [addFour, increment],
       }).then((res) => {
         expect(res).toEqual({
           errors: [],
@@ -366,7 +365,9 @@ describe('specmap', () => {
         return mapSpec({
           spec: { one: 1 },
           plugins: [
-            () => { /* do nothing */ },
+            () => {
+              /* do nothing */
+            },
             (patches, specmap) => {
               if (specmap.get(['two']) !== 2) {
                 return specmap.add(['two'], 2);
@@ -430,16 +431,15 @@ describe('specmap', () => {
               another: { $ref: '#/nested' },
             },
             plugins: [plugins.refs],
-          })
-            .then((res) => {
-              expect(res).toEqual({
-                errors: [],
-                spec: {
-                  nested: { one: 1 },
-                  another: { one: 1 },
-                },
-              });
+          }).then((res) => {
+            expect(res).toEqual({
+              errors: [],
+              spec: {
+                nested: { one: 1 },
+                another: { one: 1 },
+              },
             });
+          });
         });
 
         test('should resolve internal $refs in arrays', () => {
@@ -449,61 +449,52 @@ describe('specmap', () => {
               another: [{ $ref: '#/nested' }],
             },
             plugins: [plugins.refs],
-          })
-            .then((res) => {
-              expect(res).toEqual({
-                errors: [],
-                spec: {
-                  nested: { one: 1 },
-                  another: [{ one: 1 }],
-                },
-              });
+          }).then((res) => {
+            expect(res).toEqual({
+              errors: [],
+              spec: {
+                nested: { one: 1 },
+                another: [{ one: 1 }],
+              },
             });
+          });
         });
 
-        test(
-          'should resolve internal $refs that points to object inside an array',
-          () => {
-            return mapSpec({
+        test('should resolve internal $refs that points to object inside an array', () => {
+          return mapSpec({
+            spec: {
+              nested: [{ one: 1 }],
+              another: { $ref: '#/nested' },
+            },
+            plugins: [plugins.refs],
+          }).then((res) => {
+            expect(res).toEqual({
+              errors: [],
               spec: {
                 nested: [{ one: 1 }],
-                another: { $ref: '#/nested' },
+                another: [{ one: 1 }],
               },
-              plugins: [plugins.refs],
-            })
-              .then((res) => {
-                expect(res).toEqual({
-                  errors: [],
-                  spec: {
-                    nested: [{ one: 1 }],
-                    another: [{ one: 1 }],
-                  },
-                });
-              });
-          },
-        );
+            });
+          });
+        });
 
-        test(
-          'should resolve internal $refs that points to item inside an array',
-          () => {
-            return mapSpec({
+        test('should resolve internal $refs that points to item inside an array', () => {
+          return mapSpec({
+            spec: {
+              nested: [{ one: 1 }],
+              another: { $ref: '#/nested/0/one' },
+            },
+            plugins: [plugins.refs],
+          }).then((res) => {
+            expect(res).toEqual({
+              errors: [],
               spec: {
                 nested: [{ one: 1 }],
-                another: { $ref: '#/nested/0/one' },
+                another: 1,
               },
-              plugins: [plugins.refs],
-            })
-              .then((res) => {
-                expect(res).toEqual({
-                  errors: [],
-                  spec: {
-                    nested: [{ one: 1 }],
-                    another: 1,
-                  },
-                });
-              });
-          },
-        );
+            });
+          });
+        });
 
         test('should resolve a $ref without a pointer', () => {
           plugins.refs.docCache['http://some-path'] = {
@@ -515,15 +506,14 @@ describe('specmap', () => {
               $ref: 'http://some-path',
             },
             plugins: [plugins.refs],
-          })
-            .then((res) => {
-              expect(res).toEqual({
-                errors: [],
-                spec: {
-                  one: 1,
-                },
-              });
+          }).then((res) => {
+            expect(res).toEqual({
+              errors: [],
+              spec: {
+                one: 1,
+              },
             });
+          });
         });
 
         test('should fail if we cannot resolve a ref', () => {
@@ -534,16 +524,15 @@ describe('specmap', () => {
             },
             context: { baseDoc: 'some-path' },
             plugins: [plugins.refs],
-          })
-            .then((res) => {
-              expect(res.spec).toEqual({
-                nested: { one: 1 },
-                another: { $ref: '#/not/here' },
-              });
-              expect(res.errors[0].$ref).toEqual('#/not/here');
-              expect(res.errors[0].pointer).toEqual('/not/here');
-              expect(res.errors[0].baseDoc).toEqual('some-path');
+          }).then((res) => {
+            expect(res.spec).toEqual({
+              nested: { one: 1 },
+              another: { $ref: '#/not/here' },
             });
+            expect(res.errors[0].$ref).toEqual('#/not/here');
+            expect(res.errors[0].pointer).toEqual('/not/here');
+            expect(res.errors[0].baseDoc).toEqual('some-path');
+          });
         });
 
         test('should resolve petstore-simple', () => {
@@ -575,11 +564,10 @@ describe('specmap', () => {
             },
             allowMetaPatches: true,
             plugins: [plugins.refs],
-          })
-            .then((res) => {
-              expect(res.spec.one.$$ref).toEqual('#/two');
-              expect(res.spec.two.$$ref).toEqual(undefined);
-            });
+          }).then((res) => {
+            expect(res.spec.one.$$ref).toEqual('#/two');
+            expect(res.spec.two.$$ref).toEqual(undefined);
+          });
         });
 
         describe('allowMetaPatches = true', () => {
@@ -595,9 +583,11 @@ describe('specmap', () => {
               spec: { a: 1, $ref: 'http://example.com/common.json#/works' },
               plugins: [plugins.refs],
               allowMetaPatches: true,
-            }).then((res) => {
-              expect(res.spec.$$ref).toEqual('http://example.com/common.json#/works');
-            }).then(() => xapp.restore());
+            })
+              .then((res) => {
+                expect(res.spec.$$ref).toEqual('http://example.com/common.json#/works');
+              })
+              .then(() => xapp.restore());
           });
 
           test('should rewrite $$ref artifacts inside external $refs', () => {
@@ -617,10 +607,12 @@ describe('specmap', () => {
               spec: { a: 1, $ref: 'http://example.com/common.json#/works' },
               plugins: [plugins.refs],
               allowMetaPatches: true,
-            }).then((res) => {
-              expect(res.spec.$$ref).toEqual('http://example.com/common.json#/works');
-              expect(res.spec.one.$$ref).toEqual('http://example.com/common.json#/works/two');
-            }).then(() => xapp.restore());
+            })
+              .then((res) => {
+                expect(res.spec.$$ref).toEqual('http://example.com/common.json#/works');
+                expect(res.spec.one.$$ref).toEqual('http://example.com/common.json#/works/two');
+              })
+              .then(() => xapp.restore());
           });
         });
 
@@ -635,10 +627,12 @@ describe('specmap', () => {
           return mapSpec({
             spec: { $ref: 'http://example.com/common.json#/works' },
             plugins: [plugins.refs],
-          }).then((res) => {
-            expect(res.errors).toEqual([]);
-            expect(res.spec).toEqual({ yay: true });
-          }).then(() => xapp.restore());
+          })
+            .then((res) => {
+              expect(res.errors).toEqual([]);
+              expect(res.spec).toEqual({ yay: true });
+            })
+            .then(() => xapp.restore());
         });
 
         test('should store the absolute path, in context', () => {
@@ -664,12 +658,14 @@ describe('specmap', () => {
               $ref: '../common.json#/almost',
             },
             plugins: [plugins.refs],
-          }).then((res) => {
-            expect(res.errors).toEqual([]);
-            expect(res.spec).toEqual({
-              whoop: true,
-            });
-          }).then(() => xapp.restore());
+          })
+            .then((res) => {
+              expect(res.errors).toEqual([]);
+              expect(res.spec).toEqual({
+                whoop: true,
+              });
+            })
+            .then(() => xapp.restore());
         });
 
         test('should use absPath for the context, not refPath', () => {
@@ -698,15 +694,17 @@ describe('specmap', () => {
               $ref: 'models.json#/Parent',
             },
             plugins: [plugins.refs],
-          }).then((res) => {
-            expect(res.errors).toEqual([]);
-            expect(res.spec).toEqual({
-              parent: true,
-              child: {
-                child: true,
-              },
-            });
-          }).then(() => xapp.restore());
+          })
+            .then((res) => {
+              expect(res.errors).toEqual([]);
+              expect(res.spec).toEqual({
+                parent: true,
+                child: {
+                  child: true,
+                },
+              });
+            })
+            .then(() => xapp.restore());
         });
 
         test('should resolve a complex spec', () => {
@@ -720,12 +718,14 @@ describe('specmap', () => {
           return mapSpec({
             spec,
             plugins: [plugins.refs],
-          }).then((res) => {
-            expect(res).toEqual({
-              errors: [],
-              spec: resolved,
-            });
-          }).then(() => xapp.restore());
+          })
+            .then((res) => {
+              expect(res).toEqual({
+                errors: [],
+                spec: resolved,
+              });
+            })
+            .then(() => xapp.restore());
         });
       });
     });
@@ -793,23 +793,20 @@ describe('specmap', () => {
     });
 
     describe('context', () => {
-      test(
-        'should allow access to root context (options supplied to SpecMap)',
-        (done) => {
-          return mapSpec({
-            spec: {
-              top: { middle: { leaf: 'hi' } },
+      test('should allow access to root context (options supplied to SpecMap)', (done) => {
+        return mapSpec({
+          spec: {
+            top: { middle: { leaf: 'hi' } },
+          },
+          context: { name: 'root' },
+          plugins: [
+            (patches, inst) => {
+              expect(inst.getContext(['top', 'middle']).name).toEqual('root');
+              done();
             },
-            context: { name: 'root' },
-            plugins: [
-              (patches, inst) => {
-                expect(inst.getContext(['top', 'middle']).name).toEqual('root');
-                done();
-              },
-            ],
-          });
-        },
-      );
+          ],
+        });
+      });
 
       test('should set / get context for a given path', (done) => {
         return mapSpec({

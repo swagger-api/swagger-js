@@ -2,6 +2,10 @@
   "env": {
     "jest": true
   },
+  "globals": {
+    "fetch": true,
+    "Response": true
+  },
   "rules": {
     "global-require": 0, // needs to be eliminated in future
     "import/no-dynamic-require": 0,

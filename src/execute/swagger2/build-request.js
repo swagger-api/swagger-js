@@ -13,7 +13,10 @@ export default function buildRequest(options, req) {
   } = options;
   // Add securities, which are applicable
   req = applySecurities({
-    request: req, securities, operation, spec,
+    request: req,
+    securities,
+    operation,
+    spec,
   });
 
   if (req.body || req.form || attachContentTypeForEmptyPayload) {
@@ -24,14 +27,22 @@ export default function buildRequest(options, req) {
       [req.headers['Content-Type']] = operation.consumes;
     } else if (Array.isArray(spec.consumes)) {
       [req.headers['Content-Type']] = spec.consumes;
-    } else if (operation.parameters && operation.parameters.filter((p) => p.type === 'file').length) {
+    } else if (
+      operation.parameters &&
+      operation.parameters.filter((p) => p.type === 'file').length
+    ) {
       req.headers['Content-Type'] = 'multipart/form-data';
-    } else if (operation.parameters && operation.parameters.filter((p) => p.in === 'formData').length) {
+    } else if (
+      operation.parameters &&
+      operation.parameters.filter((p) => p.in === 'formData').length
+    ) {
       req.headers['Content-Type'] = 'application/x-www-form-urlencoded';
     }
   } else if (requestContentType) {
-    const isBodyParamPresent = operation.parameters && operation.parameters.filter((p) => p.in === 'body').length > 0;
-    const isFormDataParamPresent = operation.parameters && operation.parameters.filter((p) => p.in === 'formData').length > 0;
+    const isBodyParamPresent =
+      operation.parameters && operation.parameters.filter((p) => p.in === 'body').length > 0;
+    const isFormDataParamPresent =
+      operation.parameters && operation.parameters.filter((p) => p.in === 'formData').length > 0;
     if (isBodyParamPresent || isFormDataParamPresent) {
       req.headers['Content-Type'] = requestContentType;
     }
@@ -41,9 +52,7 @@ export default function buildRequest(options, req) {
 }
 
 // Add security values, to operations - that declare their need on them
-export function applySecurities({
-  request, securities = {}, operation = {}, spec,
-}) {
+export function applySecurities({ request, securities = {}, operation = {}, spec }) {
   const result = assign({}, request);
   const { authorized = {}, specSecurity = [] } = securities;
   const security = operation.security || specSecurity;
@@ -53,8 +62,12 @@ export function applySecurities({
   result.headers = result.headers || {};
   result.query = result.query || {};
 
-  if (!Object.keys(securities).length || !isAuthorized || !security
-      || (Array.isArray(operation.security) && !operation.security.length)) {
+  if (
+    !Object.keys(securities).length ||
+    !isAuthorized ||
+    !security ||
+    (Array.isArray(operation.security) && !operation.security.length)
+  ) {
     return request;
   }
 
@@ -88,7 +101,7 @@ export function applySecurities({
             result.headers.authorization = `Basic ${value.base64}`;
           }
         } else if (type === 'oauth2' && oauthToken) {
-          tokenType = (!tokenType || tokenType.toLowerCase() === 'bearer') ? 'Bearer' : tokenType;
+          tokenType = !tokenType || tokenType.toLowerCase() === 'bearer' ? 'Bearer' : tokenType;
           result.headers.authorization = `${tokenType} ${oauthToken}`;
         }
       }
