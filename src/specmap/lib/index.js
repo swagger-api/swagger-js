@@ -1,7 +1,7 @@
-import * as jsonPatch from 'fast-json-patch'
-import regenerator from '@babel/runtime-corejs2/regenerator'
-import deepExtend from 'deep-extend'
-import cloneDeep from 'lodash/cloneDeep'
+import * as jsonPatch from 'fast-json-patch';
+import regenerator from '@babel/runtime-corejs2/regenerator';
+import deepExtend from 'deep-extend';
+import cloneDeep from 'lodash/cloneDeep';
 
 export default {
   add,
@@ -27,36 +27,35 @@ export default {
   isGenerator,
   isFunction,
   isObject,
-  isError
-}
+  isError,
+};
 
 function applyPatch(obj, patch, opts) {
-  opts = opts || {}
+  opts = opts || {};
 
-  patch = {...patch, path: patch.path && normalizeJSONPath(patch.path)}
+  patch = { ...patch, path: patch.path && normalizeJSONPath(patch.path) };
 
   if (patch.op === 'merge') {
-    const newValue = getInByJsonPath(obj, patch.path)
-    Object.assign(newValue, patch.value)
-    jsonPatch.applyPatch(obj, [replace(patch.path, newValue)])
-  }
-  else if (patch.op === 'mergeDeep') {
-    const currentValue = getInByJsonPath(obj, patch.path)
+    const newValue = getInByJsonPath(obj, patch.path);
+    Object.assign(newValue, patch.value);
+    jsonPatch.applyPatch(obj, [replace(patch.path, newValue)]);
+  } else if (patch.op === 'mergeDeep') {
+    const currentValue = getInByJsonPath(obj, patch.path);
 
     // Iterate the properties of the patch
+    // eslint-disable-next-line no-restricted-syntax, guard-for-in
     for (const prop in patch.value) {
-      const propVal = patch.value[prop]
-      const isArray = Array.isArray(propVal)
+      const propVal = patch.value[prop];
+      const isArray = Array.isArray(propVal);
       if (isArray) {
         // deepExtend doesn't merge arrays, so we will do it manually
-        const existing = currentValue[prop] || []
-        currentValue[prop] = existing.concat(propVal)
-      }
-      else if (isObject(propVal) && !isArray) {
+        const existing = currentValue[prop] || [];
+        currentValue[prop] = existing.concat(propVal);
+      } else if (isObject(propVal) && !isArray) {
         // If it's an object, iterate it's keys and merge
         // if there are conflicting keys, merge deep, otherwise shallow merge
-        let currentObj = {...currentValue[prop]}
-        for (const key in propVal) {
+        let currentObj = { ...currentValue[prop] };
+        for (const key in propVal) { // eslint-disable-line no-restricted-syntax
           if (Object.prototype.hasOwnProperty.call(currentObj, key)) {
             // if there is a single conflicting key, just deepExtend the entire value
             // and break from the loop (since all future keys are also merged)
@@ -65,22 +64,19 @@ function applyPatch(obj, patch, opts) {
             //
             // we also deeply assign here, since we aren't in control of
             // how deepExtend affects existing nested objects
-            currentObj = deepExtend(cloneDeep(currentObj), propVal)
-            break
-          }
-          else {
-            Object.assign(currentObj, {[key]: propVal[key]})
+            currentObj = deepExtend(cloneDeep(currentObj), propVal);
+            break;
+          } else {
+            Object.assign(currentObj, { [key]: propVal[key] });
           }
         }
-        currentValue[prop] = currentObj
-      }
-      else {
+        currentValue[prop] = currentObj;
+      } else {
         // It's a primitive, just replace existing
-        currentValue[prop] = propVal
+        currentValue[prop] = propVal;
       }
     }
-  }
-  else if (patch.op === 'add' && patch.path === '' && isObject(patch.value)) {
+  } else if (patch.op === 'add' && patch.path === '' && isObject(patch.value)) {
     // { op: 'add', path: '', value: { a: 1, b: 2 }}
     // has no effect: json patch refuses to do anything.
     // so let's break that patch down into a set of patches,
@@ -91,49 +87,47 @@ function applyPatch(obj, patch, opts) {
         arr.push({
           op: 'add',
           path: `/${normalizeJSONPath(key)}`,
-          value: patch.value[key]
-        })
-        return arr
-      }, [])
+          value: patch.value[key],
+        });
+        return arr;
+      }, []);
 
-    jsonPatch.applyPatch(obj, patches)
-  }
-  else if (patch.op === 'replace' && patch.path === '') {
-    let {value} = patch
+    jsonPatch.applyPatch(obj, patches);
+  } else if (patch.op === 'replace' && patch.path === '') {
+    let { value } = patch;
 
     if (opts.allowMetaPatches && patch.meta && isAdditiveMutation(patch)
         && (Array.isArray(patch.value) || isObject(patch.value))) {
-      value = {...value, ...patch.meta}
+      value = { ...value, ...patch.meta };
     }
-    obj = value
-  }
-  else {
-    jsonPatch.applyPatch(obj, [patch])
+    obj = value;
+  } else {
+    jsonPatch.applyPatch(obj, [patch]);
 
     // Attach metadata to the resulting value.
     if (opts.allowMetaPatches && patch.meta && isAdditiveMutation(patch)
         && (Array.isArray(patch.value) || isObject(patch.value))) {
-      const currentValue = getInByJsonPath(obj, patch.path)
-      const newValue = {...currentValue, ...patch.meta}
-      jsonPatch.applyPatch(obj, [replace(patch.path, newValue)])
+      const currentValue = getInByJsonPath(obj, patch.path);
+      const newValue = { ...currentValue, ...patch.meta };
+      jsonPatch.applyPatch(obj, [replace(patch.path, newValue)]);
     }
   }
 
-  return obj
+  return obj;
 }
 
 function normalizeJSONPath(path) {
   if (Array.isArray(path)) {
     if (path.length < 1) {
-      return ''
+      return '';
     }
 
     return '/' + path.map((item) => { // eslint-disable-line prefer-template
-      return (item + '').replace(/~/g, '~0').replace(/\//g, '~1') // eslint-disable-line prefer-template
-    }).join('/')
+      return (item + '').replace(/~/g, '~0').replace(/\//g, '~1'); // eslint-disable-line prefer-template
+    }).join('/');
   }
 
-  return path
+  return path;
 }
 
 // =========================
@@ -141,39 +135,39 @@ function normalizeJSONPath(path) {
 // =========================
 
 function add(path, value) {
-  return {op: 'add', path, value}
+  return { op: 'add', path, value };
 }
 
-function _get(path) {
-  return {op: '_get', path}
-}
+// function _get(path) {
+//   return { op: '_get', path };
+// }
 
 function replace(path, value, meta) {
   return {
-    op: 'replace', path, value, meta
-  }
+    op: 'replace', path, value, meta,
+  };
 }
 
-function remove(path, value) {
-  return {op: 'remove', path}
+function remove(path) {
+  return { op: 'remove', path };
 }
 
 // Custom wrappers
 function merge(path, value) {
   return {
-    type: 'mutation', op: 'merge', path, value
-  }
+    type: 'mutation', op: 'merge', path, value,
+  };
 }
 
 // Custom wrappers
 function mergeDeep(path, value) {
   return {
-    type: 'mutation', op: 'mergeDeep', path, value
-  }
+    type: 'mutation', op: 'mergeDeep', path, value,
+  };
 }
 
 function context(path, value) {
-  return {type: 'context', path, value}
+  return { type: 'context', path, value };
 }
 
 // =========================
@@ -182,79 +176,76 @@ function context(path, value) {
 
 function forEachNew(mutations, fn) {
   try {
-    return forEachNewPatch(mutations, forEach, fn)
-  }
-  catch (e) {
-    return e
+    return forEachNewPatch(mutations, forEach, fn);
+  } catch (e) {
+    return e;
   }
 }
 
 function forEachNewPrimitive(mutations, fn) {
   try {
-    return forEachNewPatch(mutations, forEachPrimitive, fn)
-  }
-  catch (e) {
-    return e
+    return forEachNewPatch(mutations, forEachPrimitive, fn);
+  } catch (e) {
+    return e;
   }
 }
 
 function forEachNewPatch(mutations, fn, callback) {
   const res = mutations.filter(isAdditiveMutation).map((mutation) => {
-    return fn(mutation.value, callback, mutation.path)
-  }) || []
-  const flat = flatten(res)
-  const clean = cleanArray(flat)
-  return clean
+    return fn(mutation.value, callback, mutation.path);
+  }) || [];
+  const flat = flatten(res);
+  const clean = cleanArray(flat);
+  return clean;
 }
 
 function forEachPrimitive(obj, fn, basePath) {
-  basePath = basePath || []
+  basePath = basePath || [];
 
   if (Array.isArray(obj)) {
     return obj.map((val, key) => {
-      return forEachPrimitive(val, fn, basePath.concat(key))
-    })
+      return forEachPrimitive(val, fn, basePath.concat(key));
+    });
   }
 
   if (isObject(obj)) {
     return Object.keys(obj).map((key) => {
-      return forEachPrimitive(obj[key], fn, basePath.concat(key))
-    })
+      return forEachPrimitive(obj[key], fn, basePath.concat(key));
+    });
   }
 
-  return fn(obj, basePath[basePath.length - 1], basePath)
+  return fn(obj, basePath[basePath.length - 1], basePath);
 }
 
 function forEach(obj, fn, basePath) {
-  basePath = basePath || []
+  basePath = basePath || [];
 
-  let results = []
+  let results = [];
   if (basePath.length > 0) {
-    const newResults = fn(obj, basePath[basePath.length - 1], basePath)
+    const newResults = fn(obj, basePath[basePath.length - 1], basePath);
     if (newResults) {
-      results = results.concat(newResults)
+      results = results.concat(newResults);
     }
   }
 
   if (Array.isArray(obj)) {
     const arrayResults = obj.map((val, key) => {
-      return forEach(val, fn, basePath.concat(key))
-    })
+      return forEach(val, fn, basePath.concat(key));
+    });
     if (arrayResults) {
-      results = results.concat(arrayResults)
+      results = results.concat(arrayResults);
     }
-  }
-  else if (isObject(obj)) {
+  } else if (isObject(obj)) {
     const moreResults = Object.keys(obj).map((key) => {
-      return forEach(obj[key], fn, basePath.concat(key))
-    })
+      return forEach(obj[key], fn, basePath.concat(key));
+    });
     if (moreResults) {
-      results = results.concat(moreResults)
+      results = results.concat(moreResults);
     }
   }
 
-  results = flatten(results)
-  return results
+  results = flatten(results);
+  return results;
 }
 
 // =========================
@@ -263,25 +254,25 @@ function forEach(obj, fn, basePath) {
 
 function parentPathMatch(path, arr) {
   if (!Array.isArray(arr)) {
-    return false
+    return false;
   }
 
-  for (let i = 0, len = arr.length; i < len; i++) {
+  for (let i = 0, len = arr.length; i < len; i += 1) {
     if (arr[i] !== path[i]) {
-      return false
+      return false;
     }
   }
 
-  return true
+  return true;
 }
 
 function getIn(obj, path) {
   return path.reduce((val, token) => {
     if (typeof token !== 'undefined' && val) {
-      return val[token]
+      return val[token];
     }
-    return val
-  }, obj)
+    return val;
+  }, obj);
 }
 
 // =========================
@@ -289,21 +280,21 @@ function getIn(obj, path) {
 // =========================
 
 function fullyNormalizeArray(arr) {
-  return cleanArray(flatten(normalizeArray(arr)))
+  return cleanArray(flatten(normalizeArray(arr)));
 }
 
 function normalizeArray(arr) {
-  return Array.isArray(arr) ? arr : [arr]
+  return Array.isArray(arr) ? arr : [arr];
 }
 
 function flatten(arr) {
   return [].concat(...arr.map((val) => {
-    return Array.isArray(val) ? flatten(val) : val
-  }))
+    return Array.isArray(val) ? flatten(val) : val;
+  }));
 }
 
 function cleanArray(arr) {
-  return arr.filter((elm) => typeof elm !== 'undefined')
+  return arr.filter((elm) => typeof elm !== 'undefined');
 }
 
 // =========================
@@ -311,55 +302,54 @@ function cleanArray(arr) {
 // =========================
 
 function isObject(val) {
-  return val && typeof val === 'object'
+  return val && typeof val === 'object';
 }
 
 function isPromise(val) {
-  return isObject(val) && isFunction(val.then)
+  return isObject(val) && isFunction(val.then);
 }
 
 function isFunction(val) {
-  return val && typeof val === 'function'
+  return val && typeof val === 'function';
 }
 
 function isError(patch) {
-  return patch instanceof Error
+  return patch instanceof Error;
 }
 
 function isJsonPatch(patch) {
   if (isPatch(patch)) {
-    const {op} = patch
-    return op === 'add' || op === 'remove' || op === 'replace'
+    const { op } = patch;
+    return op === 'add' || op === 'remove' || op === 'replace';
   }
-  return false
+  return false;
 }
 
 function isGenerator(thing) {
-  return regenerator.isGeneratorFunction(thing)
+  return regenerator.isGeneratorFunction(thing);
 }
 
 function isMutation(patch) {
-  return isJsonPatch(patch) || (isPatch(patch) && patch.type === 'mutation')
+  return isJsonPatch(patch) || (isPatch(patch) && patch.type === 'mutation');
 }
 
 function isAdditiveMutation(patch) {
-  return isMutation(patch) && (patch.op === 'add' || patch.op === 'replace' || patch.op === 'merge' || patch.op === 'mergeDeep')
+  return isMutation(patch) && (patch.op === 'add' || patch.op === 'replace' || patch.op === 'merge' || patch.op === 'mergeDeep');
 }
 
 function isContextPatch(patch) {
-  return isPatch(patch) && patch.type === 'context'
+  return isPatch(patch) && patch.type === 'context';
 }
 
 function isPatch(patch) {
-  return patch && typeof patch === 'object'
+  return patch && typeof patch === 'object';
 }
 
 function getInByJsonPath(obj, jsonPath) {
   try {
-    return jsonPatch.getValueByPointer(obj, jsonPath)
-  }
-  catch (e) {
-    console.error(e) // eslint-disable-line no-console
-    return {}
+    return jsonPatch.getValueByPointer(obj, jsonPath);
+  } catch (e) {
+    console.error(e); // eslint-disable-line no-console
+    return {};
   }
 }

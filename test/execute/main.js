@@ -1,16 +1,16 @@
-import FormData from '../../src/internal/form-data-monkey-patch'
+import FormData from '../../src/internal/form-data-monkey-patch';
 import {
-  execute, buildRequest, baseUrl, self as stubs
-} from '../../src/execute'
-import {normalizeSwagger} from '../../src/helpers'
+  execute, buildRequest, self as stubs,
+} from '../../src/execute';
+import { normalizeSwagger } from '../../src/helpers';
 
 // Supported shape...  { spec, operationId, parameters, securities, fetch }
 // One can use operationId or pathItem + method
 
 describe('execute', () => {
   afterEach(() => {
-    jest.restoreAllMocks()
-  })
+    jest.restoreAllMocks();
+  });
 
   describe('buildRequest', () => {
     test('should build a request for the given operationId', () => {
@@ -22,22 +22,22 @@ describe('execute', () => {
         paths: {
           '/one': {
             get: {
-              operationId: 'getMe'
-            }
-          }
-        }
-      }
+              operationId: 'getMe',
+            },
+          },
+        },
+      };
 
       // when
-      const req = buildRequest({spec, operationId: 'getMe'})
+      const req = buildRequest({ spec, operationId: 'getMe' });
 
       expect(req).toEqual({
         method: 'GET',
         url: 'http://swagger.io/v1/one',
         credentials: 'same-origin',
         headers: {},
-      })
-    })
+      });
+    });
 
     test('should include host + port', () => {
       // Given
@@ -47,23 +47,23 @@ describe('execute', () => {
         paths: {
           '/': {
             get: {
-              operationId: 'foo'
-            }
-          }
-        }
-      }
+              operationId: 'foo',
+            },
+          },
+        },
+      };
 
       // When
-      const req = buildRequest({spec, operationId: 'foo'})
+      const req = buildRequest({ spec, operationId: 'foo' });
 
       // Then
       expect(req).toEqual({
         url: 'http://foo.com:8081/v1/',
         method: 'GET',
         credentials: 'same-origin',
-        headers: { }
-      })
-    })
+        headers: { },
+      });
+    });
 
     test('should include operation specifics', () => {
       // Given
@@ -74,22 +74,22 @@ describe('execute', () => {
           '/one': {
             get: {
               operationId: 'getMe',
-            }
-          }
-        }
-      }
+            },
+          },
+        },
+      };
 
       // When
-      const req = buildRequest({spec, operationId: 'getMe'})
+      const req = buildRequest({ spec, operationId: 'getMe' });
 
       // Then
       expect(req).toEqual({
         url: 'http://swagger.io/v1/one',
         method: 'GET',
         credentials: 'same-origin',
-        headers: { }
-      })
-    })
+        headers: { },
+      });
+    });
 
     test('should execute a simple get request', () => {
       // Given
@@ -99,32 +99,32 @@ describe('execute', () => {
         paths: {
           '/one': {
             get: {
-              operationId: 'getMe'
-            }
-          }
-        }
-      }
+              operationId: 'getMe',
+            },
+          },
+        },
+      };
 
-      const spy = jest.fn().mockImplementation(() => Promise.resolve())
+      const spy = jest.fn().mockImplementation(() => Promise.resolve());
 
       execute({
         fetch: spy,
         spec,
-        operationId: 'getMe'
-      })
+        operationId: 'getMe',
+      });
 
-      expect(spy.mock.calls.length).toEqual(1)
+      expect(spy.mock.calls.length).toEqual(1);
       expect(spy.mock.calls[0][0]).toEqual({
         method: 'GET',
         url: 'https://swagger.io/one',
         credentials: 'same-origin',
-        headers: { }
-      })
-    })
+        headers: { },
+      });
+    });
 
     test('should execute a simple get request with user-defined fetch', async () => {
       // cross-fetch exposes FetchAPI methods onto global
-      require('cross-fetch/polyfill')
+      require('cross-fetch/polyfill');
 
       // Given
       const spec = {
@@ -133,30 +133,30 @@ describe('execute', () => {
         paths: {
           '/one': {
             get: {
-              operationId: 'getMe'
-            }
-          }
-        }
-      }
+              operationId: 'getMe',
+            },
+          },
+        },
+      };
 
       // eslint-disable-next-line no-undef
-      const spy = jest.fn().mockImplementation(() => Promise.resolve(new Response('data')))
+      const spy = jest.fn().mockImplementation(() => Promise.resolve(new Response('data')));
 
       await execute({
         userFetch: spy,
         spec,
-        operationId: 'getMe'
-      })
+        operationId: 'getMe',
+      });
 
-      expect(spy.mock.calls.length).toEqual(1)
+      expect(spy.mock.calls.length).toEqual(1);
       expect(spy.mock.calls[0][1]).toEqual({
         method: 'GET',
         url: 'https://swagger.io/one',
         credentials: 'same-origin',
         headers: { },
-        userFetch: spy
-      })
-    })
+        userFetch: spy,
+      });
+    });
 
     test('should include values for query parameters', () => {
       // Given
@@ -167,23 +167,23 @@ describe('execute', () => {
           '/one': {
             get: {
               operationId: 'getMe',
-              parameters: [{name: 'petId', in: 'query'}]
-            }
-          }
-        }
-      }
+              parameters: [{ name: 'petId', in: 'query' }],
+            },
+          },
+        },
+      };
 
       // When
-      const req = buildRequest({spec, operationId: 'getMe', parameters: {petId: 123}})
+      const req = buildRequest({ spec, operationId: 'getMe', parameters: { petId: 123 } });
 
       // Then
       expect(req).toEqual({
         url: 'http://swagger.io/v1/one?petId=123',
         method: 'GET',
         credentials: 'same-origin',
-        headers: { }
-      })
-    })
+        headers: { },
+      });
+    });
 
     test('should include values that have brackets', () => {
       // Given
@@ -197,24 +197,24 @@ describe('execute', () => {
               parameters: [{
                 name: 'fields',
                 in: 'query',
-                type: 'string'
-              }]
-            }
-          }
-        }
-      }
+                type: 'string',
+              }],
+            },
+          },
+        },
+      };
 
       // When
-      const req = buildRequest({spec, operationId: 'getMe', parameters: {fields: '[articles]=title'}})
+      const req = buildRequest({ spec, operationId: 'getMe', parameters: { fields: '[articles]=title' } });
 
       // Then
       expect(req).toEqual({
         url: 'http://swagger.io/v1/one?fields=%5Barticles%5D%3Dtitle',
         method: 'GET',
         credentials: 'same-origin',
-        headers: { }
-      })
-    })
+        headers: { },
+      });
+    });
 
     test('should include values and defaults that are falsy', () => {
       // Given
@@ -229,30 +229,30 @@ describe('execute', () => {
                 {
                   name: 'zero',
                   in: 'query',
-                  type: 'integer'
+                  type: 'integer',
                 },
                 {
                   name: 'false',
                   in: 'query',
-                  type: 'boolean'
+                  type: 'boolean',
                 },
                 {
                   name: 'zeroDefault',
                   in: 'query',
                   type: 'integer',
-                  default: 0
+                  default: 0,
                 },
                 {
                   name: 'falseDefault',
                   in: 'query',
                   type: 'boolean',
-                  default: false
+                  default: false,
                 },
-              ]
-            }
-          }
-        }
-      }
+              ],
+            },
+          },
+        },
+      };
 
       // When
       const req = buildRequest({
@@ -260,18 +260,18 @@ describe('execute', () => {
         operationId: 'getMe',
         parameters: {
           false: false,
-          zero: 0
-        }
-      })
+          zero: 0,
+        },
+      });
 
       // Then
       expect(req).toEqual({
         url: 'http://swagger.io/v1/one?zero=0&false=false&zeroDefault=0&falseDefault=false',
         method: 'GET',
         credentials: 'same-origin',
-        headers: { }
-      })
-    })
+        headers: { },
+      });
+    });
 
     test('should include values for boolean query parameters', () => {
       // Given
@@ -285,24 +285,24 @@ describe('execute', () => {
               parameters: [{
                 name: 'petId',
                 in: 'query',
-                type: 'boolean'
-              }]
-            }
-          }
-        }
-      }
+                type: 'boolean',
+              }],
+            },
+          },
+        },
+      };
 
       // When
-      const req = buildRequest({spec, operationId: 'getMe', parameters: {petId: true}})
+      const req = buildRequest({ spec, operationId: 'getMe', parameters: { petId: true } });
 
       // Then
       expect(req).toEqual({
         url: 'http://swagger.io/v1/one?petId=true',
         method: 'GET',
         credentials: 'same-origin',
-        headers: { }
-      })
-    })
+        headers: { },
+      });
+    });
 
     test('should include the default value', () => {
       const spec = {
@@ -316,22 +316,22 @@ describe('execute', () => {
                 name: 'petId',
                 in: 'query',
                 type: 'integer',
-                default: 3
-              }]
-            }
-          }
-        }
-      }
+                default: 3,
+              }],
+            },
+          },
+        },
+      };
 
-      const req = buildRequest({spec, operationId: 'getMe', parameters: {}})
+      const req = buildRequest({ spec, operationId: 'getMe', parameters: {} });
 
       expect(req).toEqual({
         url: 'http://swagger.io/v1/one?petId=3',
         method: 'GET',
         credentials: 'same-origin',
-        headers: { }
-      })
-    })
+        headers: { },
+      });
+    });
 
     test(
       'should throw error if required parameter value is not provided',
@@ -348,16 +348,16 @@ describe('execute', () => {
                   name: 'petId',
                   in: 'query',
                   required: true,
-                  type: 'string'
-                }]
-              }
-            }
-          }
-        }
+                  type: 'string',
+                }],
+              },
+            },
+          },
+        };
 
-        expect(() => buildRequest({spec, operationId: 'getMe'})).toThrow('Required parameter petId is not provided')
-      }
-    )
+        expect(() => buildRequest({ spec, operationId: 'getMe' })).toThrow('Required parameter petId is not provided');
+      },
+    );
 
     test('should throw error if operation was not found', () => {
       // Given
@@ -367,14 +367,14 @@ describe('execute', () => {
         paths: {
           '/one': {
             get: {
-              operationId: 'getMe'
-            }
-          }
-        }
-      }
+              operationId: 'getMe',
+            },
+          },
+        },
+      };
 
-      expect(() => buildRequest({spec, operationId: 'nonExistingOperationId'})).toThrow('Operation nonExistingOperationId not found')
-    })
+      expect(() => buildRequest({ spec, operationId: 'nonExistingOperationId' })).toThrow('Operation nonExistingOperationId not found');
+    });
 
     describe('formData', () => {
       test(
@@ -391,20 +391,20 @@ describe('execute', () => {
                   parameters: [{
                     name: 'petId',
                     in: 'formData',
-                    allowEmptyValue: true
-                  }]
-                }
-              }
-            }
-          }
+                    allowEmptyValue: true,
+                  }],
+                },
+              },
+            },
+          };
 
           // When
-          const req = buildRequest({spec, operationId: 'deleteMe', parameters: {}})
+          const req = buildRequest({ spec, operationId: 'deleteMe', parameters: {} });
 
           // Then
-          expect(req.body).toEqual('petId=')
-        }
-      )
+          expect(req.body).toEqual('petId=');
+        },
+      );
 
       test('should support collectionFormat', () => {
         const spec = {
@@ -420,21 +420,21 @@ describe('execute', () => {
                   collectionFormat: 'csv',
                   type: 'array',
                   items: {
-                    type: 'integer'
-                  }
-                }]
-              }
-            }
-          }
-        }
+                    type: 'integer',
+                  },
+                }],
+              },
+            },
+          },
+        };
 
         // When
-        const req = buildRequest({spec, operationId: 'getMe', parameters: {petId: [1, 2, 3]}})
+        const req = buildRequest({ spec, operationId: 'getMe', parameters: { petId: [1, 2, 3] } });
 
         // Then
-        expect(req.body).toEqual('petId=1,2,3')
-      })
-    })
+        expect(req.body).toEqual('petId=1,2,3');
+      });
+    });
 
     test('should correctly process boolean parameters', () => {
       // Given
@@ -450,24 +450,24 @@ describe('execute', () => {
                 in: 'query',
                 name: 'status',
                 type: 'boolean',
-                required: false
-              }]
-            }
-          }
-        }
-      }
+                required: false,
+              }],
+            },
+          },
+        },
+      };
 
       // When
-      const req = buildRequest({spec, operationId: 'getMe', parameters: {status: false}})
+      const req = buildRequest({ spec, operationId: 'getMe', parameters: { status: false } });
 
       // Then
       expect(req).toEqual({
         url: 'http://swagger.io/v1/pets/findByStatus?status=false',
         method: 'GET',
         credentials: 'same-origin',
-        headers: { }
-      })
-    })
+        headers: { },
+      });
+    });
 
     test('should throw error if there is no parameter value', () => {
       // Given
@@ -483,26 +483,26 @@ describe('execute', () => {
                 in: 'query',
                 name: 'status',
                 type: 'string',
-                required: true
-              }]
-            }
-          }
-        }
-      }
+                required: true,
+              }],
+            },
+          },
+        },
+      };
 
       // Then
-      expect(() => buildRequest({spec, operationId: 'getMe', parameters: {}})).toThrow()
-    })
+      expect(() => buildRequest({ spec, operationId: 'getMe', parameters: {} })).toThrow();
+    });
 
     test('should handle responseContentType', () => {
       // Given
       const spec = {
         host: 'swagger.io',
-        paths: {'/one': {get: {operationId: 'getMe'}}}
-      }
+        paths: { '/one': { get: { operationId: 'getMe' } } },
+      };
 
       // When
-      const req = buildRequest({spec, operationId: 'getMe', responseContentType: 'application/josh'})
+      const req = buildRequest({ spec, operationId: 'getMe', responseContentType: 'application/josh' });
 
       // Then
       expect(req).toEqual({
@@ -511,9 +511,9 @@ describe('execute', () => {
         headers: {
           accept: 'application/josh',
         },
-        method: 'GET'
-      })
-    })
+        method: 'GET',
+      });
+    });
 
     test('should set the correct scheme', () => {
       const spec = {
@@ -526,27 +526,27 @@ describe('execute', () => {
               parameters: [{
                 in: 'query',
                 name: 'username',
-                type: 'string'
+                type: 'string',
               },
               {
                 in: 'query',
                 name: 'password',
-                type: 'string'
-              }]
-            }
-          }
-        }
-      }
+                type: 'string',
+              }],
+            },
+          },
+        },
+      };
 
-      const req = buildRequest({spec, operationId: 'loginUser', parameters: {username: 'fred', password: 'meyer'}})
+      const req = buildRequest({ spec, operationId: 'loginUser', parameters: { username: 'fred', password: 'meyer' } });
 
       expect(req).toEqual({
         url: 'http://swagger.io/v1/one?username=fred&password=meyer',
         method: 'GET',
         credentials: 'same-origin',
-        headers: { }
-      })
-    })
+        headers: { },
+      });
+    });
 
     test(
       'should add Content-Type if a body param definition is present but there is no payload',
@@ -563,34 +563,34 @@ describe('execute', () => {
                     name: 'body',
                     in: 'body',
                     schema: {
-                      type: 'string'
-                    }
-                  }
-                ]
-              }
-            }
-          }
-        }
+                      type: 'string',
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        };
 
         // When
         const req = buildRequest({
           spec,
           operationId: 'getMe',
-          requestContentType: 'application/josh'
-        })
+          requestContentType: 'application/josh',
+        });
 
         // Then
         expect(req).toEqual({
           url: 'http://swagger.io/one',
           body: undefined,
           headers: {
-            'Content-Type': 'application/josh'
+            'Content-Type': 'application/josh',
           },
           credentials: 'same-origin',
-          method: 'GET'
-        })
-      }
-    )
+          method: 'GET',
+        });
+      },
+    );
 
     test(
       'should add Content-Type if a formData param definition is present but there is no payload',
@@ -607,33 +607,33 @@ describe('execute', () => {
                     name: 'data',
                     in: 'formData',
                     schema: {
-                      type: 'string'
-                    }
-                  }
-                ]
-              }
-            }
-          }
-        }
+                      type: 'string',
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        };
 
         // When
         const req = buildRequest({
           spec,
           operationId: 'getMe',
-          requestContentType: 'application/x-www-form-encoded'
-        })
+          requestContentType: 'application/x-www-form-encoded',
+        });
 
         // Then
         expect(req).toEqual({
           url: 'http://swagger.io/one',
           headers: {
-            'Content-Type': 'application/x-www-form-encoded'
+            'Content-Type': 'application/x-www-form-encoded',
           },
           credentials: 'same-origin',
-          method: 'GET'
-        })
-      }
-    )
+          method: 'GET',
+        });
+      },
+    );
 
     test(
       'should not add Content-Type if no form-data or body param definition is present',
@@ -641,21 +641,21 @@ describe('execute', () => {
         // Given
         const spec = {
           host: 'swagger.io',
-          paths: {'/one': {get: {operationId: 'getMe'}}}
-        }
+          paths: { '/one': { get: { operationId: 'getMe' } } },
+        };
 
         // When
-        const req = buildRequest({spec, operationId: 'getMe', requestContentType: 'application/josh'})
+        const req = buildRequest({ spec, operationId: 'getMe', requestContentType: 'application/josh' });
 
         // Then
         expect(req).toEqual({
           url: 'http://swagger.io/one',
           headers: {},
           credentials: 'same-origin',
-          method: 'GET'
-        })
-      }
-    )
+          method: 'GET',
+        });
+      },
+    );
 
     test(
       'should add Content-Type multipart/form-data when param type is file and no other sources of consumes',
@@ -667,31 +667,31 @@ describe('execute', () => {
             '/one': {
               post: {
                 operationId: 'postMe',
-                parameters: [{name: 'foo', type: 'file', in: 'formData'}]
-              }
-            }
-          }
-        }
+                parameters: [{ name: 'foo', type: 'file', in: 'formData' }],
+              },
+            },
+          },
+        };
 
         // When
         const req = buildRequest({
           spec,
           operationId: 'postMe',
-          parameters: {foo: 'test'}
-        })
+          parameters: { foo: 'test' },
+        });
 
         // Then
         expect(req.headers).toEqual({
-          'Content-Type': 'multipart/form-data'
-        })
+          'Content-Type': 'multipart/form-data',
+        });
 
         // Would like to do a more thourough test ( ie: ensure the value `foo` exists..
         // but I don't feel like attacking the interals of the node pollyfill
         // for FormData, as it seems to be missing `.get()`)
-        expect(req.url).toEqual('http://swagger.io/one')
-        expect(req.body).toBeInstanceOf(FormData)
-      }
-    )
+        expect(req.url).toEqual('http://swagger.io/one');
+        expect(req.body).toBeInstanceOf(FormData);
+      },
+    );
 
     test(
       'should add Content-Type application/x-www-form-urlencoded when in: formData ',
@@ -703,18 +703,18 @@ describe('execute', () => {
             '/one': {
               post: {
                 operationId: 'postMe',
-                parameters: [{name: 'file', in: 'formData'}]
-              }
-            }
-          }
-        }
+                parameters: [{ name: 'file', in: 'formData' }],
+              },
+            },
+          },
+        };
 
         // When
         const req = buildRequest({
           spec,
           operationId: 'postMe',
-          parameters: {file: 'test'}
-        })
+          parameters: { file: 'test' },
+        });
 
         // Then
         expect(req).toEqual({
@@ -722,12 +722,12 @@ describe('execute', () => {
           method: 'POST',
           url: 'http://swagger.io/one',
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded',
           },
-          credentials: 'same-origin'
-        })
-      }
-    )
+          credentials: 'same-origin',
+        });
+      },
+    );
 
     test(
       'should add Content-Type from spec when no consumes in operation and no requestContentType passed',
@@ -740,18 +740,18 @@ describe('execute', () => {
             '/one': {
               post: {
                 operationId: 'postMe',
-                parameters: [{name: 'file', in: 'formData'}]
-              }
-            }
-          }
-        }
+                parameters: [{ name: 'file', in: 'formData' }],
+              },
+            },
+          },
+        };
 
         // When
         const req = buildRequest({
           spec,
           operationId: 'postMe',
-          parameters: {file: 'test'}
-        })
+          parameters: { file: 'test' },
+        });
 
         // Then
         expect(req).toEqual({
@@ -759,12 +759,12 @@ describe('execute', () => {
           method: 'POST',
           url: 'http://swagger.io/one',
           headers: {
-            'Content-Type': 'test'
+            'Content-Type': 'test',
           },
-          credentials: 'same-origin'
-        })
-      }
-    )
+          credentials: 'same-origin',
+        });
+      },
+    );
 
     test(
       'should add Content-Type from operation when no requestContentType passed',
@@ -778,18 +778,18 @@ describe('execute', () => {
               post: {
                 operationId: 'postMe',
                 consumes: ['test'],
-                parameters: [{name: 'file', in: 'formData'}]
-              }
-            }
-          }
-        }
+                parameters: [{ name: 'file', in: 'formData' }],
+              },
+            },
+          },
+        };
 
         // When
         const req = buildRequest({
           spec,
           operationId: 'postMe',
-          parameters: {file: 'test'}
-        })
+          parameters: { file: 'test' },
+        });
 
         // Then
         expect(req).toEqual({
@@ -797,12 +797,12 @@ describe('execute', () => {
           method: 'POST',
           url: 'http://swagger.io/one',
           headers: {
-            'Content-Type': 'test'
+            'Content-Type': 'test',
           },
-          credentials: 'same-origin'
-        })
-      }
-    )
+          credentials: 'same-origin',
+        });
+      },
+    );
 
     test('should build a request for all given fields', () => {
       // Given
@@ -820,19 +820,19 @@ describe('execute', () => {
                   in: 'query',
                   name: 'question',
                   type: 'string',
-                  example: 'hello'
+                  example: 'hello',
                 },
                 {
                   in: 'header',
                   name: 'head',
                   type: 'string',
-                  example: 'hi'
+                  example: 'hi',
                 },
                 {
                   in: 'path',
                   name: 'two',
                   type: 'number',
-                  example: '2'
+                  example: '2',
                 },
                 {
                   in: 'body',
@@ -841,17 +841,17 @@ describe('execute', () => {
                     type: 'object',
                     properties: {
                       one: {
-                        type: 'string'
-                      }
+                        type: 'string',
+                      },
                     },
-                    example: '2'
-                  }
+                    example: '2',
+                  },
                 },
               ],
-            }
-          }
-        }
-      }
+            },
+          },
+        },
+      };
 
       // When
       const req = buildRequest({
@@ -860,10 +860,10 @@ describe('execute', () => {
         parameters: {
           head: 'justTheHead',
           two: '2',
-          body: {json: 'rulez'},
-          question: 'answer'
-        }
-      })
+          body: { json: 'rulez' },
+          question: 'answer',
+        },
+      });
 
       // Then
       expect(req).toEqual({
@@ -874,10 +874,10 @@ describe('execute', () => {
           head: 'justTheHead',
         },
         body: {
-          json: 'rulez'
-        }
-      })
-    })
+          json: 'rulez',
+        },
+      });
+    });
 
     test(
       'should NOT stringify the body, if provided with a javascript object',
@@ -887,8 +887,8 @@ describe('execute', () => {
         // Given
         const spec = {
           host: 'swagger.io',
-          paths: {'/me': {post: {parameters: [{name: 'body', in: 'body'}], operationId: 'makeMe'}}}
-        }
+          paths: { '/me': { post: { parameters: [{ name: 'body', in: 'body' }], operationId: 'makeMe' } } },
+        };
 
         const req = buildRequest({
           spec,
@@ -896,15 +896,15 @@ describe('execute', () => {
           parameters: {
             body: {
               one: 1,
-            }
-          }
-        })
+            },
+          },
+        });
 
         expect(req.body).toEqual({
-          one: 1
-        })
-      }
-    )
+          one: 1,
+        });
+      },
+    );
 
     describe('attachContentTypeForEmptyPayload', () => {
       test(
@@ -921,31 +921,31 @@ describe('execute', () => {
                   parameters: [
                     {
                       name: 'body',
-                      in: 'body'
-                    }
-                  ]
-                }
-              }
-            }
-          }
+                      in: 'body',
+                    },
+                  ],
+                },
+              },
+            },
+          };
 
           const req = buildRequest({
             spec,
             operationId: 'myOp',
-            attachContentTypeForEmptyPayload: true
-          })
+            attachContentTypeForEmptyPayload: true,
+          });
 
           expect(req).toEqual({
             url: 'http://swagger.io/one',
             headers: {
-              'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
             },
             credentials: 'same-origin',
             method: 'POST',
-            body: undefined
-          })
-        }
-      )
+            body: undefined,
+          });
+        },
+      );
       test(
         'should attach a Content-Type to a Swagger 2 operation with a formData parameter defined but no body provided',
         () => {
@@ -960,30 +960,30 @@ describe('execute', () => {
                     {
                       name: 'data',
                       in: 'formData',
-                      type: 'string'
-                    }
-                  ]
-                }
-              }
-            }
-          }
+                      type: 'string',
+                    },
+                  ],
+                },
+              },
+            },
+          };
 
           const req = buildRequest({
             spec,
             operationId: 'myOp',
-            attachContentTypeForEmptyPayload: true
-          })
+            attachContentTypeForEmptyPayload: true,
+          });
 
           expect(req).toEqual({
             url: 'http://swagger.io/one',
             headers: {
-              'Content-Type': 'application/x-www-form-urlencoded'
+              'Content-Type': 'application/x-www-form-urlencoded',
             },
             credentials: 'same-origin',
-            method: 'POST'
-          })
-        }
-      )
+            method: 'POST',
+          });
+        },
+      );
       test(
         'should not attach a Content-Type to a Swagger 2 operation with no body or formData parameter definition present',
         () => {
@@ -993,26 +993,26 @@ describe('execute', () => {
             paths: {
               '/one': {
                 post: {
-                  operationId: 'myOp'
-                }
-              }
-            }
-          }
+                  operationId: 'myOp',
+                },
+              },
+            },
+          };
 
           const req = buildRequest({
             spec,
             operationId: 'myOp',
-            attachContentTypeForEmptyPayload: true
-          })
+            attachContentTypeForEmptyPayload: true,
+          });
 
           expect(req).toEqual({
             url: 'http://swagger.io/one',
             headers: {},
             credentials: 'same-origin',
-            method: 'POST'
-          })
-        }
-      )
+            method: 'POST',
+          });
+        },
+      );
       test(
         'should not attach a Content-Type to a Swagger 2 operation with a body parameter defined but no body provided if the option is not enabled',
         () => {
@@ -1027,28 +1027,28 @@ describe('execute', () => {
                   parameters: [
                     {
                       name: 'body',
-                      in: 'body'
-                    }
-                  ]
-                }
-              }
-            }
-          }
+                      in: 'body',
+                    },
+                  ],
+                },
+              },
+            },
+          };
 
           const req = buildRequest({
             spec,
             operationId: 'myOp',
-          })
+          });
 
           expect(req).toEqual({
             url: 'http://swagger.io/one',
             headers: {},
             credentials: 'same-origin',
             method: 'POST',
-            body: undefined
-          })
-        }
-      )
+            body: undefined,
+          });
+        },
+      );
       test(
         'should not attach a Content-Type to a Swagger 2 operation with a formData parameter defined but no body provided if the option is not enabled',
         () => {
@@ -1063,29 +1063,29 @@ describe('execute', () => {
                     {
                       name: 'data',
                       in: 'formData',
-                      type: 'string'
-                    }
-                  ]
-                }
-              }
-            }
-          }
+                      type: 'string',
+                    },
+                  ],
+                },
+              },
+            },
+          };
 
           const req = buildRequest({
             spec,
             operationId: 'myOp',
-          })
+          });
 
           expect(req).toEqual({
             url: 'http://swagger.io/one',
             headers: {},
             credentials: 'same-origin',
-            method: 'POST'
-          })
-        }
-      )
-    })
-  })
+            method: 'POST',
+          });
+        },
+      );
+    });
+  });
 
   // Note: this is to handle requestContentType and responseContentType
   // although more might end up using it.
@@ -1093,38 +1093,38 @@ describe('execute', () => {
     // Given
     const spec = {
       host: 'swagger.io',
-      paths: {'/one': {get: {operationId: 'getMe'}}}
-    }
+      paths: { '/one': { get: { operationId: 'getMe' } } },
+    };
 
-    const buildRequestSpy = jest.spyOn(stubs, 'buildRequest').mockImplementation(() => ({}))
+    const buildRequestSpy = jest.spyOn(stubs, 'buildRequest').mockImplementation(() => ({}));
 
     execute({
       fetch: jest.fn().mockImplementation(() => ({
-        then() { }
+        then() { },
       })),
       spec,
       operationId: 'getMe',
       josh: 1,
-      attachContentTypeForEmptyPayload: true
-    })
+      attachContentTypeForEmptyPayload: true,
+    });
 
-    expect(buildRequestSpy.mock.calls.length).toEqual(1)
+    expect(buildRequestSpy.mock.calls.length).toEqual(1);
     expect(buildRequestSpy.mock.calls[0][0]).toMatchObject({
       josh: 1,
-      attachContentTypeForEmptyPayload: true
-    })
-  })
+      attachContentTypeForEmptyPayload: true,
+    });
+  });
 
   test('should stringify body, if provided with javascript object', () => {
     // Given
     const spec = {
       host: 'swagger.io',
-      paths: {'/me': {post: {parameters: [{name: 'body', in: 'body'}], operationId: 'makeMe'}}}
-    }
+      paths: { '/me': { post: { parameters: [{ name: 'body', in: 'body' }], operationId: 'makeMe' } } },
+    };
 
     const fetchSpy = jest.fn().mockImplementation(() => ({
-      then() { }
-    }))
+      then() { },
+    }));
 
     execute({
       fetch: fetchSpy,
@@ -1134,50 +1134,50 @@ describe('execute', () => {
         body: {
           one: 1,
           two: {
-            three: 3
-          }
-        }
-      }
-    })
+            three: 3,
+          },
+        },
+      },
+    });
 
-    expect(fetchSpy.mock.calls.length).toEqual(1)
-    expect(fetchSpy.mock.calls[0][0].body).toEqual('{"one":1,"two":{"three":3}}')
-  })
+    expect(fetchSpy.mock.calls.length).toEqual(1);
+    expect(fetchSpy.mock.calls[0][0].body).toEqual('{"one":1,"two":{"three":3}}');
+  });
 
   test('should NOT stringify body, if its a non-object', () => {
     // Given
     const spec = {
       host: 'swagger.io',
-      paths: {'/me': {post: {parameters: [{name: 'body', in: 'body'}], operationId: 'makeMe'}}}
-    }
+      paths: { '/me': { post: { parameters: [{ name: 'body', in: 'body' }], operationId: 'makeMe' } } },
+    };
 
     const fetchSpy = jest.fn().mockImplementation(() => ({
-      then() { }
-    }))
+      then() { },
+    }));
 
     execute({
       fetch: fetchSpy,
       spec,
       operationId: 'makeMe',
       parameters: {
-        body: 'hello'
-      }
-    })
+        body: 'hello',
+      },
+    });
 
-    expect(fetchSpy.mock.calls.length).toEqual(1)
-    expect(fetchSpy.mock.calls[0][0].body).toEqual('hello')
-  })
+    expect(fetchSpy.mock.calls.length).toEqual(1);
+    expect(fetchSpy.mock.calls[0][0].body).toEqual('hello');
+  });
 
   test('should NOT stringify body, if its an instance of FormData', () => {
     // Given
     const spec = {
       host: 'swagger.io',
-      paths: {'/me': {post: {parameters: [{name: 'one', in: 'formData'}], operationId: 'makeMe'}}}
-    }
+      paths: { '/me': { post: { parameters: [{ name: 'one', in: 'formData' }], operationId: 'makeMe' } } },
+    };
 
     const fetchSpy = jest.fn().mockImplementation(() => ({
-      then() { }
-    }))
+      then() { },
+    }));
 
     execute({
       fetch: fetchSpy,
@@ -1185,14 +1185,13 @@ describe('execute', () => {
       operationId: 'makeMe',
       requestContentType: 'multipart/form-data',
       parameters: {
-        one: {hello: true}
-      }
-    })
+        one: { hello: true },
+      },
+    });
 
-    const req = fetchSpy.mock.calls[0][0]
-    expect(fetchSpy.mock.calls.length).toEqual(1)
-    expect(fetchSpy.mock.calls[0][0].body).toBeInstanceOf(FormData)
-  })
+    expect(fetchSpy.mock.calls.length).toEqual(1);
+    expect(fetchSpy.mock.calls[0][0].body).toBeInstanceOf(FormData);
+  });
 
   describe('parameterBuilders', () => {
     describe('query', () => {
@@ -1210,25 +1209,25 @@ describe('execute', () => {
                   in: 'query',
                   type: 'array',
                   items: {
-                    type: 'string'
-                  }
-                }]
-              }
-            }
-          }
-        }
+                    type: 'string',
+                  },
+                }],
+              },
+            },
+          },
+        };
 
         // When
-        const req = buildRequest({spec, operationId: 'getMe', parameters: {petId: ['a,b']}})
+        const req = buildRequest({ spec, operationId: 'getMe', parameters: { petId: ['a,b'] } });
 
         // Then
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one?petId=a%2Cb',
           method: 'GET',
           credentials: 'same-origin',
-          headers: { }
-        })
-      })
+          headers: { },
+        });
+      });
 
       test('should allow multiple collectionFormats', () => {
         // Given
@@ -1246,7 +1245,7 @@ describe('execute', () => {
                     collectionFormat: 'csv',
                     type: 'array',
                     items: {
-                      type: 'integer'
+                      type: 'integer',
                     },
                   },
                   {
@@ -1255,26 +1254,26 @@ describe('execute', () => {
                     collectionFormat: 'pipes',
                     type: 'array',
                     items: {
-                      type: 'string'
+                      type: 'string',
                     },
-                  }
-                ]
-              }
-            }
-          }
-        }
+                  },
+                ],
+              },
+            },
+          },
+        };
 
         // When
-        const req = buildRequest({spec, operationId: 'getMe', parameters: {ids: [1, 2, 3], 'the names': ['a,b', 'mary']}})
+        const req = buildRequest({ spec, operationId: 'getMe', parameters: { ids: [1, 2, 3], 'the names': ['a,b', 'mary'] } });
 
         // Then
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one?ids=1,2,3&the%20names=a%2Cb|mary',
           method: 'GET',
           credentials: 'same-origin',
-          headers: { }
-        })
-      })
+          headers: { },
+        });
+      });
 
       test(
         'should include values for array of query parameters \'csv\' collectionFormat',
@@ -1293,26 +1292,26 @@ describe('execute', () => {
                     collectionFormat: 'csv',
                     type: 'array',
                     items: {
-                      type: 'integer'
-                    }
-                  }]
-                }
-              }
-            }
-          }
+                      type: 'integer',
+                    },
+                  }],
+                },
+              },
+            },
+          };
 
           // When
-          const req = buildRequest({spec, operationId: 'getMe', parameters: {petId: [1, 2, 3]}})
+          const req = buildRequest({ spec, operationId: 'getMe', parameters: { petId: [1, 2, 3] } });
 
           // Then
           expect(req).toEqual({
             url: 'http://swagger.io/v1/one?petId=1,2,3',
             method: 'GET',
             credentials: 'same-origin',
-            headers: { }
-          })
-        }
-      )
+            headers: { },
+          });
+        },
+      );
 
       test(
         'should include values for array of query parameters \'ssv\' collectionFormat',
@@ -1331,26 +1330,26 @@ describe('execute', () => {
                     collectionFormat: 'ssv',
                     type: 'array',
                     items: {
-                      type: 'integer'
-                    }
-                  }]
-                }
-              }
-            }
-          }
+                      type: 'integer',
+                    },
+                  }],
+                },
+              },
+            },
+          };
 
           // When
-          const req = buildRequest({spec, operationId: 'getMe', parameters: {petId: [1, 2, 3]}})
+          const req = buildRequest({ spec, operationId: 'getMe', parameters: { petId: [1, 2, 3] } });
 
           // Then
           expect(req).toEqual({
             url: 'http://swagger.io/v1/one?petId=1%202%203',
             method: 'GET',
             credentials: 'same-origin',
-            headers: { }
-          })
-        }
-      )
+            headers: { },
+          });
+        },
+      );
 
       test(
         'should include values for array of query parameters \'multi\' collectionFormat',
@@ -1369,26 +1368,26 @@ describe('execute', () => {
                     collectionFormat: 'multi',
                     type: 'array',
                     items: {
-                      type: 'integer'
-                    }
-                  }]
-                }
-              }
-            }
-          }
+                      type: 'integer',
+                    },
+                  }],
+                },
+              },
+            },
+          };
 
           // When
-          const req = buildRequest({spec, operationId: 'getMe', parameters: {petId: [1, 2, 3]}})
+          const req = buildRequest({ spec, operationId: 'getMe', parameters: { petId: [1, 2, 3] } });
 
           // Then
           expect(req).toEqual({
             url: 'http://swagger.io/v1/one?petId=1&petId=2&petId=3',
             method: 'GET',
             credentials: 'same-origin',
-            headers: { }
-          })
-        }
-      )
+            headers: { },
+          });
+        },
+      );
 
       test(
         'should include values for array of query parameters \'tsv\' collectionFormat',
@@ -1407,26 +1406,26 @@ describe('execute', () => {
                     collectionFormat: 'tsv',
                     type: 'array',
                     items: {
-                      type: 'integer'
-                    }
-                  }]
-                }
-              }
-            }
-          }
+                      type: 'integer',
+                    },
+                  }],
+                },
+              },
+            },
+          };
 
           // When
-          const req = buildRequest({spec, operationId: 'getMe', parameters: {petId: [1, 2, 3]}})
+          const req = buildRequest({ spec, operationId: 'getMe', parameters: { petId: [1, 2, 3] } });
 
           // Then
           expect(req).toEqual({
             url: 'http://swagger.io/v1/one?petId=1%092%093',
             method: 'GET',
             credentials: 'same-origin',
-            headers: { }
-          })
-        }
-      )
+            headers: { },
+          });
+        },
+      );
 
       test(
         'should include values for array of query parameters \'pipes\' collectionFormat',
@@ -1445,26 +1444,26 @@ describe('execute', () => {
                     collectionFormat: 'pipes',
                     type: 'array',
                     items: {
-                      type: 'string'
-                    }
-                  }]
-                }
-              }
-            }
-          }
+                      type: 'string',
+                    },
+                  }],
+                },
+              },
+            },
+          };
 
           // When
-          const req = buildRequest({spec, operationId: 'getMe', parameters: {name: ['john', 'smith']}})
+          const req = buildRequest({ spec, operationId: 'getMe', parameters: { name: ['john', 'smith'] } });
 
           // Then
           expect(req).toEqual({
             url: 'http://swagger.io/v1/one?name=john|smith',
             method: 'GET',
             credentials: 'same-origin',
-            headers: { }
-          })
-        }
-      )
+            headers: { },
+          });
+        },
+      );
 
       test(
         'should fall back to `name-in` format when a parameter cannot be found',
@@ -1480,25 +1479,25 @@ describe('execute', () => {
                   parameters: [{
                     name: 'name',
                     in: 'query',
-                    type: 'string'
-                  }]
-                }
-              }
-            }
-          }
+                    type: 'string',
+                  }],
+                },
+              },
+            },
+          };
 
           // When
-          const req = buildRequest({spec, operationId: 'getMe', parameters: {'query.name': 'john'}})
+          const req = buildRequest({ spec, operationId: 'getMe', parameters: { 'query.name': 'john' } });
 
           // Then
           expect(req).toEqual({
             url: 'http://swagger.io/v1/one?name=john',
             method: 'GET',
             credentials: 'same-origin',
-            headers: { }
-          })
-        }
-      )
+            headers: { },
+          });
+        },
+      );
 
       test(
         'should set all parameter options when given an ambiguous parameter value',
@@ -1514,22 +1513,22 @@ describe('execute', () => {
                   parameters: [{
                     name: 'name',
                     in: 'query',
-                    type: 'string'
+                    type: 'string',
                   }, {
                     name: 'name',
                     in: 'formData',
-                    type: 'string'
-                  }]
-                }
-              }
-            }
-          }
+                    type: 'string',
+                  }],
+                },
+              },
+            },
+          };
 
-          const oriWarn = global.console.warn
-          global.console.warn = jest.fn()
+          const oriWarn = global.console.warn;
+          global.console.warn = jest.fn();
 
           // When
-          const req = buildRequest({spec, operationId: 'getMe', parameters: {name: 'john'}})
+          const req = buildRequest({ spec, operationId: 'getMe', parameters: { name: 'john' } });
 
           // Then
           expect(req).toEqual({
@@ -1537,16 +1536,17 @@ describe('execute', () => {
             method: 'GET',
             credentials: 'same-origin',
             headers: {
-              'Content-Type': 'application/x-www-form-urlencoded'
+              'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: 'name=john'
-          })
+            body: 'name=john',
+          });
 
-          expect(console.warn.mock.calls.length).toEqual(2)
-          global.console.warn = oriWarn
-        }
-      )
-    })
+          // eslint-disable-next-line no-console
+          expect(console.warn.mock.calls.length).toEqual(2);
+          global.console.warn = oriWarn;
+        },
+      );
+    });
 
     describe('body', () => {
       describe('POST', () => {
@@ -1561,13 +1561,13 @@ describe('execute', () => {
                   name: 'petId',
                   in: 'body',
                   schema: {
-                    type: 'integer'
-                  }
-                }]
-              }
-            }
-          }
-        }
+                    type: 'integer',
+                  },
+                }],
+              },
+            },
+          },
+        };
 
         test('should serialize the body', () => {
           const spec2 = {
@@ -1589,16 +1589,16 @@ describe('execute', () => {
                       schema: {
                         type: 'object',
                         properties: {
-                          id: {type: 'integer'},
-                          name: {type: 'string'}
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          }
+                          id: { type: 'integer' },
+                          name: { type: 'string' },
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          };
 
           const req = buildRequest({
             spec: spec2,
@@ -1606,11 +1606,11 @@ describe('execute', () => {
             parameters: {
               bodyParam: {
                 name: 'johny',
-                id: '123'
+                id: '123',
               },
               someQuery: 'foo',
-            }
-          })
+            },
+          });
 
           expect(req).toEqual({
             url: 'http://swagger.io/v1/blob/image.png?someQuery=foo',
@@ -1620,34 +1620,34 @@ describe('execute', () => {
               name: 'johny',
               id: '123',
             },
-            headers: { }
-          })
-        })
+            headers: { },
+          });
+        });
 
         test('should not add values of body parameters to the URL', () => {
-          const req = buildRequest({spec, operationId: 'postMe', parameters: {petId: 123}})
+          const req = buildRequest({ spec, operationId: 'postMe', parameters: { petId: 123 } });
 
           expect(req).toEqual({
             url: 'http://swagger.io/v1/one',
             method: 'POST',
             body: 123,
             credentials: 'same-origin',
-            headers: { }
-          })
-        })
+            headers: { },
+          });
+        });
 
         test('should generate a request with an empty body parameter', () => {
-          const req = buildRequest({spec, operationId: 'postMe', parameters: {}})
+          const req = buildRequest({ spec, operationId: 'postMe', parameters: {} });
 
           expect(req).toEqual({
             url: 'http://swagger.io/v1/one',
             method: 'POST',
             body: undefined,
             credentials: 'same-origin',
-            headers: { }
-          })
-        })
-      })
+            headers: { },
+          });
+        });
+      });
 
       describe('DELETE', () => {
         const spec = {
@@ -1660,37 +1660,37 @@ describe('execute', () => {
                 parameters: [{
                   name: 'petId',
                   in: 'body',
-                }]
-              }
-            }
-          }
-        }
+                }],
+              },
+            },
+          },
+        };
 
         test('should generate a request with an empty body parameter', () => {
-          const req = buildRequest({spec, operationId: 'deleteMe', parameters: {}})
+          const req = buildRequest({ spec, operationId: 'deleteMe', parameters: {} });
 
           expect(req).toEqual({
             url: 'http://swagger.io/v1/one',
             method: 'DELETE',
             body: undefined,
             credentials: 'same-origin',
-            headers: { }
-          })
-        })
+            headers: { },
+          });
+        });
 
         test('should generate a request with body parameter', () => {
-          const req = buildRequest({spec, operationId: 'deleteMe', parameters: {petId: 123}})
+          const req = buildRequest({ spec, operationId: 'deleteMe', parameters: { petId: 123 } });
 
           expect(req).toEqual({
             url: 'http://swagger.io/v1/one',
             method: 'DELETE',
             body: 123,
             credentials: 'same-origin',
-            headers: { }
-          })
-        })
-      })
-    })
+            headers: { },
+          });
+        });
+      });
+    });
 
     describe('headers', () => {
       test('should process a delete request with headers', () => {
@@ -1704,14 +1704,14 @@ describe('execute', () => {
                 parameters: [{
                   in: 'header',
                   name: 'api_key',
-                  type: 'integer'
-                }]
-              }
-            }
-          }
-        }
+                  type: 'integer',
+                }],
+              },
+            },
+          },
+        };
 
-        const req = buildRequest({spec, operationId: 'deleteMe', parameters: {api_key: 123}})
+        const req = buildRequest({ spec, operationId: 'deleteMe', parameters: { api_key: 123 } });
 
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one',
@@ -1719,9 +1719,9 @@ describe('execute', () => {
           credentials: 'same-origin',
           headers: {
             api_key: 123,
-          }
-        })
-      })
+          },
+        });
+      });
 
       test(
         'should process a delete request without headers of value undefined',
@@ -1736,23 +1736,23 @@ describe('execute', () => {
                   parameters: [{
                     in: 'header',
                     name: 'api_key',
-                    type: 'integer'
-                  }]
-                }
-              }
-            }
-          }
+                    type: 'integer',
+                  }],
+                },
+              },
+            },
+          };
 
-          const req = buildRequest({spec, operationId: 'deleteMe', parameters: {api_key: undefined}})
+          const req = buildRequest({ spec, operationId: 'deleteMe', parameters: { api_key: undefined } });
 
           expect(req).toEqual({
             url: 'http://swagger.io/v1/one',
             method: 'DELETE',
             credentials: 'same-origin',
-            headers: {}
-          })
-        }
-      )
+            headers: {},
+          });
+        },
+      );
 
       test(
         'should process a delete request without headers wich are not provided',
@@ -1767,23 +1767,23 @@ describe('execute', () => {
                   parameters: [{
                     in: 'header',
                     name: 'api_key',
-                    type: 'integer'
-                  }]
-                }
-              }
-            }
-          }
+                    type: 'integer',
+                  }],
+                },
+              },
+            },
+          };
 
-          const req = buildRequest({spec, operationId: 'deleteMe', parameters: {}})
+          const req = buildRequest({ spec, operationId: 'deleteMe', parameters: {} });
 
           expect(req).toEqual({
             url: 'http://swagger.io/v1/one',
             method: 'DELETE',
             credentials: 'same-origin',
-            headers: {}
-          })
-        }
-      )
+            headers: {},
+          });
+        },
+      );
 
       test('should accept the format', () => {
         const spec = {
@@ -1798,16 +1798,16 @@ describe('execute', () => {
                   in: 'query',
                   name: 'petId',
                   type: 'string',
-                  required: false
-                }]
-              }
-            }
-          }
-        }
+                  required: false,
+                }],
+              },
+            },
+          },
+        };
 
         const req = buildRequest({
-          spec, operationId: 'getMe', responseContentType: 'application/json', parameters: {}
-        })
+          spec, operationId: 'getMe', responseContentType: 'application/json', parameters: {},
+        });
 
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one',
@@ -1815,10 +1815,10 @@ describe('execute', () => {
           credentials: 'same-origin',
           headers: {
             accept: 'application/json',
-          }
-        })
-      })
-    })
+          },
+        });
+      });
+    });
 
     describe('path', () => {
       test('should replace path parameters with their values', () => {
@@ -1833,23 +1833,23 @@ describe('execute', () => {
                   in: 'path',
                   name: 'id',
                   type: 'number',
-                  required: true
-                }]
-              }
-            }
-          }
-        }
+                  required: true,
+                }],
+              },
+            },
+          },
+        };
 
-        const req = buildRequest({spec, operationId: 'getMe', parameters: {id: '123'}})
+        const req = buildRequest({ spec, operationId: 'getMe', parameters: { id: '123' } });
 
         expect(req).toEqual({
           url: 'http://swagger.io/v1/123',
           method: 'GET',
           credentials: 'same-origin',
           headers: {
-          }
-        })
-      })
+          },
+        });
+      });
 
       test('should merge Path and Operation parameters', () => {
         const spec = {
@@ -1863,8 +1863,8 @@ describe('execute', () => {
                   {
                     name: 'test',
                     in: 'query',
-                    type: 'number'
-                  }
+                    type: 'number',
+                  },
                 ],
               },
               parameters: [
@@ -1872,22 +1872,22 @@ describe('execute', () => {
                   name: 'id',
                   in: 'path',
                   type: 'number',
-                  required: true
-                }
+                  required: true,
+                },
               ],
-            }
-          }
-        }
+            },
+          },
+        };
 
-        const req = buildRequest({spec, operationId: 'getPetsById', parameters: {id: 123, test: 567}})
+        const req = buildRequest({ spec, operationId: 'getPetsById', parameters: { id: 123, test: 567 } });
 
         expect(req).toEqual({
           url: 'http://swagger.io/v1/pet/123?test=567',
           headers: {},
           credentials: 'same-origin',
-          method: 'GET'
-        })
-      })
+          method: 'GET',
+        });
+      });
 
       test(
         'should merge Path and Operation parameters when parameter is the first item in paths',
@@ -1902,8 +1902,8 @@ describe('execute', () => {
                     name: 'id',
                     in: 'path',
                     type: 'number',
-                    required: true
-                  }
+                    required: true,
+                  },
                 ],
                 get: {
                   operationId: 'getPetsById',
@@ -1911,24 +1911,24 @@ describe('execute', () => {
                     {
                       name: 'test',
                       in: 'query',
-                      type: 'number'
-                    }
+                      type: 'number',
+                    },
                   ],
-                }
-              }
-            }
-          }
+                },
+              },
+            },
+          };
 
-          const req = buildRequest({spec, operationId: 'getPetsById', parameters: {id: 123, test: 567}})
+          const req = buildRequest({ spec, operationId: 'getPetsById', parameters: { id: 123, test: 567 } });
 
           expect(req).toEqual({
             url: 'http://swagger.io/v1/pet/123?test=567',
             headers: {},
             credentials: 'same-origin',
-            method: 'GET'
-          })
-        }
-      )
+            method: 'GET',
+          });
+        },
+      );
 
       test(
         'should handle duplicate parameter inheritance from normalized swagger specifications',
@@ -1944,8 +1944,8 @@ describe('execute', () => {
                       name: 'id',
                       in: 'path',
                       type: 'number',
-                      required: true
-                    }
+                      required: true,
+                    },
                   ],
                   get: {
                     operationId: 'getPetsById',
@@ -1953,27 +1953,27 @@ describe('execute', () => {
                       {
                         name: 'test',
                         in: 'query',
-                        type: 'number'
-                      }
+                        type: 'number',
+                      },
                     ],
-                  }
-                }
-              }
-            }
-          }
+                  },
+                },
+              },
+            },
+          };
 
-          const resultSpec = normalizeSwagger(spec)
-          const warnSpy = jest.spyOn(console, 'warn')
-          const req = buildRequest({spec: resultSpec.spec, operationId: 'getPetsById', parameters: {id: 123, test: 567}})
+          const resultSpec = normalizeSwagger(spec);
+          const warnSpy = jest.spyOn(console, 'warn');
+          const req = buildRequest({ spec: resultSpec.spec, operationId: 'getPetsById', parameters: { id: 123, test: 567 } });
           expect(req).toEqual({
             url: 'http://swagger.io/v1/pet/123?test=567',
             headers: {},
             credentials: 'same-origin',
-            method: 'GET'
-          })
-          expect(warnSpy.mock.calls.length).toEqual(0)
-        }
-      )
+            method: 'GET',
+          });
+          expect(warnSpy.mock.calls.length).toEqual(0);
+        },
+      );
 
       test(
         'should warn for ambiguous parameters in normalized swagger specifications',
@@ -1989,8 +1989,8 @@ describe('execute', () => {
                       name: 'id',
                       in: 'path',
                       type: 'number',
-                      required: true
-                    }
+                      required: true,
+                    },
                   ],
                   get: {
                     operationId: 'getPetsById',
@@ -1998,35 +1998,36 @@ describe('execute', () => {
                       {
                         name: 'test',
                         in: 'query',
-                        type: 'number'
+                        type: 'number',
                       },
                       {
                         name: 'id',
                         in: 'query',
                         type: 'number',
-                      }
+                      },
                     ],
-                  }
-                }
-              }
-            }
-          }
+                  },
+                },
+              },
+            },
+          };
 
-          const oriWarn = global.console.warn
-          global.console.warn = jest.fn()
+          const oriWarn = global.console.warn;
+          global.console.warn = jest.fn();
 
-          const resultSpec = normalizeSwagger(spec)
-          const req = buildRequest({spec: resultSpec.spec, operationId: 'getPetsById', parameters: {id: 123, test: 567}})
+          const resultSpec = normalizeSwagger(spec);
+          const req = buildRequest({ spec: resultSpec.spec, operationId: 'getPetsById', parameters: { id: 123, test: 567 } });
           expect(req).toEqual({
             url: 'http://swagger.io/v1/pet/123?test=567&id=123',
             headers: {},
             credentials: 'same-origin',
-            method: 'GET'
-          })
-          expect(console.warn.mock.calls.length).toEqual(2)
-          global.console.warn = oriWarn
-        }
-      )
+            method: 'GET',
+          });
+          // eslint-disable-next-line no-console
+          expect(console.warn.mock.calls.length).toEqual(2);
+          global.console.warn = oriWarn;
+        },
+      );
 
       test('should encode path parameter', () => {
         const spec = {
@@ -2040,22 +2041,22 @@ describe('execute', () => {
                   in: 'path',
                   name: 'id',
                   type: 'string',
-                  required: true
-                }]
-              }
-            }
-          }
-        }
+                  required: true,
+                }],
+              },
+            },
+          },
+        };
 
-        const req = buildRequest({spec, operationId: 'deleteMe', parameters: {id: 'foo/bar'}})
+        const req = buildRequest({ spec, operationId: 'deleteMe', parameters: { id: 'foo/bar' } });
 
         expect(req).toEqual({
           url: 'http://swagger.io/v1/foo%2Fbar',
           method: 'DELETE',
           credentials: 'same-origin',
-          headers: { }
-        })
-      })
+          headers: { },
+        });
+      });
 
       test('should encode path parameter when it is included twice', () => {
         const spec = {
@@ -2069,24 +2070,24 @@ describe('execute', () => {
                   in: 'path',
                   name: 'id',
                   type: 'string',
-                  required: true
-                }]
-              }
-            }
-          }
-        }
+                  required: true,
+                }],
+              },
+            },
+          },
+        };
 
-        const req = buildRequest({spec, operationId: 'deleteMe', parameters: {id: 'foo/bar'}})
+        const req = buildRequest({ spec, operationId: 'deleteMe', parameters: { id: 'foo/bar' } });
 
         expect(req).toEqual({
           url: 'http://swagger.io/v1/foo%2Fbar/foo%2Fbar',
           method: 'DELETE',
           credentials: 'same-origin',
-          headers: { }
-        })
-      })
-    })
-  })
+          headers: { },
+        });
+      });
+    });
+  });
 
   describe('formData', () => {
     const spec = {
@@ -2099,12 +2100,12 @@ describe('execute', () => {
             parameters: [{
               name: 'petId',
               in: 'formData',
-              type: 'string'
-            }]
-          }
-        }
-      }
-    }
+              type: 'string',
+            }],
+          },
+        },
+      },
+    };
 
     test(
       'should generate a request with application/x-www-form-urlencoded',
@@ -2113,8 +2114,8 @@ describe('execute', () => {
           spec,
           requestContentType: 'application/x-www-form-urlencoded',
           operationId: 'postMe',
-          parameters: {petId: 'id'}
-        })
+          parameters: { petId: 'id' },
+        });
 
         expect(req).toEqual({
           url: 'http://swagger.io/v1/one',
@@ -2123,9 +2124,9 @@ describe('execute', () => {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
           },
-          body: 'petId=id'
-        })
-      }
-    )
-  })
-})
+          body: 'petId=id',
+        });
+      },
+    );
+  });
+});

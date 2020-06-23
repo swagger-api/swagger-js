@@ -1,16 +1,16 @@
-import mapSpec, {plugins} from '../../src/specmap'
+import mapSpec, { plugins } from '../../src/specmap';
 
 if (process.env.NODE_LIVETESTS === 'true') {
   describe('Live tests against the internet', () => {
     test('should fetch ponelat/common/1', () => {
-      jest.setTimeout(30 * 1000)
+      jest.setTimeout(30 * 1000);
 
       return mapSpec({
         spec: {
           hello: 'josh',
-          $ref: 'https://swagger.io/domains/ponelat/common/1#/pathitems/EntityOperations'
+          $ref: 'https://swagger.io/domains/ponelat/common/1#/pathitems/EntityOperations',
         },
-        plugins: [plugins.refs]
+        plugins: [plugins.refs],
       }).then((res) => {
         expect(res).toEqual({
           errors: [],
@@ -27,26 +27,25 @@ if (process.env.NODE_LIVETESTS === 'true') {
                     properties: {
                       code: {
                         type: 'integer',
-                        format: 'int32'
+                        format: 'int32',
                       },
                       message: {
-                        type: 'string'
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        })
-      })
-    })
-  })
-}
-else {
+                        type: 'string',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        });
+      });
+    });
+  });
+} else {
   describe('Live tests against the internet', () => {
     test('(skipping test suite; `NODE_LIVETESTS` is not enabled', () => {
-      expect(true).toEqual(true)
-    })
-  })
+      expect(true).toEqual(true);
+    });
+  });
 }

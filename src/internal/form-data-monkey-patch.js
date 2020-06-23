@@ -1,10 +1,10 @@
-import isFunction from 'lodash/isFunction'
-import IsomorphicFormData from 'isomorphic-form-data'
+import isFunction from 'lodash/isFunction';
+import IsomorphicFormData from 'isomorphic-form-data';
 
 // patches FormData type by mutating it.
 // patch :: FormData -> PatchedFormData
 export const patch = (FormData) => {
-  const createEntry = (field, value) => ({name: field, value})
+  const createEntry = (field, value) => ({ name: field, value });
   /** We return original type if prototype already contains one of methods we're trying to patch.
    * Reasoning: if one of the methods already exists, it would access data in other
    * property than our `_entryList`. That could potentially create nasty
@@ -20,55 +20,55 @@ export const patch = (FormData) => {
     || isFunction(FormData.prototype.getAll)
     || isFunction(FormData.prototype.has)
   ) {
-    return FormData
+    return FormData;
   }
   class PatchedFormData extends FormData {
     constructor(form) {
-      super(form)
-      this._entryList = []
+      super(form);
+      this.entryList = [];
     }
 
     append(field, value, options) {
-      this._entryList.push(createEntry(field, value))
-      return super.append(field, value, options)
+      this.entryList.push(createEntry(field, value));
+      return super.append(field, value, options);
     }
 
     set(field, value) {
-      const newEntry = createEntry(field, value)
+      const newEntry = createEntry(field, value);
 
-      this._entryList = this._entryList.filter((entry) => {
-        return entry.name !== field
-      })
+      this.entryList = this.entryList.filter((entry) => {
+        return entry.name !== field;
+      });
 
-      this._entryList.push(newEntry)
+      this.entryList.push(newEntry);
     }
 
     get(field) {
-      const foundEntry = this._entryList.find((entry) => {
-        return entry.name === field
-      })
+      const foundEntry = this.entryList.find((entry) => {
+        return entry.name === field;
+      });
 
-      return foundEntry === undefined ? null : foundEntry
+      return foundEntry === undefined ? null : foundEntry;
     }
 
     getAll(field) {
-      return this._entryList
+      return this.entryList
         .filter((entry) => {
-          return entry.name === field
+          return entry.name === field;
         })
         .map((entry) => {
-          return entry.value
-        })
+          return entry.value;
+        });
     }
 
     has(field) {
-      return this._entryList.some((entry) => {
-        return entry.name === field
-      })
+      return this.entryList.some((entry) => {
+        return entry.name === field;
+      });
     }
   }
 
-  return PatchedFormData
-}
+  return PatchedFormData;
+};
 
-export default patch(IsomorphicFormData)
+export default patch(IsomorphicFormData);

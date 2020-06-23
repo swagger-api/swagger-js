@@ -1,4 +1,4 @@
-import {applySecurities} from '../../../src/execute/swagger2/build-request'
+import { applySecurities } from '../../../src/execute/swagger2/build-request';
 
 describe('swagger2 - execute - applySecurities', () => {
   test(
@@ -7,39 +7,39 @@ describe('swagger2 - execute - applySecurities', () => {
       const spec = {
         host: 'swagger.io',
         basePath: '/v1',
-        security: [{apiKey: []}],
+        security: [{ apiKey: [] }],
         paths: {
           '/one': {
             get: {
-              operationId: 'getMe'
-            }
-          }
+              operationId: 'getMe',
+            },
+          },
         },
         securityDefinitions: {
           apiKey: {
             in: 'header',
             name: 'api_key',
-            type: 'apiKey'
-          }
-        }
-      }
+            type: 'apiKey',
+          },
+        },
+      };
 
-      const securities = {}
+      const securities = {};
       const request = {
         url: 'http://swagger.io/v1/one',
-        method: 'GET'
-      }
+        method: 'GET',
+      };
 
       const applySecurity = applySecurities({
-        request, securities, operation: spec.paths['/one'].get, spec
-      })
+        request, securities, operation: spec.paths['/one'].get, spec,
+      });
 
       expect(applySecurity).toEqual({
         url: 'http://swagger.io/v1/one',
-        method: 'GET'
-      })
-    }
-  )
+        method: 'GET',
+      });
+    },
+  );
 
   test(
     'should add a basic auth if operation requires it and has header passed',
@@ -47,178 +47,178 @@ describe('swagger2 - execute - applySecurities', () => {
       const spec = {
         host: 'swagger.io',
         basePath: '/v1',
-        security: [{authMe: []}],
+        security: [{ authMe: [] }],
         paths: {
           '/one': {
             get: {
               operationId: 'getMe',
-              security: [{authMe: []}]
-            }
-          }
+              security: [{ authMe: [] }],
+            },
+          },
         },
         securityDefinitions: {
           authMe: {
-            type: 'basic'
-          }
-        }
-      }
+            type: 'basic',
+          },
+        },
+      };
 
       const request = {
         url: 'http://swagger.io/v1/one',
         method: 'GET',
-        query: {}
-      }
+        query: {},
+      };
       const securities = {
         authorized: {
           authMe: {
-            header: 'Basic Zm9vOmJhcg=='
-          }
-        }
-      }
+            header: 'Basic Zm9vOmJhcg==',
+          },
+        },
+      };
 
       const applySecurity = applySecurities({
-        request, securities, operation: spec.paths['/one'].get, spec
-      })
+        request, securities, operation: spec.paths['/one'].get, spec,
+      });
 
       expect(applySecurity.headers).toEqual({
-        authorization: 'Basic Zm9vOmJhcg=='
-      })
-    }
-  )
+        authorization: 'Basic Zm9vOmJhcg==',
+      });
+    },
+  );
 
   test('should add a basic auth if operation requires it', () => {
     const spec = {
       host: 'swagger.io',
       basePath: '/v1',
-      security: [{authMe: []}],
+      security: [{ authMe: [] }],
       paths: {
         '/one': {
           get: {
             operationId: 'getMe',
-            security: [{authMe: []}]
-          }
-        }
+            security: [{ authMe: [] }],
+          },
+        },
       },
       securityDefinitions: {
         authMe: {
-          type: 'basic'
-        }
-      }
-    }
+          type: 'basic',
+        },
+      },
+    };
 
     const request = {
       url: 'http://swagger.io/v1/one',
       method: 'GET',
-      query: {}
-    }
+      query: {},
+    };
     const securities = {
       authorized: {
         authMe: {
           username: 'foo',
-          password: 'bar'
-        }
-      }
-    }
+          password: 'bar',
+        },
+      },
+    };
 
     const applySecurity = applySecurities({
-      request, securities, operation: spec.paths['/one'].get, spec
-    })
+      request, securities, operation: spec.paths['/one'].get, spec,
+    });
 
     expect(applySecurity.headers).toEqual({
-      authorization: 'Basic Zm9vOmJhcg=='
-    })
-  })
+      authorization: 'Basic Zm9vOmJhcg==',
+    });
+  });
 
   test('should allow empty password without casting undefined to string', () => {
     const spec = {
       host: 'swagger.io',
       basePath: '/v1',
-      security: [{authMe: []}],
+      security: [{ authMe: [] }],
       paths: {
         '/one': {
           get: {
             operationId: 'getMe',
-            security: [{authMe: []}]
-          }
-        }
+            security: [{ authMe: [] }],
+          },
+        },
       },
       securityDefinitions: {
         authMe: {
-          type: 'basic'
-        }
-      }
-    }
+          type: 'basic',
+        },
+      },
+    };
 
     const request = {
       url: 'http://swagger.io/v1/one',
       method: 'GET',
-      query: {}
-    }
+      query: {},
+    };
     const securities = {
       authorized: {
         authMe: {
           username: 'foo',
-          password: undefined
-        }
-      }
-    }
+          password: undefined,
+        },
+      },
+    };
 
     const applySecurity = applySecurities({
-      request, securities, operation: spec.paths['/one'].get, spec
-    })
+      request, securities, operation: spec.paths['/one'].get, spec,
+    });
 
     expect(applySecurity.headers).toEqual({
-      authorization: 'Basic Zm9vOg=='
-    })
-  })
+      authorization: 'Basic Zm9vOg==',
+    });
+  });
 
   test('should be able to apply multiple auths', () => {
     const spec = {
       host: 'swagger.io',
       basePath: '/v1',
-      security: [{authMe: []}, {apiKey: []}],
+      security: [{ authMe: [] }, { apiKey: [] }],
       paths: {
         '/one': {
           get: {
             operationId: 'getMe',
-            security: [{authMe: []}, {apiKey: []}]
-          }
-        }
+            security: [{ authMe: [] }, { apiKey: [] }],
+          },
+        },
       },
       securityDefinitions: {
         authMe: {
-          type: 'basic'
+          type: 'basic',
         },
         apiKey: {
           in: 'header',
           name: 'api_key',
-          type: 'apiKey'
-        }
-      }
-    }
+          type: 'apiKey',
+        },
+      },
+    };
 
     const request = {
       url: 'http://swagger.io/v1/one',
       method: 'GET',
-      query: {}
-    }
+      query: {},
+    };
     const securities = {
       authorized: {
         authMe: {
           username: 'foo',
-          password: 'bar'
+          password: 'bar',
         },
-        apiKey: 'hello'
-      }
-    }
+        apiKey: 'hello',
+      },
+    };
 
     const applySecurity = applySecurities({
-      request, securities, operation: spec.paths['/one'].get, spec
-    })
+      request, securities, operation: spec.paths['/one'].get, spec,
+    });
 
     expect(applySecurity.headers).toEqual({
       authorization: 'Basic Zm9vOmJhcg==',
-      api_key: 'hello'
-    })
-  })
-})
+      api_key: 'hello',
+    });
+  });
+});

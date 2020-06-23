@@ -1,12 +1,12 @@
 // Test runner
 //
 
-import YAML from 'js-yaml'
-import fs from 'fs'
-import Path from 'path'
-import nock from 'nock'
+import YAML from 'js-yaml';
+import fs from 'fs';
+import Path from 'path';
+import nock from 'nock';
 
-import Swagger from '../../src/index'
+import Swagger from '../../src/index';
 
 const testDocuments = fs
   .readdirSync(Path.join(__dirname))
@@ -17,83 +17,85 @@ const testDocuments = fs
   }))
   .map((doc) => ({
     path: doc.path,
-    content: YAML.safeLoad(doc.contentString)
-  }))
+    content: YAML.safeLoad(doc.contentString),
+  }));
 
 testDocuments.forEach((doc) => {
-  const {path, content} = doc
-  const {meta = {}, cases = []} = content
+  const { path, content } = doc;
+  const { meta = {}, cases = [] } = content;
 
-  let rootDescribe
+  let rootDescribe;
 
-  if (meta.skip) rootDescribe = describe.skip
-  else if (meta.only) rootDescribe = describe.only
-  else rootDescribe = describe
+  if (meta.skip) rootDescribe = describe.skip;
+  else if (meta.only) rootDescribe = describe.only;
+  else rootDescribe = describe;
 
-  rootDescribe(`declarative resolver test suite - ${meta.title || path}`, function () {
+  rootDescribe(`declarative resolver test suite - ${meta.title || path}`, () => {
     if (cases && cases.length) {
       return cases.forEach((currentCase) => {
-        describe(currentCase.name || '', function () {
+        describe(currentCase.name || '', () => {
           beforeAll(() => {
-            Swagger.clearCache()
+            Swagger.clearCache();
 
             if (!nock.isActive()) {
-              nock.activate()
+              nock.activate();
             }
 
-            nock.cleanAll()
-            nock.disableNetConnect()
+            nock.cleanAll();
+            nock.disableNetConnect();
 
-            const nockScope = nock('http://mock.swagger.test')
+            const nockScope = nock('http://mock.swagger.test');
 
             if (currentCase.remoteDocuments) {
               Object.keys(currentCase.remoteDocuments).forEach((key) => {
-                const docContent = currentCase.remoteDocuments[key]
+                const docContent = currentCase.remoteDocuments[key];
                 nockScope
                   .get(`/${key}`)
                   .reply(200, docContent, {
-                    'Content-Type': 'application/yaml'
-                  })
-              })
+                    'Content-Type': 'application/yaml',
+                  });
+              });
             }
-          })
+          });
 
-          afterAll(nock.restore)
+          afterAll(nock.restore);
 
           assertCaseExpectations(
             currentCase,
-            async () => getValueForAction(currentCase.action)
-          )
-        })
-      })
+            async () => getValueForAction(currentCase.action),
+          );
+        });
+      });
     }
-  })
-})
+
+    return undefined;
+  });
+});
 
 async function getValueForAction(action) {
   switch (action.type) {
     case 'instantiateResolve': {
-      const client = await Swagger(action.config)
+      const client = await Swagger(action.config);
       return {
         spec: client.spec,
-        errors: client.errors
-      }
+        errors: client.errors,
+      };
     }
     case 'resolveSubtree': {
-      return Swagger.resolveSubtree(action.config.obj, action.config.path, action.config.opts)
+      return Swagger.resolveSubtree(action.config.obj, action.config.path, action.config.opts);
     }
     default:
-      throw new Error('case did not specify a valid action type')
+      throw new Error('case did not specify a valid action type');
   }
 }
 
 async function assertCaseExpectations(currentCase, resultGetter) {
   currentCase.assertions.forEach((assertion) => {
-    let itFn
+    let itFn;
 
-    if (assertion.skip) itFn = it.skip
-    else if (assertion.only) itFn = it.only
-    else itFn = it
+    if (assertion.skip) itFn = it.skip;
+    else if (assertion.only) itFn = it.only;
+    else itFn = it;
 
     // if (assertion.output.match !== undefined) {
     //   itFn('should match expected error output', function () {
@@ -109,9 +111,9 @@ async function assertCaseExpectations(currentCase, resultGetter) {
     // }
 
     if (assertion.equal !== undefined) {
-      itFn('should equal expected value', async function () {
-        expect(await resultGetter()).toEqual(assertion.equal)
-      })
+      itFn('should equal expected value', async () => {
+        expect(await resultGetter()).toEqual(assertion.equal);
+      });
     }
-  })
+  });
 }

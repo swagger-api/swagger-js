@@ -1,6 +1,4 @@
-import path from 'path'
-
-import {buildRequest} from '../../../../src/execute'
+import { buildRequest } from '../../../../src/execute';
 
 describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () => {
   describe('primitive values', () => {
@@ -17,31 +15,31 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
                 parameters: [
                   {
                     name: 'id',
-                    in: 'path'
-                  }
-                ]
-              }
-            }
-          }
-        }
+                    in: 'path',
+                  },
+                ],
+              },
+            },
+          },
+        };
 
         // when
         const req = buildRequest({
           spec,
           operationId: 'myOperation',
           parameters: {
-            id: 'wow!'
-          }
-        })
+            id: 'wow!',
+          },
+        });
 
         expect(req).toEqual({
           method: 'GET',
           url: '/path/wow%21',
           credentials: 'same-origin',
           headers: {},
-        })
-      }
-    )
+        });
+      },
+    );
 
     test(
       'should build a path parameter in a simple/no-explode format',
@@ -58,31 +56,31 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
                     name: 'id',
                     in: 'path',
                     style: 'simple',
-                    explode: false
-                  }
-                ]
-              }
-            }
-          }
-        }
+                    explode: false,
+                  },
+                ],
+              },
+            },
+          },
+        };
 
         // when
         const req = buildRequest({
           spec,
           operationId: 'myOperation',
           parameters: {
-            id: 'wow!'
-          }
-        })
+            id: 'wow!',
+          },
+        });
 
         expect(req).toEqual({
           method: 'GET',
           url: '/path/wow%21',
           credentials: 'same-origin',
           headers: {},
-        })
-      }
-    )
+        });
+      },
+    );
 
     test('should build a path parameter in a simple/explode format', () => {
       // Given
@@ -97,30 +95,30 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
                   name: 'id',
                   in: 'path',
                   style: 'simple',
-                  explode: true
-                }
-              ]
-            }
-          }
-        }
-      }
+                  explode: true,
+                },
+              ],
+            },
+          },
+        },
+      };
 
       // when
       const req = buildRequest({
         spec,
         operationId: 'myOperation',
         parameters: {
-          id: 'wow!'
-        }
-      })
+          id: 'wow!',
+        },
+      });
 
       expect(req).toEqual({
         method: 'GET',
         url: '/path/wow%21',
         credentials: 'same-origin',
         headers: {},
-      })
-    })
+      });
+    });
 
     test(
       'should build a path parameter in a label/no-explode format',
@@ -137,31 +135,31 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
                     name: 'id',
                     in: 'path',
                     style: 'label',
-                    explode: false
-                  }
-                ]
-              }
-            }
-          }
-        }
+                    explode: false,
+                  },
+                ],
+              },
+            },
+          },
+        };
 
         // when
         const req = buildRequest({
           spec,
           operationId: 'myOperation',
           parameters: {
-            id: 'wow!'
-          }
-        })
+            id: 'wow!',
+          },
+        });
 
         expect(req).toEqual({
           method: 'GET',
           url: '/path/.wow%21',
           credentials: 'same-origin',
           headers: {},
-        })
-      }
-    )
+        });
+      },
+    );
 
     test('should build a path parameter in a label/explode format', () => {
       // Given
@@ -176,30 +174,30 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
                   name: 'id',
                   in: 'path',
                   style: 'label',
-                  explode: true
-                }
-              ]
-            }
-          }
-        }
-      }
+                  explode: true,
+                },
+              ],
+            },
+          },
+        },
+      };
 
       // when
       const req = buildRequest({
         spec,
         operationId: 'myOperation',
         parameters: {
-          id: 'wow!'
-        }
-      })
+          id: 'wow!',
+        },
+      });
 
       expect(req).toEqual({
         method: 'GET',
         url: '/path/.wow%21',
         credentials: 'same-origin',
         headers: {},
-      })
-    })
+      });
+    });
 
     test(
       'should build a path parameter in a matrix/no-explode format',
@@ -216,31 +214,31 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
                     name: 'id',
                     in: 'path',
                     style: 'matrix',
-                    explode: false
-                  }
-                ]
-              }
-            }
-          }
-        }
+                    explode: false,
+                  },
+                ],
+              },
+            },
+          },
+        };
 
         // when
         const req = buildRequest({
           spec,
           operationId: 'myOperation',
           parameters: {
-            id: 'wow!'
-          }
-        })
+            id: 'wow!',
+          },
+        });
 
         expect(req).toEqual({
           method: 'GET',
           url: '/path/;id=wow%21',
           credentials: 'same-origin',
           headers: {},
-        })
-      }
-    )
+        });
+      },
+    );
 
     test('should build a path parameter in a matrix/explode format', () => {
       // Given
@@ -255,31 +253,31 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
                   name: 'id',
                   in: 'path',
                   style: 'matrix',
-                  explode: true
-                }
-              ]
-            }
-          }
-        }
-      }
+                  explode: true,
+                },
+              ],
+            },
+          },
+        },
+      };
 
       // when
       const req = buildRequest({
         spec,
         operationId: 'myOperation',
         parameters: {
-          id: 'wow!'
-        }
-      })
+          id: 'wow!',
+        },
+      });
 
       expect(req).toEqual({
         method: 'GET',
         url: '/path/;id=wow%21',
         credentials: 'same-origin',
         headers: {},
-      })
-    })
-  })
+      });
+    });
+  });
   describe('array values', () => {
     test(
       'default: should build a path parameter in a simple/no-explode format',
@@ -294,31 +292,31 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
                 parameters: [
                   {
                     name: 'id',
-                    in: 'path'
-                  }
-                ]
-              }
-            }
-          }
-        }
+                    in: 'path',
+                  },
+                ],
+              },
+            },
+          },
+        };
 
         // when
         const req = buildRequest({
           spec,
           operationId: 'myOperation',
           parameters: {
-            id: [3, 4, 5]
-          }
-        })
+            id: [3, 4, 5],
+          },
+        });
 
         expect(req).toEqual({
           method: 'GET',
           url: '/path/3,4,5',
           credentials: 'same-origin',
           headers: {},
-        })
-      }
-    )
+        });
+      },
+    );
 
     test(
       'should build a path parameter in a simple/no-explode format',
@@ -335,31 +333,31 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
                     name: 'id',
                     in: 'path',
                     style: 'simple',
-                    explode: false
-                  }
-                ]
-              }
-            }
-          }
-        }
+                    explode: false,
+                  },
+                ],
+              },
+            },
+          },
+        };
 
         // when
         const req = buildRequest({
           spec,
           operationId: 'myOperation',
           parameters: {
-            id: [3, 4, 5]
-          }
-        })
+            id: [3, 4, 5],
+          },
+        });
 
         expect(req).toEqual({
           method: 'GET',
           url: '/path/3,4,5',
           credentials: 'same-origin',
           headers: {},
-        })
-      }
-    )
+        });
+      },
+    );
 
     test('should build a path parameter in a simple/explode format', () => {
       // Given
@@ -374,30 +372,30 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
                   name: 'id',
                   in: 'path',
                   style: 'simple',
-                  explode: true
-                }
-              ]
-            }
-          }
-        }
-      }
+                  explode: true,
+                },
+              ],
+            },
+          },
+        },
+      };
 
       // when
       const req = buildRequest({
         spec,
         operationId: 'myOperation',
         parameters: {
-          id: [3, 4, 5]
-        }
-      })
+          id: [3, 4, 5],
+        },
+      });
 
       expect(req).toEqual({
         method: 'GET',
         url: '/path/3,4,5',
         credentials: 'same-origin',
         headers: {},
-      })
-    })
+      });
+    });
 
     test(
       'should build a path parameter in a label/no-explode format',
@@ -414,31 +412,31 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
                     name: 'id',
                     in: 'path',
                     style: 'label',
-                    explode: false
-                  }
-                ]
-              }
-            }
-          }
-        }
+                    explode: false,
+                  },
+                ],
+              },
+            },
+          },
+        };
 
         // when
         const req = buildRequest({
           spec,
           operationId: 'myOperation',
           parameters: {
-            id: [3, 4, 5]
-          }
-        })
+            id: [3, 4, 5],
+          },
+        });
 
         expect(req).toEqual({
           method: 'GET',
           url: '/path/.3.4.5',
           credentials: 'same-origin',
           headers: {},
-        })
-      }
-    )
+        });
+      },
+    );
 
     test('should build a path parameter in a label/explode format', () => {
       // Given
@@ -453,30 +451,30 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
                   name: 'id',
                   in: 'path',
                   style: 'label',
-                  explode: true
-                }
-              ]
-            }
-          }
-        }
-      }
+                  explode: true,
+                },
+              ],
+            },
+          },
+        },
+      };
 
       // when
       const req = buildRequest({
         spec,
         operationId: 'myOperation',
         parameters: {
-          id: [3, 4, 5]
-        }
-      })
+          id: [3, 4, 5],
+        },
+      });
 
       expect(req).toEqual({
         method: 'GET',
         url: '/path/.3.4.5',
         credentials: 'same-origin',
         headers: {},
-      })
-    })
+      });
+    });
 
     test(
       'should build a path parameter in a matrix/no-explode format',
@@ -493,31 +491,31 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
                     name: 'id',
                     in: 'path',
                     style: 'matrix',
-                    explode: false
-                  }
-                ]
-              }
-            }
-          }
-        }
+                    explode: false,
+                  },
+                ],
+              },
+            },
+          },
+        };
 
         // when
         const req = buildRequest({
           spec,
           operationId: 'myOperation',
           parameters: {
-            id: [3, 4, 5]
-          }
-        })
+            id: [3, 4, 5],
+          },
+        });
 
         expect(req).toEqual({
           method: 'GET',
           url: '/path/;id=3,4,5',
           credentials: 'same-origin',
           headers: {},
-        })
-      }
-    )
+        });
+      },
+    );
 
     test('should build a path parameter in a matrix/explode format', () => {
       // Given
@@ -532,31 +530,31 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
                   name: 'id',
                   in: 'path',
                   style: 'matrix',
-                  explode: true
-                }
-              ]
-            }
-          }
-        }
-      }
+                  explode: true,
+                },
+              ],
+            },
+          },
+        },
+      };
 
       // when
       const req = buildRequest({
         spec,
         operationId: 'myOperation',
         parameters: {
-          id: [3, 4, 5]
-        }
-      })
+          id: [3, 4, 5],
+        },
+      });
 
       expect(req).toEqual({
         method: 'GET',
         url: '/path/;id=3;id=4;id=5',
         credentials: 'same-origin',
         headers: {},
-      })
-    })
-  })
+      });
+    });
+  });
   describe('object values', () => {
     test(
       'default: should build a path parameter in a simple/no-explode format',
@@ -571,13 +569,13 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
                 parameters: [
                   {
                     name: 'id',
-                    in: 'path'
-                  }
-                ]
-              }
-            }
-          }
-        }
+                    in: 'path',
+                  },
+                ],
+              },
+            },
+          },
+        };
 
         // when
         const req = buildRequest({
@@ -586,19 +584,19 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
           parameters: {
             id: {
               role: 'admin',
-              firstName: 'Alex'
-            }
-          }
-        })
+              firstName: 'Alex',
+            },
+          },
+        });
 
         expect(req).toEqual({
           method: 'GET',
           url: '/path/role,admin,firstName,Alex',
           credentials: 'same-origin',
           headers: {},
-        })
-      }
-    )
+        });
+      },
+    );
 
     test(
       'should build a path parameter in a simple/no-explode format',
@@ -615,13 +613,13 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
                     name: 'id',
                     in: 'path',
                     style: 'simple',
-                    explode: false
-                  }
-                ]
-              }
-            }
-          }
-        }
+                    explode: false,
+                  },
+                ],
+              },
+            },
+          },
+        };
 
         // when
         const req = buildRequest({
@@ -630,19 +628,19 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
           parameters: {
             id: {
               role: 'admin',
-              firstName: 'Alex'
-            }
-          }
-        })
+              firstName: 'Alex',
+            },
+          },
+        });
 
         expect(req).toEqual({
           method: 'GET',
           url: '/path/role,admin,firstName,Alex',
           credentials: 'same-origin',
           headers: {},
-        })
-      }
-    )
+        });
+      },
+    );
 
     test('should build a path parameter in a simple/explode format', () => {
       // Given
@@ -657,13 +655,13 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
                   name: 'id',
                   in: 'path',
                   style: 'simple',
-                  explode: true
-                }
-              ]
-            }
-          }
-        }
-      }
+                  explode: true,
+                },
+              ],
+            },
+          },
+        },
+      };
 
       // when
       const req = buildRequest({
@@ -672,18 +670,18 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
         parameters: {
           id: {
             role: 'admin',
-            firstName: 'Alex'
-          }
-        }
-      })
+            firstName: 'Alex',
+          },
+        },
+      });
 
       expect(req).toEqual({
         method: 'GET',
         url: '/path/role=admin,firstName=Alex',
         credentials: 'same-origin',
         headers: {},
-      })
-    })
+      });
+    });
 
     test(
       'should build a path parameter in a label/no-explode format',
@@ -700,13 +698,13 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
                     name: 'id',
                     in: 'path',
                     style: 'label',
-                    explode: false
-                  }
-                ]
-              }
-            }
-          }
-        }
+                    explode: false,
+                  },
+                ],
+              },
+            },
+          },
+        };
 
         // when
         const req = buildRequest({
@@ -715,19 +713,19 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
           parameters: {
             id: {
               role: 'admin',
-              firstName: 'Alex'
-            }
-          }
-        })
+              firstName: 'Alex',
+            },
+          },
+        });
 
         expect(req).toEqual({
           method: 'GET',
           url: '/path/.role.admin.firstName.Alex',
           credentials: 'same-origin',
           headers: {},
-        })
-      }
-    )
+        });
+      },
+    );
 
     test('should build a path parameter in a label/explode format', () => {
       // Given
@@ -742,13 +740,13 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
                   name: 'id',
                   in: 'path',
                   style: 'label',
-                  explode: true
-                }
-              ]
-            }
-          }
-        }
-      }
+                  explode: true,
+                },
+              ],
+            },
+          },
+        },
+      };
 
       // when
       const req = buildRequest({
@@ -757,18 +755,18 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
         parameters: {
           id: {
             role: 'admin',
-            firstName: 'Alex'
-          }
-        }
-      })
+            firstName: 'Alex',
+          },
+        },
+      });
 
       expect(req).toEqual({
         method: 'GET',
         url: '/path/.role=admin.firstName=Alex',
         credentials: 'same-origin',
         headers: {},
-      })
-    })
+      });
+    });
 
     test(
       'should build a path parameter in a matrix/no-explode format',
@@ -785,13 +783,13 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
                     name: 'id',
                     in: 'path',
                     style: 'matrix',
-                    explode: false
-                  }
-                ]
-              }
-            }
-          }
-        }
+                    explode: false,
+                  },
+                ],
+              },
+            },
+          },
+        };
 
         // when
         const req = buildRequest({
@@ -800,19 +798,19 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
           parameters: {
             id: {
               role: 'admin',
-              firstName: 'Alex'
-            }
-          }
-        })
+              firstName: 'Alex',
+            },
+          },
+        });
 
         expect(req).toEqual({
           method: 'GET',
           url: '/path/;id=role,admin,firstName,Alex',
           credentials: 'same-origin',
           headers: {},
-        })
-      }
-    )
+        });
+      },
+    );
 
     test('should build a path parameter in a matrix/explode format', () => {
       // Given
@@ -827,13 +825,13 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
                   name: 'id',
                   in: 'path',
                   style: 'matrix',
-                  explode: true
-                }
-              ]
-            }
-          }
-        }
-      }
+                  explode: true,
+                },
+              ],
+            },
+          },
+        },
+      };
 
       // when
       const req = buildRequest({
@@ -842,17 +840,17 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
         parameters: {
           id: {
             role: 'admin',
-            firstName: 'Alex'
-          }
-        }
-      })
+            firstName: 'Alex',
+          },
+        },
+      });
 
       expect(req).toEqual({
         method: 'GET',
         url: '/path/;role=admin;firstName=Alex',
         credentials: 'same-origin',
         headers: {},
-      })
-    })
-  })
-})
+      });
+    });
+  });
+});
