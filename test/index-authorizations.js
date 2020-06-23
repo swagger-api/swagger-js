@@ -127,7 +127,7 @@ describe('(instance) #execute', () => {
       expect(http.mock.calls.length).toEqual(1);
       expect(http.mock.calls[0][0]).toEqual({
         credentials: 'same-origin',
-        headers: { },
+        headers: {},
         method: 'GET',
         url: '/pet?petKey=barFoo',
       });

@@ -5,7 +5,9 @@ import { escape } from 'querystring';
 
 import { buildRequest, baseUrl } from '../../../src/execute';
 
-const petstoreSpec = jsYaml.safeLoad(fs.readFileSync(path.join('test', 'oas3', 'data', 'petstore-oas3.yaml'), 'utf8'));
+const petstoreSpec = jsYaml.safeLoad(
+  fs.readFileSync(path.join('test', 'oas3', 'data', 'petstore-oas3.yaml'), 'utf8')
+);
 
 // Supported shape...  { spec, operationId, parameters, securities, fetch }
 // One can use operationId or pathItem + method
@@ -508,7 +510,11 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
       };
 
       // When
-      const req = buildRequest({ spec, operationId: 'getMe', requestContentType: 'application/josh' });
+      const req = buildRequest({
+        spec,
+        operationId: 'getMe',
+        requestContentType: 'application/josh',
+      });
 
       // Then
       expect(req).toEqual({
@@ -653,7 +659,8 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
 
       const res = baseUrl({
         spec,
-        contextUrl: 'https://gist.githubusercontent.com/hkosova/d223eb45c5198db09d08f2603cc0e10a/raw/ae22e290b4f21e19bbfc02b97498289792579fec/relative-server.yaml',
+        contextUrl:
+          'https://gist.githubusercontent.com/hkosova/d223eb45c5198db09d08f2603cc0e10a/raw/ae22e290b4f21e19bbfc02b97498289792579fec/relative-server.yaml',
       });
 
       expect(res).toEqual('https://gist.githubusercontent.com');

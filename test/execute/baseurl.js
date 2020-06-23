@@ -4,21 +4,18 @@ import { baseUrl } from '../../src/execute';
 // One can use operationId or pathItem + method
 
 describe('baseUrl', () => {
-  test(
-    'should calculate a valid baseUrl given host, basePath, context, schemes',
-    () => {
-      const res = baseUrl({
-        spec: {
-          schemes: ['https'],
-          host: 'foo.com:8080',
-          basePath: '/bar',
-        },
-        contextUrl: 'http://example.com:9090/hello/swagger.json',
-      });
+  test('should calculate a valid baseUrl given host, basePath, context, schemes', () => {
+    const res = baseUrl({
+      spec: {
+        schemes: ['https'],
+        host: 'foo.com:8080',
+        basePath: '/bar',
+      },
+      contextUrl: 'http://example.com:9090/hello/swagger.json',
+    });
 
-      expect(res).toEqual('https://foo.com:8080/bar');
-    },
-  );
+    expect(res).toEqual('https://foo.com:8080/bar');
+  });
 
   test('should calculate a valid baseUrl given host, basePath, context', () => {
     const res = baseUrl({

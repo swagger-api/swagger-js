@@ -24,19 +24,13 @@ export default {
                     description: '',
                     default: 'id',
                     type: 'string',
-                    enum: [
-                      'id',
-                      'title',
-                    ],
+                    enum: ['id', 'title'],
                   },
                   'hhlContent:order': {
                     description: '',
                     default: 'desc',
                     type: 'string',
-                    enum: [
-                      'asc',
-                      'desc',
-                    ],
+                    enum: ['asc', 'desc'],
                   },
                   'email[]': {
                     description: 'The list of emails.',

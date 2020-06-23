@@ -1,7 +1,7 @@
 export default function createErrorType(name, init) {
   function E(...args) {
     if (!Error.captureStackTrace) {
-      this.stack = (new Error()).stack;
+      this.stack = new Error().stack;
     } else {
       Error.captureStackTrace(this, this.constructor);
     }

@@ -78,9 +78,7 @@ function createNode(value, parent) {
 
 function updateNode(node, value, parent) {
   node.value = value || {};
-  node.protoValue = parent
-    ? { ...parent.protoValue, ...node.value }
-    : node.value;
+  node.protoValue = parent ? { ...parent.protoValue, ...node.value } : node.value;
 
   Object.keys(node.children).forEach((prop) => {
     const child = node.children[prop];

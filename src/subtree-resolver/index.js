@@ -22,6 +22,7 @@
 // TODO: move the remarks above into project documentation
 
 import get from 'lodash/get';
+
 import resolve from '../resolver';
 import { normalizeSwagger } from '../helpers';
 

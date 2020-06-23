@@ -7,9 +7,7 @@ const spec = {
     '/product/{productId}': {
       get: {
         operationId: 'Get',
-        produces: [
-          'application/json',
-        ],
+        produces: ['application/json'],
         responses: {
           200: {
             description: 'Ok',
@@ -39,9 +37,7 @@ const spec = {
           format: 'double',
         },
       },
-      required: [
-        'height',
-      ],
+      required: ['height'],
       type: 'object',
     },
     ProductModel: {
@@ -50,97 +46,92 @@ const spec = {
           $ref: '#/definitions/Props',
         },
       },
-      required: [
-        'properties',
-      ],
+      required: ['properties'],
       type: 'object',
     },
   },
 };
 
-test(
-  'should resolve "properties" property name in model definition correctly',
-  async () => {
-    const res = await Swagger.resolve({
-      spec,
-    });
+test('should resolve "properties" property name in model definition correctly', async () => {
+  const res = await Swagger.resolve({
+    spec,
+  });
 
-    expect(res).toEqual({
-      errors: [],
-      spec: {
-        $$normalized: true,
-        definitions: {
-          ProductModel: {
+  expect(res).toEqual({
+    errors: [],
+    spec: {
+      $$normalized: true,
+      definitions: {
+        ProductModel: {
+          properties: {
             properties: {
+              $$ref: '#/definitions/Props',
               properties: {
-                $$ref: '#/definitions/Props',
-                properties: {
-                  height: {
-                    format: 'double',
-                    type: 'number',
-                  },
-                },
-                required: ['height'],
-                type: 'object',
-              },
-            },
-            required: ['properties'],
-            type: 'object',
-          },
-          Props: {
-            properties: {
-              height: {
-                format: 'double',
-                type: 'number',
-              },
-            },
-            required: ['height'],
-            type: 'object',
-          },
-        },
-        paths: {
-          '/product/{productId}': {
-            get: {
-              __originalOperationId: 'Get',
-              operationId: 'Get',
-              parameters: [
-                {
+                height: {
                   format: 'double',
-                  in: 'path',
-                  name: 'productId',
-                  required: true,
                   type: 'number',
                 },
-              ],
-              produces: ['application/json'],
-              responses: {
-                200: {
-                  description: 'Ok',
-                  schema: {
-                    $$ref: '#/definitions/ProductModel',
+              },
+              required: ['height'],
+              type: 'object',
+            },
+          },
+          required: ['properties'],
+          type: 'object',
+        },
+        Props: {
+          properties: {
+            height: {
+              format: 'double',
+              type: 'number',
+            },
+          },
+          required: ['height'],
+          type: 'object',
+        },
+      },
+      paths: {
+        '/product/{productId}': {
+          get: {
+            __originalOperationId: 'Get',
+            operationId: 'Get',
+            parameters: [
+              {
+                format: 'double',
+                in: 'path',
+                name: 'productId',
+                required: true,
+                type: 'number',
+              },
+            ],
+            produces: ['application/json'],
+            responses: {
+              200: {
+                description: 'Ok',
+                schema: {
+                  $$ref: '#/definitions/ProductModel',
+                  properties: {
                     properties: {
+                      $$ref: '#/definitions/Props',
                       properties: {
-                        $$ref: '#/definitions/Props',
-                        properties: {
-                          height: {
-                            format: 'double',
-                            type: 'number',
-                          },
+                        height: {
+                          format: 'double',
+                          type: 'number',
                         },
-                        required: ['height'],
-                        type: 'object',
                       },
+                      required: ['height'],
+                      type: 'object',
                     },
-                    required: ['properties'],
-                    type: 'object',
                   },
+                  required: ['properties'],
+                  type: 'object',
                 },
               },
-              security: [],
             },
+            security: [],
           },
         },
       },
-    });
-  },
-);
+    },
+  });
+});

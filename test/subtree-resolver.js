@@ -1,4 +1,5 @@
 import xmock from 'xmock';
+
 import resolve from '../src/subtree-resolver';
 
 describe('subtree $ref resolver', () => {
@@ -16,42 +17,66 @@ describe('subtree $ref resolver', () => {
     // refs.clearCache()
   });
 
-  test(
-    'should resolve a subtree of an object, and return the targeted subtree',
-    async () => {
-      const input = {
-        a: {
+  test('should resolve a subtree of an object, and return the targeted subtree', async () => {
+    const input = {
+      a: {
+        this: 'is my object',
+      },
+      b: {
+        description: 'here is my stuff!',
+        contents: {
+          $ref: '#/a',
+        },
+      },
+    };
+
+    const res = await resolve(input, ['b']);
+
+    expect(res).toEqual({
+      errors: [],
+      spec: {
+        description: 'here is my stuff!',
+        contents: {
           this: 'is my object',
+          $$ref: '#/a',
         },
+      },
+    });
+  });
+
+  test('should resolve circular $refs when a baseDoc is provided', async () => {
+    const input = {
+      one: {
+        $ref: '#/two',
+      },
+      two: {
+        a: {
+          $ref: '#/three',
+        },
+      },
+      three: {
         b: {
-          description: 'here is my stuff!',
-          contents: {
-            $ref: '#/a',
-          },
-        },
-      };
-
-      const res = await resolve(input, ['b']);
-
-      expect(res).toEqual({
-        errors: [],
-        spec: {
-          description: 'here is my stuff!',
-          contents: {
-            this: 'is my object',
-            $$ref: '#/a',
-          },
-        },
-      });
-    },
-  );
-
-  test(
-    'should resolve circular $refs when a baseDoc is provided',
-    async () => {
-      const input = {
-        one: {
           $ref: '#/two',
+        },
+      },
+    };
+
+    const res = await resolve(input, ['one'], {
+      baseDoc: 'http://example.com/swagger.json',
+      returnEntireTree: true,
+    });
+
+    expect(res).toEqual({
+      errors: [],
+      spec: {
+        one: {
+          $$ref: '#/two',
+          a: {
+            $$ref: '#/three',
+            b: {
+              $ref: '#/two',
+            },
+          },
         },
         two: {
           a: {
@@ -63,39 +88,9 @@ describe('subtree $ref resolver', () => {
             $ref: '#/two',
           },
         },
-      };
-
-      const res = await resolve(input, ['one'], {
-        baseDoc: 'http://example.com/swagger.json',
-        returnEntireTree: true,
-      });
-
-      expect(res).toEqual({
-        errors: [],
-        spec: {
-          one: {
-            $$ref: '#/two',
-            a: {
-              $$ref: '#/three',
-              b: {
-                $ref: '#/two',
-              },
-            },
-          },
-          two: {
-            a: {
-              $ref: '#/three',
-            },
-          },
-          three: {
-            b: {
-              $ref: '#/two',
-            },
-          },
-        },
-      });
-    },
-  );
+      },
+    });
+  });
 
   test('should return null when the path is invalid', async () => {
     const input = {

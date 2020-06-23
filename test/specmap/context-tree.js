@@ -43,14 +43,11 @@ describe('ContextTree', () => {
     expect(tree.get(['one', 'three', 'four']).baseDoc).toEqual('rooty');
   });
 
-  test(
-    'should allow setting the root from contructor and get without arg, returns root',
-    () => {
-      const tree = new ContextTree({ two: 2 });
-      const res = tree.get();
-      expect(res).toEqual({ two: 2 });
-    },
-  );
+  test('should allow setting the root from contructor and get without arg, returns root', () => {
+    const tree = new ContextTree({ two: 2 });
+    const res = tree.get();
+    expect(res).toEqual({ two: 2 });
+  });
 
   test('should get the nearest path', () => {
     const tree = new ContextTree();

@@ -86,24 +86,15 @@ describe('lib', () => {
 
   describe('parentPathMatch', () => {
     test('should match an exact path', () => {
-      expect(lib.parentPathMatch(
-        ['one', 'two'],
-        ['one', 'two'],
-      )).toEqual(true);
+      expect(lib.parentPathMatch(['one', 'two'], ['one', 'two'])).toEqual(true);
     });
 
     test('should NOT match a child path', () => {
-      expect(lib.parentPathMatch(
-        ['one', 'two'],
-        ['one', 'two', 'three'],
-      )).toEqual(false);
+      expect(lib.parentPathMatch(['one', 'two'], ['one', 'two', 'three'])).toEqual(false);
     });
 
     test('should match a parent path', () => {
-      expect(lib.parentPathMatch(
-        ['one', 'two'],
-        ['one'],
-      )).toEqual(true);
+      expect(lib.parentPathMatch(['one', 'two'], ['one'])).toEqual(true);
     });
   });
 });

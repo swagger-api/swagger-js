@@ -44,35 +44,32 @@ const spec = {
   },
 };
 
-test(
-  'should resolve a deeply-nested $ref series correctly',
-  async () => {
-    const res = await Swagger.resolve({
-      spec,
-    });
+test('should resolve a deeply-nested $ref series correctly', async () => {
+  const res = await Swagger.resolve({
+    spec,
+  });
 
-    expect(res).toEqual({
-      errors: [],
-      spec: {
-        $$normalized: true,
-        paths: {
-          '/path1': {
-            get: {
-              responses: {
-                200: {
-                  schema: {
-                    $$ref: '#/definitions/DataObjectArray',
-                    items: {
-                      $$ref: '#/definitions/DataObject',
-                      properties: {
-                        modifiers: {
-                          $$ref: '#/definitions/DataModifiers',
-                          items: {
-                            $$ref: '#/definitions/DataModifier',
-                            properties: {
-                              prop1: {
-                                type: 'string',
-                              },
+  expect(res).toEqual({
+    errors: [],
+    spec: {
+      $$normalized: true,
+      paths: {
+        '/path1': {
+          get: {
+            responses: {
+              200: {
+                schema: {
+                  $$ref: '#/definitions/DataObjectArray',
+                  items: {
+                    $$ref: '#/definitions/DataObject',
+                    properties: {
+                      modifiers: {
+                        $$ref: '#/definitions/DataModifiers',
+                        items: {
+                          $$ref: '#/definitions/DataModifier',
+                          properties: {
+                            prop1: {
+                              type: 'string',
                             },
                           },
                         },
@@ -84,8 +81,26 @@ test(
             },
           },
         },
-        definitions: {
-          DataObject: {
+      },
+      definitions: {
+        DataObject: {
+          properties: {
+            modifiers: {
+              $$ref: '#/definitions/DataModifiers',
+              items: {
+                $$ref: '#/definitions/DataModifier',
+                properties: {
+                  prop1: {
+                    type: 'string',
+                  },
+                },
+              },
+            },
+          },
+        },
+        DataObjectArray: {
+          items: {
+            $$ref: '#/definitions/DataObject',
             properties: {
               modifiers: {
                 $$ref: '#/definitions/DataModifiers',
@@ -100,43 +115,25 @@ test(
               },
             },
           },
-          DataObjectArray: {
-            items: {
-              $$ref: '#/definitions/DataObject',
-              properties: {
-                modifiers: {
-                  $$ref: '#/definitions/DataModifiers',
-                  items: {
-                    $$ref: '#/definitions/DataModifier',
-                    properties: {
-                      prop1: {
-                        type: 'string',
-                      },
-                    },
-                  },
-                },
-              },
+        },
+        DataModifier: {
+          properties: {
+            prop1: {
+              type: 'string',
             },
           },
-          DataModifier: {
+        },
+        DataModifiers: {
+          items: {
+            $$ref: '#/definitions/DataModifier',
             properties: {
               prop1: {
                 type: 'string',
               },
             },
           },
-          DataModifiers: {
-            items: {
-              $$ref: '#/definitions/DataModifier',
-              properties: {
-                prop1: {
-                  type: 'string',
-                },
-              },
-            },
-          },
         },
       },
-    });
-  },
-);
+    },
+  });
+});

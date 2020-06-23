@@ -4,6 +4,7 @@ import jsYaml from 'js-yaml';
 import pick from 'lodash/pick';
 import isFunction from 'lodash/isFunction';
 import { Buffer } from 'buffer';
+
 import FormData from './internal/form-data-monkey-patch';
 import { encodeDisallowedCharacters } from './execute/oas3/style-serializer';
 
@@ -45,7 +46,7 @@ export default async function http(url, request = {}) {
   // WARNING: don't put anything between this and the request firing unless
   // you have a good reason!
   if (request.requestInterceptor) {
-    request = await request.requestInterceptor(request) || request;
+    request = (await request.requestInterceptor(request)) || request;
   }
 
   // for content-type=multipart\/form-data remove content-type from request before fetch
@@ -62,7 +63,7 @@ export default async function http(url, request = {}) {
     res = await (request.userFetch || fetch)(request.url, request);
     res = await self.serializeRes(res, url, request);
     if (request.responseInterceptor) {
-      res = await request.responseInterceptor(res) || res;
+      res = (await request.responseInterceptor(res)) || res;
     }
   } catch (resError) {
     if (!res) {
@@ -87,10 +88,14 @@ export default async function http(url, request = {}) {
 }
 
 // exported for testing
-export const shouldDownloadAsText = (contentType = '') => /(json|xml|yaml|text)\b/.test(contentType);
+export const shouldDownloadAsText = (contentType = '') =>
+  /(json|xml|yaml|text)\b/.test(contentType);
 
 function parseBody(body, contentType) {
-  if (contentType && (contentType.indexOf('application/json') === 0 || contentType.indexOf('+json') > 0)) {
+  if (
+    contentType &&
+    (contentType.indexOf('application/json') === 0 || contentType.indexOf('+json') > 0)
+  ) {
     return JSON.parse(body);
   }
   return jsYaml.safeLoad(body);
@@ -107,7 +112,7 @@ export function serializeRes(oriRes, url, { loadSpec = false } = {}) {
   };
   const contentType = res.headers['content-type'];
   const useText = loadSpec || shouldDownloadAsText(contentType);
-  const getBody = useText ? oriRes.text : (oriRes.blob || oriRes.buffer);
+  const getBody = useText ? oriRes.text : oriRes.blob || oriRes.buffer;
   return getBody.call(oriRes).then((body) => {
     res.text = body;
     res.data = body;
@@ -138,12 +143,10 @@ function serializeHeaderValue(value) {
 export function serializeHeaders(headers = {}) {
   if (!isFunction(headers.entries)) return {};
 
-  return Array
-    .from(headers.entries())
-    .reduce((acc, [header, value]) => {
-      acc[header] = serializeHeaderValue(value);
-      return acc;
-    }, {});
+  return Array.from(headers.entries()).reduce((acc, [header, value]) => {
+    acc[header] = serializeHeaderValue(value);
+    return acc;
+  }, {});
 }
 
 export function isFile(obj, navigatorObj) {
@@ -158,10 +161,12 @@ export function isFile(obj, navigatorObj) {
     return false;
   }
 
-  if (typeof File !== 'undefined' && obj instanceof File) { // eslint-disable-line no-undef
+  if (typeof File !== 'undefined' && obj instanceof File) {
+    // eslint-disable-line no-undef
     return true;
   }
-  if (typeof Blob !== 'undefined' && obj instanceof Blob) { // eslint-disable-line no-undef
+  if (typeof Blob !== 'undefined' && obj instanceof Blob) {
+    // eslint-disable-line no-undef
     return true;
   }
   if (typeof Buffer !== 'undefined' && obj instanceof Buffer) {
@@ -172,7 +177,7 @@ export function isFile(obj, navigatorObj) {
 }
 
 function isArrayOfFile(obj, navigatorObj) {
-  return (Array.isArray(obj) && obj.some((v) => isFile(v, navigatorObj)));
+  return Array.isArray(obj) && obj.some((v) => isFile(v, navigatorObj));
 }
 
 const STYLE_SEPARATORS = {
@@ -197,12 +202,10 @@ const SEPARATORS = {
 // Return value example 5: [['R', '100'], ['G', '200'], ['B', '150']]
 // Return value example 6: [['color[R]', '100'], ['color[G]', '200'], ['color[B]', '150']]
 function formatKeyValue(key, input, skipEncoding = false) {
-  const {
-    collectionFormat, allowEmptyValue, serializationOption, encoding,
-  } = input;
+  const { collectionFormat, allowEmptyValue, serializationOption, encoding } = input;
   // `input` can be string
-  const value = (typeof input === 'object' && !Array.isArray(input)) ? input.value : input;
-  const encodeFn = skipEncoding ? ((k) => k.toString()) : ((k) => encodeURIComponent(k));
+  const value = typeof input === 'object' && !Array.isArray(input) ? input.value : input;
+  const encodeFn = skipEncoding ? (k) => k.toString() : (k) => encodeURIComponent(k);
   const encodedKey = encodeFn(key);
 
   if (typeof value === 'undefined' && allowEmptyValue) {
@@ -221,8 +224,17 @@ function formatKeyValue(key, input, skipEncoding = false) {
 
   // for OAS 3 Encoding Object
   if (encoding) {
-    if ([typeof encoding.style, typeof encoding.explode, typeof encoding.allowReserved].some((type) => type !== 'undefined')) {
-      return formatKeyValueBySerializationOption(key, value, skipEncoding, pick(encoding, ['style', 'explode', 'allowReserved']));
+    if (
+      [typeof encoding.style, typeof encoding.explode, typeof encoding.allowReserved].some(
+        (type) => type !== 'undefined'
+      )
+    ) {
+      return formatKeyValueBySerializationOption(
+        key,
+        value,
+        skipEncoding,
+        pick(encoding, ['style', 'explode', 'allowReserved'])
+      );
     }
 
     if (encoding.contentType) {
@@ -271,12 +283,18 @@ function formatKeyValue(key, input, skipEncoding = false) {
 
 function formatKeyValueBySerializationOption(key, value, skipEncoding, serializationOption) {
   const style = serializationOption.style || 'form';
-  const explode = typeof serializationOption.explode === 'undefined' ? style === 'form' : serializationOption.explode;
+  const explode =
+    typeof serializationOption.explode === 'undefined'
+      ? style === 'form'
+      : serializationOption.explode;
   // eslint-disable-next-line no-nested-ternary
-  const escape = skipEncoding ? false : (serializationOption && serializationOption.allowReserved ? 'unsafe' : 'reserved');
+  const escape = skipEncoding
+    ? false
+    : serializationOption && serializationOption.allowReserved
+    ? 'unsafe'
+    : 'reserved';
   const encodeFn = (v) => encodeDisallowedCharacters(v, { escape });
-  const encodeKeyFn = skipEncoding
-    ? ((k) => k) : ((k) => encodeDisallowedCharacters(k, { escape }));
+  const encodeKeyFn = skipEncoding ? (k) => k : (k) => encodeDisallowedCharacters(k, { escape });
 
   // Primitive
   if (typeof value !== 'object') {
@@ -295,14 +313,24 @@ function formatKeyValueBySerializationOption(key, value, skipEncoding, serializa
 
   // Object
   if (style === 'deepObject') {
-    return Object.keys(value).map((valueKey) => [encodeKeyFn(`${key}[${valueKey}]`), encodeFn(value[valueKey])]);
+    return Object.keys(value).map((valueKey) => [
+      encodeKeyFn(`${key}[${valueKey}]`),
+      encodeFn(value[valueKey]),
+    ]);
   }
 
   if (explode) {
     return Object.keys(value).map((valueKey) => [encodeKeyFn(valueKey), encodeFn(value[valueKey])]);
   }
 
-  return [[encodeKeyFn(key), Object.keys(value).map((valueKey) => [`${encodeKeyFn(valueKey)},${encodeFn(value[valueKey])}`]).join(',')]];
+  return [
+    [
+      encodeKeyFn(key),
+      Object.keys(value)
+        .map((valueKey) => [`${encodeKeyFn(valueKey)},${encodeFn(value[valueKey])}`])
+        .join(','),
+    ],
+  ];
 }
 
 function buildFormData(reqForm) {
@@ -317,7 +345,8 @@ function buildFormData(reqForm) {
     // eslint-disable-next-line no-restricted-syntax
     for (const [key, value] of formatKeyValue(name, input, true)) {
       if (Array.isArray(value)) {
-        for (const v of value) { // eslint-disable-line no-restricted-syntax
+        // eslint-disable-next-line no-restricted-syntax
+        for (const v of value) {
           formData.append(key, v);
         }
       } else {
@@ -369,7 +398,7 @@ export function mergeInQueryOrForm(req = {}) {
       req.body = encodeFormOrQuery(form);
     }
 
-    delete (req.form);
+    delete req.form;
   }
 
   if (query) {
@@ -385,7 +414,7 @@ export function mergeInQueryOrForm(req = {}) {
 
     const finalStr = joinSearch(newStr, encodeFormOrQuery(query));
     req.url = baseUrl + finalStr;
-    delete (req.query);
+    delete req.query;
   }
   return req;
 }

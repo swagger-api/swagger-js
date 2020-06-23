@@ -2,6 +2,7 @@ import path from 'path';
 import cloneDeep from 'lodash/cloneDeep';
 import glob from 'glob';
 import xmock from 'xmock';
+
 import mapSpec, { plugins } from '../../src/specmap';
 
 const { refs } = plugins;
@@ -54,13 +55,10 @@ describe('refs', () => {
     });
 
     describe('relative paths', () => {
-      test(
-        'should think of the basePath as pointing to a document, so use the parent folder for resolution',
-        () => {
-          const res = refs.absoluteify('one.json', 'http://example.com/two.json');
-          expect(res).toEqual('http://example.com/one.json');
-        },
-      );
+      test('should think of the basePath as pointing to a document, so use the parent folder for resolution', () => {
+        const res = refs.absoluteify('one.json', 'http://example.com/two.json');
+        expect(res).toEqual('http://example.com/one.json');
+      });
 
       test('should handle ../', () => {
         const res = refs.absoluteify('../one.json', 'http://example.com/two/three/four.json');
@@ -112,22 +110,25 @@ describe('refs', () => {
       xapp.get(url, (req, res) => {
         res.send({ works: { yay: true } });
       });
-      return refs.getDoc(url).then((doc) => {
-        expect(doc).toEqual({ works: { yay: true } });
-      }).then(() => {
-        expect(refs.docCache).toEqual({
-          [url]: { works: { yay: true } },
+      return refs
+        .getDoc(url)
+        .then((doc) => {
+          expect(doc).toEqual({ works: { yay: true } });
+        })
+        .then(() => {
+          expect(refs.docCache).toEqual({
+            [url]: { works: { yay: true } },
+          });
+          // Change cache to verify we're using it
+          refs.docCache[url].works.yay = false;
+          return refs.getDoc(url).then((doc) => {
+            expect(doc).toEqual({ works: { yay: false } });
+          });
         });
-        // Change cache to verify we're using it
-        refs.docCache[url].works.yay = false;
-        return refs.getDoc(url).then((doc) => {
-          expect(doc).toEqual({ works: { yay: false } });
-        });
-      });
     });
     test('should cache pending HTTP requests', () => {
       const url = 'http://example.com/common.json';
-      xapp.get(url, () => { });
+      xapp.get(url, () => {});
       const p1 = refs.getDoc(url);
       const p2 = refs.getDoc(url);
       const p3 = refs.docCache[url];
@@ -141,10 +142,9 @@ describe('refs', () => {
       refs.docCache['some-path'] = {
         one: '1',
       };
-      return refs.extractFromDoc('some-path', '/one')
-        .then((val) => {
-          expect(val).toEqual('1');
-        });
+      return refs.extractFromDoc('some-path', '/one').then((val) => {
+        expect(val).toEqual('1');
+      });
     });
 
     test('should fail nicely', () => {
@@ -152,7 +152,8 @@ describe('refs', () => {
         one: '1',
       };
 
-      return refs.extractFromDoc('some-path', '/two', '#/two')
+      return refs
+        .extractFromDoc('some-path', '/two', '#/two')
         .then(() => {
           throw new Error('Should have failed');
         })
@@ -169,14 +170,11 @@ describe('refs', () => {
       expect(res).toEqual('/one/');
     });
 
-    test(
-      'should throw if there is no basePath, and we try to resolve a realtive url',
-      () => {
-        expect(() => {
-          refs.absoluteify('../');
-        }).toThrow();
-      },
-    );
+    test('should throw if there is no basePath, and we try to resolve a realtive url', () => {
+      expect(() => {
+        refs.absoluteify('../');
+      }).toThrow();
+    });
 
     test('should return the absolute URL, with a different asset', () => {
       const res = refs.absoluteify('not-three.json', '/one/two/three.json');
@@ -192,15 +190,18 @@ describe('refs', () => {
         res.send({ works: { yay: true } });
       });
 
-      return refs.getDoc(url).then((doc) => {
-        expect(doc).toEqual({ works: { yay: true } });
-      }).then(() => {
-        expect(refs.docCache).toEqual({
-          [url]: { works: { yay: true } },
+      return refs
+        .getDoc(url)
+        .then((doc) => {
+          expect(doc).toEqual({ works: { yay: true } });
+        })
+        .then(() => {
+          expect(refs.docCache).toEqual({
+            [url]: { works: { yay: true } },
+          });
+          refs.clearCache();
+          expect(refs.docCache).toEqual({});
         });
-        refs.clearCache();
-        expect(refs.docCache).toEqual({});
-      });
     });
 
     test('should clear the docCache, of particular items', () => {
@@ -215,30 +216,36 @@ describe('refs', () => {
           res.send({ works: { yup: true } });
         });
 
-      return refs.getDoc(url).then((doc) => {
-        expect(doc).toEqual({ works: { yay: true } });
-      }).then(() => {
-        expect(refs.docCache).toEqual({
-          [url]: { works: { yay: true } },
-        });
-
-        return refs.getDoc(url2).then((doc) => {
-          expect(doc).toEqual({ works: { yup: true } });
-        }).then(() => {
+      return refs
+        .getDoc(url)
+        .then((doc) => {
+          expect(doc).toEqual({ works: { yay: true } });
+        })
+        .then(() => {
           expect(refs.docCache).toEqual({
             [url]: { works: { yay: true } },
-            [url2]: { works: { yup: true } },
           });
 
-          refs.clearCache(url);
+          return refs
+            .getDoc(url2)
+            .then((doc) => {
+              expect(doc).toEqual({ works: { yup: true } });
+            })
+            .then(() => {
+              expect(refs.docCache).toEqual({
+                [url]: { works: { yay: true } },
+                [url2]: { works: { yup: true } },
+              });
 
-          expect(refs.docCache).toEqual({
-            [url2]: {
-              works: { yup: true },
-            },
-          });
+              refs.clearCache(url);
+
+              expect(refs.docCache).toEqual({
+                [url2]: {
+                  works: { yup: true },
+                },
+              });
+            });
         });
-      });
     });
   });
 
@@ -248,13 +255,10 @@ describe('refs', () => {
       expect(subject).toEqual(['one', 'two', '/three']);
     });
 
-    test(
-      'should parse if JSON-Pointer does not start with forward dash',
-      () => {
-        const subject = refs.jsonPointerToArray('one/two/~1three');
-        expect(subject).toEqual(['one', 'two', '/three']);
-      },
-    );
+    test('should parse if JSON-Pointer does not start with forward dash', () => {
+      const subject = refs.jsonPointerToArray('one/two/~1three');
+      expect(subject).toEqual(['one', 'two', '/three']);
+    });
 
     test('should return [""] for "" and "/"', () => {
       let subject = refs.jsonPointerToArray('');
@@ -285,7 +289,7 @@ describe('refs', () => {
           const group2 = f2.replace(/\//g, path.sep).substring(dir.length).split(path.sep)[1];
           const no1 = Number(path.basename(f1).split('.')[0]);
           const no2 = Number(path.basename(f2).split('.')[0]);
-          return group1.localeCompare(group2) || (no1 - no2);
+          return group1.localeCompare(group2) || no1 - no2;
         })
         .map((filename) => {
           return { name: filename, filename, ...require(filename) };

@@ -5,26 +5,21 @@ import get from 'lodash/get';
 import btoa from 'btoa';
 
 export default function buildRequest(options, req) {
-  const {
-    operation,
-    requestBody,
-    securities,
-    spec,
-    attachContentTypeForEmptyPayload,
-  } = options;
+  const { operation, requestBody, securities, spec, attachContentTypeForEmptyPayload } = options;
 
-  let {
-    requestContentType,
-  } = options;
+  let { requestContentType } = options;
 
   req = applySecurities({
-    request: req, securities, operation, spec,
+    request: req,
+    securities,
+    operation,
+    spec,
   });
 
   const requestBodyDef = operation.requestBody || {};
   const requestBodyMediaTypes = Object.keys(requestBodyDef.content || {});
-  const isExplicitContentTypeValid = requestContentType
-  && requestBodyMediaTypes.indexOf(requestContentType) > -1;
+  const isExplicitContentTypeValid =
+    requestContentType && requestBodyMediaTypes.indexOf(requestContentType) > -1;
 
   // for OAS3: set the Content-Type
   if (requestBody || attachContentTypeForEmptyPayload) {
@@ -49,7 +44,10 @@ export default function buildRequest(options, req) {
       if (requestBodyMediaTypes.indexOf(requestContentType) > -1) {
         // only attach body if the requestBody has a definition for the
         // contentType that has been explicitly set
-        if (requestContentType === 'application/x-www-form-urlencoded' || requestContentType === 'multipart/form-data') {
+        if (
+          requestContentType === 'application/x-www-form-urlencoded' ||
+          requestContentType === 'multipart/form-data'
+        ) {
           if (typeof requestBody === 'object') {
             const encoding = (requestBodyDef.content[requestContentType] || {}).encoding || {};
 
@@ -77,9 +75,7 @@ export default function buildRequest(options, req) {
 
 // Add security values, to operations - that declare their need on them
 // Adapted from the Swagger2 implementation
-export function applySecurities({
-  request, securities = {}, operation = {}, spec,
-}) {
+export function applySecurities({ request, securities = {}, operation = {}, spec }) {
   const result = assign({}, request);
   const { authorized = {} } = securities;
   const security = operation.security || spec.security || [];
@@ -89,8 +85,12 @@ export function applySecurities({
   result.headers = result.headers || {};
   result.query = result.query || {};
 
-  if (!Object.keys(securities).length || !isAuthorized || !security
-      || (Array.isArray(operation.security) && !operation.security.length)) {
+  if (
+    !Object.keys(securities).length ||
+    !isAuthorized ||
+    !security ||
+    (Array.isArray(operation.security) && !operation.security.length)
+  ) {
     return request;
   }
 

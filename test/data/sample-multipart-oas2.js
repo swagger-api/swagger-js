@@ -17,18 +17,12 @@ export default {
   },
   host: '',
   basePath: '/api/v1',
-  schemes: [
-    'http',
-  ],
+  schemes: ['http'],
   paths: {
     '/land/content/ViewOfAuthOwner': {
       post: {
-        consumes: [
-          'multipart/form-data',
-        ],
-        produces: [
-          'application/json',
-        ],
+        consumes: ['multipart/form-data'],
+        produces: ['application/json'],
         summary: '',
         parameters: [
           {
@@ -37,10 +31,7 @@ export default {
             description: '',
             default: 'id',
             type: 'string',
-            enum: [
-              'id',
-              'title',
-            ],
+            enum: ['id', 'title'],
           },
           {
             in: 'formData',
@@ -48,10 +39,7 @@ export default {
             description: '',
             default: 'desc',
             type: 'string',
-            enum: [
-              'asc',
-              'desc',
-            ],
+            enum: ['asc', 'desc'],
           },
           {
             in: 'formData',
@@ -126,12 +114,8 @@ export default {
     },
     '/land/content/uploadImage': {
       post: {
-        consumes: [
-          'multipart/form-data',
-        ],
-        produces: [
-          'application/json',
-        ],
+        consumes: ['multipart/form-data'],
+        produces: ['application/json'],
         summary: 'upload image(s)',
         parameters: [
           {

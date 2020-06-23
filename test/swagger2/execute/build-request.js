@@ -35,7 +35,7 @@ describe('buildRequest - swagger 2.0', () => {
           method: 'GET',
           url: '/one?name=',
           credentials: 'same-origin',
-          headers: { },
+          headers: {},
         });
       });
 

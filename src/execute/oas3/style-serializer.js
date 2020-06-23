@@ -1,8 +1,8 @@
 const { Buffer } = require('buffer');
 
-const isRfc3986Reserved = (char) => ':/?#[]@!$&\'()*+,;='.indexOf(char) > -1;
+const isRfc3986Reserved = (char) => ":/?#[]@!$&'()*+,;=".indexOf(char) > -1;
 const isRrc3986Unreserved = (char) => {
-  return (/^[a-z0-9\-._~]+$/i).test(char);
+  return /^[a-z0-9\-._~]+$/i.test(char);
 };
 
 export function encodeDisallowedCharacters(str, { escape } = {}, parse) {
@@ -25,22 +25,24 @@ export function encodeDisallowedCharacters(str, { escape } = {}, parse) {
   // This causes the string iterator (another new ES6 feature) to be used internally,
   // and because that iterator is designed to deal with
   // code points rather than UCS-2/UTF-16 code units.
-  return [...str].map((char) => {
-    if (isRrc3986Unreserved(char)) {
-      return char;
-    }
+  return [...str]
+    .map((char) => {
+      if (isRrc3986Unreserved(char)) {
+        return char;
+      }
 
-    if (isRfc3986Reserved(char) && escape === 'unsafe') {
-      return char;
-    }
+      if (isRfc3986Reserved(char) && escape === 'unsafe') {
+        return char;
+      }
 
-    const encoded = (Buffer.from(char).toJSON().data || [])
-      .map((byte) => `0${byte.toString(16).toUpperCase()}`.slice(-2))
-      .map((encodedByte) => `%${encodedByte}`)
-      .join('');
+      const encoded = (Buffer.from(char).toJSON().data || [])
+        .map((byte) => `0${byte.toString(16).toUpperCase()}`.slice(-2))
+        .map((encodedByte) => `%${encodedByte}`)
+        .join('');
 
-    return encoded;
-  }).join('');
+      return encoded;
+    })
+    .join('');
 }
 
 export default function stylize(config) {
@@ -55,12 +57,11 @@ export default function stylize(config) {
   return encodePrimitive(config);
 }
 
-function encodeArray({
-  key, value, style, explode, escape,
-}) {
-  const valueEncoder = (str) => encodeDisallowedCharacters(str, {
-    escape,
-  });
+function encodeArray({ key, value, style, explode, escape }) {
+  const valueEncoder = (str) =>
+    encodeDisallowedCharacters(str, {
+      escape,
+    });
 
   if (style === 'simple') {
     return value.map((val) => valueEncoder(val)).join(',');
@@ -71,12 +72,14 @@ function encodeArray({
   }
 
   if (style === 'matrix') {
-    return value.map((val) => valueEncoder(val)).reduce((prev, curr) => {
-      if (!prev || explode) {
-        return `${(prev || '')};${key}=${curr}`;
-      }
-      return `${prev},${curr}`;
-    }, '');
+    return value
+      .map((val) => valueEncoder(val))
+      .reduce((prev, curr) => {
+        if (!prev || explode) {
+          return `${prev || ''};${key}=${curr}`;
+        }
+        return `${prev},${curr}`;
+      }, '');
   }
 
   if (style === 'form') {
@@ -97,12 +100,11 @@ function encodeArray({
   return undefined;
 }
 
-function encodeObject({
-  key, value, style, explode, escape,
-}) {
-  const valueEncoder = (str) => encodeDisallowedCharacters(str, {
-    escape,
-  });
+function encodeObject({ key, value, style, explode, escape }) {
+  const valueEncoder = (str) =>
+    encodeDisallowedCharacters(str, {
+      escape,
+    });
 
   const valueKeys = Object.keys(value);
 
@@ -158,12 +160,11 @@ function encodeObject({
   return undefined;
 }
 
-function encodePrimitive({
-  key, value, style, escape,
-}) {
-  const valueEncoder = (str) => encodeDisallowedCharacters(str, {
-    escape,
-  });
+function encodePrimitive({ key, value, style, escape }) {
+  const valueEncoder = (str) =>
+    encodeDisallowedCharacters(str, {
+      escape,
+    });
 
   if (style === 'simple') {
     return valueEncoder(value);

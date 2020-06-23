@@ -3,24 +3,24 @@ import isPlainObject from 'lodash/isPlainObject';
 import isArray from 'lodash/isArray';
 import url from 'url';
 import cookie from 'cookie';
+
 import stockHttp, { mergeInQueryOrForm } from '../http';
 import createError from '../specmap/lib/create-error';
-
 import SWAGGER2_PARAMETER_BUILDERS from './swagger2/parameter-builders';
 import * as OAS3_PARAMETER_BUILDERS from './oas3/parameter-builders';
 import oas3BuildRequest from './oas3/build-request';
 import swagger2BuildRequest from './swagger2/build-request';
-import {
-  getOperationRaw,
-  legacyIdFromPathMethod,
-  isOAS3,
-} from '../helpers';
+import { getOperationRaw, legacyIdFromPathMethod, isOAS3 } from '../helpers';
 
 const arrayOrEmpty = (ar) => {
   return Array.isArray(ar) ? ar : [];
 };
 
-const OperationNotFoundError = createError('OperationNotFoundError', function cb(message, extra, oriError) {
+const OperationNotFoundError = createError('OperationNotFoundError', function cb(
+  message,
+  extra,
+  oriError
+) {
   this.originalError = oriError;
   Object.assign(this, extra || {});
 });
@@ -74,7 +74,12 @@ export function execute({
   }
 
   const request = self.buildRequest({
-    spec, operationId, parameters, securities, http, ...extras,
+    spec,
+    operationId,
+    parameters,
+    securities,
+    http,
+    ...extras,
   });
 
   if (request.body && (isPlainObject(request.body) || isArray(request.body))) {
@@ -101,10 +106,7 @@ export function buildRequest(options) {
     http,
   } = options;
 
-  let {
-    parameters,
-    parameterBuilders,
-  } = options;
+  let { parameters, parameterBuilders } = options;
 
   const specIsOAS3 = isOAS3(spec);
   if (!parameterBuilders) {
@@ -117,7 +119,7 @@ export function buildRequest(options) {
   }
 
   // Set credentials with 'http.withCredentials' value
-  const credentials = (http && http.withCredentials) ? 'include' : 'same-origin';
+  const credentials = http && http.withCredentials ? 'include' : 'same-origin';
 
   // Base Template
   let req = {
@@ -145,7 +147,13 @@ export function buildRequest(options) {
   const { operation = {}, method, pathName } = operationRaw;
 
   req.url += baseUrl({
-    spec, scheme, contextUrl, server, serverVariables, pathName, method,
+    spec,
+    scheme,
+    contextUrl,
+    server,
+    serverVariables,
+    pathName,
+    method,
   });
 
   // Mostly for testing
@@ -159,7 +167,7 @@ export function buildRequest(options) {
   }
 
   req.url += pathName; // Have not yet replaced the path parameters
-  req.method = (`${method}`).toUpperCase();
+  req.method = `${method}`.toUpperCase();
 
   parameters = parameters || {};
   const path = spec.paths[pathName] || {};
@@ -168,9 +176,11 @@ export function buildRequest(options) {
     req.headers.accept = responseContentType;
   }
 
-  const combinedParameters = deduplicateParameters([]
-    .concat(arrayOrEmpty(operation.parameters)) // operation parameters
-    .concat(arrayOrEmpty(path.parameters))); // path parameters
+  const combinedParameters = deduplicateParameters(
+    []
+      .concat(arrayOrEmpty(operation.parameters)) // operation parameters
+      .concat(arrayOrEmpty(path.parameters))
+  ); // path parameters
 
   // REVIEW: OAS3: have any key names or parameter shapes changed?
   // Any new features that need to be plugged in here?
@@ -193,7 +203,9 @@ export function buildRequest(options) {
       // value came from `parameters[parameter.name]`
       // check to see if this is an ambiguous parameter
       // eslint-disable-next-line no-console
-      console.warn(`Parameter '${parameter.name}' is ambiguous because the defined spec has more than one parameter with the name: '${parameter.name}' and the passed-in parameter values did not define an 'in' value.`);
+      console.warn(
+        `Parameter '${parameter.name}' is ambiguous because the defined spec has more than one parameter with the name: '${parameter.name}' and the passed-in parameter values did not define an 'in' value.`
+      );
     }
 
     if (value === null) {
@@ -208,7 +220,12 @@ export function buildRequest(options) {
       throw new Error(`Required parameter ${parameter.name} is not provided`);
     }
 
-    if (specIsOAS3 && parameter.schema && parameter.schema.type === 'object' && typeof value === 'string') {
+    if (
+      specIsOAS3 &&
+      parameter.schema &&
+      parameter.schema.type === 'object' &&
+      typeof value === 'string'
+    ) {
       try {
         value = JSON.parse(value);
       } catch (e) {
@@ -218,7 +235,11 @@ export function buildRequest(options) {
 
     if (builder) {
       builder({
-        req, parameter, value, operation, spec,
+        req,
+        parameter,
+        value,
+        operation,
+        spec,
       });
     }
   });
@@ -268,12 +289,11 @@ export function baseUrl(obj) {
   return specIsOAS3 ? oas3BaseUrl(obj) : swagger2BaseUrl(obj);
 }
 
-function oas3BaseUrl({
-  spec, pathName, method, server, contextUrl, serverVariables = {},
-}) {
-  const servers = getIn(spec, ['paths', pathName, (method || '').toLowerCase(), 'servers'])
-    || getIn(spec, ['paths', pathName, 'servers'])
-    || getIn(spec, ['servers']);
+function oas3BaseUrl({ spec, pathName, method, server, contextUrl, serverVariables = {} }) {
+  const servers =
+    getIn(spec, ['paths', pathName, (method || '').toLowerCase(), 'servers']) ||
+    getIn(spec, ['paths', pathName, 'servers']) ||
+    getIn(spec, ['servers']);
 
   let selectedServerUrl = '';
   let selectedServerObj = null;
@@ -315,7 +335,8 @@ function buildOas3UrlWithContext(ourUrl = '', contextUrl = '') {
   const parsedUrl = url.parse(ourUrl);
   const parsedContextUrl = url.parse(contextUrl);
 
-  const computedScheme = stripNonAlpha(parsedUrl.protocol) || stripNonAlpha(parsedContextUrl.protocol) || '';
+  const computedScheme =
+    stripNonAlpha(parsedUrl.protocol) || stripNonAlpha(parsedContextUrl.protocol) || '';
   const computedHost = parsedUrl.host || parsedContextUrl.host;
   const computedPath = parsedUrl.pathname || '';
   let res;
@@ -337,7 +358,7 @@ function getVariableTemplateNames(str) {
   let text;
 
   // eslint-disable-next-line no-cond-assign
-  while (text = re.exec(str)) {
+  while ((text = re.exec(str))) {
     results.push(text[1]);
   }
   return results;
@@ -348,7 +369,8 @@ function swagger2BaseUrl({ spec, scheme, contextUrl = '' }) {
   const parsedContextUrl = url.parse(contextUrl);
   const firstSchemeInSpec = Array.isArray(spec.schemes) ? spec.schemes[0] : null;
 
-  const computedScheme = scheme || firstSchemeInSpec || stripNonAlpha(parsedContextUrl.protocol) || 'http';
+  const computedScheme =
+    scheme || firstSchemeInSpec || stripNonAlpha(parsedContextUrl.protocol) || 'http';
   const computedHost = spec.host || parsedContextUrl.host || '';
   const computedPath = spec.basePath || '';
   let res;

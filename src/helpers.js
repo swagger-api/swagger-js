@@ -40,8 +40,10 @@ export function opId(operation, pathName, method = '', { v2OperationIdCompatibil
 // Create a generated operationId from pathName + method
 export function idFromPathMethod(pathName, method, { v2OperationIdCompatibilityMode } = {}) {
   if (v2OperationIdCompatibilityMode) {
-    let res = `${method.toLowerCase()}_${pathName}`
-      .replace(/[\s!@#$%^&*()_+=[{\]};:<>|./?,\\'""-]/g, '_');
+    let res = `${method.toLowerCase()}_${pathName}`.replace(
+      /[\s!@#$%^&*()_+=[{\]};:<>|./?,\\'""-]/g,
+      '_'
+    );
 
     res = res || `${pathName.substring(1)}_${method}`;
 
@@ -72,8 +74,7 @@ export function getOperationRaw(spec, id) {
     const operationId = opId(operation, pathName, method);
     const legacyOperationId = legacyIdFromPathMethod(pathName, method);
 
-    return [operationId, legacyOperationId, rawOperationId]
-      .some((val) => val && val === id);
+    return [operationId, legacyOperationId, rawOperationId].some((val) => val && val === id);
   });
 }
 
@@ -184,7 +185,8 @@ export function normalizeSwagger(parsedSpec) {
         const toBeInherit = {};
 
         // Global-levels
-        for (const key in spec) { // eslint-disable-line no-restricted-syntax
+        // eslint-disable-next-line no-restricted-syntax
+        for (const key in spec) {
           if (key === 'produces' || key === 'consumes' || key === 'security') {
             toBeInherit[key] = spec[key];
             inheritsList.push(toBeInherit);
@@ -198,18 +200,22 @@ export function normalizeSwagger(parsedSpec) {
         }
 
         if (inheritsList.length) {
-          for (const inherits of inheritsList) { // eslint-disable-line no-restricted-syntax
-            for (const inheritName in inherits) { // eslint-disable-line no-restricted-syntax
+          // eslint-disable-next-line no-restricted-syntax
+          for (const inherits of inheritsList) {
+            // eslint-disable-next-line no-restricted-syntax
+            for (const inheritName in inherits) {
               if (!operation[inheritName]) {
                 operation[inheritName] = inherits[inheritName];
               } else if (inheritName === 'parameters') {
                 // eslint-disable-next-line no-restricted-syntax
                 for (const param of inherits[inheritName]) {
                   const exists = operation[inheritName].some((opParam) => {
-                    return (opParam.name && opParam.name === param.name)
-                      || (opParam.$ref && opParam.$ref === param.$ref)
-                      || (opParam.$$ref && opParam.$$ref === param.$$ref)
-                      || (opParam === param);
+                    return (
+                      (opParam.name && opParam.name === param.name) ||
+                      (opParam.$ref && opParam.$ref === param.$ref) ||
+                      (opParam.$$ref && opParam.$$ref === param.$$ref) ||
+                      opParam === param
+                    );
                   });
 
                   if (!exists) {
