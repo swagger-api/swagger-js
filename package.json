@@ -30,8 +30,8 @@
   "scripts": {
     "automated-release": "release-it --config ./release/.release-it.json",
     "build": "run-s build:browser build:node",
-    "build:browser": "webpack --config config/webpack/core.babel.js",
-    "build:node": "webpack --config config/webpack/bundle.babel.js",
+    "build:browser": "webpack --config config/webpack/browser.config.babel.js",
+    "build:node": "webpack --config config/webpack/node.config.babel.js",
     "build:bundlesize": "bundlesize --config ./bundlesize.config.json",
     "lint": "eslint src/ test/",
     "lint:fix": "npm run lint -- --fix",
