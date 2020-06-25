@@ -1,11 +1,7 @@
-/**
- * @prettier
- */
-
-import path from 'path'
-import deepExtend from 'deep-extend'
-import TerserPlugin from 'terser-webpack-plugin'
-import nodeExternals from 'webpack-node-externals'
+import path from 'path';
+import deepExtend from 'deep-extend';
+import TerserPlugin from 'terser-webpack-plugin';
+import nodeExternals from 'webpack-node-externals';
 
 const baseRules = [
   {
@@ -13,13 +9,13 @@ const baseRules = [
     loader: 'babel-loader?retainLines=true',
     exclude: [/node_modules/],
   },
-]
+];
 
 export default function buildConfig(
-  {minimize = true, mangle = true, sourcemaps = true, includeDependencies = true, umd = false},
+  { minimize = true, mangle = true, sourcemaps = true, includeDependencies = true, umd = false },
   customConfig
 ) {
-  const plugins = []
+  const plugins = [];
 
   const completeConfig = deepExtend(
     {},
@@ -33,25 +29,25 @@ export default function buildConfig(
       devtool: 'source-map',
 
       output: {
-        path: path.join(__dirname, '../dist'),
+        path: path.join(__dirname, '..', '..', 'dist'),
         library: 'SwaggerClient',
         libraryExport: 'default',
         filename: 'index.js',
         ...(umd
           ? {
-            libraryTarget: 'umd',
-            globalObject: 'this',
-          }
+              libraryTarget: 'umd',
+              globalObject: 'this',
+            }
           : {
-            libraryTarget: 'commonjs2',
-          }),
+              libraryTarget: 'commonjs2',
+            }),
       },
 
       externals: includeDependencies
         ? {
             // js-yaml includes `esprima` by default, but we don't need it
-          esprima: true,
-        }
+            esprima: true,
+          }
         : [nodeExternals()],
 
       module: {
@@ -66,7 +62,7 @@ export default function buildConfig(
       optimization: {
         minimize: !!minimize,
         minimizer: [
-          compiler =>
+          (compiler) =>
             new TerserPlugin({
               cache: true,
               sourceMap: sourcemaps,
@@ -79,10 +75,10 @@ export default function buildConfig(
     },
 
     customConfig
-  )
+  );
 
   // deepExtend mangles Plugin instances, this doesn't
-  completeConfig.plugins = plugins.concat(customConfig.plugins || [])
+  completeConfig.plugins = plugins.concat(customConfig.plugins || []);
 
-  return completeConfig
+  return completeConfig;
 }
