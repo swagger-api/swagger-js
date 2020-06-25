@@ -7,5 +7,6 @@ module.exports = {
     '<rootDir>/test/data/',
     '<rootDir>/test/jest.setup.js',
     '<rootDir>/test/specmap/data/',
+    '<rootDir>/test/webpack-bundle/',
   ],
 };
