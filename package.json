@@ -37,7 +37,7 @@
     "lint:fix": "npm run lint -- --fix",
     "test": "run-s test:unit test:bundle",
     "test:unit": "jest  --runInBand --config ./config/jest/jest.unit.config.js ",
-    "test:unit:watch": "jest --watch",
+    "test:unit:watch": "jest --watch --config ./config/jest/jest.unit.config.js",
     "test:bundle": "run-s test:bundle:browser test:bundle:node",
     "test:bundle:browser": "npm run build:browser && jest --config ./config/jest/jest.bundle-browser.config.js",
     "test:bundle:node": "npm run build:node && jest --config ./config/jest/jest.bundle-node.config.js",
