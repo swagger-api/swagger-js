@@ -12,13 +12,16 @@ Script name | Description
 Script name | Description
 --- | ---
 `build` | Build a new set of JS assets, and output them to `/dist` and `/browser`.
-`build:bundle` | Build `/browser/index.js` only.
-`build:umd` | Build `/dist/index.js` only.
+`build:browser` | Build `/browser/index.js` only.
+`build:node` | Build `/dist/index.js` only.
 `build:bundlesize` | Check if the bundle size is within allowed size range.
 
 ### Testing
 Script name | Description
 --- | ---
-`test` | Run unit tests in Node and run ESLint in errors-only mode.
+`test` | Run unit and bundle tests.
 `test:unit` | Run unit tests in Node.
 `test:unit:watch` | Run tests with change watching.
+`test:bundle` | Run tests for browser and node build fragments.
+`test:bundle:browser` | Run tests for browser build fragments.
+`test:bundle:node` | Run tests for node build fragments.
