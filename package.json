@@ -36,9 +36,10 @@
     "build:bundlesize": "bundlesize --config ./bundlesize.config.json",
     "lint": "eslint src/ test/",
     "lint:fix": "npm run lint -- --fix",
-    "test": "run-s test:unit test:bundle",
-    "test:unit": "jest  --runInBand --config ./config/jest/jest.unit.config.js ",
-    "test:unit:watch": "jest --watch --config ./config/jest/jest.unit.config.js",
+    "test": "run-s test:unit:coverage test:bundle",
+    "test:unit": "jest --runInBand --config ./config/jest/jest.unit.config.js",
+    "test:unit:coverage": "jest --runInBand --config ./config/jest/jest.unit.coverage.config.js",
+    "test:unit:watch": "jest --runInBand --watch --config ./config/jest/jest.unit.config.js",
     "test:bundle": "run-s test:bundle:browser test:bundle:node",
     "test:bundle:browser": "npm run build:browser && jest --config ./config/jest/jest.bundle-browser.config.js",
     "test:bundle:node": "npm run build:node && jest --config ./config/jest/jest.bundle-node.config.js",
@@ -47,7 +48,7 @@
     "security-audit": "run-s -sc security-audit:all security-audit:prod",
     "security-audit:prod": "npm audit --production --audit-level=low",
     "security-audit:all": "npm audit --audit-level=moderate",
-    "clean": "rimraf ./browser ./dist ./.deps_check"
+    "clean": "rimraf ./browser ./dist ./.deps_check ./coverage"
   },
   "keywords": [
     "oai",
