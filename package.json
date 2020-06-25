@@ -41,13 +41,12 @@
     "test:bundle": "run-s test:bundle:browser test:bundle:node",
     "test:bundle:browser": "npm run build:browser && jest --config ./config/jest/jest.bundle-browser.config.js",
     "test:bundle:node": "npm run build:node && jest --config ./config/jest/jest.bundle-node.config.js",
-    "deps": "run-s deps:license deps:size",
     "deps:license": "license-checker --production --csv --out $npm_package_config_deps_check_dir/licenses.csv && license-checker --development --csv --out $npm_package_config_deps_check_dir/licenses-dev.csv",
-    "deps:size": "webpack --config config/webpack/test_size.babel.js --json | webpack-bundle-size-analyzer >| $npm_package_config_deps_check_dir/sizes.txt",
+    "deps:size": "webpack --config config/webpack/browser.config.babel.js --json | webpack-bundle-size-analyzer >| $npm_package_config_deps_check_dir/sizes.txt",
     "security-audit": "run-s -sc security-audit:all security-audit:prod",
     "security-audit:prod": "npm audit --production --audit-level=low",
     "security-audit:all": "npm audit --audit-level=moderate",
-    "clean": "rimraf ./browser ./dist"
+    "clean": "rimraf ./browser ./dist ./.deps_check"
   },
   "keywords": [
     "oai",

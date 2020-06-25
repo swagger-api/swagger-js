@@ -25,3 +25,14 @@ Script name | Description
 `test:bundle` | Run tests for browser and node build fragments.
 `test:bundle:browser` | Run tests for browser build fragments.
 `test:bundle:node` | Run tests for node build fragments.
+
+### Auditing
+
+Script name | Description
+--- | ---
+`security-audit` | Runs npm security audit for production and development dependencies.
+`security-audit:all` | Runs npm security audit for all dependencies with `moderate` audit level. 
+`security-audit:prod` | Runs npm security audit for production dependencies with `low` audit level.
+`deps:license` | Generates attribution files for production and development dependencies
+`deps:size` | Generates dependencies size breakdown report.
+
