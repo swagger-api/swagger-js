@@ -4,7 +4,7 @@ export default buildConfig(
   {
     minimize: false,
     mangle: false,
-    sourcemaps: true,
+    sourcemaps: false,
     includeDependencies: false,
     umd: false,
   },
