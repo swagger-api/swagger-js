@@ -39,8 +39,6 @@ jobs:
       run: npm run security-audit
     - name: Build swagger-js
       run: npm run build
-    - name: Check bundlesize
-      run: npm run build:bundlesize
 
   release:
     if: contains(github.ref, 'master')

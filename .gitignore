@@ -15,14 +15,15 @@ env.properties
 local.yaml
 .deps.json
 /.karma
+/lib
+/es
 diagrams/
 notes/
 .DS_Store
 .deps_check
 test/specmap/data/private
 test/webpack-bundle/.tmp
-browser
-
+/swagger-client-*.*.*.tgz
 jest-stare
 
 # Automated releases

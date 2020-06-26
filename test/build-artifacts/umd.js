@@ -1,10 +1,6 @@
-/**
- * @jest-environment jsdom
- */
+import SwaggerClient from '../../dist/swagger-client.browser.min';
 
-import SwaggerClient from '../../browser/index';
-
-describe('webpack browser build', () => {
+describe('webpack browser umd build', () => {
   test('should export a function', () => {
     expect(SwaggerClient).toBeInstanceOf(Function);
   });
