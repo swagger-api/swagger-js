@@ -96,7 +96,7 @@
     "xmock": "=0.3.0"
   },
   "dependencies": {
-    "@babel/runtime-corejs2": "=7.10.2",
+    "@babel/runtime-corejs2": "=7.10.3",
     "btoa": "=1.2.1",
     "buffer": "=5.6.0",
     "cookie": "=0.4.1",
