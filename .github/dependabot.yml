@@ -14,3 +14,4 @@ updates:
     - dependency-name: "node-fetch"
     - dependency-name: "release-it"
     - dependency-name: "@release-it/conventional-changelog"
+    
