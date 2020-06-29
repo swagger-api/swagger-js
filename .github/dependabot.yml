@@ -10,7 +10,7 @@ updates:
   open-pull-requests-limit: 10
   ignore:
     # cross-fetch and node-fetch must be synced manually
-    - dependency_name: "cross-fetch"
-    - dependency_name: "node-fetch"
-    - dependency_name: "release-it"
-    - dependency_name: "@release-it/conventional-changelog"
+    - dependency-name: "cross-fetch"
+    - dependency-name: "node-fetch"
+    - dependency-name: "release-it"
+    - dependency-name: "@release-it/conventional-changelog"
