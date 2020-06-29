@@ -71,7 +71,7 @@
     "@babel/preset-env": "=7.10.3",
     "@babel/register": "=7.10.3",
     "@commitlint/cli": "=8.3.5",
-    "@commitlint/config-conventional": "=8.3.4",
+    "@commitlint/config-conventional": "=9.0.1",
     "@release-it/conventional-changelog": "=1.1.0",
     "babel-loader": "=8.1.0",
     "babel-plugin-add-module-exports": "=1.0.2",
