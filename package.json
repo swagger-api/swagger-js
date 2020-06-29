@@ -87,6 +87,7 @@
     "fetch-mock": "=9.10.1",
     "glob": "=7.1.6",
     "husky": "=4.2.5",
+    "inspectpack": "=4.5.2",
     "install": "=0.13.0",
     "jest": "=24.8.0",
     "json-loader": "=0.5.7",
