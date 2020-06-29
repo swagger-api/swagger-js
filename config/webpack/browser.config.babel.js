@@ -1,6 +1,7 @@
 import path from 'path';
 import webpack from 'webpack';
 import { StatsWriterPlugin } from 'webpack-stats-plugin';
+import { DuplicatesPlugin } from 'inspectpack/plugin';
 import LodashModuleReplacementPlugin from 'lodash-webpack-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
 
@@ -44,6 +45,12 @@ const browser = {
     new LodashModuleReplacementPlugin(),
     new webpack.LoaderOptionsPlugin({
       minimize: true,
+    }),
+    new DuplicatesPlugin({
+      // emit compilation warning or error? (Default: `false`)
+      emitErrors: true,
+      // display full duplicates information? (Default: `false`)
+      verbose: true,
     }),
     new StatsWriterPlugin({
       filename: path.join('swagger-client.browser-stats.json'),
