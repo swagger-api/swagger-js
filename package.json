@@ -72,7 +72,7 @@
     "@babel/register": "=7.10.3",
     "@commitlint/cli": "=8.3.5",
     "@commitlint/config-conventional": "=8.3.4",
-    "@release-it/conventional-changelog": "=1.1.0",
+    "@release-it/conventional-changelog": "=1.1.4",
     "babel-loader": "=8.1.0",
     "babel-plugin-add-module-exports": "=1.0.2",
     "babel-plugin-lodash": "=3.3.4",
