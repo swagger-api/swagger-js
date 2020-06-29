@@ -2,6 +2,7 @@ import path from 'path';
 import webpack from 'webpack';
 import { StatsWriterPlugin } from 'webpack-stats-plugin';
 import { DuplicatesPlugin } from 'inspectpack/plugin';
+import { WebpackBundleSizeAnalyzerPlugin } from 'webpack-bundle-size-analyzer';
 import LodashModuleReplacementPlugin from 'lodash-webpack-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
 
@@ -52,6 +53,7 @@ const browser = {
       // display full duplicates information? (Default: `false`)
       verbose: true,
     }),
+    new WebpackBundleSizeAnalyzerPlugin('swagger-client.browser-sizes.txt'),
     new StatsWriterPlugin({
       filename: path.join('swagger-client.browser-stats.json'),
       fields: null,
