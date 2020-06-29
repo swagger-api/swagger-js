@@ -35,5 +35,4 @@ Script name | Description
 `security-audit:all` | Runs npm security audit for all dependencies with `moderate` audit level. 
 `security-audit:prod` | Runs npm security audit for production dependencies with `low` audit level.
 `deps:license` | Generates attribution files for production and development dependencies
-`deps:size` | Generates dependencies size breakdown report.
 
