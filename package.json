@@ -104,6 +104,7 @@
     "webpack": "=4.43.0",
     "webpack-bundle-size-analyzer": "=3.1.0",
     "webpack-cli": "=3.3.12",
+    "webpack-stats-plugin": "=0.3.2",
     "xmock": "=0.3.0"
   },
   "dependencies": {

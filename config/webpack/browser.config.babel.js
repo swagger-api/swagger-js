@@ -1,5 +1,6 @@
 import path from 'path';
 import webpack from 'webpack';
+import { StatsWriterPlugin } from 'webpack-stats-plugin';
 import LodashModuleReplacementPlugin from 'lodash-webpack-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
 
@@ -39,6 +40,16 @@ const browser = {
       },
     ],
   },
+  plugins: [
+    new LodashModuleReplacementPlugin(),
+    new webpack.LoaderOptionsPlugin({
+      minimize: true,
+    }),
+    new StatsWriterPlugin({
+      filename: path.join('swagger-client.browser-stats.json'),
+      fields: null,
+    }),
+  ],
   optimization: {
     minimize: false,
     usedExports: false,
