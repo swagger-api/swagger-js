@@ -1,4 +1,3 @@
-import '@babel/runtime-corejs2/regenerator';
 import fetchMock from 'fetch-mock';
 import fetch, { Headers, Request, Response } from 'cross-fetch';
 

@@ -1,5 +1,4 @@
 import * as jsonPatch from 'fast-json-patch';
-import regenerator from '@babel/runtime-corejs2/regenerator';
 import deepExtend from 'deep-extend';
 import cloneDeep from 'lodash/cloneDeep';
 
@@ -349,7 +348,7 @@ function isJsonPatch(patch) {
 }
 
 function isGenerator(thing) {
-  return regenerator.isGeneratorFunction(thing);
+  return Object.prototype.toString.call(thing) === '[object GeneratorFunction]';
 }
 
 function isMutation(patch) {
