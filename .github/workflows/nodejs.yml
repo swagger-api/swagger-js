@@ -51,10 +51,13 @@ jobs:
     needs: [build]
 
     steps:
+    - uses: actions/checkout@v2
     - name: Use Node.js 8.x
       uses: actions/setup-node@v1
       with:
         node-version: 8.x
+    - name: Install dependencies
+      run: npm ci
     - name: Download Node.js 10.x build artifacts
       uses: actions/download-artifact@v1
       with:
