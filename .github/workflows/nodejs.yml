@@ -60,19 +60,19 @@ jobs:
       with:
         name: node-build-artifacts-10.x
     - name: Run Node.js 10.x build artifacts tests
-      run: node -p "require('./node-build-artifacts-10.x/lib')"
+      run: node -p "require('./node-build-artifacts-10.x')"
     - name: Download Node.js 12.x build artifacts
       uses: actions/download-artifact@v1
       with:
         name: node-build-artifacts-12.x
     - name: Run Node.js 12.x build artifacts tests
-      run: node -p "require('./node-build-artifacts-12.x/lib')"
+      run: node -p "require('./node-build-artifacts-12.x')"
     - name: Download Node.js 14.x build artifacts
       uses: actions/download-artifact@v1
       with:
         name: node-build-artifacts-14.x
     - name: Run Node.js 14.x build artifacts tests
-      run: node -p "require('./node-build-artifacts-14.x/lib')"
+      run: node -p "require('./node-build-artifacts-14.x')"
   release:
     if: contains(github.ref, 'master')
     runs-on: ubuntu-latest
