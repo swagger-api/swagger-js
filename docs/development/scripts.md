@@ -32,7 +32,7 @@ Script name | Description
 Script name | Description
 --- | ---
 `security-audit` | Runs npm security audit for production and development dependencies.
-`security-audit:all` | Runs npm security audit for all dependencies with `moderate` audit level. 
+`security-audit:dev` | Runs npm security audit for all development dependencies with `moderate` audit level. 
 `security-audit:prod` | Runs npm security audit for production dependencies with `low` audit level.
 `deps:license` | Generates attribution files for production and development dependencies
 
