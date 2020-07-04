@@ -102,6 +102,75 @@ Option | Description
 
 > *__Note:__ for more information about [requestInterceptor](http-client.md#request-interceptor), [responseInterceptor](http-client.md#response-interceptor) and [userFetch](https://github.com/swagger-api/swagger-js/blob/master/docs/usage/http-client.md#custom-fetch), please refer to the [HTTP Client](http-client.md) documentation.*
 
+### Options override
+
+Every callable OAS operationId allows to pass an additional `Options` object as a second argument.
+This `Options` object allows overrides on single callable OAS operationId basis.
+Along with that it can carry additional data for [OpenApi 3.x calls](tags-interface.md#openapi-v3x).
+
+*Here is an example of overriding `requestInterceptor` on single callable OAS operationId basis.*
+
+```js
+import SwaggerClient from 'swagger-client';
+
+const topLevelRequestInterceptor = (req) => {
+  console.log('executing top level request interceptor');
+  return req;
+};
+
+const interfaceLevelRequestInterceptor = (req) => {
+  console.log('executing interface level request interceptor');
+  return req;
+};
+
+new SwaggerClient({
+  url: 'http://petstore.swagger.io/v2/swagger.json',
+  requestInterceptor: topLevelRequestInterceptor,
+}).then((client) =>
+  client.apis.user.getUserByName(
+    { username: 'username' },
+    {
+      requestInterceptor: interfaceLevelRequestInterceptor,
+    }
+  )
+);
+```
+
+*Here is an example of appending additional `requestInterceptor` to existing request interceptors.*
+
+```js
+import SwaggerClient from 'swagger-client';
+
+const pipeP = (...fns) => (args) => fns.reduce((arg, fn) => arg.then(fn), Promise.resolve(args));
+
+const topLevelRequestInterceptor = (req) => {
+  console.log('executing top level request interceptor');
+  return req;
+};
+
+const interfaceLevelRequestInterceptor = (req) => {
+  console.log('executing interface level request interceptor');
+  return req;
+};
+
+new SwaggerClient({
+  url: 'http://petstore.swagger.io/v2/swagger.json',
+  requestInterceptor: topLevelRequestInterceptor,
+}).then((client) =>
+  client.apis.user.getUserByName(
+    { username: 'username' },
+    {
+      requestInterceptor: pipeP(topLevelRequestInterceptor, interfaceLevelRequestInterceptor),
+    }
+  )
+);
+```
+
+Here, we're overriding `requestInterceptor` for `getUserByName` call, but instead 
+of completely replacing the `topLevelRequestInterceptor` we just want to add additional
+`interfaceLevelRequestInterceptor` that gets executed right after `topLevelRequestInterceptor`.
+To learn more about request interceptor composition, checkout [HTTP Client](http-client.md#request-interceptor) documentation.
+
 ### OpenAPI v2.x
 
 ```js
