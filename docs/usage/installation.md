@@ -29,9 +29,12 @@ const SwaggerClient = require('swagger-client')
 You can embed Swagger UI's code directly in your HTML by using [unpkg's](https://unpkg.com/) interface.
 
 ```html
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
-    <script src="//unpkg.com/swagger-client"></script>
+    <meta charset="utf-8">
+    <title>SwaggerClient test</title>
+    <script src="https://unpkg.com/swagger-client"></script>
     <script>
       new SwaggerClient('http://petstore.swagger.io/v2/swagger.json')
         .then(
