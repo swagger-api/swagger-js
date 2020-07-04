@@ -1,0 +1,12 @@
+{
+  "parserOptions": {
+    "sourceType": "script",
+    "ecmaFeatures": {
+      "impliedStrict": false
+    }
+  },
+  "rules": {
+    "strict": [2, "safe"],
+    "import/no-extraneous-dependencies": 0
+  }
+}
