@@ -48,7 +48,6 @@ const isAdvisoryNotWhitelisted = (whitelist) => (advisoryId) =>
 
 (async () => {
   const auditLevel = auditLevelFromArguments(auditArguments);
-
   const jsonReport = JSON.parse(
     await execShellCommand(`npm audit --json ${auditArguments.join(' ')}`)
   );
@@ -56,12 +55,14 @@ const isAdvisoryNotWhitelisted = (whitelist) => (advisoryId) =>
   const advisoriesIds = Object.keys(jsonReport.advisories)
     .filter(isAdvisoryNotWhitelisted(whitelist))
     .filter(lteLevel(auditLevel));
+  const exitCode = advisoriesIds.length > 0 ? 1 : 0;
 
-  const textReport = await execShellCommand(`npm audit ${auditArguments.join(' ')}`);
+  if (exitCode === 1 || !process.env.CI) {
+    const textReport = await execShellCommand(`npm audit ${auditArguments.join(' ')}`);
+    console.log(textReport);
+  }
 
-  console.log(textReport);
-
-  if (whitelist.length > 0) {
+  if (exitCode === 1 && whitelist.length > 0 && !process.env.CI) {
     console.info(
       `Ignoring following security advisories:\n\n ----------------------------------${whitelist
         .map(
@@ -72,7 +73,5 @@ const isAdvisoryNotWhitelisted = (whitelist) => (advisoryId) =>
     );
   }
 
-  if (advisoriesIds.length > 0) {
-    process.exit(1);
-  }
+  process.exit(exitCode);
 })();
