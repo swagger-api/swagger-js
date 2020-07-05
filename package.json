@@ -9,7 +9,6 @@
   "main": "lib/index.js",
   "module": "es/index.js",
   "jsnext:main": "es/index.js",
-  "browser": "dist/swagger-client.browser.min.js",
   "unpkg": "dist/swagger-client.browser.min.js",
   "repository": "git@github.com:swagger-api/swagger-js.git",
   "contributors": [
