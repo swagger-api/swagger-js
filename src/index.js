@@ -69,7 +69,7 @@ Swagger.prototype = {
     return Swagger.resolve({
       spec: this.spec,
       url: this.url,
-      http: this.http,
+      http: this.http || this.fetch,
       allowMetaPatches: this.allowMetaPatches,
       useCircularStructures: this.useCircularStructures,
       requestInterceptor: this.requestInterceptor || null,
