@@ -1,5 +1,5 @@
 // commonjs import is here by design to test native node.js require function on artifact
-const SwaggerClient = require('../../lib');
+const SwaggerClient = require('../../lib/commonjs');
 
 describe('babel commonjs artifact', () => {
   test('should export a function', () => {
