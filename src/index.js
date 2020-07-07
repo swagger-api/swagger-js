@@ -102,4 +102,8 @@ Swagger.prototype.applyDefaults = function applyDefaults() {
   }
 };
 
+// add backwards compatibility with older versions of swagger-ui
+// Refs https://github.com/swagger-api/swagger-ui/issues/6210
+export const { helpers } = Swagger;
+
 export default Swagger;
