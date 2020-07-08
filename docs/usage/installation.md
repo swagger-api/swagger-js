@@ -21,7 +21,7 @@ import SwaggerClient from 'swagger-client'
 
 [CommonJS imports](https://en.wikipedia.org/wiki/CommonJS)
 ```js
-const SwaggerClient = require('swagger-client')
+const SwaggerClient = require('swagger-client');
 ```
 
 ### unpkg
