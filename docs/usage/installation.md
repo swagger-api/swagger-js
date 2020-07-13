@@ -16,12 +16,12 @@ After installed successfully:
 
 [ES6 imports](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import)
 ```js
-import SwaggerClient from 'swagger-client'
+import SwaggerClient from 'swagger-client';
 ```
 
 [CommonJS imports](https://en.wikipedia.org/wiki/CommonJS)
 ```js
-const SwaggerClient = require('swagger-client')
+const SwaggerClient = require('swagger-client');
 ```
 
 ### unpkg
