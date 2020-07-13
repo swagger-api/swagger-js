@@ -114,7 +114,7 @@
     "fast-json-patch": "=2.2.1",
     "isomorphic-form-data": "=2.0.0",
     "js-yaml": "=3.14.0",
-    "lodash": "=4.17.15",
+    "lodash": "=4.17.19",
     "qs": "=6.9.4",
     "querystring-browser": "=1.0.4",
     "traverse": "=0.6.6",
