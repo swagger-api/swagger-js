@@ -6,6 +6,20 @@ import { WebpackBundleSizeAnalyzerPlugin } from 'webpack-bundle-size-analyzer';
 import LodashModuleReplacementPlugin from 'lodash-webpack-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
 
+const module = {
+  rules: [
+    {
+      test: /\.js$/,
+      // `cross-fetch` requires a number of polyfills (like Promise), so we
+      // let `@babel/plugin-transform-runtime` inject them.
+      exclude: /node_modules\/(?!cross-fetch\/)/,
+      use: {
+        loader: 'babel-loader',
+      },
+    },
+  ],
+};
+
 const browser = {
   mode: 'production',
   entry: ['./src/index.js'],
@@ -28,20 +42,7 @@ const browser = {
     modules: ['node_modules'],
     extensions: ['.js', '.json'],
   },
-  module: {
-    rules: [
-      {
-        test: /\.(js)?$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            babelrc: true,
-          },
-        },
-      },
-    ],
-  },
+  module,
   plugins: [
     new LodashModuleReplacementPlugin(),
     new webpack.LoaderOptionsPlugin({
@@ -91,20 +92,7 @@ const browserMin = {
     modules: ['node_modules'],
     extensions: ['.js', '.json'],
   },
-  module: {
-    rules: [
-      {
-        test: /\.(js)?$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            babelrc: true,
-          },
-        },
-      },
-    ],
-  },
+  module,
   plugins: [
     new LodashModuleReplacementPlugin(),
     new webpack.LoaderOptionsPlugin({
