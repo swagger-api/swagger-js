@@ -64,6 +64,7 @@
             "version": "^7.10.4"
           }
         ],
+        "@babel/plugin-transform-modules-commonjs",
         "@babel/proposal-class-properties",
         "@babel/proposal-object-rest-spread",
         "lodash"
