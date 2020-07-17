@@ -51,6 +51,7 @@ module.exports = {
       ],
     },
     browser: {
+      sourceType: 'unambiguous', // https://github.com/webpack/webpack/issues/4039#issuecomment-419284940
       presets: [
         [
           '@babel/preset-env',
@@ -67,7 +68,6 @@ module.exports = {
             version: '^7.10.4',
           },
         ],
-        '@babel/plugin-transform-modules-commonjs',
         '@babel/proposal-class-properties',
         '@babel/proposal-object-rest-spread',
         'lodash',
