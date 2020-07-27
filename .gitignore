@@ -26,5 +26,6 @@ test/webpack-bundle/.tmp
 /swagger-client-*.*.*.tgz
 jest-stare
 
+
 # Automated releases
 release/.version
