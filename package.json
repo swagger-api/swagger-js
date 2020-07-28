@@ -50,8 +50,8 @@
     "test:artifact:commonjs": "npm run build:commonjs && cross-env BABEL_ENV=commonjs jest --config ./config/jest/jest.artifact-commonjs.config.js",
     "deps:license": "license-checker --production --csv --out $npm_package_config_deps_check_dir/licenses.csv && license-checker --development --csv --out $npm_package_config_deps_check_dir/licenses-dev.csv",
     "security-audit": "run-s -sc security-audit:prod security-audit:dev",
-    "security-audit:prod": "node scripts/npm-audit.js --production --only=prod --audit-level=low",
-    "security-audit:dev": "node scripts/npm-audit.js --only=dev --audit-level=moderate",
+    "security-audit:prod": "npm-audit --production --only=prod --audit-level=low",
+    "security-audit:dev": "npm-audit --only=dev --audit-level=moderate",
     "clean": "rimraf ./dist ./lib ./es ./.deps_check ./coverage"
   },
   "keywords": [
@@ -69,6 +69,7 @@
     "@babel/plugin-transform-runtime": "=7.10.5",
     "@babel/preset-env": "=7.10.4",
     "@babel/register": "=7.10.5",
+    "@char0n/npm-audit": "gist:2964395223d7943c10396f59df9a8ea0",
     "@commitlint/cli": "=9.1.1",
     "@commitlint/config-conventional": "=9.1.1",
     "@release-it/conventional-changelog": "=1.1.0",
