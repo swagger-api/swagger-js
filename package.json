@@ -65,7 +65,7 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@babel/cli": "=7.10.5",
-    "@babel/core": "=7.10.5",
+    "@babel/core": "=7.11.0",
     "@babel/plugin-transform-runtime": "=7.10.5",
     "@babel/preset-env": "=7.11.0",
     "@babel/register": "=7.10.5",
@@ -87,7 +87,7 @@
     "husky": "=4.2.5",
     "inspectpack": "=4.5.2",
     "install": "=0.13.0",
-    "jest": "=26.1.0",
+    "jest": "=26.2.1",
     "json-loader": "=0.5.7",
     "license-checker": "=25.0.1",
     "lint-staged": "=10.2.11",
