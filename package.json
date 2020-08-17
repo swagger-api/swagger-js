@@ -71,7 +71,7 @@
     "@babel/register": "=7.10.5",
     "@char0n/npm-audit": "gist:2964395223d7943c10396f59df9a8ea0",
     "@commitlint/cli": "^9.1.2",
-    "@commitlint/config-conventional": "=9.1.1",
+    "@commitlint/config-conventional": "=9.1.2",
     "@release-it/conventional-changelog": "^1.1.4",
     "babel-loader": "=8.1.0",
     "babel-plugin-lodash": "=3.3.4",
