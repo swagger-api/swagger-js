@@ -7,6 +7,8 @@ module.exports = {
           {
             debug: false,
             modules: 'commonjs',
+            corejs: { version: 3 },
+            useBuiltIns: false,
             targets: {
               node: '8',
             },
@@ -33,6 +35,8 @@ module.exports = {
           {
             debug: false,
             modules: false,
+            corejs: { version: 3 },
+            useBuiltIns: false,
           },
         ],
       ],
@@ -41,8 +45,8 @@ module.exports = {
           '@babel/plugin-transform-runtime',
           {
             absoluteRuntime: false,
-            corejs: 2,
-            version: '^7.10.4',
+            corejs: 3,
+            version: '^7.11.2',
           },
         ],
         '@babel/proposal-class-properties',
@@ -57,6 +61,8 @@ module.exports = {
           '@babel/preset-env',
           {
             debug: false,
+            corejs: { version: 3 },
+            useBuiltIns: false,
           },
         ],
       ],
@@ -64,8 +70,8 @@ module.exports = {
         [
           '@babel/plugin-transform-runtime',
           {
-            corejs: 2,
-            version: '^7.10.4',
+            corejs: 3,
+            version: '^7.11.2',
           },
         ],
         '@babel/proposal-class-properties',

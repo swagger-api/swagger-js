@@ -1,4 +1,4 @@
-import '@babel/runtime-corejs2/regenerator';
+import '@babel/runtime-corejs3/regenerator';
 import SwaggerClient from '../../es';
 
 describe('babel ES6 imports artifact', () => {
