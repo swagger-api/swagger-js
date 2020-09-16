@@ -58,7 +58,7 @@ export function generateAbsoluteRefPatches(
   const patches = [];
 
   traverse(obj).forEach(function callback() {
-    if (targetKeys.indexOf(this.key) > -1) {
+    if (targetKeys.indexOf(this.key) > -1 && typeof this.node === 'string') {
       const nodePath = this.path; // this node's path, relative to `obj`
       const fullPath = basePath.concat(this.path);
 
