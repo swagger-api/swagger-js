@@ -1,0 +1,55 @@
+openapi: 3.0.0
+servers:
+  - description: "mock definition for swagger-client issue #1719"
+    url: https://test.com/v1
+info:
+  version: "0.0.1"
+  title: Test Defect
+  description: >-
+    A client side JS error occured when the throwError endpoint was expanded in
+    the UI Docs panel. This error was specifically visible when a $ref is seen 
+    by the subtree resolver after an allOf or after an anyOf. E.g. the subtree
+    resolver was treating the $ref as a reference instead as an object.
+paths:
+  /throwError:
+    post:
+      summary: Opening this documentation (previously) throws an error
+      description: Allows baskets of new prospects to be imported in to a portal
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/1_SchemaRef'
+        description: the data to import
+        required: true
+components:
+  schemas:
+    1_SchemaRef:
+      type: object
+      properties:
+        propertyOne:
+          type: array
+          items:
+            $ref: '#/components/schemas/2_RefWithAllOf'
+
+    2_RefWithAllOf:
+      allOf:
+        - $ref: '#/components/schemas/3_InnerAllOfRef'
+    
+    3_InnerAllOfRef:
+      type: object
+      properties:
+        propertyTwo:
+          $ref: '#/components/schemas/0_TargetRef'
+
+    0_TargetRef:
+      type: object
+      properties:
+        $ref: # this $ref should be treated as an object, not a reference string
+          type: string
+        devTestRefId:
+          type: string
+
