@@ -626,6 +626,74 @@ import SwaggerClient from 'swagger-client';
 SwaggerClient.http.withCredentials = true;
 ```
 
+#### Request cancellation with AbortSignal
+
+You may cancel requests with [AbortController](https://developer.mozilla.org/en-US/docs/Web/API/AbortController).
+The AbortController interface represents a controller object that allows you to abort one or more Web requests as and when desired.
+Using AbortController, you can easily implement request timeouts.
+
+###### Node.js
+
+AbortController needs to be introduced in Node.js environment via [abort-controller](https://www.npmjs.com/package/abort-controller) npm package.
+
+```js
+const SwaggerClient = require('swagger-client');
+const AbortController = require('abort-controller');
+
+const controller = new AbortController();
+const { signal } = controller;
+const timeout = setTimeout(() => {
+  controller.abort();
+}, 1);
+
+(async () => {
+  try {
+    await SwaggerClient.http({ url: 'https://www.google.com', signal });
+  } catch (error) {
+    if (error.name === 'AbortError') {
+      console.error('request was aborted');
+    }
+  } finally {
+    clearTimeout(timeout);
+  }
+})();
+```
+
+###### Browser
+
+AbortController is part of modern [Web APIs](https://developer.mozilla.org/en-US/docs/Web/API/AbortController). 
+No need to install it explicitly.
+
+```html
+<html>
+  <head>
+    <script src="//unpkg.com/swagger-client"></script>
+    <script>
+        const controller = new AbortController();
+        const { signal } = controller;
+        const timeout = setTimeout(() => {
+          controller.abort();
+        }, 1);
+
+        (async () => {
+          try {
+            await SwaggerClient.http({ url: 'https://www.google.com', signal });
+          } catch (error) {
+            if (error.name === 'AbortError') {
+              console.error('request was aborted');
+            }
+          } finally {
+            clearTimeout(timeout);
+          }
+        })();
+    </script>
+  </head>
+  <body>
+    check console in browser's dev. tools
+  </body>
+</html>
+```
+
 #### Alternate API
 
 It's also possible (for convenience) to call HTTP Client from `SwaggerClient` instances.
