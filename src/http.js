@@ -347,7 +347,7 @@ function buildFormData(reqForm) {
       if (Array.isArray(value)) {
         // eslint-disable-next-line no-restricted-syntax
         for (const v of value) {
-          formData.append(key, v);
+          formData.append(`${key}[]`, v);
         }
       } else {
         formData.append(key, value);
