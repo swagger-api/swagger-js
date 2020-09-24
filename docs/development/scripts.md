@@ -12,7 +12,7 @@ Script name | Description
 Script name | Description
 --- | ---
 `build` | Build a new set of JS assets, and output them to `/dist` and `/browser`.
-`build:umb:browser` | Build `/dist/swagger-client.browser.*.js` files.
+`build:umd:browser` | Build `/dist/swagger-client.browser.*.js` files.
 `build:common` | Build `/lib` directory containing ES5 code with commonjs imports.
 `build:es` | Build `/es` directory containing ES5 code with ES6 imports
 
