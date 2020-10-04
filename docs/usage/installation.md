@@ -57,5 +57,5 @@ See unpkg's main page for more information on how to use [unpkg](https://unpkg.c
 
 ### Static files without HTTP or HTML
 
-Once swagger-ui has successfully generated the `/dist` and `/browser` directory, 
-you can copy files from those directories to your own file system and host from there.
+Once swagger-ui has successfully generated the `/dist` directory, 
+you can copy files from that directory to your own file system and host from there.
