@@ -2,10 +2,6 @@
   "name": "swagger-client",
   "version": "3.11.1",
   "description": "SwaggerJS - a collection of interfaces for OAI specs",
-  "engines": {
-    "node": ">=10.21.0",
-    "npm": ">=6.14.5"
-  },
   "main": "lib/commonjs.js",
   "module": "es/index.js",
   "jsnext:main": "es/index.js",
