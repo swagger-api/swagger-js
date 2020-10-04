@@ -16,7 +16,7 @@ Current Node.js Active LTS:
 - NPM 6.x
 
 Current Node.js Maintenance LTS:
-- Node.js 10.x
+- Node.js >=10.21.0
 - NPM 6.x
 
 > Note: our build artifacts should also work on older node versions such as node>=8.
