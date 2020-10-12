@@ -70,11 +70,11 @@ describe('subtree $ref resolver', () => {
       errors: [],
       spec: {
         one: {
-          $$ref: '#/two',
+          $$ref: 'http://example.com/swagger.json#/two',
           a: {
-            $$ref: '#/three',
+            $$ref: 'http://example.com/swagger.json#/three',
             b: {
-              $ref: '#/two',
+              $ref: 'http://example.com/swagger.json#/two',
             },
           },
         },
@@ -85,7 +85,7 @@ describe('subtree $ref resolver', () => {
         },
         three: {
           b: {
-            $ref: '#/two',
+            $ref: 'http://example.com/swagger.json#/two',
           },
         },
       },
@@ -704,9 +704,9 @@ describe('subtree $ref resolver', () => {
       spec: {
         foo: {
           bar: {
-            $$ref: './remote.json',
+            $$ref: 'http://example.com/remote.json',
             baz: {
-              $$ref: '#/remoteOther',
+              $$ref: 'http://example.com/remote.json#/remoteOther',
               result: 'it works!',
             },
             remoteOther: {
@@ -717,7 +717,7 @@ describe('subtree $ref resolver', () => {
       },
     });
   });
-  test.only('should redirect and resolve nested remote document requests', async () => {
+  test('should redirect and resolve nested remote document requests', async () => {
     const input = {
       foo: {
         bar: {
