@@ -61,7 +61,7 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@babel/cli": "=7.12.1",
-    "@babel/core": "=7.12.1",
+    "@babel/core": "=7.12.3",
     "@babel/plugin-transform-runtime": "=7.12.1",
     "@babel/preset-env": "=7.12.1",
     "@babel/register": "=7.12.1",
