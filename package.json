@@ -83,7 +83,7 @@
     "husky": "=4.3.0",
     "inspectpack": "=4.5.2",
     "install": "=0.13.0",
-    "jest": "=26.5.3",
+    "jest": "=26.6.0",
     "json-loader": "=0.5.7",
     "license-checker": "=25.0.1",
     "lint-staged": "=10.4.2",
