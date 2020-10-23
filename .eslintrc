@@ -3,7 +3,6 @@
   "env": {
     "shared-node-browser": true,
     "es6": true,
-    "test": true,
     "es2017": true
   },
   "globals": {

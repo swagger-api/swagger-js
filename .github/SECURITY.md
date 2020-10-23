@@ -4,7 +4,7 @@ If you believe you've found an exploitable security issue in Swagger Client,
 **please don't create a public issue**. 
 
 
-## Supported versions
+## Supported versions add
 
 This is the list of versions of `swagger-client` which are
 currently being supported with security updates.
