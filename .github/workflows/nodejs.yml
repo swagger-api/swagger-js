@@ -31,7 +31,7 @@ jobs:
           PRESET: DEPENDABOT_MINOR
 
   build:
-    runs-on: ubuntu-latest change
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
