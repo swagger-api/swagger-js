@@ -12,6 +12,7 @@ on:
 jobs:
   merge-me:
     name: Merge me!
+    if: github.actor == 'dependabot[bot]'
 
     runs-on: ubuntu-latest
 
