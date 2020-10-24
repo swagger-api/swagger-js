@@ -771,4 +771,47 @@ describe('Authorization - OpenAPI Specification 3.0', () => {
       },
     });
   });
+  test('should support openIdConnect security scheme', () => {
+    const spec = {
+      openapi: '3.0.0',
+      components: {
+        securitySchemes: {
+          myOIDC: {
+            type: 'openIdConnect',
+            openIdConnectUrl: 'https://accounts.google.com/.well-known/openid-configuration',
+          },
+        },
+      },
+      paths: {
+        '/': {
+          get: {
+            operationId: 'myOperation',
+            security: [{ myOIDC: [] }],
+          },
+        },
+      },
+    };
+
+    const req = buildRequest({
+      spec,
+      operationId: 'myOperation',
+      securities: {
+        authorized: {
+          myOIDC: {
+            token: {
+              access_token: 'myTokenValue',
+            },
+          },
+        },
+      },
+    });
+    expect(req).toEqual({
+      method: 'GET',
+      url: '/',
+      credentials: 'same-origin',
+      headers: {
+        Authorization: 'Bearer myTokenValue',
+      },
+    });
+  });
 });

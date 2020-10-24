@@ -128,7 +128,7 @@ export function applySecurities({ request, securities = {}, operation = {}, spec
           if (/^bearer$/i.test(schema.scheme)) {
             result.headers.Authorization = `Bearer ${value}`;
           }
-        } else if (type === 'oauth2') {
+        } else if (type === 'oauth2' || type === 'openIdConnect') {
           const token = auth.token || {};
           const tokenName = schema['x-tokenName'] || 'access_token';
           const tokenValue = token[tokenName];
