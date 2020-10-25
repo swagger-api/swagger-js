@@ -110,7 +110,7 @@
     "cookie": "~0.4.1",
     "cross-fetch": "^3.0.6",
     "deep-extend": "~0.6.0",
-    "fast-json-patch": "^2.2.1",
+    "fast-json-patch": "^3.0.0-1",
     "isomorphic-form-data": "~2.0.0",
     "js-yaml": "^3.14.0",
     "lodash": "^4.17.19",

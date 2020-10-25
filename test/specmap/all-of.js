@@ -311,70 +311,139 @@ describe('allOf', () => {
     });
   });
 
-  test('should suppport nested allOfs with $refs', () => {
-    return mapSpec({
+  test('should support nested allOfs with $refs', async () => {
+    const res = await mapSpec({
       plugins: [plugins.refs, plugins.allOf],
       spec: {
         definitions: {
-          Alpha: {
-            allOf: [{ type: 'object' }],
+          D: {
+            type: 'object',
             properties: {
-              one: {
-                $ref: '#/definitions/Bravo',
-              },
-              two: {
+              z: {
                 type: 'string',
+                description: 'Some Z string',
               },
             },
           },
-          Bravo: {
-            allOf: [
-              {
-                type: 'object',
-                properties: {
-                  three: {
-                    type: 'string',
+          C: {
+            type: 'object',
+            properties: {
+              d: {
+                title: 'D',
+                allOf: [
+                  {
+                    description: 'Some D',
                   },
-                },
+                  {
+                    $ref: '#/definitions/D',
+                  },
+                ],
               },
-            ],
+            },
+          },
+          B: {
+            type: 'object',
+            properties: {
+              c: {
+                title: 'C',
+                allOf: [
+                  {
+                    description: 'Some C',
+                  },
+                  {
+                    $ref: '#/definitions/C',
+                  },
+                ],
+              },
+            },
+          },
+          A: {
+            type: 'object',
+            properties: {
+              b: {
+                title: 'B',
+                allOf: [
+                  {
+                    $ref: '#/definitions/B',
+                  },
+                  {
+                    description: 'Some B',
+                  },
+                ],
+              },
+            },
           },
         },
       },
-    }).then((res) => {
-      // To show the error, unfortunately, the expect call doesn't pretty print it nicely
-      // console.log(res.errors[0])
-      expect(res.errors).toEqual([]);
-      expect(res.spec).toEqual({
-        definitions: {
-          Alpha: {
-            type: 'object',
-            properties: {
-              one: {
-                type: 'object',
-                properties: {
-                  three: {
-                    type: 'string',
-                  },
-                },
-              },
-              two: {
-                type: 'string',
-              },
-            },
-          },
-          Bravo: {
-            type: 'object',
-            properties: {
-              three: {
-                type: 'string',
-              },
+    });
+
+    // To show the error, unfortunately, the expect call doesn't pretty print it nicely
+    // console.log(res.errors[0])
+    expect(res.errors).toEqual([]);
+    expect(res.spec).toEqual({
+      definitions: {
+        D: {
+          type: 'object',
+          properties: { z: { type: 'string', description: 'Some Z string' } },
+        },
+        C: {
+          type: 'object',
+          properties: {
+            d: {
+              description: 'Some D',
+              type: 'object',
+              properties: { z: { type: 'string', description: 'Some Z string' } },
+              title: 'D',
             },
           },
         },
-      });
+        B: {
+          type: 'object',
+          properties: {
+            c: {
+              description: 'Some C',
+              type: 'object',
+              properties: {
+                d: {
+                  description: 'Some D',
+                  type: 'object',
+                  properties: { z: { type: 'string', description: 'Some Z string' } },
+                  title: 'D',
+                },
+              },
+              title: 'C',
+            },
+          },
+        },
+        A: {
+          type: 'object',
+          properties: {
+            b: {
+              type: 'object',
+              properties: {
+                c: {
+                  description: 'Some C',
+                  type: 'object',
+                  properties: {
+                    d: {
+                      description: 'Some D',
+                      type: 'object',
+                      properties: { z: { type: 'string', description: 'Some Z string' } },
+                      title: 'D',
+                    },
+                  },
+                  title: 'C',
+                },
+              },
+              description: 'Some B',
+              title: 'B',
+            },
+          },
+        },
+      },
     });
   });
+
   test('merges arrays inside of an `allOf`', () => {
     return mapSpec({
       plugins: [plugins.refs, plugins.allOf],
