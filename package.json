@@ -79,7 +79,7 @@
     "eslint-config-prettier": "=6.14.0",
     "eslint-plugin-import": "=2.22.1",
     "eslint-plugin-prettier": "=3.1.4",
-    "expect": "=26.6.0",
+    "expect": "=26.6.1",
     "fetch-mock": "=9.10.7",
     "glob": "=7.1.6",
     "husky": "=4.3.0",
