@@ -1,3 +1,5 @@
+import isEmpty from 'lodash/isEmpty';
+
 import { isFreelyNamed, generateAbsoluteRefPatches } from '../helpers';
 
 export default {
@@ -31,6 +33,12 @@ export default {
       originalDefinitionObj = originalDefinitionObj[part];
     });
     originalDefinitionObj = { ...originalDefinitionObj };
+
+    // when we've lost sight, interrupt prematurely
+    if (isEmpty(originalDefinitionObj)) {
+      return undefined;
+    }
+
     delete originalDefinitionObj.allOf;
 
     const patches = [];
