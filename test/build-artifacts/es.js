@@ -17,6 +17,7 @@ describe('babel ES6 imports artifact', () => {
     expect(SwaggerClient.clearCache).toBeInstanceOf(Function);
     expect(SwaggerClient.makeApisTagOperation).toBeInstanceOf(Function);
     expect(SwaggerClient.buildRequest).toBeInstanceOf(Function);
+    // eslint-disable-next-line import/no-named-as-default-member
     expect(Object.keys(SwaggerClient.helpers)).toContain('opId');
     expect(SwaggerClient.getBaseUrl).toBeInstanceOf(Function);
   });
