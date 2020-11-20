@@ -2,6 +2,8 @@ import path from 'path';
 import cloneDeep from 'lodash/cloneDeep';
 import glob from 'glob';
 import xmock from 'xmock';
+import fs from 'fs';
+import jsYaml from 'js-yaml';
 
 import mapSpec, { plugins } from '../../src/specmap';
 
@@ -404,7 +406,46 @@ describe('refs', () => {
           expect(res.errors).toEqual([]);
         });
       });
-      test('should ignore root or nested $refs in OAS3 Example Objects', () => {
+      test('should ignore root or nested $refs in OAS2 response examples', () => {
+        const input = {
+          swagger: '2.0',
+          paths: {
+            '/': {
+              get: {
+                responses: {
+                  200: {
+                    description: '',
+                    examples: {
+                      'application/json': {
+                        $ref: '#/definitions/Foo',
+                        arr: [
+                          {
+                            $ref: '#/definitions/Foo',
+                          },
+                        ],
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          definitions: {
+            Foo: {
+              type: 'string',
+            },
+          },
+        };
+
+        return mapSpec({
+          spec: input,
+          plugins: [refs],
+        }).then((res) => {
+          expect(res.spec).toEqual(input);
+          expect(res.errors).toEqual([]);
+        });
+      });
+      test('should ignore root or nested $refs in OAS3 media type `example`', () => {
         const input = {
           spec: {
             openapi: '3.0.0',
@@ -466,6 +507,86 @@ describe('refs', () => {
             },
           },
         };
+
+        return mapSpec({
+          spec: input,
+          plugins: [refs],
+        }).then((res) => {
+          expect(res.spec).toEqual(input);
+          expect(res.errors).toEqual([]);
+        });
+      });
+      test('should ignore root or nested $refs in values of OAS3 media type `examples`', () => {
+        const input = {
+          openapi: '3.0.0',
+          paths: {
+            '/': {
+              post: {
+                requestBody: {
+                  content: {
+                    'application/json': {
+                      schema: {},
+                      examples: {
+                        0: {
+                          value: {
+                            $ref: '#/components/schemas/Foo',
+                            arr: [
+                              {
+                                $ref: '#/components/schemas/Foo',
+                              },
+                            ],
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+                responses: {
+                  200: {
+                    description: '',
+                    content: {
+                      'application/json': {
+                        schema: {},
+                        examples: {
+                          1: {
+                            value: {
+                              $ref: '#/components/schemas/Foo',
+                              arr: [
+                                {
+                                  $ref: '#/components/schemas/Foo',
+                                },
+                              ],
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          components: {
+            schemas: {
+              Foo: {
+                type: 'string',
+              },
+            },
+          },
+        };
+
+        return mapSpec({
+          spec: input,
+          plugins: [refs],
+        }).then((res) => {
+          expect(res.spec).toEqual(input);
+          expect(res.errors).toEqual([]);
+        });
+      });
+      test('should ignore root or nested $refs in values of OAS3 parameter examples', () => {
+        const input = jsYaml.safeLoad(
+          fs.readFileSync(path.join('test', 'data', 'parameter-examples-with-refs.yaml'), 'utf8')
+        );
 
         return mapSpec({
           spec: input,
