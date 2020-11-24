@@ -445,7 +445,7 @@ describe('refs', () => {
           expect(res.errors).toEqual([]);
         });
       });
-      test('should ignore root or nested $refs in OAS3 media type `example`', () => {
+      test('should ignore root or nested $refs in schema examples', () => {
         const input = {
           spec: {
             openapi: '3.0.0',
