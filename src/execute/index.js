@@ -16,14 +16,13 @@ const arrayOrEmpty = (ar) => {
   return Array.isArray(ar) ? ar : [];
 };
 
-const OperationNotFoundError = createError('OperationNotFoundError', function cb(
-  message,
-  extra,
-  oriError
-) {
-  this.originalError = oriError;
-  Object.assign(this, extra || {});
-});
+const OperationNotFoundError = createError(
+  'OperationNotFoundError',
+  function cb(message, extra, oriError) {
+    this.originalError = oriError;
+    Object.assign(this, extra || {});
+  }
+);
 
 const findParametersWithName = (name, parameters) => {
   return parameters.filter((p) => p.name === name);
