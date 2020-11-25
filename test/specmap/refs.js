@@ -516,6 +516,64 @@ describe('refs', () => {
           expect(res.errors).toEqual([]);
         });
       });
+      test('should ignore root or nested $refs within OAS3 requestBody/response media type `example`', () => {
+        const input = {
+          openapi: '3.0.0',
+          paths: {
+            '/order': {
+              post: {
+                requestBody: {
+                  content: {
+                    'application/json': {
+                      example: {
+                        $ref: '#/components/examples/User/value',
+                        user: {
+                          $ref: '#/components/examples/User/value',
+                        },
+                        quantity: 1,
+                      },
+                    },
+                  },
+                },
+                responses: {
+                  200: {
+                    description: 'OK',
+                    content: {
+                      'application/json': {
+                        example: {
+                          $ref: '#/components/examples/User/value',
+                          user: {
+                            $ref: '#/components/examples/User/value',
+                          },
+                          quantity: 1,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          components: {
+            examples: {
+              User: {
+                value: {
+                  id: 1,
+                  name: 'Sasha',
+                },
+              },
+            },
+          },
+        };
+
+        return mapSpec({
+          spec: input,
+          plugins: [refs],
+        }).then((res) => {
+          expect(res.spec).toEqual(input);
+          expect(res.errors).toEqual([]);
+        });
+      });
       test('should ignore root or nested $refs in values of OAS3 media type `examples`', () => {
         const input = {
           openapi: '3.0.0',
