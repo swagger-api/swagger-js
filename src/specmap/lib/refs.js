@@ -19,20 +19,86 @@ const docCache = {};
 const specmapRefs = new WeakMap();
 
 const skipResolutionTestFns = [
+  // OpenAPI 2.0 response examples
   (path) =>
-    // OpenAPI 3.0 Response Media Type Example
+    // ["paths", *, *, "responses", *, "examples"]
+    path[0] === 'paths' && path[3] === 'responses' && path[5] === 'examples',
+
+  // OpenAPI 3.0 Response Media Type Examples
+  (path) =>
     // ["paths", *, *, "responses", *, "content", *, "example"]
     path[0] === 'paths' &&
     path[3] === 'responses' &&
     path[5] === 'content' &&
     path[7] === 'example',
   (path) =>
-    // OpenAPI 3.0 Request Body Media Type Example
-    // ["paths", *, *, "responses", *, "content", *, "example"]
+    // ["paths", *, *, "responses", *, "content", *, "examples", *, "value"]
+    path[0] === 'paths' &&
+    path[3] === 'responses' &&
+    path[5] === 'content' &&
+    path[7] === 'examples' &&
+    path[9] === 'value',
+
+  // OpenAPI 3.0 Request Body Media Type Examples
+  (path) =>
+    // ["paths", *, *, "requestBody", "content", *, "example"]
     path[0] === 'paths' &&
     path[3] === 'requestBody' &&
     path[4] === 'content' &&
     path[6] === 'example',
+  (path) =>
+    // ["paths", *, *, "requestBody", "content", *, "examples", *, "value"]
+    path[0] === 'paths' &&
+    path[3] === 'requestBody' &&
+    path[4] === 'content' &&
+    path[6] === 'examples' &&
+    path[8] === 'value',
+
+  // OAS 3.0 Parameter Examples
+  (path) =>
+    // ["paths", *, "parameters", *, "example"]
+    path[0] === 'paths' && path[2] === 'parameters' && path[4] === 'example',
+  (path) =>
+    // ["paths", *, *, "parameters", *, "example"]
+    path[0] === 'paths' && path[3] === 'parameters' && path[5] === 'example',
+  (path) =>
+    // ["paths", *, "parameters", *, "examples", *, "value"]
+    path[0] === 'paths' &&
+    path[2] === 'parameters' &&
+    path[4] === 'examples' &&
+    path[6] === 'value',
+  (path) =>
+    // ["paths", *, *, "parameters", *, "examples", *, "value"]
+    path[0] === 'paths' &&
+    path[3] === 'parameters' &&
+    path[5] === 'examples' &&
+    path[7] === 'value',
+  (path) =>
+    // ["paths", *, "parameters", *, "content", *, "example"]
+    path[0] === 'paths' &&
+    path[2] === 'parameters' &&
+    path[4] === 'content' &&
+    path[6] === 'example',
+  (path) =>
+    // ["paths", *, "parameters", *, "content", *, "examples", *, "value"]
+    path[0] === 'paths' &&
+    path[2] === 'parameters' &&
+    path[4] === 'content' &&
+    path[6] === 'examples' &&
+    path[8] === 'value',
+  (path) =>
+    // ["paths", *, *, "parameters", *, "content", *, "example"]
+    path[0] === 'paths' &&
+    path[3] === 'parameters' &&
+    path[4] === 'content' &&
+    path[7] === 'example',
+  (path) =>
+    // ["paths", *, *, "parameters", *, "content", *, "examples", *, "value"]
+    path[0] === 'paths' &&
+    path[3] === 'parameters' &&
+    path[5] === 'content' &&
+    path[7] === 'examples' &&
+    path[9] === 'value',
 ];
 
 const shouldSkipResolution = (path) => skipResolutionTestFns.some((fn) => fn(path));

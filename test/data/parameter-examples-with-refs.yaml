@@ -1,0 +1,74 @@
+openapi: 3.0.0
+info:
+  title: These $refs in parameter examples should not be resolved
+  version: 1.0.0
+paths:
+  /:
+    parameters:
+      - in: query
+        name: param1
+        schema:
+          type: object
+        example:
+          $ref: '#/components/schemas/Foo'
+          arr:
+            - $ref: '#/components/schemas/Foo'
+      - in: query
+        name: param2
+        schema:
+          type: object
+        examples:
+          '0':
+            value:
+              $ref: '#/components/schemas/Foo'
+              arr:
+                - $ref: '#/components/schemas/Foo'
+    get:
+      parameters:
+        - in: query
+          name: param3
+          schema:
+            type: object
+          example:
+            $ref: '#/components/schemas/Foo'
+            arr:
+              - $ref: '#/components/schemas/Foo'
+        - in: query
+          name: param4
+          schema:
+            type: object
+          examples:
+            '1':
+              value:
+                $ref: '#/components/schemas/Foo'
+                arr:
+                  - $ref: '#/components/schemas/Foo'
+        - in: query
+          name: param5
+          content:
+            '*/*':
+              schema:
+                type: object
+              example:
+                $ref: '#/components/schemas/Foo'
+                arr:
+                  - $ref: '#/components/schemas/Foo'
+        - in: query
+          name: param6
+          content:
+            '*/*':
+              schema:
+                type: object
+              examples:
+                '2':
+                  value:
+                    $ref: '#/components/schemas/Foo'
+                    arr:
+                      - $ref: '#/components/schemas/Foo'
+      responses:
+        '200':
+          description: ''
+components:
+  schemas:
+    Foo:
+      type: string
