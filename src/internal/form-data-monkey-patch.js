@@ -36,35 +36,23 @@ export const patch = (FormData) => {
     set(field, value) {
       const newEntry = createEntry(field, value);
 
-      this.entryList = this.entryList.filter((entry) => {
-        return entry.name !== field;
-      });
+      this.entryList = this.entryList.filter((entry) => entry.name !== field);
 
       this.entryList.push(newEntry);
     }
 
     get(field) {
-      const foundEntry = this.entryList.find((entry) => {
-        return entry.name === field;
-      });
+      const foundEntry = this.entryList.find((entry) => entry.name === field);
 
       return foundEntry === undefined ? null : foundEntry;
     }
 
     getAll(field) {
-      return this.entryList
-        .filter((entry) => {
-          return entry.name === field;
-        })
-        .map((entry) => {
-          return entry.value;
-        });
+      return this.entryList.filter((entry) => entry.name === field).map((entry) => entry.value);
     }
 
     has(field) {
-      return this.entryList.some((entry) => {
-        return entry.name === field;
-      });
+      return this.entryList.some((entry) => entry.name === field);
     }
   }
 

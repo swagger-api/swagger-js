@@ -94,11 +94,10 @@ describe('constructor', () => {
       });
     });
 
-    test('should NOT add `apis` if disableInterfaces', () => {
-      return Swagger({ spec: {}, disableInterfaces: true }).then((swag) => {
+    test('should NOT add `apis` if disableInterfaces', () =>
+      Swagger({ spec: {}, disableInterfaces: true }).then((swag) => {
         expect(swag.apis).toEqual();
-      });
-    });
+      }));
 
     test('should add `apis` from the makeApisTagOperation', () => {
       // Given
@@ -242,9 +241,7 @@ describe('constructor', () => {
 
     test('should handle invalid JSON bodies', () => {
       // Given
-      xmock().get('https://swagger.io/one', (req, res) => {
-        return res.send('[');
-      });
+      xmock().get('https://swagger.io/one', (req, res) => res.send('['));
 
       const req = {
         url: 'https://swagger.io/one',
@@ -684,9 +681,7 @@ describe('constructor', () => {
     });
 
     test('should support response interceptor when fetching a spec and remote ref', (cb) => {
-      const spy = jest.fn().mockImplementation((a) => {
-        return a;
-      });
+      const spy = jest.fn().mockImplementation((a) => a);
 
       new Swagger({
         url: 'http://petstore.swagger.io/v2/base.json',

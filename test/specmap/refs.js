@@ -293,12 +293,8 @@ describe('refs', () => {
           const no2 = Number(path.basename(f2).split('.')[0]);
           return group1.localeCompare(group2) || no1 - no2;
         })
-        .map((filename) => {
-          return { name: filename, filename, ...require(filename) };
-        })
-        .filter((testCase) => {
-          return !testCase.ignore;
-        });
+        .map((filename) => ({ name: filename, filename, ...require(filename) }))
+        .filter((testCase) => !testCase.ignore);
 
       // Runs test serially, just more convenient for debugging if a spec fails
       return new Promise((resolve, reject) => {
@@ -330,8 +326,8 @@ describe('refs', () => {
       });
     });
 
-    test('should handle this weird case', () => {
-      return mapSpec({
+    test('should handle this weird case', () =>
+      mapSpec({
         spec: {
           one: { one: 1 },
           onelike: { $ref: '#/one' }, // Start with `one` and is a sibling of `/one`
@@ -342,11 +338,10 @@ describe('refs', () => {
           one: { one: 1 },
           onelike: { one: 1 },
         });
-      });
-    });
+      }));
 
-    test('should not stop if one $ref has error', () => {
-      return mapSpec({
+    test('should not stop if one $ref has error', () =>
+      mapSpec({
         spec: {
           valid: { data: 1 },
           two: { $ref: 'invalid' },
@@ -359,12 +354,11 @@ describe('refs', () => {
           two: { $ref: 'invalid' },
           three: { data: 1 },
         });
-      });
-    });
+      }));
 
     describe('freely named key positions', () => {
-      test('should ignore $refs in freely named Swagger positions', () => {
-        return mapSpec({
+      test('should ignore $refs in freely named Swagger positions', () =>
+        mapSpec({
           spec: {
             a: 1234,
             parameters: {
@@ -404,8 +398,7 @@ describe('refs', () => {
             },
           });
           expect(res.errors).toEqual([]);
-        });
-      });
+        }));
       test('should ignore root or nested $refs in OAS2 response examples', () => {
         const input = {
           swagger: '2.0',
@@ -656,14 +649,13 @@ describe('refs', () => {
       });
     });
 
-    test('should include fullPath in invalid $ref type', () => {
-      return mapSpec({
+    test('should include fullPath in invalid $ref type', () =>
+      mapSpec({
         spec: { one: { $ref: 1 } },
         plugins: [refs],
       }).then((res) => {
         expect(res.errors[0].fullPath).toEqual(['one', '$ref']);
-      });
-    });
+      }));
 
     test('should be able to overwrite fetchJSON', () => {
       // This is to allow downstream projects, use some proxy

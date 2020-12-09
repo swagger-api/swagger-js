@@ -130,10 +130,11 @@ function normalizeJSONPath(path) {
     }
 
     return `/${path
-      .map((item) => {
-        // eslint-disable-line prefer-template
-        return (item + '').replace(/~/g, '~0').replace(/\//g, '~1'); // eslint-disable-line prefer-template
-      })
+      .map(
+        (item) =>
+          // eslint-disable-line prefer-template
+          (item + '').replace(/~/g, '~0').replace(/\//g, '~1') // eslint-disable-line prefer-template
+      )
       .join('/')}`;
   }
 
@@ -211,9 +212,9 @@ function forEachNewPrimitive(mutations, fn) {
 
 function forEachNewPatch(mutations, fn, callback) {
   const res =
-    mutations.filter(isAdditiveMutation).map((mutation) => {
-      return fn(mutation.value, callback, mutation.path);
-    }) || [];
+    mutations
+      .filter(isAdditiveMutation)
+      .map((mutation) => fn(mutation.value, callback, mutation.path)) || [];
   const flat = flatten(res);
   const clean = cleanArray(flat);
   return clean;
@@ -223,15 +224,11 @@ function forEachPrimitive(obj, fn, basePath) {
   basePath = basePath || [];
 
   if (Array.isArray(obj)) {
-    return obj.map((val, key) => {
-      return forEachPrimitive(val, fn, basePath.concat(key));
-    });
+    return obj.map((val, key) => forEachPrimitive(val, fn, basePath.concat(key)));
   }
 
   if (isObject(obj)) {
-    return Object.keys(obj).map((key) => {
-      return forEachPrimitive(obj[key], fn, basePath.concat(key));
-    });
+    return Object.keys(obj).map((key) => forEachPrimitive(obj[key], fn, basePath.concat(key)));
   }
 
   return fn(obj, basePath[basePath.length - 1], basePath);
@@ -249,16 +246,12 @@ function forEach(obj, fn, basePath) {
   }
 
   if (Array.isArray(obj)) {
-    const arrayResults = obj.map((val, key) => {
-      return forEach(val, fn, basePath.concat(key));
-    });
+    const arrayResults = obj.map((val, key) => forEach(val, fn, basePath.concat(key)));
     if (arrayResults) {
       results = results.concat(arrayResults);
     }
   } else if (isObject(obj)) {
-    const moreResults = Object.keys(obj).map((key) => {
-      return forEach(obj[key], fn, basePath.concat(key));
-    });
+    const moreResults = Object.keys(obj).map((key) => forEach(obj[key], fn, basePath.concat(key)));
     if (moreResults) {
       results = results.concat(moreResults);
     }
@@ -308,11 +301,7 @@ function normalizeArray(arr) {
 }
 
 function flatten(arr) {
-  return [].concat(
-    ...arr.map((val) => {
-      return Array.isArray(val) ? flatten(val) : val;
-    })
-  );
+  return [].concat(...arr.map((val) => (Array.isArray(val) ? flatten(val) : val)));
 }
 
 function cleanArray(arr) {

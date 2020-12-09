@@ -7,8 +7,8 @@ describe('allOf', () => {
     xmock().restore();
   });
 
-  test('should resolve simple allOf', () => {
-    return mapSpec({
+  test('should resolve simple allOf', () =>
+    mapSpec({
       spec: {
         allOf: [{ one: 1 }, { two: 2 }],
       },
@@ -21,11 +21,10 @@ describe('allOf', () => {
           two: 2,
         },
       });
-    });
-  });
+    }));
 
-  test('should return empty object when you pass nothing to allOf', (done) => {
-    return mapSpec({
+  test('should return empty object when you pass nothing to allOf', (done) =>
+    mapSpec({
       spec: { allOf: [] },
       plugins: [plugins.allOf],
     }).then((res) => {
@@ -34,11 +33,10 @@ describe('allOf', () => {
         spec: {},
       });
       done();
-    });
-  });
+    }));
 
-  test('should resolve local $refs in allOf', () => {
-    return mapSpec({
+  test('should resolve local $refs in allOf', () =>
+    mapSpec({
       spec: {
         allOf: [{ one: { $ref: '#/bar' } }, { two: 2 }],
         bar: { baz: 4 },
@@ -53,11 +51,10 @@ describe('allOf', () => {
           bar: { baz: 4 },
         },
       });
-    });
-  });
+    }));
 
-  test('should not overwrite properties that are already present', () => {
-    return mapSpec({
+  test('should not overwrite properties that are already present', () =>
+    mapSpec({
       spec: {
         original: 'yes',
         allOf: [
@@ -76,11 +73,10 @@ describe('allOf', () => {
           notOriginal: 'yes',
         },
       });
-    });
-  });
+    }));
 
-  test('should set $$ref values', () => {
-    return mapSpec({
+  test('should set $$ref values', () =>
+    mapSpec({
       allowMetaPatches: true,
       spec: {
         Pet: {
@@ -168,11 +164,10 @@ describe('allOf', () => {
           },
         },
       });
-    });
-  });
+    }));
 
-  test('should return error if allOf is not an array', () => {
-    return mapSpec({
+  test('should return error if allOf is not an array', () =>
+    mapSpec({
       spec: {
         allOf: {},
       },
@@ -181,8 +176,7 @@ describe('allOf', () => {
       expect(res.errors[0].message).toEqual('allOf must be an array');
       expect(res.errors[0].fullPath).toEqual(['allOf']);
       expect(res.spec).toEqual({ allOf: {} });
-    });
-  });
+    }));
 
   test('should ignore "allOf" in freely named Swagger key positions', () => {
     const spec = {
@@ -222,8 +216,8 @@ describe('allOf', () => {
     });
   });
 
-  test('should throw error if allOf has a non-object item', () => {
-    return mapSpec({
+  test('should throw error if allOf has a non-object item', () =>
+    mapSpec({
       spec: {
         allOf: [{ one: 1 }, 2],
       },
@@ -232,11 +226,10 @@ describe('allOf', () => {
       expect(res.errors[0].message).toEqual('Elements in allOf must be objects');
       expect(res.errors[0].fullPath).toEqual(['allOf']);
       expect(res.spec).toEqual({ one: 1 });
-    });
-  });
+    }));
 
-  test('should merge allOf items, deeply', () => {
-    return mapSpec({
+  test('should merge allOf items, deeply', () =>
+    mapSpec({
       spec: {
         allOf: [
           { one: { two: { half: true } } }, // eslint-disable-line object-curly-spacing
@@ -256,11 +249,10 @@ describe('allOf', () => {
           },
         },
       });
-    });
-  });
+    }));
 
-  test('should resolve nested allOf', () => {
-    return mapSpec({
+  test('should resolve nested allOf', () =>
+    mapSpec({
       spec: {
         allOf: [
           {
@@ -289,8 +281,7 @@ describe('allOf', () => {
           five: 5,
         },
       });
-    });
-  });
+    }));
 
   test('should handle external $refs inside allOf', () => {
     xmock().get('http://example.com', (req, res) => {
@@ -444,8 +435,8 @@ describe('allOf', () => {
     });
   });
 
-  test('merges arrays inside of an `allOf`', () => {
-    return mapSpec({
+  test('merges arrays inside of an `allOf`', () =>
+    mapSpec({
       plugins: [plugins.refs, plugins.allOf],
       showDebug: true,
       spec: {
@@ -485,11 +476,10 @@ describe('allOf', () => {
           },
         },
       });
-    });
-  });
+    }));
 
-  test('should handle case, with an `allOf` referencing an `allOf` ', () => {
-    return mapSpec({
+  test('should handle case, with an `allOf` referencing an `allOf` ', () =>
+    mapSpec({
       plugins: [plugins.refs, plugins.allOf],
       showDebug: true,
       spec: {
@@ -525,6 +515,5 @@ describe('allOf', () => {
           },
         },
       });
-    });
-  });
+    }));
 });

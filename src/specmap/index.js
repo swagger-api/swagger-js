@@ -99,9 +99,7 @@ class SpecMap {
           return true;
         }
 
-        return path.every((val, i) => {
-          return val === tested[i];
-        });
+        return path.every((val, i) => val === tested[i]);
       };
 
       return function* generator(patches, specmap) {
@@ -350,11 +348,9 @@ class SpecMap {
       const promises = this.promisedPatches.map((p) => p.value);
 
       // Waits for all to settle instead of Promise.all which stops on rejection
-      return Promise.all(
-        promises.map((promise) => {
-          return promise.then(noop, noop);
-        })
-      ).then(() => this.dispatch());
+      return Promise.all(promises.map((promise) => promise.then(noop, noop))).then(() =>
+        this.dispatch()
+      );
     }
 
     // Ok, run the plugin

@@ -13,8 +13,8 @@ describe('specmap', () => {
   });
 
   describe('#dispatch', () => {
-    test('should pass the spec through', () => {
-      return mapSpec({
+    test('should pass the spec through', () =>
+      mapSpec({
         spec: { bob: true },
         plugins: [],
       }).then((res) => {
@@ -22,8 +22,7 @@ describe('specmap', () => {
           errors: [],
           spec: { bob: true },
         });
-      });
-    });
+      }));
 
     test('should call plugins with patches', (done) => {
       mapSpec({
@@ -85,14 +84,10 @@ describe('specmap', () => {
       });
     });
 
-    test('allows synchronous calls (no Promise)', () => {
-      return mapSpec({
+    test('allows synchronous calls (no Promise)', () =>
+      mapSpec({
         spec: { here: true },
-        plugins: [
-          (patches, specMap) => {
-            return !specMap.hasRun() && specMap.add(['alsoHere'], true);
-          },
-        ],
+        plugins: [(patches, specMap) => !specMap.hasRun() && specMap.add(['alsoHere'], true)],
       }).then((result) => {
         expect(result).toEqual({
           errors: [],
@@ -101,8 +96,7 @@ describe('specmap', () => {
             alsoHere: true,
           },
         });
-      });
-    });
+      }));
 
     test('should block until promises resolve before running next plugin', () => {
       const p1 = (patches, specmap) => {
@@ -182,8 +176,8 @@ describe('specmap', () => {
       });
     });
 
-    test('records errors after each plugin', () => {
-      return mapSpec({
+    test('records errors after each plugin', () =>
+      mapSpec({
         spec: { here: true },
         plugins: [
           {
@@ -204,8 +198,7 @@ describe('specmap', () => {
           errors: [new Error('This is not working'), new TypeError('wrong type')],
           spec: { here: true },
         });
-      });
-    });
+      }));
 
     test('should record errors and mutations', () => {
       let hasRun = false;
@@ -361,8 +354,8 @@ describe('specmap', () => {
         expect(fn()).toEqual('josh');
       });
 
-      test('should handle multiple plugins', () => {
-        return mapSpec({
+      test('should handle multiple plugins', () =>
+        mapSpec({
           spec: { one: 1 },
           plugins: [
             () => {
@@ -387,11 +380,10 @@ describe('specmap', () => {
         }).then((res) => {
           expect(res.errors).toEqual([]);
           expect(res.spec).toEqual({ one: 10, two: 2 });
-        });
-      });
+        }));
 
-      test('should handle multiple plugins, with the same key', () => {
-        return mapSpec({
+      test('should handle multiple plugins, with the same key', () =>
+        mapSpec({
           spec: { one: 1 },
           plugins: [
             {
@@ -418,14 +410,13 @@ describe('specmap', () => {
         }).then((res) => {
           expect(res.errors).toEqual([]);
           expect(res.spec).toEqual({ one: 4 });
-        });
-      });
+        }));
     });
 
     describe('plugins', () => {
       describe('$refs', () => {
-        test('should resolve internal $refs', () => {
-          return mapSpec({
+        test('should resolve internal $refs', () =>
+          mapSpec({
             spec: {
               nested: { one: 1 },
               another: { $ref: '#/nested' },
@@ -439,11 +430,10 @@ describe('specmap', () => {
                 another: { one: 1 },
               },
             });
-          });
-        });
+          }));
 
-        test('should resolve internal $refs in arrays', () => {
-          return mapSpec({
+        test('should resolve internal $refs in arrays', () =>
+          mapSpec({
             spec: {
               nested: { one: 1 },
               another: [{ $ref: '#/nested' }],
@@ -457,11 +447,10 @@ describe('specmap', () => {
                 another: [{ one: 1 }],
               },
             });
-          });
-        });
+          }));
 
-        test('should resolve internal $refs that points to object inside an array', () => {
-          return mapSpec({
+        test('should resolve internal $refs that points to object inside an array', () =>
+          mapSpec({
             spec: {
               nested: [{ one: 1 }],
               another: { $ref: '#/nested' },
@@ -475,11 +464,10 @@ describe('specmap', () => {
                 another: [{ one: 1 }],
               },
             });
-          });
-        });
+          }));
 
-        test('should resolve internal $refs that points to item inside an array', () => {
-          return mapSpec({
+        test('should resolve internal $refs that points to item inside an array', () =>
+          mapSpec({
             spec: {
               nested: [{ one: 1 }],
               another: { $ref: '#/nested/0/one' },
@@ -493,8 +481,7 @@ describe('specmap', () => {
                 another: 1,
               },
             });
-          });
-        });
+          }));
 
         test('should resolve a $ref without a pointer', () => {
           plugins.refs.docCache['http://some-path'] = {
@@ -516,8 +503,8 @@ describe('specmap', () => {
           });
         });
 
-        test('should fail if we cannot resolve a ref', () => {
-          return mapSpec({
+        test('should fail if we cannot resolve a ref', () =>
+          mapSpec({
             spec: {
               nested: { one: 1 },
               another: { $ref: '#/not/here' },
@@ -532,8 +519,7 @@ describe('specmap', () => {
             expect(res.errors[0].$ref).toEqual('#/not/here');
             expect(res.errors[0].pointer).toEqual('/not/here');
             expect(res.errors[0].baseDoc).toEqual('some-path');
-          });
-        });
+          }));
 
         test('should resolve petstore-simple', () => {
           const spec = cloneDeep(require('./data/specs/petstore-simple.json')); // eslint-disable-line global-require
@@ -556,8 +542,8 @@ describe('specmap', () => {
           });
         });
 
-        test('should retain local $refs', () => {
-          return mapSpec({
+        test('should retain local $refs', () =>
+          mapSpec({
             spec: {
               one: { a: 1, $ref: '#/two' },
               two: { b: 2 },
@@ -567,8 +553,7 @@ describe('specmap', () => {
           }).then((res) => {
             expect(res.spec.one.$$ref).toEqual('#/two');
             expect(res.spec.two.$$ref).toEqual(undefined);
-          });
-        });
+          }));
 
         describe('allowMetaPatches = true', () => {
           test('should retain external $refs', () => {
@@ -639,16 +624,14 @@ describe('specmap', () => {
           plugins.refs.clearCache();
           const xapp = xmock();
 
-          xapp.get('http://example.com/common.json', () => {
-            return {
-              works: {
-                whoop: true,
-              },
-              almost: {
-                $ref: '#/works',
-              },
-            };
-          });
+          xapp.get('http://example.com/common.json', () => ({
+            works: {
+              whoop: true,
+            },
+            almost: {
+              $ref: '#/works',
+            },
+          }));
 
           return mapSpec({
             context: {
@@ -672,19 +655,17 @@ describe('specmap', () => {
           plugins.refs.clearCache();
 
           const xapp = xmock();
-          xapp.get('http://example.com/models.json', () => {
-            return {
-              Parent: {
-                parent: true,
-                child: {
-                  $ref: '#/Child',
-                },
+          xapp.get('http://example.com/models.json', () => ({
+            Parent: {
+              parent: true,
+              child: {
+                $ref: '#/Child',
               },
-              Child: {
-                child: true,
-              },
-            };
-          });
+            },
+            Child: {
+              child: true,
+            },
+          }));
 
           return mapSpec({
             context: {
@@ -731,8 +712,8 @@ describe('specmap', () => {
     });
 
     describe('keywords in properties', () => {
-      test('should ignore $ref and allOf in properties', () => {
-        return mapSpec({
+      test('should ignore $ref and allOf in properties', () =>
+        mapSpec({
           plugins: [plugins.refs, plugins.allOf],
           spec: {
             properties: {
@@ -756,11 +737,10 @@ describe('specmap', () => {
               },
             },
           });
-        });
-      });
+        }));
 
-      test('should merge sub-properties', () => {
-        return mapSpec({
+      test('should merge sub-properties', () =>
+        mapSpec({
           plugins: [plugins.refs, plugins.allOf],
           spec: {
             properties: {
@@ -788,13 +768,12 @@ describe('specmap', () => {
               },
             },
           });
-        });
-      });
+        }));
     });
 
     describe('context', () => {
-      test('should allow access to root context (options supplied to SpecMap)', (done) => {
-        return mapSpec({
+      test('should allow access to root context (options supplied to SpecMap)', (done) =>
+        mapSpec({
           spec: {
             top: { middle: { leaf: 'hi' } },
           },
@@ -805,11 +784,10 @@ describe('specmap', () => {
               done();
             },
           ],
-        });
-      });
+        }));
 
-      test('should set / get context for a given path', (done) => {
-        return mapSpec({
+      test('should set / get context for a given path', (done) =>
+        mapSpec({
           spec: {},
           patches: [lib.context(['one', 'two'], { hey: 'ho' })],
           context: { hello: 'hi' },
@@ -821,8 +799,7 @@ describe('specmap', () => {
               done();
             },
           ],
-        });
-      });
+        }));
     });
   });
 });

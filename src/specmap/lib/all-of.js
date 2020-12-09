@@ -67,9 +67,8 @@ export default {
       const collapsedFullPath = fullPath.slice(0, -1);
 
       const absoluteRefPatches = generateAbsoluteRefPatches(toMerge, collapsedFullPath, {
-        getBaseUrlForNodePath: (nodePath) => {
-          return specmap.getContext([...fullPath, i, ...nodePath]).baseDoc;
-        },
+        getBaseUrlForNodePath: (nodePath) =>
+          specmap.getContext([...fullPath, i, ...nodePath]).baseDoc,
         specmap,
       });
 

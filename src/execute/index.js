@@ -12,9 +12,7 @@ import oas3BuildRequest from './oas3/build-request';
 import swagger2BuildRequest from './swagger2/build-request';
 import { getOperationRaw, legacyIdFromPathMethod, isOAS3 } from '../helpers';
 
-const arrayOrEmpty = (ar) => {
-  return Array.isArray(ar) ? ar : [];
-};
+const arrayOrEmpty = (ar) => (Array.isArray(ar) ? ar : []);
 
 const OperationNotFoundError = createError(
   'OperationNotFoundError',
@@ -24,9 +22,7 @@ const OperationNotFoundError = createError(
   }
 );
 
-const findParametersWithName = (name, parameters) => {
-  return parameters.filter((p) => p.name === name);
-};
+const findParametersWithName = (name, parameters) => parameters.filter((p) => p.name === name);
 
 // removes parameters that have duplicate 'in' and 'name' properties
 const deduplicateParameters = (parameters) => {
