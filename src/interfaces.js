@@ -4,9 +4,7 @@ import { eachOperation, opId } from './helpers';
 
 const nullFn = () => null;
 
-const normalizeArray = (arg) => {
-  return Array.isArray(arg) ? arg : [arg];
-};
+const normalizeArray = (arg) => (Array.isArray(arg) ? arg : [arg]);
 
 // To allow stubbing of functions
 export const self = {
@@ -16,8 +14,8 @@ export const self = {
 
 // Make an execute, bound to arguments defined in mapTagOperation's callback (cb)
 export function makeExecute(swaggerJs = {}) {
-  return ({ pathName, method, operationId }) => (parameters, opts = {}) => {
-    return swaggerJs.execute({
+  return ({ pathName, method, operationId }) => (parameters, opts = {}) =>
+    swaggerJs.execute({
       spec: swaggerJs.spec,
       ...pick(swaggerJs, 'requestInterceptor', 'responseInterceptor', 'userFetch'),
       pathName,
@@ -26,7 +24,6 @@ export function makeExecute(swaggerJs = {}) {
       operationId,
       ...opts,
     });
-  };
 }
 
 // Creates an interface with tags+operations = execute

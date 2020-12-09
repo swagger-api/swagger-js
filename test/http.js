@@ -83,14 +83,13 @@ describe('http', () => {
 
     return http({
       url: 'http://swagger.io',
-      requestInterceptor: (req) => {
-        return new Promise((resolve) => {
+      requestInterceptor: (req) =>
+        new Promise((resolve) => {
           setTimeout(() => {
             req.headers.mystatus = 200;
             resolve(req);
           }, 20);
-        });
-      },
+        }),
     }).then((res) => {
       expect(res.status).toEqual(200);
     });
@@ -122,11 +121,10 @@ describe('http', () => {
 
     return http({
       url: 'http://swagger.io',
-      responseInterceptor: () => {
-        return http({
+      responseInterceptor: () =>
+        http({
           url: 'http://example.com',
-        });
-      },
+        }),
     }).then((res) => {
       expect(res.status).toEqual(200);
       expect(res.text).toEqual('hi');
@@ -317,14 +315,12 @@ describe('http', () => {
 
     test('should remove newlines from header values', () => {
       // Given
-      fetchMock.get('*', (url, opts) => {
-        return {
-          headers: {
-            'Content-Type': 'text/plain',
-          },
-          body: opts.headers.WilliamCWilliamsHeader,
-        };
-      });
+      fetchMock.get('*', (url, opts) => ({
+        headers: {
+          'Content-Type': 'text/plain',
+        },
+        body: opts.headers.WilliamCWilliamsHeader,
+      }));
       const req = {
         url: 'http://example.com',
         method: 'GET',
@@ -403,10 +399,10 @@ describe('http', () => {
       fetchMock.mock('http://swagger.io', { body, headers });
 
       return fetch('http://swagger.io')
-        .then((_res) => {
+        .then((_res) =>
           // eslint-disable-line no-undef
-          return serializeRes(_res, 'https://swagger.io');
-        })
+          serializeRes(_res, 'https://swagger.io')
+        )
         .then((resSerialize) => {
           expect(resSerialize.data).toBe(resSerialize.text);
           expect(resSerialize.data).toBe(body);

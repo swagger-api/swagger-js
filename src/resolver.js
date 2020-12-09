@@ -7,8 +7,8 @@ export function makeFetchJSON(http, opts = {}) {
   const { requestInterceptor, responseInterceptor } = opts;
   // Set credentials with 'http.withCredentials' value
   const credentials = http.withCredentials ? 'include' : 'same-origin';
-  return (docPath) => {
-    return http({
+  return (docPath) =>
+    http({
       url: docPath,
       loadSpec: true,
       requestInterceptor,
@@ -17,10 +17,7 @@ export function makeFetchJSON(http, opts = {}) {
         Accept: ACCEPT_HEADER_VALUE_FOR_DOCUMENTS,
       },
       credentials,
-    }).then((res) => {
-      return res.body;
-    });
-  };
+    }).then((res) => res.body);
 }
 
 // Wipe out the http cache

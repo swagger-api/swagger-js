@@ -34,9 +34,7 @@ describe('complex', () => {
         const no2 = Number(path.basename(f2).split('.')[0]);
         return no1 - no2;
       })
-      .map((filename) => {
-        return { name: path.basename(filename), spec: require(filename) };
-      });
+      .map((filename) => ({ name: path.basename(filename), spec: require(filename) }));
 
     // Runs test serially, just more convenient for debugging if a spec fails
     return new Promise((resolve, reject) => {

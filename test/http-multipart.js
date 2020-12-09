@@ -91,20 +91,17 @@ describe('buildRequest - openapi 2.0', () => {
      * Expect server response format: { message: 'ok', data: returnData }
      * where returnData = req.body/req.files/req.file
      */
-    test.skip('should (Live) POST multipart-formdata with entry item entries', () => {
-      return fetch('http://localhost:3300/api/v1/formdata', {
+    test.skip('should (Live) POST multipart-formdata with entry item entries', () =>
+      fetch('http://localhost:3300/api/v1/formdata', {
         method: 'POST',
         body: req.body,
       })
-        .then((res) => {
-          return res.json();
-        })
+        .then((res) => res.json())
         .then((json) => {
           expect(json.data.email.length).toEqual(2);
           expect(json.data.email[0]).toEqual('person1');
           expect(json.data.email[1]).toEqual('person2');
-        });
-    });
+        }));
 
     test('should Mock POST multipart-formdata with entry item entries', () => {
       // Given
@@ -130,9 +127,7 @@ describe('buildRequest - openapi 2.0', () => {
         method: 'POST',
         body: req.body,
       })
-        .then((res) => {
-          return res.json();
-        })
+        .then((res) => res.json())
         .then((json) => {
           expect(json.data.email.length).toEqual(2);
           expect(json.data.email[0]).toEqual('person1');
@@ -186,20 +181,17 @@ describe('buildRequest - openapi 3.0', () => {
      * Expect server response format: { message: 'ok', data: returnData }
      * where returnData = req.body/req.files/req.file
      */
-    test.skip('should (Live) POST multipart-formdata with entry item entries', () => {
-      return fetch('http://localhost:3300/api/v1/formdata', {
+    test.skip('should (Live) POST multipart-formdata with entry item entries', () =>
+      fetch('http://localhost:3300/api/v1/formdata', {
         method: 'POST',
         body: req.body,
       })
-        .then((res) => {
-          return res.json();
-        })
+        .then((res) => res.json())
         .then((json) => {
           expect(json.data.email.length).toEqual(2);
           expect(json.data.email[0]).toEqual('person1');
           expect(json.data.email[1]).toEqual('person2');
-        });
-    });
+        }));
 
     test('should Mock POST multipart-formdata with entry item entries', () => {
       // Given
@@ -225,9 +217,7 @@ describe('buildRequest - openapi 3.0', () => {
         method: 'POST',
         body: req.body,
       })
-        .then((res) => {
-          return res.json();
-        })
+        .then((res) => res.json())
         .then((json) => {
           expect(json.data.email.length).toEqual(2);
           expect(json.data.email[0]).toEqual('person1');

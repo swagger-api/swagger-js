@@ -2,9 +2,7 @@ import isObject from 'lodash/isObject';
 import startsWith from 'lodash/startsWith';
 
 const toLower = (str) => String.prototype.toLowerCase.call(str);
-const escapeString = (str) => {
-  return str.replace(/[^\w]/gi, '_');
-};
+const escapeString = (str) => str.replace(/[^\w]/gi, '_');
 
 // Spec version detection
 export function isOAS3(spec) {
@@ -209,14 +207,13 @@ export function normalizeSwagger(parsedSpec) {
               } else if (inheritName === 'parameters') {
                 // eslint-disable-next-line no-restricted-syntax
                 for (const param of inherits[inheritName]) {
-                  const exists = operation[inheritName].some((opParam) => {
-                    return (
+                  const exists = operation[inheritName].some(
+                    (opParam) =>
                       (opParam.name && opParam.name === param.name) ||
                       (opParam.$ref && opParam.$ref === param.$ref) ||
                       (opParam.$$ref && opParam.$$ref === param.$$ref) ||
                       opParam === param
-                    );
-                  });
+                  );
 
                   if (!exists) {
                     operation[inheritName].push(param);

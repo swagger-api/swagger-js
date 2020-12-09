@@ -17,11 +17,10 @@ describe('helpers', () => {
       expect(id).toEqual('get_one');
     });
     test('should handle strange paths/methods correctly when in v2 mode', () => {
-      const fn = (path, method) => {
-        return idFromPathMethod(path, method, {
+      const fn = (path, method) =>
+        idFromPathMethod(path, method, {
           v2OperationIdCompatibilityMode: true,
         });
-      };
       // https://github.com/swagger-api/swagger-js/issues/1269#issue-309070070
       expect(fn('/foo/{bar}/baz', 'get')).toEqual('get_foo_bar_baz');
 

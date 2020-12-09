@@ -169,8 +169,8 @@ describe('http', () => {
   /**
    * See https://github.com/swagger-api/swagger-js/issues/1277
    */
-  test('should return a helpful error when the connection is refused', () => {
-    return Swagger('http://localhost:1/untouchable.yaml')
+  test('should return a helpful error when the connection is refused', () =>
+    Swagger('http://localhost:1/untouchable.yaml')
       .then(() => {
         throw new Error('Expected an error.');
       })
@@ -179,8 +179,7 @@ describe('http', () => {
           'request to http://localhost:1/untouchable.yaml failed, reason: connect ECONNREFUSED 127.0.0.1:1'
         );
         expect(error.name).toEqual('FetchError');
-      });
-  });
+      }));
 
   /**
    * See https://github.com/swagger-api/swagger-js/issues/1002
@@ -253,8 +252,8 @@ describe('http', () => {
     }
   });
 
-  test('should err gracefully when requesting https from an http server', () => {
-    return Swagger({
+  test('should err gracefully when requesting https from an http server', () =>
+    Swagger({
       url: 'http://localhost:8000/petstore.json',
       requestInterceptor: (req) => {
         const u = url.parse(req.url);
@@ -266,8 +265,7 @@ describe('http', () => {
       expect(err.message).toMatch(
         /^request to https:\/\/localhost:8000\/petstore\.json failed, reason: (socket hang up|write EPROTO)/
       );
-    });
-  });
+    }));
 
   test('should use requestInterceptor for resolving nested $refs', () => {
     const requestInterceptor = jest.fn();

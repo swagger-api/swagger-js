@@ -517,12 +517,11 @@ function pointerAlreadyInPath(pointer, basePath, parent, specmap) {
     currPath = `${currPath}/${escapeJsonPointerToken(token)}`;
     return (
       refs[currPath] &&
-      refs[currPath].some((ref) => {
-        return (
+      refs[currPath].some(
+        (ref) =>
           pointerIsAParent(ref, fullyQualifiedPointer) ||
           pointerIsAParent(fullyQualifiedPointer, ref)
-        );
-      })
+      )
     );
   });
   if (hasIndirectCycle) {
@@ -551,10 +550,7 @@ function patchValueAlreadyInPath(root, patch) {
   function pointToAncestor(obj) {
     return (
       lib.isObject(obj) &&
-      (ancestors.indexOf(obj) >= 0 ||
-        Object.keys(obj).some((k) => {
-          return pointToAncestor(obj[k]);
-        }))
+      (ancestors.indexOf(obj) >= 0 || Object.keys(obj).some((k) => pointToAncestor(obj[k])))
     );
   }
 }
