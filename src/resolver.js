@@ -81,7 +81,7 @@ export default function resolve(obj) {
       plugs.push(plugins.allOf);
     }
 
-    // mapSpec is where the hard work happens, see https://github.com/swagger-api/specmap for more details
+    // mapSpec is where the hard work happens
     return mapSpec({
       spec: _spec,
       context: { baseDoc },
