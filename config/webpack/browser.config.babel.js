@@ -109,7 +109,6 @@ const browserMin = {
           output: {
             comments: false,
           },
-          sourceMap: true,
         },
       }),
     ],
