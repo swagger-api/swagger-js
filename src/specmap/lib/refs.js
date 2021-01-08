@@ -379,7 +379,7 @@ function getDoc(docPath) {
 function fetchJSON(docPath) {
   return fetch(docPath, { headers: { Accept: ACCEPT_HEADER_VALUE_FOR_DOCUMENTS }, loadSpec: true })
     .then((res) => res.text())
-    .then((text) => jsYaml.safeLoad(text));
+    .then((text) => jsYaml.load(text));
 }
 
 /**

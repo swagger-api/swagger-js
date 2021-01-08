@@ -100,7 +100,7 @@ function parseBody(body, contentType) {
   ) {
     return JSON.parse(body);
   }
-  return jsYaml.safeLoad(body);
+  return jsYaml.load(body);
 }
 
 // Serialize the response, returns a promise with headers and the body part of the hash
