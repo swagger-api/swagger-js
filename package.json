@@ -82,7 +82,7 @@
     "expect": "=26.6.2",
     "fetch-mock": "=9.11.0",
     "glob": "=7.1.6",
-    "husky": "=4.3.7",
+    "husky": "=4.3.8",
     "inspectpack": "=4.5.2",
     "install": "=0.13.0",
     "jest": "=26.6.3",
