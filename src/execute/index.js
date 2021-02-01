@@ -327,7 +327,9 @@ function oas3BaseUrl({ spec, pathName, method, server, contextUrl, serverVariabl
 }
 
 function buildOas3UrlWithContext(ourUrl = '', contextUrl = '') {
-  const parsedUrl = url.parse(ourUrl);
+  // Relative server url should be resolved against contextUrl
+  const parsedUrl =
+    ourUrl && contextUrl ? url.parse(url.resolve(contextUrl, ourUrl)) : url.parse(ourUrl);
   const parsedContextUrl = url.parse(contextUrl);
 
   const computedScheme =
