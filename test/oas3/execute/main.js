@@ -652,18 +652,45 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
     });
   });
   describe('baseUrl', () => {
-    it('should consider contextUrls correctly with relative server paths', () => {
+    // Verify that given serverUrl and contextUrl produces exepcted baseUrl
+    function testUrlResolving(serverUrl, contextUrl, expectedBaseUrl) {
       const spec = {
         openapi: '3.0.0',
+        servers: [
+          {
+            url: serverUrl,
+          },
+        ],
       };
 
       const res = baseUrl({
         spec,
-        contextUrl:
-          'https://gist.githubusercontent.com/hkosova/d223eb45c5198db09d08f2603cc0e10a/raw/ae22e290b4f21e19bbfc02b97498289792579fec/relative-server.yaml',
+        contextUrl,
       });
+      expect(res).toEqual(expectedBaseUrl);
+    }
 
-      expect(res).toEqual('https://gist.githubusercontent.com');
+    it('should use absolute server url when context url is not empty', () => {
+      testUrlResolving('http://t.com/app/', 'http://t.com/doc/api.json', 'http://t.com/app');
+    });
+    it('should use absolute server url when context url is empty', () => {
+      testUrlResolving('http://t.com/app/', '', 'http://t.com/app');
+    });
+    it('should use host of context url when server url is empty', () => {
+      testUrlResolving('', 'http://t.com/doc/api.json', 'http://t.com');
+    });
+    it('should resolve url correctly when server url is absolute path', () => {
+      testUrlResolving('/app/', 'http://t.com/doc/api.json', 'http://t.com/app');
+    });
+    it('should resolve url correctly when server url is absolute path and context url is empty', () => {
+      testUrlResolving('/app/', '', '/app');
+    });
+    it('should return empty when both server url and context url are empty', () => {
+      testUrlResolving('', '', '');
+    });
+    it('should resolve relative server url correctly against context url', () => {
+      testUrlResolving('./', 'http://t.com/doc/api.json', 'http://t.com/doc');
+      testUrlResolving('../app/', 'http://t.com/doc/api.json', 'http://t.com/app');
     });
     it('should default to using the first server if none is explicitly chosen', () => {
       const spec = {
