@@ -7,6 +7,7 @@
     "after:release": "echo GIT_TAG=v${version} > release/.version"
   },
   "git": {
+    "requireCleanWorkingDir": false,
     "requireUpstream": false,
     "changelog": "./release/get-changelog.sh",
     "commitMessage": "chore(release): cut the v${version} release",
