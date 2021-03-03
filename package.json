@@ -90,7 +90,7 @@
     "license-checker": "=25.0.1",
     "lint-staged": "=10.5.4",
     "lodash-webpack-plugin": "=0.11.6",
-    "nock": "=13.0.9",
+    "nock": "=13.0.10",
     "node-fetch": "=2.6.1",
     "npm-run-all": "=4.1.5",
     "prettier": "=2.2.1",
