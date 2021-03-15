@@ -9,6 +9,7 @@ export default function buildRequest(options, req) {
     operation,
     securities,
     requestContentType,
+    responseContentType,
     attachContentTypeForEmptyPayload,
   } = options;
   // Add securities, which are applicable
@@ -45,6 +46,11 @@ export default function buildRequest(options, req) {
       operation.parameters && operation.parameters.filter((p) => p.in === 'formData').length > 0;
     if (isBodyParamPresent || isFormDataParamPresent) {
       req.headers['Content-Type'] = requestContentType;
+    }
+  }
+  if (!responseContentType && operation.responses) {
+    if (operation.produces && operation.produces.length > 0) {
+      req.headers.accept = operation.produces.join(', ');
     }
   }
 

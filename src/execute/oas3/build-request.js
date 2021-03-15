@@ -37,6 +37,18 @@ export default function buildRequest(options, req) {
   } else if (requestContentType && isExplicitContentTypeValid) {
     req.headers['Content-Type'] = requestContentType;
   }
+  if (!options.responseContentType && operation.responses) {
+    const accept = [];
+    Object.entries(operation.responses)
+      .filter(([key]) => {
+        const code = parseInt(key, 10);
+        return code >= 200 && code < 300;
+      })
+      .forEach((entry) => accept.push(...Object.keys(entry[1].content)));
+    if (accept.length > 0) {
+      req.headers.accept = accept.join(', ');
+    }
+  }
 
   // for OAS3: add requestBody to request
   if (requestBody) {
