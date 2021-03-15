@@ -880,6 +880,7 @@ describe('execute', () => {
         method: 'PUT',
         credentials: 'same-origin',
         headers: {
+          accept: 'mime/silent-french-type',
           head: 'justTheHead',
         },
         body: {
