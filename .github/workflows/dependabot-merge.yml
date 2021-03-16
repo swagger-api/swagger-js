@@ -5,7 +5,6 @@ name: Dependabot PR merge
 on:
   workflow_run:
     workflows: ["Node.js CI"]
-    branches: [master]
     types:
       - completed
 
