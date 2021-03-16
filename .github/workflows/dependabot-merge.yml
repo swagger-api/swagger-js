@@ -16,12 +16,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Merge me!
-      steps:
-        - uses: actions/checkout@v2
-        - uses: ahmadnassri/action-dependabot-auto-merge@v2
-          with:
-            dependency_type: all
-            target: minor
-            github-token: ${{ secrets.SWAGGER_BOT_GITHUB_TOKEN }}
-            update_type: "semver:minor"
+      - uses: actions/checkout@v2
+      - uses: ahmadnassri/action-dependabot-auto-merge@v2
+        with:
+          dependency_type: all
+          target: minor
+          github-token: ${{ secrets.SWAGGER_BOT_GITHUB_TOKEN }}
+          update_type: "semver:minor"
