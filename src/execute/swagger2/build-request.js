@@ -48,7 +48,7 @@ export default function buildRequest(options, req) {
       req.headers['Content-Type'] = requestContentType;
     }
   }
-  if (!responseContentType && operation.produces && operation.produces.length > 0) {
+  if (!responseContentType && Array.isArray(operation.produces) && operation.produces.length > 0) {
     req.headers.accept = operation.produces.join(', ');
   }
 

@@ -3,6 +3,7 @@
 import assign from 'lodash/assign';
 import get from 'lodash/get';
 import btoa from 'btoa';
+import isPlainObject from 'lodash/isPlainObject';
 
 export default function buildRequest(options, req) {
   const { operation, requestBody, securities, spec, attachContentTypeForEmptyPayload } = options;
@@ -38,15 +39,14 @@ export default function buildRequest(options, req) {
     req.headers['Content-Type'] = requestContentType;
   }
   if (!options.responseContentType && operation.responses) {
-    const accept = [];
-    Object.entries(operation.responses)
-      .filter(([key]) => {
+    const mediaTypes = Object.entries(operation.responses)
+      .filter(([key, value]) => {
         const code = parseInt(key, 10);
-        return code >= 200 && code < 300;
+        return code >= 200 && code < 300 && isPlainObject(value.content);
       })
-      .forEach((entry) => accept.push(...Object.keys(entry[1].content)));
-    if (accept.length > 0) {
-      req.headers.accept = accept.join(', ');
+      .reduce((acc, [, value]) => acc.concat(Object.keys(value.content)), []);
+    if (mediaTypes.length > 0) {
+      req.headers.accept = mediaTypes.join(', ');
     }
   }
 
