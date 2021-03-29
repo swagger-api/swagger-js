@@ -284,4 +284,61 @@ describe('buildRequest - swagger 2.0', () => {
       });
     });
   });
+
+  describe('test accept header', () => {
+    const spec = {
+      host: 'test.com',
+      basePath: '/v1',
+      schemes: ['https'],
+      paths: {
+        '/getMultiple': {
+          get: {
+            operationId: 'getMultiple',
+            produces: ['application/xml', 'application/json'],
+            responses: {
+              200: {
+                schema: {
+                  type: 'array',
+                  items: 'string',
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+
+    test('should generate accept header according to defined responses', () => {
+      const req = buildRequest({
+        spec,
+        operationId: 'getMultiple',
+      });
+
+      expect(req).toEqual({
+        url: 'https://test.com/v1/getMultiple',
+        method: 'GET',
+        credentials: 'same-origin',
+        headers: {
+          accept: 'application/xml, application/json',
+        },
+      });
+    });
+
+    test('should allow to override accept header according to defined responses', () => {
+      const req = buildRequest({
+        spec,
+        operationId: 'getMultiple',
+        responseContentType: 'application/xml',
+      });
+
+      expect(req).toEqual({
+        url: 'https://test.com/v1/getMultiple',
+        method: 'GET',
+        credentials: 'same-origin',
+        headers: {
+          accept: 'application/xml',
+        },
+      });
+    });
+  });
 });
