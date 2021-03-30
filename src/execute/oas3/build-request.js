@@ -2,6 +2,7 @@
 // `src/execute/index.js#buildRequest`
 import assign from 'lodash/assign';
 import get from 'lodash/get';
+import isPlainObject from 'lodash/isPlainObject';
 import btoa from 'btoa';
 
 export default function buildRequest(options, req) {
@@ -36,6 +37,17 @@ export default function buildRequest(options, req) {
     }
   } else if (requestContentType && isExplicitContentTypeValid) {
     req.headers['Content-Type'] = requestContentType;
+  }
+  if (!options.responseContentType && operation.responses) {
+    const mediaTypes = Object.entries(operation.responses)
+      .filter(([key, value]) => {
+        const code = parseInt(key, 10);
+        return code >= 200 && code < 300 && isPlainObject(value.content);
+      })
+      .reduce((acc, [, value]) => acc.concat(Object.keys(value.content)), []);
+    if (mediaTypes.length > 0) {
+      req.headers.accept = mediaTypes.join(', ');
+    }
   }
 
   // for OAS3: add requestBody to request
