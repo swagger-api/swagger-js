@@ -3,7 +3,6 @@
 import assign from 'lodash/assign';
 import get from 'lodash/get';
 import btoa from 'btoa';
-import isPlainObject from 'lodash/isPlainObject';
 
 export default function buildRequest(options, req) {
   const { operation, requestBody, securities, spec, attachContentTypeForEmptyPayload } = options;
