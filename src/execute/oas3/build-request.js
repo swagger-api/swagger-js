@@ -2,6 +2,7 @@
 // `src/execute/index.js#buildRequest`
 import assign from 'lodash/assign';
 import get from 'lodash/get';
+import isPlainObject from 'lodash/isPlainObject';
 import btoa from 'btoa';
 
 export default function buildRequest(options, req) {
