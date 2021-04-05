@@ -25,6 +25,20 @@ export function clearCache() {
   plugins.refs.clearCache();
 }
 
+export function makeFetchRaw(http, opts = {}) {
+  const { requestInterceptor, responseInterceptor } = opts;
+  // Set credentials with 'http.withCredentials' value
+  const credentials = http.withCredentials ? 'include' : 'same-origin';
+  return (docPath) =>
+    http({
+      url: docPath,
+      loadSpec: true,
+      requestInterceptor,
+      responseInterceptor,
+      credentials,
+    }).then((res) => res.text);
+}
+
 export default function resolve(obj) {
   const {
     fetch,
@@ -66,8 +80,13 @@ export default function resolve(obj) {
 
     // Build a json-fetcher ( ie: give it a URL and get json out )
     plugins.refs.fetchJSON = makeFetchJSON(http, { requestInterceptor, responseInterceptor });
+    // Build a raw-fetcher ( ie: give it a URL and get raw text out )
+    plugins.externalValue.fetchRaw = makeFetchRaw(http, {
+      requestInterceptor,
+      responseInterceptor,
+    });
 
-    const plugs = [plugins.refs];
+    const plugs = [plugins.refs, plugins.externalValue];
 
     if (typeof parameterMacro === 'function') {
       plugs.push(plugins.parameters);
