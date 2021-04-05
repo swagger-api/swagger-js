@@ -91,8 +91,13 @@ const ExternalValueError = createError('ExternalValueError', function cb(message
  */
 const plugin = {
   key: 'externalValue',
-  plugin: (externalValue, _, fullPath) => {
+  plugin: (externalValue, _, fullPath, __, patch) => {
     const parent = fullPath.slice(0, -1);
+    const parentObj = lib.getIn(patch.value, parent);
+
+    if (parentObj.value !== undefined) {
+      return undefined;
+    }
 
     if (shouldSkipResolution(fullPath)) {
       return undefined;
