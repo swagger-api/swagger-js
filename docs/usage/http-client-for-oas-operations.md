@@ -1,9 +1,9 @@
-# TryItOut Executor
+# HTTP client for OAS operations
 
-TryItOut Executor is an OpenAPI specific HTTP client for OAS operations.
+HTTP client for OAS operations is an OpenAPI specific HTTP client for OAS operations.
 It maps an OAS operation and values into an HTTP request.
 
-To execute an OAS operation, you need to provide TryItOut Executor with various properties.
+To execute an OAS operation, you need to provide HTTP client for OAS operations with various properties.
 
 Type notations are formatted like so:
 

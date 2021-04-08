@@ -2,7 +2,7 @@
 
 - [Installation](usage/installation.md)
 - [Tags Interface](usage/tags-interface.md)
-- [TryItOut Executor](usage/try-it-out-executor.md)
+- [HTTP client for OAS operations](usage/http-client-for-oas-operations.md)
 - [OpenAPI Definition Resolver](usage/openapi-definition-resolver.md)
 - [HTTP Client](usage/http-client.md)
 - [Swagger Client API](usage/api.md)
