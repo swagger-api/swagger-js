@@ -33,7 +33,7 @@ Swagger Client Version | Release Date | OpenAPI Spec compatibility | Notes
 
 - [Installation](docs/usage/installation.md)
 - [Tags Interface](docs/usage/tags-interface.md)
-- [TryItOut Executor](docs/usage/try-it-out-executor.md)
+- [HTTP client for OAS operations](docs/usage/http-client-for-oas-operations.md)
 - [OpenAPI Definition Resolver](docs/usage/openapi-definition-resolver.md)
 - [HTTP Client](docs/usage/http-client.md)
 - [Swagger Client API](docs/usage/api.md)
