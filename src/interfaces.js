@@ -14,16 +14,17 @@ export const self = {
 
 // Make an execute, bound to arguments defined in mapTagOperation's callback (cb)
 export function makeExecute(swaggerJs = {}) {
-  return ({ pathName, method, operationId }) => (parameters, opts = {}) =>
-    swaggerJs.execute({
-      spec: swaggerJs.spec,
-      ...pick(swaggerJs, 'requestInterceptor', 'responseInterceptor', 'userFetch'),
-      pathName,
-      method,
-      parameters,
-      operationId,
-      ...opts,
-    });
+  return ({ pathName, method, operationId }) =>
+    (parameters, opts = {}) =>
+      swaggerJs.execute({
+        spec: swaggerJs.spec,
+        ...pick(swaggerJs, 'requestInterceptor', 'responseInterceptor', 'userFetch'),
+        pathName,
+        method,
+        parameters,
+        operationId,
+        ...opts,
+      });
 }
 
 // Creates an interface with tags+operations = execute
