@@ -47,7 +47,7 @@ jobs:
     - name: Build swagger-js
       run: npm run build
     - name: Upload commonjs build artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v1
       with:
         name: commonjs-${{ matrix.node-version }}
         path: ./lib/
@@ -74,21 +74,21 @@ jobs:
       run: npm ci
 
     - name: Download Node.js 12.x commonjs build artifacts
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v1
       with:
         name: commonjs-12.x
     - name: Run Node.js 12.x commonjs build artifacts tests
       run: node -p "require('./commonjs-12.x')"
 
     - name: Download Node.js 14.x commonjs build artifacts
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v1
       with:
         name: commonjs-14.x
     - name: Run Node.js 14.x commonjs build artifacts tests
       run: node -p "require('./commonjs-14.x')"
 
     - name: Download Node.js 16.x commonjs build artifacts
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v1
       with:
         name: commonjs-16.x
     - name: Run Node.js 16.x commonjs build artifacts tests
