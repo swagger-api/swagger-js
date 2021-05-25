@@ -1,0 +1,6 @@
+{
+  "release": {
+    "branches": ["master"],
+    "tagFormat": "v${version}"
+  }
+}
