@@ -3,21 +3,21 @@
 ### Prerequisites
 
 - git, any version
-- NPM 6.x
+- NPM >=6.12.x
 
 Generally, we recommend following guidelines from [Node.js Releases](https://nodejs.org/en/about/releases/) to only use `Current`, `Active LTS` or `Maintenance LTS` releases.
 
 Current Node.js:
-- Node.js 14.x
-- NPM 6.x
+- Node.js 16.x
+- NPM >=7.10.x
 
 Current Node.js Active LTS:
-- Node.js 12.x
-- NPM 6.x
+- Node.js 14.x
+- NPM >=6.14.x
 
 Current Node.js Maintenance LTS:
-- Node.js >=10.21.0
-- NPM 6.x
+- Node.js >=12.x
+- NPM >=6.12.x
 
 > Note: our build artifacts should also work on older node versions such as node>=8.
 
