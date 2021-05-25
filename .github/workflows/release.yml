@@ -4,13 +4,13 @@ on:
     branches:
       - master
 
-#  workflow_run:
-#    workflows:
-#      - "Node.js CI"
-#    branches:
-#      - master
-#    types:
-#      - completed
+  workflow_run:
+    workflows:
+      - "Node.js CI"
+    branches:
+      - master
+    types:
+      - completed
 jobs:
   release:
     name: Release
