@@ -32,6 +32,8 @@ jobs:
         uses: cycjimmy/semantic-release-action@v2
         with:
           dry_run: false
+          extra_plugins: |
+            @semantic-release/git
         env:
           GITHUB_TOKEN: ${{ secrets.SWAGGER_BOT_GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
