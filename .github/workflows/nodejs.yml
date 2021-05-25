@@ -93,15 +93,3 @@ jobs:
         name: commonjs-16.x
     - name: Run Node.js 16.x commonjs build artifacts tests
       run: node -p "require('./commonjs-16.x')"
-
-  release:
-    if: contains(github.ref, 'master')
-    runs-on: ubuntu-latest
-    needs: [build, commonjs-artifacts-test]
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: 14.x
