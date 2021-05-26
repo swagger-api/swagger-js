@@ -23,7 +23,7 @@ describe('allOf', () => {
       });
     }));
 
-  test('should return empty object when you pass nothing to allOf', (done) =>
+  test('should return empty object when you pass nothing to allOf', (done) => {
     mapSpec({
       spec: { allOf: [] },
       plugins: [plugins.allOf],
@@ -33,7 +33,8 @@ describe('allOf', () => {
         spec: {},
       });
       done();
-    }));
+    });
+  });
 
   test('should resolve local $refs in allOf', () =>
     mapSpec({

@@ -772,7 +772,7 @@ describe('specmap', () => {
     });
 
     describe('context', () => {
-      test('should allow access to root context (options supplied to SpecMap)', (done) =>
+      test('should allow access to root context (options supplied to SpecMap)', (done) => {
         mapSpec({
           spec: {
             top: { middle: { leaf: 'hi' } },
@@ -784,9 +784,10 @@ describe('specmap', () => {
               done();
             },
           ],
-        }));
+        });
+      });
 
-      test('should set / get context for a given path', (done) =>
+      test('should set / get context for a given path', (done) => {
         mapSpec({
           spec: {},
           patches: [lib.context(['one', 'two'], { hey: 'ho' })],
@@ -799,7 +800,8 @@ describe('specmap', () => {
               done();
             },
           ],
-        }));
+        });
+      });
     });
   });
 });
