@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Merge me!
-        if: steps.waitforstatuschecks.outputs.status == 'success'
         uses: ahmadnassri/action-dependabot-auto-merge@v2
         with:
           target: minor
