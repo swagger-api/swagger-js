@@ -7,12 +7,21 @@ import { Buffer } from 'buffer';
 
 import FormData from './internal/form-data-monkey-patch';
 import { encodeDisallowedCharacters } from './execute/oas3/style-serializer';
+import createError from './specmap/lib/create-error';
 
 // For testing
 export const self = {
   serializeRes,
   mergeInQueryOrForm,
 };
+
+export const FetchResponseError = createError('Error', function cb(response, responseError) {
+  this.message = response.statusText;
+  this.status = response.status;
+  this.statusCode = response.status;
+  if (responseError) this.responseError = responseError;
+  else this.response = response;
+});
 
 // Handles fetch-like syntax and the case where there is only one object passed-in
 // (which will have the URL as a property). Also serilizes the response.
@@ -71,18 +80,10 @@ export default async function http(url, request = {}) {
       // so we'll just throw the error we got
       throw resError;
     }
-    const error = new Error(res.statusText);
-    error.status = res.status;
-    error.statusCode = res.status;
-    error.responseError = resError;
-    throw error;
+    throw new FetchResponseError(res, resError);
   }
   if (!res.ok) {
-    const error = new Error(res.statusText);
-    error.status = res.status;
-    error.statusCode = res.status;
-    error.response = res;
-    throw error;
+    throw new FetchResponseError(res);
   }
   return res;
 }

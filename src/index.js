@@ -9,6 +9,8 @@ import { makeApisTagOperation } from './interfaces';
 import { execute, buildRequest, baseUrl } from './execute';
 import { opId } from './helpers';
 
+export { FetchResponseError } from './http';
+
 Swagger.http = Http;
 Swagger.makeHttp = makeHttp.bind(null, Swagger.http);
 Swagger.resolve = Resolver;
