@@ -71,14 +71,14 @@ export default async function http(url, request = {}) {
       // so we'll just throw the error we got
       throw resError;
     }
-    const error = new Error(res.statusText);
+    const error = new Error(res.statusText || `response status is ${res.status}`);
     error.status = res.status;
     error.statusCode = res.status;
     error.responseError = resError;
     throw error;
   }
   if (!res.ok) {
-    const error = new Error(res.statusText);
+    const error = new Error(res.statusText || `response status is ${res.status}`);
     error.status = res.status;
     error.statusCode = res.status;
     error.response = res;
