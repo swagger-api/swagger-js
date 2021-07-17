@@ -99,6 +99,7 @@ Option | Description
 `requestInterceptor` | `Function=identity`. Either synchronous or asynchronous function transformer that accepts `Request` and should return `Request`.  
 `responseInterceptor` | `Function=identity`. Either synchronous or asynchronous function transformer that accepts `Response` and should return `Response`.
 `userFetch` | `Function=cross-fetch`. Custom **asynchronous** fetch function that accepts two arguments: the `url` and the `Request` object and must return a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response) object.
+`skipNormalization` | `Boolean=false`. Normalization creates unique operationIds when explicit operationIds are duplicates, and preserve originals.
 
 > *__Note:__ for more information about [requestInterceptor](http-client.md#request-interceptor), [responseInterceptor](http-client.md#response-interceptor) and [userFetch](https://github.com/swagger-api/swagger-js/blob/master/docs/usage/http-client.md#custom-fetch), please refer to the [HTTP Client](http-client.md) documentation.*
 

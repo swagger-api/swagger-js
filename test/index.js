@@ -1,4 +1,5 @@
 import xmock from 'xmock';
+import cloneDeep from 'lodash/cloneDeep';
 
 import Swagger from '../src/index';
 
@@ -708,6 +709,109 @@ describe('constructor', () => {
           cb();
         })
         .catch(cb);
+    });
+  });
+
+  describe('skipNormalization', () => {
+    const spec = {
+      openapi: '3.0.0',
+      info: {
+        title: 'Cloudpotato - Medwork',
+        description: 'The Cloudpotato API',
+        version: '1.0.3',
+        contact: {},
+      },
+      tags: [],
+      servers: [],
+      paths: {
+        '/v1/clients/{id}/groups': {
+          get: {
+            operationId: 'getGroups',
+            summary: '',
+            parameters: [
+              {
+                name: 'options',
+                required: false,
+                in: 'query',
+                schema: {
+                  type: 'string',
+                },
+              },
+              {
+                name: 'id',
+                required: true,
+                in: 'path',
+                schema: {
+                  type: 'number',
+                },
+              },
+            ],
+            responses: {
+              200: {
+                description: '',
+              },
+            },
+            tags: ['clients'],
+            security: [
+              {
+                bearer: [],
+              },
+            ],
+          },
+        },
+        '/v1/groups': {
+          get: {
+            operationId: 'getGroups',
+            summary: '',
+            parameters: [],
+            responses: {
+              200: {
+                description: '',
+              },
+            },
+            tags: ['groups'],
+            security: [
+              {
+                bearer: [],
+              },
+            ],
+          },
+        },
+      },
+    };
+
+    /**
+     * We're deep-cloning the spec before using it as resolution mutates
+     * the original object.
+     */
+
+    describe('skipNormalization', () => {
+      describe('given skipNormalization option not provided', () => {
+        test('should resolve with normalized interfaces', async () => {
+          const client = await new Swagger({ spec: cloneDeep(spec) });
+
+          expect(client.apis.clients.getGroups1).toBeInstanceOf(Function);
+          expect(client.apis.groups.getGroups2).toBeInstanceOf(Function);
+        });
+      });
+
+      describe('given skipNormalization option provided as `false`', () => {
+        test('should resolve with normalized interfaces', async () => {
+          const client = await new Swagger({ spec: cloneDeep(spec), skipNormalization: false });
+
+          expect(client.apis.clients.getGroups1).toBeInstanceOf(Function);
+          expect(client.apis.groups.getGroups2).toBeInstanceOf(Function);
+        });
+      });
+
+      describe('given skipNormalization option provided as `true`', () => {
+        test('should resolve with normalized interfaces', async () => {
+          const client = await new Swagger({ spec: cloneDeep(spec), skipNormalization: true });
+
+          expect(client.apis.clients.getGroups).toBeInstanceOf(Function);
+          expect(client.apis.groups.getGroups).toBeInstanceOf(Function);
+        });
+      });
     });
   });
 });

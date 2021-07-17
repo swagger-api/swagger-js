@@ -74,6 +74,7 @@ Swagger.prototype = {
       useCircularStructures: this.useCircularStructures,
       requestInterceptor: this.requestInterceptor || null,
       responseInterceptor: this.responseInterceptor || null,
+      skipNormalization: this.skipNormalization || false,
       ...options,
     }).then((obj) => {
       this.originalSpec = this.spec;
