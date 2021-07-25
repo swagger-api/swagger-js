@@ -1,6 +1,6 @@
 import fetchMock from 'fetch-mock';
+import { FormData } from 'formdata-node';
 
-import FormData from '../src/internal/form-data-monkey-patch';
 import { buildRequest } from '../src/execute';
 import sampleMultipartOpenApi2 from './data/sample-multipart-oas2';
 import sampleMultipartOpenApi3 from './data/sample-multipart-oas3';
@@ -132,10 +132,9 @@ describe('buildRequest - openapi 2.0', () => {
           expect(json.data.email.length).toEqual(2);
           expect(json.data.email[0]).toEqual('person1');
           expect(json.data.email[1]).toEqual('person2');
-          // duck typing that fetch received a FormData instance instead of plain object
+          // fetch received a FormData instance instead of plain object
           const lastOptions = fetchMock.lastOptions();
-          expect(lastOptions.body.readable).toEqual(true);
-          // expect(lastOptions.body._streams).toBeDefined()
+          expect(lastOptions.body).toBeInstanceOf(FormData);
         });
     });
   });
@@ -222,10 +221,9 @@ describe('buildRequest - openapi 3.0', () => {
           expect(json.data.email.length).toEqual(2);
           expect(json.data.email[0]).toEqual('person1');
           expect(json.data.email[1]).toEqual('person2');
-          // duck typing that fetch received a FormData instance instead of plain object
+          // fetch received a FormData instance instead of plain object
           const lastOptions = fetchMock.lastOptions();
-          expect(lastOptions.body.readable).toEqual(true);
-          // expect(lastOptions.body._streams).toBeDefined()
+          expect(lastOptions.body).toBeInstanceOf(FormData);
         });
     });
   });
@@ -243,7 +241,7 @@ describe('buildRequest - openapi 3.0', () => {
       },
     });
 
-    test('should return FormData entry list and item entries (in order)', () => {
+    test('should return FormData entry list and item entries (in order)', async () => {
       expect(req).toMatchObject({
         method: 'POST',
         url: '/api/v1/land/content/uploadImage',
@@ -255,9 +253,10 @@ describe('buildRequest - openapi 3.0', () => {
       const validateFormDataInstance = req.body instanceof FormData;
       expect(validateFormDataInstance).toEqual(true);
       const itemEntries = req.body.getAll('images[]');
+
       expect(itemEntries.length).toEqual(2);
-      expect(itemEntries[0]).toEqual(file1);
-      expect(itemEntries[1]).toEqual(file2);
+      expect(await itemEntries[0].text()).toEqual(file1.toString());
+      expect(await itemEntries[1].text()).toEqual(file2.toString());
     });
   });
 
@@ -318,10 +317,10 @@ describe('buildRequest - openapi 3.0', () => {
         },
       });
 
-      expect(Array.from(req.body.entryList)).toEqual([
-        { name: 'color[R]', value: '100' },
-        { name: 'color[G]', value: '200' },
-        { name: 'color[B]', value: '150' },
+      expect(Array.from(req.body)).toEqual([
+        ['color[R]', '100'],
+        ['color[G]', '200'],
+        ['color[B]', '150'],
       ]);
     });
   });

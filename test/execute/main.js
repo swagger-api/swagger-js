@@ -1,4 +1,5 @@
-import FormData from '../../src/internal/form-data-monkey-patch';
+import { FormData } from 'formdata-node';
+
 import { execute, buildRequest, self as stubs } from '../../src/execute';
 import { normalizeSwagger } from '../../src/helpers';
 

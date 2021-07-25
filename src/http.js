@@ -4,8 +4,8 @@ import jsYaml from 'js-yaml';
 import pick from 'lodash/pick';
 import isFunction from 'lodash/isFunction';
 import { Buffer } from 'buffer';
+import { FormData } from 'formdata-node';
 
-import FormData from './internal/form-data-monkey-patch';
 import { encodeDisallowedCharacters } from './execute/oas3/style-serializer';
 
 // For testing
