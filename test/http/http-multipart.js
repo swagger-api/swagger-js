@@ -1,9 +1,9 @@
 import fetchMock from 'fetch-mock';
-import { FormData } from 'formdata-node';
+import { Readable } from 'stream';
 
-import { buildRequest } from '../src/execute';
-import sampleMultipartOpenApi2 from './data/sample-multipart-oas2';
-import sampleMultipartOpenApi3 from './data/sample-multipart-oas3';
+import { buildRequest } from '../../src/execute';
+import sampleMultipartOpenApi2 from '../data/sample-multipart-oas2';
+import sampleMultipartOpenApi3 from '../data/sample-multipart-oas3';
 
 /**
  * fetch-mock uses node-fetch under the hood
@@ -39,49 +39,48 @@ describe('buildRequest - openapi 2.0', () => {
         url: '/api/v1/land/content/ViewOfAuthOwner',
         credentials: 'same-origin',
         headers: {
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': expect.stringMatching(/^multipart\/form-data/),
         },
       });
     });
 
-    test('should build request body as FormData', () => {
-      const validateFormDataInstance = req.body instanceof FormData;
-      expect(validateFormDataInstance).toEqual(true);
+    test('should build request body as Readable Stream', () => {
+      expect(req.body).toBeInstanceOf(Readable);
     });
 
     test('should return "collectionFormat: multi" as FormData entry list and entry item entries (in order)', () => {
-      const itemEntries = req.body.getAll('email[]');
+      const itemEntries = req.formdata.getAll('email[]');
       expect(itemEntries.length).toEqual(2);
       expect(itemEntries[0]).toEqual('person1');
       expect(itemEntries[1]).toEqual('person2');
     });
 
     test('should return "collectionFormat: none" as single FormData entry in csv format', () => {
-      const itemEntriesNone = req.body.getAll('none[]');
+      const itemEntriesNone = req.formdata.getAll('none[]');
       expect(itemEntriesNone.length).toEqual(1);
       expect(itemEntriesNone[0]).toEqual('foo,bar');
     });
 
     test('should return "collectionFormat: csv" as single FormData entry in csv format', () => {
-      const itemEntriesCsv = req.body.getAll('csv[]');
+      const itemEntriesCsv = req.formdata.getAll('csv[]');
       expect(itemEntriesCsv.length).toEqual(1);
       expect(itemEntriesCsv[0]).toEqual('foo,bar');
     });
 
     test('should return "collectionFormat: tsv" as single FormData entry in tsv format', () => {
-      const itemEntriesTsv = req.body.getAll('tsv[]');
+      const itemEntriesTsv = req.formdata.getAll('tsv[]');
       expect(itemEntriesTsv.length).toEqual(1);
       expect(itemEntriesTsv[0]).toEqual('foo%09bar');
     });
 
     test('should return "collectionFormat: ssv" as single FormData entry in ssv format', () => {
-      const itemEntriesSsv = req.body.getAll('ssv[]');
+      const itemEntriesSsv = req.formdata.getAll('ssv[]');
       expect(itemEntriesSsv.length).toEqual(1);
       expect(itemEntriesSsv[0]).toEqual('foo%20bar');
     });
 
     test('should return "collectionFormat: pipes" as single FormData entry in pipes format', () => {
-      const itemEntriesPipes = req.body.getAll('pipes[]');
+      const itemEntriesPipes = req.formdata.getAll('pipes[]');
       expect(itemEntriesPipes.length).toEqual(1);
       expect(itemEntriesPipes[0]).toEqual('foo|bar');
     });
@@ -134,7 +133,7 @@ describe('buildRequest - openapi 2.0', () => {
           expect(json.data.email[1]).toEqual('person2');
           // fetch received a FormData instance instead of plain object
           const lastOptions = fetchMock.lastOptions();
-          expect(lastOptions.body).toBeInstanceOf(FormData);
+          expect(lastOptions.body).toBeInstanceOf(Readable);
         });
     });
   });
@@ -158,18 +157,17 @@ describe('buildRequest - openapi 3.0', () => {
         url: '/api/v1/land/content/ViewOfAuthOwner',
         credentials: 'same-origin',
         headers: {
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': expect.stringMatching(/^multipart\/form-data/),
         },
       });
     });
 
     test('should build request body as FormData', () => {
-      const validateFormDataInstance = req.body instanceof FormData;
-      expect(validateFormDataInstance).toEqual(true);
+      expect(req.body).toBeInstanceOf(Readable);
     });
 
     test('should return FormData entry list and item entries (in order)', () => {
-      const itemEntries = req.body.getAll('email[]');
+      const itemEntries = req.formdata.getAll('email[]');
       expect(itemEntries.length).toEqual(2);
       expect(itemEntries[0]).toEqual('person1');
       expect(itemEntries[1]).toEqual('person2');
@@ -223,7 +221,7 @@ describe('buildRequest - openapi 3.0', () => {
           expect(json.data.email[1]).toEqual('person2');
           // fetch received a FormData instance instead of plain object
           const lastOptions = fetchMock.lastOptions();
-          expect(lastOptions.body).toBeInstanceOf(FormData);
+          expect(lastOptions.body).toBeInstanceOf(Readable);
         });
     });
   });
@@ -247,12 +245,11 @@ describe('buildRequest - openapi 3.0', () => {
         url: '/api/v1/land/content/uploadImage',
         credentials: 'same-origin',
         headers: {
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': expect.stringMatching(/^multipart\/form-data/),
         },
       });
-      const validateFormDataInstance = req.body instanceof FormData;
-      expect(validateFormDataInstance).toEqual(true);
-      const itemEntries = req.body.getAll('images[]');
+      expect(req.body).toBeInstanceOf(Readable);
+      const itemEntries = req.formdata.getAll('images[]');
 
       expect(itemEntries.length).toEqual(2);
       expect(await itemEntries[0].text()).toEqual(file1.toString());
@@ -313,11 +310,11 @@ describe('buildRequest - openapi 3.0', () => {
         url: 'http://petstore.swagger.io/v2/one',
         credentials: 'same-origin',
         headers: {
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': expect.stringMatching(/^multipart\/form-data/),
         },
       });
 
-      expect(Array.from(req.body)).toEqual([
+      expect(Array.from(req.formdata)).toEqual([
         ['color[R]', '100'],
         ['color[G]', '200'],
         ['color[B]', '150'],

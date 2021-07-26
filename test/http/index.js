@@ -8,7 +8,7 @@ import http, {
   serializeRes,
   shouldDownloadAsText,
   isFile,
-} from '../src/http';
+} from '../../src/http';
 
 describe('http', () => {
   let xapp;
@@ -240,7 +240,7 @@ describe('http', () => {
         },
       };
       mergeInQueryOrForm(req);
-      const fdArrayItem = req.body.getAll('testJson');
+      const fdArrayItem = req.formdata.getAll('testJson');
       expect(fdArrayItem.length).toEqual(1);
       expect(fdArrayItem[0]).toEqual('{"name": "John"}');
     });

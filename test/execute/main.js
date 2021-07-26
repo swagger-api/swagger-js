@@ -1,4 +1,4 @@
-import { FormData } from 'formdata-node';
+import { Readable } from 'stream';
 
 import { execute, buildRequest, self as stubs } from '../../src/execute';
 import { normalizeSwagger } from '../../src/helpers';
@@ -702,14 +702,15 @@ describe('execute', () => {
 
       // Then
       expect(req.headers).toEqual({
-        'Content-Type': 'multipart/form-data',
+        'Content-Length': 134,
+        'Content-Type': expect.stringMatching(/^multipart\/form-data/),
       });
 
       // Would like to do a more thourough test ( ie: ensure the value `foo` exists..
       // but I don't feel like attacking the interals of the node pollyfill
       // for FormData, as it seems to be missing `.get()`)
       expect(req.url).toEqual('http://swagger.io/one');
-      expect(req.body).toBeInstanceOf(FormData);
+      expect(req.body).toBeInstanceOf(Readable);
     });
 
     test('should add Content-Type application/x-www-form-urlencoded when in: formData ', () => {
@@ -1191,7 +1192,7 @@ describe('execute', () => {
     });
 
     expect(fetchSpy.mock.calls.length).toEqual(1);
-    expect(fetchSpy.mock.calls[0][0].body).toBeInstanceOf(FormData);
+    expect(fetchSpy.mock.calls[0][0].body).toBeInstanceOf(Readable);
   });
 
   describe('parameterBuilders', () => {

@@ -6,7 +6,8 @@ import isFunction from 'lodash/isFunction';
 import { Buffer } from 'buffer';
 import { FormData } from 'formdata-node';
 
-import { encodeDisallowedCharacters } from './execute/oas3/style-serializer';
+import { encodeDisallowedCharacters } from '../execute/oas3/style-serializer';
+import foldFormDataToRequest from './fold-formdata-to-request.node';
 
 // For testing
 export const self = {
@@ -50,9 +51,9 @@ export default async function http(url, request = {}) {
   }
 
   // for content-type=multipart\/form-data remove content-type from request before fetch
-  // so that correct one with `boundary` is set
+  // so that correct one with `boundary` is set when request body is different than boundary encoded string
   const contentType = request.headers['content-type'] || request.headers['Content-Type'];
-  if (/multipart\/form-data/i.test(contentType)) {
+  if (/multipart\/form-data/i.test(contentType) && request.body instanceof FormData) {
     delete request.headers['content-type'];
     delete request.headers['Content-Type'];
   }
@@ -393,7 +394,8 @@ export function mergeInQueryOrForm(req = {}) {
     const contentType = req.headers['content-type'] || req.headers['Content-Type'];
 
     if (hasFile || /multipart\/form-data/i.test(contentType)) {
-      req.body = buildFormData(req.form);
+      const formdata = buildFormData(req.form);
+      foldFormDataToRequest(formdata, req);
     } else {
       req.body = encodeFormOrQuery(form);
     }
