@@ -73,12 +73,12 @@ jobs:
       if: steps.cache-node-modules.outputs.cache-hit != 'true'
       run: npm ci
 
-    - name: Download Node.js 12.x commonjs build artifacts
+    - name: Download Node.js 12.4.x commonjs build artifacts
       uses: actions/download-artifact@v1
       with:
-        name: commonjs-12.x
-    - name: Run Node.js 12.x commonjs build artifacts tests
-      run: node -p "require('./commonjs-12.x')"
+        name: commonjs-12.4.x
+    - name: Run Node.js 12.4.x commonjs build artifacts tests
+      run: node -p "require('./commonjs-12.4.x')"
 
     - name: Download Node.js 14.x commonjs build artifacts
       uses: actions/download-artifact@v1
