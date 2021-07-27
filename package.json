@@ -3,7 +3,9 @@
   "version": "3.14.0",
   "description": "SwaggerJS - a collection of interfaces for OAI specs",
   "browser": {
-    "./src/http/fold-formdata-to-request.node.js": "./src/http/fold-formdata-to-request.browser.js"
+    "./src/http/fold-formdata-to-request.node.js": "./src/http/fold-formdata-to-request.browser.js",
+    "./lib/http/fold-formdata-to-request.node.js": "./lib/http/fold-formdata-to-request.browser.js",
+    "./es/http/fold-formdata-to-request.node.js": "./es/http/fold-formdata-to-request.browser.js"
   },
   "main": "lib/commonjs.js",
   "module": "es/index.js",
