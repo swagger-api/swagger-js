@@ -4,8 +4,8 @@
 
 ### NPM Registry
 
-We publish two modules to npm: [swagger-client](https://www.npmjs.com/package/swagger-client).
-`swagger-client` is meant for consumption by any JavaScript engine (node.js, web, etc...).
+We publish single module to npm: [swagger-client](https://www.npmjs.com/package/swagger-client).
+`swagger-client` is meant for consumption by any JavaScript engine (node.js, browser, etc...).
 The npm package contains transpiled and minified ES5 compatible code.
 
 ```shell script

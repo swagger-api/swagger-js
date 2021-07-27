@@ -2,6 +2,9 @@
   "name": "swagger-client",
   "version": "3.13.7",
   "description": "SwaggerJS - a collection of interfaces for OAI specs",
+  "browser": {
+    "./src/http/fold-formdata-to-request.node.js": "./src/http/fold-formdata-to-request.browser.js"
+  },
   "main": "lib/commonjs.js",
   "module": "es/index.js",
   "jsnext:main": "es/index.js",
@@ -41,7 +44,7 @@
     "test:unit:coverage": "cross-env BABEL_ENV=commonjs jest --runInBand --config ./config/jest/jest.unit.coverage.config.js",
     "test:unit:watch": "cross-env BABEL_ENV=commonjs jest --runInBand --watch --config ./config/jest/jest.unit.config.js",
     "test:artifact": "run-s test:artifact:umd:browser test:artifact:es test:artifact:commonjs",
-    "test:artifact:umd:browser": "npm run build:umd:browser && cross-env BABEL_ENV=commonjs jest --config ./config/jest/jest.artifact-umd-browser.config.js",
+    "test:artifact:umd:browser": "npm run build:umd:browser && cross-env BABEL_ENV=browser jest --config ./config/jest/jest.artifact-umd-browser.config.js",
     "test:artifact:es": "npm run build:es && cross-env BABEL_ENV=commonjs jest --config ./config/jest/jest.artifact-es.config.js",
     "test:artifact:commonjs": "npm run build:commonjs && cross-env BABEL_ENV=commonjs jest --config ./config/jest/jest.artifact-commonjs.config.js",
     "deps:license": "license-checker --production --csv --out $npm_package_config_deps_check_dir/licenses.csv && license-checker --development --csv --out $npm_package_config_deps_check_dir/licenses-dev.csv",
@@ -109,7 +112,8 @@
     "cross-fetch": "^3.1.4",
     "deep-extend": "~0.6.0",
     "fast-json-patch": "^3.0.0-1",
-    "isomorphic-form-data": "~2.0.0",
+    "form-data-encoder": "^1.0.1",
+    "formdata-node": "^3.6.2",
     "js-yaml": "^3.14.0",
     "lodash": "^4.17.19",
     "qs": "^6.9.4",

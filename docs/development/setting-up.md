@@ -12,14 +12,12 @@ Current Node.js:
 - NPM >=7.10.x
 
 Current Node.js Active LTS:
-- Node.js 14.x
+- Node.js >=14.x
 - NPM >=6.14.x
 
 Current Node.js Maintenance LTS:
-- Node.js >=12.x
+- Node.js >=12.4
 - NPM >=6.12.x
-
-> Note: our build artifacts should also work on older node versions such as node>=8.
 
 ### Steps
 
