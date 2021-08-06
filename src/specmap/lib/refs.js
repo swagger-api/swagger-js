@@ -1,4 +1,4 @@
-import { fetch } from 'cross-fetch';
+import 'cross-fetch/polyfill'; /* global fetch */
 import jsYaml from 'js-yaml';
 import qs from 'querystring-browser';
 import url from 'url';
@@ -503,7 +503,8 @@ function pointerAlreadyInPath(pointer, basePath, parent, specmap) {
   // Detect by checking that the parent path doesn't start with pointer.
   // This only applies if the pointer is internal, i.e. basePath === rootPath (could be null)
   const rootDoc = specmap.contextTree.get([]).baseDoc;
-  if (basePath == rootDoc && pointerIsAParent(safeParentPointer, pointer)) { // eslint-disable-line
+  if (basePath === rootDoc && pointerIsAParent(safeParentPointer, pointer)) {
+    // eslint-disable-line
     return true;
   }
 
