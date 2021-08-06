@@ -116,7 +116,7 @@
     "fast-json-patch": "^3.0.0-1",
     "form-data-encoder": "^1.0.1",
     "formdata-node": "^3.6.2",
-    "js-yaml": "^3.14.0",
+    "js-yaml": "^4.1.0",
     "lodash": "^4.17.19",
     "qs": "^6.9.4",
     "querystring-browser": "^1.0.4",
