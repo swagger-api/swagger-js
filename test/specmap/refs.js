@@ -635,7 +635,7 @@ describe('refs', () => {
         });
       });
       test('should ignore root or nested $refs in values of OAS3 parameter examples', () => {
-        const input = jsYaml.safeLoad(
+        const input = jsYaml.load(
           fs.readFileSync(path.join('test', 'data', 'parameter-examples-with-refs.yaml'), 'utf8')
         );
 

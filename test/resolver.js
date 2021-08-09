@@ -720,7 +720,7 @@ describe('resolver', () => {
 
   test('should not throw errors on resvered-keywords in freely-named-fields', () => {
     // Given
-    const ReservedKeywordSpec = jsYaml.safeLoad(
+    const ReservedKeywordSpec = jsYaml.load(
       fs.readFileSync(path.resolve(__dirname, './data/reserved-keywords.yaml'), 'utf8')
     );
 

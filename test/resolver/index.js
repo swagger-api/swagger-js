@@ -17,7 +17,7 @@ const testDocuments = fs
   }))
   .map((doc) => ({
     path: doc.path,
-    content: YAML.safeLoad(doc.contentString),
+    content: YAML.load(doc.contentString),
   }));
 
 testDocuments.forEach((doc) => {
