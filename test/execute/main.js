@@ -702,7 +702,7 @@ describe('execute', () => {
 
       // Then
       expect(req.headers).toEqual({
-        'Content-Length': 134,
+        'Content-Length': '134',
         'Content-Type': expect.stringMatching(/^multipart\/form-data/),
       });
 
