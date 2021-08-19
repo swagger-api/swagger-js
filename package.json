@@ -115,7 +115,7 @@
     "deep-extend": "~0.6.0",
     "fast-json-patch": "^3.0.0-1",
     "form-data-encoder": "^1.4.3",
-    "formdata-node": "^3.6.2",
+    "formdata-node": "^4.0.0",
     "js-yaml": "^4.1.0",
     "lodash": "^4.17.19",
     "qs": "^6.9.4",
