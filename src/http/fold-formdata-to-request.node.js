@@ -1,5 +1,5 @@
 import { Readable } from 'stream';
-import { Encoder } from 'form-data-encoder';
+import { FormDataEncoder } from 'form-data-encoder';
 
 /**
  * formdata-node works in node-fetch@2.x via form-data-encoder only.
@@ -9,7 +9,7 @@ import { Encoder } from 'form-data-encoder';
  * TODO(vladimir.gorej@gmail.com): this can be removed when migrated to node-fetch@3.x
  */
 const foldFormDataToRequest = (formdata, request) => {
-  const encoder = new Encoder(formdata);
+  const encoder = new FormDataEncoder(formdata);
   const readableStream = Readable.from(encoder);
 
   // get rid of previous headers

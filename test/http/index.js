@@ -1,5 +1,6 @@
 import xmock from 'xmock';
 import fetchMock from 'fetch-mock';
+import { File, Blob } from 'formdata-node';
 
 import http, {
   serializeHeaders,
@@ -440,11 +441,6 @@ describe('http', () => {
   });
 
   describe('isFile', () => {
-    // mock browser File class
-    global.File = class MockBrowserFile {};
-    // mock browser Blob class
-    global.Blob = class MockBrowserBlob {};
-
     const mockBrowserNavigator = {
       product: 'Gecko',
     };
@@ -452,8 +448,8 @@ describe('http', () => {
       product: 'ReactNative',
     };
 
-    const browserFile = new global.File();
-    const browserBlob = new global.File();
+    const browserFile = new File(['file'], 'file.txt');
+    const browserBlob = new Blob(['blob']);
     const reactNativeFileObject = {
       uri: '/mock/path',
     };
