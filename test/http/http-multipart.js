@@ -227,7 +227,38 @@ describe('buildRequest - openapi 3.0', () => {
     });
   });
 
-  describe('formData with file', () => {
+  describe('formData with Buffer', () => {
+    const file1 = Buffer.from('test file data1');
+    const file2 = Buffer.from('test file data2');
+
+    const req = buildRequest({
+      spec: sampleMultipartOpenApi3,
+      operationId: 'post_land_content_uploadImage',
+      requestBody: {
+        imageId: 'id',
+        'images[]': [file1, file2],
+      },
+    });
+
+    test('should return FormData entry list and item entries (in order)', async () => {
+      expect(req).toMatchObject({
+        method: 'POST',
+        url: '/api/v1/land/content/uploadImage',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': expect.stringMatching(/^multipart\/form-data/),
+        },
+      });
+      expect(req.body).toBeInstanceOf(Readable);
+      const itemEntries = req.formdata.getAll('images[]');
+
+      expect(itemEntries.length).toEqual(2);
+      expect(await itemEntries[0].text()).toEqual(file1.toString());
+      expect(await itemEntries[1].text()).toEqual(file2.toString());
+    });
+  });
+
+  describe('formData with File/Blob', () => {
     const file1 = new File(['test file data1'], 'file1.txt', {
       type: 'text/plain',
     });

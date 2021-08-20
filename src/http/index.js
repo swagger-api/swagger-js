@@ -163,18 +163,13 @@ export function isFile(obj, navigatorObj) {
     return false;
   }
 
-  const FileConstructor = globalThis.File || File;
-  const BlobConstructor = globalThis.Blob || Blob;
-
-  if (typeof FileConstructor !== 'undefined' && obj instanceof FileConstructor) {
-    // eslint-disable-line no-undef
+  if (typeof File !== 'undefined' && obj instanceof File) {
     return true;
   }
-  if (typeof BlobConstructor !== 'undefined' && obj instanceof BlobConstructor) {
-    // eslint-disable-line no-undef
+  if (typeof Blob !== 'undefined' && obj instanceof Blob) {
     return true;
   }
-  if (typeof Buffer !== 'undefined' && obj instanceof Buffer) {
+  if (Buffer.isBuffer(obj)) {
     return true;
   }
 
@@ -343,6 +338,11 @@ function buildFormData(reqForm) {
    * Build a new FormData instance, support array as field value
    * OAS2.0 - when collectionFormat is multi
    * OAS3.0 - when explode of Encoding Object is true
+   *
+   * This function explicitly handles Buffers (for backward compatibility)
+   * if provided as a values to FormData. FormData can only handle USVString
+   * or Blob.
+   *
    * @param {Object} reqForm - ori req.form
    * @return {FormData} - new FormData instance
    */
@@ -352,8 +352,16 @@ function buildFormData(reqForm) {
       if (Array.isArray(value)) {
         // eslint-disable-next-line no-restricted-syntax
         for (const v of value) {
-          formData.append(key, v);
+          if (Buffer.isBuffer(v)) {
+            const blob = new Blob([v]);
+            formData.append(key, blob);
+          } else {
+            formData.append(key, v);
+          }
         }
+      } else if (Buffer.isBuffer(value)) {
+        const blob = new Blob([value]);
+        formData.append(key, blob);
       } else {
         formData.append(key, value);
       }

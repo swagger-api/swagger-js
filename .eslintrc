@@ -7,8 +7,7 @@
   },
   "globals": {
     "File": true,
-    "Blob": true,
-    "globalThis": false
+    "Blob": true
   },
   "parserOptions": {
     "sourceType": "module",
