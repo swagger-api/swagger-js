@@ -1,5 +1,6 @@
 import fetchMock from 'fetch-mock';
 import { Readable } from 'stream';
+import { File } from 'formdata-node';
 
 import { buildRequest } from '../../src/execute';
 import sampleMultipartOpenApi2 from '../data/sample-multipart-oas2';
@@ -227,8 +228,12 @@ describe('buildRequest - openapi 3.0', () => {
   });
 
   describe('formData with file', () => {
-    const file1 = Buffer.from('test file data1');
-    const file2 = Buffer.from('test file data2');
+    const file1 = new File(['test file data1'], 'file1.txt', {
+      type: 'text/plain',
+    });
+    const file2 = new File(['test file data2'], 'file2.txt', {
+      type: 'text/plain',
+    });
 
     const req = buildRequest({
       spec: sampleMultipartOpenApi3,
