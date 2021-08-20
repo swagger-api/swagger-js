@@ -4,7 +4,7 @@ import jsYaml from 'js-yaml';
 import pick from 'lodash/pick';
 import isFunction from 'lodash/isFunction';
 import { Buffer } from 'buffer';
-import { FormData } from 'formdata-node';
+import { FormData, File, Blob } from 'formdata-node';
 
 import { encodeDisallowedCharacters } from '../execute/oas3/style-serializer';
 import foldFormDataToRequest from './fold-formdata-to-request.node';
@@ -163,11 +163,14 @@ export function isFile(obj, navigatorObj) {
     return false;
   }
 
-  if (typeof File !== 'undefined' && obj instanceof File) {
+  const FileConstructor = globalThis.File || File;
+  const BlobConstructor = globalThis.Blob || Blob;
+
+  if (typeof FileConstructor !== 'undefined' && obj instanceof FileConstructor) {
     // eslint-disable-line no-undef
     return true;
   }
-  if (typeof Blob !== 'undefined' && obj instanceof Blob) {
+  if (typeof BlobConstructor !== 'undefined' && obj instanceof BlobConstructor) {
     // eslint-disable-line no-undef
     return true;
   }

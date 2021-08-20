@@ -257,8 +257,8 @@ describe('buildRequest - openapi 3.0', () => {
       const itemEntries = req.formdata.getAll('images[]');
 
       expect(itemEntries.length).toEqual(2);
-      expect(await itemEntries[0].text()).toEqual(file1.toString());
-      expect(await itemEntries[1].text()).toEqual(file2.toString());
+      expect(await itemEntries[0].text()).toEqual(await file1.text());
+      expect(await itemEntries[1].text()).toEqual(await file2.text());
     });
   });
 
