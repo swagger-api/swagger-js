@@ -1,6 +1,8 @@
-import fetchMock from 'fetch-mock';
+import path from 'path';
 import { Readable } from 'stream';
-import { File } from 'formdata-node';
+import fetchMock from 'fetch-mock';
+import { File, Blob } from 'formdata-node';
+import { fileFromPathSync } from 'formdata-node/lib/cjs/fileFromPath';
 
 import { buildRequest } from '../../src/execute';
 import sampleMultipartOpenApi2 from '../data/sample-multipart-oas2';
@@ -258,11 +260,47 @@ describe('buildRequest - openapi 3.0', () => {
     });
   });
 
+  describe('formData with fs.createReadStream', () => {
+    /**
+     * fs.ReadStream is not supported as a value in FormData according to the spec.
+     * `fileFromPathSync` helper should be used to load files from Node.js env
+     * that are further used as values for FormData.
+     */
+    const file1 = fileFromPathSync(path.join(__dirname, 'data', 'file1.txt'));
+    const file2 = fileFromPathSync(path.join(__dirname, 'data', 'file2.txt'));
+
+    const req = buildRequest({
+      spec: sampleMultipartOpenApi3,
+      operationId: 'post_land_content_uploadImage',
+      requestBody: {
+        imageId: 'id',
+        'images[]': [file1, file2],
+      },
+    });
+
+    test('should return FormData entry list and item entries (in order)', async () => {
+      expect(req).toMatchObject({
+        method: 'POST',
+        url: '/api/v1/land/content/uploadImage',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': expect.stringMatching(/^multipart\/form-data/),
+        },
+      });
+      expect(req.body).toBeInstanceOf(Readable);
+      const itemEntries = req.formdata.getAll('images[]');
+
+      expect(itemEntries.length).toEqual(2);
+      expect(await itemEntries[0].text()).toEqual(await file1.text());
+      expect(await itemEntries[1].text()).toEqual(await file2.text());
+    });
+  });
+
   describe('formData with File/Blob', () => {
     const file1 = new File(['test file data1'], 'file1.txt', {
       type: 'text/plain',
     });
-    const file2 = new File(['test file data2'], 'file2.txt', {
+    const file2 = new Blob(['test file data2'], {
       type: 'text/plain',
     });
 
