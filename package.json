@@ -117,7 +117,7 @@
     "form-data-encoder": "^1.4.3",
     "formdata-node": "^4.0.0",
     "js-yaml": "^4.1.0",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.21",
     "qs": "^6.9.4",
     "querystring-browser": "^1.0.4",
     "traverse": "~0.6.6",
