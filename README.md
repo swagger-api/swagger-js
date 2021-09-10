@@ -1,6 +1,6 @@
 # Swagger Client <img src="https://raw.githubusercontent.com/swagger-api/swagger.io/wordpress/images/assets/SW-logo-clr.png" height="50" align="right">
 
-![Build Status](https://github.com/swagger-api/swagger-js/actions/workflows/nodejs.yml/badge.svg)
+[![Build Status](https://github.com/swagger-api/swagger-js/actions/workflows/nodejs.yml/badge.svg)](https://github.com/swagger-api/swagger-js/actions)
 
 **Swagger Client** is a JavaScript module that allows you to fetch, resolve, and interact with Swagger/OpenAPI documents.
 
