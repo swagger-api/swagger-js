@@ -1,6 +1,5 @@
 // This function runs after the common function,
 // `src/execute/index.js#buildRequest`
-import assign from 'lodash/assign';
 import get from 'lodash/get';
 import isPlainObject from 'lodash/isPlainObject';
 import btoa from 'btoa';
@@ -88,7 +87,7 @@ export default function buildRequest(options, req) {
 // Add security values, to operations - that declare their need on them
 // Adapted from the Swagger2 implementation
 export function applySecurities({ request, securities = {}, operation = {}, spec }) {
-  const result = assign({}, request);
+  const result = { ...request };
   const { authorized = {} } = securities;
   const security = operation.security || spec.security || [];
   const isAuthorized = authorized && !!Object.keys(authorized).length;

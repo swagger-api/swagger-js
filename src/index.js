@@ -1,4 +1,3 @@
-import assign from 'lodash/assign';
 import startsWith from 'lodash/startsWith';
 import Url from 'url';
 
@@ -34,11 +33,11 @@ function Swagger(url, opts = {}) {
     return new Swagger(opts);
   }
 
-  assign(this, opts);
+  Object.assign(this, opts);
 
   const prom = this.resolve().then(() => {
     if (!this.disableInterfaces) {
-      assign(this, Swagger.makeApisTagOperation(this));
+      Object.assign(this, Swagger.makeApisTagOperation(this));
     }
     return this;
   });
