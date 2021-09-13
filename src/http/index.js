@@ -1,7 +1,6 @@
 import 'cross-fetch/polyfill'; /* global fetch */
 import qs from 'qs';
 import jsYaml from 'js-yaml';
-import pick from 'lodash/pick';
 import isFunction from 'lodash/isFunction';
 import { Buffer } from 'buffer';
 import { FormData, File, Blob } from 'formdata-node';
@@ -229,12 +228,12 @@ function formatKeyValue(key, input, skipEncoding = false) {
         (type) => type !== 'undefined'
       )
     ) {
-      return formatKeyValueBySerializationOption(
-        key,
-        value,
-        skipEncoding,
-        pick(encoding, ['style', 'explode', 'allowReserved'])
-      );
+      const { style, explode, allowReserved } = encoding;
+      return formatKeyValueBySerializationOption(key, value, skipEncoding, {
+        style,
+        explode,
+        allowReserved,
+      });
     }
 
     if (encoding.contentType) {
