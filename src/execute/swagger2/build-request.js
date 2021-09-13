@@ -1,5 +1,4 @@
 import btoa from 'btoa';
-import assign from 'lodash/assign';
 
 // This function runs after the common function,
 // `src/execute/index.js#buildRequest`
@@ -57,7 +56,7 @@ export default function buildRequest(options, req) {
 
 // Add security values, to operations - that declare their need on them
 export function applySecurities({ request, securities = {}, operation = {}, spec }) {
-  const result = assign({}, request);
+  const result = { ...request };
   const { authorized = {}, specSecurity = [] } = securities;
   const security = operation.security || specSecurity;
   const isAuthorized = authorized && !!Object.keys(authorized).length;
