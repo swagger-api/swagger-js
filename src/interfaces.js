@@ -14,7 +14,7 @@ export const self = {
 export function makeExecute(swaggerJs = {}) {
   return ({ pathName, method, operationId }) =>
     (parameters, opts = {}) => {
-      const { requestInterceptor, responseInterceptor, userFetch } = swaggerJs
+      const { requestInterceptor, responseInterceptor, userFetch } = swaggerJs;
       return swaggerJs.execute({
         spec: swaggerJs.spec,
         requestInterceptor,
@@ -26,7 +26,7 @@ export function makeExecute(swaggerJs = {}) {
         operationId,
         ...opts,
       });
-    }
+    };
 }
 
 // Creates an interface with tags+operations = execute

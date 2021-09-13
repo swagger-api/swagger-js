@@ -229,12 +229,11 @@ function formatKeyValue(key, input, skipEncoding = false) {
       )
     ) {
       const { style, explode, allowReserved } = encoding;
-      return formatKeyValueBySerializationOption(
-        key,
-        value,
-        skipEncoding,
-        { style, explode, allowReserved }
-      );
+      return formatKeyValueBySerializationOption(key, value, skipEncoding, {
+        style,
+        explode,
+        allowReserved,
+      });
     }
 
     if (encoding.contentType) {
