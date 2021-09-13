@@ -1,5 +1,3 @@
-import pick from 'lodash/pick';
-
 import stylize, { encodeDisallowedCharacters } from './style-serializer';
 import serialize from './content-serializer';
 
@@ -45,9 +43,10 @@ export function query({ req, value, parameter }) {
   }
 
   if (value) {
+    const { style, explode, allowReserved } = parameter;
     req.query[parameter.name] = {
       value,
-      serializationOption: pick(parameter, ['style', 'explode', 'allowReserved']),
+      serializationOption: { style, explode, allowReserved },
     };
   } else if (parameter.allowEmptyValue && value !== undefined) {
     const paramName = parameter.name;

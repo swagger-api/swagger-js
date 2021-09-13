@@ -1,5 +1,3 @@
-import pick from 'lodash/pick';
-
 import { eachOperation, opId } from './helpers';
 
 const nullFn = () => null;
@@ -15,16 +13,20 @@ export const self = {
 // Make an execute, bound to arguments defined in mapTagOperation's callback (cb)
 export function makeExecute(swaggerJs = {}) {
   return ({ pathName, method, operationId }) =>
-    (parameters, opts = {}) =>
-      swaggerJs.execute({
+    (parameters, opts = {}) => {
+      const { requestInterceptor, responseInterceptor, userFetch } = swaggerJs
+      return swaggerJs.execute({
         spec: swaggerJs.spec,
-        ...pick(swaggerJs, 'requestInterceptor', 'responseInterceptor', 'userFetch'),
+        requestInterceptor,
+        responseInterceptor,
+        userFetch,
         pathName,
         method,
         parameters,
         operationId,
         ...opts,
       });
+    }
 }
 
 // Creates an interface with tags+operations = execute
