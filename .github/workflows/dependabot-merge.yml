@@ -14,3 +14,4 @@ jobs:
         with:
           target: minor
           github-token: ${{ secrets.SWAGGER_BOT_GITHUB_TOKEN }}
+          command: squash and merge
