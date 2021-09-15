@@ -1,6 +1,6 @@
 import btoa from 'btoa';
 
-import { buildRequest } from '../../../src/execute';
+import { buildRequest } from '../../../src/execute/index.js';
 
 // OAS 3.0 Authorization
 

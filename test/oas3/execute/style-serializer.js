@@ -1,4 +1,4 @@
-import { encodeDisallowedCharacters } from '../../../src/execute/oas3/style-serializer';
+import { encodeDisallowedCharacters } from '../../../src/execute/oas3/style-serializer.js';
 
 describe('OAS3 style serializer', () => {
   describe('encodeDisallowedCharacters', () => {

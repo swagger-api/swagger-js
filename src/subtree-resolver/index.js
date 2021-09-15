@@ -23,8 +23,8 @@
 
 import get from 'lodash/get';
 
-import resolve from '../resolver';
-import { normalizeSwagger } from '../helpers';
+import resolve from '../resolver.js';
+import { normalizeSwagger } from '../helpers.js';
 
 export default async function resolveSubtree(obj, path, opts = {}) {
   const {

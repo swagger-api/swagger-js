@@ -3,7 +3,7 @@ import {
   makeApisTagOperationsOperationExecute,
   makeApisTagOperation,
   self as stubs,
-} from '../src/interfaces';
+} from '../src/interfaces.js';
 
 describe('intefaces', () => {
   afterEach(() => {

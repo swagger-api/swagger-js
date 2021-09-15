@@ -1,12 +1,11 @@
 import 'cross-fetch/polyfill'; /* global fetch */
 import qs from 'qs';
 import jsYaml from 'js-yaml';
-import isFunction from 'lodash/isFunction';
 import { Buffer } from 'buffer';
 import { FormData, File, Blob } from 'formdata-node';
 
-import { encodeDisallowedCharacters } from '../execute/oas3/style-serializer';
-import foldFormDataToRequest from './fold-formdata-to-request.node';
+import { encodeDisallowedCharacters } from '../execute/oas3/style-serializer.js';
+import foldFormDataToRequest from './fold-formdata-to-request.node.js';
 
 // For testing
 export const self = {
@@ -142,7 +141,7 @@ function serializeHeaderValue(value) {
 //     Cookie: two
 //  =  { Cookie: [ "one", "two" ]
 export function serializeHeaders(headers = {}) {
-  if (!isFunction(headers.entries)) return {};
+  if (typeof headers.entries !== 'function') return {};
 
   return Array.from(headers.entries()).reduce((acc, [header, value]) => {
     acc[header] = serializeHeaderValue(value);

@@ -1,6 +1,6 @@
 'use strict'; // eslint-disable-line
 
-const { default: SwaggerClient } = require('./index');
+const { default: SwaggerClient } = require('./index.js');
 
 // add backwards compatibility with older versions of swagger-ui
 // by exporting one single symbol.

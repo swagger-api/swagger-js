@@ -1,4 +1,4 @@
-import lib from '.';
+import lib from './index.js';
 
 export default {
   key: 'parameters',

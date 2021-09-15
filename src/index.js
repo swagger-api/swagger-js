@@ -1,13 +1,12 @@
 import assign from 'lodash/assign';
-import startsWith from 'lodash/startsWith';
 import Url from 'url';
 
-import Http, { makeHttp, serializeRes, serializeHeaders } from './http';
-import Resolver, { clearCache } from './resolver';
-import resolveSubtree from './subtree-resolver';
-import { makeApisTagOperation } from './interfaces';
-import { execute, buildRequest, baseUrl } from './execute';
-import { opId } from './helpers';
+import Http, { makeHttp, serializeRes, serializeHeaders } from './http/index.js';
+import Resolver, { clearCache } from './resolver.js';
+import resolveSubtree from './subtree-resolver/index.js';
+import { makeApisTagOperation } from './interfaces.js';
+import { execute, buildRequest, baseUrl } from './execute/index.js';
+import { opId } from './helpers.js';
 
 Swagger.http = Http;
 Swagger.makeHttp = makeHttp.bind(null, Swagger.http);
@@ -89,7 +88,7 @@ Swagger.prototype.applyDefaults = function applyDefaults() {
   const { spec } = this;
   const specUrl = this.url;
   // TODO: OAS3: support servers here
-  if (specUrl && startsWith(specUrl, 'http')) {
+  if (specUrl && specUrl.startsWith('http')) {
     const parsed = Url.parse(specUrl);
     if (!spec.host) {
       spec.host = parsed.host;

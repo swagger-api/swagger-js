@@ -1,12 +1,12 @@
 import find from 'lodash/find';
 import noop from 'lodash/noop';
 
-import lib from './lib';
-import refs from './lib/refs';
-import allOf from './lib/all-of';
-import parameters from './lib/parameters';
-import properties from './lib/properties';
-import ContextTree from './lib/context-tree';
+import lib from './lib/index.js';
+import refs from './lib/refs.js';
+import allOf from './lib/all-of.js';
+import parameters from './lib/parameters.js';
+import properties from './lib/properties.js';
+import ContextTree from './lib/context-tree.js';
 
 const HARD_LIMIT = 100;
 

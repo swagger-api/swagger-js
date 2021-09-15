@@ -1,7 +1,7 @@
 import xmock from 'xmock';
 import cloneDeep from 'lodash/cloneDeep';
 
-import Swagger from '../src/index';
+import Swagger from '../src/index.js';
 
 describe('constructor', () => {
   afterEach(() => {
