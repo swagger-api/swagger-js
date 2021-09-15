@@ -10,7 +10,7 @@ export function isOAS3(spec) {
     return false;
   }
 
-  return oasVersion[0] === '3';
+  return oasVersion.startsWith('3');
 }
 
 export function isSwagger2(spec) {
@@ -19,7 +19,7 @@ export function isSwagger2(spec) {
     return false;
   }
 
-  return swaggerVersion[0] === '2';
+  return swaggerVersion.startsWith('2');
 }
 
 // Strategy for determining operationId
