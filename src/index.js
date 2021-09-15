@@ -1,4 +1,3 @@
-import startsWith from 'lodash/startsWith';
 import Url from 'url';
 
 import Http, { makeHttp, serializeRes, serializeHeaders } from './http/index.js';
