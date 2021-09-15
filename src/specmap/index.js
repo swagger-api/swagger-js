@@ -1,6 +1,3 @@
-import find from 'lodash/find';
-import noop from 'lodash/noop';
-
 import lib from './lib';
 import refs from './lib/refs';
 import allOf from './lib/all-of';
@@ -9,6 +6,7 @@ import properties from './lib/properties';
 import ContextTree from './lib/context-tree';
 
 const HARD_LIMIT = 100;
+const noop = () => {};
 
 class SpecMap {
   static getPluginName(plugin) {
@@ -154,8 +152,7 @@ class SpecMap {
   }
 
   nextPlugin() {
-    // Array.prototype.find doesn't work in IE 11 :(
-    return find(this.wrappedPlugins, (plugin) => {
+    return this.wrappedPlugins.find((plugin) => {
       const mutations = this.getMutationsForPlugin(plugin);
       return mutations.length > 0;
     });

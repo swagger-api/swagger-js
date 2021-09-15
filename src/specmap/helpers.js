@@ -1,6 +1,5 @@
 import traverse from 'traverse';
 import URL from 'url';
-import isString from 'lodash/isString';
 
 // This will match if the direct parent's key exactly matches an item.
 const freelyNamedKeyParents = ['properties'];
@@ -59,7 +58,7 @@ export function generateAbsoluteRefPatches(
   const patches = [];
 
   traverse(obj).forEach(function callback() {
-    if (targetKeys.includes(this.key) && isString(this.node)) {
+    if (targetKeys.includes(this.key) && typeof this.node === 'string') {
       const nodePath = this.path; // this node's path, relative to `obj`
       const fullPath = basePath.concat(this.path);
 
