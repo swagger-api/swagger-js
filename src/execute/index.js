@@ -1,6 +1,5 @@
 import getIn from 'lodash/get';
 import isPlainObject from 'lodash/isPlainObject';
-import isArray from 'lodash/isArray';
 import url from 'url';
 import cookie from 'cookie';
 
@@ -77,7 +76,7 @@ export function execute({
     ...extras,
   });
 
-  if (request.body && (isPlainObject(request.body) || isArray(request.body))) {
+  if (request.body && (isPlainObject(request.body) || Array.isArray(request.body))) {
     request.body = JSON.stringify(request.body);
   }
 
