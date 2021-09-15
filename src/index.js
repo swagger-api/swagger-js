@@ -1,4 +1,3 @@
-import startsWith from 'lodash/startsWith';
 import Url from 'url';
 
 import Http, { makeHttp, serializeRes, serializeHeaders } from './http';
@@ -88,7 +87,7 @@ Swagger.prototype.applyDefaults = function applyDefaults() {
   const { spec } = this;
   const specUrl = this.url;
   // TODO: OAS3: support servers here
-  if (specUrl && startsWith(specUrl, 'http')) {
+  if (specUrl && specUrl.startsWith('http')) {
     const parsed = Url.parse(specUrl);
     if (!spec.host) {
       spec.host = parsed.host;

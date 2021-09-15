@@ -1,5 +1,4 @@
 import isObject from 'lodash/isObject';
-import startsWith from 'lodash/startsWith';
 
 const toLower = (str) => String.prototype.toLowerCase.call(str);
 const escapeString = (str) => str.replace(/[^\w]/gi, '_');
@@ -11,7 +10,7 @@ export function isOAS3(spec) {
     return false;
   }
 
-  return startsWith(oasVersion, '3');
+  return oasVersion[0] === '3';
 }
 
 export function isSwagger2(spec) {
@@ -20,7 +19,7 @@ export function isSwagger2(spec) {
     return false;
   }
 
-  return startsWith(swaggerVersion, '2');
+  return swaggerVersion[0] === '2';
 }
 
 // Strategy for determining operationId
