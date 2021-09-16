@@ -1,7 +1,6 @@
 import 'cross-fetch/polyfill'; /* global fetch */
 import qs from 'qs';
 import jsYaml from 'js-yaml';
-import { Buffer } from 'buffer';
 import { FormData, File, Blob } from 'formdata-node';
 
 import { encodeDisallowedCharacters } from '../execute/oas3/style-serializer';
@@ -167,7 +166,7 @@ export function isFile(obj, navigatorObj) {
   if (typeof Blob !== 'undefined' && obj instanceof Blob) {
     return true;
   }
-  if (Buffer.isBuffer(obj)) {
+  if (ArrayBuffer.isView(obj)) {
     return true;
   }
 
@@ -350,14 +349,14 @@ function buildFormData(reqForm) {
       if (Array.isArray(value)) {
         // eslint-disable-next-line no-restricted-syntax
         for (const v of value) {
-          if (Buffer.isBuffer(v)) {
+          if (ArrayBuffer.isView(v)) {
             const blob = new Blob([v]);
             formData.append(key, blob);
           } else {
             formData.append(key, v);
           }
         }
-      } else if (Buffer.isBuffer(value)) {
+      } else if (ArrayBuffer.isView(value)) {
         const blob = new Blob([value]);
         formData.append(key, blob);
       } else {
