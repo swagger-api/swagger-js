@@ -78,4 +78,23 @@ describe('externalValue', () => {
         expect(res.spec).toEqual(spec);
       }));
   });
+
+  describe('absoluteify', () => {
+    test('should find the absolute path for a url', () => {
+      const res = refs.absoluteify('/one', 'http://example.com');
+      expect(res).toEqual('http://example.com/one');
+    });
+
+    describe('relative paths', () => {
+      test('should think of the basePath as pointing to a document, so use the parent folder for resolution', () => {
+        const res = refs.absoluteify('one.json', 'http://example.com/two.json');
+        expect(res).toEqual('http://example.com/one.json');
+      });
+
+      test('should handle ../', () => {
+        const res = refs.absoluteify('../one.json', 'http://example.com/two/three/four.json');
+        expect(res).toEqual('http://example.com/two/one.json');
+      });
+    });
+  });
 });

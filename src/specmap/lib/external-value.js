@@ -2,8 +2,26 @@ import { fetch } from 'cross-fetch';
 
 import createError from './create-error';
 import lib from '.';
+import url from 'url';
 
 const externalValuesCache = {};
+
+
+/**
+ * Resolves a path(optional absolute) and its base to an abolute URL.
+ * @api public
+ */
+ function absoluteify(path, basePath) {
+  if (!ABSOLUTE_URL_REGEXP.test(path)) {
+    if (!basePath) {
+      throw new JSONRefError(
+        `Tried to resolve a relative URL, without having a basePath. path: '${path}' basePath: '${basePath}'`
+      );
+    }
+    return url.resolve(basePath, path);
+  }
+  return path;
+}
 
 /**
  * Clears all external value caches.
@@ -91,7 +109,7 @@ const ExternalValueError = createError('ExternalValueError', function cb(message
  */
 const plugin = {
   key: 'externalValue',
-  plugin: (externalValue, _, fullPath, __, patch) => {
+  plugin: (externalValue, _, fullPath, specmap, patch) => {
     const parent = fullPath.slice(0, -1);
     const parentObj = lib.getIn(patch.value, parent);
 
@@ -102,12 +120,31 @@ const plugin = {
     if (shouldSkipResolution(fullPath)) {
       return undefined;
     }
+    const { baseDoc } = specmap.getContext(fullPath);
 
     if (typeof externalValue !== 'string') {
       return new ExternalValueError('externalValue: must be a string', {
         externalValue,
+        baseDoc,
         fullPath,
       });
+    }
+
+    const pathFragmentSplit = externalValue.split('#');
+    const externalValuePath = pathFragmentSplit[0];
+
+    let basePath;
+    try {
+      basePath = baseDoc || externalValuePath ? absoluteify(externalValuePath, baseDoc) : null;
+    } catch (e) {
+      return new ExternalValueError(
+        `Could not absoluteify externalValue: ${externalValue}`,
+        {
+          externalValue,
+          baseDoc,
+          fullPath,
+        }
+      );
     }
 
     try {
@@ -117,6 +154,7 @@ const plugin = {
           `Could not resolve externalValue: ${externalValue}`,
           {
             externalValue,
+            baseDoc,
             fullPath,
           }
         );
@@ -159,6 +197,7 @@ const mod = Object.assign(plugin, {
   ExternalValueError,
   fetchRaw,
   getExternalValue,
+  absoluteify
 });
 export default mod;
 
