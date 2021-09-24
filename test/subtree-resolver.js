@@ -290,6 +290,15 @@ describe('subtree $ref resolver', () => {
             get: {
               parameters: [
                 {
+                  name: 'petId',
+                  in: 'path',
+                  description: 'ID of pet to return',
+                  required: true,
+                  type: 'integer',
+                  format: 'int64',
+                  $$ref: '#/parameters/petId',
+                },
+                {
                   name: 'name',
                   in: 'formData',
                   description: 'Updated name of the pet',
@@ -302,15 +311,6 @@ describe('subtree $ref resolver', () => {
                   description: 'Updated status of the pet',
                   required: false,
                   type: 'string',
-                },
-                {
-                  name: 'petId',
-                  in: 'path',
-                  description: 'ID of pet to return',
-                  required: true,
-                  type: 'integer',
-                  format: 'int64',
-                  $$ref: '#/parameters/petId',
                 },
               ],
             },
@@ -411,14 +411,6 @@ describe('subtree $ref resolver', () => {
               summary: 'has own operation parameters',
               parameters: [
                 {
-                  name: 'Three',
-                  in: 'query',
-                },
-                {
-                  name: 'Four',
-                  in: 'query',
-                },
-                {
                   type: 'string',
                   name: 'One',
                   in: 'query',
@@ -429,6 +421,14 @@ describe('subtree $ref resolver', () => {
                   name: 'Two',
                   in: 'query',
                   $$ref: '#/parameters/Two',
+                },
+                {
+                  name: 'Three',
+                  in: 'query',
+                },
+                {
+                  name: 'Four',
+                  in: 'query',
                 },
               ],
             },
@@ -525,6 +525,15 @@ describe('subtree $ref resolver', () => {
             get: {
               parameters: [
                 {
+                  name: 'petId',
+                  in: 'path',
+                  description: 'ID of pet to return',
+                  required: true,
+                  type: 'integer',
+                  format: 'int64',
+                  $$ref: '#/parameters/petId',
+                },
+                {
                   name: 'name',
                   in: 'formData',
                   description: 'Updated name of the pet',
@@ -537,15 +546,6 @@ describe('subtree $ref resolver', () => {
                   description: 'Updated status of the pet',
                   required: false,
                   type: 'string',
-                },
-                {
-                  name: 'petId',
-                  in: 'path',
-                  description: 'ID of pet to return',
-                  required: true,
-                  type: 'integer',
-                  format: 'int64',
-                  $$ref: '#/parameters/petId',
                 },
               ],
             },

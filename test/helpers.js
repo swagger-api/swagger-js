@@ -609,9 +609,9 @@ describe('helpers', () => {
                 ],
                 get: {
                   parameters: [
+                    { name: 'b', in: 'path' },
                     { name: 'a', in: 'query' },
                     { name: 'c', in: 'query' },
-                    { name: 'b', in: 'path' },
                   ],
                 },
               },
