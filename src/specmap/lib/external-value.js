@@ -14,7 +14,7 @@ const externalValuesCache = {};
  function absoluteify(path, basePath) {
   if (!ABSOLUTE_URL_REGEXP.test(path)) {
     if (!basePath) {
-      throw new JSONRefError(
+      throw new ExternalValueError(
         `Tried to resolve a relative URL, without having a basePath. path: '${path}' basePath: '${basePath}'`
       );
     }
