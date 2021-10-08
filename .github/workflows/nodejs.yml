@@ -73,15 +73,15 @@ jobs:
     - name: Install dependencies
       if: steps.cache-node-modules.outputs.cache-hit != 'true'
       run: npm ci
-#
-#    - name: Download commonjs build artifacts
-#      uses: actions/download-artifact@v1
-#      with:
-#        name: commonjs
-#
-#    - name: Run commonjs build artifacts on Node.js 12.4.x
-#      run: node -p "require('./commonjs')"
-#
+
+    - name: Download commonjs build artifacts
+      uses: actions/download-artifact@v1
+      with:
+        name: commonjs
+
+    - name: Run commonjs build artifacts on Node.js 12.4.x
+      run: node -p "require('./commonjs')"
+
 #    - name: Use Node 14.x
 #      uses: actions/setup-node@v2
 #      with:
