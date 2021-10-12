@@ -1,5 +1,4 @@
-import getIn from 'lodash/get';
-import isPlainObject from 'lodash/isPlainObject';
+import { isPlainObject, get } from 'lodash';
 import url from 'url';
 import cookie from 'cookie';
 
@@ -285,9 +284,9 @@ export function baseUrl(obj) {
 
 function oas3BaseUrl({ spec, pathName, method, server, contextUrl, serverVariables = {} }) {
   const servers =
-    getIn(spec, ['paths', pathName, (method || '').toLowerCase(), 'servers']) ||
-    getIn(spec, ['paths', pathName, 'servers']) ||
-    getIn(spec, ['servers']);
+    get(spec, ['paths', pathName, (method || '').toLowerCase(), 'servers']) ||
+    get(spec, ['paths', pathName, 'servers']) ||
+    get(spec, ['servers']);
 
   let selectedServerUrl = '';
   let selectedServerObj = null;

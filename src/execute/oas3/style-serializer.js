@@ -1,4 +1,4 @@
-const { Buffer } = require('buffer');
+import { Buffer } from 'buffer';
 
 const isRfc3986Reserved = (char) => ":/?#[]@!$&'()*+,;=".indexOf(char) > -1;
 const isRrc3986Unreserved = (char) => /^[a-z0-9\-._~]+$/i.test(char);
