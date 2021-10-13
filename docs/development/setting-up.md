@@ -16,7 +16,7 @@ Current Node.js Active LTS:
 - NPM >=6.14.x
 
 Current Node.js Maintenance LTS:
-- Node.js >=12.4
+- Node.js >12.4
 - NPM >=6.12.x
 
 ### Steps
