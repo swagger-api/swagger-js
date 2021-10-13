@@ -46,7 +46,7 @@ export default {
     // remove existing content
     patches.push(specmap.replace(parent, {}));
 
-    val.forEach((toMerge, i) => {
+    val.forEach((toMerge, position) => {
       if (!specmap.isObject(toMerge)) {
         if (alreadyAddError) {
           return null;
@@ -68,7 +68,7 @@ export default {
 
       const absoluteRefPatches = generateAbsoluteRefPatches(toMerge, collapsedFullPath, {
         getBaseUrlForNodePath: (nodePath) =>
-          specmap.getContext([...fullPath, i, ...nodePath]).baseDoc,
+          specmap.getContext([...fullPath, position, ...nodePath]).baseDoc,
         specmap,
       });
 

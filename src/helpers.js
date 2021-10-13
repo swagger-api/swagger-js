@@ -4,8 +4,8 @@ const toLower = (str) => String.prototype.toLowerCase.call(str);
 const escapeString = (str) => str.replace(/[^\w]/gi, '_');
 
 // Spec version detection
-export function isOAS3(spec) {
-  const oasVersion = spec.openapi;
+export function isOAS3(specs) {
+  const oasVersion = specs.openapi;
   if (!oasVersion) {
     return false;
   }
@@ -160,10 +160,10 @@ export function normalizeSwagger(parsedSpec) {
 
         const opList = map[oid];
         if (opList.length > 1) {
-          opList.forEach((o, i) => {
+          opList.forEach((op, key) => {
             // eslint-disable-next-line no-underscore-dangle
-            o.__originalOperationId = o.__originalOperationId || o.operationId;
-            o.operationId = `${oid}${i + 1}`;
+            op.__originalOperationId = op.__originalOperationId || op.operationId;
+            op.operationId = `${oid}${key + 1}`;
           });
         } else if (typeof operation.operationId !== 'undefined') {
           // Ensure we always add the normalized operation ID if one already exists

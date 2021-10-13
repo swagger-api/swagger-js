@@ -97,7 +97,7 @@ class SpecMap {
           return true;
         }
 
-        return path.every((val, i) => val === tested[i]);
+        return path.every((val, key) => val === tested[key]);
       };
 
       return function* generator(patches, specmap) {
@@ -223,9 +223,9 @@ class SpecMap {
           this.updateMutations(patch);
           return;
         }
-      } catch (e) {
-        console.error(e); // eslint-disable-line no-console
-        this.errors.push(e);
+      } catch (error) {
+        console.error(error); // eslint-disable-line no-console
+        this.errors.push(error);
       }
     });
   }
@@ -258,9 +258,9 @@ class SpecMap {
         this.removePromisedPatch(patch);
         this.updatePatches(promisedPatch);
       })
-      .catch((e) => {
+      .catch((error) => {
         this.removePromisedPatch(patch);
-        this.updatePatches(e);
+        this.updatePatches(error);
       });
     return patch.value;
   }
@@ -342,7 +342,7 @@ class SpecMap {
 
     // A different plugin runs, wait for all promises to resolve, then retry
     if (plugin !== this.currentPlugin && this.promisedPatches.length) {
-      const promises = this.promisedPatches.map((p) => p.value);
+      const promises = this.promisedPatches.map((parameter) => parameter.value);
 
       // Waits for all to settle instead of Promise.all which stops on rejection
       return Promise.all(promises.map((promise) => promise.then(noop, noop))).then(() =>
@@ -368,9 +368,9 @@ class SpecMap {
           const newPatches = plugin(mutations, that.getLib());
           updatePatches(newPatches);
         }
-      } catch (e) {
-        console.error(e); // eslint-disable-line no-console
-        updatePatches([Object.assign(Object.create(e), { plugin })]);
+      } catch (error) {
+        console.error(error); // eslint-disable-line no-console
+        updatePatches([Object.assign(Object.create(error), { plugin })]);
       } finally {
         that.updatePluginHistory(plugin, { mutationIndex: lastMutationIndex });
       }

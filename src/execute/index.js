@@ -20,22 +20,23 @@ const OperationNotFoundError = createError(
   }
 );
 
-const findParametersWithName = (name, parameters) => parameters.filter((p) => p.name === name);
+const findParametersWithName = (name, parameters) =>
+  parameters.filter((parameter) => parameter.name === name);
 
 // removes parameters that have duplicate 'in' and 'name' properties
 const deduplicateParameters = (parameters) => {
   const paramsMap = {};
-  parameters.forEach((p) => {
-    if (!paramsMap[p.in]) {
-      paramsMap[p.in] = {};
+  parameters.forEach((parameter) => {
+    if (!paramsMap[parameter.in]) {
+      paramsMap[parameter.in] = {};
     }
-    paramsMap[p.in][p.name] = p;
+    paramsMap[parameter.in][parameter.name] = parameter;
   });
 
   const dedupedParameters = [];
-  Object.keys(paramsMap).forEach((i) => {
-    Object.keys(paramsMap[i]).forEach((p) => {
-      dedupedParameters.push(paramsMap[i][p]);
+  Object.keys(paramsMap).forEach((param) => {
+    Object.keys(paramsMap[param]).forEach((parameter) => {
+      dedupedParameters.push(paramsMap[param][parameter]);
     });
   });
   return dedupedParameters;
@@ -221,7 +222,7 @@ export function buildRequest(options) {
     ) {
       try {
         value = JSON.parse(value);
-      } catch (e) {
+      } catch (error) {
         throw new Error('Could not parse object parameter value string as JSON');
       }
     }

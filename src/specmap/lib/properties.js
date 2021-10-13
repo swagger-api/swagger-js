@@ -6,11 +6,11 @@ export default {
     const val = { ...properties };
 
     // eslint-disable-next-line no-restricted-syntax, guard-for-in
-    for (const k in properties) {
+    for (const position in properties) {
       try {
-        val[k].default = specmap.modelPropertyMacro(val[k]);
-      } catch (e) {
-        const err = new Error(e);
+        val[position].default = specmap.modelPropertyMacro(val[position]);
+      } catch (error) {
+        const err = new Error(error);
         err.fullPath = fullPath; // This is an array
         return err;
       }

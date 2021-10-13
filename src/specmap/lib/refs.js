@@ -152,8 +152,8 @@ const plugin = {
     let basePath;
     try {
       basePath = baseDoc || refPath ? absoluteify(refPath, baseDoc) : null;
-    } catch (e) {
-      return wrapError(e, {
+    } catch (error) {
+      return wrapError(error, {
         pointer,
         $ref: ref,
         basePath,
@@ -199,8 +199,8 @@ const plugin = {
       if (promOrVal.__value != null) {
         promOrVal = promOrVal.__value; // eslint-disable-line no-underscore-dangle
       } else {
-        promOrVal = promOrVal.catch((e) => {
-          throw wrapError(e, {
+        promOrVal = promOrVal.catch((error) => {
+          throw wrapError(error, {
             pointer,
             $ref: ref,
             baseDoc,
@@ -227,7 +227,7 @@ const plugin = {
       if (!patchValueAlreadyInPath(specmap.state, patch) || specmapInstance.useCircularStructures) {
         return patch;
       }
-    } catch (e) {
+    } catch (error) {
       // if we're catching here, path traversal failed, so we should
       // ditch without sending any patches back up.
       //
@@ -324,10 +324,10 @@ function extractFromDoc(docPath, pointer) {
     // `spec` and `docCache[basePath]` refer to the exact same object).
     // See test "should resolve a cyclic spec when baseDoc is specified".
     try {
-      const v = extract(pointer, doc);
-      return Object.assign(Promise.resolve(v), { __value: v });
-    } catch (e) {
-      return Promise.reject(e);
+      const val = extract(pointer, doc);
+      return Object.assign(Promise.resolve(val), { __value: val });
+    } catch (error) {
+      return Promise.reject(error);
     }
   }
 
@@ -542,9 +542,9 @@ function pointerAlreadyInPath(pointer, basePath, parent, specmap) {
  */
 function patchValueAlreadyInPath(root, patch) {
   const ancestors = [root];
-  patch.path.reduce((parent, p) => {
-    ancestors.push(parent[p]);
-    return parent[p];
+  patch.path.reduce((parent, currentValue) => {
+    ancestors.push(parent[currentValue]);
+    return parent[currentValue];
   }, root);
   return pointToAncestor(patch.value);
 

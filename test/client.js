@@ -227,8 +227,8 @@ describe('http', () => {
     try {
       const res = await client.apis.default.myOp();
       expect(res.status).toBe(404);
-    } catch (e) {
-      expect(e).toMatchObject({
+    } catch (error) {
+      expect(error).toMatchObject({
         status: 404,
         response: {
           url: 'http://localhost:8000/v1/endpoint',
@@ -242,8 +242,8 @@ describe('http', () => {
     try {
       const res = await client.apis.default.myOp();
       expect(res.status).toBe(404);
-    } catch (e) {
-      expect(e).toMatchObject({
+    } catch (error) {
+      expect(error).toMatchObject({
         status: 404,
         response: {
           url: 'http://localhost:8000/v1/endpoint',

@@ -120,8 +120,8 @@ export function serializeRes(oriRes, url, { loadSpec = false } = {}) {
         const obj = parseBody(body, contentType);
         res.body = obj;
         res.obj = obj;
-      } catch (e) {
-        res.parseError = e;
+      } catch (error) {
+        res.parseError = error;
       }
     }
     return res;
@@ -202,7 +202,7 @@ function formatKeyValue(key, input, skipEncoding = false) {
   const { collectionFormat, allowEmptyValue, serializationOption, encoding } = input;
   // `input` can be string
   const value = typeof input === 'object' && !Array.isArray(input) ? input.value : input;
-  const encodeFn = skipEncoding ? (k) => k.toString() : (k) => encodeURIComponent(k);
+  const encodeFn = (k) => (skipEncoding ? k.toString() : encodeURIComponent(k));
   const encodedKey = encodeFn(key);
 
   if (typeof value === 'undefined' && allowEmptyValue) {
@@ -290,8 +290,10 @@ function formatKeyValueBySerializationOption(key, value, skipEncoding, serializa
     : serializationOption && serializationOption.allowReserved
     ? 'unsafe'
     : 'reserved';
-  const encodeFn = (v) => encodeDisallowedCharacters(v, { escape });
-  const encodeKeyFn = skipEncoding ? (k) => k : (k) => encodeDisallowedCharacters(k, { escape });
+  const encodeFn = (str) => encodeDisallowedCharacters(str, { escape });
+  const encodeKeyFn = skipEncoding
+    ? (str) => str
+    : (str) => encodeDisallowedCharacters(str, { escape });
 
   // Primitive
   if (typeof value !== 'object') {
@@ -432,8 +434,8 @@ export function mergeInQueryOrForm(req = {}) {
 
 // Wrap a http function ( there are otherways to do this, consider this deprecated )
 export function makeHttp(httpFn, preFetch, postFetch) {
-  postFetch = postFetch || ((a) => a);
-  preFetch = preFetch || ((a) => a);
+  postFetch = postFetch || ((req) => req);
+  preFetch = preFetch || ((req) => req);
   return (req) => {
     if (typeof req === 'string') {
       req = { url: req };

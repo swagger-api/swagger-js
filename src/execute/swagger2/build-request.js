@@ -29,20 +29,22 @@ export default function buildRequest(options, req) {
       [req.headers['Content-Type']] = spec.consumes;
     } else if (
       operation.parameters &&
-      operation.parameters.filter((p) => p.type === 'file').length
+      operation.parameters.filter((parameter) => parameter.type === 'file').length
     ) {
       req.headers['Content-Type'] = 'multipart/form-data';
     } else if (
       operation.parameters &&
-      operation.parameters.filter((p) => p.in === 'formData').length
+      operation.parameters.filter((parameter) => parameter.in === 'formData').length
     ) {
       req.headers['Content-Type'] = 'application/x-www-form-urlencoded';
     }
   } else if (requestContentType) {
     const isBodyParamPresent =
-      operation.parameters && operation.parameters.filter((p) => p.in === 'body').length > 0;
+      operation.parameters &&
+      operation.parameters.filter((parameter) => parameter.in === 'body').length > 0;
     const isFormDataParamPresent =
-      operation.parameters && operation.parameters.filter((p) => p.in === 'formData').length > 0;
+      operation.parameters &&
+      operation.parameters.filter((parameter) => parameter.in === 'formData').length > 0;
     if (isBodyParamPresent || isFormDataParamPresent) {
       req.headers['Content-Type'] = requestContentType;
     }

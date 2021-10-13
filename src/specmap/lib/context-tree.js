@@ -31,8 +31,8 @@ export default class ContextTree {
     let branch = this.root;
     let child;
     let token;
-    for (let i = 0; i < path.length; i += 1) {
-      token = path[i];
+    for (let position = 0; position < path.length; position += 1) {
+      token = path[position];
       child = branch.children;
       if (!child[token]) {
         break;

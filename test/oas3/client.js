@@ -75,6 +75,6 @@ describe('http - OpenAPI Specification 3.0', () => {
 
         done();
       })
-      .catch((e) => done(e));
+      .catch((error) => done(error));
   });
 });
