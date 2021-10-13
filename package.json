@@ -109,7 +109,6 @@
   "dependencies": {
     "@babel/runtime-corejs3": "^7.11.2",
     "btoa": "^1.2.1",
-    "buffer": "^6.0.3",
     "cookie": "~0.4.1",
     "cross-fetch": "^3.1.4",
     "deep-extend": "~0.6.0",
@@ -119,7 +118,6 @@
     "js-yaml": "^4.1.0",
     "lodash": "^4.17.21",
     "qs": "^6.9.4",
-    "querystring-browser": "^1.0.4",
     "traverse": "~0.6.6",
     "url": "~0.11.0"
   }
