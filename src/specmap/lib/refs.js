@@ -152,8 +152,8 @@ const plugin = {
     let basePath;
     try {
       basePath = baseDoc || refPath ? absoluteify(refPath, baseDoc) : null;
-    } catch (error) {
-      return wrapError(error, {
+    } catch (e) {
+      return wrapError(e, {
         pointer,
         $ref: ref,
         basePath,
@@ -199,8 +199,8 @@ const plugin = {
       if (promOrVal.__value != null) {
         promOrVal = promOrVal.__value; // eslint-disable-line no-underscore-dangle
       } else {
-        promOrVal = promOrVal.catch((error) => {
-          throw wrapError(error, {
+        promOrVal = promOrVal.catch((e) => {
+          throw wrapError(e, {
             pointer,
             $ref: ref,
             baseDoc,
@@ -227,7 +227,7 @@ const plugin = {
       if (!patchValueAlreadyInPath(specmap.state, patch) || specmapInstance.useCircularStructures) {
         return patch;
       }
-    } catch (error) {
+    } catch (e) {
       // if we're catching here, path traversal failed, so we should
       // ditch without sending any patches back up.
       //
@@ -326,8 +326,8 @@ function extractFromDoc(docPath, pointer) {
     try {
       const val = extract(pointer, doc);
       return Object.assign(Promise.resolve(val), { __value: val });
-    } catch (error) {
-      return Promise.reject(error);
+    } catch (e) {
+      return Promise.reject(e);
     }
   }
 

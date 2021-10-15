@@ -223,9 +223,9 @@ class SpecMap {
           this.updateMutations(patch);
           return;
         }
-      } catch (error) {
-        console.error(error); // eslint-disable-line no-console
-        this.errors.push(error);
+      } catch (e) {
+        console.error(e); // eslint-disable-line no-console
+        this.errors.push(e);
       }
     });
   }
@@ -258,9 +258,9 @@ class SpecMap {
         this.removePromisedPatch(patch);
         this.updatePatches(promisedPatch);
       })
-      .catch((error) => {
+      .catch((e) => {
         this.removePromisedPatch(patch);
-        this.updatePatches(error);
+        this.updatePatches(e);
       });
     return patch.value;
   }
@@ -368,9 +368,9 @@ class SpecMap {
           const newPatches = plugin(mutations, that.getLib());
           updatePatches(newPatches);
         }
-      } catch (error) {
-        console.error(error); // eslint-disable-line no-console
-        updatePatches([Object.assign(Object.create(error), { plugin })]);
+      } catch (e) {
+        console.error(e); // eslint-disable-line no-console
+        updatePatches([Object.assign(Object.create(e), { plugin })]);
       } finally {
         that.updatePluginHistory(plugin, { mutationIndex: lastMutationIndex });
       }

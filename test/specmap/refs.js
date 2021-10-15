@@ -31,21 +31,21 @@ describe('refs', () => {
           $ref: '#/one',
           basePath: 'localhost/one.json',
         });
-      } catch (error) {
-        expect(error.toString()).toEqual('JSONRefError: Failed to download ref');
-        expect(error.$ref).toEqual('#/one');
-        expect(error.basePath).toEqual('localhost/one.json');
+      } catch (e) {
+        expect(e.toString()).toEqual('JSONRefError: Failed to download ref');
+        expect(e.$ref).toEqual('#/one');
+        expect(e.basePath).toEqual('localhost/one.json');
       }
     });
 
     test('.wrapError should wrap an error in JSONRefError', () => {
       try {
         throw refs.wrapError(new Error('hi'), { $ref: '#/one', basePath: 'localhost' });
-      } catch (error) {
-        expect(error.message).toMatch(/reference/);
-        expect(error.message).toMatch(/hi/);
-        expect(error.$ref).toEqual('#/one');
-        expect(error.basePath).toEqual('localhost');
+      } catch (e) {
+        expect(e.message).toMatch(/reference/);
+        expect(e.message).toMatch(/hi/);
+        expect(e.$ref).toEqual('#/one');
+        expect(e.basePath).toEqual('localhost');
       }
     });
   });
@@ -159,9 +159,9 @@ describe('refs', () => {
         .then(() => {
           throw new Error('Should have failed');
         })
-        .catch((error) => {
-          expect(error.pointer).toEqual('/two');
-          expect(error.basePath).toBeFalsy();
+        .catch((e) => {
+          expect(e.pointer).toEqual('/two');
+          expect(e.basePath).toBeFalsy();
         });
     });
   });

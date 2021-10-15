@@ -9,8 +9,8 @@ export default {
     for (const position in properties) {
       try {
         val[position].default = specmap.modelPropertyMacro(val[position]);
-      } catch (error) {
-        const err = new Error(error);
+      } catch (e) {
+        const err = new Error(e);
         err.fullPath = fullPath; // This is an array
         return err;
       }

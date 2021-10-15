@@ -120,8 +120,8 @@ export function serializeRes(oriRes, url, { loadSpec = false } = {}) {
         const obj = parseBody(body, contentType);
         res.body = obj;
         res.obj = obj;
-      } catch (error) {
-        res.parseError = error;
+      } catch (e) {
+        res.parseError = e;
       }
     }
     return res;

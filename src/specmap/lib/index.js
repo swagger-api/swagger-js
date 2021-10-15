@@ -197,16 +197,16 @@ function context(path, value) {
 function forEachNew(mutations, fn) {
   try {
     return forEachNewPatch(mutations, forEach, fn);
-  } catch (error) {
-    return error;
+  } catch (e) {
+    return e;
   }
 }
 
 function forEachNewPrimitive(mutations, fn) {
   try {
     return forEachNewPatch(mutations, forEachPrimitive, fn);
-  } catch (error) {
-    return error;
+  } catch (e) {
+    return e;
   }
 }
 
@@ -365,8 +365,8 @@ function isPatch(patch) {
 function getInByJsonPath(obj, jsonPath) {
   try {
     return jsonPatch.getValueByPointer(obj, jsonPath);
-  } catch (error) {
-    console.error(error); // eslint-disable-line no-console
+  } catch (e) {
+    console.error(e); // eslint-disable-line no-console
     return {};
   }
 }

@@ -39,8 +39,8 @@ describe('specmap', () => {
                   },
                 ]);
                 done();
-              } catch (error) {
-                done(error);
+              } catch (e) {
+                done(e);
               }
             },
           },
@@ -75,8 +75,8 @@ describe('specmap', () => {
                   value: { one: 1 },
                 },
               ]);
-            } catch (error) {
-              done(error);
+            } catch (e) {
+              done(e);
             }
             done();
           },

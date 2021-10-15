@@ -223,7 +223,7 @@ export function buildRequest(options) {
     ) {
       try {
         value = JSON.parse(value);
-      } catch (error) {
+      } catch (e) {
         throw new Error('Could not parse object parameter value string as JSON');
       }
     }

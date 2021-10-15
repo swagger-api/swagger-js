@@ -4,8 +4,8 @@ const toLower = (str) => String.prototype.toLowerCase.call(str);
 const escapeString = (str) => str.replace(/[^\w]/gi, '_');
 
 // Spec version detection
-export function isOAS3(specs) {
-  const oasVersion = specs.openapi;
+export function isOAS3(spec) {
+  const oasVersion = spec.openapi;
   if (!oasVersion) {
     return false;
   }

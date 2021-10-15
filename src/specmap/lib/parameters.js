@@ -11,8 +11,8 @@ export default {
       parameters.forEach((param, position) => {
         try {
           val[position].default = specmap.parameterMacro(op, param);
-        } catch (error) {
-          const err = new Error(error);
+        } catch (e) {
+          const err = new Error(e);
           err.fullPath = fullPath;
           return err;
         }
