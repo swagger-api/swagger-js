@@ -30,7 +30,7 @@ Current Node.js Maintenance LTS:
 
 It is often the case that after fixing a bug or implementing a new feature,
 developer wants to test his changes in [Swagger-UI](https://github.com/swagger-api/swagger-ui).
-This section will guide you trough how to do that.
+This section will guide you through how to do that.
 
 **1. Clone and install swagger-ui repository**
 
