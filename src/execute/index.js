@@ -1,4 +1,5 @@
-import { isPlainObject, get } from 'lodash';
+import get from 'lodash/get';
+import isPlainObject from 'lodash/isPlainObject';
 import url from 'url';
 import cookie from 'cookie';
 

@@ -1,6 +1,7 @@
 // This function runs after the common function,
 // `src/execute/index.js#buildRequest`
-import { isPlainObject, get } from 'lodash';
+import get from 'lodash/get';
+import isPlainObject from 'lodash/isPlainObject';
 import btoa from 'btoa';
 
 export default function buildRequest(options, req) {
