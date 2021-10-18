@@ -33,7 +33,8 @@ export function encodeDisallowedCharacters(str, { escape } = {}, parse) {
         return char;
       }
 
-      const encoded = (Buffer.from(char).toJSON().data || [])
+      const encoder = new TextEncoder();
+      const encoded = Array.from(encoder.encode(char))
         .map((byte) => `0${byte.toString(16).toUpperCase()}`.slice(-2))
         .map((encodedByte) => `%${encodedByte}`)
         .join('');
