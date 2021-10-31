@@ -1,5 +1,4 @@
 import getIn from 'lodash/get';
-import isPlainObject from 'lodash/isPlainObject';
 import url from 'url';
 import cookie from 'cookie';
 
@@ -76,7 +75,14 @@ export function execute({
     ...extras,
   });
 
-  if (request.body && (isPlainObject(request.body) || Array.isArray(request.body))) {
+  if (
+    request.body &&
+    ((request.body.constructor !== undefined &&
+      typeof request.body.constructor.prototype === 'object' &&
+      // eslint-disable-next-line no-prototype-builtins
+      request.body.constructor.prototype.hasOwnProperty('isPrototypeOf')) ||
+      Array.isArray(request.body))
+  ) {
     request.body = JSON.stringify(request.body);
   }
 
