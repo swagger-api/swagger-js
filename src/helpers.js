@@ -1,5 +1,3 @@
-import isObject from 'lodash/isObject';
-
 const toLower = (str) => String.prototype.toLowerCase.call(str);
 const escapeString = (str) => str.replace(/[^\w]/gi, '_');
 
@@ -136,7 +134,7 @@ export function normalizeSwagger(parsedSpec) {
   for (const pathName in paths) {
     const path = paths[pathName];
 
-    if (!isObject(path)) {
+    if (typeof path !== 'object') {
       continue; // eslint-disable-line no-continue
     }
 
@@ -145,7 +143,7 @@ export function normalizeSwagger(parsedSpec) {
     // eslint-disable-next-line no-restricted-syntax, guard-for-in
     for (const method in path) {
       const operation = path[method];
-      if (!isObject(operation)) {
+      if (typeof path !== 'object') {
         continue; // eslint-disable-line no-continue
       }
 
