@@ -1,7 +1,7 @@
 import { Readable } from 'stream';
 
-import { execute, buildRequest, self as stubs } from '../../src/execute';
-import { normalizeSwagger } from '../../src/helpers';
+import { execute, buildRequest, self as stubs } from '../../src/execute/index.js';
+import { normalizeSwagger } from '../../src/helpers.js';
 
 // Supported shape...  { spec, operationId, parameters, securities, fetch }
 // One can use operationId or pathItem + method

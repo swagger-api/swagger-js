@@ -1,5 +1,5 @@
 import '@babel/runtime-corejs3/regenerator';
-import SwaggerClient from '../../es';
+import SwaggerClient from '../../es/index.js';
 
 describe('babel ES6 imports artifact', () => {
   test('should export a function', () => {

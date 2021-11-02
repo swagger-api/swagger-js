@@ -3,8 +3,8 @@ import qs from 'qs';
 import jsYaml from 'js-yaml';
 import { FormData, File, Blob } from 'formdata-node';
 
-import { encodeDisallowedCharacters } from '../execute/oas3/style-serializer';
-import foldFormDataToRequest from './fold-formdata-to-request.node';
+import { encodeDisallowedCharacters } from '../execute/oas3/style-serializer.js';
+import foldFormDataToRequest from './fold-formdata-to-request.node.js';
 
 // For testing
 export const self = {

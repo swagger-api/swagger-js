@@ -1,6 +1,6 @@
 // https://github.com/swagger-api/swagger-ui/issues/4228
 
-import Swagger from '../../src';
+import Swagger from '../../src/index.js';
 
 const spec = {
   paths: {

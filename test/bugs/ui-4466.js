@@ -1,7 +1,7 @@
 // https://github.com/swagger-api/swagger-ui/issues/4466
 // https://github.com/swagger-api/swagger-ui/issues/4467
 
-import resolveSubtree from '../../src/subtree-resolver';
+import resolveSubtree from '../../src/subtree-resolver/index.js';
 
 const spec = {
   swagger: '2.0',

@@ -1,6 +1,6 @@
 import xmock from 'xmock';
 
-import mapSpec, { plugins } from '../../src/specmap';
+import mapSpec, { plugins } from '../../src/specmap/index.js';
 
 describe('allOf', () => {
   afterEach(() => {

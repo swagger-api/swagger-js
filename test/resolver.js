@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import jsYaml from 'js-yaml';
 
-import Swagger from '../src';
+import Swagger from '../src/index.js';
 
 describe('resolver', () => {
   afterEach(() => {

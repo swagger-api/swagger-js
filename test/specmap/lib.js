@@ -1,4 +1,4 @@
-import lib from '../../src/specmap/lib';
+import lib from '../../src/specmap/lib/index.js';
 
 describe('lib', () => {
   describe('applyPatch', () => {
