@@ -1,6 +1,5 @@
 import 'cross-fetch/polyfill'; /* global fetch */
 import jsYaml from 'js-yaml';
-import qs from 'querystring-browser';
 import url from 'url';
 
 import lib from '.';
@@ -432,7 +431,9 @@ function unescapeJsonPointerToken(token) {
   if (typeof token !== 'string') {
     return token;
   }
-  return qs.unescape(token.replace(/~1/g, '/').replace(/~0/g, '~'));
+
+  const params = new URLSearchParams(`=${token.replace(/~1/g, '/').replace(/~0/g, '~')}`);
+  return params.get('');
 }
 
 /**
@@ -440,7 +441,8 @@ function unescapeJsonPointerToken(token) {
  * @api public
  */
 function escapeJsonPointerToken(token) {
-  return qs.escape(token.replace(/~/g, '~0').replace(/\//g, '~1'));
+  const params = new URLSearchParams([['', token.replace(/~/g, '~0').replace(/\//g, '~1')]]);
+  return params.toString().slice(1);
 }
 
 function arrayToJsonPointer(arr) {

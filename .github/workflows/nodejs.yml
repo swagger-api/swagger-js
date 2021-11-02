@@ -47,22 +47,23 @@ jobs:
     - name: Build swagger-js
       run: npm run build
     - name: Upload commonjs build artifacts
+      if: startsWith(matrix.node-version, '14')
       uses: actions/upload-artifact@v1
       with:
-        name: commonjs-${{ matrix.node-version }}
+        name: commonjs
         path: ./lib/
 
   commonjs-artifacts-test:
-    name: commonjs-artifacts-test (8.x)
+    name: commonjs-artifacts-test
     runs-on: ubuntu-latest
     needs: [build]
 
     steps:
     - uses: actions/checkout@v2
-    - name: Use Node.js 12.4
+    - name: Use Node.js 12.4.x
       uses: actions/setup-node@v2
       with:
-        node-version: 12.x
+        node-version: 12.4.x
     - name: Cache Node Modules
       id: cache-node-modules
       uses: actions/cache@v2
@@ -73,23 +74,24 @@ jobs:
       if: steps.cache-node-modules.outputs.cache-hit != 'true'
       run: npm ci
 
-    - name: Download Node.js 12.x commonjs build artifacts
+    - name: Download commonjs build artifacts
       uses: actions/download-artifact@v1
       with:
-        name: commonjs-12.x
-    - name: Run Node.js 12.x commonjs build artifacts tests
-      run: node -p "require('./commonjs-12.x')"
+        name: commonjs
 
-    - name: Download Node.js 14.x commonjs build artifacts
-      uses: actions/download-artifact@v1
-      with:
-        name: commonjs-14.x
-    - name: Run Node.js 14.x commonjs build artifacts tests
-      run: node -p "require('./commonjs-14.x')"
+    - name: Run commonjs build artifacts on Node.js 12.4.x
+      run: node -p "require('./commonjs')"
 
-    - name: Download Node.js 16.x commonjs build artifacts
-      uses: actions/download-artifact@v1
+    - name: Use Node 14.x
+      uses: actions/setup-node@v2
       with:
-        name: commonjs-16.x
-    - name: Run Node.js 16.x commonjs build artifacts tests
-      run: node -p "require('./commonjs-16.x')"
+        node-version: 14.x
+    - name: Run commonjs build artifacts on Node.js 14.x
+      run: node -p "require('./commonjs')"
+
+    - name: Use Node 16.x
+      uses: actions/setup-node@v2
+      with:
+        node-version: 16.x
+    - name: Run commonjs build artifacts on Node.js 16.x
+      run: node -p "require('./commonjs')"
