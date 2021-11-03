@@ -134,7 +134,7 @@ export function normalizeSwagger(parsedSpec) {
   for (const pathName in paths) {
     const path = paths[pathName];
 
-    if (typeof path !== 'object') {
+    if (path == null || !['object', 'function'].includes(typeof path)) {
       continue; // eslint-disable-line no-continue
     }
 
@@ -143,7 +143,7 @@ export function normalizeSwagger(parsedSpec) {
     // eslint-disable-next-line no-restricted-syntax, guard-for-in
     for (const method in path) {
       const operation = path[method];
-      if (typeof path !== 'object') {
+      if (path == null || !['object', 'function'].includes(typeof path)) {
         continue; // eslint-disable-line no-continue
       }
 
