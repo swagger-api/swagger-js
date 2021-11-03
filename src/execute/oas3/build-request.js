@@ -40,11 +40,14 @@ export default function buildRequest(options, req) {
     const mediaTypes = Object.entries(operation.responses)
       .filter(([key, value]) => {
         const code = parseInt(key, 10);
-        return code >= 200 && code < 300 &&
-        value.content.constructor !== undefined &&
-        typeof value.content.constructor.prototype === 'object' &&
-        // eslint-disable-next-line no-prototype-builtins
-        value.content.constructor.prototype.hasOwnProperty('isPrototypeOf'))
+        return (
+          code >= 200 &&
+          code < 300 &&
+          value.content.constructor !== undefined &&
+          typeof value.content.constructor.prototype === 'object' &&
+          // eslint-disable-next-line no-prototype-builtins
+          value.content.constructor.prototype.hasOwnProperty('isPrototypeOf')
+        );
       })
       .reduce((acc, [, value]) => acc.concat(Object.keys(value.content)), []);
     if (mediaTypes.length > 0) {
