@@ -1,6 +1,7 @@
 import getIn from 'lodash/get';
 import url from 'url';
 import cookie from 'cookie';
+import { isPlainObject } from 'is-plain-object';
 
 import stockHttp, { mergeInQueryOrForm } from '../http';
 import createError from '../specmap/lib/create-error';
@@ -75,14 +76,7 @@ export function execute({
     ...extras,
   });
 
-  if (
-    request.body &&
-    ((request.body.constructor !== undefined &&
-      typeof request.body.constructor.prototype === 'object' &&
-      // eslint-disable-next-line no-prototype-builtins
-      request.body.constructor.prototype.hasOwnProperty('isPrototypeOf')) ||
-      Array.isArray(request.body))
-  ) {
+  if (request.body && (isPlainObject(request.body) || Array.isArray(request.body))) {
     request.body = JSON.stringify(request.body);
   }
 
