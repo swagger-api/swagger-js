@@ -41,7 +41,7 @@ export default function buildRequest(options, req) {
     const mediaTypes = Object.entries(operation.responses)
       .filter(([key, value]) => {
         const code = parseInt(key, 10);
-        return code >= 200 && code < 300 && isPlainObject(value);
+        return code >= 200 && code < 300 && isPlainObject(value.content);
       })
       .reduce((acc, [, value]) => acc.concat(Object.keys(value.content)), []);
     if (mediaTypes.length > 0) {
