@@ -2,7 +2,7 @@ import path from 'path';
 import glob from 'glob';
 import xmock from 'xmock';
 
-import mapSpec, { plugins } from '../../src/specmap';
+import mapSpec, { plugins } from '../../src/specmap/index.js';
 
 const { refs } = plugins;
 const { allOf } = plugins;

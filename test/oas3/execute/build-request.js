@@ -1,5 +1,5 @@
 // https://github.com/swagger-api/swagger-js/issues/1116
-import { buildRequest } from '../../../src/execute';
+import { buildRequest } from '../../../src/execute/index.js';
 
 describe('buildRequest - OAS 3.0.x', () => {
   describe('test accept header', () => {

@@ -2,8 +2,8 @@ import cloneDeep from 'lodash/cloneDeep';
 import xmock from 'xmock';
 import traverse from 'traverse';
 
-import mapSpec, { SpecMap, plugins } from '../../src/specmap';
-import lib from '../../src/specmap/lib';
+import mapSpec, { SpecMap, plugins } from '../../src/specmap/index.js';
+import lib from '../../src/specmap/lib/index.js';
 
 describe('specmap', () => {
   let testContext;

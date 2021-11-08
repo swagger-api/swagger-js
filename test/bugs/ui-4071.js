@@ -1,5 +1,5 @@
 // https://github.com/swagger-api/swagger-ui/issues/4071
-import { buildRequest } from '../../src/execute';
+import { buildRequest } from '../../src/execute/index.js';
 
 const spec = {
   openapi: '3.0.0',

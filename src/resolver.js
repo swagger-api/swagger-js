@@ -1,7 +1,7 @@
-import Http from './http';
-import mapSpec, { plugins } from './specmap';
-import { normalizeSwagger } from './helpers';
-import { ACCEPT_HEADER_VALUE_FOR_DOCUMENTS } from './constants';
+import Http from './http/index.js';
+import mapSpec, { plugins } from './specmap/index.js';
+import { normalizeSwagger } from './helpers.js';
+import { ACCEPT_HEADER_VALUE_FOR_DOCUMENTS } from './constants.js';
 
 export function makeFetchJSON(http, opts = {}) {
   const { requestInterceptor, responseInterceptor } = opts;

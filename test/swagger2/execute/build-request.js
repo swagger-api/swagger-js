@@ -1,4 +1,4 @@
-import { buildRequest } from '../../../src/execute';
+import { buildRequest } from '../../../src/execute/index.js';
 
 describe('buildRequest - swagger 2.0', () => {
   describe('allowEmptyValue parameters', () => {

@@ -1,4 +1,4 @@
-import { isOAS3, isSwagger2 } from '../../src/helpers';
+import { isOAS3, isSwagger2 } from '../../src/helpers.js';
 
 describe('helpers - OpenAPI Specification 3.0', () => {
   describe('isOAS3', () => {

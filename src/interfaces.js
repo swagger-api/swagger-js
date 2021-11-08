@@ -1,4 +1,4 @@
-import { eachOperation, opId } from './helpers';
+import { eachOperation, opId } from './helpers.js';
 
 const nullFn = () => null;
 

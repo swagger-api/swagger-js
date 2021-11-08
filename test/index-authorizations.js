@@ -1,4 +1,4 @@
-import Swagger from '../src/index';
+import Swagger from '../src/index.js';
 
 describe('(instance) #execute', () => {
   test('should be able to execute a simple operation', () => {

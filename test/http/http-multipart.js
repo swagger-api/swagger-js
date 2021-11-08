@@ -4,9 +4,9 @@ import fetchMock from 'fetch-mock';
 import { File, Blob } from 'formdata-node';
 import { fileFromPathSync } from 'formdata-node/lib/cjs/fileFromPath';
 
-import { buildRequest } from '../../src/execute';
-import sampleMultipartOpenApi2 from '../data/sample-multipart-oas2';
-import sampleMultipartOpenApi3 from '../data/sample-multipart-oas3';
+import { buildRequest } from '../../src/execute/index.js';
+import sampleMultipartOpenApi2 from '../data/sample-multipart-oas2.js';
+import sampleMultipartOpenApi3 from '../data/sample-multipart-oas3.js';
 
 /**
  * fetch-mock uses node-fetch under the hood

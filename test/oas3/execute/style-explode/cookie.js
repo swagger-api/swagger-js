@@ -1,4 +1,4 @@
-import { buildRequest } from '../../../../src/execute';
+import { buildRequest } from '../../../../src/execute/index.js';
 
 describe('OAS 3.0 - buildRequest w/ `style` & `explode` - cookie parameters', () => {
   describe('primitive values', () => {

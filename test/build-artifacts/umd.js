@@ -1,8 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 
-import SwaggerClient from '../../dist/swagger-client.browser';
-import SwaggerClientMin from '../../dist/swagger-client.browser.min';
+import SwaggerClient from '../../dist/swagger-client.browser.js';
+import SwaggerClientMin from '../../dist/swagger-client.browser.min.js';
 
 describe('webpack browser umd build', () => {
   test('should export a function', () => {

@@ -5,7 +5,7 @@ import xmock from 'xmock';
 import fs from 'fs';
 import jsYaml from 'js-yaml';
 
-import mapSpec, { plugins } from '../../src/specmap';
+import mapSpec, { plugins } from '../../src/specmap/index.js';
 
 const { refs } = plugins;
 

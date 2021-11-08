@@ -3,7 +3,7 @@ import url from 'url';
 import path from 'path';
 import fs from 'fs';
 
-import Swagger from '../src/index';
+import Swagger from '../src/index.js';
 
 describe('http', () => {
   let server;

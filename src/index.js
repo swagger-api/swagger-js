@@ -1,11 +1,11 @@
 import Url from 'url';
 
-import Http, { makeHttp, serializeRes, serializeHeaders } from './http';
-import Resolver, { clearCache } from './resolver';
-import resolveSubtree from './subtree-resolver';
-import { makeApisTagOperation } from './interfaces';
-import { execute, buildRequest, baseUrl } from './execute';
-import { opId } from './helpers';
+import Http, { makeHttp, serializeRes, serializeHeaders } from './http/index.js';
+import Resolver, { clearCache } from './resolver.js';
+import resolveSubtree from './subtree-resolver/index.js';
+import { makeApisTagOperation } from './interfaces.js';
+import { execute, buildRequest, baseUrl } from './execute/index.js';
+import { opId } from './helpers.js';
 
 Swagger.http = Http;
 Swagger.makeHttp = makeHttp.bind(null, Swagger.http);

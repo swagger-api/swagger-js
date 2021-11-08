@@ -6,7 +6,7 @@ import fs from 'fs';
 import Path from 'path';
 import nock from 'nock';
 
-import Swagger from '../../src/index';
+import Swagger from '../../src/index.js';
 
 const testDocuments = fs
   .readdirSync(Path.join(__dirname))
