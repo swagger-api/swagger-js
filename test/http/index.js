@@ -9,7 +9,7 @@ import http, {
   serializeRes,
   shouldDownloadAsText,
   isFile,
-} from '../../src/http';
+} from '../../src/http/index.js';
 
 describe('http', () => {
   let xapp;

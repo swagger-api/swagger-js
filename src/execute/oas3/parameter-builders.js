@@ -1,5 +1,5 @@
-import stylize, { encodeDisallowedCharacters } from './style-serializer';
-import serialize from './content-serializer';
+import stylize, { encodeDisallowedCharacters } from './style-serializer.js';
+import serialize from './content-serializer.js';
 
 export function path({ req, value, parameter }) {
   const { name, style, explode, content } = parameter;

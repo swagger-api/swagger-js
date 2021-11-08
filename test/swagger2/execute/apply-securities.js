@@ -1,4 +1,4 @@
-import { applySecurities } from '../../../src/execute/swagger2/build-request';
+import { applySecurities } from '../../../src/execute/swagger2/build-request.js';
 
 describe('swagger2 - execute - applySecurities', () => {
   test('should NOT add any securities, if the operation does not require it', () => {

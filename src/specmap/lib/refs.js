@@ -2,10 +2,10 @@ import 'cross-fetch/polyfill'; /* global fetch */
 import jsYaml from 'js-yaml';
 import url from 'url';
 
-import lib from '.';
-import createError from './create-error';
-import { isFreelyNamed, absolutifyPointer } from '../helpers';
-import { ACCEPT_HEADER_VALUE_FOR_DOCUMENTS } from '../../constants';
+import lib from './index.js';
+import createError from './create-error.js';
+import { isFreelyNamed, absolutifyPointer } from '../helpers.js';
+import { ACCEPT_HEADER_VALUE_FOR_DOCUMENTS } from '../../constants.js';
 
 const ABSOLUTE_URL_REGEXP = new RegExp('^([a-z]+://|//)', 'i');
 

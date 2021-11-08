@@ -4,7 +4,7 @@ import path from 'path';
 import fs from 'fs';
 import jsYaml from 'js-yaml';
 
-import resolveSubtree from '../../src/subtree-resolver';
+import resolveSubtree from '../../src/subtree-resolver/index.js';
 
 const testDoc = jsYaml.load(
   fs.readFileSync(path.join('test', 'data', 'issue-1719-ref-object-reference.yaml'), 'utf8')

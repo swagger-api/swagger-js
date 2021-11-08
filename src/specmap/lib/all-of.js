@@ -1,6 +1,6 @@
 import isEmpty from 'lodash/isEmpty';
 
-import { isFreelyNamed, generateAbsoluteRefPatches } from '../helpers';
+import { isFreelyNamed, generateAbsoluteRefPatches } from '../helpers.js';
 
 export default {
   key: 'allOf',

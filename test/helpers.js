@@ -1,4 +1,4 @@
-import { normalizeSwagger, getOperationRaw, idFromPathMethod } from '../src/helpers';
+import { normalizeSwagger, getOperationRaw, idFromPathMethod } from '../src/helpers.js';
 
 describe('helpers', () => {
   describe('idFromPathMethod', () => {

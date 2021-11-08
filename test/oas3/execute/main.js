@@ -3,7 +3,7 @@ import fs from 'fs';
 import jsYaml from 'js-yaml';
 import { escape } from 'querystring';
 
-import { buildRequest, baseUrl } from '../../../src/execute';
+import { buildRequest, baseUrl } from '../../../src/execute/index.js';
 
 const petstoreSpec = jsYaml.load(
   fs.readFileSync(path.join('test', 'oas3', 'data', 'petstore-oas3.yaml'), 'utf8')

@@ -1,4 +1,4 @@
-import { baseUrl } from '../../src/execute';
+import { baseUrl } from '../../src/execute/index.js';
 
 // Supported shape...  { spec, operationId, parameters, securities, fetch }
 // One can use operationId or pathItem + method

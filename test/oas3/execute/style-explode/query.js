@@ -1,4 +1,4 @@
-import { buildRequest } from '../../../../src/execute';
+import { buildRequest } from '../../../../src/execute/index.js';
 
 // Expecting the space to become `%20`, not `+`, because it's just better that way
 // See: https://stackoverflow.com/a/40292688
