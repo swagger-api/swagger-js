@@ -1,7 +1,7 @@
 import getIn from 'lodash/get';
-import isPlainObject from 'lodash/isPlainObject';
 import url from 'url';
 import cookie from 'cookie';
+import { isPlainObject } from 'is-plain-object';
 
 import stockHttp, { mergeInQueryOrForm } from '../http/index.js';
 import createError from '../specmap/lib/create-error.js';
