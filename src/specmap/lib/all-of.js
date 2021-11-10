@@ -33,7 +33,7 @@ export default {
     originalDefinitionObj = { ...originalDefinitionObj };
 
     // when we've lost sight, interrupt prematurely
-    if (!Object.keys(originalDefinitionObj).length) {
+    if (Object.keys(originalDefinitionObj).length === 0) {
       return undefined;
     }
 
