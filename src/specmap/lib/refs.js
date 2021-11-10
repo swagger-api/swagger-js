@@ -7,7 +7,7 @@ import createError from './create-error.js';
 import { isFreelyNamed, absolutifyPointer } from '../helpers.js';
 import { ACCEPT_HEADER_VALUE_FOR_DOCUMENTS } from '../../constants.js';
 
-const ABSOLUTE_URL_REGEXP = new RegExp('^([a-z]+://|//)', 'i');
+const ABSOLUTE_URL_REGEXP = /^([a-z]+:\/\/|\/\/)/i;
 
 const JSONRefError = createError('JSONRefError', function cb(message, extra, oriError) {
   this.originalError = oriError;
