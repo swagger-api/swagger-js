@@ -1,5 +1,3 @@
-import isEmpty from 'lodash/isEmpty';
-
 import { isFreelyNamed, generateAbsoluteRefPatches } from '../helpers.js';
 
 export default {
@@ -35,7 +33,7 @@ export default {
     originalDefinitionObj = { ...originalDefinitionObj };
 
     // when we've lost sight, interrupt prematurely
-    if (isEmpty(originalDefinitionObj)) {
+    if (Object.keys(originalDefinitionObj).length === 0) {
       return undefined;
     }
 
