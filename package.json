@@ -70,7 +70,7 @@
     "@babel/core": "=7.16.0",
     "@babel/plugin-proposal-class-properties": "=7.16.0",
     "@babel/plugin-proposal-object-rest-spread": "=7.16.0",
-    "@babel/plugin-transform-runtime": "=7.16.4",
+    "@babel/plugin-transform-runtime": "=7.16.5",
     "@babel/preset-env": "=7.16.5",
     "@babel/register": "=7.16.0",
     "@char0n/npm-audit": "gist:2964395223d7943c10396f59df9a8ea0",
