@@ -26,6 +26,7 @@ Property | Description
 `attachContentTypeForEmptyPayload` | `Boolean=false`. Attaches a `Content-Type` header to a `Request` even when no payload was provided for the `Request`.
 `http` | `Function=Http`. A function with an interface compatible with [HTTP Client](http-client.md).
 `userFetch` | `Function=cross-fetch`. Custom **asynchronous** fetch function that accepts two arguments: the `url` and the `Request` object and must return a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response) object. More info in [HTTP Client](http-client.md) documentation.
+`signal` | `AbortSignal=null`. AbortSignal object instance, which can be used to abort a request as desired.
 
 For all later references, we will always use following OpenAPI 3.0.0 definition when referring
 to a `spec`.
@@ -151,6 +152,88 @@ SwaggerClient.execute({
   parameters: { q: 'search string' },
   securities: { authorized: { BearerAuth: "3492342948239482398" } },
 }); // => Promise.<Response>
+```
+
+#### Request cancellation with AbortSignal
+
+You may cancel requests with [AbortController](https://developer.mozilla.org/en-US/docs/Web/API/AbortController).
+The AbortController interface represents a controller object that allows you to abort one or more Web requests as and when desired.
+Using AbortController, you can easily implement request timeouts.
+
+###### Node.js
+
+AbortController needs to be introduced in Node.js environment via [abort-controller](https://www.npmjs.com/package/abort-controller) npm package.
+
+```js
+const SwaggerClient = require('swagger-client');
+const AbortController = require('abort-controller');
+
+const controller = new AbortController();
+const { signal } = controller;
+const timeout = setTimeout(() => {
+  controller.abort();
+}, 1);
+
+(async () => {
+  try {
+    await SwaggerClient.execute({
+      spec,
+      pathName: '/users',
+      method: 'get',
+      parameters: { q: 'search string' },
+      securities: { authorized: { BearerAuth: "3492342948239482398" } },
+      signal,
+    });
+  } catch (error) {
+    if (error.name === 'AbortError') {
+      console.error('request was aborted');
+    }
+  } finally {
+    clearTimeout(timeout);
+  }
+})();
+```
+
+###### Browser
+
+AbortController is part of modern [Web APIs](https://developer.mozilla.org/en-US/docs/Web/API/AbortController).
+No need to install it explicitly.
+
+```html
+<html>
+  <head>
+    <script src="//unpkg.com/swagger-client"></script>
+    <script>
+        const controller = new AbortController();
+        const { signal } = controller;
+        const timeout = setTimeout(() => {
+          controller.abort();
+        }, 1);
+
+        (async () => {
+          try {
+            await SwaggerClient.execute({
+              spec,
+              pathName: '/users',
+              method: 'get',
+              parameters: { q: 'search string' },
+              securities: { authorized: { BearerAuth: "3492342948239482398" } },
+              signal,
+            });
+          } catch (error) {
+            if (error.name === 'AbortError') {
+              console.error('request was aborted');
+            }
+          } finally {
+            clearTimeout(timeout);
+          }
+        })();
+    </script>
+  </head>
+  <body>
+    check console in browser's dev. tools
+  </body>
+</html>
 ```
 
 #### Alternate API

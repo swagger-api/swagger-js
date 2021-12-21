@@ -1,3 +1,5 @@
+import AbortController from 'abort-controller';
+
 import {
   mapTagOperations,
   makeApisTagOperationsOperationExecute,
@@ -105,6 +107,31 @@ describe('intefaces', () => {
         option: 1,
         parameters: ['param'],
         pathName: '/one',
+      });
+    });
+
+    test('should pass signal option to execute', () => {
+      // Given
+      const spyMapTagOperations = jest.spyOn(stubs, 'mapTagOperations');
+      const spyExecute = jest.fn();
+      makeApisTagOperationsOperationExecute({ execute: spyExecute });
+      const { cb } = spyMapTagOperations.mock.calls[0][0];
+
+      // When
+      const controller = new AbortController();
+      const { signal } = controller;
+      const executer = cb({ pathName: '/one', method: 'GET' });
+      executer(['param'], { signal });
+
+      // Then
+      expect(spyExecute.mock.calls.length).toEqual(1);
+      expect(spyExecute.mock.calls[0][0]).toEqual({
+        spec: undefined,
+        operationId: undefined,
+        method: 'GET',
+        parameters: ['param'],
+        pathName: '/one',
+        signal,
       });
     });
 
