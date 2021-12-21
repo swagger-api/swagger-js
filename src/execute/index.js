@@ -98,6 +98,7 @@ export function buildRequest(options) {
     server,
     serverVariables,
     http,
+    signal,
   } = options;
 
   let { parameters, parameterBuilders } = options;
@@ -122,6 +123,10 @@ export function buildRequest(options) {
     headers: {},
     cookies: {},
   };
+
+  if (signal) {
+    req.signal = signal;
+  }
 
   if (requestInterceptor) {
     req.requestInterceptor = requestInterceptor;

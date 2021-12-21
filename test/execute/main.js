@@ -1,4 +1,5 @@
 import { Readable } from 'stream';
+import AbortController from 'abort-controller';
 
 import { execute, buildRequest, self as stubs } from '../../src/execute/index.js';
 import { normalizeSwagger } from '../../src/helpers.js';
@@ -154,6 +155,48 @@ describe('execute', () => {
         credentials: 'same-origin',
         headers: {},
         userFetch: spy,
+      });
+    });
+
+    test('should allow aborting request during execution', async () => {
+      // cross-fetch exposes FetchAPI methods onto global
+      require('cross-fetch/polyfill');
+
+      // Given
+      const spec = {
+        host: 'swagger.io',
+        schemes: ['https'],
+        paths: {
+          '/one': {
+            get: {
+              operationId: 'getMe',
+            },
+          },
+        },
+      };
+
+      const spy = jest.fn().mockImplementation(() => Promise.resolve(new Response('data')));
+      const controller = new AbortController();
+      const { signal } = controller;
+
+      const response = execute({
+        userFetch: spy,
+        spec,
+        operationId: 'getMe',
+        signal,
+      });
+
+      controller.abort();
+      await response;
+
+      expect(spy.mock.calls.length).toEqual(1);
+      expect(spy.mock.calls[0][1]).toEqual({
+        method: 'GET',
+        url: 'https://swagger.io/one',
+        credentials: 'same-origin',
+        headers: {},
+        userFetch: spy,
+        signal,
       });
     });
 
