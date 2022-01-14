@@ -1,6 +1,5 @@
 import * as jsonPatch from 'fast-json-patch';
-import deepExtend from 'deep-extend';
-import cloneDeep from 'lodash/cloneDeep';
+import deepmerge from 'deepmerge';
 
 export default {
   add,
@@ -40,42 +39,8 @@ function applyPatch(obj, patch, opts) {
     jsonPatch.applyPatch(obj, [replace(patch.path, newValue)]);
   } else if (patch.op === 'mergeDeep') {
     const currentValue = getInByJsonPath(obj, patch.path);
-
-    // Iterate the properties of the patch
-    // eslint-disable-next-line no-restricted-syntax, guard-for-in
-    for (const prop in patch.value) {
-      const propVal = patch.value[prop];
-      const isArray = Array.isArray(propVal);
-      if (isArray) {
-        // deepExtend doesn't merge arrays, so we will do it manually
-        const existing = currentValue[prop] || [];
-        currentValue[prop] = existing.concat(propVal);
-      } else if (isObject(propVal) && !isArray) {
-        // If it's an object, iterate it's keys and merge
-        // if there are conflicting keys, merge deep, otherwise shallow merge
-        let currentObj = { ...currentValue[prop] };
-        // eslint-disable-next-line no-restricted-syntax
-        for (const key in propVal) {
-          if (Object.prototype.hasOwnProperty.call(currentObj, key)) {
-            // if there is a single conflicting key, just deepExtend the entire value
-            // and break from the loop (since all future keys are also merged)
-            // We do this because we can't deepExtend two primitives
-            // (currentObj[key] & propVal[key] may be primitives).
-            //
-            // we also deeply assign here, since we aren't in control of
-            // how deepExtend affects existing nested objects
-            currentObj = deepExtend(cloneDeep(currentObj), propVal);
-            break;
-          } else {
-            Object.assign(currentObj, { [key]: propVal[key] });
-          }
-        }
-        currentValue[prop] = currentObj;
-      } else {
-        // It's a primitive, just replace existing
-        currentValue[prop] = propVal;
-      }
-    }
+    const newValue = deepmerge(currentValue, patch.value);
+    obj = jsonPatch.applyPatch(obj, [replace(patch.path, newValue)]).newDocument;
   } else if (patch.op === 'add' && patch.path === '' && isObject(patch.value)) {
     // { op: 'add', path: '', value: { a: 1, b: 2 }}
     // has no effect: json patch refuses to do anything.

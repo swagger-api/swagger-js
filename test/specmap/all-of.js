@@ -436,7 +436,7 @@ describe('allOf', () => {
     });
   });
 
-  test('merges arrays inside of an `allOf`', () =>
+  test('deepmerges arrays inside of an `allOf`', () =>
     mapSpec({
       plugins: [plugins.refs, plugins.allOf],
       showDebug: true,
@@ -450,6 +450,12 @@ describe('allOf', () => {
               {
                 type: 'object',
                 required: ['a', 'b'],
+                properties: {
+                  nested: {
+                    type: 'object',
+                    required: ['e'],
+                  },
+                },
               },
             ],
           },
@@ -458,6 +464,12 @@ describe('allOf', () => {
               {
                 type: 'object',
                 required: ['c', 'd'],
+                properties: {
+                  nested: {
+                    type: 'object',
+                    required: ['f'],
+                  },
+                },
               },
             ],
           },
@@ -470,10 +482,22 @@ describe('allOf', () => {
           one: {
             type: 'object',
             required: ['c', 'd', 'a', 'b'],
+            properties: {
+              nested: {
+                type: 'object',
+                required: ['f', 'e'],
+              },
+            },
           },
           two: {
             type: 'object',
             required: ['c', 'd'],
+            properties: {
+              nested: {
+                type: 'object',
+                required: ['f'],
+              },
+            },
           },
         },
       });
