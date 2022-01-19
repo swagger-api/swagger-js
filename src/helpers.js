@@ -143,7 +143,7 @@ export function normalizeSwagger(parsedSpec) {
     // eslint-disable-next-line no-restricted-syntax, guard-for-in
     for (const method in path) {
       const operation = path[method];
-      if (path == null || !['object', 'function'].includes(typeof path)) {
+      if (operation == null || !['object', 'function'].includes(typeof operation)) {
         continue; // eslint-disable-line no-continue
       }
 
