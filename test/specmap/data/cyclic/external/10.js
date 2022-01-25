@@ -2,11 +2,11 @@ module.exports = {
   name: 'link to 2 cyclic nodes',
   spec: {
     x: {
-      $ref: 'http://2/spec#/a',
+      $ref: 'http://0.0.0.2/spec#/a',
     },
   },
   external: {
-    'http://2/spec': {
+    'http://0.0.0.2/spec': {
       a: {
         $ref: '#/b',
       },
@@ -17,7 +17,7 @@ module.exports = {
   },
   output: {
     x: {
-      $ref: 'http://2/spec#/a',
+      $ref: 'http://0.0.0.2/spec#/a',
     },
   },
 };
