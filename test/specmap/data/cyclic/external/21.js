@@ -2,11 +2,11 @@ module.exports = {
   name: 'link to 3 cyclic nodes (in array)',
   spec: {
     x: {
-      $ref: 'http://4/spec#/defs/0',
+      $ref: 'http://0.0.0.4/spec#/defs/0',
     },
   },
   external: {
-    'http://4/spec': {
+    'http://0.0.0.4/spec': {
       defs: [
         {
           d1k: {
@@ -31,7 +31,7 @@ module.exports = {
       d1k: {
         d2k: {
           d3k: {
-            $ref: 'http://4/spec#/defs/0',
+            $ref: 'http://0.0.0.4/spec#/defs/0',
           },
         },
       },
