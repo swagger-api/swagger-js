@@ -75,8 +75,19 @@ export default {
       return undefined;
     });
 
+    // Keep the example from the original definition
+    // instead of merging it with examples from subschemas
+    const mergeOptions = {
+      customMerge: (mergingKey) => {
+        if (mergingKey === 'example') {
+          return (exampleA, exampleB) => exampleB;
+        }
+        return undefined;
+      },
+    };
+
     // Merge back the values from the original definition
-    patches.push(specmap.mergeDeep(parent, originalDefinitionObj));
+    patches.push(specmap.mergeDeep(parent, originalDefinitionObj, mergeOptions));
 
     // If there was not an original $$ref value, make sure to remove
     // any $$ref value that may exist from the result of `allOf` merges

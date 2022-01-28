@@ -39,7 +39,7 @@ function applyPatch(obj, patch, opts) {
     jsonPatch.applyPatch(obj, [replace(patch.path, newValue)]);
   } else if (patch.op === 'mergeDeep') {
     const currentValue = getInByJsonPath(obj, patch.path);
-    const newValue = deepmerge(currentValue, patch.value);
+    const newValue = deepmerge(currentValue, patch.value, patch.mergeOptions);
     obj = jsonPatch.applyPatch(obj, [replace(patch.path, newValue)]).newDocument;
   } else if (patch.op === 'add' && patch.path === '' && isObject(patch.value)) {
     // { op: 'add', path: '', value: { a: 1, b: 2 }}
@@ -142,12 +142,13 @@ function merge(path, value) {
 }
 
 // Custom wrappers
-function mergeDeep(path, value) {
+function mergeDeep(path, value, mergeOptions) {
   return {
     type: 'mutation',
     op: 'mergeDeep',
     path,
     value,
+    mergeOptions,
   };
 }
 
