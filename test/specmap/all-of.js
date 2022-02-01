@@ -541,4 +541,127 @@ describe('allOf', () => {
         },
       });
     }));
+
+  // https://github.com/swagger-api/swagger-ui/issues/4175
+  test('should suppress merging examples when composing a schema', async () => {
+    const res = await mapSpec({
+      plugins: [plugins.refs, plugins.allOf],
+      spec: {
+        definitions: {
+          hal: {
+            properties: {
+              _links: {
+                type: 'object',
+                additionalProperties: {
+                  $ref: '#/definitions/link',
+                },
+              },
+            },
+            example: {
+              _links: {
+                self: {
+                  href: '/exampleApi/things/r12300',
+                },
+                up: {
+                  href: '/exampleApi/otherThings',
+                },
+              },
+            },
+          },
+          link: {
+            type: 'object',
+            properties: {
+              href: {
+                type: 'string',
+                format: 'uri',
+              },
+            },
+          },
+          model: {
+            allOf: [{ $ref: '#/definitions/hal' }],
+            properties: {
+              id: {
+                type: 'string',
+              },
+            },
+            example: {
+              id: 1,
+              _links: {
+                self: {
+                  href: '/exampleApi/models/1',
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+    expect(res.errors).toEqual([]);
+    expect(res.spec).toEqual({
+      definitions: {
+        hal: {
+          properties: {
+            _links: {
+              type: 'object',
+              additionalProperties: {
+                type: 'object',
+                properties: {
+                  href: {
+                    type: 'string',
+                    format: 'uri',
+                  },
+                },
+              },
+            },
+          },
+          example: {
+            _links: {
+              self: {
+                href: '/exampleApi/things/r12300',
+              },
+              up: {
+                href: '/exampleApi/otherThings',
+              },
+            },
+          },
+        },
+        link: {
+          type: 'object',
+          properties: {
+            href: {
+              type: 'string',
+              format: 'uri',
+            },
+          },
+        },
+        model: {
+          properties: {
+            id: {
+              type: 'string',
+            },
+            _links: {
+              type: 'object',
+              additionalProperties: {
+                type: 'object',
+                properties: {
+                  href: {
+                    type: 'string',
+                    format: 'uri',
+                  },
+                },
+              },
+            },
+          },
+          example: {
+            id: 1,
+            _links: {
+              self: {
+                href: '/exampleApi/models/1',
+              },
+            },
+          },
+        },
+      },
+    });
+  });
 });
