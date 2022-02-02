@@ -76,7 +76,7 @@ export default {
     });
 
     // If there was an example in the original definition,
-    // keep it instead of merging with examples from subschemas
+    // keep it instead of merging with examples from other schema
     if (originalDefinitionObj.example) {
       // Delete subschemas examples
       patches.push(specmap.remove([].concat(parent, 'example')));
