@@ -75,6 +75,12 @@ export default {
       return undefined;
     });
 
+    // If there was an example in the original definition,
+    // keep it instead of merging with examples from other schema
+    if (originalDefinitionObj.example) {
+      // Delete other schema examples
+      patches.push(specmap.remove([].concat(parent, 'example')));
+    }
     // Merge back the values from the original definition
     patches.push(specmap.mergeDeep(parent, originalDefinitionObj));
 

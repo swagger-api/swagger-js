@@ -541,4 +541,102 @@ describe('allOf', () => {
         },
       });
     }));
+
+  // https://github.com/swagger-api/swagger-ui/issues/4175
+  test('should suppress merging examples when composing a schema', async () => {
+    const res = await mapSpec({
+      plugins: [plugins.refs, plugins.allOf],
+      spec: {
+        definitions: {
+          Pet: {
+            type: 'object',
+            properties: {
+              name: {
+                type: 'string',
+              },
+            },
+            example: {
+              name: 'my pet',
+            },
+          },
+          Cat: {
+            allOf: [
+              { $ref: '#/definitions/Pet' },
+              {
+                type: 'object',
+                properties: {
+                  meow: {
+                    type: 'string',
+                  },
+                },
+                example: {
+                  name: 'my cat',
+                  meow: 'meow',
+                },
+              },
+            ],
+          },
+          PetCat: {
+            allOf: [{ $ref: '#/definitions/Pet' }, { $ref: '#/definitions/Cat' }],
+            properties: {
+              id: {
+                type: 'string',
+              },
+            },
+            example: {
+              id: '1',
+            },
+          },
+        },
+      },
+    });
+    expect(res.errors).toEqual([]);
+    expect(res.spec).toEqual({
+      definitions: {
+        Pet: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+            },
+          },
+          example: {
+            name: 'my pet',
+          },
+        },
+        Cat: {
+          type: 'object',
+          properties: {
+            name: {
+              type: 'string',
+            },
+            meow: {
+              type: 'string',
+            },
+          },
+          example: {
+            name: 'my cat',
+            meow: 'meow',
+          },
+        },
+        PetCat: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+            },
+            name: {
+              type: 'string',
+            },
+            meow: {
+              type: 'string',
+            },
+          },
+          example: {
+            id: '1',
+          },
+        },
+      },
+    });
+  });
 });
