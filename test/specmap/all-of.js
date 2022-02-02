@@ -548,49 +548,43 @@ describe('allOf', () => {
       plugins: [plugins.refs, plugins.allOf],
       spec: {
         definitions: {
-          hal: {
+          Pet: {
+            type: 'object',
             properties: {
-              _links: {
-                type: 'object',
-                additionalProperties: {
-                  $ref: '#/definitions/link',
-                },
+              name: {
+                type: 'string',
               },
             },
             example: {
-              _links: {
-                self: {
-                  href: '/exampleApi/things/r12300',
-                },
-                up: {
-                  href: '/exampleApi/otherThings',
-                },
-              },
+              name: 'my pet',
             },
           },
-          link: {
-            type: 'object',
-            properties: {
-              href: {
-                type: 'string',
-                format: 'uri',
+          Cat: {
+            allOf: [
+              { $ref: '#/definitions/Pet' },
+              {
+                type: 'object',
+                properties: {
+                  meow: {
+                    type: 'string',
+                  },
+                },
+                example: {
+                  name: 'my cat',
+                  meow: 'meow',
+                },
               },
-            },
+            ],
           },
-          model: {
-            allOf: [{ $ref: '#/definitions/hal' }],
+          PetCat: {
+            allOf: [{ $ref: '#/definitions/Pet' }, { $ref: '#/definitions/Cat' }],
             properties: {
               id: {
                 type: 'string',
               },
             },
             example: {
-              id: 1,
-              _links: {
-                self: {
-                  href: '/exampleApi/models/1',
-                },
-              },
+              id: '1',
             },
           },
         },
@@ -599,69 +593,50 @@ describe('allOf', () => {
     expect(res.errors).toEqual([]);
     expect(res.spec).toEqual({
       definitions: {
-        hal: {
+        Pet: {
+          type: 'object',
           properties: {
-            _links: {
-              type: 'object',
-              additionalProperties: {
-                type: 'object',
-                properties: {
-                  href: {
-                    type: 'string',
-                    format: 'uri',
-                  },
-                },
-              },
+            name: {
+              type: 'string',
             },
           },
           example: {
-            _links: {
-              self: {
-                href: '/exampleApi/things/r12300',
-              },
-              up: {
-                href: '/exampleApi/otherThings',
-              },
-            },
+            name: 'my pet',
           },
         },
-        link: {
+        Cat: {
           type: 'object',
           properties: {
-            href: {
+            name: {
               type: 'string',
-              format: 'uri',
+            },
+            meow: {
+              type: 'string',
             },
           },
+          example: {
+            name: 'my cat',
+            meow: 'meow',
+          },
         },
-        model: {
+        PetCat: {
+          type: 'object',
           properties: {
             id: {
               type: 'string',
             },
-            _links: {
-              type: 'object',
-              additionalProperties: {
-                type: 'object',
-                properties: {
-                  href: {
-                    type: 'string',
-                    format: 'uri',
-                  },
-                },
-              },
+            name: {
+              type: 'string',
+            },
+            meow: {
+              type: 'string',
             },
           },
           example: {
-            id: 1,
-            _links: {
-              self: {
-                href: '/exampleApi/models/1',
-              },
-            },
+            id: '1',
           },
         },
       },
-    });
+    });    
   });
 });
