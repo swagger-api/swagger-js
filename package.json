@@ -66,7 +66,7 @@
     "@babel/cli": "=7.17.3",
     "@babel/core": "=7.17.4",
     "@babel/plugin-proposal-class-properties": "=7.16.7",
-    "@babel/plugin-proposal-object-rest-spread": "=7.16.7",
+    "@babel/plugin-proposal-object-rest-spread": "=7.17.3",
     "@babel/plugin-transform-runtime": "=7.17.0",
     "@babel/preset-env": "=7.16.11",
     "@babel/register": "=7.17.0",
