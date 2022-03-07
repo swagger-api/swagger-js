@@ -90,7 +90,7 @@
     "jest": "^27.0.1",
     "json-loader": "=0.5.7",
     "license-checker": "=25.0.1",
-    "lint-staged": "=12.3.4",
+    "lint-staged": "=12.3.5",
     "lodash-webpack-plugin": "=0.11.6",
     "nock": "=13.2.4",
     "node-fetch": "^2.6.7",
