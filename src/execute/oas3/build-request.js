@@ -137,7 +137,7 @@ export function applySecurities({ request, securities = {}, operation = {}, spec
           }
 
           if (/^bearer$/i.test(schema.scheme)) {
-            result.headers.Authorization = `Bearer ${value}`;
+            result.headers.Authorization = `Bearer ${value.bearer || value}`;
           }
         } else if (type === 'oauth2' || type === 'openIdConnect') {
           const token = auth.token || {};
