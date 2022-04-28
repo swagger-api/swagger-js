@@ -203,7 +203,7 @@ export function normalizeSwagger(parsedSpec) {
                 operation[inheritName] = inherits[inheritName];
               } else if (inheritName === 'parameters') {
                 // eslint-disable-next-line no-restricted-syntax
-                for (const param of inherits[inheritName]) {
+                for (const param of inherits[inheritName].slice(0).reverse()) {
                   const exists = operation[inheritName].some(
                     (opParam) =>
                       (opParam.name && opParam.name === param.name) ||
@@ -213,7 +213,7 @@ export function normalizeSwagger(parsedSpec) {
                   );
 
                   if (!exists) {
-                    operation[inheritName].push(param);
+                    operation[inheritName].unshift(param);
                   }
                 }
               }
