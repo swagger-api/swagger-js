@@ -68,7 +68,7 @@
     "@babel/plugin-proposal-class-properties": "=7.16.7",
     "@babel/plugin-proposal-object-rest-spread": "=7.17.3",
     "@babel/plugin-transform-runtime": "=7.17.0",
-    "@babel/preset-env": "=7.16.11",
+    "@babel/preset-env": "=7.17.10",
     "@babel/register": "=7.17.7",
     "@commitlint/cli": "^16.0.1",
     "@commitlint/config-conventional": "^16.0.0",
