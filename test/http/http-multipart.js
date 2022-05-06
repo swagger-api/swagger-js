@@ -2,7 +2,7 @@ import path from 'path';
 import { Readable } from 'stream';
 import fetchMock from 'fetch-mock';
 import { File, Blob } from 'formdata-node';
-import { fileFromPathSync } from 'formdata-node/lib/cjs/fileFromPath';
+import { fileFromPathSync } from 'formdata-node/lib/cjs/fileFromPath.js';
 
 import { buildRequest } from '../../src/execute/index.js';
 import sampleMultipartOpenApi2 from '../data/sample-multipart-oas2.js';
