@@ -9,7 +9,7 @@ import SWAGGER2_PARAMETER_BUILDERS from './swagger2/parameter-builders.js';
 import * as OAS3_PARAMETER_BUILDERS from './oas3/parameter-builders.js';
 import oas3BuildRequest from './oas3/build-request.js';
 import swagger2BuildRequest from './swagger2/build-request.js';
-import { getOperationRaw, legacyIdFromPathMethod, isOAS3 } from '../helpers.js';
+import { getOperationRaw, legacyIdFromPathMethod, isOAS3 } from '../helpers/index.js';
 
 const arrayOrEmpty = (ar) => (Array.isArray(ar) ? ar : []);
 
