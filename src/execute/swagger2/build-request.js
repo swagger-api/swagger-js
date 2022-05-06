@@ -1,4 +1,4 @@
-import btoa from 'btoa';
+import btoa from '../../helpers/btoa.node.js';
 
 // This function runs after the common function,
 // `src/execute/index.js#buildRequest`

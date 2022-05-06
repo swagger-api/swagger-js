@@ -1,5 +1,4 @@
-import btoa from 'btoa';
-
+import btoa from '../../../src/helpers/btoa.node.js';
 import { buildRequest } from '../../../src/execute/index.js';
 
 // OAS 3.0 Authorization

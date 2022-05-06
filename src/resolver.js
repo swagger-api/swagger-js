@@ -1,6 +1,6 @@
 import Http from './http/index.js';
 import mapSpec, { plugins } from './specmap/index.js';
-import { normalizeSwagger } from './helpers.js';
+import { normalizeSwagger } from './helpers/index.js';
 import { ACCEPT_HEADER_VALUE_FOR_DOCUMENTS } from './constants.js';
 
 export function makeFetchJSON(http, opts = {}) {

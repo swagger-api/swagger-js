@@ -5,7 +5,10 @@
   "browser": {
     "./src/http/fold-formdata-to-request.node.js": "./src/http/fold-formdata-to-request.browser.js",
     "./lib/http/fold-formdata-to-request.node.js": "./lib/http/fold-formdata-to-request.browser.js",
-    "./es/http/fold-formdata-to-request.node.js": "./es/http/fold-formdata-to-request.browser.js"
+    "./es/http/fold-formdata-to-request.node.js": "./es/http/fold-formdata-to-request.browser.js",
+    "./src/helpers/btoa.node.js": "./src/helpers/btoa.browser.js",
+    "./lib/helpers/btoa.node.js": "./lib/helpers/btoa.browser.js",
+    "./es/helpers/btoa.node.js": "./es/helpers/btoa.browser.js"
   },
   "main": "lib/commonjs.js",
   "module": "es/index.js",
@@ -106,7 +109,6 @@
   },
   "dependencies": {
     "@babel/runtime-corejs3": "^7.11.2",
-    "btoa": "^1.2.1",
     "cookie": "~0.5.0",
     "cross-fetch": "^3.1.5",
     "deepmerge": "~4.2.2",

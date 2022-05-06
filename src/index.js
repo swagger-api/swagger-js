@@ -5,7 +5,7 @@ import Resolver, { clearCache } from './resolver.js';
 import resolveSubtree from './subtree-resolver/index.js';
 import { makeApisTagOperation } from './interfaces.js';
 import { execute, buildRequest, baseUrl } from './execute/index.js';
-import { opId } from './helpers.js';
+import { opId } from './helpers/index.js';
 
 Swagger.http = Http;
 Swagger.makeHttp = makeHttp.bind(null, Swagger.http);

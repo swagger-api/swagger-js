@@ -2,7 +2,7 @@ import { Readable } from 'stream';
 import AbortController from 'abort-controller';
 
 import { execute, buildRequest, self as stubs } from '../../src/execute/index.js';
-import { normalizeSwagger } from '../../src/helpers.js';
+import { normalizeSwagger } from '../../src/helpers/index.js';
 
 // Supported shape...  { spec, operationId, parameters, securities, fetch }
 // One can use operationId or pathItem + method
