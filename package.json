@@ -94,7 +94,7 @@
     "jest-environment-jsdom": "^28.0.2",
     "json-loader": "=0.5.7",
     "license-checker": "=25.0.1",
-    "lint-staged": "=12.4.3",
+    "lint-staged": "=12.5.0",
     "lodash-webpack-plugin": "=0.11.6",
     "nock": "=13.2.4",
     "node-fetch": "^2.6.7",
