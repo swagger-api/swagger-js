@@ -83,7 +83,7 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "=8.5.0",
     "eslint-plugin-import": "=2.26.0",
-    "eslint-plugin-prettier": "=4.0.0",
+    "eslint-plugin-prettier": "=4.1.0",
     "expect": "^28.0.2",
     "fetch-mock": "=9.11.0",
     "glob": "=8.0.3",
