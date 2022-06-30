@@ -2,7 +2,7 @@ import stylize, { encodeDisallowedCharacters } from './style-serializer.js';
 import serialize from './content-serializer.js';
 
 export function path({ req, value, parameter }) {
-  const { name, style, explode, content } = parameter;
+  const { name, style, explode, content, allowReserved } = parameter;
 
   if (content) {
     const effectiveMediaType = Object.keys(content)[0];
@@ -18,7 +18,7 @@ export function path({ req, value, parameter }) {
     value,
     style: style || 'simple',
     explode: explode || false,
-    escape: true,
+    escape: allowReserved ? 'unsafe' : true,
   });
 
   req.url = req.url.split(`{${name}}`).join(styledValue);

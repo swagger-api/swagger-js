@@ -76,6 +76,45 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
       });
     });
 
+    test('should build a path parameter with escaped non-RFC3986 characters', () => {
+      // Given
+      const spec = {
+        openapi: '3.0.0',
+        paths: {
+          '/path/{id}': {
+            get: {
+              operationId: 'myOperation',
+              parameters: [
+                {
+                  name: 'id',
+                  in: 'path',
+                  style: 'simple',
+                  explode: false,
+                  allowReserved: true,
+                },
+              ],
+            },
+          },
+        },
+      };
+
+      // when
+      const req = buildRequest({
+        spec,
+        operationId: 'myOperation',
+        parameters: {
+          id: 'wow this is nice!',
+        },
+      });
+
+      expect(req).toEqual({
+        method: 'GET',
+        url: '/path/wow%20this%20is%20nice!',
+        credentials: 'same-origin',
+        headers: {},
+      });
+    });
+
     test('should build a path parameter in a simple/explode format', () => {
       // Given
       const spec = {
