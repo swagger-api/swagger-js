@@ -1,6 +1,3 @@
-import fs from 'fs';
-import path from 'path';
-
 import SwaggerClient from '../../dist/swagger-client.browser.js';
 import SwaggerClientMin from '../../dist/swagger-client.browser.min.js';
 
@@ -56,13 +53,6 @@ describe('webpack browser umd build', () => {
         value: 1234,
       },
     });
-  });
-
-  test('should not contain references to `new Promise`', () => {
-    const bundlePath = path.join(__dirname, '../../dist/swagger-client.browser.js');
-    const src = fs.readFileSync(bundlePath).toString();
-
-    expect(src).not.toMatch(/new Promise\s*\(/);
   });
 });
 
