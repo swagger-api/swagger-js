@@ -1,4 +1,4 @@
-import 'cross-fetch/polyfill'; /* global fetch */
+import 'cross-fetch/polyfill';
 import qs from 'qs';
 import jsYaml from 'js-yaml';
 import { FormData, File, Blob } from 'formdata-node';

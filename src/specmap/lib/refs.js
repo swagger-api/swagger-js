@@ -1,4 +1,4 @@
-import 'cross-fetch/polyfill'; /* global fetch */
+import 'cross-fetch/polyfill';
 import jsYaml from 'js-yaml';
 import url from 'url';
 
