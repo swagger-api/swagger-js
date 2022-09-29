@@ -278,7 +278,7 @@ Property | Description
 `status` | `Number`. The status code of the response. (This will be 200 for a success).
 `statusText` | `String`. The status message corresponding to the status code. (e.g., OK for 200).
 `url` | `String`. Request url.
-`heades` | `Object`. The Headers object associated with the response.
+`headers` | `Object`. The Headers object associated with the response.
 `text` | `String` &#124; `Blob`. Textual body, or Blob.
 `data` | `String` &#124; `Blob`. Textual body, or Blob. (`Legacy` property)
 `body` | `Object=undefined`. JSON object or `undefined`. 
