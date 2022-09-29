@@ -1,5 +1,6 @@
 import lib from './lib/index.js';
 import refs from './lib/refs.js';
+import externalValue from './lib/external-value.js';
 import allOf from './lib/all-of.js';
 import parameters from './lib/parameters.js';
 import properties from './lib/properties.js';
@@ -393,6 +394,7 @@ export default function mapSpec(opts) {
 
 const plugins = {
   refs,
+  externalValue,
   allOf,
   parameters,
   properties,
