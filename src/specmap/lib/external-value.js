@@ -1,17 +1,23 @@
 import { fetch } from 'cross-fetch';
-
-import createError from './create-error';
-import lib from '.';
 import url from 'url';
 
-const externalValuesCache = {};
+import createError from './create-error.js';
+import lib from '.';
 
+const ABSOLUTE_URL_REGEXP = /^([a-z]+:\/\/|\/\/)/i;
+
+const ExternalValueError = createError('ExternalValueError', function cb(message, extra, oriError) {
+  this.originalError = oriError;
+  Object.assign(this, extra || {});
+});
+
+const externalValuesCache = {};
 
 /**
  * Resolves a path(optional absolute) and its base to an abolute URL.
  * @api public
  */
- function absoluteify(path, basePath) {
+function absoluteify(path, basePath) {
   if (!ABSOLUTE_URL_REGEXP.test(path)) {
     if (!basePath) {
       throw new ExternalValueError(
@@ -25,12 +31,12 @@ const externalValuesCache = {};
 
 /**
  * Clears all external value caches.
- * @param  {String} url (optional) the original externalValue value of the cache item to be cleared.
+ * @param  {String} uri (optional) the original externalValue value of the cache item to be cleared.
  * @api public
  */
-function clearCache(url) {
-  if (typeof url !== 'undefined') {
-    delete externalValuesCache[url];
+function clearCache(uri) {
+  if (typeof uri !== 'undefined') {
+    delete externalValuesCache[uri];
   } else {
     Object.keys(externalValuesCache).forEach((key) => {
       delete externalValuesCache[key];
@@ -44,7 +50,7 @@ function clearCache(url) {
  * @return {Promise}        a promise of the document content.
  * @api public
  */
-const fetchRaw = (url) => fetch(url).then((res) => res.text);
+const fetchRaw = (uri) => fetch(uri).then((res) => res.text);
 
 const shouldResolveTestFn = [
   // OAS 3.0 Response Media Type Examples externalValue
@@ -96,11 +102,6 @@ const shouldResolveTestFn = [
 
 const shouldSkipResolution = (path) => !shouldResolveTestFn.some((fn) => fn(path));
 
-const ExternalValueError = createError('ExternalValueError', function cb(message, extra, oriError) {
-  this.originalError = oriError;
-  Object.assign(this, extra || {});
-});
-
 /**
  * This plugin resolves externalValue keys.
  * In order to do so it will use a cache in case the url was already requested.
@@ -135,16 +136,14 @@ const plugin = {
 
     let basePath;
     try {
+      // eslint-disable-next-line no-unused-vars
       basePath = baseDoc || externalValuePath ? absoluteify(externalValuePath, baseDoc) : null;
     } catch (e) {
-      return new ExternalValueError(
-        `Could not absoluteify externalValue: ${externalValue}`,
-        {
-          externalValue,
-          baseDoc,
-          fullPath,
-        }
-      );
+      return new ExternalValueError(`Could not absoluteify externalValue: ${externalValue}`, {
+        externalValue,
+        baseDoc,
+        fullPath,
+      });
     }
 
     try {
@@ -197,7 +196,7 @@ const mod = Object.assign(plugin, {
   ExternalValueError,
   fetchRaw,
   getExternalValue,
-  absoluteify
+  absoluteify,
 });
 export default mod;
 
@@ -226,17 +225,17 @@ function wrapError(e, extra) {
  * @return {Promise}        a promise of the document content.
  * @api public
  */
-function getExternalValue(url) {
-  const val = externalValuesCache[url];
+function getExternalValue(uri) {
+  const val = externalValuesCache[uri];
   if (val) {
     return lib.isPromise(val) ? val : Promise.resolve(val);
   }
 
   // NOTE: we need to use `mod.fetchRaw` in order to be able to overwrite it.
   // Any tips on how to make this cleaner, please ping!
-  externalValuesCache[url] = mod.fetchRaw(url).then((raw) => {
-    externalValuesCache[url] = raw;
+  externalValuesCache[uri] = mod.fetchRaw(uri).then((raw) => {
+    externalValuesCache[uri] = raw;
     return raw;
   });
-  return externalValuesCache[url];
+  return externalValuesCache[uri];
 }
