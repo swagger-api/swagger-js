@@ -32,6 +32,12 @@
         "ignorePackages": true
       }
     ],
+    "import/no-unresolved": [
+      2,
+      {
+        "ignore": ["^@swagger-api/apidom-reference/configuration/empty$"]
+      }
+    ],
     "prettier/prettier": "error",
     "no-param-reassign": 0, // needs to be eliminated in future
     "no-use-before-define": [2, "nofunc"] // needs to be eliminated in future
