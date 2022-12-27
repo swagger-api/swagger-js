@@ -23,6 +23,8 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
+        registry-url: https://npm.pkg.github.com/
+        scope: "@swagger-api"
     - name: Cache Node Modules
       id: cache-node-modules
       uses: actions/cache@v2
@@ -32,6 +34,8 @@ jobs:
     - name: Install dependencies
       if: steps.cache-node-modules.outputs.cache-hit != 'true'
       run: npm ci
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Lint commit message
       if: github.ref != 'refs/heads/main' && github.actor != 'dependabot[bot]'
       run: git log -1 --pretty=format:"%s" | npx commitlint
@@ -61,6 +65,8 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: 12.4.x
+        registry-url: https://npm.pkg.github.com/
+        scope: "@swagger-api"
     - name: Cache Node Modules
       id: cache-node-modules
       uses: actions/cache@v2
@@ -70,6 +76,8 @@ jobs:
     - name: Install dependencies
       if: steps.cache-node-modules.outputs.cache-hit != 'true'
       run: npm ci
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Download commonjs build artifacts
       uses: actions/download-artifact@v1
@@ -83,6 +91,8 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: 14.x
+        registry-url: https://npm.pkg.github.com/
+        scope: "@swagger-api"
     - name: Run commonjs build artifacts on Node.js 14.x
       run: node -p "require('./commonjs')"
 
@@ -90,5 +100,7 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: 16.x
+        registry-url: https://npm.pkg.github.com/
+        scope: "@swagger-api"
     - name: Run commonjs build artifacts on Node.js 16.x
       run: node -p "require('./commonjs')"
