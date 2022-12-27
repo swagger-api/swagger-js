@@ -128,7 +128,6 @@
   "overrides": {
     "@swagger-api/apidom-reference": {
       "@swagger-api/apidom-ns-asyncapi-2": "npm:-@0.0.1",
-      "@swagger-api/apidom-ns-openapi-3-0": "npm:-@0.0.1",
       "@swagger-api/apidom-parser-adapter-api-design-systems-json": "npm:-@0.0.1",
       "@swagger-api/apidom-parser-adapter-api-design-systems-yaml": "npm:-@0.0.1",
       "@swagger-api/apidom-parser-adapter-asyncapi-json-2": "npm:-@0.0.1",
