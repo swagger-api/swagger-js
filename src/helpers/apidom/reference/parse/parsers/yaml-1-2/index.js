@@ -38,13 +38,13 @@ const YamlParser = Parser.compose({
       const source = file.toString();
 
       try {
-        const parsedYAML = YAML.load(source, { schema: JSON_SCHEMA });
+        const pojo = YAML.load(source, { schema: JSON_SCHEMA });
 
-        if (this.allowEmpty && typeof parsedYAML === 'undefined') {
+        if (this.allowEmpty && typeof pojo === 'undefined') {
           return parseResultElement;
         }
 
-        const element = from(parsedYAML);
+        const element = from(pojo);
         element.classes.push('result');
         parseResultElement.push(element);
         return parseResultElement;
