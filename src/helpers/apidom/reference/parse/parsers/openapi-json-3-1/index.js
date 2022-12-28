@@ -40,19 +40,22 @@ const OpenApiJson3_1Parser = Parser.compose({
 
     async parse(file) {
       if (this.sourceMap) {
-        // eslint-disable-next-line no-console
-        console.warn(
+        throw new ParserError(
           "openapi-json-3-1-swagger-client parser plugin doesn't support sourceMaps option"
         );
       }
 
+      const parseResultElement = new ParseResultElement();
       const source = file.toString();
+
+      // allow empty files
+      if (this.allowEmpty && source.trim() === '') {
+        return parseResultElement;
+      }
 
       try {
         const pojo = JSON.parse(source);
         const element = OpenApi3_1Element.refract(pojo, this.refractorOpts);
-        const parseResultElement = new ParseResultElement();
-
         element.classes.push('result');
         parseResultElement.push(element);
         return parseResultElement;

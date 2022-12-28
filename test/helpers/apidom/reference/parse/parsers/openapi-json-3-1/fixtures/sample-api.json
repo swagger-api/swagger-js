@@ -1,0 +1,206 @@
+{
+  "openapi": "3.1.0",
+  "x-top-level": "value",
+  "info": {
+    "title": "Sample API",
+    "unknownFixedField": "value",
+    "description": "Optional multiline or single-line description in [CommonMark](http://commonmark.org/help/) or HTML.",
+    "summary": "example summary",
+    "termsOfService": "Terms of service",
+    "version": "0.1.9",
+    "x-version": "0.1.9-beta",
+    "license": {
+      "name": "Apache License 2.0",
+      "x-fullName": "Apache License 2.0",
+      "identifier": "Apache License 2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0"
+    },
+    "contact": {
+      "name": "Vladimir Gorej",
+      "x-username": "char0n",
+      "url": "https://www.linkedin.com/in/vladimirgorej/",
+      "email": "vladimir.gorej@gmail.com"
+    }
+  },
+  "components": {
+    "x-extension": "value",
+    "schemas": {
+      "x-model": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type:": "integer"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/UserProfile",
+            "summary": "user profile reference summary",
+            "description": "user profile reference description"
+          }
+        }
+      },
+      "UserProfile": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "x-nullable": true
+          }
+        }
+      }
+    },
+    "parameters": {
+      "userId": {
+        "$ref": "#/components/parameters/userIdRef"
+      },
+      "userIdRef": {
+        "name": "userId",
+        "in": "query",
+        "description": "ID of the user",
+        "required": true
+      }
+    }
+  },
+  "security": [
+    {},
+    {
+      "petstore_auth": [
+        "write:pets",
+        "read:pets"
+      ]
+    }
+  ],
+  "servers": [
+    {
+      "url": "http://api.example.com/v1",
+      "description": "Optional server description, e.g. Main (production) server"
+    },
+    {
+      "url": "http:{port}//staging-api.example.com",
+      "description": "Optional server description, e.g. Internal staging server for testing",
+      "variables": {
+        "port": {
+          "enum": [
+            "8443",
+            "443"
+          ],
+          "default": "8443",
+          "description": "Port description"
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/users": {
+      "summary": "path item summary",
+      "description": "path item description",
+      "get": {
+        "tags": ["tag1", "tag2"],
+        "summary": "Returns a list of users.",
+        "description": "Optional extended description in CommonMark or HTML.",
+        "externalDocs": {
+          "description": "Find more info here",
+          "url": "https://example.com"
+        },
+        "operationId": "getUserList",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/userId"
+          }
+        ],
+        "requestBody": {
+          "content": {}
+        },
+        "responses": {
+          "xxx": {"key":  "val"},
+          "200": {
+            "description": "A JSON array of user names",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "A response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        },
+        "callbacks": {
+          "myCallback": {
+            "{$request.query.queryUrl}": {
+              "post": {
+                "requestBody": {
+                  "description": "Callback payload",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/User"
+                      }
+                    }
+                  }
+                },
+                "responses": {
+                  "200": {
+                    "description": "callback successfully processed"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": true,
+        "security": [
+          {},
+          {
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
+          }
+        ],
+        "servers": [
+          {
+            "url": "http://api.example.com/v3",
+            "description": "Redundant server description, e.g. redundant server"
+          }
+        ]
+      },
+      "servers": [
+        {
+          "url": "http://api.example.com/v2",
+          "description": "Redundant server description, e.g. redundant server"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "userId",
+          "in": "query",
+          "description": "ID of the user",
+          "required": true
+        }
+      ]
+    }
+  }
+}
