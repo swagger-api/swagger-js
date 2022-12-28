@@ -29,16 +29,22 @@ const YamlParser = Parser.compose({
 
     async parse(file) {
       if (this.sourceMap) {
-        // eslint-disable-next-line no-console
-        console.warn("yaml-1-2-swagger-client parser plugin doesn't support sourceMaps option");
+        throw new ParserError(
+          "yaml-1-2-swagger-client parser plugin doesn't support sourceMaps option"
+        );
       }
 
+      const parseResultElement = new ParseResultElement();
       const source = file.toString();
 
       try {
-        const element = from(YAML.load(source, { schema: JSON_SCHEMA }));
-        const parseResultElement = new ParseResultElement();
+        const parsedYAML = YAML.load(source, { schema: JSON_SCHEMA });
 
+        if (this.allowEmpty && typeof parsedYAML === 'undefined') {
+          return parseResultElement;
+        }
+
+        const element = from(parsedYAML);
         element.classes.push('result');
         parseResultElement.push(element);
         return parseResultElement;
