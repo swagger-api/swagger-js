@@ -28,16 +28,21 @@ const JsonParser = Parser.compose({
 
     async parse(file) {
       if (this.sourceMap) {
-        // eslint-disable-next-line no-console
-        console.warn("json-swagger-client parser plugin doesn't support sourceMaps option");
+        throw new ParserError(
+          "json-swagger-client parser plugin doesn't support sourceMaps option"
+        );
       }
 
+      const parseResultElement = new ParseResultElement();
       const source = file.toString();
+
+      // allow empty files
+      if (this.allowEmpty && source.trim() === '') {
+        return parseResultElement;
+      }
 
       try {
         const element = from(JSON.parse(source));
-        const parseResultElement = new ParseResultElement();
-
         element.classes.push('result');
         parseResultElement.push(element);
         return parseResultElement;
