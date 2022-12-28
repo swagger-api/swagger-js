@@ -8,7 +8,7 @@ import {
 } from '@swagger-api/apidom-ns-openapi-3-1';
 
 // eslint-disable-next-line camelcase
-const OpenApiJson3_1Parser = Parser.compose(Parser, {
+const OpenApiJson3_1Parser = Parser.compose({
   props: {
     name: 'openapi-json-3-1-swagger-client',
     fileExtensions: ['.json'],
@@ -37,6 +37,7 @@ const OpenApiJson3_1Parser = Parser.compose(Parser, {
       }
       return false;
     },
+
     async parse(file) {
       if (this.sourceMap) {
         // eslint-disable-next-line no-console

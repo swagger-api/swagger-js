@@ -9,7 +9,7 @@ import {
 } from '@swagger-api/apidom-ns-openapi-3-1';
 
 // eslint-disable-next-line camelcase
-const OpenApiYaml3_1Parser = Parser.compose(Parser, {
+const OpenApiYaml3_1Parser = Parser.compose({
   props: {
     name: 'openapi-yaml-3-1-swagger-client',
     fileExtensions: ['.yaml', '.yml'],
@@ -39,6 +39,7 @@ const OpenApiYaml3_1Parser = Parser.compose(Parser, {
       }
       return false;
     },
+
     async parse(file) {
       if (this.sourceMap) {
         // eslint-disable-next-line no-console
