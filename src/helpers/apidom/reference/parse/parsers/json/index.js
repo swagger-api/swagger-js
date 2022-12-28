@@ -1,7 +1,7 @@
 import { from, ParseResultElement } from '@swagger-api/apidom-core';
 import { ParserError, Parser } from '@swagger-api/apidom-reference/configuration/empty';
 
-const JsonParser = Parser.compose(Parser, {
+const JsonParser = Parser.compose({
   props: {
     name: 'json-swagger-client',
     fileExtensions: ['.json'],

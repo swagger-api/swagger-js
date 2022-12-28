@@ -2,7 +2,7 @@ import YAML, { JSON_SCHEMA } from 'js-yaml';
 import { from, ParseResultElement } from '@swagger-api/apidom-core';
 import { ParserError, Parser } from '@swagger-api/apidom-reference/configuration/empty';
 
-const YamlParser = Parser.compose(Parser, {
+const YamlParser = Parser.compose({
   props: {
     name: 'yaml-1-2-swagger-client',
     fileExtensions: ['.yaml', '.yml'],
