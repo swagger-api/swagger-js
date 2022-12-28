@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { isParseResultElement } from '@swagger-api/apidom-core';
-import { File, ParserError } from '@swagger-api/apidom-reference';
+import { File, ParserError } from '@swagger-api/apidom-reference/configuration/empty';
 import { mediaTypes } from '@swagger-api/apidom-ns-openapi-3-1';
 
 // eslint-disable-next-line camelcase
