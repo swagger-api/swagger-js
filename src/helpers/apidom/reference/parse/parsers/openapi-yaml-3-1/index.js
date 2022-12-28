@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import YAML from 'js-yaml';
+import YAML, { JSON_SCHEMA } from 'js-yaml';
 import { ParseResultElement } from '@swagger-api/apidom-core';
 import { ParserError, Parser } from '@swagger-api/apidom-reference/configuration/empty';
 import {
@@ -42,19 +42,22 @@ const OpenApiYaml3_1Parser = Parser.compose({
 
     async parse(file) {
       if (this.sourceMap) {
-        // eslint-disable-next-line no-console
-        console.warn(
+        throw new ParserError(
           "openapi-yaml-3-1-swagger-client parser plugin doesn't support sourceMaps option"
         );
       }
 
+      const parseResultElement = new ParseResultElement();
       const source = file.toString();
 
       try {
-        const pojo = YAML.load(source);
-        const element = OpenApi3_1Element.refract(pojo, this.refractorOpts);
-        const parseResultElement = new ParseResultElement();
+        const pojo = YAML.load(source, { schema: JSON_SCHEMA });
 
+        if (this.allowEmpty && typeof pojo === 'undefined') {
+          return parseResultElement;
+        }
+
+        const element = OpenApi3_1Element.refract(pojo, this.refractorOpts);
         element.classes.push('result');
         parseResultElement.push(element);
         return parseResultElement;
