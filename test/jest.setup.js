@@ -1,7 +1,42 @@
+import process from 'node:process';
+import http from 'node:http';
+import path from 'node:path';
+import fs from 'node:fs';
 import fetchMock from 'fetch-mock';
 import fetch, { Headers, Request, Response } from 'cross-fetch';
+import AbortController from 'abort-controller';
 
+// configures fetchMock with node-fetch
 fetchMock.config.fetch = fetch;
 fetchMock.config.Request = Request;
 fetchMock.config.Response = Response;
 fetchMock.config.Headers = Headers;
+
+// provide AbortController for older Node.js versions
+globalThis.AbortController = globalThis.AbortController ?? AbortController;
+
+// helper for providing HTTP server instance for testing
+globalThis.createHTTPServer = ({ port = 8123, cwd = process.cwd() } = {}) => {
+  const server = http.createServer((req, res) => {
+    const filePath = path.join(cwd, req.url || '/favicon.ico');
+
+    if (!fs.existsSync(filePath)) {
+      res.writeHead(404, { 'Content-Type': 'text/plain' });
+      res.end('Not found');
+      return;
+    }
+
+    const data = fs.readFileSync(filePath).toString();
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(data);
+  });
+
+  server.listen(port);
+
+  server.terminate = () =>
+    new Promise((resolve) => {
+      server.close(() => resolve(server));
+    });
+
+  return server;
+};
