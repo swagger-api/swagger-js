@@ -79,7 +79,7 @@ describe('HttpResolverSwaggerClient', () => {
       test('should throw on timeout', async () => {
         resolver = HttpResolverSwaggerClient({ timeout: 1 });
         const url = 'http://localhost:8123/local-file.txt';
-        const cwd = path.join(__dirname, 'fixtures');
+        const cwd = path.join(__dirname, '__fixtures__');
         const server = globalThis.createHTTPServer({ port: 8123, cwd });
 
         expect.assertions(3);

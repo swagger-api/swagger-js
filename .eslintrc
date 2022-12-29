@@ -37,7 +37,11 @@
     "import/no-unresolved": [
       2,
       {
-        "ignore": ["^@swagger-api/apidom-reference/configuration/empty$"]
+        "ignore": [
+          "^@swagger-api/apidom-reference/configuration/empty$",
+          "^@swagger-api/apidom-reference/dereference/strategies/openapi-3-1$",
+          "^@swagger-api/apidom-reference/resolve/resolvers/file$"
+        ]
       }
     ],
     "prettier/prettier": "error",

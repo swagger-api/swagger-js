@@ -15,5 +15,7 @@ module.exports = {
     '<rootDir>/test/jest.setup.js',
     '<rootDir>/test/specmap/data/',
     '<rootDir>/test/build-artifacts/',
+    '/__fixtures__/',
+    '/__utils__/',
   ],
 };

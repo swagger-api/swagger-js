@@ -67,7 +67,7 @@ describe('OpenApiJson3_1Parser', () => {
     describe('given file with supported extension', () => {
       describe('and file data is buffer and can be detected as OpenAPI 3.1.0', () => {
         test('should return true', async () => {
-          const url = path.join(__dirname, 'fixtures', 'sample-api.json');
+          const url = path.join(__dirname, '__fixtures__', 'sample-api.json');
           const file = File({
             uri: '/path/to/open-api.json',
             data: fs.readFileSync(url),
@@ -80,7 +80,7 @@ describe('OpenApiJson3_1Parser', () => {
 
       describe('and file data is string and can be detected as OpenAPI 3.1.0', () => {
         test('should return true', async () => {
-          const url = path.join(__dirname, 'fixtures', 'sample-api.json');
+          const url = path.join(__dirname, '__fixtures__', 'sample-api.json');
           const file = File({
             uri: '/path/to/open-api.json',
             data: fs.readFileSync(url).toString(),
@@ -96,7 +96,7 @@ describe('OpenApiJson3_1Parser', () => {
   describe('parse', () => {
     describe('given OpenApi 3.1.x JSON data', () => {
       test('should return parse result', async () => {
-        const url = path.join(__dirname, 'fixtures', 'sample-api.json');
+        const url = path.join(__dirname, '__fixtures__', 'sample-api.json');
         const data = fs.readFileSync(url).toString();
         const file = File({
           url,
@@ -112,7 +112,7 @@ describe('OpenApiJson3_1Parser', () => {
 
     describe('given OpenApi 3.1.x JSON data as buffer', () => {
       test('should return parse result', async () => {
-        const url = path.join(__dirname, 'fixtures', 'sample-api.json');
+        const url = path.join(__dirname, '__fixtures__', 'sample-api.json');
         const data = fs.readFileSync(url);
         const file = File({
           url,
@@ -174,7 +174,7 @@ describe('OpenApiJson3_1Parser', () => {
 
       describe('given sourceMap disabled', () => {
         test('should not decorate ApiDOM with source maps', async () => {
-          const url = path.join(__dirname, 'fixtures', 'sample-api.json');
+          const url = path.join(__dirname, '__fixtures__', 'sample-api.json');
           const data = fs.readFileSync(url).toString();
           const file = File({
             url,
