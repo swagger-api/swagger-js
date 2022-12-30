@@ -1,0 +1,6 @@
+{
+  "externalPathItem": {
+    "description": "this is path item stored in external file",
+    "get": {}
+  }
+}

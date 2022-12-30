@@ -1,0 +1,17 @@
+{
+  "openapi": "3.1.0",
+  "components": {
+    "pathItems": {
+      "pathItem1": {
+        "$ref": "#/components/pathItems/pathItem2"
+      },
+      "pathItem2": {
+        "$ref": "#/components/pathItems/pathItem3"
+      },
+      "pathItem3": {
+        "summary": "path item summary",
+        "description": "path item description"
+      }
+    }
+  }
+}

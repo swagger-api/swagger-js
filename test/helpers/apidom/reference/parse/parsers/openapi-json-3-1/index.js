@@ -159,12 +159,12 @@ describe('OpenApiJson3_1Parser', () => {
 
     describe('sourceMap', () => {
       describe('given sourceMap enabled', () => {
-        test('should throw error', () => {
+        test('should throw error', async () => {
           const file = File({ uri: '/path/to/file.json', data: '{"prop": "val"}' });
           const parser = OpenApiJson3_1Parser({ sourceMap: true });
-          const parseWithSourceMap = () => parser.parse(file);
+          const parseWithSourceMapThunk = () => parser.parse(file);
 
-          expect(parseWithSourceMap).rejects.toThrow(
+          await expect(parseWithSourceMapThunk()).rejects.toThrow(
             new ParserError(
               "openapi-json-3-1-swagger-client parser plugin doesn't support sourceMaps option"
             )

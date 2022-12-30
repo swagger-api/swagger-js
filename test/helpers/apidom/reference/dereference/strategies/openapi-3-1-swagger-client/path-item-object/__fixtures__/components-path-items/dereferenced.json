@@ -1,0 +1,15 @@
+[
+  {
+    "openapi": "3.1.0",
+    "components": {
+      "pathItems": {
+        "pathItem1": {
+          "description": "description of path item 1"
+        },
+        "pathItem2": {
+          "description": "description of path item 1"
+        }
+      }
+    }
+  }
+]

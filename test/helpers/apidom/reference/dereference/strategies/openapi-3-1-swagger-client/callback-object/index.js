@@ -17,7 +17,7 @@ describe('dereference', () => {
   });
 
   describe('strategies', () => {
-    describe('openapi-3-1swagger-client', () => {
+    describe('openapi-3-1-swagger-client', () => {
       describe('Callback Object', () => {
         describe('given in components/callbacks field', () => {
           const fixturePath = path.join(rootFixturePath, 'components-callbacks');

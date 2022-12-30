@@ -1,0 +1,29 @@
+[
+  {
+    "openapi": "3.1.0",
+    "paths": {
+      "/path": {
+        "get": {
+          "responses": {
+            "default": {
+              "description": "first response object"
+            },
+            "200": {
+              "description": "second response object"
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "responses": {
+        "default": {
+          "description": "first response object"
+        },
+        "200": {
+          "description": "second response object"
+        }
+      }
+    }
+  }
+]

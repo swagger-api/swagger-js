@@ -1,0 +1,14 @@
+[
+  {
+    "openapi": "3.1.0",
+    "components": {
+      "parameters": {
+        "externalRef": {
+          "a": {
+            "$ref": "#/three"
+          }
+        }
+      }
+    }
+  }
+]

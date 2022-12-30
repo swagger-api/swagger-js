@@ -1,0 +1,17 @@
+[
+  {
+    "openapi": "3.1.0",
+    "webhooks": {
+      "hook": {
+        "description": "description of path item 1"
+      }
+    },
+    "components": {
+      "pathItems": {
+        "pathItem1": {
+          "description": "description of path item 1"
+        }
+      }
+    }
+  }
+]

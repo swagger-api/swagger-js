@@ -110,12 +110,12 @@ describe('JsonParser', () => {
 
     describe('sourceMap', () => {
       describe('given sourceMap enabled', () => {
-        test('should throw error', () => {
+        test('should throw error', async () => {
           const file = File({ uri: '/path/to/file.json', data: '{"prop": "val"}' });
           const parser = JsonParser({ sourceMap: true });
-          const parseWithSourceMap = () => parser.parse(file);
+          const parseWithSourceMapThunk = () => parser.parse(file);
 
-          expect(parseWithSourceMap).rejects.toThrow(
+          await expect(parseWithSourceMapThunk()).rejects.toThrow(
             new ParserError("json-swagger-client parser plugin doesn't support sourceMaps option")
           );
         });

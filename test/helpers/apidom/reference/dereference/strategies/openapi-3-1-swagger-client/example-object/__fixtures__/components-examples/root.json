@@ -1,0 +1,14 @@
+{
+  "openapi": "3.1.0",
+  "components": {
+    "examples": {
+      "example1": {
+        "description": "example1 description",
+        "value": 1
+      },
+      "example2": {
+        "$ref": "#/components/examples/example1"
+      }
+    }
+  }
+}
