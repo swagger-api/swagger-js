@@ -1,0 +1,32 @@
+[
+  {
+    "openapi": "3.1.0",
+    "components": {
+      "parameters": {
+        "param1": {
+          "name": "offset",
+          "in": "query",
+          "required": true,
+          "content": {
+            "encoding": {
+              "Encoding": {
+                "headers": {
+                  "content-type": {
+                    "$ref": "#/components/headers/content-type"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "components": {
+        "headers": {
+          "content-type": {
+            "description": "content type header description"
+          }
+        }
+      }
+    }
+  }
+]

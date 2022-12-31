@@ -1,0 +1,10 @@
+{
+  "openapi": "3.1.0",
+  "components": {
+    "schemas": {
+      "User": {
+        "$ref": "./ex1.json#/$defs/User"
+      }
+    }
+  }
+}

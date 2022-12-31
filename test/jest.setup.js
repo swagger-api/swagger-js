@@ -15,6 +15,10 @@ fetchMock.config.Headers = Headers;
 // provide AbortController for older Node.js versions
 globalThis.AbortController = globalThis.AbortController ?? AbortController;
 
+// helpers for reading local files
+globalThis.loadFile = (uri) => fs.readFileSync(uri).toString();
+globalThis.loadJsonFile = (uri) => JSON.parse(globalThis.loadFile(uri));
+
 // helper for providing HTTP server instance for testing
 globalThis.createHTTPServer = ({ port = 8123, cwd = process.cwd() } = {}) => {
   const server = http.createServer((req, res) => {

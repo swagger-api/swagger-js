@@ -1,0 +1,29 @@
+{
+  "openapi": "3.1.0",
+  "paths": {
+    "/path": {
+      "get": {
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "example1": {
+                    "$ref": "#/components/examples/example2"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "examples": {
+      "example2": {
+        "description": "example 2 description"
+      }
+    }
+  }
+}

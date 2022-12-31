@@ -1,0 +1,7 @@
+{
+  "$defs": {
+    "User": {
+      "$ref": "./ex3.json#/$defs/User"
+    }
+  }
+}

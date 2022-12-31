@@ -1,0 +1,7 @@
+{
+  "$defs": {
+    "Indirection": {
+      "$ref": "./ex2.json#/$defs/Indirection"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "openapi": "3.1.0",
+  "components": {
+    "links": {
+      "link1": {
+        "operationId": "op1"
+      }
+    }
+  }
+}

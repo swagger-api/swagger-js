@@ -1,0 +1,20 @@
+[
+  {
+    "openapi": "3.1.0",
+    "components": {
+      "schemas": {
+        "schema1": {
+          "type": "object",
+          "$$ref": "http://localhost:8123/root.json#/components/schemas/schema3"
+        },
+        "schema2": {
+          "type": "object",
+          "$$ref": "http://localhost:8123/root.json#/components/schemas/schema3"
+        },
+        "schema3": {
+          "type": "object"
+        }
+      }
+    }
+  }
+]

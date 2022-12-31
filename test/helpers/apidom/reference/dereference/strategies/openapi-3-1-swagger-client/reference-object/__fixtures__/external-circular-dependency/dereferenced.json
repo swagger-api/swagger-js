@@ -1,0 +1,21 @@
+[
+  {
+    "openapi": "3.1.0",
+    "components": {
+      "parameters": {
+        "param1": {
+          "name": "param2",
+          "in": "query"
+        },
+        "param2": {
+          "name": "param2",
+          "in": "query"
+        },
+        "param3": {
+          "name": "ex-param3",
+          "in": "query"
+        }
+      }
+    }
+  }
+]

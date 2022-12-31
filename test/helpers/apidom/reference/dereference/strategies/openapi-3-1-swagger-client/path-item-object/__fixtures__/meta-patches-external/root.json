@@ -1,0 +1,11 @@
+{
+  "openapi": "3.1.0",
+  "components": {
+    "pathItems": {
+       "externalRef": {
+        "$ref": "./ex1.json#/indirection",
+        "description": "external ref"
+      }
+    }
+  }
+}

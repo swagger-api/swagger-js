@@ -1,0 +1,16 @@
+{
+  "openapi": "3.1.0",
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "x-track": "1",
+        "properties": {
+          "profile": {
+            "$ref": "./ex.json#/$defs/UserProfile"
+          }
+        }
+      }
+    }
+  }
+}

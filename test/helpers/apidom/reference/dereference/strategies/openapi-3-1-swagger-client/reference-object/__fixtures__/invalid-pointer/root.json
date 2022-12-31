@@ -1,0 +1,17 @@
+{
+  "openapi": "3.1.0",
+  "components": {
+    "parameters": {
+      "userId": {
+        "$ref": "invalid-pointer",
+        "description": "override"
+      },
+      "userIdRef": {
+        "name": "userId",
+        "in": "query",
+        "description": "ID of the user",
+        "required": true
+      }
+    }
+  }
+}

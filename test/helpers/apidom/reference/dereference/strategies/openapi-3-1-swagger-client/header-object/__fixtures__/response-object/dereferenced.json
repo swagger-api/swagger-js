@@ -1,0 +1,21 @@
+[
+  {
+    "openapi": "3.1.0",
+    "components": {
+      "responses": {
+        "default": {
+          "headers": {
+            "content-type": {
+              "description": "content type header description"
+            }
+          }
+        }
+      },
+      "headers": {
+        "content-type": {
+          "description": "content type header description"
+        }
+      }
+    }
+  }
+]
