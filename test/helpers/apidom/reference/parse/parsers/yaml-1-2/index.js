@@ -124,7 +124,7 @@ describe('YamlParser', () => {
           const parser = YamlParser({ sourceMap: true });
           const parseWithSourceMap = () => parser.parse(file);
 
-          expect(parseWithSourceMap).rejects.toThrow(
+          expect(parseWithSourceMap()).rejects.toThrow(
             new ParserError(
               "yaml-1-2-swagger-client parser plugin doesn't support sourceMaps option"
             )

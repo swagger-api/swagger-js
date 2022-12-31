@@ -60,41 +60,44 @@ describe('HttpResolverSwaggerClient', () => {
         const response = new Response(Buffer.from('data'), {
           status: 400,
         });
-        fetchMock.get(url, response, { repeat: 1 });
+        const readThunk = async () => {
+          fetchMock.get(url, response, { repeat: 1 });
+          try {
+            return await resolver.read(File({ uri: url }));
+          } finally {
+            fetchMock.restore();
+          }
+        };
 
-        expect.assertions(2);
-        try {
-          await resolver.read(File({ uri: url }));
-        } catch (error) {
-          expect(error).toBeInstanceOf(ResolverError);
-          expect(error).toHaveProperty(
-            'message',
-            'Error downloading "https://httpbin.org/anything"'
-          );
-        } finally {
-          fetchMock.restore();
-        }
+        await expect(readThunk()).rejects.toThrow(ResolverError);
+        await expect(readThunk()).rejects.toHaveProperty(
+          'message',
+          'Error downloading "https://httpbin.org/anything"'
+        );
       });
 
       test('should throw on timeout', async () => {
         resolver = HttpResolverSwaggerClient({ timeout: 1 });
         const url = 'http://localhost:8123/local-file.txt';
-        const cwd = path.join(__dirname, 'fixtures');
-        const server = globalThis.createHTTPServer({ port: 8123, cwd });
+        const cwd = path.join(__dirname, '__fixtures__');
+        const readThunk = async () => {
+          const server = globalThis.createHTTPServer({ port: 8123, cwd });
+          try {
+            return await resolver.read(File({ uri: url }));
+          } finally {
+            await server.terminate();
+          }
+        };
 
-        expect.assertions(3);
-        try {
-          await resolver.read(File({ uri: url }));
-        } catch (error) {
-          expect(error.cause.message).toStrictEqual('The user aborted a request.');
-          expect(error).toBeInstanceOf(ResolverError);
-          expect(error).toHaveProperty(
-            'message',
-            'Error downloading "http://localhost:8123/local-file.txt"'
-          );
-        } finally {
-          await server.terminate();
-        }
+        await expect(readThunk()).rejects.toThrow(ResolverError);
+        await expect(readThunk()).rejects.toHaveProperty(
+          'message',
+          'Error downloading "http://localhost:8123/local-file.txt"'
+        );
+        await expect(readThunk).rejects.toHaveProperty(
+          'cause.message',
+          'The user aborted a request.'
+        );
       });
 
       describe('given withCredentials option', () => {
@@ -104,17 +107,18 @@ describe('HttpResolverSwaggerClient', () => {
           });
           const url = 'https://httpbin.org/anything';
           const response = new Response(Buffer.from('data'));
-          fetchMock.get(url, response, { repeat: 1 });
+          const readThunk = async () => {
+            fetchMock.get(url, response, { repeat: 1 });
+            try {
+              await resolver.read(File({ uri: url }));
+              const [, requestInit] = fetchMock.lastCall(url);
+              return requestInit;
+            } finally {
+              fetchMock.restore();
+            }
+          };
 
-          expect.assertions(1);
-          try {
-            await resolver.read(File({ uri: url }));
-            const [, requestInit] = fetchMock.lastCall(url);
-
-            expect(requestInit).toHaveProperty('credentials', 'include');
-          } finally {
-            fetchMock.restore();
-          }
+          await expect(readThunk()).resolves.toHaveProperty('credentials', 'include');
         });
       });
 
@@ -122,21 +126,22 @@ describe('HttpResolverSwaggerClient', () => {
         test('should allow cross-site Access-Control requests', async () => {
           const url = 'https://httpbin.org/anything';
           const response = new Response(Buffer.from('data'));
-          fetchMock.get(url, response, { repeat: 1 });
           const { withCredentials: originalWithCredentials } = Http;
+          const readThunk = async () => {
+            fetchMock.get(url, response, { repeat: 1 });
+            Http.withCredentials = true;
 
-          Http.withCredentials = true;
+            try {
+              await resolver.read(File({ uri: url }));
+              const [, requestInit] = fetchMock.lastCall(url);
+              return requestInit;
+            } finally {
+              fetchMock.restore();
+              Http.withCredentials = originalWithCredentials;
+            }
+          };
 
-          expect.assertions(1);
-          try {
-            await resolver.read(File({ uri: url }));
-            const [, requestInit] = fetchMock.lastCall(url);
-
-            expect(requestInit).toHaveProperty('credentials', 'include');
-          } finally {
-            fetchMock.restore();
-            Http.withCredentials = originalWithCredentials;
-          }
+          await expect(readThunk()).resolves.toHaveProperty('credentials', 'include');
         });
       });
 

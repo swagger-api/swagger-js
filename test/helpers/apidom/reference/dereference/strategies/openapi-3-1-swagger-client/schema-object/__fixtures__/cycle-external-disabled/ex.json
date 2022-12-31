@@ -1,0 +1,11 @@
+{
+  "$defs": {
+    "UserProfile": {
+      "properties": {
+        "parent": {
+          "$ref": "#/$defs/UserProfile"
+        }
+      }
+    }
+  }
+}

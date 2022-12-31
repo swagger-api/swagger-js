@@ -1,0 +1,17 @@
+{
+  "openapi": "3.1.0",
+  "components": {
+    "parameters": {
+      "param1": {
+        "$ref": "./ex.json#/components/parameters/param1"
+      },
+      "param2": {
+        "name": "param2",
+        "in": "query"
+      },
+      "param3": {
+        "$ref": "./ex.json#/components/parameters/param3"
+      }
+    }
+  }
+}

@@ -1,0 +1,17 @@
+[
+  {
+    "openapi": "3.1.0",
+    "paths": {
+      "/path1": {
+        "summary": "path1 item summary",
+        "description": "path item description",
+        "get": {}
+      },
+      "/path2": {
+        "summary": "path2 item summary",
+        "description": "path item description",
+        "get": {}
+      }
+    }
+  }
+]

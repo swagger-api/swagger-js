@@ -1,0 +1,16 @@
+{
+  "openapi": "3.1.0",
+  "components": {
+    "schemas": {
+      "schema1": {
+        "$ref": "./ex.json#/$defs/schema1"
+      },
+      "schema2": {
+        "type": "object"
+      },
+      "schema3": {
+        "$ref": "./ex.json#/$defs/schema3"
+      }
+    }
+  }
+}

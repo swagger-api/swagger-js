@@ -1,0 +1,34 @@
+[
+  {
+    "openapi": "3.1.0",
+    "components": {
+      "schemas": {
+        "User": {
+          "type": "object",
+          "properties": {
+            "login": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            },
+            "profile": {
+              "$anchor": "avatar",
+              "type": "string"
+            }
+          }
+        },
+        "UserProfile": {
+          "$id": "https://swagger.io/schemas/user-profile",
+          "type": "object",
+          "properties": {
+            "avatar": {
+              "$anchor": "avatar",
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+]

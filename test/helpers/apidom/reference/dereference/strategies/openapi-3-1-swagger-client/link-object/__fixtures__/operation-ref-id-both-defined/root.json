@@ -1,0 +1,11 @@
+{
+  "openapi": "3.1.0",
+  "components": {
+    "links": {
+      "link1": {
+        "operationRef": "#/components/pathItems/pathItem1/get",
+        "operationId": "op1"
+      }
+    }
+  }
+}

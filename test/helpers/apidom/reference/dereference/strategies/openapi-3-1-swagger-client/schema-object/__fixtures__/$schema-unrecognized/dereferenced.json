@@ -1,0 +1,39 @@
+[
+  {
+    "openapi": "3.1.0",
+    "components": {
+      "schemas": {
+        "User": {
+          "$schema": "https://www.google.com/",
+          "type": "object",
+          "properties": {
+            "login": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            },
+            "profile": {
+              "$schema": "https://www.google.com/",
+              "type": "object",
+              "properties": {
+                "avatar": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "UserProfile": {
+          "$schema": "https://www.google.com/",
+          "type": "object",
+          "properties": {
+            "avatar": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+]
