@@ -1,0 +1,38 @@
+[
+  {
+    "info": {
+      "title": "Swagger Petstore",
+      "version": "1.0.0"
+    },
+    "openapi": "3.1.0",
+    "paths": {
+      "/pets": {
+        "get": {
+          "operationId": "listPets",
+          "responses": {
+            "200": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "number"
+                  }
+                },
+                "application/yaml": {
+                  "schema": {
+                    "$anchor": "Pet",
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "servers": [
+      {
+        "url": "http://petstore.swagger.io/v1"
+      }
+    ]
+  }
+]

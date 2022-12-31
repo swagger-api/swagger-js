@@ -1,0 +1,11 @@
+{
+  "openapi": "3.1.0",
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "$ref": "#/components/schemas/invalid-pointer"
+      }
+    }
+  }
+}

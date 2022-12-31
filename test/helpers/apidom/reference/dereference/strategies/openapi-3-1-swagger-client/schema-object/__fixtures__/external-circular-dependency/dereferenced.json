@@ -1,0 +1,18 @@
+[
+  {
+    "openapi": "3.1.0",
+    "components": {
+      "schemas": {
+        "schema1": {
+          "type": "object"
+        },
+        "schema2": {
+          "type": "object"
+        },
+        "schema3": {
+          "type": "string"
+        }
+      }
+    }
+  }
+]

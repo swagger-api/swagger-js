@@ -1,0 +1,34 @@
+[
+  {
+    "openapi": "3.1.0",
+    "components": {
+      "schemas": {
+        "User": {
+          "type": "object",
+          "properties": {
+            "login": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            },
+            "profile": {
+              "$anchor": "avatar",
+              "type": "string"
+            }
+          }
+        },
+        "UserProfile": {
+          "$id": "urn:uuid:ee564b8a-7a87-4125-8c96-e9f123d6766f",
+          "type": "object",
+          "properties": {
+            "avatar": {
+              "$anchor": "avatar",
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+]

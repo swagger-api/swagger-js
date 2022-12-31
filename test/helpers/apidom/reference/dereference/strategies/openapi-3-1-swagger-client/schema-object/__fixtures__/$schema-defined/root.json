@@ -1,0 +1,31 @@
+{
+  "openapi": "3.1.0",
+  "components": {
+    "schemas": {
+      "User": {
+        "$schema": "https://spec.openapis.org/oas/3.1/dialect/base",
+        "type": "object",
+        "properties": {
+          "login": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/UserProfile"
+          }
+        }
+      },
+      "UserProfile": {
+        "$schema": "https://spec.openapis.org/oas/3.1/dialect/base",
+        "type": "object",
+        "properties": {
+          "avatar": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
