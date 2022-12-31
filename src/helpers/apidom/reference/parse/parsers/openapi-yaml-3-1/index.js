@@ -8,7 +8,6 @@ import {
   OpenAPIMediaTypes,
 } from '@swagger-api/apidom-ns-openapi-3-1';
 
-// eslint-disable-next-line camelcase
 const OpenApiYaml3_1Parser = Parser.compose({
   props: {
     name: 'openapi-yaml-3-1-swagger-client',
