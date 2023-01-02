@@ -9,7 +9,8 @@ import SWAGGER2_PARAMETER_BUILDERS from './swagger2/parameter-builders.js';
 import * as OAS3_PARAMETER_BUILDERS from './oas3/parameter-builders.js';
 import oas3BuildRequest from './oas3/build-request.js';
 import swagger2BuildRequest from './swagger2/build-request.js';
-import { getOperationRaw, legacyIdFromPathMethod, isOAS3 } from '../helpers/index.js';
+import { getOperationRaw, legacyIdFromPathMethod } from '../helpers/index.js';
+import { isOpenAPI3 } from '../helpers/openapi-predicates.js';
 
 const arrayOrEmpty = (ar) => (Array.isArray(ar) ? ar : []);
 
@@ -103,7 +104,7 @@ export function buildRequest(options) {
 
   let { parameters, parameterBuilders } = options;
 
-  const specIsOAS3 = isOAS3(spec);
+  const specIsOAS3 = isOpenAPI3(spec);
   if (!parameterBuilders) {
     // user did not provide custom parameter builders
     if (specIsOAS3) {
@@ -283,7 +284,7 @@ const stripNonAlpha = (str) => (str ? str.replace(/\W/g, '') : null);
 
 // be careful when modifying this! it is a publicly-exposed method.
 export function baseUrl(obj) {
-  const specIsOAS3 = isOAS3(obj.spec);
+  const specIsOAS3 = isOpenAPI3(obj.spec);
 
   return specIsOAS3 ? oas3BaseUrl(obj) : swagger2BaseUrl(obj);
 }
