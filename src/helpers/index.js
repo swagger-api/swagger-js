@@ -1,25 +1,6 @@
 const toLower = (str) => String.prototype.toLowerCase.call(str);
 const escapeString = (str) => str.replace(/[^\w]/gi, '_');
 
-// Spec version detection
-export function isOAS3(spec) {
-  const oasVersion = spec.openapi;
-  if (!oasVersion) {
-    return false;
-  }
-
-  return oasVersion.startsWith('3');
-}
-
-export function isSwagger2(spec) {
-  const swaggerVersion = spec.swagger;
-  if (!swaggerVersion) {
-    return false;
-  }
-
-  return swaggerVersion.startsWith('2');
-}
-
 // Strategy for determining operationId
 export function opId(operation, pathName, method = '', { v2OperationIdCompatibilityMode } = {}) {
   if (!operation || typeof operation !== 'object') {
