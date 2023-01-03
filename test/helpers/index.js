@@ -1,4 +1,6 @@
-import { normalizeSwagger, getOperationRaw, idFromPathMethod } from '../../src/helpers/index.js';
+import { getOperationRaw, idFromPathMethod } from '../../src/helpers/index.js';
+// eslint-disable-next-line camelcase
+import normalizeOpenAPI2__30 from '../../src/helpers/normalize/openapi-2--3-0.js';
 
 describe('helpers', () => {
   describe('idFromPathMethod', () => {
@@ -136,7 +138,7 @@ describe('helpers', () => {
     });
   });
 
-  describe('normalizeSwagger', () => {
+  describe('normalizeOpenAPI2__30', () => {
     describe('operationId', () => {
       test('should create unique operationIds when explicit operationIds are duplicates, and preserve originals', () => {
         const input = {
@@ -161,7 +163,7 @@ describe('helpers', () => {
           },
         };
 
-        const res = normalizeSwagger(input);
+        const res = normalizeOpenAPI2__30(input);
         const fooRes = res.spec.paths['/foo'].get;
         const barRes = res.spec.paths['/bar'].get;
         const bazRes = res.spec.paths['/baz'].get;
@@ -190,7 +192,7 @@ describe('helpers', () => {
         };
 
         // When
-        const normalizedSpec = normalizeSwagger(spec);
+        const normalizedSpec = normalizeOpenAPI2__30(spec);
         const id = normalizedSpec.spec.paths['/foo'].get.operationId;
 
         // Then
@@ -222,7 +224,7 @@ describe('helpers', () => {
         };
 
         // When
-        normalizeSwagger(input);
+        normalizeOpenAPI2__30(input);
         const fooOperation = input.spec.paths['/foo'].get;
         const barOperation = input.spec.paths['/bar'].get;
         const bazOperation = input.spec.paths['/baz'].get;
@@ -263,7 +265,7 @@ describe('helpers', () => {
         };
 
         // When
-        normalizeSwagger(input);
+        normalizeOpenAPI2__30(input);
         const fooOperation = input.spec.paths['/foo'].get;
         const barOperation = input.spec.paths['/bar'].get;
         const bazOperation = input.spec.paths['/baz'].get;
@@ -294,7 +296,7 @@ describe('helpers', () => {
         };
 
         // When
-        const normalizedSpec = normalizeSwagger(spec);
+        const normalizedSpec = normalizeOpenAPI2__30(spec);
         const originalId = normalizedSpec.spec.paths['/foo'].get.__originalOperationId;
 
         // Then
@@ -317,7 +319,7 @@ describe('helpers', () => {
         };
 
         // When
-        const normalizedSpec = normalizeSwagger(spec);
+        const normalizedSpec = normalizeOpenAPI2__30(spec);
         const fooGet = normalizedSpec.spec.paths['/foo'].get;
         const fooPost = normalizedSpec.spec.paths['/foo'].post;
 
@@ -349,7 +351,7 @@ describe('helpers', () => {
           },
         };
 
-        const id = normalizeSwagger(spec);
+        const id = normalizeOpenAPI2__30(spec);
         const id1 = id.spec.paths['/foo'].get.operationId;
         const id2 = id.spec.paths['/bar'].get.operationId;
         const id3 = id.spec.paths['/bat'].get.operationId;
@@ -375,7 +377,7 @@ describe('helpers', () => {
           },
         };
 
-        const resultSpec = normalizeSwagger(spec);
+        const resultSpec = normalizeOpenAPI2__30(spec);
 
         expect(resultSpec).toEqual({
           spec: {
@@ -404,7 +406,7 @@ describe('helpers', () => {
           },
         };
 
-        const resultSpec = normalizeSwagger(spec);
+        const resultSpec = normalizeOpenAPI2__30(spec);
 
         expect(resultSpec).toEqual({
           spec: {
@@ -437,7 +439,7 @@ describe('helpers', () => {
           },
         };
 
-        const resultSpec = normalizeSwagger(spec);
+        const resultSpec = normalizeOpenAPI2__30(spec);
 
         expect(resultSpec).toEqual({
           spec: {
@@ -466,7 +468,7 @@ describe('helpers', () => {
           },
         };
 
-        const resultSpec = normalizeSwagger(spec);
+        const resultSpec = normalizeOpenAPI2__30(spec);
 
         expect(resultSpec).toEqual({
           spec: {
@@ -499,7 +501,7 @@ describe('helpers', () => {
           },
         };
 
-        const resultSpec = normalizeSwagger(spec);
+        const resultSpec = normalizeOpenAPI2__30(spec);
 
         expect(resultSpec).toEqual({
           spec: {
@@ -528,7 +530,7 @@ describe('helpers', () => {
           },
         };
 
-        const resultSpec = normalizeSwagger(spec);
+        const resultSpec = normalizeOpenAPI2__30(spec);
 
         expect(resultSpec).toEqual({
           spec: {
@@ -559,7 +561,7 @@ describe('helpers', () => {
           },
         };
 
-        const resultSpec = normalizeSwagger(spec);
+        const resultSpec = normalizeOpenAPI2__30(spec);
 
         expect(resultSpec).toEqual({
           spec: {
@@ -596,7 +598,7 @@ describe('helpers', () => {
           },
         };
 
-        const resultSpec = normalizeSwagger(spec);
+        const resultSpec = normalizeOpenAPI2__30(spec);
 
         expect(resultSpec).toEqual({
           spec: {

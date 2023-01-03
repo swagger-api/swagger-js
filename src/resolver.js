@@ -1,6 +1,7 @@
 import Http from './http/index.js';
 import mapSpec, { plugins } from './specmap/index.js';
-import { normalizeSwagger } from './helpers/index.js';
+// eslint-disable-next-line camelcase
+import normalizeOpenAPI2__30 from './helpers/normalize/openapi-2--3-0.js';
 import { ACCEPT_HEADER_VALUE_FOR_DOCUMENTS } from './constants.js';
 
 export function makeFetchJSON(http, opts = {}) {
@@ -91,6 +92,7 @@ export default function resolve(obj) {
       parameterMacro,
       modelPropertyMacro,
       useCircularStructures,
-    }).then(skipNormalization ? async (a) => a : normalizeSwagger);
+      // eslint-disable-next-line camelcase
+    }).then(skipNormalization ? async (a) => a : normalizeOpenAPI2__30);
   }
 }
