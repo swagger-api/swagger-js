@@ -24,7 +24,8 @@
 import get from 'lodash/get';
 
 import resolve from '../resolver.js';
-import { normalizeSwagger } from '../helpers/index.js';
+// eslint-disable-next-line camelcase
+import normalizeOpenAPI2__30 from '../helpers/normalize/openapi-2--3-0.js';
 
 export default async function resolveSubtree(obj, path, opts = {}) {
   const {
@@ -47,7 +48,7 @@ export default async function resolveSubtree(obj, path, opts = {}) {
     useCircularStructures,
   };
 
-  const { spec: normalized } = normalizeSwagger({
+  const { spec: normalized } = normalizeOpenAPI2__30({
     spec: obj,
   });
 

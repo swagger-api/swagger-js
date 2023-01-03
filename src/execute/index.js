@@ -9,7 +9,7 @@ import SWAGGER2_PARAMETER_BUILDERS from './swagger2/parameter-builders.js';
 import * as OAS3_PARAMETER_BUILDERS from './oas3/parameter-builders.js';
 import oas3BuildRequest from './oas3/build-request.js';
 import swagger2BuildRequest from './swagger2/build-request.js';
-import { getOperationRaw, legacyIdFromPathMethod } from '../helpers/index.js';
+import { getOperationRaw, idFromPathMethodLegacy } from '../helpers/index.js';
 import { isOpenAPI3 } from '../helpers/openapi-predicates.js';
 
 const arrayOrEmpty = (ar) => (Array.isArray(ar) ? ar : []);
@@ -65,7 +65,7 @@ export function execute({
   const http = userHttp || fetch || stockHttp; // Default to _our_ http
 
   if (pathName && method && !operationId) {
-    operationId = legacyIdFromPathMethod(pathName, method);
+    operationId = idFromPathMethodLegacy(pathName, method);
   }
 
   const request = self.buildRequest({
