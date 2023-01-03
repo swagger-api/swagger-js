@@ -1,0 +1,169 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`helpers normalize OpenAPI 3.1 given denormalized Header Object examples should normalize 1`] = `
+{
+  "$$normalized": true,
+  "openapi": "3.1.0",
+  "paths": {
+    "/": {
+      "get": {
+        "responses": {
+          "200": {
+            "headers": {
+              "content-type": {
+                "examples": {
+                  "example1": {
+                    "value": 2,
+                  },
+                },
+                "schema": {
+                  "examples": [
+                    2,
+                  ],
+                  "type": "number",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`helpers normalize OpenAPI 3.1 given denormalized Operation.id fields should normalize 1`] = `
+{
+  "$$normalized": true,
+  "openapi": "3.1.0",
+  "paths": {
+    "/": {
+      "get": {
+        "__originalOperationId": "get operation ^",
+        "operationId": "get_operation__",
+      },
+    },
+  },
+}
+`;
+
+exports[`helpers normalize OpenAPI 3.1 given denormalized Parameter Object examples should normalize 1`] = `
+{
+  "$$normalized": true,
+  "openapi": "3.1.0",
+  "paths": {
+    "/": {
+      "parameters": [
+        {
+          "examples": {
+            "example1": {
+              "value": 2,
+            },
+          },
+          "in": "query",
+          "name": "param1",
+          "schema": {
+            "examples": [
+              2,
+            ],
+            "type": "number",
+          },
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`helpers normalize OpenAPI 3.1 given denormalized Parameter Objects should normalize 1`] = `
+{
+  "$$normalized": true,
+  "openapi": "3.1.0",
+  "paths": {
+    "/": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "param1",
+          },
+          {
+            "in": "query",
+            "name": "param2",
+          },
+        ],
+      },
+      "parameters": [
+        {
+          "in": "query",
+          "name": "param1",
+        },
+        {
+          "in": "query",
+          "name": "param2",
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`helpers normalize OpenAPI 3.1 given denormalized Security Requirements Objects should normalize 1`] = `
+{
+  "$$normalized": true,
+  "openapi": "3.1.0",
+  "paths": {
+    "/": {
+      "get": {
+        "security": [
+          {
+            "petstore_auth": [
+              "write:pets",
+              "read:pets",
+            ],
+          },
+        ],
+      },
+    },
+  },
+  "security": [
+    {
+      "petstore_auth": [
+        "write:pets",
+        "read:pets",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`helpers normalize OpenAPI 3.1 given denormalized Servers Objects should normalize 1`] = `
+{
+  "$$normalized": true,
+  "openapi": "3.1.0",
+  "paths": {
+    "/": {
+      "get": {
+        "servers": [
+          {
+            "description": "production server",
+            "url": "https://example.com/",
+          },
+        ],
+      },
+      "servers": [
+        {
+          "description": "production server",
+          "url": "https://example.com/",
+        },
+      ],
+    },
+  },
+  "servers": [
+    {
+      "description": "production server",
+      "url": "https://example.com/",
+    },
+  ],
+}
+`;

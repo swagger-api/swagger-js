@@ -1,0 +1,16 @@
+{
+  "openapi": "3.1.0",
+  "security": [
+    {
+      "petstore_auth": [
+        "write:pets",
+        "read:pets"
+      ]
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {}
+    }
+  }
+}
