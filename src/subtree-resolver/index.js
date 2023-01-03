@@ -23,7 +23,7 @@
 
 import get from 'lodash/get';
 
-import resolve from '../resolver.js';
+import resolve from '../resolver/index.js';
 // eslint-disable-next-line camelcase
 import normalizeOpenAPI2__30 from '../helpers/normalize/openapi-2--3-0.js';
 
