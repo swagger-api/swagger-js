@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import jsYaml from 'js-yaml';
 
-import Swagger from '../src/index.js';
+import Swagger from '../../src/index.js';
 
 describe('resolver', () => {
   afterEach(() => {
@@ -721,7 +721,7 @@ describe('resolver', () => {
   test('should not throw errors on resvered-keywords in freely-named-fields', () => {
     // Given
     const ReservedKeywordSpec = jsYaml.load(
-      fs.readFileSync(path.resolve(__dirname, './data/reserved-keywords.yaml'), 'utf8')
+      fs.readFileSync(path.resolve(__dirname, '../data/reserved-keywords.yaml'), 'utf8')
     );
 
     // When
