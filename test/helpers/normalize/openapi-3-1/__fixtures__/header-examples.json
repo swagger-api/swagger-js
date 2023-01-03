@@ -1,0 +1,28 @@
+{
+  "openapi": "3.1.0",
+  "paths": {
+    "/": {
+      "get": {
+        "responses": {
+          "200": {
+            "headers": {
+              "content-type": {
+                "schema": {
+                  "type": "number",
+                  "examples": [
+                    1
+                  ]
+                },
+                "examples": {
+                  "example1": {
+                    "value": 2
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
