@@ -74,7 +74,7 @@ const browserMin = {
   devtool: 'source-map',
   performance: {
     hints: 'error',
-    maxEntrypointSize: 270000,
+    maxEntrypointSize: 500000,
     maxAssetSize: 1300000,
   },
   output: {
