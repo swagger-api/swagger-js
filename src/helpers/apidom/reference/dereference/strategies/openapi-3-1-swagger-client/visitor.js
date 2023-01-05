@@ -43,19 +43,12 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
   props: {
     useCircularStructures: true,
     allowMetaPatches: false,
+    ancestors: [],
   },
-  init({
-    visited = {
-      SchemaElement: new WeakSet(),
-      SchemaElementReference: new WeakSet(),
-      SchemaElementNoReference: new WeakSet(),
-    },
-    useCircularStructures,
-    allowMetaPatches,
-  }) {
-    this.visited = visited;
+  init({ useCircularStructures, allowMetaPatches, ancestors = this.ancestors }) {
     this.useCircularStructures = useCircularStructures;
     this.allowMetaPatches = allowMetaPatches;
+    this.ancestors = [...ancestors];
   },
   methods: {
     async ReferenceElement(referenceElement) {
@@ -245,25 +238,20 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
       return mergedResult;
     },
 
-    async SchemaElement(referencingElement) {
-      /**
-       * Skip traversal for already visited schemas.
-       * visit function detects cycles in path automatically.
-       */
-      if (this.visited.SchemaElementNoReference.has(referencingElement)) {
-        return false;
-      }
-      if (this.visited.SchemaElementReference.has(referencingElement)) {
-        return undefined;
-      }
+    async SchemaElement(referencingElement, key, parent, path, ancestors) {
+      // compute full ancestors lineage
+      const ancestorsLineage = [...this.ancestors, ...ancestors];
 
       // skip current referencing schema as $ref keyword was not defined
       if (!isStringElement(referencingElement.$ref)) {
-        // mark current referencing schema as visited
-        this.visited.SchemaElement.add(referencingElement);
-        this.visited.SchemaElementNoReference.add(referencingElement);
         // skip traversing this schema but traverse all it's child schemas
         return undefined;
+      }
+
+      // detect possible cycle and avoid it
+      if (ancestorsLineage.includes(referencingElement)) {
+        // skip processing this schema but all it's child schemas
+        return false;
       }
 
       // compute baseURI using rules around $id and $ref keywords
@@ -277,9 +265,6 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
 
       // ignore resolving external Schema Objects
       if (!this.options.resolve.external && isExternal) {
-        // mark current referencing schema as visited
-        this.visited.SchemaElement.add(referencingElement);
-        this.visited.SchemaElementReference.add(referencingElement);
         // skip traversing this schema but traverse all it's child schemas
         return undefined;
       }
@@ -338,10 +323,6 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
         }
       }
 
-      // mark current referencing schema as visited
-      this.visited.SchemaElement.add(referencingElement);
-      this.visited.SchemaElementReference.add(referencingElement);
-
       // detect direct or indirect reference
       if (this.indirections.includes(referencedElement)) {
         throw new Error('Recursive JSON Pointer detected');
@@ -354,19 +335,8 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
         );
       }
 
-      // detect possible cycle and avoid it
-      if (!this.useCircularStructures && this.visited.SchemaElement.has(referencedElement)) {
-        if (url.isHttpUrl(reference.uri) || url.isFileSystemPath(reference.uri)) {
-          // make the referencing URL or file system path absolute
-          const absoluteJSONPointerURL = url.resolve(
-            reference.uri,
-            referencingElement.$ref?.toValue()
-          );
-          referencingElement.set('$ref', absoluteJSONPointerURL);
-        }
-        // skip processing this schema and all it's child schemas
-        return false;
-      }
+      // append referencing schema to ancestors lineage
+      ancestorsLineage.push(referencingElement);
 
       // dive deep into the fragment
       const visitor = OpenApi3_1SwaggerClientDereferenceVisitor({
@@ -374,14 +344,9 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
         namespace: this.namespace,
         indirections: [...this.indirections],
         options: this.options,
-        // SchemaElementReference must be reset for deep dive, as we want to dereference all indirections
-        visited: {
-          SchemaElement: this.visited.SchemaElement,
-          SchemaElementReference: new WeakSet(),
-          SchemaElementNoReference: this.visited.SchemaElementNoReference,
-        },
         useCircularStructures: this.useCircularStructures,
         allowMetaPatches: this.allowMetaPatches,
+        ancestors: ancestorsLineage,
       });
       referencedElement = await visitAsync(referencedElement, visitor, {
         keyMap,
@@ -390,52 +355,66 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
 
       this.indirections.pop();
 
-      // Boolean JSON Schemas
       if (isBooleanJsonSchemaElement(referencedElement)) {
-        const referencedElementClone = referencedElement.clone();
+        // Boolean JSON Schema
+        const jsonSchemaBooleanElement = referencedElement.clone();
         // annotate referenced element with info about original referencing element
-        referencedElementClone.setMetaProperty('ref-fields', {
+        jsonSchemaBooleanElement.setMetaProperty('ref-fields', {
           $ref: referencingElement.$ref?.toValue(),
         });
         // annotate referenced element with info about origin
-        referencedElementClone.setMetaProperty('ref-origin', reference.uri);
-        return referencedElementClone;
+        jsonSchemaBooleanElement.setMetaProperty('ref-origin', reference.uri);
+
+        return jsonSchemaBooleanElement;
+      }
+
+      // useCircularStructures option processing
+      const hasCycle = referencedElement.content.some((memberElement) =>
+        ancestorsLineage.includes(memberElement)
+      );
+      if (hasCycle && !this.useCircularStructures) {
+        if (url.isHttpUrl(reference.uri) || url.isFileSystemPath(reference.uri)) {
+          // make the referencing URL or file system path absolute
+          const absoluteURI = url.resolve(reference.uri, referencingElement.$ref?.toValue());
+          referencingElement.set('$ref', absoluteURI);
+        }
+
+        // skip processing this schema but traverse all it's child schemas
+        return undefined;
       }
 
       // Schema Object - merge keywords from referenced schema with referencing schema
-      const mergedResult = new SchemaElement(
+      const mergedSchemaElement = new SchemaElement(
         // @ts-ignore
         [...referencedElement.content],
         referencedElement.meta.clone(),
         referencedElement.attributes.clone()
       );
       // existing keywords from referencing schema overrides ones from referenced schema
-      referencingElement.forEach((value, key, item) => {
-        mergedResult.remove(key.toValue());
-        mergedResult.content.push(item);
+      referencingElement.forEach((memberValue, memberKey, member) => {
+        mergedSchemaElement.remove(memberKey.toValue());
+        mergedSchemaElement.content.push(member);
       });
-      mergedResult.remove('$ref');
+      mergedSchemaElement.remove('$ref');
 
       // annotate referenced element with info about original referencing element
-      mergedResult.setMetaProperty('ref-fields', {
+      mergedSchemaElement.setMetaProperty('ref-fields', {
         $ref: referencingElement.$ref?.toValue(),
       });
       // annotate fragment with info about origin
-      mergedResult.setMetaProperty('ref-origin', reference.uri);
-      // apply meta patches
+      mergedSchemaElement.setMetaProperty('ref-origin', reference.uri);
+
+      // allowMetaPatches option processing
       if (this.allowMetaPatches) {
         // apply meta patch only when not already applied
-        if (typeof mergedResult.get('$$ref') === 'undefined') {
-          const absoluteJSONPointerURL = url.resolve(
-            reference.uri,
-            referencingElement.$ref?.toValue()
-          );
-          mergedResult.set('$$ref', absoluteJSONPointerURL);
+        if (typeof mergedSchemaElement.get('$$ref') === 'undefined') {
+          const absoluteURI = url.resolve(reference.uri, referencingElement.$ref?.toValue());
+          mergedSchemaElement.set('$$ref', absoluteURI);
         }
       }
 
       // transclude referencing element with merged referenced element
-      return mergedResult;
+      return mergedSchemaElement;
     },
   },
 });
