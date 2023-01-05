@@ -51,7 +51,7 @@ Swagger Client Version | Release Date | OpenAPI Spec compatibility | Notes
 
 ### Runtime 
 
-- Node.js `>=` 12.4.x
+- Node.js `>=`12.20.0
 - `swagger-client` works in the latest versions of Chrome, Safari, Firefox, and Edge.
 
 ## Security contact

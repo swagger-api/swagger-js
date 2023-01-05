@@ -10,7 +10,7 @@ module.exports = {
             corejs: { version: 3 },
             useBuiltIns: false,
             targets: {
-              node: '12.4',
+              node: '12.20.0',
             },
             forceAllTransforms: false,
             ignoreBrowserslistConfig: true,
