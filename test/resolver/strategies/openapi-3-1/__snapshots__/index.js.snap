@@ -175,7 +175,20 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition should re
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "https://example.com/petstore.json#/components/schemas/Error",
+                    "properties": {
+                      "code": {
+                        "format": "int32",
+                        "type": "integer",
+                      },
+                      "message": {
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "code",
+                      "message",
+                    ],
+                    "type": "object",
                   },
                 },
               },
@@ -217,7 +230,23 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition should re
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "https://example.com/petstore.json#/components/schemas/Pet",
+                    "properties": {
+                      "id": {
+                        "format": "int64",
+                        "type": "integer",
+                      },
+                      "name": {
+                        "type": "string",
+                      },
+                      "tag": {
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "id",
+                      "name",
+                    ],
+                    "type": "object",
                   },
                 },
               },
@@ -227,7 +256,20 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition should re
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "https://example.com/petstore.json#/components/schemas/Error",
+                    "properties": {
+                      "code": {
+                        "format": "int32",
+                        "type": "integer",
+                      },
+                      "message": {
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "code",
+                      "message",
+                    ],
+                    "type": "object",
                   },
                 },
               },

@@ -138,7 +138,7 @@ describe('dereference', () => {
 
             describe('and using HTTP protocol', () => {
               test('should make JSON Pointer absolute', async () => {
-                const fixturePath = path.join(rootFixturePath, 'cycle-external-disabled-http');
+                const fixturePath = path.join(rootFixturePath, 'cycle-internal-disabled-http');
                 const dereferenceThunk = async () => {
                   const httpServer = globalThis.createHTTPServer({ port: 8123, cwd: fixturePath });
 
