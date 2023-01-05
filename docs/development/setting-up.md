@@ -3,21 +3,10 @@
 ### Prerequisites
 
 - git, any version
-- NPM >=6.12.x
+- Node.js >=16.16
+- NPM >=8.11.0
 
 Generally, we recommend following guidelines from [Node.js Releases](https://nodejs.org/en/about/releases/) to only use `Current`, `Active LTS` or `Maintenance LTS` releases.
-
-Current Node.js:
-- Node.js 16.x
-- NPM >=7.10.x
-
-Current Node.js Active LTS:
-- Node.js >=14.x
-- NPM >=6.14.x
-
-Current Node.js Maintenance LTS:
-- Node.js >12.4
-- NPM >=6.12.x
 
 ### Steps
 
