@@ -24,6 +24,24 @@ describe('resolve', () => {
 
         fetchMock.restore();
       });
+
+      describe('and allowMetaPatches=true', () => {
+        test('should resolve', async () => {
+          const url = 'https://example.com/petstore.json';
+          const response = new Response(
+            globalThis.loadFile(path.join(fixturePath, 'petstore.json'))
+          );
+          fetchMock.get(url, response, { repeat: 1 });
+          const resolvedSpec = await Swagger.resolve({
+            url: 'https://example.com/petstore.json',
+            allowMetaPatches: true,
+          });
+
+          expect(resolvedSpec).toMatchSnapshot();
+
+          fetchMock.restore();
+        });
+      });
     });
   });
 });

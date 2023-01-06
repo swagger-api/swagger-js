@@ -122,7 +122,7 @@ describe('dereference', () => {
                 parse: { mediaType: mediaTypes.latest('json') },
               });
               refSet.refs[0].uri = '/home/smartbear/root.json';
-              const actual = await dereference('/home/smartbear/root.json', {
+              const actual = await dereference(refSet.refs[0].uri, {
                 parse: { mediaType: mediaTypes.latest('json') },
                 dereference: {
                   refSet,
@@ -495,9 +495,8 @@ describe('dereference', () => {
         });
 
         describe('given Schema Objects with $id keyword defined directly in referencing Schema Object', () => {
-          const fixturePath = path.join(rootFixturePath, '$id-uri-direct');
-
           test('should dereference', async () => {
+            const fixturePath = path.join(rootFixturePath, '$id-uri-direct');
             const rootFilePath = path.join(fixturePath, 'root.json');
             const actual = await dereference(rootFilePath, {
               parse: { mediaType: mediaTypes.latest('json') },
@@ -505,13 +504,36 @@ describe('dereference', () => {
             const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
             expect(toValue(actual)).toEqual(expected);
+          });
+
+          describe('and allowMetaPatches=true', () => {
+            test('should dereference', async () => {
+              const fixturePath = path.join(rootFixturePath, '$id-uri-direct-meta-patches');
+              const rootFilePath = path.join(fixturePath, 'root.json');
+              const refSet = await resolve(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+              });
+              refSet.refs[0].uri = '/home/smartbear/root.json';
+              refSet.refs[1].uri = '/home/smartbear/nested/ex.json';
+              const actual = await dereference(refSet.refs[0].uri, {
+                parse: { mediaType: mediaTypes.latest('json') },
+                dereference: {
+                  refSet,
+                  strategies: [
+                    OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                  ],
+                },
+              });
+              const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
+
+              expect(toValue(actual)).toEqual(expected);
+            });
           });
         });
 
         describe('given Schema Objects with $id keyword defined in enclosing Schema Object', () => {
-          const fixturePath = path.join(rootFixturePath, '$id-uri-enclosing');
-
           test('should dereference', async () => {
+            const fixturePath = path.join(rootFixturePath, '$id-uri-enclosing');
             const rootFilePath = path.join(fixturePath, 'root.json');
             const actual = await dereference(rootFilePath, {
               parse: { mediaType: mediaTypes.latest('json') },
@@ -520,12 +542,35 @@ describe('dereference', () => {
 
             expect(toValue(actual)).toEqual(expected);
           });
+
+          describe('and allowMetaPatches=true', () => {
+            test('should dereference', async () => {
+              const fixturePath = path.join(rootFixturePath, '$id-uri-enclosing-meta-patches');
+              const rootFilePath = path.join(fixturePath, 'root.json');
+              const refSet = await resolve(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+              });
+              refSet.refs[0].uri = '/home/smartbear/root.json';
+              refSet.refs[1].uri = '/home/smartbear/nested/ex.json';
+              const actual = await dereference(refSet.refs[0].uri, {
+                parse: { mediaType: mediaTypes.latest('json') },
+                dereference: {
+                  refSet,
+                  strategies: [
+                    OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                  ],
+                },
+              });
+              const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
+
+              expect(toValue(actual)).toEqual(expected);
+            });
+          });
         });
 
         describe('given Schema Objects with $id keyword pointing to external files', () => {
-          const fixturePath = path.join(rootFixturePath, '$id-uri-external');
-
           test('should dereference', async () => {
+            const fixturePath = path.join(rootFixturePath, '$id-uri-external');
             const rootFilePath = path.join(fixturePath, 'root.json');
             const actual = await dereference(rootFilePath, {
               parse: { mediaType: mediaTypes.latest('json') },
@@ -533,6 +578,31 @@ describe('dereference', () => {
             const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
             expect(toValue(actual)).toEqual(expected);
+          });
+
+          describe('and allowMetaPatches=true', () => {
+            test('should dereference', async () => {
+              const fixturePath = path.join(rootFixturePath, '$id-uri-external-meta-patches');
+              const rootFilePath = path.join(fixturePath, 'root.json');
+              const refSet = await resolve(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+              });
+              refSet.refs[0].uri = '/home/smartbear/root.json';
+              refSet.refs[1].uri = '/home/smartbear/nested/ex.json';
+              refSet.refs[2].uri = '/home/smartbear/nested/nested/ex.json';
+              const actual = await dereference(refSet.refs[0].uri, {
+                parse: { mediaType: mediaTypes.latest('json') },
+                dereference: {
+                  refSet,
+                  strategies: [
+                    OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                  ],
+                },
+              });
+              const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
+
+              expect(toValue(actual)).toEqual(expected);
+            });
           });
         });
 
@@ -560,9 +630,8 @@ describe('dereference', () => {
         });
 
         describe('given Schema Objects with $ref keyword containing URL', () => {
-          const fixturePath = path.join(rootFixturePath, '$ref-url');
-
           test('should dereference', async () => {
+            const fixturePath = path.join(rootFixturePath, '$ref-url');
             const rootFilePath = path.join(fixturePath, 'root.json');
             const actual = await dereference(rootFilePath, {
               parse: { mediaType: mediaTypes.latest('json') },
@@ -570,13 +639,35 @@ describe('dereference', () => {
             const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
             expect(toValue(actual)).toEqual(expected);
+          });
+
+          describe('and allowMetaPatches=true', () => {
+            test('should dereference', async () => {
+              const fixturePath = path.join(rootFixturePath, '$ref-url-meta-patches');
+              const rootFilePath = path.join(fixturePath, 'root.json');
+              const refSet = await resolve(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+              });
+              refSet.refs[0].uri = '/home/smartbear/root.json';
+              const actual = await dereference(refSet.refs[0].uri, {
+                parse: { mediaType: mediaTypes.latest('json') },
+                dereference: {
+                  refSet,
+                  strategies: [
+                    OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                  ],
+                },
+              });
+              const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
+
+              expect(toValue(actual)).toEqual(expected);
+            });
           });
         });
 
         describe('given Schema Objects with $ref keyword containing relative references', () => {
-          const fixturePath = path.join(rootFixturePath, '$ref-url-relative-reference');
-
           test('should dereference', async () => {
+            const fixturePath = path.join(rootFixturePath, '$ref-url-relative-reference');
             const rootFilePath = path.join(fixturePath, 'root.json');
             const actual = await dereference(rootFilePath, {
               parse: { mediaType: mediaTypes.latest('json') },
@@ -584,13 +675,38 @@ describe('dereference', () => {
             const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
             expect(toValue(actual)).toEqual(expected);
+          });
+
+          describe('and allowMetaPatches=true', () => {
+            test('should dereference', async () => {
+              const fixturePath = path.join(
+                rootFixturePath,
+                '$ref-url-relative-reference-meta-patches'
+              );
+              const rootFilePath = path.join(fixturePath, 'root.json');
+              const refSet = await resolve(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+              });
+              refSet.refs[0].uri = '/home/smartbear/root.json';
+              const actual = await dereference(refSet.refs[0].uri, {
+                parse: { mediaType: mediaTypes.latest('json') },
+                dereference: {
+                  refSet,
+                  strategies: [
+                    OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                  ],
+                },
+              });
+              const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
+
+              expect(toValue(actual)).toEqual(expected);
+            });
           });
         });
 
         describe('given Schema Objects with $ref keyword containing URL and JSON Pointer fragment', () => {
-          const fixturePath = path.join(rootFixturePath, '$ref-url-pointer');
-
           test('should dereference', async () => {
+            const fixturePath = path.join(rootFixturePath, '$ref-url-pointer');
             const rootFilePath = path.join(fixturePath, 'root.json');
             const actual = await dereference(rootFilePath, {
               parse: { mediaType: mediaTypes.latest('json') },
@@ -598,13 +714,35 @@ describe('dereference', () => {
             const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
             expect(toValue(actual)).toEqual(expected);
+          });
+
+          describe('and allowMetaPatches=true', () => {
+            test('should dereference', async () => {
+              const fixturePath = path.join(rootFixturePath, '$ref-url-pointer-meta-patches');
+              const rootFilePath = path.join(fixturePath, 'root.json');
+              const refSet = await resolve(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+              });
+              refSet.refs[0].uri = '/home/smartbear/root.json';
+              const actual = await dereference(refSet.refs[0].uri, {
+                parse: { mediaType: mediaTypes.latest('json') },
+                dereference: {
+                  refSet,
+                  strategies: [
+                    OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                  ],
+                },
+              });
+              const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
+
+              expect(toValue(actual)).toEqual(expected);
+            });
           });
         });
 
         describe('given Schema Objects with $ref keyword containing URL and $anchor', () => {
-          const fixturePath = path.join(rootFixturePath, '$ref-url-$anchor');
-
           test('should dereference', async () => {
+            const fixturePath = path.join(rootFixturePath, '$ref-url-$anchor');
             const rootFilePath = path.join(fixturePath, 'root.json');
             const actual = await dereference(rootFilePath, {
               parse: { mediaType: mediaTypes.latest('json') },
@@ -613,12 +751,34 @@ describe('dereference', () => {
 
             expect(toValue(actual)).toEqual(expected);
           });
+
+          describe('and allowMetaPatches=true', () => {
+            test('should dereference', async () => {
+              const fixturePath = path.join(rootFixturePath, '$ref-url-$anchor-meta-patches');
+              const rootFilePath = path.join(fixturePath, 'root.json');
+              const refSet = await resolve(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+              });
+              refSet.refs[0].uri = '/home/smartbear/root.json';
+              const actual = await dereference(refSet.refs[0].uri, {
+                parse: { mediaType: mediaTypes.latest('json') },
+                dereference: {
+                  refSet,
+                  strategies: [
+                    OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                  ],
+                },
+              });
+              const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
+
+              expect(toValue(actual)).toEqual(expected);
+            });
+          });
         });
 
         describe('given Schema Objects with $ref keyword containing resolvable URL', () => {
-          const fixturePath = path.join(rootFixturePath, '$ref-url-resolvable');
-
           test('should dereference', async () => {
+            const fixturePath = path.join(rootFixturePath, '$ref-url-resolvable');
             const rootFilePath = path.join(fixturePath, 'root.json');
             const actual = await dereference(rootFilePath, {
               parse: { mediaType: mediaTypes.latest('json') },
@@ -626,6 +786,30 @@ describe('dereference', () => {
             const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
             expect(toValue(actual)).toEqual(expected);
+          });
+
+          describe('and allowMetaPatches=true', () => {
+            test('should dereference', async () => {
+              const fixturePath = path.join(rootFixturePath, '$ref-url-resolvable-meta-patches');
+              const rootFilePath = path.join(fixturePath, 'root.json');
+              const refSet = await resolve(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+              });
+              refSet.refs[0].uri = '/home/smartbear/root.json';
+              refSet.refs[1].uri = '/home/smartbear/ex.json';
+              const actual = await dereference(refSet.refs[0].uri, {
+                parse: { mediaType: mediaTypes.latest('json') },
+                dereference: {
+                  refSet,
+                  strategies: [
+                    OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                  ],
+                },
+              });
+              const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
+
+              expect(toValue(actual)).toEqual(expected);
+            });
           });
         });
 
@@ -649,9 +833,8 @@ describe('dereference', () => {
         });
 
         describe('given Schema Objects with $ref keyword containing Uniform Resource Name', () => {
-          const fixturePath = path.join(rootFixturePath, '$ref-urn');
-
           test('should dereference', async () => {
+            const fixturePath = path.join(rootFixturePath, '$ref-urn');
             const rootFilePath = path.join(fixturePath, 'root.json');
             const actual = await dereference(rootFilePath, {
               parse: { mediaType: mediaTypes.latest('json') },
@@ -660,12 +843,34 @@ describe('dereference', () => {
 
             expect(toValue(actual)).toEqual(expected);
           });
+
+          describe('and allowMetaPatches=true', () => {
+            test('should dereference', async () => {
+              const fixturePath = path.join(rootFixturePath, '$ref-urn-meta-patches');
+              const rootFilePath = path.join(fixturePath, 'root.json');
+              const refSet = await resolve(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+              });
+              refSet.refs[0].uri = '/home/smartbear/root.json';
+              const actual = await dereference(refSet.refs[0].uri, {
+                parse: { mediaType: mediaTypes.latest('json') },
+                dereference: {
+                  refSet,
+                  strategies: [
+                    OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                  ],
+                },
+              });
+              const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
+
+              expect(toValue(actual)).toEqual(expected);
+            });
+          });
         });
 
         describe('given Schema Objects with $ref keyword containing Uniform Resource Name and JSON Pointer fragment', () => {
-          const fixturePath = path.join(rootFixturePath, '$ref-urn-pointer');
-
           test('should dereference', async () => {
+            const fixturePath = path.join(rootFixturePath, '$ref-urn-pointer');
             const rootFilePath = path.join(fixturePath, 'root.json');
             const actual = await dereference(rootFilePath, {
               parse: { mediaType: mediaTypes.latest('json') },
@@ -673,6 +878,29 @@ describe('dereference', () => {
             const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
             expect(toValue(actual)).toEqual(expected);
+          });
+
+          describe('and allowMetaPatches=true', () => {
+            test('should dereference', async () => {
+              const fixturePath = path.join(rootFixturePath, '$ref-urn-pointer-meta-patches');
+              const rootFilePath = path.join(fixturePath, 'root.json');
+              const refSet = await resolve(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+              });
+              refSet.refs[0].uri = '/home/smartbear/root.json';
+              const actual = await dereference(refSet.refs[0].uri, {
+                parse: { mediaType: mediaTypes.latest('json') },
+                dereference: {
+                  refSet,
+                  strategies: [
+                    OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                  ],
+                },
+              });
+              const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
+
+              expect(toValue(actual)).toEqual(expected);
+            });
           });
         });
 
@@ -710,9 +938,8 @@ describe('dereference', () => {
         });
 
         describe('given Schema Objects with $anchor keyword pointing to internal schema', () => {
-          const fixturePath = path.join(rootFixturePath, '$anchor-internal');
-
           test('should dereference', async () => {
+            const fixturePath = path.join(rootFixturePath, '$anchor-internal');
             const rootFilePath = path.join(fixturePath, 'root.json');
             const actual = await dereference(rootFilePath, {
               parse: { mediaType: mediaTypes.latest('json') },
@@ -721,12 +948,34 @@ describe('dereference', () => {
 
             expect(toValue(actual)).toEqual(expected);
           });
+
+          describe('and allowMetaPatches=true', () => {
+            test('should dereference', async () => {
+              const fixturePath = path.join(rootFixturePath, '$anchor-internal-meta-patches');
+              const rootFilePath = path.join(fixturePath, 'root.json');
+              const refSet = await resolve(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+              });
+              refSet.refs[0].uri = '/home/smartbear/root.json';
+              const actual = await dereference(refSet.refs[0].uri, {
+                parse: { mediaType: mediaTypes.latest('json') },
+                dereference: {
+                  strategies: [
+                    OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                  ],
+                  refSet,
+                },
+              });
+              const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
+
+              expect(toValue(actual)).toEqual(expected);
+            });
+          });
         });
 
         describe('given Schema Objects with $anchor keyword pointing to external schema', () => {
-          const fixturePath = path.join(rootFixturePath, '$anchor-external');
-
           test('should dereference', async () => {
+            const fixturePath = path.join(rootFixturePath, '$anchor-external');
             const rootFilePath = path.join(fixturePath, 'root.json');
             const actual = await dereference(rootFilePath, {
               parse: { mediaType: mediaTypes.latest('json') },
@@ -734,6 +983,31 @@ describe('dereference', () => {
             const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
             expect(toValue(actual)).toEqual(expected);
+          });
+
+          describe('and allowMetaPatches=true', () => {
+            test('should dereference', async () => {
+              const fixturePath = path.join(rootFixturePath, '$anchor-external-meta-patches');
+              const rootFilePath = path.join(fixturePath, 'root.json');
+              const refSet = await resolve(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+              });
+              refSet.refs.forEach((ref) => {
+                ref.uri = `/home/smartbear/${path.basename(ref.uri)}`;
+              });
+              const actual = await dereference(refSet.refs[0].uri, {
+                parse: { mediaType: mediaTypes.latest('json') },
+                dereference: {
+                  strategies: [
+                    OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                  ],
+                  refSet,
+                },
+              });
+              const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
+
+              expect(toValue(actual)).toEqual(expected);
+            });
           });
         });
 

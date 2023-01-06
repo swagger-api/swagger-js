@@ -134,11 +134,8 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
         const objectFragment = fragment;
         // apply meta patch only when not already applied
         if (typeof objectFragment.get('$$ref') === 'undefined') {
-          const absoluteJSONPointerURL = url.resolve(
-            reference.uri,
-            referenceElement.$ref?.toValue()
-          );
-          objectFragment.set('$$ref', absoluteJSONPointerURL);
+          const absoluteURI = url.resolve(reference.uri, referenceElement.$ref?.toValue());
+          objectFragment.set('$$ref', absoluteURI);
         }
       }
 
@@ -226,11 +223,8 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
       if (this.allowMetaPatches) {
         // apply meta patch only when not already applied
         if (typeof mergedResult.get('$$ref') === 'undefined') {
-          const absoluteJSONPointerURL = url.resolve(
-            reference.uri,
-            pathItemElement.$ref?.toValue()
-          );
-          mergedResult.set('$$ref', absoluteJSONPointerURL);
+          const absoluteURI = url.resolve(reference.uri, pathItemElement.$ref?.toValue());
+          mergedResult.set('$$ref', absoluteURI);
         }
       }
 
@@ -255,13 +249,14 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
       }
 
       // compute baseURI using rules around $id and $ref keywords
-      const retrieveURI = this.reference.uri;
-      const $refBaseURI = resolveSchema$refField(retrieveURI, referencingElement);
+      let { reference } = this;
+      let { uri: retrievalURI } = reference;
+      const $refBaseURI = resolveSchema$refField(retrievalURI, referencingElement);
       const $refBaseURIStrippedHash = url.stripHash($refBaseURI);
       const file = File({ uri: $refBaseURIStrippedHash });
       const isUnknownURI = !this.options.resolve.resolvers.some((r) => r.canRead(file));
       const isURL = !isUnknownURI;
-      const isExternal = isURL && this.reference.uri !== $refBaseURIStrippedHash;
+      const isExternal = isURL && retrievalURI !== $refBaseURIStrippedHash;
 
       // ignore resolving external Schema Objects
       if (!this.options.resolve.external && isExternal) {
@@ -272,13 +267,11 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
       this.indirections.push(referencingElement);
 
       // determining reference, proper evaluation and selection mechanism
-      let reference;
       let referencedElement;
 
       try {
         if (isUnknownURI || isURL) {
           // we're dealing with canonical URI or URL with possible fragment
-          reference = this.reference;
           const selector = $refBaseURI;
           referencedElement = uriEvaluate(
             selector,
@@ -288,6 +281,7 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
         } else {
           // we're assuming here that we're dealing with JSON Pointer here
           reference = await this.toReference(url.unsanitize($refBaseURI));
+          retrievalURI = reference.uri;
           const selector = uriToPointer($refBaseURI);
           referencedElement = maybeRefractToSchemaElement(
             // @ts-ignore
@@ -303,6 +297,7 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
           if (isAnchor(uriToAnchor($refBaseURI))) {
             // we're dealing with JSON Schema $anchor here
             reference = await this.toReference(url.unsanitize($refBaseURI));
+            retrievalURI = reference.uri;
             const selector = uriToAnchor($refBaseURI);
             referencedElement = $anchorEvaluate(
               selector,
@@ -312,6 +307,7 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
           } else {
             // we're assuming here that we're dealing with JSON Pointer here
             reference = await this.toReference(url.unsanitize($refBaseURI));
+            retrievalURI = reference.uri;
             const selector = uriToPointer($refBaseURI);
             referencedElement = maybeRefractToSchemaElement(
               // @ts-ignore
@@ -363,7 +359,7 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
           $ref: referencingElement.$ref?.toValue(),
         });
         // annotate referenced element with info about origin
-        jsonSchemaBooleanElement.setMetaProperty('ref-origin', reference.uri);
+        jsonSchemaBooleanElement.setMetaProperty('ref-origin', retrievalURI);
 
         return jsonSchemaBooleanElement;
       }
@@ -373,10 +369,10 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
         ancestorsLineage.includes(memberElement)
       );
       if (hasCycle && !this.useCircularStructures) {
-        if (url.isHttpUrl(reference.uri) || url.isFileSystemPath(reference.uri)) {
+        if (url.isHttpUrl(retrievalURI) || url.isFileSystemPath(retrievalURI)) {
           // make the referencing URL or file system path absolute
-          const absoluteURI = url.resolve(reference.uri, referencingElement.$ref?.toValue());
-          referencingElement.set('$ref', absoluteURI);
+          const baseURI = url.resolve(retrievalURI, $refBaseURI);
+          referencingElement.set('$ref', baseURI);
         }
 
         // skip processing this schema but traverse all it's child schemas
@@ -402,14 +398,14 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
         $ref: referencingElement.$ref?.toValue(),
       });
       // annotate fragment with info about origin
-      mergedSchemaElement.setMetaProperty('ref-origin', reference.uri);
+      mergedSchemaElement.setMetaProperty('ref-origin', retrievalURI);
 
       // allowMetaPatches option processing
       if (this.allowMetaPatches) {
         // apply meta patch only when not already applied
         if (typeof mergedSchemaElement.get('$$ref') === 'undefined') {
-          const absoluteURI = url.resolve(reference.uri, referencingElement.$ref?.toValue());
-          mergedSchemaElement.set('$$ref', absoluteURI);
+          const baseURI = url.resolve(retrievalURI, $refBaseURI);
+          mergedSchemaElement.set('$$ref', baseURI);
         }
       }
 
