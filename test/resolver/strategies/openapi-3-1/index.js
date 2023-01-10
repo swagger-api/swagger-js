@@ -44,7 +44,7 @@ describe('resolve', () => {
         });
       });
 
-      describe('and allowMetaPatches=true', () => {
+      describe('and allowMetaPatches=false', () => {
         test('should resolve', async () => {
           const url = 'https://example.com/petstore.json';
           const response = new Response(
@@ -127,6 +127,30 @@ describe('resolve', () => {
           const resolvedSpec = await SwaggerClient.resolve({
             spec,
             url: 'https://example.com/',
+          });
+
+          expect(resolvedSpec).toMatchSnapshot();
+        });
+      });
+
+      describe('and skipNormalization=true', () => {
+        test('should resolve and skip normalization', async () => {
+          const spec = globalThis.loadJsonFile(path.join(fixturePath, 'petstore.json'));
+          const resolvedSpec = await SwaggerClient.resolve({
+            spec,
+            skipNormalization: true,
+          });
+
+          expect(resolvedSpec).toMatchSnapshot();
+        });
+      });
+
+      describe('and skipNormalization=false', () => {
+        test('should resolve and normalize', async () => {
+          const spec = globalThis.loadJsonFile(path.join(fixturePath, 'petstore.json'));
+          const resolvedSpec = await SwaggerClient.resolve({
+            spec,
+            skipNormalization: false,
           });
 
           expect(resolvedSpec).toMatchSnapshot();
