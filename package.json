@@ -112,7 +112,7 @@
   "dependencies": {
     "@babel/runtime-corejs3": "^7.11.2",
     "@swagger-api/apidom-core": "^0.63.0",
-    "@swagger-api/apidom-reference": "^0.63.0",
+    "@swagger-api/apidom-reference": "^0.63.1",
     "@swagger-api/apidom-ns-openapi-3-1": "^0.63.0",
     "@swagger-api/apidom-json-pointer": "^0.63.0",
     "cookie": "~0.5.0",

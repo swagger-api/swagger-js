@@ -1,0 +1,11 @@
+{
+  "type": "object",
+  "properties": {
+    "avatar": {
+      "type": "string"
+    },
+    "user": {
+      "$ref": "../../root.json#/components/schemas/User"
+    }
+  }
+}

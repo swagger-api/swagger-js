@@ -1,0 +1,22 @@
+{
+  "openapi": "3.1.0",
+  "components": {
+    "schemas": {
+      "User": {
+        "$id": "./nested/",
+        "type": "object",
+        "properties": {
+          "login": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "profile": {
+            "$ref": "./ex.json"
+          }
+        }
+      }
+    }
+  }
+}

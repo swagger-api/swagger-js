@@ -1,0 +1,22 @@
+[
+  {
+    "openapi": "3.1.0",
+    "components": {
+      "schemas": {
+        "User": {
+          "type": "object",
+          "properties": {
+            "profile": {
+              "type": "object",
+              "properties": {
+                "user": {
+                  "$ref": "/home/smartbear/root.json#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+]
