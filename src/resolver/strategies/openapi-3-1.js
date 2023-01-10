@@ -25,10 +25,11 @@ const resolveOpenAPI31Strategy = async (options) => {
     useCircularStructures = false,
     skipNormalization = false,
   } = options;
+  const defaultRetrievalURL = 'https://smartbear.com/';
   const openApiElement = OpenApi3_1Element.refract(spec);
   const dereferenced = await dereferenceApiDOM(openApiElement, {
     resolve: {
-      baseURI: optionsUtil.retrievalURI(options),
+      baseURI: optionsUtil.retrievalURI(options) || defaultRetrievalURL,
       resolvers: [
         HttpResolverSwaggerClient({
           timeout: timeout || 10000,

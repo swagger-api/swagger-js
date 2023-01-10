@@ -1,22 +1,22 @@
 import path from 'node:path';
 import fetchMock from 'fetch-mock';
 
-import Swagger from '../../../../src/index.js';
+import SwaggerClient from '../../../../src/index.js';
 
 const fixturePath = path.join(__dirname, '__fixtures__');
 
 describe('resolve', () => {
   describe('OpenAPI 3.1.0 strategy', () => {
     test('should expose a resolver function', () => {
-      expect(Swagger.resolve).toBeInstanceOf(Function);
+      expect(SwaggerClient.resolve).toBeInstanceOf(Function);
     });
 
-    describe('given OpenAPI 3.1.0 definition', () => {
+    describe('given OpenAPI 3.1.0 definition via URL', () => {
       test('should resolve', async () => {
         const url = 'https://example.com/petstore.json';
         const response = new Response(globalThis.loadFile(path.join(fixturePath, 'petstore.json')));
         fetchMock.get(url, response, { repeat: 1 });
-        const resolvedSpec = await Swagger.resolve({
+        const resolvedSpec = await SwaggerClient.resolve({
           url: 'https://example.com/petstore.json',
           allowMetaPatches: false,
         });
@@ -33,7 +33,7 @@ describe('resolve', () => {
             globalThis.loadFile(path.join(fixturePath, 'petstore.json'))
           );
           fetchMock.get(url, response, { repeat: 1 });
-          const resolvedSpec = await Swagger.resolve({
+          const resolvedSpec = await SwaggerClient.resolve({
             url: 'https://example.com/petstore.json',
             allowMetaPatches: true,
           });
@@ -51,7 +51,7 @@ describe('resolve', () => {
             globalThis.loadFile(path.join(fixturePath, 'petstore.json'))
           );
           fetchMock.get(url, response, { repeat: 1 });
-          const resolvedSpec = await Swagger.resolve({
+          const resolvedSpec = await SwaggerClient.resolve({
             url: 'https://example.com/petstore.json',
             allowMetaPatches: false,
           });
@@ -69,7 +69,7 @@ describe('resolve', () => {
             globalThis.loadFile(path.join(fixturePath, 'circular-structures.json'))
           );
           fetchMock.get(url, response, { repeat: 1 });
-          const resolvedSpec = await Swagger.resolve({
+          const resolvedSpec = await SwaggerClient.resolve({
             url: 'https://example.com/circular-structures.json',
             useCircularStructures: true,
           });
@@ -87,7 +87,7 @@ describe('resolve', () => {
             globalThis.loadFile(path.join(fixturePath, 'circular-structures.json'))
           );
           fetchMock.get(url, response, { repeat: 1 });
-          const resolvedSpec = await Swagger.resolve({
+          const resolvedSpec = await SwaggerClient.resolve({
             url: 'https://example.com/circular-structures.json',
             useCircularStructures: false,
           });
@@ -95,6 +95,41 @@ describe('resolve', () => {
           expect(resolvedSpec).toMatchSnapshot();
 
           fetchMock.restore();
+        });
+      });
+    });
+
+    describe('given OpenAPI 3.1.0 definition via spec option', () => {
+      describe('and neither baseDoc nor url option is provided', () => {
+        test('should resolve', async () => {
+          const spec = globalThis.loadJsonFile(path.join(fixturePath, 'petstore.json'));
+          const resolvedSpec = await SwaggerClient.resolve({ spec });
+
+          expect(resolvedSpec).toMatchSnapshot();
+        });
+      });
+
+      describe('and baseDoc option is provided', () => {
+        test('should resolve', async () => {
+          const spec = globalThis.loadJsonFile(path.join(fixturePath, 'petstore.json'));
+          const resolvedSpec = await SwaggerClient.resolve({
+            spec,
+            baseDoc: 'https://example.com/',
+          });
+
+          expect(resolvedSpec).toMatchSnapshot();
+        });
+      });
+
+      describe('and url option is provided', () => {
+        test('should resolve', async () => {
+          const spec = globalThis.loadJsonFile(path.join(fixturePath, 'petstore.json'));
+          const resolvedSpec = await SwaggerClient.resolve({
+            spec,
+            url: 'https://example.com/',
+          });
+
+          expect(resolvedSpec).toMatchSnapshot();
         });
       });
     });

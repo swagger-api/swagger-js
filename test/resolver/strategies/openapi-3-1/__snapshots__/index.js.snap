@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition and allowMetaPatches=true should resolve 1`] = `
+exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL and allowMetaPatches=true should resolve 1`] = `
 {
   "errors": [],
   "spec": {
@@ -309,7 +309,7 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition and allow
 }
 `;
 
-exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition and allowMetaPatches=true should resolve 2`] = `
+exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL and allowMetaPatches=true should resolve 2`] = `
 {
   "errors": [],
   "spec": {
@@ -611,7 +611,7 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition and allow
 }
 `;
 
-exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition and useCircularStructures=false should resolve 1`] = `
+exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL and useCircularStructures=false should resolve 1`] = `
 {
   "errors": [],
   "spec": {
@@ -646,7 +646,7 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition and useCi
 }
 `;
 
-exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition and useCircularStructures=true should resolve 1`] = `
+exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL and useCircularStructures=true should resolve 1`] = `
 {
   "errors": [],
   "spec": {
@@ -688,7 +688,913 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition and useCi
 }
 `;
 
-exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition should resolve 1`] = `
+exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL should resolve 1`] = `
+{
+  "errors": [],
+  "spec": {
+    "$$normalized": true,
+    "components": {
+      "schemas": {
+        "Error": {
+          "properties": {
+            "code": {
+              "format": "int32",
+              "type": "integer",
+            },
+            "message": {
+              "type": "string",
+            },
+          },
+          "required": [
+            "code",
+            "message",
+          ],
+          "type": "object",
+        },
+        "Pet": {
+          "properties": {
+            "id": {
+              "format": "int64",
+              "type": "integer",
+            },
+            "name": {
+              "type": "string",
+            },
+            "tag": {
+              "type": "string",
+            },
+          },
+          "required": [
+            "id",
+            "name",
+          ],
+          "type": "object",
+        },
+        "Pets": {
+          "items": {
+            "properties": {
+              "id": {
+                "format": "int64",
+                "type": "integer",
+              },
+              "name": {
+                "type": "string",
+              },
+              "tag": {
+                "type": "string",
+              },
+            },
+            "required": [
+              "id",
+              "name",
+            ],
+            "type": "object",
+          },
+          "maxItems": 100,
+          "type": "array",
+        },
+      },
+    },
+    "info": {
+      "license": {
+        "name": "MIT",
+      },
+      "title": "Swagger Petstore",
+      "version": "1.0.0",
+    },
+    "openapi": "3.1.0",
+    "paths": {
+      "/pets": {
+        "get": {
+          "operationId": "listPets",
+          "parameters": [
+            {
+              "description": "How many items to return at one time (max 100)",
+              "in": "query",
+              "name": "limit",
+              "required": false,
+              "schema": {
+                "format": "int32",
+                "maximum": 100,
+                "type": "integer",
+              },
+            },
+          ],
+          "responses": {
+            "200": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "items": {
+                      "properties": {
+                        "id": {
+                          "format": "int64",
+                          "type": "integer",
+                        },
+                        "name": {
+                          "type": "string",
+                        },
+                        "tag": {
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                      ],
+                      "type": "object",
+                    },
+                    "maxItems": 100,
+                    "type": "array",
+                  },
+                },
+              },
+              "description": "A paged array of pets",
+              "headers": {
+                "x-next": {
+                  "description": "A link to the next page of responses",
+                  "schema": {
+                    "type": "string",
+                  },
+                },
+              },
+            },
+            "default": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "properties": {
+                      "code": {
+                        "format": "int32",
+                        "type": "integer",
+                      },
+                      "message": {
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "code",
+                      "message",
+                    ],
+                    "type": "object",
+                  },
+                },
+              },
+              "description": "unexpected error",
+            },
+          },
+          "servers": [
+            {
+              "url": "http://petstore.swagger.io/v1",
+            },
+          ],
+          "summary": "List all pets",
+          "tags": [
+            "pets",
+          ],
+        },
+        "post": {
+          "operationId": "createPets",
+          "responses": {
+            "201": {
+              "description": "Null response",
+            },
+            "default": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "properties": {
+                      "code": {
+                        "format": "int32",
+                        "type": "integer",
+                      },
+                      "message": {
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "code",
+                      "message",
+                    ],
+                    "type": "object",
+                  },
+                },
+              },
+              "description": "unexpected error",
+            },
+          },
+          "servers": [
+            {
+              "url": "http://petstore.swagger.io/v1",
+            },
+          ],
+          "summary": "Create a pet",
+          "tags": [
+            "pets",
+          ],
+        },
+        "servers": [
+          {
+            "url": "http://petstore.swagger.io/v1",
+          },
+        ],
+      },
+      "/pets/{petId}": {
+        "get": {
+          "operationId": "showPetById",
+          "parameters": [
+            {
+              "description": "The id of the pet to retrieve",
+              "in": "path",
+              "name": "petId",
+              "required": true,
+              "schema": {
+                "type": "string",
+              },
+            },
+          ],
+          "responses": {
+            "200": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "properties": {
+                      "id": {
+                        "format": "int64",
+                        "type": "integer",
+                      },
+                      "name": {
+                        "type": "string",
+                      },
+                      "tag": {
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "id",
+                      "name",
+                    ],
+                    "type": "object",
+                  },
+                },
+              },
+              "description": "Expected response to a valid request",
+            },
+            "default": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "properties": {
+                      "code": {
+                        "format": "int32",
+                        "type": "integer",
+                      },
+                      "message": {
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "code",
+                      "message",
+                    ],
+                    "type": "object",
+                  },
+                },
+              },
+              "description": "unexpected error",
+            },
+          },
+          "servers": [
+            {
+              "url": "http://petstore.swagger.io/v1",
+            },
+          ],
+          "summary": "Info for a specific pet",
+          "tags": [
+            "pets",
+          ],
+        },
+        "servers": [
+          {
+            "url": "http://petstore.swagger.io/v1",
+          },
+        ],
+      },
+    },
+    "servers": [
+      {
+        "url": "http://petstore.swagger.io/v1",
+      },
+    ],
+  },
+}
+`;
+
+exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec option and baseDoc option is provided should resolve 1`] = `
+{
+  "errors": [],
+  "spec": {
+    "$$normalized": true,
+    "components": {
+      "schemas": {
+        "Error": {
+          "properties": {
+            "code": {
+              "format": "int32",
+              "type": "integer",
+            },
+            "message": {
+              "type": "string",
+            },
+          },
+          "required": [
+            "code",
+            "message",
+          ],
+          "type": "object",
+        },
+        "Pet": {
+          "properties": {
+            "id": {
+              "format": "int64",
+              "type": "integer",
+            },
+            "name": {
+              "type": "string",
+            },
+            "tag": {
+              "type": "string",
+            },
+          },
+          "required": [
+            "id",
+            "name",
+          ],
+          "type": "object",
+        },
+        "Pets": {
+          "items": {
+            "properties": {
+              "id": {
+                "format": "int64",
+                "type": "integer",
+              },
+              "name": {
+                "type": "string",
+              },
+              "tag": {
+                "type": "string",
+              },
+            },
+            "required": [
+              "id",
+              "name",
+            ],
+            "type": "object",
+          },
+          "maxItems": 100,
+          "type": "array",
+        },
+      },
+    },
+    "info": {
+      "license": {
+        "name": "MIT",
+      },
+      "title": "Swagger Petstore",
+      "version": "1.0.0",
+    },
+    "openapi": "3.1.0",
+    "paths": {
+      "/pets": {
+        "get": {
+          "operationId": "listPets",
+          "parameters": [
+            {
+              "description": "How many items to return at one time (max 100)",
+              "in": "query",
+              "name": "limit",
+              "required": false,
+              "schema": {
+                "format": "int32",
+                "maximum": 100,
+                "type": "integer",
+              },
+            },
+          ],
+          "responses": {
+            "200": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "items": {
+                      "properties": {
+                        "id": {
+                          "format": "int64",
+                          "type": "integer",
+                        },
+                        "name": {
+                          "type": "string",
+                        },
+                        "tag": {
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                      ],
+                      "type": "object",
+                    },
+                    "maxItems": 100,
+                    "type": "array",
+                  },
+                },
+              },
+              "description": "A paged array of pets",
+              "headers": {
+                "x-next": {
+                  "description": "A link to the next page of responses",
+                  "schema": {
+                    "type": "string",
+                  },
+                },
+              },
+            },
+            "default": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "properties": {
+                      "code": {
+                        "format": "int32",
+                        "type": "integer",
+                      },
+                      "message": {
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "code",
+                      "message",
+                    ],
+                    "type": "object",
+                  },
+                },
+              },
+              "description": "unexpected error",
+            },
+          },
+          "servers": [
+            {
+              "url": "http://petstore.swagger.io/v1",
+            },
+          ],
+          "summary": "List all pets",
+          "tags": [
+            "pets",
+          ],
+        },
+        "post": {
+          "operationId": "createPets",
+          "responses": {
+            "201": {
+              "description": "Null response",
+            },
+            "default": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "properties": {
+                      "code": {
+                        "format": "int32",
+                        "type": "integer",
+                      },
+                      "message": {
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "code",
+                      "message",
+                    ],
+                    "type": "object",
+                  },
+                },
+              },
+              "description": "unexpected error",
+            },
+          },
+          "servers": [
+            {
+              "url": "http://petstore.swagger.io/v1",
+            },
+          ],
+          "summary": "Create a pet",
+          "tags": [
+            "pets",
+          ],
+        },
+        "servers": [
+          {
+            "url": "http://petstore.swagger.io/v1",
+          },
+        ],
+      },
+      "/pets/{petId}": {
+        "get": {
+          "operationId": "showPetById",
+          "parameters": [
+            {
+              "description": "The id of the pet to retrieve",
+              "in": "path",
+              "name": "petId",
+              "required": true,
+              "schema": {
+                "type": "string",
+              },
+            },
+          ],
+          "responses": {
+            "200": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "properties": {
+                      "id": {
+                        "format": "int64",
+                        "type": "integer",
+                      },
+                      "name": {
+                        "type": "string",
+                      },
+                      "tag": {
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "id",
+                      "name",
+                    ],
+                    "type": "object",
+                  },
+                },
+              },
+              "description": "Expected response to a valid request",
+            },
+            "default": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "properties": {
+                      "code": {
+                        "format": "int32",
+                        "type": "integer",
+                      },
+                      "message": {
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "code",
+                      "message",
+                    ],
+                    "type": "object",
+                  },
+                },
+              },
+              "description": "unexpected error",
+            },
+          },
+          "servers": [
+            {
+              "url": "http://petstore.swagger.io/v1",
+            },
+          ],
+          "summary": "Info for a specific pet",
+          "tags": [
+            "pets",
+          ],
+        },
+        "servers": [
+          {
+            "url": "http://petstore.swagger.io/v1",
+          },
+        ],
+      },
+    },
+    "servers": [
+      {
+        "url": "http://petstore.swagger.io/v1",
+      },
+    ],
+  },
+}
+`;
+
+exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec option and neither baseDoc nor url option is provided should resolve 1`] = `
+{
+  "errors": [],
+  "spec": {
+    "$$normalized": true,
+    "components": {
+      "schemas": {
+        "Error": {
+          "properties": {
+            "code": {
+              "format": "int32",
+              "type": "integer",
+            },
+            "message": {
+              "type": "string",
+            },
+          },
+          "required": [
+            "code",
+            "message",
+          ],
+          "type": "object",
+        },
+        "Pet": {
+          "properties": {
+            "id": {
+              "format": "int64",
+              "type": "integer",
+            },
+            "name": {
+              "type": "string",
+            },
+            "tag": {
+              "type": "string",
+            },
+          },
+          "required": [
+            "id",
+            "name",
+          ],
+          "type": "object",
+        },
+        "Pets": {
+          "items": {
+            "properties": {
+              "id": {
+                "format": "int64",
+                "type": "integer",
+              },
+              "name": {
+                "type": "string",
+              },
+              "tag": {
+                "type": "string",
+              },
+            },
+            "required": [
+              "id",
+              "name",
+            ],
+            "type": "object",
+          },
+          "maxItems": 100,
+          "type": "array",
+        },
+      },
+    },
+    "info": {
+      "license": {
+        "name": "MIT",
+      },
+      "title": "Swagger Petstore",
+      "version": "1.0.0",
+    },
+    "openapi": "3.1.0",
+    "paths": {
+      "/pets": {
+        "get": {
+          "operationId": "listPets",
+          "parameters": [
+            {
+              "description": "How many items to return at one time (max 100)",
+              "in": "query",
+              "name": "limit",
+              "required": false,
+              "schema": {
+                "format": "int32",
+                "maximum": 100,
+                "type": "integer",
+              },
+            },
+          ],
+          "responses": {
+            "200": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "items": {
+                      "properties": {
+                        "id": {
+                          "format": "int64",
+                          "type": "integer",
+                        },
+                        "name": {
+                          "type": "string",
+                        },
+                        "tag": {
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                      ],
+                      "type": "object",
+                    },
+                    "maxItems": 100,
+                    "type": "array",
+                  },
+                },
+              },
+              "description": "A paged array of pets",
+              "headers": {
+                "x-next": {
+                  "description": "A link to the next page of responses",
+                  "schema": {
+                    "type": "string",
+                  },
+                },
+              },
+            },
+            "default": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "properties": {
+                      "code": {
+                        "format": "int32",
+                        "type": "integer",
+                      },
+                      "message": {
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "code",
+                      "message",
+                    ],
+                    "type": "object",
+                  },
+                },
+              },
+              "description": "unexpected error",
+            },
+          },
+          "servers": [
+            {
+              "url": "http://petstore.swagger.io/v1",
+            },
+          ],
+          "summary": "List all pets",
+          "tags": [
+            "pets",
+          ],
+        },
+        "post": {
+          "operationId": "createPets",
+          "responses": {
+            "201": {
+              "description": "Null response",
+            },
+            "default": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "properties": {
+                      "code": {
+                        "format": "int32",
+                        "type": "integer",
+                      },
+                      "message": {
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "code",
+                      "message",
+                    ],
+                    "type": "object",
+                  },
+                },
+              },
+              "description": "unexpected error",
+            },
+          },
+          "servers": [
+            {
+              "url": "http://petstore.swagger.io/v1",
+            },
+          ],
+          "summary": "Create a pet",
+          "tags": [
+            "pets",
+          ],
+        },
+        "servers": [
+          {
+            "url": "http://petstore.swagger.io/v1",
+          },
+        ],
+      },
+      "/pets/{petId}": {
+        "get": {
+          "operationId": "showPetById",
+          "parameters": [
+            {
+              "description": "The id of the pet to retrieve",
+              "in": "path",
+              "name": "petId",
+              "required": true,
+              "schema": {
+                "type": "string",
+              },
+            },
+          ],
+          "responses": {
+            "200": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "properties": {
+                      "id": {
+                        "format": "int64",
+                        "type": "integer",
+                      },
+                      "name": {
+                        "type": "string",
+                      },
+                      "tag": {
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "id",
+                      "name",
+                    ],
+                    "type": "object",
+                  },
+                },
+              },
+              "description": "Expected response to a valid request",
+            },
+            "default": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "properties": {
+                      "code": {
+                        "format": "int32",
+                        "type": "integer",
+                      },
+                      "message": {
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "code",
+                      "message",
+                    ],
+                    "type": "object",
+                  },
+                },
+              },
+              "description": "unexpected error",
+            },
+          },
+          "servers": [
+            {
+              "url": "http://petstore.swagger.io/v1",
+            },
+          ],
+          "summary": "Info for a specific pet",
+          "tags": [
+            "pets",
+          ],
+        },
+        "servers": [
+          {
+            "url": "http://petstore.swagger.io/v1",
+          },
+        ],
+      },
+    },
+    "servers": [
+      {
+        "url": "http://petstore.swagger.io/v1",
+      },
+    ],
+  },
+}
+`;
+
+exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec option and url option is provided should resolve 1`] = `
 {
   "errors": [],
   "spec": {
