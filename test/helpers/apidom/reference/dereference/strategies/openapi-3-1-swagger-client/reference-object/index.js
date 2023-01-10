@@ -421,7 +421,6 @@ describe('dereference', () => {
             const parseResult = await parse(uri, {
               parse: { mediaType: mediaTypes.latest('json') },
             });
-            // @ts-ignore
             const referenceElement = parseResult.api?.components.parameters.get('externalRef');
             const refSet = ReferenceSet();
             const rootFileReference = Reference({ uri, value: parseResult });

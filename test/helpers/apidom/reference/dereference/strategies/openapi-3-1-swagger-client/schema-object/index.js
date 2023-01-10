@@ -116,7 +116,7 @@ describe('dereference', () => {
 
           describe('and useCircularStructures=false', () => {
             test('should avoid cycles by skipping transclusion', async () => {
-              const fixturePath = path.join(rootFixturePath, 'cycle-internal-disabled');
+              const fixturePath = path.join(rootFixturePath, 'cycle-internal-circular-structures');
               const rootFilePath = path.join(fixturePath, 'root.json');
               const refSet = await resolve(rootFilePath, {
                 parse: { mediaType: mediaTypes.latest('json') },
@@ -138,7 +138,10 @@ describe('dereference', () => {
 
             describe('and using HTTP protocol', () => {
               test('should make JSON Pointer absolute', async () => {
-                const fixturePath = path.join(rootFixturePath, 'cycle-internal-disabled-http');
+                const fixturePath = path.join(
+                  rootFixturePath,
+                  'cycle-internal-http-circular-structures'
+                );
                 const dereferenceThunk = async () => {
                   const httpServer = globalThis.createHTTPServer({ port: 8123, cwd: fixturePath });
 
@@ -190,7 +193,7 @@ describe('dereference', () => {
 
           describe('and useCircularStructures=false', () => {
             test('should avoid cycles by skipping transclusion', async () => {
-              const fixturePath = path.join(rootFixturePath, 'cycle-external-disabled');
+              const fixturePath = path.join(rootFixturePath, 'cycle-external-circular-structures');
               const rootFilePath = path.join(fixturePath, 'root.json');
               const refSet = await resolve(rootFilePath, {
                 parse: { mediaType: mediaTypes.latest('json') },
@@ -529,6 +532,30 @@ describe('dereference', () => {
               expect(toValue(actual)).toEqual(expected);
             });
           });
+
+          describe('and useCircularStructures=false', () => {
+            test('should dereference', async () => {
+              const fixturePath = path.join(rootFixturePath, '$id-uri-direct-circular-structures');
+              const rootFilePath = path.join(fixturePath, 'root.json');
+              const refSet = await resolve(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+              });
+              refSet.refs[0].uri = '/home/smartbear/root.json';
+              refSet.refs[1].uri = '/home/smartbear/nested/ex.json';
+              const actual = await dereference(refSet.refs[0].uri, {
+                parse: { mediaType: mediaTypes.latest('json') },
+                dereference: {
+                  refSet,
+                  strategies: [
+                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
+                  ],
+                },
+              });
+              const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
+
+              expect(toValue(actual)).toEqual(expected);
+            });
+          });
         });
 
         describe('given Schema Objects with $id keyword defined in enclosing Schema Object', () => {
@@ -558,6 +585,33 @@ describe('dereference', () => {
                   refSet,
                   strategies: [
                     OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                  ],
+                },
+              });
+              const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
+
+              expect(toValue(actual)).toEqual(expected);
+            });
+          });
+
+          describe('and useCircularStructures=false', () => {
+            test('should dereference', async () => {
+              const fixturePath = path.join(
+                rootFixturePath,
+                '$id-uri-enclosing-circular-structures'
+              );
+              const rootFilePath = path.join(fixturePath, 'root.json');
+              const refSet = await resolve(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+              });
+              refSet.refs[0].uri = '/home/smartbear/root.json';
+              refSet.refs[1].uri = '/home/smartbear/nested/ex.json';
+              const actual = await dereference(refSet.refs[0].uri, {
+                parse: { mediaType: mediaTypes.latest('json') },
+                dereference: {
+                  refSet,
+                  strategies: [
+                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
                   ],
                 },
               });
@@ -596,6 +650,34 @@ describe('dereference', () => {
                   refSet,
                   strategies: [
                     OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                  ],
+                },
+              });
+              const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
+
+              expect(toValue(actual)).toEqual(expected);
+            });
+          });
+
+          describe('and useCircularStructures=false', () => {
+            test('should dereference', async () => {
+              const fixturePath = path.join(
+                rootFixturePath,
+                '$id-uri-external-circular-structures'
+              );
+              const rootFilePath = path.join(fixturePath, 'root.json');
+              const refSet = await resolve(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+              });
+              refSet.refs[0].uri = '/home/smartbear/root.json';
+              refSet.refs[1].uri = '/home/smartbear/nested/ex.json';
+              refSet.refs[2].uri = '/home/smartbear/nested/nested/ex.json';
+              const actual = await dereference(refSet.refs[0].uri, {
+                parse: { mediaType: mediaTypes.latest('json') },
+                dereference: {
+                  refSet,
+                  strategies: [
+                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
                   ],
                 },
               });
@@ -663,6 +745,28 @@ describe('dereference', () => {
               expect(toValue(actual)).toEqual(expected);
             });
           });
+
+          describe('and useCircularStructures=false', () => {
+            test('should dereference', async () => {
+              const fixturePath = path.join(rootFixturePath, '$ref-url-circular-structures');
+              const rootFilePath = path.join(fixturePath, 'root.json');
+              const refSet = await resolve(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+              });
+              const actual = await dereference(refSet.refs[0].uri, {
+                parse: { mediaType: mediaTypes.latest('json') },
+                dereference: {
+                  refSet,
+                  strategies: [
+                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
+                  ],
+                },
+              });
+              const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
+
+              expect(toValue(actual)).toEqual(expected);
+            });
+          });
         });
 
         describe('given Schema Objects with $ref keyword containing relative references', () => {
@@ -702,6 +806,31 @@ describe('dereference', () => {
               expect(toValue(actual)).toEqual(expected);
             });
           });
+
+          describe('and useCircularStructures=false', () => {
+            test('should dereference', async () => {
+              const fixturePath = path.join(
+                rootFixturePath,
+                '$ref-url-relative-reference-circular-structures'
+              );
+              const rootFilePath = path.join(fixturePath, 'root.json');
+              const refSet = await resolve(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+              });
+              const actual = await dereference(refSet.refs[0].uri, {
+                parse: { mediaType: mediaTypes.latest('json') },
+                dereference: {
+                  refSet,
+                  strategies: [
+                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
+                  ],
+                },
+              });
+              const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
+
+              expect(toValue(actual)).toEqual(expected);
+            });
+          });
         });
 
         describe('given Schema Objects with $ref keyword containing URL and JSON Pointer fragment', () => {
@@ -730,6 +859,32 @@ describe('dereference', () => {
                   refSet,
                   strategies: [
                     OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                  ],
+                },
+              });
+              const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
+
+              expect(toValue(actual)).toEqual(expected);
+            });
+          });
+
+          describe('and useCircularStructures=false', () => {
+            test('should dereference', async () => {
+              const fixturePath = path.join(
+                rootFixturePath,
+                '$ref-url-pointer-circular-structures'
+              );
+              const rootFilePath = path.join(fixturePath, 'root.json');
+              const refSet = await resolve(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+              });
+              refSet.refs[0].uri = '/home/smartbear/root.json';
+              const actual = await dereference(refSet.refs[0].uri, {
+                parse: { mediaType: mediaTypes.latest('json') },
+                dereference: {
+                  refSet,
+                  strategies: [
+                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
                   ],
                 },
               });
@@ -811,6 +966,33 @@ describe('dereference', () => {
               expect(toValue(actual)).toEqual(expected);
             });
           });
+
+          describe('and useCircularStructures=false', () => {
+            test('should dereference', async () => {
+              const fixturePath = path.join(
+                rootFixturePath,
+                '$ref-url-resolvable-circular-structures'
+              );
+              const rootFilePath = path.join(fixturePath, 'root.json');
+              const refSet = await resolve(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+              });
+              refSet.refs[0].uri = '/home/smartbear/root.json';
+              refSet.refs[1].uri = '/home/smartbear/ex.json';
+              const actual = await dereference(refSet.refs[0].uri, {
+                parse: { mediaType: mediaTypes.latest('json') },
+                dereference: {
+                  refSet,
+                  strategies: [
+                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
+                  ],
+                },
+              });
+              const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
+
+              expect(toValue(actual)).toEqual(expected);
+            });
+          });
         });
 
         describe('given Schema Objects with $ref keyword containing unresolvable URL', () => {
@@ -858,6 +1040,28 @@ describe('dereference', () => {
                   refSet,
                   strategies: [
                     OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                  ],
+                },
+              });
+              const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
+
+              expect(toValue(actual)).toEqual(expected);
+            });
+          });
+
+          describe('and useCircularStructures=false', () => {
+            test.only('should dereference', async () => {
+              const fixturePath = path.join(rootFixturePath, '$ref-urn-circular-structures');
+              const rootFilePath = path.join(fixturePath, 'root.json');
+              const refSet = await resolve(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+              });
+              const actual = await dereference(refSet.refs[0].uri, {
+                parse: { mediaType: mediaTypes.latest('json') },
+                dereference: {
+                  refSet,
+                  strategies: [
+                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
                   ],
                 },
               });
@@ -971,6 +1175,32 @@ describe('dereference', () => {
               expect(toValue(actual)).toEqual(expected);
             });
           });
+
+          describe('and useCircularStructures=false', () => {
+            test('should dereference', async () => {
+              const fixturePath = path.join(
+                rootFixturePath,
+                '$anchor-internal-circular-structures'
+              );
+              const rootFilePath = path.join(fixturePath, 'root.json');
+              const refSet = await resolve(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+              });
+              refSet.refs[0].uri = '/home/smartbear/root.json';
+              const actual = await dereference(refSet.refs[0].uri, {
+                parse: { mediaType: mediaTypes.latest('json') },
+                dereference: {
+                  strategies: [
+                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
+                  ],
+                  refSet,
+                },
+              });
+              const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
+
+              expect(toValue(actual)).toEqual(expected);
+            });
+          });
         });
 
         describe('given Schema Objects with $anchor keyword pointing to external schema', () => {
@@ -1000,6 +1230,34 @@ describe('dereference', () => {
                 dereference: {
                   strategies: [
                     OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                  ],
+                  refSet,
+                },
+              });
+              const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
+
+              expect(toValue(actual)).toEqual(expected);
+            });
+          });
+
+          describe('and useCircularStructures=false', () => {
+            test('should dereference', async () => {
+              const fixturePath = path.join(
+                rootFixturePath,
+                '$anchor-external-circular-structures'
+              );
+              const rootFilePath = path.join(fixturePath, 'root.json');
+              const refSet = await resolve(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+              });
+              refSet.refs.forEach((ref) => {
+                ref.uri = `/home/smartbear/${path.basename(ref.uri)}`;
+              });
+              const actual = await dereference(refSet.refs[0].uri, {
+                parse: { mediaType: mediaTypes.latest('json') },
+                dereference: {
+                  strategies: [
+                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
                   ],
                   refSet,
                 },

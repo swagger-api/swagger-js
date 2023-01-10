@@ -1,0 +1,33 @@
+[
+  {
+    "openapi": "3.1.0",
+    "components": {
+      "schemas": {
+        "User": {
+          "$id": "https://swagger.io/schemas/user",
+          "type": "object",
+          "properties": {
+            "profile": {
+              "$id": "https://swagger.io/schemas/user-profile",
+              "type": "object",
+              "properties": {
+                "user": {
+                  "$ref": "https://swagger.io/schemas/user"
+                }
+              }
+            }
+          }
+        },
+        "UserProfile": {
+          "$id": "https://swagger.io/schemas/user-profile",
+          "type": "object",
+          "properties": {
+            "user": {
+              "$ref": "https://swagger.io/schemas/user"
+            }
+          }
+        }
+      }
+    }
+  }
+]
