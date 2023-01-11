@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 import { toValue } from '@swagger-api/apidom-core';
 import { OpenApi3_1Element } from '@swagger-api/apidom-ns-openapi-3-1';
-import { dereferenceApiDOM } from '@swagger-api/apidom-reference/configuration/empty';
+import { dereferenceApiDOM, url } from '@swagger-api/apidom-reference/configuration/empty';
 import BinaryParser from '@swagger-api/apidom-reference/parse/parsers/binary';
 import OpenApi3_1ResolveStrategy from '@swagger-api/apidom-reference/resolve/strategies/openapi-3-1';
 
@@ -25,11 +25,17 @@ const resolveOpenAPI31Strategy = async (options) => {
     useCircularStructures = false,
     skipNormalization = false,
   } = options;
-  const defaultRetrievalURL = 'https://smartbear.com/';
+  const baseURI = optionsUtil.retrievalURI(options) ?? url.cwd();
   const openApiElement = OpenApi3_1Element.refract(spec);
   const dereferenced = await dereferenceApiDOM(openApiElement, {
     resolve: {
-      baseURI: optionsUtil.retrievalURI(options) || defaultRetrievalURL,
+      /**
+       * swagger-client only supports resolving HTTP(S) URLs or spec objects.
+       * If runtime env is detected as non-browser one,
+       * and baseURI was not provided as part of resolver options,
+       * then below baseURI check will make sure that constant HTTPS URL is used as baseURI.
+       */
+      baseURI: url.isHttpUrl(baseURI) ? baseURI : 'https://smartbear.com/',
       resolvers: [
         HttpResolverSwaggerClient({
           timeout: timeout || 10000,
