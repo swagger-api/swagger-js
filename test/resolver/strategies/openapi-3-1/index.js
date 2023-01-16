@@ -1,5 +1,6 @@
 import path from 'node:path';
 import fetchMock from 'fetch-mock';
+import { EvaluationJsonPointerError } from '@swagger-api/apidom-json-pointer';
 
 import SwaggerClient from '../../../../src/index.js';
 
@@ -154,6 +155,43 @@ describe('resolve', () => {
           });
 
           expect(resolvedSpec).toMatchSnapshot();
+        });
+      });
+
+      describe('and pathDiscriminator is empty list', () => {
+        test('should resolve entire spec', async () => {
+          const spec = globalThis.loadJsonFile(path.join(fixturePath, 'petstore.json'));
+          const resolvedSpec = await SwaggerClient.resolve({
+            spec,
+            pathDiscriminator: [],
+          });
+
+          expect(resolvedSpec).toMatchSnapshot();
+        });
+      });
+
+      describe('and pathDiscriminator=[paths, /pets]', () => {
+        test('should resolve within the pathDiscriminator', async () => {
+          const spec = globalThis.loadJsonFile(path.join(fixturePath, 'petstore.json'));
+          const resolvedSpec = await SwaggerClient.resolve({
+            spec,
+            pathDiscriminator: ['paths', '/pets'],
+          });
+
+          expect(resolvedSpec).toMatchSnapshot();
+        });
+      });
+
+      describe('and pathDiscriminator compiles into invalid JSON Pointer', () => {
+        test('should throw error', async () => {
+          const spec = globalThis.loadJsonFile(path.join(fixturePath, 'petstore.json'));
+          const resolveThunk = () =>
+            SwaggerClient.resolve({
+              spec,
+              pathDiscriminator: ['path', 'to', 'nothing'],
+            });
+
+          await expect(resolveThunk()).rejects.toThrow(EvaluationJsonPointerError);
         });
       });
     });

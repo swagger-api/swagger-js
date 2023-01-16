@@ -1,7 +1,16 @@
 /* eslint-disable camelcase */
-import { toValue } from '@swagger-api/apidom-core';
-import { OpenApi3_1Element } from '@swagger-api/apidom-ns-openapi-3-1';
-import { dereferenceApiDOM, url } from '@swagger-api/apidom-reference/configuration/empty';
+import { toValue, transclude, ParseResultElement } from '@swagger-api/apidom-core';
+import {
+  compile as jsonPointerCompile,
+  evaluate as jsonPointerEvaluate,
+} from '@swagger-api/apidom-json-pointer';
+import { OpenApi3_1Element, mediaTypes } from '@swagger-api/apidom-ns-openapi-3-1';
+import {
+  dereferenceApiDOM,
+  url,
+  ReferenceSet,
+  Reference,
+} from '@swagger-api/apidom-reference/configuration/empty';
 import BinaryParser from '@swagger-api/apidom-reference/parse/parsers/binary';
 import OpenApi3_1ResolveStrategy from '@swagger-api/apidom-reference/resolve/strategies/openapi-3-1';
 
@@ -21,13 +30,32 @@ const resolveOpenAPI31Strategy = async (options) => {
     redirects,
     requestInterceptor,
     responseInterceptor,
+    pathDiscriminator = [],
     allowMetaPatches = false,
     useCircularStructures = false,
     skipNormalization = false,
   } = options;
-  const baseURI = optionsUtil.retrievalURI(options) ?? url.cwd();
+  // determining BaseURI
+  const defaultBaseURI = 'https://smartbear.com/';
+  const retrievalURI = optionsUtil.retrievalURI(options) ?? url.cwd();
+  const baseURI = url.isHttpUrl(retrievalURI) ? retrievalURI : defaultBaseURI;
+
+  // prepare spec for dereferencing
   const openApiElement = OpenApi3_1Element.refract(spec);
-  const dereferenced = await dereferenceApiDOM(openApiElement, {
+  openApiElement.classes.push('result');
+  const openApiParseResultElement = new ParseResultElement([openApiElement]);
+
+  // prepare fragment for dereferencing
+  const jsonPointer = jsonPointerCompile(pathDiscriminator);
+  const jsonPointerURI = jsonPointer === '' ? '' : `#${jsonPointer}`;
+  const fragmentElement = jsonPointerEvaluate(jsonPointer, openApiElement);
+
+  // prepare reference set for dereferencing
+  const openApiElementReference = Reference({ uri: baseURI, value: openApiParseResultElement });
+  const refSet = ReferenceSet({ refs: [openApiElementReference] });
+  if (jsonPointer !== '') refSet.rootRef = null; // reset root reference as we want fragment to become the root reference
+
+  const dereferenced = await dereferenceApiDOM(fragmentElement, {
     resolve: {
       /**
        * swagger-client only supports resolving HTTP(S) URLs or spec objects.
@@ -35,7 +63,7 @@ const resolveOpenAPI31Strategy = async (options) => {
        * and baseURI was not provided as part of resolver options,
        * then below baseURI check will make sure that constant HTTPS URL is used as baseURI.
        */
-      baseURI: url.isHttpUrl(baseURI) ? baseURI : 'https://smartbear.com/',
+      baseURI: `${baseURI}${jsonPointerURI}`,
       resolvers: [
         HttpResolverSwaggerClient({
           timeout: timeout || 10000,
@@ -51,6 +79,7 @@ const resolveOpenAPI31Strategy = async (options) => {
       strategies: [OpenApi3_1ResolveStrategy()],
     },
     parse: {
+      mediaType: mediaTypes.latest(),
       parsers: [
         OpenApiJson3_1Parser({ allowEmpty: false, sourceMap: false }),
         OpenApiYaml3_1Parser({ allowEmpty: false, sourceMap: false }),
@@ -63,9 +92,12 @@ const resolveOpenAPI31Strategy = async (options) => {
       strategies: [
         OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches, useCircularStructures }),
       ],
+      refSet,
     },
   });
-  const normalized = skipNormalization ? dereferenced : normalizeOpenAPI31(dereferenced);
+
+  const transcluded = transclude(fragmentElement, dereferenced, openApiElement);
+  const normalized = skipNormalization ? transcluded : normalizeOpenAPI31(transcluded);
 
   return { spec: toValue(normalized), errors: [] };
 };
