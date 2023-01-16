@@ -90,6 +90,7 @@ const resolveOpenAPI31Strategy = async (options) => {
       ],
     },
     dereference: {
+      maxDepth: 100,
       strategies: [
         OpenApi3_1SwaggerClientDereferenceStrategy({
           allowMetaPatches,
