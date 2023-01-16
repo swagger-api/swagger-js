@@ -4,6 +4,7 @@ import {
   isPrimitiveElement,
   isStringElement,
   visit,
+  toValue,
   includesClasses,
 } from '@swagger-api/apidom-core';
 import {
@@ -40,17 +41,28 @@ import {
 
 const visitAsync = visit[Symbol.for('nodejs.util.promisify.custom')];
 
-const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.compose({
-  props: {
-    useCircularStructures: true,
-    allowMetaPatches: false,
-  },
-  init({ useCircularStructures, allowMetaPatches }) {
+const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.init(
+  function _OpenApi3_1SwaggerClientDereferenceVisitor({
+    useCircularStructures = true,
+    allowMetaPatches = false,
+    parameterMacro = null,
+  }) {
+    const instance = this;
+    let parameterMacroOperation = null;
+
+    // props
     this.useCircularStructures = useCircularStructures;
     this.allowMetaPatches = allowMetaPatches;
-  },
-  methods: {
-    async ReferenceElement(referenceElement, key, parent, path, ancestors) {
+    this.parameterMacro = parameterMacro;
+
+    // methods
+    this.ReferenceElement = async function _ReferenceElement(
+      referenceElement,
+      key,
+      parent,
+      path,
+      ancestors
+    ) {
       const [ancestorsLineage, directAncestors] = this.toAncestorLineage(ancestors);
 
       // skip already identified cycled Path Item Objects
@@ -119,6 +131,7 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
         ancestors: ancestorsLineage,
         allowMetaPatches: this.allowMetaPatches,
         useCircularStructures: this.useCircularStructures,
+        parameterMacro: this.parameterMacro,
       });
       fragment = await visitAsync(fragment, visitor, { keyMap, nodeTypeGetter: getNodeType });
 
@@ -176,9 +189,15 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
 
       // transclude the element for a fragment
       return fragment;
-    },
+    };
 
-    async PathItemElement(pathItemElement, key, parent, path, ancestors) {
+    this.PathItemElement = async function _PathItemElement(
+      pathItemElement,
+      key,
+      parent,
+      path,
+      ancestors
+    ) {
       const [ancestorsLineage, directAncestors] = this.toAncestorLineage(ancestors);
 
       // ignore PathItemElement without $ref field
@@ -242,6 +261,7 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
         ancestors: ancestorsLineage,
         allowMetaPatches: this.allowMetaPatches,
         useCircularStructures: this.useCircularStructures,
+        parameterMacro: this.parameterMacro,
       });
       referencedElement = await visitAsync(referencedElement, visitor, {
         keyMap,
@@ -302,9 +322,15 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
 
       // transclude referencing element with merged referenced element
       return mergedPathItemElement;
-    },
+    };
 
-    async SchemaElement(referencingElement, key, parent, path, ancestors) {
+    this.SchemaElement = async function _SchemaElement(
+      referencingElement,
+      key,
+      parent,
+      path,
+      ancestors
+    ) {
       const [ancestorsLineage, directAncestors] = this.toAncestorLineage(ancestors);
 
       // skip current referencing schema as $ref keyword was not defined
@@ -414,6 +440,7 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
         options: this.options,
         useCircularStructures: this.useCircularStructures,
         allowMetaPatches: this.allowMetaPatches,
+        parameterMacro: this.parameterMacro,
         ancestors: ancestorsLineage,
       });
       referencedElement = await visitAsync(referencedElement, mergeVisitor, {
@@ -490,9 +517,31 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
 
       // transclude referencing element with merged referenced element
       return mergedSchemaElement;
-    },
-  },
-});
+    };
+
+    this.OperationElement = {
+      enter(operationElement) {
+        parameterMacroOperation = operationElement;
+      },
+      leave() {
+        parameterMacroOperation = null;
+      },
+    };
+
+    this.ParameterElement = {
+      leave(parameterElement) {
+        if (typeof instance.parameterMacro !== 'function') return;
+
+        const pojoOperation =
+          parameterMacroOperation === null ? null : toValue(parameterMacroOperation);
+        const pojoParameter = toValue(parameterElement);
+        const defaultValue = instance.parameterMacro(pojoOperation, pojoParameter);
+
+        parameterElement.set('default', defaultValue);
+      },
+    };
+  }
+);
 
 export default OpenApi3_1SwaggerClientDereferenceVisitor;
 /* eslint-enable camelcase */

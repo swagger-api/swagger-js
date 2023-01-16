@@ -34,6 +34,7 @@ const resolveOpenAPI31Strategy = async (options) => {
     allowMetaPatches = false,
     useCircularStructures = false,
     skipNormalization = false,
+    parameterMacro = null,
   } = options;
   // determining BaseURI
   const defaultBaseURI = 'https://smartbear.com/';
@@ -90,7 +91,11 @@ const resolveOpenAPI31Strategy = async (options) => {
     },
     dereference: {
       strategies: [
-        OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches, useCircularStructures }),
+        OpenApi3_1SwaggerClientDereferenceStrategy({
+          allowMetaPatches,
+          useCircularStructures,
+          parameterMacro,
+        }),
       ],
       refSet,
     },
