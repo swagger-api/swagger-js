@@ -194,6 +194,30 @@ describe('resolve', () => {
           await expect(resolveThunk()).rejects.toThrow(EvaluationJsonPointerError);
         });
       });
+
+      describe('and parameterMacro is provided sa a function', () => {
+        test('should call parameterMacro with Operation and Parameter Objects', async () => {
+          const spec = globalThis.loadJsonFile(path.join(fixturePath, 'parameter-macro.json'));
+          const resolvedSpec = await SwaggerClient.resolve({
+            spec,
+            parameterMacro: (operation, parameter) => `${operation.operationId}-${parameter.name}`,
+          });
+
+          expect(resolvedSpec).toMatchSnapshot();
+        });
+
+        test('should call parameterMacro with Parameter Object only', async () => {
+          const spec = globalThis.loadJsonFile(
+            path.join(fixturePath, 'parameter-macro-no-operation.json')
+          );
+          const resolvedSpec = await SwaggerClient.resolve({
+            spec,
+            parameterMacro: (operation, parameter) => `${String(operation)}-${parameter.name}`,
+          });
+
+          expect(resolvedSpec).toMatchSnapshot();
+        });
+      });
     });
   });
 });
