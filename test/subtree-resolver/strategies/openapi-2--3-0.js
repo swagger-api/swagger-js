@@ -1,6 +1,6 @@
 import xmock from 'xmock';
 
-import resolve from '../src/subtree-resolver/index.js';
+import resolve from '../../../src/subtree-resolver/index.js';
 
 describe('subtree $ref resolver', () => {
   let xapp;

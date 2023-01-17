@@ -1,4 +1,5 @@
-import { dispatchRefractorPlugins, isObjectElement } from '@swagger-api/apidom-core';
+/* eslint-disable camelcase */
+import { dispatchRefractorPlugins, isObjectElement, toValue } from '@swagger-api/apidom-core';
 import {
   refractorPluginNormalizeOperationIds,
   refractorPluginNormalizeParameters,
@@ -9,6 +10,7 @@ import {
   createToolbox,
   keyMap,
   getNodeType,
+  OpenApi3_1Element,
 } from '@swagger-api/apidom-ns-openapi-3-1';
 
 import opId from '../op-id.js';
@@ -38,4 +40,19 @@ const normalize = (element) => {
   return normalized;
 };
 
+/**
+ * This adapter allow to perform normalization on Plain Old JavaScript Objects.
+ * The function adapts the `normalize` function interface and is able to accept
+ * Plain Old JavaScript Objects and returns Plain Old JavaScript Objects.
+ */
+export const pojoAdapter = (normalizeFn) => (spec) => {
+  if (spec?.$$normalized) return spec;
+
+  const openApiElement = OpenApi3_1Element.refract(spec);
+  const normalized = normalizeFn(openApiElement);
+
+  return toValue(normalized);
+};
+
 export default normalize;
+/* eslint-enable camelcase */
