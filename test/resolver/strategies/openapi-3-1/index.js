@@ -1,6 +1,5 @@
 import path from 'node:path';
 import fetchMock from 'fetch-mock';
-import { EvaluationJsonPointerError } from '@swagger-api/apidom-json-pointer';
 
 import SwaggerClient from '../../../../src/index.js';
 
@@ -183,15 +182,14 @@ describe('resolve', () => {
       });
 
       describe('and pathDiscriminator compiles into invalid JSON Pointer', () => {
-        test('should throw error', async () => {
+        test('should return spec as null', async () => {
           const spec = globalThis.loadJsonFile(path.join(fixturePath, 'petstore.json'));
-          const resolveThunk = () =>
-            SwaggerClient.resolve({
-              spec,
-              pathDiscriminator: ['path', 'to', 'nothing'],
-            });
+          const resolvedSpec = await SwaggerClient.resolve({
+            spec,
+            pathDiscriminator: ['path', 'to', 'nothing'],
+          });
 
-          await expect(resolveThunk()).rejects.toThrow(EvaluationJsonPointerError);
+          expect(resolvedSpec).toEqual({ spec: null, errors: [] });
         });
       });
 

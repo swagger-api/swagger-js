@@ -20,12 +20,12 @@
 // future versions.
 //
 // TODO: move the remarks above into project documentation
-
 import get from 'lodash/get';
 
+import { isOpenAPI31 } from '../helpers/openapi-predicates.js';
 import resolve from '../resolver/index.js';
-// eslint-disable-next-line camelcase
-import normalizeOpenAPI2__30 from '../helpers/normalize/openapi-2--3-0.js';
+import normalizeOpenAPI2__30 from '../helpers/normalize/openapi-2--3-0.js'; // eslint-disable-line camelcase
+import normalizeOpenAPI31, { pojoAdapter } from '../helpers/normalize/openapi-3-1.js';
 
 export default async function resolveSubtree(obj, path, opts = {}) {
   const {
@@ -48,9 +48,14 @@ export default async function resolveSubtree(obj, path, opts = {}) {
     useCircularStructures,
   };
 
-  const { spec: normalized } = normalizeOpenAPI2__30({
-    spec: obj,
-  });
+  let normalized;
+  if (isOpenAPI31(obj)) {
+    normalized = pojoAdapter(normalizeOpenAPI31)(obj);
+  } else {
+    ({ spec: normalized } = normalizeOpenAPI2__30({
+      spec: obj,
+    }));
+  }
 
   const result = await resolve({
     ...resolveOptions,
