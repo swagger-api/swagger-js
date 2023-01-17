@@ -218,6 +218,18 @@ describe('resolve', () => {
           expect(resolvedSpec).toMatchSnapshot();
         });
       });
+
+      describe('and modelPropertyMacro is provided as a function', () => {
+        test('should call modelPropertyMacro with Schema Object property', async () => {
+          const spec = globalThis.loadJsonFile(path.join(fixturePath, 'model-property-macro.json'));
+          const resolvedSpec = await SwaggerClient.resolve({
+            spec,
+            modelPropertyMacro: (property) => `${property.type}-3`,
+          });
+
+          expect(resolvedSpec).toMatchSnapshot();
+        });
+      });
     });
   });
 });

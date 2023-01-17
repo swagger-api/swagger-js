@@ -13,16 +13,19 @@ const OpenApi3_1SwaggerClientDereferenceStrategy = OpenApi3_1DereferenceStrategy
     useCircularStructures: true,
     allowMetaPatches: false,
     parameterMacro: null,
+    modelPropertyMacro: null,
   },
   init({
     useCircularStructures = this.useCircularStructures,
     allowMetaPatches = this.allowMetaPatches,
     parameterMacro = this.parameterMacro,
+    modelPropertyMacro = this.modelPropertyMacro,
   } = {}) {
     this.name = 'openapi-3-1-swagger-client';
     this.useCircularStructures = useCircularStructures;
     this.allowMetaPatches = allowMetaPatches;
     this.parameterMacro = parameterMacro;
+    this.modelPropertyMacro = modelPropertyMacro;
   },
   methods: {
     async dereference(file, options) {
@@ -45,6 +48,7 @@ const OpenApi3_1SwaggerClientDereferenceStrategy = OpenApi3_1DereferenceStrategy
         useCircularStructures: this.useCircularStructures,
         allowMetaPatches: this.allowMetaPatches,
         parameterMacro: this.parameterMacro,
+        modelPropertyMacro: this.modelPropertyMacro,
       });
       const dereferencedElement = await visitAsync(refSet.rootRef.value, visitor, {
         keyMap,
