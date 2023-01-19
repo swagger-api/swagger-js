@@ -13,7 +13,7 @@ const ParameterMacroVisitor = ({ parameterMacro }) => {
       },
     },
     ParameterElement: {
-      leave: (parameterElement) => {
+      leave(parameterElement) {
         const pojoOperation = macroOperation === null ? null : toValue(macroOperation);
         const pojoParameter = toValue(parameterElement);
         const defaultValue = parameterMacro(pojoOperation, pojoParameter);

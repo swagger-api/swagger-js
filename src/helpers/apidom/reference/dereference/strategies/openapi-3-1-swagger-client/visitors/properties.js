@@ -2,7 +2,7 @@ import { isObjectElement, toValue } from '@swagger-api/apidom-core';
 
 const ModelPropertyMacroVisitor = ({ modelPropertyMacro }) => ({
   SchemaElement: {
-    leave: (schemaElement) => {
+    leave(schemaElement) {
       if (typeof schemaElement.properties === 'undefined') return;
       if (!isObjectElement(schemaElement.properties)) return;
 

@@ -7,6 +7,7 @@ import openApi3_1Namespace, { getNodeType, keyMap } from '@swagger-api/apidom-ns
 import OpenApi3_1SwaggerClientDereferenceVisitor from './visitors/dereference.js';
 import ParameterMacroVisitor from './visitors/parameters.js';
 import ModelPropertyMacroVisitor from './visitors/properties.js';
+import AllOfVisitor from './visitors/all-of.js';
 
 const visitAsync = visit[Symbol.for('nodejs.util.promisify.custom')];
 
@@ -16,18 +17,21 @@ const OpenApi3_1SwaggerClientDereferenceStrategy = OpenApi3_1DereferenceStrategy
     allowMetaPatches: false,
     parameterMacro: null,
     modelPropertyMacro: null,
+    mode: 'non-strict',
   },
   init({
     useCircularStructures = this.useCircularStructures,
     allowMetaPatches = this.allowMetaPatches,
     parameterMacro = this.parameterMacro,
     modelPropertyMacro = this.modelPropertyMacro,
+    mode = this.mode,
   } = {}) {
     this.name = 'openapi-3-1-swagger-client';
     this.useCircularStructures = useCircularStructures;
     this.allowMetaPatches = allowMetaPatches;
     this.parameterMacro = parameterMacro;
     this.modelPropertyMacro = modelPropertyMacro;
+    this.mode = mode;
   },
   methods: {
     async dereference(file, options) {
@@ -68,6 +72,12 @@ const OpenApi3_1SwaggerClientDereferenceStrategy = OpenApi3_1DereferenceStrategy
           modelPropertyMacro: this.modelPropertyMacro,
         });
         visitors.push(modelPropertyMacroVisitor);
+      }
+
+      // create allOf visitor (if necessary)
+      if (this.mode !== 'strict') {
+        const allOfVisitor = AllOfVisitor();
+        visitors.push(allOfVisitor);
       }
 
       // determine the root visitor
