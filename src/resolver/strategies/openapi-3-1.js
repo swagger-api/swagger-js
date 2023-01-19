@@ -38,6 +38,7 @@ const resolveOpenAPI31Strategy = async (options) => {
     skipNormalization = false,
     parameterMacro = null,
     modelPropertyMacro = null,
+    mode = 'non-strict',
   } = options;
   try {
     // determining BaseURI
@@ -101,6 +102,7 @@ const resolveOpenAPI31Strategy = async (options) => {
             useCircularStructures,
             parameterMacro,
             modelPropertyMacro,
+            mode,
           }),
         ],
         refSet,
