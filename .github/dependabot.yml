@@ -1,5 +1,6 @@
 version: 2
 updates:
+
 - package-ecosystem: npm
   directory: "/"
   schedule:
@@ -12,3 +13,9 @@ updates:
     # cross-fetch and node-fetch must be synced manually
     - dependency-name: "cross-fetch"
     - dependency-name: "node-fetch"
+
+- package-ecosystem: "github-actions"
+  target-branch: "master"
+  directory: "/"
+  schedule:
+    interval: daily
