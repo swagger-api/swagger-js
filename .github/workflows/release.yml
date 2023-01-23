@@ -2,7 +2,7 @@ name: Release
 on:
   workflow_dispatch:
     branches:
-      - cha0rn/openapi-3-1-support
+      - alpha
 
   workflow_run:
     workflows:
