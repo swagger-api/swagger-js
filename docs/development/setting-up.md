@@ -8,6 +8,11 @@
 
 Generally, we recommend following guidelines from [Node.js Releases](https://nodejs.org/en/about/releases/) to only use `Current`, `Active LTS` or `Maintenance LTS` releases.
 
+swagger-client is using certain dependencies ([ApiDOM](https://github.com/swagger-api/apidom)) that are hosted on [GitHub packages registry](https://docs.github.com/en/packages/learn-github-packages/introduction-to-github-packages).
+Before running `npm install` you need to [authenticate to GitHub Packages](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-to-github-packages).
+You can use your GitHUB PAT (Personal Access Token) or use npm login. More information can be found
+in [Working with the npm registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-with-a-personal-access-token) GitHub guide.
+
 ### Steps
 
 1. `git clone https://github.com/swagger-api/swagger-js.git`

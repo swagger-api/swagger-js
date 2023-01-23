@@ -1,6 +1,6 @@
 {
   "name": "swagger-client",
-  "version": "3.18.5",
+  "version": "3.19.0-alpha.1",
   "description": "SwaggerJS - a collection of interfaces for OAI specs",
   "browser": {
     "./src/http/fold-formdata-to-request.node.js": "./src/http/fold-formdata-to-request.browser.js",
@@ -76,6 +76,10 @@
     "@babel/register": "=7.18.9",
     "@commitlint/cli": "^17.0.0",
     "@commitlint/config-conventional": "^17.0.0",
+    "@swagger-api/apidom-core": "=0.65.0",
+    "@swagger-api/apidom-json-pointer": "=0.65.0",
+    "@swagger-api/apidom-ns-openapi-3-1": "=0.65.0",
+    "@swagger-api/apidom-reference": "=0.65.0",
     "abort-controller": "^3.0.0",
     "babel-loader": "=9.1.2",
     "babel-plugin-lodash": "=3.3.4",
@@ -111,10 +115,6 @@
   },
   "dependencies": {
     "@babel/runtime-corejs3": "^7.11.2",
-    "@swagger-api/apidom-core": "=0.65.0",
-    "@swagger-api/apidom-reference": "=0.65.0",
-    "@swagger-api/apidom-ns-openapi-3-1": "=0.65.0",
-    "@swagger-api/apidom-json-pointer": "=0.65.0",
     "cookie": "~0.5.0",
     "cross-fetch": "^3.1.5",
     "deepmerge": "~4.2.2",
@@ -128,9 +128,16 @@
     "traverse": "~0.6.6",
     "url": "~0.11.0"
   },
+  "bundleDependencies": [
+    "@swagger-api/apidom-core",
+    "@swagger-api/apidom-reference",
+    "@swagger-api/apidom-ns-openapi-3-1",
+    "@swagger-api/apidom-json-pointer"
+  ],
   "overrides": {
     "@swagger-api/apidom-reference": {
       "@swagger-api/apidom-ns-asyncapi-2": "npm:-@0.0.1",
+      "@swagger-api/apidom-ns-api-design-systems": "npm:-@0.0.1",
       "@swagger-api/apidom-parser-adapter-api-design-systems-json": "npm:-@0.0.1",
       "@swagger-api/apidom-parser-adapter-api-design-systems-yaml": "npm:-@0.0.1",
       "@swagger-api/apidom-parser-adapter-asyncapi-json-2": "npm:-@0.0.1",

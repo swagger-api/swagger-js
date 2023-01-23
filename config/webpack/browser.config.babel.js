@@ -50,7 +50,7 @@ const browser = {
     }),
     new DuplicatesPlugin({
       // emit compilation warning or error? (Default: `false`)
-      emitErrors: true,
+      emitErrors: false, // https://github.com/FormidableLabs/inspectpack/issues/181
       // display full duplicates information? (Default: `false`)
       verbose: true,
     }),

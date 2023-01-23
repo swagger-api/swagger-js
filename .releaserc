@@ -2,7 +2,7 @@
   "release": {
     "branches": [
       {"name": "master"},
-      {"name": "char0n/openapi-3-1-support", "channel": "alpha", "prerelease": "alpha"}
+      {"name": "alpha", "channel": "alpha", "prerelease": "alpha"}
     ],
     "tagFormat": "v${version}"
   },
