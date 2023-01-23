@@ -128,6 +128,12 @@
     "traverse": "~0.6.6",
     "url": "~0.11.0"
   },
+  "bundleDependencies": [
+    "@swagger-api/apidom-core",
+    "@swagger-api/apidom-reference",
+    "@swagger-api/apidom-ns-openapi-3-1",
+    "@swagger-api/apidom-json-pointer"
+  ],
   "overrides": {
     "@swagger-api/apidom-reference": {
       "@swagger-api/apidom-ns-asyncapi-2": "npm:-@0.0.1",
