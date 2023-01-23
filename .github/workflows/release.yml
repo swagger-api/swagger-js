@@ -16,7 +16,7 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.workflow_run.head_branch === 'cha0rn/openapi-3-1-support' || (github.event.workflow_run.head_branch === 'master' && github.event.workflow_run.conclusion == 'success') }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -42,13 +42,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.SWAGGER_BOT_GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Release failed
-        if: steps.semantic.outputs.new_release_published == 'false'
-        uses: actions/github-script@v6
-        with:
-          script: |
-            core.setFailed('Release failed')
 
       - name: Release published
         if: steps.semantic.outputs.new_release_published == 'true'
