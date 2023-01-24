@@ -3,6 +3,7 @@ on:
   workflow_dispatch:
     branches:
       - alpha
+      
 jobs:
   release:
     name: Release
