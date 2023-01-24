@@ -20,7 +20,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
     - name: Cache Node Modules
@@ -58,7 +58,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js 12.4.x
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v3
       with:
         node-version: 12.4.x
     - name: Cache Node Modules
@@ -80,14 +80,14 @@ jobs:
       run: node -p "require('./commonjs')"
 
     - name: Use Node 14.x
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v3
       with:
         node-version: 14.x
     - name: Run commonjs build artifacts on Node.js 14.x
       run: node -p "require('./commonjs')"
 
     - name: Use Node 16.x
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v3
       with:
         node-version: 16.x
     - name: Run commonjs build artifacts on Node.js 16.x
