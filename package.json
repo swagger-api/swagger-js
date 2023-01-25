@@ -38,7 +38,7 @@
     "deps_check_dir": ".deps_check"
   },
   "scripts": {
-    "prepublishOnly": "npm run clean && npm run lint && npm run test && npm run build",
+    "prepublishOnly": "npm run clean && npm run lint && npm run test && npm run build && node ./scripts/overrides.js",
     "build": "run-s build:umd:browser build:commonjs build:es",
     "build:umd:browser": "cross-env BABEL_ENV=browser webpack --progress --config config/webpack/browser.config.babel.js",
     "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
