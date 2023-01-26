@@ -492,6 +492,14 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
       // transclude referencing element with merged referenced element
       return mergedSchemaElement;
     },
+    async LinkElement() {
+      /**
+       * OpenApi3_1DereferenceVisitor is doing lookup of Operation Objects
+       * and assigns them to Link Object metadata. This is not needed in
+       * swagger-client context, so we're disabling it here.
+       */
+      return undefined;
+    },
   },
 });
 
