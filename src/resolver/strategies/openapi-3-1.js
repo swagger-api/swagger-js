@@ -61,6 +61,7 @@ const resolveOpenAPI31Strategy = async (options) => {
     const refSet = ReferenceSet({ refs: [openApiElementReference] });
     if (jsonPointer !== '') refSet.rootRef = null; // reset root reference as we want fragment to become the root reference
 
+    const errors = [];
     const dereferenced = await dereferenceApiDOM(fragmentElement, {
       resolve: {
         /**
@@ -106,13 +107,13 @@ const resolveOpenAPI31Strategy = async (options) => {
           }),
         ],
         refSet,
+        dereferenceOpts: { errors },
       },
     });
-
     const transcluded = transclude(fragmentElement, dereferenced, openApiElement);
     const normalized = skipNormalization ? transcluded : normalizeOpenAPI31(transcluded);
 
-    return { spec: toValue(normalized), errors: [] };
+    return { spec: toValue(normalized), errors };
   } catch (error) {
     if (error instanceof InvalidJsonPointerError || error instanceof EvaluationJsonPointerError) {
       return { spec: null, errors: [] };

@@ -38,19 +38,27 @@ import {
   EvaluationJsonSchemaUriError,
 } from '@swagger-api/apidom-reference/dereference/strategies/openapi-3-1/selectors/uri';
 
+import toPath from '../utils/to-path.js';
+import getRootCause from '../utils/get-root-cause.js';
+import specMapMod from '../../../../../../../specmap/lib/refs.js';
+
+const { wrapError } = specMapMod;
 const visitAsync = visit[Symbol.for('nodejs.util.promisify.custom')];
 
 const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.compose({
   props: {
     useCircularStructures: true,
     allowMetaPatches: false,
+    basePath: null,
   },
   init({
     allowMetaPatches = this.allowMetaPatches,
     useCircularStructures = this.useCircularStructures,
+    basePath = this.basePath,
   }) {
     this.allowMetaPatches = allowMetaPatches;
     this.useCircularStructures = useCircularStructures;
+    this.basePath = basePath;
   },
   methods: {
     async ReferenceElement(referenceElement, key, parent, path, ancestors) {
@@ -122,6 +130,7 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
         ancestors: ancestorsLineage,
         allowMetaPatches: this.allowMetaPatches,
         useCircularStructures: this.useCircularStructures,
+        basePath: this.basePath ?? toPath([...ancestors, parent, referenceElement]),
       });
       fragment = await visitAsync(fragment, visitor, { keyMap, nodeTypeGetter: getNodeType });
 
@@ -180,6 +189,7 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
       // transclude the element for a fragment
       return fragment;
     },
+
     async PathItemElement(pathItemElement, key, parent, path, ancestors) {
       const [ancestorsLineage, directAncestors] = this.toAncestorLineage(ancestors);
 
@@ -244,6 +254,7 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
         ancestors: ancestorsLineage,
         allowMetaPatches: this.allowMetaPatches,
         useCircularStructures: this.useCircularStructures,
+        basePath: this.basePath ?? toPath([...ancestors, parent, pathItemElement]),
       });
       referencedElement = await visitAsync(referencedElement, visitor, {
         keyMap,
@@ -305,6 +316,7 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
       // transclude referencing element with merged referenced element
       return mergedPathItemElement;
     },
+
     async SchemaElement(referencingElement, key, parent, path, ancestors) {
       const [ancestorsLineage, directAncestors] = this.toAncestorLineage(ancestors);
 
@@ -416,6 +428,7 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
         useCircularStructures: this.useCircularStructures,
         allowMetaPatches: this.allowMetaPatches,
         ancestors: ancestorsLineage,
+        basePath: this.basePath ?? toPath([...ancestors, parent, referencingElement]),
       });
       referencedElement = await visitAsync(referencedElement, mergeVisitor, {
         keyMap,
@@ -492,6 +505,7 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
       // transclude referencing element with merged referenced element
       return mergedSchemaElement;
     },
+
     async LinkElement() {
       /**
        * OpenApi3_1DereferenceVisitor is doing lookup of Operation Objects
@@ -499,6 +513,29 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
        * swagger-client context, so we're disabling it here.
        */
       return undefined;
+    },
+
+    async ExampleElement(exampleElement, key, parent, path, ancestors) {
+      try {
+        return await OpenApi3_1DereferenceVisitor.compose.methods.ExampleElement.call(
+          this,
+          exampleElement,
+          key,
+          parent,
+          path,
+          ancestors
+        );
+      } catch (error) {
+        const rootCause = getRootCause(error);
+        const wrappedError = wrapError(rootCause, {
+          baseDoc: this.reference.uri,
+          externalValue: exampleElement.externalValue?.toValue(),
+          fullPath: this.basePath ?? toPath([...ancestors, parent, exampleElement]),
+        });
+        this.options.dereference.dereferenceOpts?.errors?.push?.(wrappedError);
+
+        return undefined;
+      }
     },
   },
 });

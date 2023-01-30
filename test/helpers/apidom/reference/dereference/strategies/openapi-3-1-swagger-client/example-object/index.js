@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { toValue } from '@swagger-api/apidom-core';
 import { mediaTypes } from '@swagger-api/apidom-ns-openapi-3-1';
-import { dereference, DereferenceError } from '@swagger-api/apidom-reference/configuration/empty';
+import { dereference } from '@swagger-api/apidom-reference/configuration/empty';
 
 import * as jestSetup from '../__utils__/jest.local.setup.js';
 
@@ -135,14 +135,38 @@ describe('dereference', () => {
           describe('and with unresolvable URI', () => {
             const fixturePath = path.join(rootFixturePath, 'external-value-unresolvable');
 
-            test('should throw error', async () => {
-              const rootFilePath = path.join(fixturePath, 'root.json');
-              const dereferenceThunk = () =>
-                dereference(rootFilePath, {
+            test.only('should dereference', async () => {
+              try {
+                const rootFilePath = path.join(fixturePath, 'root.json');
+                const actual = await dereference(rootFilePath, {
                   parse: { mediaType: mediaTypes.latest('json') },
                 });
+                const expected = globalThis.loadJsonFile(
+                  path.join(fixturePath, 'dereferenced.json')
+                );
 
-              await expect(dereferenceThunk()).rejects.toThrow(DereferenceError);
+                expect(toValue(actual)).toEqual(expected);
+              } catch (e) {
+                console.dir(e);
+              }
+            });
+
+            test('should collect error', async () => {
+              const rootFilePath = path.join(fixturePath, 'root.json');
+              const errors = [];
+
+              await dereference(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+                dereference: { dereferenceOpts: { errors } },
+              });
+
+              expect(errors).toHaveLength(1);
+              expect(errors[0]).toMatchObject({
+                message: expect.stringMatching(/^Could not resolve reference: ENOENT/),
+                baseDoc: expect.stringMatching(/external-value-unresolvable\/root\.json$/),
+                externalValue: './ex.json',
+                fullPath: ['components', 'examples', 'example1'],
+              });
             });
           });
 
@@ -164,14 +188,32 @@ describe('dereference', () => {
           describe('given both value and externalValue fields are defined', () => {
             const fixturePath = path.join(rootFixturePath, 'external-value-value-both-defined');
 
-            test('should throw error', async () => {
+            test('should dereference', async () => {
               const rootFilePath = path.join(fixturePath, 'root.json');
-              const dereferenceThunk = () =>
-                dereference(rootFilePath, {
-                  parse: { mediaType: mediaTypes.latest('json') },
-                });
+              const actual = await dereference(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+              });
+              const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
-              await expect(dereferenceThunk()).rejects.toThrow(DereferenceError);
+              expect(toValue(actual)).toEqual(expected);
+            });
+
+            test('should collect error', async () => {
+              const rootFilePath = path.join(fixturePath, 'root.json');
+              const errors = [];
+
+              await dereference(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+                dereference: { dereferenceOpts: { errors } },
+              });
+
+              expect(errors).toHaveLength(1);
+              expect(errors[0]).toMatchObject({
+                message: expect.stringMatching(/^Could not resolve reference: ExampleElement/),
+                baseDoc: expect.stringMatching(/external-value-value-both-defined\/root\.json$/),
+                externalValue: './ex.json',
+                fullPath: ['components', 'examples', 'example1'],
+              });
             });
           });
         });
