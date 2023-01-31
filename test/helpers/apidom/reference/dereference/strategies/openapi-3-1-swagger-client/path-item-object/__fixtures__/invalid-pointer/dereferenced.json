@@ -1,0 +1,15 @@
+[
+  {
+    "openapi": "3.1.0",
+    "paths": {
+      "/path1": {
+        "$ref": "invalid-pointer"
+      },
+      "/path2": {
+        "summary": "path item summary",
+        "description": "path item description",
+        "get": {}
+      }
+    }
+  }
+]
