@@ -204,130 +204,143 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
     },
 
     async PathItemElement(pathItemElement, key, parent, path, ancestors) {
-      const [ancestorsLineage, directAncestors] = this.toAncestorLineage(ancestors);
+      try {
+        const [ancestorsLineage, directAncestors] = this.toAncestorLineage(ancestors);
 
-      // ignore PathItemElement without $ref field
-      if (!isStringElement(pathItemElement.$ref)) {
-        return undefined;
-      }
+        // ignore PathItemElement without $ref field
+        if (!isStringElement(pathItemElement.$ref)) {
+          return undefined;
+        }
 
-      // skip already identified cycled Path Item Objects
-      if (includesClasses(['cycle'], pathItemElement.$ref)) {
-        return false;
-      }
-
-      // detect possible cycle in traversal and avoid it
-      if (ancestorsLineage.some((ancs) => ancs.has(pathItemElement))) {
-        // skip processing this schema and all it's child schemas
-        return false;
-      }
-
-      // ignore resolving external Path Item Elements
-      if (!this.options.resolve.external && isPathItemElementExternal(pathItemElement)) {
-        return undefined;
-      }
-
-      const reference = await this.toReference(pathItemElement.$ref.toValue());
-      const retrievalURI = reference.uri;
-      const $refBaseURI = url.resolve(retrievalURI, pathItemElement.$ref.toValue());
-
-      this.indirections.push(pathItemElement);
-
-      const jsonPointer = uriToPointer($refBaseURI);
-
-      // possibly non-semantic referenced element
-      let referencedElement = jsonPointerEvaluate(jsonPointer, reference.value.result);
-
-      // applying semantics to a referenced element
-      if (isPrimitiveElement(referencedElement)) {
-        referencedElement = PathItemElement.refract(referencedElement);
-      }
-
-      // detect direct or indirect reference
-      if (this.indirections.includes(referencedElement)) {
-        throw new Error('Recursive JSON Pointer detected');
-      }
-
-      // detect maximum depth of dereferencing
-      if (this.indirections.length > this.options.dereference.maxDepth) {
-        throw new MaximumDereferenceDepthError(
-          `Maximum dereference depth of "${this.options.dereference.maxDepth}" has been exceeded in file "${this.reference.uri}"`
-        );
-      }
-
-      // append referencing schema to ancestors lineage
-      directAncestors.add(pathItemElement);
-
-      // dive deep into the referenced element
-      const visitor = OpenApi3_1SwaggerClientDereferenceVisitor({
-        reference,
-        namespace: this.namespace,
-        indirections: [...this.indirections],
-        options: this.options,
-        ancestors: ancestorsLineage,
-        allowMetaPatches: this.allowMetaPatches,
-        useCircularStructures: this.useCircularStructures,
-        basePath: this.basePath ?? toPath([...ancestors, parent, pathItemElement]),
-      });
-      referencedElement = await visitAsync(referencedElement, visitor, {
-        keyMap,
-        nodeTypeGetter: getNodeType,
-      });
-
-      // remove referencing schema from ancestors lineage
-      directAncestors.delete(pathItemElement);
-
-      this.indirections.pop();
-
-      if (!this.useCircularStructures) {
-        const hasCycles = ancestorsLineage.some((ancs) => ancs.has(referencedElement));
-        if (hasCycles) {
-          if (url.isHttpUrl(retrievalURI) || url.isFileSystemPath(retrievalURI)) {
-            // make the referencing URL or file system path absolute
-            const cycledPathItemElement = new PathItemElement(
-              { $ref: $refBaseURI },
-              pathItemElement.meta.clone(),
-              pathItemElement.attributes.clone()
-            );
-            cycledPathItemElement.get('$ref').classes.push('cycle');
-            return cycledPathItemElement;
-          }
-          // skip processing this schema but traverse all it's child schemas
+        // skip already identified cycled Path Item Objects
+        if (includesClasses(['cycle'], pathItemElement.$ref)) {
           return false;
         }
-      }
 
-      // merge fields from referenced Path Item with referencing one
-      const mergedPathItemElement = new PathItemElement(
-        [...referencedElement.content],
-        referencedElement.meta.clone(),
-        referencedElement.attributes.clone()
-      );
-      // existing keywords from referencing PathItemElement overrides ones from referenced element
-      pathItemElement.forEach((valueElement, keyElement, item) => {
-        mergedPathItemElement.remove(keyElement.toValue());
-        mergedPathItemElement.content.push(item);
-      });
-      mergedPathItemElement.remove('$ref');
-
-      // annotate referenced element with info about original referencing element
-      mergedPathItemElement.setMetaProperty('ref-fields', {
-        $ref: pathItemElement.$ref?.toValue(),
-      });
-      // annotate referenced element with info about origin
-      mergedPathItemElement.setMetaProperty('ref-origin', reference.uri);
-
-      // apply meta patches
-      if (this.allowMetaPatches) {
-        // apply meta patch only when not already applied
-        if (typeof mergedPathItemElement.get('$$ref') === 'undefined') {
-          const baseURI = url.resolve(retrievalURI, $refBaseURI);
-          mergedPathItemElement.set('$$ref', baseURI);
+        // detect possible cycle in traversal and avoid it
+        if (ancestorsLineage.some((ancs) => ancs.has(pathItemElement))) {
+          // skip processing this schema and all it's child schemas
+          return false;
         }
-      }
 
-      // transclude referencing element with merged referenced element
-      return mergedPathItemElement;
+        // ignore resolving external Path Item Elements
+        if (!this.options.resolve.external && isPathItemElementExternal(pathItemElement)) {
+          return undefined;
+        }
+
+        const reference = await this.toReference(pathItemElement.$ref.toValue());
+        const retrievalURI = reference.uri;
+        const $refBaseURI = url.resolve(retrievalURI, pathItemElement.$ref.toValue());
+
+        this.indirections.push(pathItemElement);
+
+        const jsonPointer = uriToPointer($refBaseURI);
+
+        // possibly non-semantic referenced element
+        let referencedElement = jsonPointerEvaluate(jsonPointer, reference.value.result);
+
+        // applying semantics to a referenced element
+        if (isPrimitiveElement(referencedElement)) {
+          referencedElement = PathItemElement.refract(referencedElement);
+        }
+
+        // detect direct or indirect reference
+        if (this.indirections.includes(referencedElement)) {
+          throw new Error('Recursive JSON Pointer detected');
+        }
+
+        // detect maximum depth of dereferencing
+        if (this.indirections.length > this.options.dereference.maxDepth) {
+          throw new MaximumDereferenceDepthError(
+            `Maximum dereference depth of "${this.options.dereference.maxDepth}" has been exceeded in file "${this.reference.uri}"`
+          );
+        }
+
+        // append referencing schema to ancestors lineage
+        directAncestors.add(pathItemElement);
+
+        // dive deep into the referenced element
+        const visitor = OpenApi3_1SwaggerClientDereferenceVisitor({
+          reference,
+          namespace: this.namespace,
+          indirections: [...this.indirections],
+          options: this.options,
+          ancestors: ancestorsLineage,
+          allowMetaPatches: this.allowMetaPatches,
+          useCircularStructures: this.useCircularStructures,
+          basePath: this.basePath ?? [...toPath([...ancestors, parent, pathItemElement]), '$ref'],
+        });
+        referencedElement = await visitAsync(referencedElement, visitor, {
+          keyMap,
+          nodeTypeGetter: getNodeType,
+        });
+
+        // remove referencing schema from ancestors lineage
+        directAncestors.delete(pathItemElement);
+
+        this.indirections.pop();
+
+        if (!this.useCircularStructures) {
+          const hasCycles = ancestorsLineage.some((ancs) => ancs.has(referencedElement));
+          if (hasCycles) {
+            if (url.isHttpUrl(retrievalURI) || url.isFileSystemPath(retrievalURI)) {
+              // make the referencing URL or file system path absolute
+              const cycledPathItemElement = new PathItemElement(
+                { $ref: $refBaseURI },
+                pathItemElement.meta.clone(),
+                pathItemElement.attributes.clone()
+              );
+              cycledPathItemElement.get('$ref').classes.push('cycle');
+              return cycledPathItemElement;
+            }
+            // skip processing this schema but traverse all it's child schemas
+            return false;
+          }
+        }
+
+        // merge fields from referenced Path Item with referencing one
+        const mergedPathItemElement = new PathItemElement(
+          [...referencedElement.content],
+          referencedElement.meta.clone(),
+          referencedElement.attributes.clone()
+        );
+        // existing keywords from referencing PathItemElement overrides ones from referenced element
+        pathItemElement.forEach((valueElement, keyElement, item) => {
+          mergedPathItemElement.remove(keyElement.toValue());
+          mergedPathItemElement.content.push(item);
+        });
+        mergedPathItemElement.remove('$ref');
+
+        // annotate referenced element with info about original referencing element
+        mergedPathItemElement.setMetaProperty('ref-fields', {
+          $ref: pathItemElement.$ref?.toValue(),
+        });
+        // annotate referenced element with info about origin
+        mergedPathItemElement.setMetaProperty('ref-origin', reference.uri);
+
+        // apply meta patches
+        if (this.allowMetaPatches) {
+          // apply meta patch only when not already applied
+          if (typeof mergedPathItemElement.get('$$ref') === 'undefined') {
+            const baseURI = url.resolve(retrievalURI, $refBaseURI);
+            mergedPathItemElement.set('$$ref', baseURI);
+          }
+        }
+
+        // transclude referencing element with merged referenced element
+        return mergedPathItemElement;
+      } catch (error) {
+        const rootCause = getRootCause(error);
+        const wrappedError = wrapError(rootCause, {
+          baseDoc: this.reference.uri,
+          $ref: pathItemElement.$ref.toValue(),
+          pointer: uriToPointer(pathItemElement.$ref.toValue()),
+          fullPath: this.basePath ?? [...toPath([...ancestors, parent, pathItemElement]), '$ref'],
+        });
+        this.options.dereference.dereferenceOpts?.errors?.push?.(wrappedError);
+
+        return undefined;
+      }
     },
 
     async SchemaElement(referencingElement, key, parent, path, ancestors) {
