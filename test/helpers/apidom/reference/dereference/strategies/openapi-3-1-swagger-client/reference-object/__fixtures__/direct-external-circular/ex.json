@@ -1,5 +1,5 @@
 {
   "externalParameter": {
-    "$ref": "./root.json#/components/parameters/userId"
+    "$ref": "./root.json#/components/parameters/externalRef"
   }
 }
