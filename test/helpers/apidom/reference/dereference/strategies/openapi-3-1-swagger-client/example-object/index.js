@@ -135,20 +135,14 @@ describe('dereference', () => {
           describe('and with unresolvable URI', () => {
             const fixturePath = path.join(rootFixturePath, 'external-value-unresolvable');
 
-            test.only('should dereference', async () => {
-              try {
-                const rootFilePath = path.join(fixturePath, 'root.json');
-                const actual = await dereference(rootFilePath, {
-                  parse: { mediaType: mediaTypes.latest('json') },
-                });
-                const expected = globalThis.loadJsonFile(
-                  path.join(fixturePath, 'dereferenced.json')
-                );
+            test('should dereference', async () => {
+              const rootFilePath = path.join(fixturePath, 'root.json');
+              const actual = await dereference(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+              });
+              const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
-                expect(toValue(actual)).toEqual(expected);
-              } catch (e) {
-                console.dir(e);
-              }
+              expect(toValue(actual)).toEqual(expected);
             });
 
             test('should collect error', async () => {
@@ -165,7 +159,7 @@ describe('dereference', () => {
                 message: expect.stringMatching(/^Could not resolve reference: ENOENT/),
                 baseDoc: expect.stringMatching(/external-value-unresolvable\/root\.json$/),
                 externalValue: './ex.json',
-                fullPath: ['components', 'examples', 'example1'],
+                fullPath: ['components', 'examples', 'example1', 'externalValue'],
               });
             });
           });
@@ -212,7 +206,7 @@ describe('dereference', () => {
                 message: expect.stringMatching(/^Could not resolve reference: ExampleElement/),
                 baseDoc: expect.stringMatching(/external-value-value-both-defined\/root\.json$/),
                 externalValue: './ex.json',
-                fullPath: ['components', 'examples', 'example1'],
+                fullPath: ['components', 'examples', 'example1', 'externalValue'],
               });
             });
           });

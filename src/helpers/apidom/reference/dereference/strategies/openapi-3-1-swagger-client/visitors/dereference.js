@@ -62,132 +62,145 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
   },
   methods: {
     async ReferenceElement(referenceElement, key, parent, path, ancestors) {
-      const [ancestorsLineage, directAncestors] = this.toAncestorLineage(ancestors);
+      try {
+        const [ancestorsLineage, directAncestors] = this.toAncestorLineage(ancestors);
 
-      // skip already identified cycled Path Item Objects
-      if (includesClasses(['cycle'], referenceElement.$ref)) {
-        return false;
-      }
-
-      // detect possible cycle in traversal and avoid it
-      if (ancestorsLineage.some((ancs) => ancs.has(referenceElement))) {
-        // skip processing this schema and all it's child schemas
-        return false;
-      }
-
-      // ignore resolving external Reference Objects
-      if (!this.options.resolve.external && isReferenceElementExternal(referenceElement)) {
-        return false;
-      }
-
-      const reference = await this.toReference(referenceElement.$ref.toValue());
-      const retrievalURI = reference.uri;
-      const $refBaseURI = url.resolve(retrievalURI, referenceElement.$ref.toValue());
-
-      this.indirections.push(referenceElement);
-
-      const jsonPointer = uriToPointer($refBaseURI);
-
-      // possibly non-semantic fragment
-      let fragment = jsonPointerEvaluate(jsonPointer, reference.value.result);
-
-      // applying semantics to a fragment
-      if (isPrimitiveElement(fragment)) {
-        const referencedElementType = referenceElement.meta.get('referenced-element').toValue();
-
-        if (isReferenceLikeElement(fragment)) {
-          // handling indirect references
-          fragment = ReferenceElement.refract(fragment);
-          fragment.setMetaProperty('referenced-element', referencedElementType);
-        } else {
-          // handling direct references
-          const ElementClass = this.namespace.getElementClass(referencedElementType);
-          fragment = ElementClass.refract(fragment);
-        }
-      }
-
-      // detect direct or indirect reference
-      if (this.indirections.includes(fragment)) {
-        throw new Error('Recursive JSON Pointer detected');
-      }
-
-      // detect maximum depth of dereferencing
-      if (this.indirections.length > this.options.dereference.maxDepth) {
-        throw new MaximumDereferenceDepthError(
-          `Maximum dereference depth of "${this.options.dereference.maxDepth}" has been exceeded in file "${this.reference.uri}"`
-        );
-      }
-
-      // append referencing schema to ancestors lineage
-      directAncestors.add(referenceElement);
-
-      // dive deep into the fragment
-      const visitor = OpenApi3_1SwaggerClientDereferenceVisitor({
-        reference,
-        namespace: this.namespace,
-        indirections: [...this.indirections],
-        options: this.options,
-        ancestors: ancestorsLineage,
-        allowMetaPatches: this.allowMetaPatches,
-        useCircularStructures: this.useCircularStructures,
-        basePath: this.basePath ?? toPath([...ancestors, parent, referenceElement]),
-      });
-      fragment = await visitAsync(fragment, visitor, { keyMap, nodeTypeGetter: getNodeType });
-
-      // remove referencing schema from ancestors lineage
-      directAncestors.delete(referenceElement);
-
-      this.indirections.pop();
-
-      if (!this.useCircularStructures) {
-        const hasCycles = ancestorsLineage.some((ancs) => ancs.has(fragment));
-        if (hasCycles) {
-          if (url.isHttpUrl(retrievalURI) || url.isFileSystemPath(retrievalURI)) {
-            // make the referencing URL or file system path absolute
-            const cycledReferenceElement = new ReferenceElement(
-              { $ref: $refBaseURI },
-              referenceElement.meta.clone(),
-              referenceElement.attributes.clone()
-            );
-            cycledReferenceElement.get('$ref').classes.push('cycle');
-            return cycledReferenceElement;
-          }
-          // skip processing this schema but traverse all it's child schemas
+        // skip already identified cycled Path Item Objects
+        if (includesClasses(['cycle'], referenceElement.$ref)) {
           return false;
         }
-      }
 
-      fragment = fragment.clone();
-      fragment.setMetaProperty('ref-fields', {
-        $ref: referenceElement.$ref?.toValue(),
-        description: referenceElement.description?.toValue(),
-        summary: referenceElement.summary?.toValue(),
-      });
-      // annotate fragment with info about origin
-      fragment.setMetaProperty('ref-origin', reference.uri);
-
-      // override description and summary (outer has higher priority then inner)
-      const hasDescription = typeof referenceElement.description !== 'undefined';
-      const hasSummary = typeof referenceElement.description !== 'undefined';
-      if (hasDescription && 'description' in fragment) {
-        fragment.description = referenceElement.description;
-      }
-      if (hasSummary && 'summary' in fragment) {
-        fragment.summary = referenceElement.summary;
-      }
-
-      // apply meta patches
-      if (this.allowMetaPatches && isObjectElement(fragment)) {
-        const objectFragment = fragment;
-        // apply meta patch only when not already applied
-        if (typeof objectFragment.get('$$ref') === 'undefined') {
-          const baseURI = url.resolve(retrievalURI, $refBaseURI);
-          objectFragment.set('$$ref', baseURI);
+        // detect possible cycle in traversal and avoid it
+        if (ancestorsLineage.some((ancs) => ancs.has(referenceElement))) {
+          // skip processing this schema and all it's child schemas
+          return false;
         }
-      }
 
-      // transclude the element for a fragment
-      return fragment;
+        // ignore resolving external Reference Objects
+        if (!this.options.resolve.external && isReferenceElementExternal(referenceElement)) {
+          return false;
+        }
+
+        const reference = await this.toReference(referenceElement.$ref.toValue());
+        const retrievalURI = reference.uri;
+        const $refBaseURI = url.resolve(retrievalURI, referenceElement.$ref.toValue());
+
+        this.indirections.push(referenceElement);
+
+        const jsonPointer = uriToPointer($refBaseURI);
+
+        // possibly non-semantic fragment
+        let fragment = jsonPointerEvaluate(jsonPointer, reference.value.result);
+
+        // applying semantics to a fragment
+        if (isPrimitiveElement(fragment)) {
+          const referencedElementType = referenceElement.meta.get('referenced-element').toValue();
+
+          if (isReferenceLikeElement(fragment)) {
+            // handling indirect references
+            fragment = ReferenceElement.refract(fragment);
+            fragment.setMetaProperty('referenced-element', referencedElementType);
+          } else {
+            // handling direct references
+            const ElementClass = this.namespace.getElementClass(referencedElementType);
+            fragment = ElementClass.refract(fragment);
+          }
+        }
+
+        // detect direct or indirect reference
+        if (this.indirections.includes(fragment)) {
+          throw new Error('Recursive JSON Pointer detected');
+        }
+
+        // detect maximum depth of dereferencing
+        if (this.indirections.length > this.options.dereference.maxDepth) {
+          throw new MaximumDereferenceDepthError(
+            `Maximum dereference depth of "${this.options.dereference.maxDepth}" has been exceeded in file "${this.reference.uri}"`
+          );
+        }
+
+        // append referencing schema to ancestors lineage
+        directAncestors.add(referenceElement);
+
+        // dive deep into the fragment
+        const visitor = OpenApi3_1SwaggerClientDereferenceVisitor({
+          reference,
+          namespace: this.namespace,
+          indirections: [...this.indirections],
+          options: this.options,
+          ancestors: ancestorsLineage,
+          allowMetaPatches: this.allowMetaPatches,
+          useCircularStructures: this.useCircularStructures,
+          basePath: this.basePath ?? [...toPath([...ancestors, parent, referenceElement]), '$ref'],
+        });
+        fragment = await visitAsync(fragment, visitor, { keyMap, nodeTypeGetter: getNodeType });
+
+        // remove referencing schema from ancestors lineage
+        directAncestors.delete(referenceElement);
+
+        this.indirections.pop();
+
+        if (!this.useCircularStructures) {
+          const hasCycles = ancestorsLineage.some((ancs) => ancs.has(fragment));
+          if (hasCycles) {
+            if (url.isHttpUrl(retrievalURI) || url.isFileSystemPath(retrievalURI)) {
+              // make the referencing URL or file system path absolute
+              const cycledReferenceElement = new ReferenceElement(
+                { $ref: $refBaseURI },
+                referenceElement.meta.clone(),
+                referenceElement.attributes.clone()
+              );
+              cycledReferenceElement.get('$ref').classes.push('cycle');
+              return cycledReferenceElement;
+            }
+            // skip processing this schema but traverse all it's child schemas
+            return false;
+          }
+        }
+
+        fragment = fragment.clone();
+        fragment.setMetaProperty('ref-fields', {
+          $ref: referenceElement.$ref?.toValue(),
+          description: referenceElement.description?.toValue(),
+          summary: referenceElement.summary?.toValue(),
+        });
+        // annotate fragment with info about origin
+        fragment.setMetaProperty('ref-origin', reference.uri);
+
+        // override description and summary (outer has higher priority then inner)
+        const hasDescription = typeof referenceElement.description !== 'undefined';
+        const hasSummary = typeof referenceElement.summary !== 'undefined';
+        if (hasDescription && 'description' in fragment) {
+          fragment.description = referenceElement.description;
+        }
+        if (hasSummary && 'summary' in fragment) {
+          fragment.summary = referenceElement.summary;
+        }
+
+        // apply meta patches
+        if (this.allowMetaPatches && isObjectElement(fragment)) {
+          const objectFragment = fragment;
+          // apply meta patch only when not already applied
+          if (typeof objectFragment.get('$$ref') === 'undefined') {
+            const baseURI = url.resolve(retrievalURI, $refBaseURI);
+            objectFragment.set('$$ref', baseURI);
+          }
+        }
+
+        // transclude the element for a fragment
+        return fragment;
+      } catch (error) {
+        const rootCause = getRootCause(error);
+        const wrappedError = wrapError(rootCause, {
+          baseDoc: this.reference.uri,
+          $ref: referenceElement.$ref.toValue(),
+          pointer: uriToPointer(referenceElement.$ref.toValue()),
+          fullPath: this.basePath ?? [...toPath([...ancestors, parent, referenceElement]), '$ref'],
+        });
+        this.options.dereference.dereferenceOpts?.errors?.push?.(wrappedError);
+
+        return undefined;
+      }
     },
 
     async PathItemElement(pathItemElement, key, parent, path, ancestors) {
@@ -530,7 +543,10 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
         const wrappedError = wrapError(rootCause, {
           baseDoc: this.reference.uri,
           externalValue: exampleElement.externalValue?.toValue(),
-          fullPath: this.basePath ?? toPath([...ancestors, parent, exampleElement]),
+          fullPath: this.basePath ?? [
+            ...toPath([...ancestors, parent, exampleElement]),
+            'externalValue',
+          ],
         });
         this.options.dereference.dereferenceOpts?.errors?.push?.(wrappedError);
 
