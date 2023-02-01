@@ -70,6 +70,7 @@ const OpenApi3_1SwaggerClientDereferenceStrategy = OpenApi3_1DereferenceStrategy
       if (typeof this.modelPropertyMacro === 'function') {
         const modelPropertyMacroVisitor = ModelPropertyMacroVisitor({
           modelPropertyMacro: this.modelPropertyMacro,
+          options,
         });
         visitors.push(modelPropertyMacroVisitor);
       }
