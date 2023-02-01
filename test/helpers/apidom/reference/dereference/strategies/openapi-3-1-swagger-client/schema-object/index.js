@@ -2,16 +2,7 @@ import path from 'node:path';
 import { toValue } from '@swagger-api/apidom-core';
 import { isSchemaElement, mediaTypes } from '@swagger-api/apidom-ns-openapi-3-1';
 import { evaluate } from '@swagger-api/apidom-json-pointer';
-import {
-  DereferenceError,
-  MaximumDereferenceDepthError,
-  MaximumResolverDepthError,
-  ResolverError,
-  dereference,
-  resolve,
-} from '@swagger-api/apidom-reference/configuration/empty';
-import { EvaluationJsonSchema$anchorError } from '@swagger-api/apidom-reference/dereference/strategies/openapi-3-1/selectors/$anchor';
-import { EvaluationJsonSchemaUriError } from '@swagger-api/apidom-reference/dereference/strategies/openapi-3-1/selectors/uri';
+import { dereference, resolve } from '@swagger-api/apidom-reference/configuration/empty';
 
 // eslint-disable-next-line camelcase
 import OpenApi3_1SwaggerClientDereferenceStrategy from '../../../../../../../../src/helpers/apidom/reference/dereference/strategies/openapi-3-1-swagger-client/index.js';
@@ -690,24 +681,32 @@ describe('dereference', () => {
 
         describe('given Schema Objects with unresolvable $id values', () => {
           const fixturePath = path.join(rootFixturePath, '$id-unresolvable');
+          const rootFilePath = path.join(fixturePath, 'root.json');
 
-          test('should throw error', async () => {
-            const rootFilePath = path.join(fixturePath, 'root.json');
-            const dereferenceThunk = () =>
-              dereference(rootFilePath, {
-                parse: { mediaType: mediaTypes.latest('json') },
-              });
-
-            await expect(dereferenceThunk()).rejects.toThrow(DereferenceError);
-            await expect(dereferenceThunk()).rejects.toMatchObject({
-              cause: {
-                cause: expect.any(ResolverError),
-              },
+          test('should dereference', async () => {
+            const actual = await dereference(rootFilePath, {
+              parse: { mediaType: mediaTypes.latest('json') },
             });
-            await expect(dereferenceThunk()).rejects.toHaveProperty(
-              'cause.cause.message',
-              expect.stringMatching(/\/schemas\/nested\/ex\.json"$/)
-            );
+            const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
+
+            expect(toValue(actual)).toEqual(expected);
+          });
+
+          test('should collect error', async () => {
+            const errors = [];
+
+            await dereference(rootFilePath, {
+              parse: { mediaType: mediaTypes.latest('json') },
+              dereference: { dereferenceOpts: { errors } },
+            });
+
+            expect(errors).toHaveLength(1);
+            expect(errors[0]).toMatchObject({
+              message: expect.stringMatching(/^Could not resolve reference: ENOENT/),
+              baseDoc: expect.stringMatching(/\$id-unresolvable\/root\.json$/),
+              $ref: './ex.json',
+              fullPath: ['components', 'schemas', 'User', 'properties', 'profile', '$ref'],
+            });
           });
         });
 
@@ -997,19 +996,31 @@ describe('dereference', () => {
 
         describe('given Schema Objects with $ref keyword containing unresolvable URL', () => {
           const fixturePath = path.join(rootFixturePath, '$ref-url-unresolvable');
+          const rootFilePath = path.join(fixturePath, 'root.json');
 
-          test('should throw error', async () => {
-            const rootFilePath = path.join(fixturePath, 'root.json');
-            const dereferenceThunk = () =>
-              dereference(rootFilePath, {
-                parse: { mediaType: mediaTypes.latest('json') },
-              });
+          test('should dereference', async () => {
+            const actual = await dereference(rootFilePath, {
+              parse: { mediaType: mediaTypes.latest('json') },
+            });
+            const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
-            await expect(dereferenceThunk()).rejects.toThrow(DereferenceError);
-            await expect(dereferenceThunk()).rejects.toMatchObject({
-              cause: {
-                cause: expect.any(ResolverError),
-              },
+            expect(toValue(actual)).toEqual(expected);
+          });
+
+          test('should collect error', async () => {
+            const errors = [];
+
+            await dereference(rootFilePath, {
+              parse: { mediaType: mediaTypes.latest('json') },
+              dereference: { dereferenceOpts: { errors } },
+            });
+
+            expect(errors).toHaveLength(1);
+            expect(errors[0]).toMatchObject({
+              message: expect.stringMatching(/^Could not resolve reference: ENOENT/),
+              baseDoc: expect.stringMatching(/\$ref-url-unresolvable\/root\.json$/),
+              $ref: './ex.json',
+              fullPath: ['components', 'schemas', 'User', 'properties', 'profile', '$ref'],
             });
           });
         });
@@ -1124,19 +1135,34 @@ describe('dereference', () => {
 
         describe('given Schema Objects with $ref keyword containing unresolvable Uniform Resource Name', () => {
           const fixturePath = path.join(rootFixturePath, '$ref-urn-unresolvable');
+          const rootFilePath = path.join(fixturePath, 'root.json');
 
-          test('should throw error', async () => {
-            const rootFilePath = path.join(fixturePath, 'root.json');
-            const dereferenceThunk = () =>
-              dereference(rootFilePath, {
-                parse: { mediaType: mediaTypes.latest('json') },
-              });
+          test('should dereference', async () => {
+            const actual = await dereference(rootFilePath, {
+              parse: { mediaType: mediaTypes.latest('json') },
+              resolve: { maxDepth: 2 },
+            });
+            const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
-            await expect(dereferenceThunk()).rejects.toThrow(DereferenceError);
-            await expect(dereferenceThunk()).rejects.toMatchObject({
-              cause: {
-                cause: expect.any(EvaluationJsonSchemaUriError),
-              },
+            expect(toValue(actual)).toEqual(expected);
+          });
+
+          test('should collect error', async () => {
+            const errors = [];
+
+            await dereference(rootFilePath, {
+              parse: { mediaType: mediaTypes.latest('json') },
+              dereference: { dereferenceOpts: { errors } },
+            });
+
+            expect(errors).toHaveLength(1);
+            expect(errors[0]).toMatchObject({
+              message: expect.stringMatching(
+                /^Could not resolve reference: Evaluation failed on URI:/
+              ),
+              baseDoc: expect.stringMatching(/\$ref-urn-unresolvable\/root\.json$/),
+              $ref: 'urn:uuid:3',
+              fullPath: ['components', 'schemas', 'User', 'properties', 'profile', '$ref'],
             });
           });
         });
@@ -1285,19 +1311,33 @@ describe('dereference', () => {
 
         describe('given Schema Objects with not found $anchor', () => {
           const fixturePath = path.join(rootFixturePath, '$anchor-not-found');
+          const rootFilePath = path.join(fixturePath, 'root.json');
 
-          test('should throw error', async () => {
-            const rootFilePath = path.join(fixturePath, 'root.json');
-            const dereferenceThunk = () =>
-              dereference(rootFilePath, {
-                parse: { mediaType: mediaTypes.latest('json') },
-              });
+          test('should dereference', async () => {
+            const actual = await dereference(rootFilePath, {
+              parse: { mediaType: mediaTypes.latest('json') },
+            });
+            const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
-            await expect(dereferenceThunk()).rejects.toThrow(DereferenceError);
-            await expect(dereferenceThunk()).rejects.toMatchObject({
-              cause: {
-                cause: expect.any(EvaluationJsonSchema$anchorError),
-              },
+            expect(toValue(actual)).toEqual(expected);
+          });
+
+          test('should collect error', async () => {
+            const errors = [];
+
+            await dereference(rootFilePath, {
+              parse: { mediaType: mediaTypes.latest('json') },
+              dereference: { dereferenceOpts: { errors } },
+            });
+
+            expect(errors).toHaveLength(1);
+            expect(errors[0]).toMatchObject({
+              message: expect.stringMatching(
+                /^Could not resolve reference: Evaluation failed on token:/
+              ),
+              baseDoc: expect.stringMatching(/\$anchor-not-found\/root\.json$/),
+              $ref: '#user-profile',
+              fullPath: ['components', 'schemas', 'User', 'properties', 'profile', '$ref'],
             });
           });
         });
@@ -1318,180 +1358,378 @@ describe('dereference', () => {
 
         describe('given Schema Objects and maxDepth of dereference', () => {
           const fixturePath = path.join(rootFixturePath, 'max-depth');
+          const rootFilePath = path.join(fixturePath, 'root.json');
 
-          test('should throw error', async () => {
-            const rootFilePath = path.join(fixturePath, 'root.json');
-            const dereferenceThunk = () =>
-              dereference(rootFilePath, {
-                parse: { mediaType: mediaTypes.latest('json') },
-                dereference: { maxDepth: 2 },
-              });
+          test('should dereference', async () => {
+            const actual = await dereference(rootFilePath, {
+              parse: { mediaType: mediaTypes.latest('json') },
+              dereference: { maxDepth: 2 },
+            });
+            const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
-            await expect(dereferenceThunk()).rejects.toThrow(DereferenceError);
-            await expect(dereferenceThunk()).rejects.toMatchObject({
-              cause: {
-                cause: expect.any(MaximumDereferenceDepthError),
+            expect(toValue(actual)).toEqual(expected);
+          });
+
+          test('should collect error', async () => {
+            const errors = [];
+
+            await dereference(rootFilePath, {
+              parse: { mediaType: mediaTypes.latest('json') },
+              dereference: {
+                maxDepth: 2,
+                dereferenceOpts: { errors },
               },
             });
-            await expect(dereferenceThunk()).rejects.toHaveProperty(
-              'cause.cause.message',
-              expect.stringMatching(/__fixtures__\/max-depth\/ex2.json"$/)
-            );
+
+            expect(errors).toHaveLength(1);
+            expect(errors[0]).toMatchObject({
+              message: expect.stringMatching(
+                /^Could not resolve reference: Maximum dereference depth/
+              ),
+              baseDoc: expect.stringMatching(/max-depth\/ex2\.json$/),
+              $ref: './ex3.json',
+              fullPath: ['components', 'schemas', 'User', '$ref'],
+            });
           });
         });
 
         describe('given Schema Objects and maxDepth of resolution', () => {
           const fixturePath = path.join(rootFixturePath, 'max-depth');
+          const rootFilePath = path.join(fixturePath, 'root.json');
 
-          test('should throw error', async () => {
-            const rootFilePath = path.join(fixturePath, 'root.json');
-            const dereferenceThunk = () =>
-              dereference(rootFilePath, {
-                parse: { mediaType: mediaTypes.latest('json') },
-                resolve: { maxDepth: 2 },
-              });
-
-            await expect(dereferenceThunk()).rejects.toThrow(DereferenceError);
-            await expect(dereferenceThunk()).rejects.toMatchObject({
-              cause: {
-                cause: expect.any(MaximumResolverDepthError),
-              },
+          test('should dereference', async () => {
+            const actual = await dereference(rootFilePath, {
+              parse: { mediaType: mediaTypes.latest('json') },
+              resolve: { maxDepth: 2 },
             });
-            await expect(dereferenceThunk()).rejects.toHaveProperty(
-              'cause.cause.message',
-              expect.stringMatching(/__fixtures__\/max-depth\/ex2.json"$/)
-            );
+            const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
+
+            expect(toValue(actual)).toEqual(expected);
+          });
+
+          test('should collect error', async () => {
+            const errors = [];
+
+            await dereference(rootFilePath, {
+              resolve: { maxDepth: 2 },
+              parse: { mediaType: mediaTypes.latest('json') },
+              dereference: { dereferenceOpts: { errors } },
+            });
+
+            expect(errors).toHaveLength(1);
+            expect(errors[0]).toMatchObject({
+              message: expect.stringMatching(
+                /^Could not resolve reference: Maximum resolution depth/
+              ),
+              baseDoc: expect.stringMatching(/max-depth\/ex2\.json$/),
+              $ref: './ex3.json',
+              fullPath: ['components', 'schemas', 'User', '$ref'],
+            });
           });
         });
 
         describe('given Schema Objects with unresolvable reference', () => {
           const fixturePath = path.join(rootFixturePath, 'unresolvable-reference');
+          const rootFilePath = path.join(fixturePath, 'root.json');
 
-          test('should throw error', async () => {
-            const rootFilePath = path.join(fixturePath, 'root.json');
-            const dereferenceThunk = () =>
-              dereference(rootFilePath, {
-                parse: { mediaType: mediaTypes.latest('json') },
-              });
+          test('should dereference', async () => {
+            const actual = await dereference(rootFilePath, {
+              parse: { mediaType: mediaTypes.latest('json') },
+            });
+            const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
-            await expect(dereferenceThunk()).rejects.toThrow(DereferenceError);
+            expect(toValue(actual)).toEqual(expected);
+          });
+
+          test('should collect error', async () => {
+            const errors = [];
+
+            await dereference(rootFilePath, {
+              parse: { mediaType: mediaTypes.latest('json') },
+              dereference: { dereferenceOpts: { errors } },
+            });
+
+            expect(errors).toHaveLength(1);
+            expect(errors[0]).toMatchObject({
+              message: expect.stringMatching(
+                /^Could not resolve reference: Evaluation failed on token/
+              ),
+              baseDoc: expect.stringMatching(/unresolvable-reference\/root\.json$/),
+              $ref: '#/components/schemas/UserProfile',
+              fullPath: ['components', 'schemas', 'User', 'properties', 'profile', '$ref'],
+            });
           });
         });
 
         describe('given Schema Objects with invalid JSON Pointer', () => {
           const fixturePath = path.join(rootFixturePath, 'invalid-pointer');
+          const rootFilePath = path.join(fixturePath, 'root.json');
 
-          test('should throw error', async () => {
-            const rootFilePath = path.join(fixturePath, 'root.json');
-            const dereferenceThunk = () =>
-              dereference(rootFilePath, {
-                parse: { mediaType: mediaTypes.latest('json') },
-              });
+          test('should dereference', async () => {
+            const actual = await dereference(rootFilePath, {
+              parse: { mediaType: mediaTypes.latest('json') },
+            });
+            const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
-            await expect(dereferenceThunk()).rejects.toThrow(DereferenceError);
+            expect(toValue(actual)).toEqual(expected);
+          });
+
+          test('should collect error', async () => {
+            const errors = [];
+
+            await dereference(rootFilePath, {
+              parse: { mediaType: mediaTypes.latest('json') },
+              dereference: { dereferenceOpts: { errors } },
+            });
+
+            expect(errors).toHaveLength(1);
+            expect(errors[0]).toMatchObject({
+              message: expect.stringMatching(
+                /^Could not resolve reference: Evaluation failed on token/
+              ),
+              baseDoc: expect.stringMatching(/invalid-pointer\/root\.json$/),
+              $ref: '#/components/schemas/invalid-pointer',
+              fullPath: ['components', 'schemas', 'User', '$ref'],
+            });
           });
         });
 
         describe('given Schema Objects with infinite recursion', () => {
           const fixturePath = path.join(rootFixturePath, 'infinite-recursion');
+          const rootFilePath = path.join(fixturePath, 'root.json');
 
-          test('should throw error', async () => {
-            const rootFilePath = path.join(fixturePath, 'root.json');
-            const dereferenceThunk = () =>
-              dereference(rootFilePath, {
-                parse: { mediaType: mediaTypes.latest('json') },
-              });
+          test('should dereference', async () => {
+            const actual = await dereference(rootFilePath, {
+              parse: { mediaType: mediaTypes.latest('json') },
+            });
+            const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
-            await expect(dereferenceThunk()).rejects.toThrow(DereferenceError);
+            expect(toValue(actual)).toEqual(expected);
+          });
+
+          test('should collect error', async () => {
+            const errors = [];
+
+            await dereference(rootFilePath, {
+              parse: { mediaType: mediaTypes.latest('json') },
+              dereference: { dereferenceOpts: { errors } },
+            });
+
+            expect(errors).toHaveLength(1);
+            expect(errors[0]).toMatchObject({
+              message: expect.stringMatching(
+                /^Could not resolve reference: Recursive Schema Object reference detected/
+              ),
+              baseDoc: expect.stringMatching(/infinite-recursion\/root\.json$/),
+              $ref: '#/components/schemas/User',
+              fullPath: ['components', 'schemas', 'User', '$ref'],
+            });
           });
         });
 
         describe('given Schema Objects with direct circular external reference', () => {
           const fixturePath = path.join(rootFixturePath, 'direct-external-circular');
+          const rootFilePath = path.join(fixturePath, 'root.json');
 
-          test('should throw error', async () => {
-            const rootFilePath = path.join(fixturePath, 'root.json');
-            const dereferenceThunk = () =>
-              dereference(rootFilePath, {
-                parse: { mediaType: mediaTypes.latest('json') },
-              });
+          test('should dereference', async () => {
+            const actual = await dereference(rootFilePath, {
+              parse: { mediaType: mediaTypes.latest('json') },
+            });
+            const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
-            await expect(dereferenceThunk()).rejects.toThrow(DereferenceError);
+            expect(toValue(actual)).toEqual(expected);
+          });
+
+          test('should collect error', async () => {
+            const errors = [];
+
+            await dereference(rootFilePath, {
+              parse: { mediaType: mediaTypes.latest('json') },
+              dereference: { dereferenceOpts: { errors } },
+            });
+
+            expect(errors).toHaveLength(1);
+            expect(errors[0]).toMatchObject({
+              message: expect.stringMatching(
+                /^Could not resolve reference: Recursive Schema Object reference detected/
+              ),
+              baseDoc: expect.stringMatching(/direct-external-circular\/ex\.json$/),
+              $ref: './root.json#/components/schemas/User',
+              fullPath: ['components', 'schemas', 'User', '$ref'],
+            });
           });
         });
 
         describe('given Schema Objects with direct circular internal reference', () => {
           const fixturePath = path.join(rootFixturePath, 'direct-internal-circular');
+          const rootFilePath = path.join(fixturePath, 'root.json');
 
-          test('should throw error', async () => {
-            const rootFilePath = path.join(fixturePath, 'root.json');
-            const dereferenceThunk = () =>
-              dereference(rootFilePath, {
-                parse: { mediaType: mediaTypes.latest('json') },
-              });
+          test('should dereference', async () => {
+            const actual = await dereference(rootFilePath, {
+              parse: { mediaType: mediaTypes.latest('json') },
+            });
+            const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
-            await expect(dereferenceThunk()).rejects.toThrow(DereferenceError);
+            expect(toValue(actual)).toEqual(expected);
+          });
+
+          test('should collect error', async () => {
+            const errors = [];
+
+            await dereference(rootFilePath, {
+              parse: { mediaType: mediaTypes.latest('json') },
+              dereference: { dereferenceOpts: { errors } },
+            });
+
+            expect(errors).toHaveLength(1);
+            expect(errors[0]).toMatchObject({
+              message: expect.stringMatching(
+                /^Could not resolve reference: Recursive Schema Object reference detected/
+              ),
+              baseDoc: expect.stringMatching(/direct-internal-circular\/root\.json$/),
+              $ref: '#/components/schemas/User',
+              fullPath: ['components', 'schemas', 'User', '$ref'],
+            });
           });
         });
 
         describe('given Schema Objects with indirect circular external reference', () => {
           const fixturePath = path.join(rootFixturePath, 'indirect-external-circular');
+          const rootFilePath = path.join(fixturePath, 'root.json');
 
-          test('should throw error', async () => {
-            const rootFilePath = path.join(fixturePath, 'root.json');
-            const dereferenceThunk = () =>
-              dereference(rootFilePath, {
-                parse: { mediaType: mediaTypes.latest('json') },
-              });
+          test('should dereference', async () => {
+            const actual = await dereference(rootFilePath, {
+              parse: { mediaType: mediaTypes.latest('json') },
+            });
+            const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
-            await expect(dereferenceThunk()).rejects.toThrow(DereferenceError);
+            expect(toValue(actual)).toEqual(expected);
+          });
+
+          test('should collect error', async () => {
+            const errors = [];
+
+            await dereference(rootFilePath, {
+              parse: { mediaType: mediaTypes.latest('json') },
+              dereference: { dereferenceOpts: { errors } },
+            });
+
+            expect(errors).toHaveLength(1);
+            expect(errors[0]).toMatchObject({
+              message: expect.stringMatching(
+                /^Could not resolve reference: Recursive Schema Object reference detected/
+              ),
+              baseDoc: expect.stringMatching(/indirect-external-circular\/ex3\.json$/),
+              $ref: './root.json#/components/schemas/User',
+              fullPath: ['components', 'schemas', 'User', '$ref'],
+            });
           });
 
           describe('and useCircularStructures=false', () => {
-            test('should throw error', async () => {
-              const rootFilePath = path.join(fixturePath, 'root.json');
-              const dereferenceThunk = () =>
-                dereference(rootFilePath, {
-                  parse: { mediaType: mediaTypes.latest('json') },
-                  dereference: {
-                    strategies: [
-                      OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
-                    ],
-                  },
-                });
+            test('should dereference', async () => {
+              const actual = await dereference(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+                dereference: {
+                  strategies: [
+                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
+                  ],
+                },
+              });
+              const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
-              await expect(dereferenceThunk()).rejects.toThrow(DereferenceError);
+              expect(toValue(actual)).toEqual(expected);
+            });
+
+            test('should collect error', async () => {
+              const errors = [];
+
+              await dereference(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+                dereference: {
+                  dereferenceOpts: { errors },
+                  strategies: [
+                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
+                  ],
+                },
+              });
+
+              expect(errors).toHaveLength(1);
+              expect(errors[0]).toMatchObject({
+                message: expect.stringMatching(
+                  /^Could not resolve reference: Recursive Schema Object reference detected/
+                ),
+                baseDoc: expect.stringMatching(/indirect-external-circular\/ex3\.json$/),
+                $ref: './root.json#/components/schemas/User',
+                fullPath: ['components', 'schemas', 'User', '$ref'],
+              });
             });
           });
         });
 
         describe('given Schema Objects with indirect circular internal reference', () => {
           const fixturePath = path.join(rootFixturePath, 'indirect-internal-circular');
+          const rootFilePath = path.join(fixturePath, 'root.json');
 
-          test('should throw error', async () => {
-            const rootFilePath = path.join(fixturePath, 'root.json');
-            const dereferenceThunk = () =>
-              dereference(rootFilePath, {
-                parse: { mediaType: mediaTypes.latest('json') },
-              });
+          test('should dereference', async () => {
+            const actual = await dereference(rootFilePath, {
+              parse: { mediaType: mediaTypes.latest('json') },
+            });
+            const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
-            await expect(dereferenceThunk()).rejects.toThrow(DereferenceError);
+            expect(toValue(actual)).toEqual(expected);
+          });
+
+          test('should collect error', async () => {
+            const errors = [];
+
+            await dereference(rootFilePath, {
+              parse: { mediaType: mediaTypes.latest('json') },
+              dereference: { dereferenceOpts: { errors } },
+            });
+
+            expect(errors).toHaveLength(1);
+            expect(errors[0]).toMatchObject({
+              message: expect.stringMatching(
+                /^Could not resolve reference: Recursive Schema Object reference detected/
+              ),
+              baseDoc: expect.stringMatching(/indirect-internal-circular\/root\.json$/),
+              $ref: '#/components/schemas/User',
+              fullPath: ['components', 'schemas', 'User', '$ref'],
+            });
           });
 
           describe('and useCircularStructures=false', () => {
-            test('should throw error', async () => {
-              const rootFilePath = path.join(fixturePath, 'root.json');
-              const dereferenceThunk = () =>
-                dereference(rootFilePath, {
-                  parse: { mediaType: mediaTypes.latest('json') },
-                  dereference: {
-                    strategies: [
-                      OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
-                    ],
-                  },
-                });
+            test('should dereference', async () => {
+              const actual = await dereference(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+              });
+              const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
-              await expect(dereferenceThunk()).rejects.toThrow(DereferenceError);
+              expect(toValue(actual)).toEqual(expected);
+            });
+
+            test('should collect error', async () => {
+              const errors = [];
+
+              await dereference(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+                dereference: {
+                  dereferenceOpts: { errors },
+                  strategies: [
+                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
+                  ],
+                },
+              });
+
+              expect(errors).toHaveLength(1);
+              expect(errors[0]).toMatchObject({
+                message: expect.stringMatching(
+                  /^Could not resolve reference: Recursive Schema Object reference detected/
+                ),
+                baseDoc: expect.stringMatching(/indirect-internal-circular\/root\.json$/),
+                $ref: '#/components/schemas/User',
+                fullPath: ['components', 'schemas', 'User', '$ref'],
+              });
             });
           });
         });
