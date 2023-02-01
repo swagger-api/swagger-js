@@ -1,10 +1,7 @@
 /* eslint-disable camelcase */
 import { toValue } from '@swagger-api/apidom-core';
 import { mediaTypes, OpenApi3_1Element } from '@swagger-api/apidom-ns-openapi-3-1';
-import {
-  dereferenceApiDOM,
-  DereferenceError,
-} from '@swagger-api/apidom-reference/configuration/empty';
+import { dereferenceApiDOM } from '@swagger-api/apidom-reference/configuration/empty';
 
 import * as jestSetup from '../__utils__/jest.local.setup.js';
 import OpenApi3_1SwaggerClientDereferenceStrategy from '../../../../../../../../src/helpers/apidom/reference/dereference/strategies/openapi-3-1-swagger-client/index.js';
@@ -22,29 +19,37 @@ describe('dereference', () => {
     describe('openapi-3-1-swagger-client', () => {
       describe('Schema Object', () => {
         describe('given allOf is not an array', () => {
-          test('should throw error', async () => {
-            const spec = OpenApi3_1Element.refract({
-              openapi: '3.1.0',
-              components: {
-                schemas: {
-                  User: {
-                    allOf: {},
-                  },
+          const openApiElement = OpenApi3_1Element.refract({
+            openapi: '3.1.0',
+            components: {
+              schemas: {
+                User: {
+                  allOf: {},
                 },
               },
-            });
-            const dereferenceThunk = () =>
-              dereferenceApiDOM(spec, {
-                parse: { mediaType: mediaTypes.latest('json') },
-              });
+            },
+          });
 
-            await expect(dereferenceThunk()).rejects.toThrow(DereferenceError);
-            await expect(dereferenceThunk()).rejects.toMatchObject({
-              cause: {
-                cause: {
-                  message: expect.stringMatching(/^allOf must be an array$/),
-                },
-              },
+          test('should dereference', async () => {
+            const actual = await dereferenceApiDOM(openApiElement, {
+              parse: { mediaType: mediaTypes.latest('json') },
+            });
+
+            expect(toValue(actual)).toEqual(toValue(openApiElement));
+          });
+
+          test('should collect error', async () => {
+            const errors = [];
+
+            await dereferenceApiDOM(openApiElement, {
+              parse: { mediaType: mediaTypes.latest('json') },
+              dereference: { dereferenceOpts: { errors } },
+            });
+
+            expect(errors).toHaveLength(1);
+            expect(errors[0]).toMatchObject({
+              message: expect.stringMatching(/^allOf must be an array/),
+              fullPath: ['components', 'schemas', 'User', 'allOf'],
             });
           });
         });
@@ -77,29 +82,37 @@ describe('dereference', () => {
         });
 
         describe('give allOf contains non-object item', () => {
-          test('should throw error', async () => {
-            const spec = OpenApi3_1Element.refract({
-              openapi: '3.1.0',
-              components: {
-                schemas: {
-                  User: {
-                    allOf: [{ type: 'string' }, 2],
-                  },
+          const openApiElement = OpenApi3_1Element.refract({
+            openapi: '3.1.0',
+            components: {
+              schemas: {
+                User: {
+                  allOf: [{ type: 'string' }, 2],
                 },
               },
-            });
-            const dereferenceThunk = () =>
-              dereferenceApiDOM(spec, {
-                parse: { mediaType: mediaTypes.latest('json') },
-              });
+            },
+          });
 
-            await expect(dereferenceThunk()).rejects.toThrow(DereferenceError);
-            await expect(dereferenceThunk()).rejects.toMatchObject({
-              cause: {
-                cause: {
-                  message: expect.stringMatching(/^Elements in allOf must be objects$/),
-                },
-              },
+          test('should dereference', async () => {
+            const actual = await dereferenceApiDOM(openApiElement, {
+              parse: { mediaType: mediaTypes.latest('json') },
+            });
+
+            expect(toValue(actual)).toEqual(toValue(openApiElement));
+          });
+
+          test('should collect error', async () => {
+            const errors = [];
+
+            await dereferenceApiDOM(openApiElement, {
+              parse: { mediaType: mediaTypes.latest('json') },
+              dereference: { dereferenceOpts: { errors } },
+            });
+
+            expect(errors).toHaveLength(1);
+            expect(errors[0]).toMatchObject({
+              message: expect.stringMatching(/^Elements in allOf must be objects/),
+              fullPath: ['components', 'schemas', 'User', 'allOf'],
             });
           });
         });
