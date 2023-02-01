@@ -76,15 +76,12 @@ const OpenApi3_1SwaggerClientDereferenceStrategy = OpenApi3_1DereferenceStrategy
 
       // create allOf visitor (if necessary)
       if (this.mode !== 'strict') {
-        const allOfVisitor = AllOfVisitor();
+        const allOfVisitor = AllOfVisitor({ options });
         visitors.push(allOfVisitor);
       }
 
-      // determine the root visitor
-      const rootVisitor =
-        visitors.length === 1
-          ? visitors[0]
-          : mergeAllVisitors(visitors, { nodeTypeGetter: getNodeType });
+      // establish root visitor by visitor merging
+      const rootVisitor = mergeAllVisitors(visitors, { nodeTypeGetter: getNodeType });
 
       const dereferencedElement = await visitAsync(refSet.rootRef.value, rootVisitor, {
         keyMap,
