@@ -1,27 +1,42 @@
 import { toValue } from '@swagger-api/apidom-core';
 
-const ParameterMacroVisitor = ({ parameterMacro }) => {
-  let macroOperation = null;
+import compose from '../utils/compose.js';
+import toPath from '../utils/to-path.js';
 
-  return {
+const ParameterMacroVisitor = compose({
+  init({ parameterMacro, options }) {
+    this.parameterMacro = parameterMacro;
+    this.options = options;
+  },
+  props: {
+    parameterMacro: null,
+    options: null,
+    macroOperation: null,
+
     OperationElement: {
       enter(operationElement) {
-        macroOperation = operationElement;
+        this.macroOperation = operationElement;
       },
       leave() {
-        macroOperation = null;
+        this.macroOperation = null;
       },
     },
     ParameterElement: {
-      leave(parameterElement) {
-        const pojoOperation = macroOperation === null ? null : toValue(macroOperation);
+      leave(parameterElement, key, parent, path, ancestors) {
+        const pojoOperation = this.macroOperation === null ? null : toValue(this.macroOperation);
         const pojoParameter = toValue(parameterElement);
-        const defaultValue = parameterMacro(pojoOperation, pojoParameter);
 
-        parameterElement.set('default', defaultValue);
+        try {
+          const macroValue = this.parameterMacro(pojoOperation, pojoParameter);
+          parameterElement.set('default', macroValue);
+        } catch (error) {
+          const macroError = new Error(error, { cause: error });
+          macroError.fullPath = toPath([...ancestors, parent]);
+          this.options.dereference.dereferenceOpts?.errors?.push?.(macroError);
+        }
       },
     },
-  };
-};
+  },
+});
 
 export default ParameterMacroVisitor;

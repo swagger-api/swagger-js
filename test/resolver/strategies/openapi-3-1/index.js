@@ -215,6 +215,25 @@ describe('resolve', () => {
 
           expect(resolvedSpec).toMatchSnapshot();
         });
+
+        describe('given the function throws error', () => {
+          test('should collect error', async () => {
+            const spec = globalThis.loadJsonFile(path.join(fixturePath, 'parameter-macro.json'));
+            const { spec: resolvedSpec, errors } = await SwaggerClient.resolve({
+              spec,
+              parameterMacro: () => {
+                throw new Error('this macro throws');
+              },
+            });
+
+            expect(resolvedSpec).toMatchSnapshot();
+            expect(errors).toHaveLength(1);
+            expect(errors[0]).toMatchObject({
+              message: expect.stringMatching(/^Error: this macro throws/),
+              fullPath: ['paths', '/pets', 'get', 'parameters'],
+            });
+          });
+        });
       });
 
       describe('and modelPropertyMacro is provided as a function', () => {
