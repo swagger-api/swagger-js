@@ -8,10 +8,10 @@
       "Indirection1": {
         "$ref": "#/components/schemas/Indirection2"
       },
-      "Indirection3": {
+      "Indirection2": {
         "$ref": "#/components/schemas/Indirection3"
       },
-      "Indirection4": {
+      "Indirection3": {
         "$ref": "#/components/schemas/User"
       }
     }
