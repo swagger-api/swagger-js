@@ -62,6 +62,7 @@ const OpenApi3_1SwaggerClientDereferenceStrategy = OpenApi3_1DereferenceStrategy
       if (typeof this.parameterMacro === 'function') {
         const parameterMacroVisitor = ParameterMacroVisitor({
           parameterMacro: this.parameterMacro,
+          options,
         });
         visitors.push(parameterMacroVisitor);
       }

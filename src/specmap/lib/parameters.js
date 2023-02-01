@@ -8,7 +8,9 @@ export default {
       const opPath = fullPath.slice(0, -1);
       const op = { ...lib.getIn(specmap.spec, opPath) };
 
-      parameters.forEach((param, i) => {
+      for (let i = 0; i < parameters.length; i += 1) {
+        const param = parameters[i];
+
         try {
           val[i].default = specmap.parameterMacro(op, param);
         } catch (e) {
@@ -16,8 +18,7 @@ export default {
           err.fullPath = fullPath;
           return err;
         }
-        return undefined;
-      });
+      }
 
       return lib.replace(fullPath, val);
     }
