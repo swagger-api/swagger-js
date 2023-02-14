@@ -1,6 +1,6 @@
 // eslint-disable-next-line camelcase
-import resolveOpenAPI2_30Strategy from './strategies/openapi-2--3-0.js';
-import resolveOpenAPI31Strategy from './strategies/openapi-3-1.js';
+import resolveOpenAPI2_30Strategy from './strategies/openapi-2--3-0/index.js';
+import resolveOpenAPI31Strategy from './strategies/openapi-3-1/index.js';
 import { makeFetchJSON } from './utils/index.js';
 import * as optionsUtil from './utils/options.js';
 import { isOpenAPI31 } from '../helpers/openapi-predicates.js';
