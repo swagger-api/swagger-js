@@ -24,8 +24,8 @@ import get from 'lodash/get';
 
 import { isOpenAPI31 } from '../helpers/openapi-predicates.js';
 import resolve from '../resolver/index.js';
-import normalizeOpenAPI2__30 from '../helpers/normalize/openapi-2--3-0.js'; // eslint-disable-line camelcase
-import normalizeOpenAPI31, { pojoAdapter } from '../helpers/normalize/openapi-3-1.js';
+import normalizeOpenAPI2__30 from '../resolver/strategies/openapi-2--3-0/normalize.js'; // eslint-disable-line camelcase
+import normalizeOpenAPI31, { pojoAdapter } from '../resolver/strategies/openapi-3-1/normalize.js';
 
 export default async function resolveSubtree(obj, path, opts = {}) {
   const {

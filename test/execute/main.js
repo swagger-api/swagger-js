@@ -3,7 +3,7 @@ import AbortController from 'abort-controller';
 
 import { execute, buildRequest, self as stubs } from '../../src/execute/index.js';
 // eslint-disable-next-line camelcase
-import normalizeOpenAPI2__30 from '../../src/helpers/normalize/openapi-2--3-0.js';
+import normalizeOpenAPI2__30 from '../../src/resolver/strategies/openapi-2--3-0/normalize.js';
 
 // Supported shape...  { spec, operationId, parameters, securities, fetch }
 // One can use operationId or pathItem + method

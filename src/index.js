@@ -2,7 +2,7 @@ import Url from 'url';
 
 import Http, { makeHttp, serializeRes, serializeHeaders } from './http/index.js';
 import Resolver from './resolver/index.js';
-import { clearCache } from './resolver/strategies/openapi-2--3-0.js';
+import { clearCache } from './resolver/strategies/openapi-2--3-0/index.js';
 import resolveSubtree from './subtree-resolver/index.js';
 import { makeApisTagOperation } from './interfaces.js';
 import { execute, buildRequest, baseUrl } from './execute/index.js';
