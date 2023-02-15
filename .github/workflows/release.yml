@@ -2,8 +2,8 @@ name: Release
 on:
   workflow_dispatch:
     branches:
-      - alpha
-      
+      - beta
+
 jobs:
   release:
     name: Release
@@ -28,7 +28,7 @@ jobs:
         id: semantic
         uses: cycjimmy/semantic-release-action@v3.2.0
         with:
-          dry_run: false
+          dry_run: true
           extra_plugins: |
             @semantic-release/git
         env:
