@@ -156,6 +156,19 @@ describe('given OpenAPI 3.1.0 definition', () => {
     expect(response.body).toEqual([{ id: 'value' }]);
   });
 
+  test('should execute OAS operation in alternate API', async () => {
+    const client = await SwaggerClient({
+      spec,
+      authorization: { BearerAuth: '3492342948239482398' },
+    });
+    const response = await client.execute({
+      operationId: 'getUserList',
+      parameters: { q: 'search string' },
+    });
+
+    expect(response.body).toEqual([{ id: 'value' }]);
+  });
+
   test('should build a request', () => {
     const request = SwaggerClient.buildRequest({
       spec,
