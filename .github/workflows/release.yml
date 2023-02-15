@@ -3,6 +3,7 @@ on:
   workflow_dispatch:
     branches:
       - alpha
+      - beta
 
   workflow_run:
     workflows:
