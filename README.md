@@ -16,7 +16,7 @@ For features known to be missing from 3.x please see the [Graveyard](docs/migrat
 For the older version of swagger-js, refer to the [*2.x branch*](https://github.com/swagger-api/swagger-js/tree/2.x).
 
 > *The npm package is called `swagger-client` and the GitHub repository is `swagger-js`.
-We'll be consolidating that soon. Just giving you the heads up. You may see references to both names.*
+We'll be consolidating that soon. Just giving you the heads-up. You may see references to both names.*
 
 ## Compatibility
 The OpenAPI Specification has undergone multiple revisions since initial creation in 2010. 
