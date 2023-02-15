@@ -2,7 +2,7 @@
   "release": {
     "branches": [
       {"name": "master"},
-      {"name": "alpha", "channel": "alpha", "prerelease": "alpha"}
+      {"name": "beta", "channel": "beta", "prerelease": "beta"}
     ],
     "tagFormat": "v${version}"
   },
