@@ -28,7 +28,7 @@ jobs:
         id: semantic
         uses: cycjimmy/semantic-release-action@v3.2.0
         with:
-          dry_run: true
+          dry_run: false
           extra_plugins: |
             @semantic-release/git
         env:
