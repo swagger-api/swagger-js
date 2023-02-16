@@ -61,7 +61,7 @@ const OpenApiYaml3_1Parser = Parser.compose({
         parseResultElement.push(element);
         return parseResultElement;
       } catch (error) {
-        throw new ParserError(`Error parsing "${file.uri}"`, error);
+        throw new ParserError(`Error parsing "${file.uri}"`, { cause: error });
       }
     },
   },

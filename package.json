@@ -155,8 +155,7 @@
       "@swagger-api/apidom-parser-adapter-openapi-yaml-3-0": "npm:-@0.0.1",
       "@swagger-api/apidom-parser-adapter-openapi-yaml-3-1": "npm:-@0.0.1",
       "@swagger-api/apidom-parser-adapter-yaml-1-2": "npm:-@0.0.1",
-      "axios": "npm:-@0.0.1",
-      "minimatch": "npm:-@0.0.1"
+      "axios": "npm:-@0.0.1"
     }
   }
 }
