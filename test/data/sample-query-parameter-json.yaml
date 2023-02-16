@@ -1,0 +1,23 @@
+openapi: 3.0.1
+info:
+  version: "0.0.1"
+  title: Test Defect
+  description: >-
+    A client side JS error occurred when using the `TryItOut` feature of the SwaggerUI. It would try fail
+    to formatKeyValuePairs on a JSON query parameter.
+paths:
+  /test:
+    get:
+      operationId: test
+      parameters:
+        - name: jsonArray
+          in: query
+          description: |
+            Query parameter formatted as JSON
+          content:
+            application/json:
+              schema:
+                type: array
+      responses:
+        '200':
+          description: OK
