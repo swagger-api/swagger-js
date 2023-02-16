@@ -46,7 +46,7 @@ const HttpResolverSwaggerClient = HttpResolver.compose({
 
         return response.text.arrayBuffer();
       } catch (error) {
-        throw new ResolverError(`Error downloading "${file.uri}"`, error);
+        throw new ResolverError(`Error downloading "${file.uri}"`, { cause: error });
       } finally {
         clearTimeout(timeoutID);
       }
