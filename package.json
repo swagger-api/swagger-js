@@ -38,6 +38,7 @@
     "deps_check_dir": ".deps_check"
   },
   "scripts": {
+    "analyze:umd:browser": "source-map-explorer 'dist/swagger-client.browser.min.js'",
     "prepublishOnly": "npm run clean && npm run lint && npm run test && npm run build && node ./scripts/overrides.js",
     "build": "run-s build:umd:browser build:commonjs build:es",
     "build:umd:browser": "cross-env BABEL_ENV=browser webpack --progress --config config/webpack/browser.config.babel.js",
@@ -76,10 +77,10 @@
     "@babel/register": "=7.18.9",
     "@commitlint/cli": "^17.0.0",
     "@commitlint/config-conventional": "^17.0.0",
-    "@swagger-api/apidom-core": "=0.67.1",
-    "@swagger-api/apidom-json-pointer": "=0.67.1",
-    "@swagger-api/apidom-ns-openapi-3-1": "=0.67.1",
-    "@swagger-api/apidom-reference": "=0.67.1",
+    "@swagger-api/apidom-core": "=0.68.0",
+    "@swagger-api/apidom-json-pointer": "=0.68.0",
+    "@swagger-api/apidom-ns-openapi-3-1": "=0.68.0",
+    "@swagger-api/apidom-reference": "=0.68.0",
     "abort-controller": "^3.0.0",
     "babel-loader": "=9.1.2",
     "babel-plugin-lodash": "=3.3.4",
@@ -106,6 +107,7 @@
     "npm-run-all": "=4.1.5",
     "prettier": "^2.3.0",
     "rimraf": "=4.1.2",
+    "source-map-explorer": "^2.5.3",
     "terser-webpack-plugin": "^5.0.3",
     "webpack": "=5.75.0",
     "webpack-bundle-size-analyzer": "=3.1.0",
@@ -136,9 +138,6 @@
   ],
   "overrides": {
     "@types/ramda": "npm:-@0.0.1",
-    "@swagger-api/apidom-ast": {
-      "unraw": "npm:-@0.0.1"
-    },
     "@swagger-api/apidom-core": {
       "short-unique-id": "npm:-@0.0.1"
     },
