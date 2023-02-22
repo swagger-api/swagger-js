@@ -149,16 +149,25 @@
         ".": "npm:-@0.0.1"
       }
     },
+    "@swagger-api/apidom-json-pointer": {
+      "@types/ramda": {
+        ".": "npm:-@0.0.1"
+      }
+    },
     "@swagger-api/apidom-ns-json-schema-draft-4": {
       "@types/ramda": {
         ".": "npm:-@0.0.1"
       }
     },
     "@swagger-api/apidom-ns-openapi-3-0": {
-      "@types/ramda": "npm:-@0.0.1"
+      "@types/ramda": {
+        ".": "npm:-@0.0.1"
+      }
     },
     "@swagger-api/apidom-ns-openapi-3-1": {
-      "@types/ramda": "npm:-@0.0.1"
+      "@types/ramda": {
+        ".": "npm:-@0.0.1"
+      }
     },
     "@swagger-api/apidom-reference": {
       "@swagger-api/apidom-ns-asyncapi-2": {

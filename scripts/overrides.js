@@ -3,12 +3,22 @@
  * unnecessary dependencies of ApiDOM from npm bundling.
  * The mechanism is fully idempotent.
  *
- * Dependencies are only removed when using following override notation:
+ * Dependencies are removed when using following override notation:
  *
  * ```
- *  "dep": {
- *    ".": "dep-override"
- *  }
+ * "overrides": {
+ *   "dep": {
+ *     ".": "dep-override"
+ *   }
+ * }
+ * ```
+ *
+ * Dependencies are overridden when using following override notation:
+ *
+ * ```
+ * "overrides": {
+ *   "dep": "dep-override"
+ * }
  * ```
  */
 const fs = require('node:fs');
@@ -38,6 +48,8 @@ const removeDeps = (pckgName, overrides) => {
   Object.entries(overrides).forEach(([dep, override]) => {
     if (typeof override === 'object') {
       delete pckgJSON?.dependencies[dep];
+    } else {
+      pckgJSON.dependencies[dep] = override;
     }
   });
 
