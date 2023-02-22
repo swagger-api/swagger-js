@@ -139,7 +139,6 @@
   ],
   "overrides": {
     "@swagger-api/apidom-ast": {
-      "unraw": "npm:-@0.0.1",
       "@types/ramda": {
         ".": "npm:-@0.0.1"
       }
