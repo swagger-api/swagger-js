@@ -3,7 +3,7 @@ import path from 'node:path';
 import { toValue, StringElement } from '@swagger-api/apidom-core';
 import { OpenApi3_1Element } from '@swagger-api/apidom-ns-openapi-3-1';
 
-import normalize from '../../../../../src/resolver/strategies/openapi-3-1/normalize.js';
+import normalize from '../../../../../src/resolver/strategies/openapi-3-1-apidom/normalize.js';
 
 const fixturesPath = path.join(__dirname, '__fixtures__');
 

@@ -22,12 +22,12 @@
 // TODO: move the remarks above into project documentation
 import get from 'lodash/get';
 
-import { isOpenAPI31 } from '../helpers/openapi-predicates.js';
 import resolve from '../resolver/index.js';
-import normalizeOpenAPI2__30 from '../resolver/strategies/openapi-2--3-0/normalize.js'; // eslint-disable-line camelcase
-import normalizeOpenAPI31, { pojoAdapter } from '../resolver/strategies/openapi-3-1/normalize.js';
+import genericResolverStrategy from '../resolver/strategies/generic/index.js';
+import openApi2ResolverStrategy from '../resolver/strategies/openapi-2/index.js';
+import openApi30ResolverStrategy from '../resolver/strategies/openapi-3-0/index.js';
 
-export default async function resolveSubtree(obj, path, opts = {}) {
+export default async function resolveSubtree(obj, path, options = {}) {
   const {
     returnEntireTree,
     baseDoc,
@@ -36,9 +36,14 @@ export default async function resolveSubtree(obj, path, opts = {}) {
     parameterMacro,
     modelPropertyMacro,
     useCircularStructures,
-  } = opts;
-
+  } = options;
+  const strategies = options.strategies || [
+    openApi30ResolverStrategy,
+    openApi2ResolverStrategy,
+    genericResolverStrategy,
+  ];
   const resolveOptions = {
+    spec: obj,
     pathDiscriminator: path,
     baseDoc,
     requestInterceptor,
@@ -46,17 +51,10 @@ export default async function resolveSubtree(obj, path, opts = {}) {
     parameterMacro,
     modelPropertyMacro,
     useCircularStructures,
+    strategies,
   };
-
-  let normalized;
-  if (isOpenAPI31(obj)) {
-    normalized = pojoAdapter(normalizeOpenAPI31)(obj);
-  } else {
-    ({ spec: normalized } = normalizeOpenAPI2__30({
-      spec: obj,
-    }));
-  }
-
+  const strategy = strategies.find((strg) => strg.match(resolveOptions));
+  const normalized = strategy.normalize(resolveOptions);
   const result = await resolve({
     ...resolveOptions,
     spec: normalized,

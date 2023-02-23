@@ -3,7 +3,7 @@ import AbortController from 'abort-controller';
 
 import { execute, buildRequest, self as stubs } from '../../src/execute/index.js';
 // eslint-disable-next-line camelcase
-import normalizeOpenAPI2__30 from '../../src/resolver/strategies/openapi-2--3-0/normalize.js';
+import normalize from '../../src/resolver/strategies/generic/normalize.js';
 
 // Supported shape...  { spec, operationId, parameters, securities, fetch }
 // One can use operationId or pathItem + method
@@ -2033,7 +2033,7 @@ describe('execute', () => {
           },
         };
 
-        const resultSpec = normalizeOpenAPI2__30(spec);
+        const resultSpec = normalize(spec);
         const warnSpy = jest.spyOn(console, 'warn');
         const req = buildRequest({
           spec: resultSpec.spec,
@@ -2087,7 +2087,7 @@ describe('execute', () => {
         const oriWarn = global.console.warn;
         global.console.warn = jest.fn();
 
-        const resultSpec = normalizeOpenAPI2__30(spec);
+        const resultSpec = normalize(spec);
         const req = buildRequest({
           spec: resultSpec.spec,
           operationId: 'getPetsById',
