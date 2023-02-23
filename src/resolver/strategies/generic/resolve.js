@@ -1,16 +1,9 @@
 import mapSpec, { plugins } from '../../../specmap/index.js';
-// eslint-disable-next-line camelcase
 import normalize from './normalize.js';
 import { makeFetchJSON } from '../../utils/index.js';
 import * as optionsUtil from '../../utils/options.js';
 
-// Wipe out the http cache
-export function clearCache() {
-  plugins.refs.clearCache();
-}
-
-// eslint-disable-next-line camelcase
-export default function resolveOpenAPI2_30Strategy(obj) {
+export default async function resolveGenericStrategy(options) {
   const {
     spec,
     mode,
@@ -22,10 +15,10 @@ export default function resolveOpenAPI2_30Strategy(obj) {
     responseInterceptor,
     skipNormalization,
     useCircularStructures,
-  } = obj;
+  } = options;
 
-  const retrievalURI = optionsUtil.retrievalURI(obj);
-  const httpClient = optionsUtil.httpClient(obj);
+  const retrievalURI = optionsUtil.retrievalURI(options);
+  const httpClient = optionsUtil.httpClient(options);
 
   return doResolve(spec);
 

@@ -1,5 +1,5 @@
 // eslint-disable-next-line camelcase
-import normalize from '../../../../src/resolver/strategies/openapi-2--3-0/normalize.js';
+import normalize from '../../../../src/resolver/strategies/openapi-2/normalize.js';
 
 describe('helpers', () => {
   describe('normalize', () => {

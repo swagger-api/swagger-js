@@ -1,9 +1,8 @@
-// eslint-disable-next-line camelcase
-import resolveOpenAPI2_30Strategy from './strategies/openapi-2--3-0/index.js';
-import resolveOpenAPI31Strategy from './strategies/openapi-3-1/index.js';
 import { makeFetchJSON } from './utils/index.js';
 import * as optionsUtil from './utils/options.js';
-import { isOpenAPI31 } from '../helpers/openapi-predicates.js';
+import genericStrategy from './strategies/generic/index.js';
+import openApi2Strategy from './strategies/openapi-2/index.js';
+import openApi30Strategy from './strategies/openapi-3-0/index.js';
 
 const resolve = async (options) => {
   const { spec, requestInterceptor, responseInterceptor } = options;
@@ -14,10 +13,10 @@ const resolve = async (options) => {
     spec ||
     (await makeFetchJSON(httpClient, { requestInterceptor, responseInterceptor })(retrievalURI));
   const strategyOptions = { ...options, spec: retrievedSpec };
+  const strategies = options.strategies || [openApi30Strategy, openApi2Strategy, genericStrategy];
+  const strategy = strategies.find((strg) => strg.match(strategyOptions));
 
-  return isOpenAPI31(retrievedSpec)
-    ? resolveOpenAPI31Strategy(strategyOptions)
-    : resolveOpenAPI2_30Strategy(strategyOptions);
+  return strategy.resolve(strategyOptions);
 };
 
 export default resolve;
