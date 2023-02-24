@@ -27,7 +27,7 @@ import genericResolverStrategy from '../resolver/strategies/generic/index.js';
 import openApi2ResolverStrategy from '../resolver/strategies/openapi-2/index.js';
 import openApi30ResolverStrategy from '../resolver/strategies/openapi-3-0/index.js';
 
-export const resolveSubtree = async (obj, path, options = {}) => {
+const resolveSubtree = async (obj, path, options = {}) => {
   const {
     returnEntireTree,
     baseDoc,
