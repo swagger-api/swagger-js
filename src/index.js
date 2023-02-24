@@ -2,12 +2,12 @@
 import Url from 'url';
 
 import Http, { makeHttp, serializeRes, serializeHeaders } from './http/index.js';
-import resolve from './resolver/index.js';
+import { makeResolve } from './resolver/index.js';
+import { makeResolveSubtree } from './subtree-resolver/index.js';
 import genericResolveStrategy from './resolver/strategies/generic/index.js';
 import openApi2ResolveStrategy, { clearCache } from './resolver/strategies/openapi-2/index.js';
 import openApi30ResolveStrategy from './resolver/strategies/openapi-3-0/index.js';
 import openApi31ApiDOMResolveStrategy from './resolver/strategies/openapi-3-1-apidom/index.js';
-import resolveSubtree from './subtree-resolver/index.js';
 import { makeApisTagOperation } from './interfaces.js';
 import { execute, buildRequest, baseUrl } from './execute/index.js';
 import { opId } from './helpers/index.js';
@@ -26,14 +26,22 @@ Swagger.resolveStrategies = {
   'openapi-2-0': openApi2ResolveStrategy,
   generic: genericResolveStrategy,
 };
-Swagger.resolve = async (options) => {
-  const mergedOptions = { strategies: Object.values(Swagger.resolveStrategies), ...options };
-  return resolve(mergedOptions);
-};
-Swagger.resolveSubtree = async (obj, path, options = {}) => {
-  const mergedOptions = { strategies: Object.values(Swagger.resolveStrategies), ...options };
-  return resolveSubtree(obj, path, mergedOptions);
-};
+Swagger.resolve = makeResolve({
+  strategies: [
+    Swagger.resolveStrategies['openapi-3-1-apidom'],
+    Swagger.resolveStrategies['openapi-3-0'],
+    Swagger.resolveStrategies['openapi-2-0'],
+    Swagger.resolveStrategies.generic,
+  ],
+});
+Swagger.resolveSubtree = makeResolveSubtree({
+  strategies: [
+    Swagger.resolveStrategies['openapi-3-1-apidom'],
+    Swagger.resolveStrategies['openapi-3-0'],
+    Swagger.resolveStrategies['openapi-2-0'],
+    Swagger.resolveStrategies.generic,
+  ],
+});
 Swagger.execute = execute;
 Swagger.serializeRes = serializeRes;
 Swagger.serializeHeaders = serializeHeaders;
