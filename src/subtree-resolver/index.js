@@ -27,7 +27,7 @@ import genericResolverStrategy from '../resolver/strategies/generic/index.js';
 import openApi2ResolverStrategy from '../resolver/strategies/openapi-2/index.js';
 import openApi30ResolverStrategy from '../resolver/strategies/openapi-3-0/index.js';
 
-export default async function resolveSubtree(obj, path, options = {}) {
+export const resolveSubtree = async (obj, path, options = {}) => {
   const {
     returnEntireTree,
     baseDoc,
@@ -36,12 +36,8 @@ export default async function resolveSubtree(obj, path, options = {}) {
     parameterMacro,
     modelPropertyMacro,
     useCircularStructures,
+    strategies,
   } = options;
-  const strategies = options.strategies || [
-    openApi30ResolverStrategy,
-    openApi2ResolverStrategy,
-    genericResolverStrategy,
-  ];
   const resolveOptions = {
     spec: obj,
     pathDiscriminator: path,
@@ -67,4 +63,15 @@ export default async function resolveSubtree(obj, path, options = {}) {
   }
 
   return result;
-}
+};
+
+export const makeResolveSubtree =
+  (defaultOptions) =>
+  async (obj, path, options = {}) => {
+    const mergedOptions = { ...defaultOptions, ...options };
+    return resolveSubtree(obj, path, mergedOptions);
+  };
+
+export default makeResolveSubtree({
+  strategies: [openApi30ResolverStrategy, openApi2ResolverStrategy, genericResolverStrategy],
+});

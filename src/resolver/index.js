@@ -13,10 +13,16 @@ const resolve = async (options) => {
     spec ||
     (await makeFetchJSON(httpClient, { requestInterceptor, responseInterceptor })(retrievalURI));
   const strategyOptions = { ...options, spec: retrievedSpec };
-  const strategies = options.strategies || [openApi30Strategy, openApi2Strategy, genericStrategy];
-  const strategy = strategies.find((strg) => strg.match(strategyOptions));
+  const strategy = options.strategies.find((strg) => strg.match(strategyOptions));
 
   return strategy.resolve(strategyOptions);
 };
 
-export default resolve;
+export const makeResolve = (defaultOptions) => async (options) => {
+  const mergedOptions = { ...defaultOptions, ...options };
+  return resolve(mergedOptions);
+};
+
+export default makeResolve({
+  strategies: [openApi30Strategy, openApi2Strategy, genericStrategy],
+});
