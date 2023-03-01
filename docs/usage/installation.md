@@ -12,6 +12,35 @@ The npm package contains transpiled and minified ES5 compatible code.
  $ npm install swagger-client
 ``` 
 
+**Increasing installation speed:**
+
+`swagger-client` integrates with [ApiDOM](https://github.com/swagger-api/apidom) and use it
+as a direct dependency. Some transitive dependencies of ApiDOM are [optional](https://docs.npmjs.com/cli/v8/configuring-npm/package-json#optionaldependencies),
+which means we can use [override package.json field](https://docs.npmjs.com/cli/v8/configuring-npm/package-json#overrides)
+to speed up the installation:
+
+```json
+"overrides": {
+  "@swagger-api/apidom-reference": {
+    "@swagger-api/apidom-ns-asyncapi-2": "npm:-@0.0.1",
+    "@swagger-api/apidom-parser-adapter-api-design-systems-json": "npm:-@0.0.1",
+    "@swagger-api/apidom-parser-adapter-api-design-systems-yaml": "npm:-@0.0.1",
+    "@swagger-api/apidom-parser-adapter-asyncapi-json-2": "npm:-@0.0.1",
+    "@swagger-api/apidom-parser-adapter-asyncapi-yaml-2": "npm:-@0.0.1",
+    "@swagger-api/apidom-parser-adapter-json": "npm:-@0.0.1",
+    "@swagger-api/apidom-parser-adapter-openapi-json-3-0": "npm:-@0.0.1",
+    "@swagger-api/apidom-parser-adapter-openapi-json-3-1": "npm:-@0.0.1",
+    "@swagger-api/apidom-parser-adapter-openapi-yaml-3-0": "npm:-@0.0.1",
+    "@swagger-api/apidom-parser-adapter-openapi-yaml-3-1": "npm:-@0.0.1",
+    "@swagger-api/apidom-parser-adapter-yaml-1-2": "npm:-@0.0.1"
+  }
+}
+```
+
+> NOTE 1: Above override uses [empty npm package called "-"](https://www.npmjs.com/package/-) to override optional ApiDOM transitive dependencies.
+
+> NOTE 2: When ApiDOM optional dependencies fail to install, you can safely ignore it as `swagger-client` can work without these optional dependencies.
+
 After installed successfully:
 
 [ES6 imports](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import)
