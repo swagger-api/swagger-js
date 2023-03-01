@@ -16,35 +16,7 @@ If you use [nvm](https://github.com/nvm-sh/nvm), running following command insid
  $ nvm use
 ```
 
-This repository is using npm packages from https://www.npmjs.com/ and [GitHub packages registry](https://docs.github.com/en/packages/learn-github-packages/introduction-to-github-packages). 
-To successfully install npm packages that SwaggerEditor requires, you need to [Authenticate to GitHub Packages](https://docs.github.com/en/packages/learn-github-packages/introduction-to-github-packages).
-
-You can authenticate to GitHub Packages with npm by either editing your per-user *~/.npmrc*
-file to include your personal access token (classic) or by logging in to npm on the command line using your username and personal access token.
-
-To authenticate by adding your personal access token (classic) to your *~/.npmrc* file,
-edit the *~/.npmrc* file for your project to include the following line,
-replacing TOKEN with your personal access token. Create a new *~/.npmrc* file if one doesn't exist.
-You can find more information about authenticating to GitHub Packages in [GitHub documentation](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-to-github-packages).
-
-```
-//npm.pkg.github.com/:_authToken=TOKEN
-```
-
-
-Alternatively, to authenticate by logging in to npm, use the `npm login` command,
-replacing USERNAME with your GitHub username, TOKEN with your personal access token (classic),
-and PUBLIC-EMAIL-ADDRESS with your email address.
-
-```sh
-$ npm login --scope=@swagger-api --registry=https://npm.pkg.github.com
-
-> Username: USERNAME
-> Password: TOKEN
-> Email: PUBLIC-EMAIL-ADDRESS
-```
-
-### Steps
+#### Setup teps
 
 1. `git clone https://github.com/swagger-api/swagger-js.git`
 2. `cd swagger-js`
