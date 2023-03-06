@@ -1,0 +1,31 @@
+{
+  "openapi": "3.1.0",
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "profile": {
+            "type": "object",
+            "description": "user profile",
+            "$ref": "#/components/schemas/UserProfile"
+          }
+        }
+      },
+      "UserProfile": {
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          }
+        }
+      },
+      "Order": {
+        "type": "object",
+        "$ref": "./ex.json"
+      }
+    }
+  }
+}

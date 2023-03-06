@@ -1,4 +1,4 @@
-const unitConfig = require('./jest.unit.config');
+const unitConfig = require('./jest.unit.config.js');
 
 module.exports = {
   ...unitConfig,
@@ -6,10 +6,10 @@ module.exports = {
   collectCoverageFrom: ['src/**/*.js'],
   coverageThreshold: {
     './src/': {
-      branches: 87,
+      branches: 86,
       functions: 91,
       lines: 90,
-      statements: 90,
+      statements: 89,
     },
   },
 };

@@ -1,0 +1,13 @@
+{
+  "$defs": {
+    "schema1": {
+      "$ref": "./root.json#/components/schemas/schema2"
+    },
+    "schema2": {
+      "$ref": "./root.json#/components/schemas/schema2"
+    },
+    "schema3": {
+      "type": "string"
+    }
+  }
+}

@@ -61,7 +61,11 @@ describe('allOf', () => {
         allOf: [
           {
             original: 'no',
+            subOriginal: 'no1',
             notOriginal: 'yes',
+          },
+          {
+            subOriginal: 'no2',
           },
         ],
       },
@@ -71,6 +75,7 @@ describe('allOf', () => {
         errors: [],
         spec: {
           original: 'yes',
+          subOriginal: 'no2',
           notOriginal: 'yes',
         },
       });

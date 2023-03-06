@@ -1,0 +1,21 @@
+[
+  {
+    "openapi": "3.1.0",
+    "paths": {
+      "/path": {
+        "get": {
+          "requestBody": {
+            "description": "description of request body 2"
+          }
+        }
+      }
+    },
+    "components": {
+      "requestBodies": {
+        "requestBody2": {
+          "description": "description of request body 2"
+        }
+      }
+    }
+  }
+]

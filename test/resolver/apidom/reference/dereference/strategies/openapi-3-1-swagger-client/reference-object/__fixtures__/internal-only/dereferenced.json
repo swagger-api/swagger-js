@@ -1,0 +1,33 @@
+[
+  {
+    "openapi": "3.1.0",
+    "components": {
+      "parameters": {
+        "userId": {
+          "name": "userId",
+          "in": "query",
+          "description": "override",
+          "required": true
+        },
+        "indirection1": {
+          "name": "userId",
+          "in": "query",
+          "description": "ID of the user",
+          "required": true
+        },
+        "indirection2": {
+          "name": "userId",
+          "in": "query",
+          "description": "ID of the user",
+          "required": true
+        },
+        "userIdRef": {
+          "name": "userId",
+          "in": "query",
+          "description": "ID of the user",
+          "required": true
+        }
+      }
+    }
+  }
+]

@@ -2,7 +2,8 @@ import { Readable } from 'stream';
 import AbortController from 'abort-controller';
 
 import { execute, buildRequest, self as stubs } from '../../src/execute/index.js';
-import { normalizeSwagger } from '../../src/helpers/index.js';
+// eslint-disable-next-line camelcase
+import normalize from '../../src/resolver/strategies/generic/normalize.js';
 
 // Supported shape...  { spec, operationId, parameters, securities, fetch }
 // One can use operationId or pathItem + method
@@ -2032,7 +2033,7 @@ describe('execute', () => {
           },
         };
 
-        const resultSpec = normalizeSwagger(spec);
+        const resultSpec = normalize(spec);
         const warnSpy = jest.spyOn(console, 'warn');
         const req = buildRequest({
           spec: resultSpec.spec,
@@ -2086,7 +2087,7 @@ describe('execute', () => {
         const oriWarn = global.console.warn;
         global.console.warn = jest.fn();
 
-        const resultSpec = normalizeSwagger(spec);
+        const resultSpec = normalize(spec);
         const req = buildRequest({
           spec: resultSpec.spec,
           operationId: 'getPetsById',

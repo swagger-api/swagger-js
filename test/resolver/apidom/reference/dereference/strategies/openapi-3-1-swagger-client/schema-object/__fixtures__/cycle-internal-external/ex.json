@@ -1,0 +1,11 @@
+{
+  "$defs": {
+    "UserProfile": {
+      "properties": {
+        "user": {
+          "$ref": "./root.json#/components/schemas/User"
+        }
+      }
+    }
+  }
+}

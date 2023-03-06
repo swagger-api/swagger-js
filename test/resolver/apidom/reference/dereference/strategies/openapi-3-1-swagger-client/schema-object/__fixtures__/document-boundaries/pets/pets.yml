@@ -1,0 +1,5 @@
+get:
+  operationId: listPets
+  responses:
+    "200":
+      $ref: "./response.yml"

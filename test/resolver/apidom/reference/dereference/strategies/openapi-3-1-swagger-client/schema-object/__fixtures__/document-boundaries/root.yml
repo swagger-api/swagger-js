@@ -1,0 +1,10 @@
+openapi: "3.1.0"
+info:
+  version: 1.0.0
+  title: Swagger Petstore
+servers:
+  - url: http://petstore.swagger.io/v1
+paths:
+  /pets:
+    $ref: "./pets/pets.yml"
+

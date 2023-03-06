@@ -6,6 +6,7 @@ import {
   makeApisTagOperation,
   self as stubs,
 } from '../src/interfaces.js';
+import SwaggerClient from '../src/index.js';
 
 describe('intefaces', () => {
   afterEach(() => {
@@ -400,6 +401,104 @@ describe('intefaces', () => {
           getOne3: 3,
         },
       });
+    });
+
+    test('should support OpenAPI 3.1.0', async () => {
+      const spec = {
+        openapi: '3.1.0',
+        info: {
+          title: 'Testing API',
+          version: '1.0.0',
+        },
+        components: {
+          schemas: {
+            user: {
+              properties: {
+                id: {
+                  type: 'integer',
+                },
+              },
+            },
+          },
+          securitySchemes: {
+            BasicAuth: {
+              type: 'http',
+              scheme: 'basic',
+            },
+            ApiKey: {
+              type: 'apiKey',
+              in: 'header',
+              name: 'X-API-KEY',
+            },
+            BearerAuth: {
+              type: 'http',
+              scheme: 'bearer',
+            },
+            oAuth2: {
+              type: 'oauth2',
+              flows: {
+                implicit: {
+                  authorizationUrl: 'https://api.example.com/oauth2/authorize',
+                  scopes: {
+                    read: 'authorize to read',
+                  },
+                },
+              },
+            },
+          },
+        },
+        servers: [
+          {
+            url: 'http://localhost:8080',
+          },
+        ],
+        paths: {
+          '/users': {
+            get: {
+              operationId: 'getUserList',
+              description: 'Get list of users',
+              security: [
+                {
+                  BasicAuth: [],
+                  BearerAuth: [],
+                  ApiKey: [],
+                  oAuth2: [],
+                },
+              ],
+              parameters: [
+                {
+                  name: 'q',
+                  in: 'query',
+                  description: 'search query parameter',
+                  schema: {
+                    type: 'array',
+                    items: {
+                      type: 'string',
+                    },
+                  },
+                  style: 'pipeDelimited',
+                  explode: false,
+                },
+              ],
+              responses: {
+                200: {
+                  description: 'List of users',
+                  content: {
+                    'application/json': {
+                      schema: {
+                        $ref: '#/components/schemas/user',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+      const client = await new SwaggerClient({ spec });
+
+      expect(client.apis.default.getUserList).toEqual(expect.any(Function));
     });
   });
 });

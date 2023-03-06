@@ -1,0 +1,13 @@
+{
+  "openapi": "3.1.0",
+  "components": {
+    "requestBodies": {
+      "requestBody1": {
+        "description": "example1 description"
+      },
+      "requestBody2": {
+        "$ref": "#/components/requestBodies/requestBody1"
+      }
+    }
+  }
+}

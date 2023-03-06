@@ -1,0 +1,29 @@
+{
+  "openapi": "3.1.0",
+  "components": {
+    "schemas": {
+      "schema1": {
+        "$ref": "#/components/schemas/schema2"
+      },
+      "schema2": {
+        "$ref": "#/components/schemas/schema3"
+      },
+      "schema3": {
+        "type": "object"
+      },
+      "schema4": {
+        "type": "string"
+      },
+      "Animal": {
+        "properties": {
+          "pet": {
+            "$ref": "#/components/schemas/schema3"
+          },
+          "cat": {
+            "$ref": "#/components/schemas/schema4"
+          }
+        }
+      }
+    }
+  }
+}

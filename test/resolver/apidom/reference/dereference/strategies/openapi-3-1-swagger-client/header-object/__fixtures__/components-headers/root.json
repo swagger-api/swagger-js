@@ -1,0 +1,13 @@
+{
+  "openapi": "3.1.0",
+  "components": {
+    "headers": {
+      "content-type": {
+        "description": "content type header description"
+      },
+      "x-custom-header": {
+        "$ref": "#/components/headers/content-type"
+      }
+    }
+  }
+}

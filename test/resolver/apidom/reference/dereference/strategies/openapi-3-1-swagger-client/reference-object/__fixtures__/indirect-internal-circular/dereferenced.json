@@ -1,0 +1,25 @@
+[
+  {
+    "openapi": "3.1.0",
+    "components": {
+      "parameters": {
+        "userId": {
+          "$ref": "#/components/parameters/userId",
+          "description": "description 1"
+        },
+        "indirection1": {
+          "$ref": "#/components/parameters/userId",
+          "description": "description 1"
+        },
+        "indirection2": {
+          "$ref": "#/components/parameters/userId",
+          "description": "description 1"
+        },
+        "indirection3": {
+          "$ref": "#/components/parameters/userId",
+          "description": "description 1"
+        }
+      }
+    }
+  }
+]

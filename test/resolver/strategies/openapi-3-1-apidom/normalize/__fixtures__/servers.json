@@ -1,0 +1,14 @@
+{
+  "openapi": "3.1.0",
+  "servers": [
+    {
+      "url": "https://example.com/",
+      "description": "production server"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {}
+    }
+  }
+}

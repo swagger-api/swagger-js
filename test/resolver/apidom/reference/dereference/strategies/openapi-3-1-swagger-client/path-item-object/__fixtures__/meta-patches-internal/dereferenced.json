@@ -1,0 +1,23 @@
+[
+  {
+    "openapi": "3.1.0",
+    "components": {
+      "pathItems": {
+        "pathItem1": {
+          "summary": "path item summary",
+          "description": "path item description",
+          "$$ref": "http://localhost:8123/root.json#/components/pathItems/pathItem3"
+        },
+        "pathItem2": {
+          "summary": "path item summary",
+          "description": "path item description",
+          "$$ref": "http://localhost:8123/root.json#/components/pathItems/pathItem3"
+        },
+        "pathItem3": {
+          "summary": "path item summary",
+          "description": "path item description"
+        }
+      }
+    }
+  }
+]

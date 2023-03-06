@@ -1,0 +1,19 @@
+[
+  {
+    "openapi": "3.1.0",
+    "components": {
+      "securitySchemes": {
+        "api_key": {
+          "type": "apiKey",
+          "name": "api_key",
+          "in": "header"
+        },
+        "api_key2": {
+          "type": "apiKey",
+          "name": "api_key",
+          "in": "header"
+        }
+      }
+    }
+  }
+]

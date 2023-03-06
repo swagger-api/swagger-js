@@ -1,0 +1,21 @@
+{
+  "openapi": "3.1.0",
+  "components": {
+    "responses": {
+      "201": {
+        "description": "201 description",
+        "headers": {
+          "Content-Type": {
+            "description": "The number of allowed requests in the current period",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "400": {
+        "$ref": "#/components/responses/201"
+      }
+    }
+  }
+}

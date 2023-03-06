@@ -1,0 +1,15 @@
+{
+  "openapi": "3.1.0",
+  "webhooks": {
+    "hook": {
+      "$ref": "#/components/pathItems/pathItem1"
+    }
+  },
+  "components": {
+    "pathItems": {
+      "pathItem1": {
+        "description": "description of path item 1"
+      }
+    }
+  }
+}

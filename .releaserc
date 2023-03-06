@@ -1,7 +1,8 @@
 {
   "release": {
     "branches": [
-      {"name": "master"}
+      {"name": "master"},
+      {"name": "beta", "channel": "beta", "prerelease": "beta"}
     ],
     "tagFormat": "v${version}"
   },

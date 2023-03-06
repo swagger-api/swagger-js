@@ -1,0 +1,24 @@
+[
+  {
+    "openapi": "3.1.0",
+    "components": {
+      "parameters": {
+        "param1": {
+          "name": "offset",
+          "in": "query",
+          "required": true,
+          "examples": {
+            "example1": {
+              "description": "example 2 description"
+            }
+          }
+        }
+      },
+      "examples": {
+        "example2": {
+          "description": "example 2 description"
+        }
+      }
+    }
+  }
+]
