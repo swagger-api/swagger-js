@@ -1,5 +1,5 @@
 import path from 'path';
-import glob from 'glob';
+import { globSync } from 'glob';
 import xmock from 'xmock';
 
 import mapSpec, { plugins } from '../../src/specmap/index.js';
@@ -27,7 +27,7 @@ describe('complex', () => {
     xapp.restore();
 
     const dir = path.join(__dirname, 'data', 'complex');
-    const specFiles = glob.sync(`${dir}/**/*.json`);
+    const specFiles = globSync(`${dir}/**/*.json`);
     const specs = specFiles
       .sort((f1, f2) => {
         const no1 = Number(path.basename(f1).split('.')[0]);
