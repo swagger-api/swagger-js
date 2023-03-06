@@ -1,11 +1,16 @@
 name: Release
 on:
-  workflow_dispatch:
+  workflow_run:
+    workflows:
+      - "Node.js CI"
     branches:
-      - beta
+      - master
+    types:
+      - completed
 
 jobs:
   release:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Release
     runs-on: ubuntu-latest
     steps:
