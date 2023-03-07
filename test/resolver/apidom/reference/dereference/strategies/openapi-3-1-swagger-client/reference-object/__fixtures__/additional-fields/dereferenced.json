@@ -1,0 +1,39 @@
+[
+  {
+    "openapi": "3.1.0",
+    "components": {
+      "parameters": {
+        "userId": {
+          "name": "userId",
+          "in": "query",
+          "description": "description 1",
+          "required": true
+        },
+        "indirection1": {
+          "name": "userId",
+          "in": "query",
+          "description": "indirect description 1",
+          "required": true
+        },
+        "indirection2": {
+          "name": "userId",
+          "in": "query",
+          "description": "indirect description 1",
+          "required": true
+        },
+        "userIdRef": {
+          "name": "userId",
+          "in": "query",
+          "description": "ID of the user",
+          "required": true
+        },
+        "externalRef": {
+          "name": "externalParameter",
+          "in": "query",
+          "description": "pulled from external source",
+          "required": true
+        }
+      }
+    }
+  }
+]

@@ -1,0 +1,4 @@
+components:
+  schemas:
+    Pet:
+      $ref: "./def2.yml#/components/schemas/Pet"

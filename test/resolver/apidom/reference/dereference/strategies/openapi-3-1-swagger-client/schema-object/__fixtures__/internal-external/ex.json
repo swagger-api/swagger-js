@@ -1,0 +1,12 @@
+{
+  "$defs": {
+    "Order": {
+      "type": "object",
+      "properties": {
+        "orderId": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}

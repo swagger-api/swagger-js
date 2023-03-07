@@ -1,0 +1,19 @@
+[
+  {
+    "openapi": "3.1.0",
+    "components": {
+      "callbacks": {
+        "callback1": {
+          "{$method}": {
+            "description": "description of callback2"
+          }
+        },
+        "callback2": {
+          "{$method}": {
+            "description": "description of callback2"
+          }
+        }
+      }
+    }
+  }
+]

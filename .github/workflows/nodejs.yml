@@ -57,16 +57,17 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Use Node.js 12.4.x
+    - name: Use Node.js 12.20.0
       uses: actions/setup-node@v3
       with:
-        node-version: 12.4.x
+        node-version: 12.20.0
     - name: Cache Node Modules
       id: cache-node-modules
       uses: actions/cache@v3
       with:
         path: node_modules
         key: node-modules-${{ hashFiles('package-lock.json') }}
+
     - name: Install dependencies
       if: steps.cache-node-modules.outputs.cache-hit != 'true'
       run: npm ci
@@ -76,13 +77,14 @@ jobs:
       with:
         name: commonjs
 
-    - name: Run commonjs build artifacts on Node.js 12.4.x
+    - name: Run commonjs build artifacts on Node.js 12.20.0
       run: node -p "require('./commonjs')"
 
     - name: Use Node 14.x
       uses: actions/setup-node@v3
       with:
         node-version: 14.x
+
     - name: Run commonjs build artifacts on Node.js 14.x
       run: node -p "require('./commonjs')"
 
@@ -90,5 +92,6 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: 16.x
+
     - name: Run commonjs build artifacts on Node.js 16.x
       run: node -p "require('./commonjs')"

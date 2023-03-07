@@ -1,0 +1,7 @@
+{
+  "/path3": {
+    "summary": "path item summary",
+    "description": "path item description",
+    "get": {}
+  }
+}

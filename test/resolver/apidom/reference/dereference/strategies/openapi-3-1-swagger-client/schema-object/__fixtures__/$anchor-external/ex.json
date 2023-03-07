@@ -1,0 +1,15 @@
+{
+  "$defs": {
+    "UserProfile": {
+      "$anchor": "user-profile",
+      "properties": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

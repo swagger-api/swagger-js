@@ -1,0 +1,25 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Swagger Petstore",
+    "license": {
+      "name": "MIT"
+    }
+  },
+  "components": {
+    "parameters": {
+      "limit": {
+        "name": "limit",
+        "in": "query",
+        "description": "How many items to return at one time (max 100)",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "maximum": 100,
+          "format": "int32"
+        }
+      }
+    }
+  }
+}

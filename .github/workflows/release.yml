@@ -1,10 +1,5 @@
 name: Release
 on:
-  workflow_dispatch:
-    branches:
-      - alpha
-      - beta
-
   workflow_run:
     workflows:
       - "Node.js CI"
@@ -12,11 +7,12 @@ on:
       - master
     types:
       - completed
+
 jobs:
   release:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Release
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3

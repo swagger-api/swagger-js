@@ -1,0 +1,18 @@
+[
+  {
+    "openapi": "3.1.0",
+    "components": {
+      "schemas": {
+        "User": {
+          "type": "object"
+        },
+        "Indirection1": {
+          "type": "object"
+        },
+        "Indirection2": {
+          "type": "object"
+        }
+      }
+    }
+  }
+]

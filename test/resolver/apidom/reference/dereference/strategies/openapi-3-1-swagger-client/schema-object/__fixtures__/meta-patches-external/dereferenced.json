@@ -1,0 +1,14 @@
+[
+  {
+    "openapi": "3.1.0",
+    "components": {
+      "schemas": {
+        "externalRef": {
+          "description": "external ref",
+          "type": "object",
+          "$$ref": "http://localhost:8123/ex3.json#/$defs/externalSchema"
+        }
+      }
+    }
+  }
+]

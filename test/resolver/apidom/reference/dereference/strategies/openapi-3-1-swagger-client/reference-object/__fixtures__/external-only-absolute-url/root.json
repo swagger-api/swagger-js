@@ -1,0 +1,11 @@
+{
+  "openapi": "3.1.0",
+  "components": {
+    "parameters": {
+       "externalRef": {
+        "$ref": "http://localhost:8123/ex.json#/externalParameter",
+        "description": "external ref"
+      }
+    }
+  }
+}

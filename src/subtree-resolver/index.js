@@ -20,13 +20,14 @@
 // future versions.
 //
 // TODO: move the remarks above into project documentation
-
 import get from 'lodash/get';
 
-import resolve from '../resolver.js';
-import { normalizeSwagger } from '../helpers/index.js';
+import resolve from '../resolver/index.js';
+import genericResolverStrategy from '../resolver/strategies/generic/index.js';
+import openApi2ResolverStrategy from '../resolver/strategies/openapi-2/index.js';
+import openApi30ResolverStrategy from '../resolver/strategies/openapi-3-0/index.js';
 
-export default async function resolveSubtree(obj, path, opts = {}) {
+const resolveSubtree = async (obj, path, options = {}) => {
   const {
     returnEntireTree,
     baseDoc,
@@ -35,9 +36,10 @@ export default async function resolveSubtree(obj, path, opts = {}) {
     parameterMacro,
     modelPropertyMacro,
     useCircularStructures,
-  } = opts;
-
+    strategies,
+  } = options;
   const resolveOptions = {
+    spec: obj,
     pathDiscriminator: path,
     baseDoc,
     requestInterceptor,
@@ -45,12 +47,10 @@ export default async function resolveSubtree(obj, path, opts = {}) {
     parameterMacro,
     modelPropertyMacro,
     useCircularStructures,
+    strategies,
   };
-
-  const { spec: normalized } = normalizeSwagger({
-    spec: obj,
-  });
-
+  const strategy = strategies.find((strg) => strg.match(resolveOptions));
+  const normalized = strategy.normalize(resolveOptions);
   const result = await resolve({
     ...resolveOptions,
     spec: normalized,
@@ -63,4 +63,15 @@ export default async function resolveSubtree(obj, path, opts = {}) {
   }
 
   return result;
-}
+};
+
+export const makeResolveSubtree =
+  (defaultOptions) =>
+  async (obj, path, options = {}) => {
+    const mergedOptions = { ...defaultOptions, ...options };
+    return resolveSubtree(obj, path, mergedOptions);
+  };
+
+export default makeResolveSubtree({
+  strategies: [openApi30ResolverStrategy, openApi2ResolverStrategy, genericResolverStrategy],
+});

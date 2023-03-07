@@ -1,0 +1,18 @@
+{
+  "openapi": "3.1.0",
+  "paths": {
+    "/": {
+      "parameters": [
+        {
+          "name": "param1",
+          "in": "query"
+        },
+        {
+          "name": "param2",
+          "in": "query"
+        }
+      ],
+      "get": {}
+    }
+  }
+}

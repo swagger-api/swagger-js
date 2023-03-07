@@ -1,6 +1,6 @@
 import path from 'path';
 import cloneDeep from 'lodash/cloneDeep';
-import glob from 'glob';
+import { globSync } from 'glob';
 import xmock from 'xmock';
 import fs from 'fs';
 import jsYaml from 'js-yaml';
@@ -283,7 +283,7 @@ describe('refs', () => {
   describe('handle cyclic references', () => {
     test('should resolve references as deeply as possible', () => {
       const dir = path.join(__dirname, 'data', 'cyclic');
-      const caseFiles = glob.sync(`${dir}/**/*.js`);
+      const caseFiles = globSync(`${dir}/**/*.js`);
       const cases = caseFiles
         .sort((f1, f2) => {
           // Sorts by group ('internal', 'external') before test case number

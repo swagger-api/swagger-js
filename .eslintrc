@@ -7,10 +7,12 @@
   },
   "globals": {
     "File": true,
-    "Blob": true
+    "Blob": true,
+    "globalThis": true
   },
   "parserOptions": {
     "sourceType": "module",
+    "ecmaVersion": 2020,
     "ecmaFeatures": {
       "impliedStrict": true
     }
@@ -30,6 +32,20 @@
       "always",
       {
         "ignorePackages": true
+      }
+    ],
+    "import/no-unresolved": [
+      2,
+      {
+        "ignore": [
+          "^@swagger-api/apidom-reference/configuration/empty$",
+          "^@swagger-api/apidom-reference/dereference/strategies/openapi-3-1$",
+          "^@swagger-api/apidom-reference/dereference/strategies/openapi-3-1/selectors/\\$anchor$",
+          "^@swagger-api/apidom-reference/dereference/strategies/openapi-3-1/selectors/uri$",
+          "^@swagger-api/apidom-reference/resolve/resolvers/file$",
+          "^@swagger-api/apidom-reference/resolve/strategies/openapi-3-1$",
+          "^@swagger-api/apidom-reference/parse/parsers/binary$"
+        ]
       }
     ],
     "prettier/prettier": "error",

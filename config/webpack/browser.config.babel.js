@@ -1,5 +1,4 @@
 import path from 'path';
-import webpack from 'webpack';
 import { StatsWriterPlugin } from 'webpack-stats-plugin';
 import { DuplicatesPlugin } from 'inspectpack/plugin';
 import { WebpackBundleSizeAnalyzerPlugin } from 'webpack-bundle-size-analyzer';
@@ -45,19 +44,11 @@ const browser = {
   module,
   plugins: [
     new LodashModuleReplacementPlugin(),
-    new webpack.LoaderOptionsPlugin({
-      minimize: true,
-    }),
     new DuplicatesPlugin({
       // emit compilation warning or error? (Default: `false`)
-      emitErrors: true,
+      emitErrors: false, // https://github.com/FormidableLabs/inspectpack/issues/181
       // display full duplicates information? (Default: `false`)
       verbose: true,
-    }),
-    new WebpackBundleSizeAnalyzerPlugin('swagger-client.browser-sizes.txt'),
-    new StatsWriterPlugin({
-      filename: path.join('swagger-client.browser-stats.json'),
-      fields: null,
     }),
   ],
   optimization: {
@@ -74,8 +65,8 @@ const browserMin = {
   devtool: 'source-map',
   performance: {
     hints: 'error',
-    maxEntrypointSize: 270000,
-    maxAssetSize: 1300000,
+    maxEntrypointSize: 440000,
+    maxAssetSize: 50000000,
   },
   output: {
     path: path.resolve('./dist'),
@@ -95,8 +86,10 @@ const browserMin = {
   module,
   plugins: [
     new LodashModuleReplacementPlugin(),
-    new webpack.LoaderOptionsPlugin({
-      minimize: true,
+    new WebpackBundleSizeAnalyzerPlugin('swagger-client.browser-sizes.txt'),
+    new StatsWriterPlugin({
+      filename: path.join('swagger-client.browser-stats.json'),
+      fields: null,
     }),
   ],
   optimization: {

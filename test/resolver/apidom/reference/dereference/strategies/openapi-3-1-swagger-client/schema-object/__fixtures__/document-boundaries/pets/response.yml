@@ -1,0 +1,7 @@
+content:
+  application/json:
+    schema:
+      $ref: "./def.yml#/components/schemas/Pet"
+  application/yaml:
+    schema:
+      $ref: "./def3.yml#Pet"

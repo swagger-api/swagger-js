@@ -1,0 +1,17 @@
+[
+  {
+    "openapi": "3.1.0",
+    "components": {
+      "schemas": {
+        "User": {
+          "type": "object",
+          "properties": {
+            "parent": {
+              "$ref": "http://localhost:8123/root.json#/components/schemas/User"
+            }
+          }
+        }
+      }
+    }
+  }
+]

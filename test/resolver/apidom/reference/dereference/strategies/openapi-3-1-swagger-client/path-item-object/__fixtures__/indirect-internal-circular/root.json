@@ -1,0 +1,14 @@
+{
+  "openapi": "3.1.0",
+  "paths": {
+    "/path1": {
+      "$ref": "#/paths/~1path2"
+    },
+    "/path2": {
+      "$ref": "#/paths/~1path3"
+    },
+    "/path3": {
+      "$ref": "#/paths/~1path1"
+    }
+  }
+}

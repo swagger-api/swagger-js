@@ -1,0 +1,13 @@
+---
+openapi: 3.1.0
+paths:
+  "/path":
+    get:
+      callbacks:
+        callback:
+          "$ref": "#/components/callbacks/callback"
+components:
+  callbacks:
+    callback:
+      "{$method}":
+        description: description of callback2

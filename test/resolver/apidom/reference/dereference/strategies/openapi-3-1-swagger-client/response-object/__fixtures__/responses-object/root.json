@@ -1,0 +1,27 @@
+{
+  "openapi": "3.1.0",
+  "paths": {
+    "/path": {
+      "get": {
+        "responses": {
+          "default": {
+            "$ref": "#/components/responses/default"
+          },
+          "200": {
+            "$ref": "#/components/responses/200"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "responses": {
+      "default": {
+        "description": "first response object"
+      },
+      "200": {
+        "description": "second response object"
+      }
+    }
+  }
+}

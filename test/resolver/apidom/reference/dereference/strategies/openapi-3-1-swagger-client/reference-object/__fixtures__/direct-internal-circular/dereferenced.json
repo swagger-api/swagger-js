@@ -1,0 +1,13 @@
+[
+  {
+    "openapi": "3.1.0",
+    "components": {
+      "parameters": {
+        "userId": {
+          "$ref": "#/components/parameters/userId",
+          "description": "description 1"
+        }
+      }
+    }
+  }
+]

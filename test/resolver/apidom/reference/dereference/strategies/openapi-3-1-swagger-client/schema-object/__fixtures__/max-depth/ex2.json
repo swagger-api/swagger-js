@@ -1,0 +1,8 @@
+{
+  "type": "object",
+  "$defs": {
+    "Indirection": {
+      "$ref": "./ex3.json"
+    }
+  }
+}

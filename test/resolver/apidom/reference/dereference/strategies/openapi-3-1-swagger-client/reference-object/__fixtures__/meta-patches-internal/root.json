@@ -1,0 +1,18 @@
+{
+  "openapi": "3.1.0",
+  "components": {
+    "parameters": {
+      "param1": {
+        "$ref": "#/components/parameters/param2"
+      },
+      "param2": {
+        "$ref": "#/components/parameters/param3"
+      },
+      "param3": {
+        "name": "offset",
+        "in": "query",
+        "required": true
+      }
+    }
+  }
+}
