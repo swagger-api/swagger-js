@@ -311,7 +311,6 @@ describe('http', () => {
         expect(client.apis.default.test).toBeTruthy();
 
         return client.apis.default.test({}).catch((err) => {
-          // Would have thrown before that
           expect(err.status).toBe(404);
           done();
         });
