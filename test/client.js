@@ -301,4 +301,20 @@ describe('http', () => {
       });
     });
   });
+
+  test('should omit undefined JSON query parameter', (done) => {
+    Swagger('http://localhost:8000/sample-query-parameter-json.yaml')
+      .then((client) => {
+        expect(client).toBeTruthy();
+        expect(Object.keys(client.apis).length).toBe(1);
+        expect(client.apis.default).toBeTruthy();
+        expect(client.apis.default.test).toBeTruthy();
+
+        return client.apis.default.test({}).catch((err) => {
+          expect(err.status).toBe(404);
+          done();
+        });
+      })
+      .catch((err) => done(err));
+  });
 });

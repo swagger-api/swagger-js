@@ -29,8 +29,16 @@ export function query({ req, value, parameter }) {
 
   if (parameter.content) {
     const effectiveMediaType = Object.keys(parameter.content)[0];
+    const serializedValue = serialize(value, effectiveMediaType);
 
-    req.query[parameter.name] = serialize(value, effectiveMediaType);
+    if (serializedValue) {
+      req.query[parameter.name] = serializedValue;
+    } else if (parameter.allowEmptyValue && value !== undefined) {
+      const paramName = parameter.name;
+      req.query[paramName] = req.query[paramName] || {};
+      req.query[paramName].allowEmptyValue = true;
+    }
+
     return;
   }
 
