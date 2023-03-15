@@ -9,7 +9,7 @@ export const isOpenAPI2 = (spec) => {
 export const isOpenAPI30 = (spec) => {
   try {
     const { openapi } = spec;
-    return typeof openapi === 'string' && openapi.startsWith('3.0');
+    return typeof openapi === 'string' && /^3\.0\.([0123])(?:-rc[012])?$/.test(openapi);
   } catch {
     return false;
   }
@@ -18,7 +18,7 @@ export const isOpenAPI30 = (spec) => {
 export const isOpenAPI31 = (spec) => {
   try {
     const { openapi } = spec;
-    return typeof openapi === 'string' && openapi.startsWith('3.1');
+    return typeof openapi === 'string' && /^3\.1\.(?:[1-9]\d*|0)$/.test(openapi);
   } catch {
     return false;
   }
