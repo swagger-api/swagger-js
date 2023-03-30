@@ -5,7 +5,7 @@ export const retrievalURI = (options) => {
 
   // @TODO Swagger-UI uses baseDoc instead of url, this is to allow both
   // need to fix and pick one.
-  return baseDoc || url;
+  return baseDoc || url || '';
 };
 
 export const httpClient = (options) => {
