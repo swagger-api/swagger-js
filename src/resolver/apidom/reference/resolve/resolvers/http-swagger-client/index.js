@@ -34,8 +34,20 @@ const HttpResolverSwaggerClient = HttpResolver.compose({
           url: file.uri,
           signal,
           userFetch: async (resource, options) => {
-            const res = await fetch(resource, options);
-            res.headers.delete('Content-Type');
+            let res = await fetch(resource, options);
+
+            try {
+              // node-fetch supports mutations
+              res.headers.delete('Content-Type');
+            } catch {
+              // Fetch API has guards which prevent mutations
+              res = new Response(res.body, {
+                ...res,
+                headers: new Headers(res.headers),
+              });
+              res.headers.delete('Content-Type');
+            }
+
             return res;
           },
           credentials,
