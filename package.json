@@ -1,6 +1,6 @@
 {
   "name": "swagger-client",
-  "version": "3.19.3",
+  "version": "3.19.4",
   "description": "SwaggerJS - a collection of interfaces for OAI specs",
   "browser": {
     "./src/http/fold-formdata-to-request.node.js": "./src/http/fold-formdata-to-request.browser.js",
