@@ -101,9 +101,12 @@ describe('resolve', () => {
 
     describe('given OpenAPI 3.1.0 definition via spec option', () => {
       describe('and neither baseDoc nor url option is provided', () => {
-        test('should resolve', async () => {
+        test('should resolve using implicit baseURI=https://smartbear.com/', async () => {
           const spec = globalThis.loadJsonFile(path.join(fixturePath, 'petstore.json'));
-          const resolvedSpec = await SwaggerClient.resolve({ spec });
+          const resolvedSpec = await SwaggerClient.resolve({
+            spec,
+            allowMetaPatches: true, // used only to assert on resolved baseURI within the snapshot
+          });
 
           expect(resolvedSpec).toMatchSnapshot();
         });
@@ -118,6 +121,19 @@ describe('resolve', () => {
           });
 
           expect(resolvedSpec).toMatchSnapshot();
+        });
+
+        describe('and baseDoc option is a relative reference', () => {
+          test('should resolve the definition with the resolved baseDoc', async () => {
+            const spec = globalThis.loadJsonFile(path.join(fixturePath, 'petstore.json'));
+            const resolvedSpec = await SwaggerClient.resolve({
+              spec,
+              baseDoc: './petstore.json',
+              allowMetaPatches: true, // used only to assert on resolved baseURI within the snapshot
+            });
+
+            expect(resolvedSpec).toMatchSnapshot();
+          });
         });
       });
 

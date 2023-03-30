@@ -42,9 +42,9 @@ const resolveOpenAPI31Strategy = async (options) => {
   } = options;
   try {
     // determining BaseURI
-    const defaultBaseURI = 'https://smartbear.com/';
-    const retrievalURI = optionsUtil.retrievalURI(options) ?? url.cwd();
-    const baseURI = url.isHttpUrl(retrievalURI) ? retrievalURI : defaultBaseURI;
+    const cwd = url.isHttpUrl(url.cwd()) ? url.cwd() : 'https://smartbear.com/';
+    const retrievalURI = optionsUtil.retrievalURI(options);
+    const baseURI = url.resolve(cwd, retrievalURI);
 
     // prepare spec for dereferencing
     const openApiElement = OpenApi3_1Element.refract(spec);
