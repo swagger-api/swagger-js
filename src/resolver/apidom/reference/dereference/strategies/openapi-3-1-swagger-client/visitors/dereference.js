@@ -64,7 +64,7 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
   methods: {
     async ReferenceElement(referenceElement, key, parent, path, ancestors) {
       try {
-        const [ancestorsLineage, directAncestors] = this.toAncestorLineage(ancestors);
+        const [ancestorsLineage, directAncestors] = this.toAncestorLineage([...ancestors, parent]);
 
         // skip already identified cycled Path Item Objects
         if (includesClasses(['cycle'], referenceElement.$ref)) {
@@ -120,6 +120,24 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
           );
         }
 
+        if (!this.useCircularStructures) {
+          const hasCycles = ancestorsLineage.some((ancs) => ancs.has(fragment));
+          if (hasCycles) {
+            if (url.isHttpUrl(retrievalURI) || url.isFileSystemPath(retrievalURI)) {
+              // make the referencing URL or file system path absolute
+              const cycledReferenceElement = new ReferenceElement(
+                { $ref: $refBaseURI },
+                referenceElement.meta.clone(),
+                referenceElement.attributes.clone()
+              );
+              cycledReferenceElement.get('$ref').classes.push('cycle');
+              return cycledReferenceElement;
+            }
+            // skip processing this schema and all it's child schemas
+            return false;
+          }
+        }
+
         // append referencing schema to ancestors lineage
         directAncestors.add(referenceElement);
 
@@ -140,24 +158,6 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
         directAncestors.delete(referenceElement);
 
         this.indirections.pop();
-
-        if (!this.useCircularStructures) {
-          const hasCycles = ancestorsLineage.some((ancs) => ancs.has(fragment));
-          if (hasCycles) {
-            if (url.isHttpUrl(retrievalURI) || url.isFileSystemPath(retrievalURI)) {
-              // make the referencing URL or file system path absolute
-              const cycledReferenceElement = new ReferenceElement(
-                { $ref: $refBaseURI },
-                referenceElement.meta.clone(),
-                referenceElement.attributes.clone()
-              );
-              cycledReferenceElement.get('$ref').classes.push('cycle');
-              return cycledReferenceElement;
-            }
-            // skip processing this schema but traverse all it's child schemas
-            return false;
-          }
-        }
 
         fragment = fragment.clone();
         fragment.setMetaProperty('ref-fields', {
@@ -206,7 +206,7 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
 
     async PathItemElement(pathItemElement, key, parent, path, ancestors) {
       try {
-        const [ancestorsLineage, directAncestors] = this.toAncestorLineage(ancestors);
+        const [ancestorsLineage, directAncestors] = this.toAncestorLineage([...ancestors, parent]);
 
         // ignore PathItemElement without $ref field
         if (!isStringElement(pathItemElement.$ref)) {
@@ -257,6 +257,24 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
           );
         }
 
+        if (!this.useCircularStructures) {
+          const hasCycles = ancestorsLineage.some((ancs) => ancs.has(referencedElement));
+          if (hasCycles) {
+            if (url.isHttpUrl(retrievalURI) || url.isFileSystemPath(retrievalURI)) {
+              // make the referencing URL or file system path absolute
+              const cycledPathItemElement = new PathItemElement(
+                { $ref: $refBaseURI },
+                pathItemElement.meta.clone(),
+                pathItemElement.attributes.clone()
+              );
+              cycledPathItemElement.get('$ref').classes.push('cycle');
+              return cycledPathItemElement;
+            }
+            // skip processing this schema and all it's child schemas
+            return false;
+          }
+        }
+
         // append referencing schema to ancestors lineage
         directAncestors.add(pathItemElement);
 
@@ -280,24 +298,6 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
         directAncestors.delete(pathItemElement);
 
         this.indirections.pop();
-
-        if (!this.useCircularStructures) {
-          const hasCycles = ancestorsLineage.some((ancs) => ancs.has(referencedElement));
-          if (hasCycles) {
-            if (url.isHttpUrl(retrievalURI) || url.isFileSystemPath(retrievalURI)) {
-              // make the referencing URL or file system path absolute
-              const cycledPathItemElement = new PathItemElement(
-                { $ref: $refBaseURI },
-                pathItemElement.meta.clone(),
-                pathItemElement.attributes.clone()
-              );
-              cycledPathItemElement.get('$ref').classes.push('cycle');
-              return cycledPathItemElement;
-            }
-            // skip processing this schema but traverse all it's child schemas
-            return false;
-          }
-        }
 
         // merge fields from referenced Path Item with referencing one
         const mergedPathItemElement = new PathItemElement(
@@ -346,7 +346,7 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
 
     async SchemaElement(referencingElement, key, parent, path, ancestors) {
       try {
-        const [ancestorsLineage, directAncestors] = this.toAncestorLineage(ancestors);
+        const [ancestorsLineage, directAncestors] = this.toAncestorLineage([...ancestors, parent]);
 
         // skip current referencing schema as $ref keyword was not defined
         if (!isStringElement(referencingElement.$ref)) {
@@ -444,6 +444,26 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
           );
         }
 
+        // useCircularStructures option processing
+        if (!this.useCircularStructures) {
+          const hasCycles = ancestorsLineage.some((ancs) => ancs.has(referencedElement));
+          if (hasCycles) {
+            if (url.isHttpUrl(retrievalURI) || url.isFileSystemPath(retrievalURI)) {
+              // make the referencing URL or file system path absolute
+              const baseURI = url.resolve(retrievalURI, $refBaseURI);
+              const cycledSchemaElement = new SchemaElement(
+                { $ref: baseURI },
+                referencingElement.meta.clone(),
+                referencingElement.attributes.clone()
+              );
+              cycledSchemaElement.get('$ref').classes.push('cycle');
+              return cycledSchemaElement;
+            }
+            // skip processing this schema and all it's child schemas
+            return false;
+          }
+        }
+
         // append referencing schema to ancestors lineage
         directAncestors.add(referencingElement);
 
@@ -482,26 +502,6 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
           jsonSchemaBooleanElement.setMetaProperty('ref-origin', retrievalURI);
 
           return jsonSchemaBooleanElement;
-        }
-
-        // useCircularStructures option processing
-        if (!this.useCircularStructures) {
-          const hasCycles = ancestorsLineage.some((ancs) => ancs.has(referencedElement));
-          if (hasCycles) {
-            if (url.isHttpUrl(retrievalURI) || url.isFileSystemPath(retrievalURI)) {
-              // make the referencing URL or file system path absolute
-              const baseURI = url.resolve(retrievalURI, $refBaseURI);
-              const cycledSchemaElement = new SchemaElement(
-                { $ref: baseURI },
-                referencingElement.meta.clone(),
-                referencingElement.attributes.clone()
-              );
-              cycledSchemaElement.get('$ref').classes.push('cycle');
-              return cycledSchemaElement;
-            }
-            // skip processing this schema but traverse all it's child schemas
-            return false;
-          }
         }
 
         // Schema Object - merge keywords from referenced schema with referencing schema

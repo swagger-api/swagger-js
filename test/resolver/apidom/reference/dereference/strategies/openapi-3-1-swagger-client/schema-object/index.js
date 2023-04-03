@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { toValue } from '@swagger-api/apidom-core';
+import { toValue, toJSON } from '@swagger-api/apidom-core';
 import { isSchemaElement, mediaTypes } from '@swagger-api/apidom-ns-openapi-3-1';
 import { evaluate } from '@swagger-api/apidom-json-pointer';
 import { dereference, resolve } from '@swagger-api/apidom-reference/configuration/empty';
@@ -124,6 +124,7 @@ describe('dereference', () => {
               });
               const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
+              expect(typeof toJSON(actual)).toBe('string');
               expect(toValue(actual)).toEqual(expected);
             });
 
@@ -132,6 +133,87 @@ describe('dereference', () => {
                 const fixturePath = path.join(
                   rootFixturePath,
                   'cycle-internal-http-circular-structures'
+                );
+                const dereferenceThunk = async () => {
+                  const httpServer = globalThis.createHTTPServer({ port: 8123, cwd: fixturePath });
+
+                  try {
+                    return toValue(
+                      await dereference('http://localhost:8123/root.json', {
+                        parse: { mediaType: mediaTypes.latest('json') },
+                        dereference: {
+                          strategies: [
+                            OpenApi3_1SwaggerClientDereferenceStrategy({
+                              useCircularStructures: false,
+                            }),
+                          ],
+                        },
+                      })
+                    );
+                  } finally {
+                    await httpServer.terminate();
+                  }
+                };
+                const expected = globalThis.loadJsonFile(
+                  path.join(fixturePath, 'dereferenced.json')
+                );
+
+                await expect(dereferenceThunk()).resolves.toEqual(expected);
+              });
+            });
+          });
+        });
+
+        describe('given Schema Objects with advanced internal cycles', () => {
+          test('should dereference', async () => {
+            const fixturePath = path.join(rootFixturePath, 'cycle-internal-advanced');
+            const rootFilePath = path.join(fixturePath, 'root.json');
+            const dereferenced = await dereference(rootFilePath, {
+              parse: { mediaType: mediaTypes.latest('json') },
+            });
+            const parent = evaluate(
+              '/0/components/schemas/PlatformMenuTreeNode/properties/children/items',
+              dereferenced
+            );
+            const cyclicParent = evaluate(
+              '/0/components/schemas/PlatformMenuTreeNode/properties/children/items/properties/children/items',
+              dereferenced
+            );
+
+            expect(parent).toStrictEqual(cyclicParent);
+          });
+
+          describe('and useCircularStructures=false', () => {
+            test('should avoid cycles by skipping transclusion', async () => {
+              const fixturePath = path.join(
+                rootFixturePath,
+                'cycle-internal-advanced-circular-structures'
+              );
+              const rootFilePath = path.join(fixturePath, 'root.json');
+              const refSet = await resolve(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+              });
+              refSet.refs[0].uri = '/home/smartbear/root.json';
+              const actual = await dereference(refSet.refs[0].uri, {
+                parse: { mediaType: mediaTypes.latest('json') },
+                dereference: {
+                  refSet,
+                  strategies: [
+                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
+                  ],
+                },
+              });
+              const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
+
+              expect(typeof toJSON(actual)).toBe('string');
+              expect(toValue(actual)).toEqual(expected);
+            });
+
+            describe('and using HTTP protocol', () => {
+              test('should make JSON Pointer absolute', async () => {
+                const fixturePath = path.join(
+                  rootFixturePath,
+                  'cycle-internal-advanced-http-circular-structures'
                 );
                 const dereferenceThunk = async () => {
                   const httpServer = globalThis.createHTTPServer({ port: 8123, cwd: fixturePath });
@@ -202,6 +284,7 @@ describe('dereference', () => {
               });
               const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
+              expect(typeof toJSON(actual)).toBe('string');
               expect(toValue(actual)).toEqual(expected);
             });
           });
@@ -544,6 +627,7 @@ describe('dereference', () => {
               });
               const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
+              expect(typeof toJSON(actual)).toBe('string');
               expect(toValue(actual)).toEqual(expected);
             });
           });
@@ -608,6 +692,7 @@ describe('dereference', () => {
               });
               const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
+              expect(typeof toJSON(actual)).toBe('string');
               expect(toValue(actual)).toEqual(expected);
             });
           });
@@ -674,6 +759,7 @@ describe('dereference', () => {
               });
               const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
+              expect(typeof toJSON(actual)).toBe('string');
               expect(toValue(actual)).toEqual(expected);
             });
           });
@@ -763,6 +849,7 @@ describe('dereference', () => {
               });
               const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
+              expect(typeof toJSON(actual)).toBe('string');
               expect(toValue(actual)).toEqual(expected);
             });
           });
@@ -827,6 +914,7 @@ describe('dereference', () => {
               });
               const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
+              expect(typeof toJSON(actual)).toBe('string');
               expect(toValue(actual)).toEqual(expected);
             });
           });
@@ -889,6 +977,7 @@ describe('dereference', () => {
               });
               const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
+              expect(typeof toJSON(actual)).toBe('string');
               expect(toValue(actual)).toEqual(expected);
             });
           });
@@ -989,6 +1078,7 @@ describe('dereference', () => {
               });
               const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
+              expect(typeof toJSON(actual)).toBe('string');
               expect(toValue(actual)).toEqual(expected);
             });
           });
@@ -1078,6 +1168,7 @@ describe('dereference', () => {
               });
               const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
+              expect(typeof toJSON(actual)).toBe('string');
               expect(toValue(actual)).toEqual(expected);
             });
           });
@@ -1224,6 +1315,7 @@ describe('dereference', () => {
               });
               const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
+              expect(typeof toJSON(actual)).toBe('string');
               expect(toValue(actual)).toEqual(expected);
             });
           });
@@ -1290,6 +1382,7 @@ describe('dereference', () => {
               });
               const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
+              expect(typeof toJSON(actual)).toBe('string');
               expect(toValue(actual)).toEqual(expected);
             });
           });
@@ -1637,6 +1730,7 @@ describe('dereference', () => {
               });
               const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
+              expect(typeof toJSON(actual)).toBe('string');
               expect(toValue(actual)).toEqual(expected);
             });
 
@@ -1705,6 +1799,7 @@ describe('dereference', () => {
               });
               const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
+              expect(typeof toJSON(actual)).toBe('string');
               expect(toValue(actual)).toEqual(expected);
             });
 
