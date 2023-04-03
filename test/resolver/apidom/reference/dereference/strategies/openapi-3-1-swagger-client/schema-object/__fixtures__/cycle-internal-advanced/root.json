@@ -1,0 +1,35 @@
+{
+  "openapi": "3.1.0",
+  "components": {
+    "schemas": {
+      "PlatformMenuTree": {
+        "$ref": "#/components/schemas/PlatformMenuTreeNode"
+      },
+      "PlatformMenuTreeNode": {
+        "properties": {
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlatformMenuTreeNode"
+            }
+          },
+          "resources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlatformMenuTreeResourceNode"
+            }
+          }
+        }
+      },
+      "PlatformMenuTreeResourceNode": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID"
+          }
+        }
+      }
+    }
+  }
+}
