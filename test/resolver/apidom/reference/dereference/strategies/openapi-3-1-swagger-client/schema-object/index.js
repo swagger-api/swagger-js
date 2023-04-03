@@ -213,7 +213,7 @@ describe('dereference', () => {
               test('should make JSON Pointer absolute', async () => {
                 const fixturePath = path.join(
                   rootFixturePath,
-                  'cycle-internal-http-circular-structures'
+                  'cycle-internal-advanced-http-circular-structures'
                 );
                 const dereferenceThunk = async () => {
                   const httpServer = globalThis.createHTTPServer({ port: 8123, cwd: fixturePath });
