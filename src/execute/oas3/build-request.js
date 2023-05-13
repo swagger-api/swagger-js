@@ -65,9 +65,13 @@ export default function buildRequest(options, req) {
 
             req.form = {};
             Object.keys(requestBody).forEach((k) => {
+              const partEncoding = encoding[k];
+              const partBody = partEncoding
+                ? new Blob([requestBody[k]], { type: partEncoding.contentType })
+                : requestBody[k];
               req.form[k] = {
-                value: requestBody[k],
-                encoding: encoding[k] || {},
+                value: partBody,
+                encoding: partEncoding || {},
               };
             });
           } else {
