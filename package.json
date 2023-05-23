@@ -89,7 +89,7 @@
     "eslint-plugin-prettier": "=4.2.1",
     "expect": "^29.0.3",
     "fetch-mock": "=9.11.0",
-    "glob": "=10.2.5",
+    "glob": "=10.2.6",
     "husky": "^8.0.1",
     "inspectpack": "=4.7.1",
     "install": "=0.13.0",
