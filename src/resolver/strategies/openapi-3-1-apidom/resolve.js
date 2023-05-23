@@ -61,6 +61,9 @@ const resolveOpenAPI31Strategy = async (options) => {
     const refSet = ReferenceSet({ refs: [openApiElementReference] });
     if (jsonPointer !== '') refSet.rootRef = null; // reset root reference as we want fragment to become the root reference
 
+    // prepare ancestors; needed for cases where fragment is not OpenAPI element
+    const ancestors = [new WeakSet([fragmentElement])];
+
     const errors = [];
     const dereferenced = await dereferenceApiDOM(fragmentElement, {
       resolve: {
@@ -104,6 +107,7 @@ const resolveOpenAPI31Strategy = async (options) => {
             parameterMacro,
             modelPropertyMacro,
             mode,
+            ancestors,
           }),
         ],
         refSet,
