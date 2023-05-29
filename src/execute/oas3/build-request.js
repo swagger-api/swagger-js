@@ -2,6 +2,7 @@
 // `src/execute/index.js#buildRequest`
 import { isPlainObject } from 'is-plain-object';
 import get from 'lodash/get';
+import { Blob } from 'formdata-node';
 
 import btoa from '../../helpers/btoa.node.js';
 
