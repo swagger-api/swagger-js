@@ -18,6 +18,7 @@ const OpenApi3_1SwaggerClientDereferenceStrategy = OpenApi3_1DereferenceStrategy
     parameterMacro: null,
     modelPropertyMacro: null,
     mode: 'non-strict',
+    ancestors: null,
   },
   init({
     useCircularStructures = this.useCircularStructures,
@@ -25,6 +26,7 @@ const OpenApi3_1SwaggerClientDereferenceStrategy = OpenApi3_1DereferenceStrategy
     parameterMacro = this.parameterMacro,
     modelPropertyMacro = this.modelPropertyMacro,
     mode = this.mode,
+    ancestors = [],
   } = {}) {
     this.name = 'openapi-3-1-swagger-client';
     this.useCircularStructures = useCircularStructures;
@@ -32,6 +34,7 @@ const OpenApi3_1SwaggerClientDereferenceStrategy = OpenApi3_1DereferenceStrategy
     this.parameterMacro = parameterMacro;
     this.modelPropertyMacro = modelPropertyMacro;
     this.mode = mode;
+    this.ancestors = [...ancestors];
   },
   methods: {
     async dereference(file, options) {
@@ -55,6 +58,7 @@ const OpenApi3_1SwaggerClientDereferenceStrategy = OpenApi3_1DereferenceStrategy
         options,
         useCircularStructures: this.useCircularStructures,
         allowMetaPatches: this.allowMetaPatches,
+        ancestors: this.ancestors,
       });
       visitors.push(dereferenceVisitor);
 

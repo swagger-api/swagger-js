@@ -2,7 +2,11 @@ import path from 'node:path';
 import { toValue, toJSON } from '@swagger-api/apidom-core';
 import { isSchemaElement, mediaTypes } from '@swagger-api/apidom-ns-openapi-3-1';
 import { evaluate } from '@swagger-api/apidom-json-pointer';
-import { dereference, resolve } from '@swagger-api/apidom-reference/configuration/empty';
+import {
+  dereference,
+  dereferenceApiDOM,
+  resolve,
+} from '@swagger-api/apidom-reference/configuration/empty';
 
 // eslint-disable-next-line camelcase
 import OpenApi3_1SwaggerClientDereferenceStrategy from '../../../../../../../../src/resolver/apidom/reference/dereference/strategies/openapi-3-1-swagger-client/index.js';
@@ -126,6 +130,32 @@ describe('dereference', () => {
 
               expect(typeof toJSON(actual)).toBe('string');
               expect(toValue(actual)).toEqual(expected);
+            });
+
+            test('should avoid cycles by skipping transclusion on single element', async () => {
+              const fixturePath = path.join(rootFixturePath, 'cycle-internal-circular-structures');
+              const rootFilePath = path.join(fixturePath, 'root.json');
+              const refSet = await resolve(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+              });
+              refSet.refs[0].uri = '/home/smartbear/root.json';
+              const userSchema = evaluate('/components/schemas/User', refSet.refs[0].value.result);
+              const actual = await dereferenceApiDOM(userSchema, {
+                resolve: { baseURI: '/home/smartbear/root.json' },
+                parse: { mediaType: mediaTypes.latest('json') },
+                dereference: {
+                  refSet,
+                  strategies: [
+                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
+                  ],
+                },
+              });
+              const [expected] = globalThis.loadJsonFile(
+                path.join(fixturePath, 'dereferenced.json')
+              );
+
+              expect(typeof toJSON(actual)).toBe('string');
+              expect(toValue(actual)).toMatchObject(expected);
             });
 
             describe('and using HTTP protocol', () => {
