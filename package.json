@@ -123,7 +123,7 @@
     "deepmerge": "~4.3.0",
     "fast-json-patch": "^3.0.0-1",
     "form-data-encoder": "^1.4.3",
-    "formdata-node": "^4.0.0",
+    "formdata-node": "^5.0.1",
     "is-plain-object": "^5.0.0",
     "js-yaml": "^4.1.0",
     "lodash": "^4.17.21",
