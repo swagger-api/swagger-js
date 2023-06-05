@@ -221,7 +221,6 @@ class SpecMap {
 
         if (lib.isMutation(patch)) {
           this.updateMutations(patch);
-          return;
         }
       } catch (e) {
         console.error(e); // eslint-disable-line no-console
