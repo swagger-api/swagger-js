@@ -330,7 +330,7 @@ function formatKeyValueBySerializationOption(key, value, skipEncoding, serializa
   ];
 }
 
-function buildFormData(reqForm) {
+function buildFormData(reqForm, schema) {
   /**
    * Build a new FormData instance, support array as field value
    * OAS2.0 - when collectionFormat is multi
@@ -358,6 +358,9 @@ function buildFormData(reqForm) {
         }
       } else if (ArrayBuffer.isView(value)) {
         const blob = new Blob([value]);
+        formData.append(key, blob);
+      } else if (schema && schema.encoding && schema.encoding[key] && schema.encoding[key].contentType) {
+        const blob = new Blob([value], {type: schema.encoding[key].contentType});
         formData.append(key, blob);
       } else {
         formData.append(key, value);
@@ -387,7 +390,7 @@ export function encodeFormOrQuery(data) {
 
 // If the request has a `query` object, merge it into the request.url, and delete the object
 // If file and/or multipart, also create FormData instance
-export function mergeInQueryOrForm(req = {}) {
+export function mergeInQueryOrForm(req = {}, operation) {
   const { url = '', query, form } = req;
   const joinSearch = (...strs) => {
     const search = strs.filter((a) => a).join('&'); // Only truthy value
@@ -403,7 +406,7 @@ export function mergeInQueryOrForm(req = {}) {
     const contentType = req.headers['content-type'] || req.headers['Content-Type'];
 
     if (hasFile || /multipart\/form-data/i.test(contentType)) {
-      const formdata = buildFormData(req.form);
+      const formdata = buildFormData(req.form, operation.requestBody ? operation.requestBody.content['multipart/form-data'].schema : null);
       foldFormDataToRequest(formdata, req);
     } else {
       req.body = encodeFormOrQuery(form);

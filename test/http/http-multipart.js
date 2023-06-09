@@ -394,5 +394,77 @@ describe('buildRequest - openapi 3.0', () => {
         ['color[B]', '150'],
       ]);
     });
+
+    test('Encodes JSON correctly', async () => {
+      const spec = {
+        openapi: '3.0.0',
+        servers: [
+          {
+            url: 'http://petstore.swagger.io/v2',
+            name: 'Petstore',
+          },
+        ],
+        paths: {
+          '/one': {
+            post: {
+              operationId: 'getOne',
+              requestBody: {
+                content: {
+                  'multipart/form-data': {
+                    schema: {
+                      type: 'object',
+                      properties: {
+                        color_primary: {
+                          type: 'object',
+                        },
+                        color_secondary: {
+                          type: 'object',
+                        },
+                      },
+                      encoding: {
+                        color_primary: {
+                          contentType: 'application/json'
+                        },
+                        color_secondary: {
+                          contentType: 'application/json'
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+
+      // when
+      const req = buildRequest({
+        spec,
+        operationId: 'getOne',
+        requestBody: {
+          color_primary: { R: 100, G: 200, B: 150 },
+          color_secondary: { R: 150, G: 200, B: 100 },
+        },
+      });
+
+      expect(req).toMatchObject({
+        method: 'POST',
+        url: 'http://petstore.swagger.io/v2/one',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': expect.stringMatching(/^multipart\/form-data/),
+        },
+      });
+
+      const formdata = {};
+
+      for(const [k,v] of Object.entries(Object.fromEntries(req.formdata))){
+        formdata[k] = await v.text();
+      }
+
+      expect(JSON.parse(formdata.color_primary)).toEqual({ R: 100, G: 200, B: 150 });
+      expect(JSON.parse(formdata.color_secondary)).toEqual({ R: 150, G: 200, B: 100 });
+    });
   });
 });
