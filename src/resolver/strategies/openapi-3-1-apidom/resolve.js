@@ -41,14 +41,23 @@ const resolveOpenAPI31Strategy = async (options) => {
     mode = 'non-strict',
   } = options;
   try {
+    const { cache } = resolveOpenAPI31Strategy;
+
     // determining BaseURI
     const cwd = url.isHttpUrl(url.cwd()) ? url.cwd() : 'https://smartbear.com/';
     const retrievalURI = optionsUtil.retrievalURI(options);
     const baseURI = url.resolve(cwd, retrievalURI);
 
     // prepare spec for dereferencing
-    const openApiElement = OpenApi3_1Element.refract(spec);
-    openApiElement.classes.push('result');
+    let openApiElement;
+    if (cache.has(spec)) {
+      openApiElement = cache.get(spec);
+    } else {
+      openApiElement = OpenApi3_1Element.refract(spec);
+      openApiElement.classes.push('result');
+      cache.set(spec, openApiElement);
+    }
+
     const openApiParseResultElement = new ParseResultElement([openApiElement]);
 
     // prepare fragment for dereferencing
@@ -125,6 +134,7 @@ const resolveOpenAPI31Strategy = async (options) => {
     throw error;
   }
 };
+resolveOpenAPI31Strategy.cache = new WeakMap();
 
 export default resolveOpenAPI31Strategy;
 /* eslint-enable camelcase */
