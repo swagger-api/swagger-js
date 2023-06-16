@@ -47,12 +47,17 @@ const normalize = (element) => {
  */
 export const pojoAdapter = (normalizeFn) => (spec) => {
   if (spec?.$$normalized) return spec;
+  if (pojoAdapter.cache.has(spec)) return spec;
 
   const openApiElement = OpenApi3_1Element.refract(spec);
   const normalized = normalizeFn(openApiElement);
+  const value = toValue(normalized);
 
-  return toValue(normalized);
+  pojoAdapter.cache.set(spec, value);
+
+  return value;
 };
+pojoAdapter.cache = new WeakMap();
 
 export default normalize;
 /* eslint-enable camelcase */
