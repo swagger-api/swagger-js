@@ -1282,47 +1282,6 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
 
         expect(req.body).toStrictEqual(readStream);
       });
-
-      it('should preserve fs.ReadStream for application/octet-stream', () => {
-        const spec = {
-          openapi: '3.0.0',
-          paths: {
-            '/one': {
-              get: {
-                operationId: 'getMe',
-                requestBody: {
-                  content: {
-                    'application/octet-stream': {
-                      schema: {
-                        type: 'string',
-                        format: 'binary',
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        };
-
-        // when
-        const readStream = fs.createReadStream(path.join(__dirname, 'data', 'payload.txt'));
-
-        const req = buildRequest({
-          spec,
-          operationId: 'getMe',
-          requestBody: readStream,
-        });
-
-        expect(req).toMatchObject({
-          method: 'GET',
-          url: '/one',
-          credentials: 'same-origin',
-          headers: {},
-        });
-
-        expect(req.body).toStrictEqual(readStream);
-      });
     });
   });
 });
