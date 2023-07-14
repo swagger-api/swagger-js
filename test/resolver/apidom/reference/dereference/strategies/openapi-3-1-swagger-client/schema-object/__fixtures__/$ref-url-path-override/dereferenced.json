@@ -1,0 +1,21 @@
+[
+  {
+    "openapi": "3.1.0",
+    "components": {
+      "schemas": {
+        "User": {
+          "type": "object"
+        },
+        "UserProfile": {
+          "$id": "/components/schemas/user-profile",
+          "type": "object",
+          "properties": {
+            "user": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    }
+  }
+]

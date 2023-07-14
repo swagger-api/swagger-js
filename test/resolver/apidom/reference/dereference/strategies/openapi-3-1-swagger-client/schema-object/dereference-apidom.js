@@ -17,7 +17,45 @@ describe('dereference', () => {
   describe('strategies', () => {
     describe('openapi-3-1-swagger-client', () => {
       describe('Schema Object', () => {
-        describe('given single SchemaElement passed to dereferenceApiDOM', () => {
+        describe('given single SchemaElement passed to dereferenceApiDOM with internal references', () => {
+          const fixturePath = path.join(__dirname, '__fixtures__', 'internal-only', 'root.json');
+
+          test('should dereference', async () => {
+            const parseResult = await parse(fixturePath, {
+              parse: { mediaType: mediaTypes.latest('json') },
+            });
+            const schemaElement = evaluate(
+              '/components/schemas/User/properties/profile',
+              parseResult.api
+            );
+            const dereferenced = await dereferenceApiDOM(schemaElement, {
+              parse: { mediaType: mediaTypes.latest('json') },
+              resolve: { baseURI: `${fixturePath}#/components/schemas/User/properties/profile` },
+            });
+
+            expect(isSchemaElement(dereferenced)).toBe(true);
+          });
+
+          test('should dereference and contain metadata about origin', async () => {
+            const parseResult = await parse(fixturePath, {
+              parse: { mediaType: mediaTypes.latest('json') },
+            });
+            const schemaElement = evaluate(
+              '/components/schemas/User/properties/profile',
+              parseResult.api
+            );
+            const dereferenced = await dereferenceApiDOM(schemaElement, {
+              parse: { mediaType: mediaTypes.latest('json') },
+              resolve: { baseURI: `${fixturePath}#/components/schemas/User/properties/profile` },
+            });
+
+            expect(dereferenced.meta.get('ref-origin').toValue()).toEqual(
+              expect.stringMatching(/internal-only\/root\.json$/)
+            );
+          });
+        });
+
+        describe('given single SchemaElement passed to dereferenceApiDOM with external references', () => {
           const fixturePath = path.join(__dirname, '__fixtures__', 'external-only', 'root.json');
 
           test('should dereference', async () => {
