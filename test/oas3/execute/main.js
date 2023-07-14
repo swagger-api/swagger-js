@@ -1282,7 +1282,6 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
 
         expect(req.body).toStrictEqual(readStream);
       });
-
     });
   });
 });
