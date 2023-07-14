@@ -83,7 +83,7 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
         }
 
         const reference = await this.toReference(referenceElement.$ref.toValue());
-        const retrievalURI = reference.uri;
+        const { uri: retrievalURI } = reference;
         const $refBaseURI = url.resolve(retrievalURI, referenceElement.$ref.toValue());
 
         this.indirections.push(referenceElement);
@@ -230,7 +230,7 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
         }
 
         const reference = await this.toReference(pathItemElement.$ref.toValue());
-        const retrievalURI = reference.uri;
+        const { uri: retrievalURI } = reference;
         const $refBaseURI = url.resolve(retrievalURI, pathItemElement.$ref.toValue());
 
         this.indirections.push(pathItemElement);
@@ -366,7 +366,7 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
         }
 
         // compute baseURI using rules around $id and $ref keywords
-        let { reference } = this;
+        let reference = await this.toReference(url.unsanitize(this.reference.uri));
         let { uri: retrievalURI } = reference;
         const $refBaseURI = resolveSchema$refField(retrievalURI, referencingElement);
         const $refBaseURIStrippedHash = url.stripHash($refBaseURI);

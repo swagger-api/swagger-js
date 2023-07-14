@@ -3,9 +3,12 @@ import { toValue, toJSON } from '@swagger-api/apidom-core';
 import { isSchemaElement, mediaTypes } from '@swagger-api/apidom-ns-openapi-3-1';
 import { evaluate } from '@swagger-api/apidom-json-pointer';
 import {
+  parse,
   dereference,
   dereferenceApiDOM,
   resolve,
+  Reference,
+  ReferenceSet,
 } from '@swagger-api/apidom-reference/configuration/empty';
 
 // eslint-disable-next-line camelcase
@@ -1049,6 +1052,29 @@ describe('dereference', () => {
           });
         });
 
+        describe('given Schema Objects with $ref keyword containing URL path override', () => {
+          const fixturePath = path.join(rootFixturePath, '$ref-url-path-override');
+
+          test('should dereference', async () => {
+            const rootFilePath = path.join(fixturePath, 'root.json');
+            const parseResult = await parse(rootFilePath, {
+              parse: { mediaType: mediaTypes.latest('json') },
+            });
+            const uri = 'https://example.com/';
+            const reference = Reference({ uri, value: parseResult });
+            const refSet = ReferenceSet({ refs: [reference] });
+
+            const actual = await dereference(uri, {
+              dereference: { refSet },
+              parse: { mediaType: mediaTypes.latest('json') },
+            });
+
+            const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
+
+            expect(toValue(actual)).toEqual(expected);
+          });
+        });
+
         describe('given Schema Objects with $ref keyword containing resolvable URL', () => {
           test('should dereference', async () => {
             const fixturePath = path.join(rootFixturePath, '$ref-url-resolvable');
@@ -1111,6 +1137,29 @@ describe('dereference', () => {
               expect(typeof toJSON(actual)).toBe('string');
               expect(toValue(actual)).toEqual(expected);
             });
+          });
+        });
+
+        describe('given Schema Objects with $anchor keyword after $id pointing to internal schema', () => {
+          const fixturePath = path.join(rootFixturePath, '$anchor-internal-no-embedding');
+
+          test('should dereference', async () => {
+            const rootFilePath = path.join(fixturePath, 'root.json');
+            const parseResult = await parse(rootFilePath, {
+              parse: { mediaType: mediaTypes.latest('json') },
+            });
+            const uri = 'https://example.com/';
+            const reference = Reference({ uri, value: parseResult });
+            const refSet = ReferenceSet({ refs: [reference] });
+
+            const actual = await dereference(uri, {
+              dereference: { refSet },
+              parse: { mediaType: mediaTypes.latest('json') },
+            });
+
+            const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
+
+            expect(toValue(actual)).toEqual(expected);
           });
         });
 
