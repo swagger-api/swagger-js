@@ -61,7 +61,7 @@ export default function buildRequest(options, req) {
           requestContentType === 'multipart/form-data'
         ) {
           if (typeof requestBody === 'object') {
-            const encoding = (requestBodyDef.content[requestContentType] || {}).encoding || {};
+            const encoding = requestBodyDef.content[requestContentType]?.encoding ?? {};
 
             req.form = {};
             Object.keys(requestBody).forEach((k) => {

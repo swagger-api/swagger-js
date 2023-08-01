@@ -268,7 +268,7 @@ export function buildRequest(options) {
 
   if (req.cookies) {
     // even if no cookies were defined, we need to remove
-    // the cookies key from our request, or many many legacy
+    // the cookies key from our request, or many legacy
     // tests will break.
     delete req.cookies;
   }
