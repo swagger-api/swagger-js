@@ -190,6 +190,29 @@ const SEPARATORS = {
   pipes: '|',
 };
 
+/**
+ * Specialized sub-class of File class, that only
+ * accepts string data and retain this data in `data`
+ * public property throughout the lifecycle of its instances.
+ *
+ * This sub-class is exclusively used only when Encoding Object
+ * is defined within the Media Type Object (OpenAPI 3.x.y).
+ */
+class FileWithData extends File {
+  constructor(data, name = '', options = {}) {
+    super([data], name, options);
+    this.data = data;
+  }
+
+  valueOf() {
+    return this.data;
+  }
+
+  toString() {
+    return this.valueOf();
+  }
+}
+
 // Formats a key-value and returns an array of key-value pairs.
 //
 // Return value example 1: [['color', 'blue']]
@@ -234,13 +257,20 @@ function formatKeyValue(key, input, skipEncoding = false) {
       });
     }
 
-    if (encoding.contentType) {
-      if (encoding.contentType === 'application/json') {
-        // If value is a string, assume value is already a JSON string
+    if (typeof encoding.contentType === 'string') {
+      if (encoding.contentType.startsWith('application/json')) {
+        // if value is a string, assume value is already a JSON string
         const json = typeof value === 'string' ? value : JSON.stringify(value);
-        return [[encodedKey, encodeFn(json)]];
+        const encodedJson = encodeFn(json);
+        const file = new FileWithData(encodedJson, 'blob', { type: encoding.contentType });
+
+        return [[encodedKey, file]];
       }
-      return [[encodedKey, encodeFn(value.toString())]];
+
+      const encodedData = encodeFn(String(value));
+      const blob = new FileWithData(encodedData, 'blob', { type: encoding.contentType });
+
+      return [[encodedKey, blob]];
     }
 
     // Primitive
@@ -378,10 +408,15 @@ export function encodeFormOrQuery(data) {
   const encodedQuery = Object.keys(data).reduce((result, parameterName) => {
     // eslint-disable-next-line no-restricted-syntax
     for (const [key, value] of formatKeyValue(parameterName, data[parameterName])) {
-      result[key] = value;
+      if (value instanceof FileWithData) {
+        result[key] = value.valueOf();
+      } else {
+        result[key] = value;
+      }
     }
     return result;
   }, {});
+
   return qs.stringify(encodedQuery, { encode: false, indices: false }) || '';
 }
 
