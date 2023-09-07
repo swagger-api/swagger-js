@@ -1624,7 +1624,7 @@ describe('dereference', () => {
             expect(errors).toHaveLength(1);
             expect(errors[0]).toMatchObject({
               message: expect.stringMatching(
-                /^Could not resolve reference: Evaluation failed on token/
+                /^Could not resolve reference: JSON Pointer evaluation failed while/
               ),
               baseDoc: expect.stringMatching(/unresolvable-reference\/root\.json$/),
               $ref: '#/components/schemas/UserProfile',
@@ -1657,7 +1657,7 @@ describe('dereference', () => {
             expect(errors).toHaveLength(1);
             expect(errors[0]).toMatchObject({
               message: expect.stringMatching(
-                /^Could not resolve reference: Evaluation failed on token/
+                /^Could not resolve reference: JSON Pointer evaluation failed while evaluating/
               ),
               baseDoc: expect.stringMatching(/invalid-pointer\/root\.json$/),
               $ref: '#/components/schemas/invalid-pointer',
