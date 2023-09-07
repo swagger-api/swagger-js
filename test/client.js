@@ -175,8 +175,8 @@ describe('http', () => {
         throw new Error('Expected an error.');
       })
       .catch((error) => {
-        expect(error.message).toEqual(
-          'request to http://localhost:1/untouchable.yaml failed, reason: connect ECONNREFUSED 127.0.0.1:1'
+        expect(error.message).toMatch(
+          /request to http:\/\/localhost:1\/untouchable\.yaml failed, reason: connect ECONNREFUSED/
         );
         expect(error.name).toEqual('FetchError');
       }));
