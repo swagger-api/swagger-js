@@ -6,11 +6,17 @@ import fetchMock from 'fetch-mock';
 import fetch, { Headers, Request, Response } from 'cross-fetch';
 import AbortController from 'abort-controller';
 
-// configures fetchMock with node-fetch
+// configures fetchMock
 fetchMock.config.fetch = fetch;
 fetchMock.config.Request = Request;
 fetchMock.config.Response = Response;
 fetchMock.config.Headers = Headers;
+
+// force node-fetch to be used even for Node.js >= 18 where native fetch exists
+globalThis.fetch = fetch;
+globalThis.Request = Request;
+globalThis.Response = Response;
+globalThis.Headers = Headers;
 
 // provide AbortController for older Node.js versions
 globalThis.AbortController = globalThis.AbortController ?? AbortController;

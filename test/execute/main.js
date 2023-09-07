@@ -124,9 +124,6 @@ describe('execute', () => {
     });
 
     test('should execute a simple get request with user-defined fetch', async () => {
-      // cross-fetch exposes FetchAPI methods onto global
-      require('cross-fetch/polyfill');
-
       // Given
       const spec = {
         host: 'swagger.io',
@@ -160,9 +157,6 @@ describe('execute', () => {
     });
 
     test('should allow aborting request during execution', async () => {
-      // cross-fetch exposes FetchAPI methods onto global
-      require('cross-fetch/polyfill');
-
       // Given
       const spec = {
         host: 'swagger.io',
