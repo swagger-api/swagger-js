@@ -156,8 +156,6 @@ describe('http', () => {
   describe('serializeHeaders', () => {
     test('should handle FetchAPI Headers object, which is iterable', () => {
       // Given
-      // cross-fetch exposes FetchAPI methods onto global
-      require('cross-fetch/polyfill');
       expect(global.Headers).toBeInstanceOf(Function);
       const headers = new Headers(); // eslint-disable-line no-undef
       headers.append('Authorization', 'Basic hoop-la');
@@ -175,8 +173,6 @@ describe('http', () => {
 
     test('should handle two of the same headers', () => {
       // Given
-      // cross-fetch exposes FetchAPI methods onto global
-      require('cross-fetch/polyfill');
       expect(global.Headers).toBeInstanceOf(Function);
       const headers = new Headers(); // eslint-disable-line no-undef
       headers.append('Authorization', 'Basic hoop-la');
@@ -193,8 +189,6 @@ describe('http', () => {
 
     test('should handle multiple headers', () => {
       // Given
-      // cross-fetch exposes FetchAPI methods onto global
-      require('cross-fetch/polyfill');
       expect(global.Headers).toBeInstanceOf(Function);
       const headers = new Headers(); // eslint-disable-line no-undef
       headers.append('Authorization', 'Basic hoop-la');
@@ -341,8 +335,6 @@ describe('http', () => {
 
   describe('serializeRes', () => {
     test('should serialize fetch-like response and call serializeHeaders', () => {
-      // cross-fetch exposes FetchAPI methods onto global
-      require('cross-fetch/polyfill');
       const response = new Response('data', {
         // eslint-disable-line no-undef
         status: 200,
@@ -361,9 +353,6 @@ describe('http', () => {
     });
 
     test('should set .text and .data to body Blob or Buffer for binary response', () => {
-      // cross-fetch exposes FetchAPI methods onto global
-      require('cross-fetch/polyfill');
-
       const headers = {
         'Content-Type': 'application/octet-stream',
       };
