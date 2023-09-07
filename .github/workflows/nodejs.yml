@@ -15,7 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.x, 16.x]
+        node-version: [14.x, 16.x, 18.x, 20.x]
 
     steps:
     - uses: actions/checkout@v3
@@ -95,3 +95,21 @@ jobs:
 
     - name: Run commonjs build artifacts on Node.js 16.x
       run: node -p "require('./commonjs')"
+
+    - name: Use Node 18.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18.x
+
+    - name: Run commonjs build artifacts on Node.js 18.x
+      run: node -p "require('./commonjs')"
+
+    - name: Use Node 20.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20.x
+
+    - name: Run commonjs build artifacts on Node.js 20.x
+      run: node -p "require('./commonjs')"
+
+
