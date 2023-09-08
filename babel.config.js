@@ -1,60 +1,44 @@
-/**
- * This is override for https://github.com/lodash/babel-plugin-lodash/issues/259.
- * babel-plugin-lodash is using deprecated babel API, which causes generation of many
- * console.trace calls.
- */
-
-const consoleTrace = console.trace.bind(console);
-console.trace = (message, ...optionalParams) => {
-  if (
-    typeof message === 'string' &&
-    message.startsWith('`isModuleDeclaration` has been deprecated')
-  ) {
-    return undefined; // noop
-  }
-
-  return consoleTrace(message, ...optionalParams);
-};
-
 module.exports = {
   env: {
     commonjs: {
+      browserslistEnv: 'isomorphic-production',
       presets: [
         [
           '@babel/preset-env',
           {
             debug: false,
             modules: 'commonjs',
-            corejs: { version: 3 },
+            loose: true,
             useBuiltIns: false,
-            targets: {
-              node: '12.20.0',
-            },
             forceAllTransforms: false,
-            ignoreBrowserslistConfig: true,
+            ignoreBrowserslistConfig: false,
           },
         ],
       ],
       plugins: [
         [
-          '@babel/plugin-transform-modules-commonjs',
+          '@babel/plugin-transform-runtime',
           {
-            loose: true,
+            corejs: { version: 3, proposals: false },
+            absoluteRuntime: false,
+            helpers: true,
+            regenerator: false,
+            version: '^7.22.15',
           },
         ],
-        '@babel/proposal-class-properties',
-        '@babel/proposal-object-rest-spread',
       ],
     },
     es: {
+      browserslistEnv: 'isomorphic-production',
       presets: [
         [
           '@babel/preset-env',
           {
             debug: false,
             modules: false,
-            corejs: { version: 3 },
             useBuiltIns: false,
+            forceAllTransforms: false,
+            ignoreBrowserslistConfig: false,
           },
         ],
       ],
@@ -62,25 +46,28 @@ module.exports = {
         [
           '@babel/plugin-transform-runtime',
           {
+            corejs: { version: 3, proposals: false },
             absoluteRuntime: false,
-            corejs: 3,
-            version: '^7.11.2',
+            helpers: true,
+            regenerator: false,
+            useESModules: true,
+            version: '^7.22.15',
           },
         ],
-        '@babel/proposal-class-properties',
-        '@babel/proposal-object-rest-spread',
-        'lodash',
       ],
     },
     browser: {
+      browserslistEnv: 'browser-production',
       sourceType: 'unambiguous', // https://github.com/webpack/webpack/issues/4039#issuecomment-419284940
       presets: [
         [
           '@babel/preset-env',
           {
             debug: false,
-            corejs: { version: 3 },
+            modules: 'auto',
             useBuiltIns: false,
+            forceAllTransforms: false,
+            ignoreBrowserslistConfig: false,
           },
         ],
       ],
@@ -88,13 +75,13 @@ module.exports = {
         [
           '@babel/plugin-transform-runtime',
           {
-            corejs: 3,
-            version: '^7.11.2',
+            corejs: { version: 3, proposals: false },
+            absoluteRuntime: false,
+            helpers: true,
+            regenerator: false,
+            version: '^7.22.15',
           },
         ],
-        '@babel/proposal-class-properties',
-        '@babel/proposal-object-rest-spread',
-        'lodash',
       ],
     },
   },
