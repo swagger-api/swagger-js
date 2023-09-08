@@ -1,4 +1,23 @@
+[isomorphic-production]
 > 1%
 last 2 versions
 Firefox ESR
 not dead
+node 12.20.0
+
+[isomorphic-development]
+last 1 Chrome versions
+last 1 FireFox versions
+last 1 Safari versions
+node 20
+
+[browser-production]
+> 1%
+last 2 versions
+Firefox ESR
+not dead
+
+[browser-development]
+last 1 Chrome versions
+last 1 FireFox versions
+last 1 Safari versions
