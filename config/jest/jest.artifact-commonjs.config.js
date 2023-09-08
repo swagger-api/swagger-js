@@ -13,11 +13,5 @@ module.exports = {
      * More information in https://github.com/facebook/jest/issues/12270.
      *
      */
-    '#buffer':
-      '<rootDir>/node_modules/@swagger-api/apidom-reference/cjs/util/polyfills/buffer/protocol-import.cjs',
-    '#fs':
-      '<rootDir>/node_modules/@swagger-api/apidom-reference/cjs/util/polyfills/fs/protocol-import.cjs',
-    '#util':
-      '<rootDir>/node_modules/@swagger-api/apidom-reference/cjs/util/polyfills/util/protocol-import.cjs',
   },
 };
