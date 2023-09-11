@@ -38,7 +38,7 @@ const HttpResolverSwaggerClient = HttpResolver.compose({
             let res = await fetch(resource, options);
 
             try {
-              // node-fetch supports mutations
+              // undici supports mutations
               res.headers.delete('Content-Type');
             } catch {
               // Fetch API has guards which prevent mutations

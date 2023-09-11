@@ -1,11 +1,26 @@
 import path from 'node:path';
-import fetchMock from 'fetch-mock';
+import * as undici from 'undici';
 
 import SwaggerClient from '../../../../src/index.js';
 
 const fixturePath = path.join(__dirname, '__fixtures__');
 
 describe('resolve', () => {
+  let mockAgent;
+  let originalGlobalDispatcher;
+
+  beforeEach(() => {
+    mockAgent = new undici.MockAgent();
+    originalGlobalDispatcher = undici.getGlobalDispatcher();
+    undici.setGlobalDispatcher(mockAgent);
+  });
+
+  afterEach(() => {
+    undici.setGlobalDispatcher(originalGlobalDispatcher);
+    mockAgent = null;
+    originalGlobalDispatcher = null;
+  });
+
   describe('OpenAPI 3.1.0 strategy', () => {
     test('should expose a resolver function', () => {
       expect(SwaggerClient.resolve).toBeInstanceOf(Function);
@@ -14,87 +29,79 @@ describe('resolve', () => {
     describe('given OpenAPI 3.1.0 definition via URL', () => {
       test('should resolve', async () => {
         const url = 'https://example.com/petstore.json';
-        const response = new Response(globalThis.loadFile(path.join(fixturePath, 'petstore.json')));
-        fetchMock.get(url, response, { repeat: 1 });
+        const mockPool = mockAgent.get('https://example.com');
+        mockPool
+          .intercept({ path: 'petstore.json' })
+          .reply(200, globalThis.loadFile(path.join(fixturePath, 'petstore.json')));
         const resolvedSpec = await SwaggerClient.resolve({
-          url: 'https://example.com/petstore.json',
+          url,
           allowMetaPatches: false,
         });
 
         expect(resolvedSpec).toMatchSnapshot();
-
-        fetchMock.restore();
       });
 
       describe('and allowMetaPatches=true', () => {
         test('should resolve', async () => {
           const url = 'https://example.com/petstore.json';
-          const response = new Response(
-            globalThis.loadFile(path.join(fixturePath, 'petstore.json'))
-          );
-          fetchMock.get(url, response, { repeat: 1 });
+          const mockPool = mockAgent.get('https://example.com');
+          mockPool
+            .intercept({ path: 'petstore.json' })
+            .reply(200, globalThis.loadFile(path.join(fixturePath, 'petstore.json')));
           const resolvedSpec = await SwaggerClient.resolve({
-            url: 'https://example.com/petstore.json',
+            url,
             allowMetaPatches: true,
           });
 
           expect(resolvedSpec).toMatchSnapshot();
-
-          fetchMock.restore();
         });
       });
 
       describe('and allowMetaPatches=false', () => {
         test('should resolve', async () => {
           const url = 'https://example.com/petstore.json';
-          const response = new Response(
-            globalThis.loadFile(path.join(fixturePath, 'petstore.json'))
-          );
-          fetchMock.get(url, response, { repeat: 1 });
+          const mockPool = mockAgent.get('https://example.com');
+          mockPool
+            .intercept({ path: 'petstore.json' })
+            .reply(200, globalThis.loadFile(path.join(fixturePath, 'petstore.json')));
           const resolvedSpec = await SwaggerClient.resolve({
-            url: 'https://example.com/petstore.json',
+            url,
             allowMetaPatches: false,
           });
 
           expect(resolvedSpec).toMatchSnapshot();
-
-          fetchMock.restore();
         });
       });
 
       describe('and useCircularStructures=true', () => {
         test('should resolve', async () => {
           const url = 'https://example.com/circular-structures.json';
-          const response = new Response(
-            globalThis.loadFile(path.join(fixturePath, 'circular-structures.json'))
-          );
-          fetchMock.get(url, response, { repeat: 1 });
+          const mockPool = mockAgent.get('https://example.com');
+          mockPool
+            .intercept({ path: '/circular-structures.json' })
+            .reply(200, globalThis.loadFile(path.join(fixturePath, 'circular-structures.json')));
           const resolvedSpec = await SwaggerClient.resolve({
-            url: 'https://example.com/circular-structures.json',
+            url,
             useCircularStructures: true,
           });
 
           expect(resolvedSpec).toMatchSnapshot();
-
-          fetchMock.restore();
         });
       });
 
       describe('and useCircularStructures=false', () => {
         test('should resolve', async () => {
           const url = 'https://example.com/circular-structures.json';
-          const response = new Response(
-            globalThis.loadFile(path.join(fixturePath, 'circular-structures.json'))
-          );
-          fetchMock.get(url, response, { repeat: 1 });
+          const mockPool = mockAgent.get('https://example.com');
+          mockPool
+            .intercept({ path: '/circular-structures.json' })
+            .reply(200, globalThis.loadFile(path.join(fixturePath, 'circular-structures.json')));
           const resolvedSpec = await SwaggerClient.resolve({
-            url: 'https://example.com/circular-structures.json',
+            url,
             useCircularStructures: false,
           });
 
           expect(resolvedSpec).toMatchSnapshot();
-
-          fetchMock.restore();
         });
       });
     });

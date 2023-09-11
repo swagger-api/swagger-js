@@ -2,16 +2,9 @@ import process from 'node:process';
 import http from 'node:http';
 import path from 'node:path';
 import fs from 'node:fs';
-import fetchMock from 'fetch-mock';
 import AbortController from 'abort-controller';
 
 import { fetch, Headers, Request, Response } from '../src/helpers/fetch-ponyfill.node.js';
-
-// configures fetchMock
-fetchMock.config.fetch = fetch;
-fetchMock.config.Request = Request;
-fetchMock.config.Response = Response;
-fetchMock.config.Headers = Headers;
 
 // force undici to be used even for Node.js >= 18 where native fetch exists
 globalThis.fetch = fetch;
