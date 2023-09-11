@@ -33,7 +33,7 @@ jobs:
       if: startsWith(matrix.node-version, '14')
       run: npm install -g npm@latest
     - name: Install dependencies
-      if: steps.cache-node-modules.outputs.cache-hit != 'true' &&
+      if: steps.cache-node-modules.outputs.cache-hit != 'true'
       run: npm ci
     - name: Lint commit message
       if: github.ref != 'refs/heads/master' && github.actor != 'dependabot[bot]'
