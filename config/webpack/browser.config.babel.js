@@ -2,7 +2,6 @@ import path from 'path';
 import { StatsWriterPlugin } from 'webpack-stats-plugin';
 import { DuplicatesPlugin } from 'inspectpack/plugin';
 import { WebpackBundleSizeAnalyzerPlugin } from 'webpack-bundle-size-analyzer';
-import LodashModuleReplacementPlugin from 'lodash-webpack-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
 
 const module = {
@@ -43,7 +42,6 @@ const browser = {
   },
   module,
   plugins: [
-    new LodashModuleReplacementPlugin(),
     new DuplicatesPlugin({
       // emit compilation warning or error? (Default: `false`)
       emitErrors: false, // https://github.com/FormidableLabs/inspectpack/issues/181
@@ -85,7 +83,6 @@ const browserMin = {
   },
   module,
   plugins: [
-    new LodashModuleReplacementPlugin(),
     new WebpackBundleSizeAnalyzerPlugin('swagger-client.browser-sizes.txt'),
     new StatsWriterPlugin({
       filename: path.join('swagger-client.browser-stats.json'),

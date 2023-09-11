@@ -20,8 +20,6 @@
 // future versions.
 //
 // TODO: move the remarks above into project documentation
-import get from 'lodash/get';
-
 import resolve from '../resolver/index.js';
 import genericResolverStrategy from '../resolver/strategies/generic/index.js';
 import openApi2ResolverStrategy from '../resolver/strategies/openapi-2/index.js';
@@ -59,7 +57,7 @@ const resolveSubtree = async (obj, path, options = {}) => {
   });
 
   if (!returnEntireTree && Array.isArray(path) && path.length) {
-    result.spec = get(result.spec, path) || null;
+    result.spec = path.reduce((acc, pathSegment) => acc?.[pathSegment], result.spec) || null;
   }
 
   return result;

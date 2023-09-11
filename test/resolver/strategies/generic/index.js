@@ -1,16 +1,27 @@
-import xmock from 'xmock';
-import path from 'path';
-import fs from 'fs';
+import path from 'node:path';
+import fs from 'node:fs';
 import jsYaml from 'js-yaml';
+import * as undici from 'undici';
 
 import Swagger from '../../../../src/index.js';
 
 describe('resolver', () => {
+  let mockAgent;
+  let originalGlobalDispatcher;
+
+  beforeEach(() => {
+    mockAgent = new undici.MockAgent();
+    originalGlobalDispatcher = undici.getGlobalDispatcher();
+    undici.setGlobalDispatcher(mockAgent);
+  });
+
   afterEach(() => {
-    // Restore all xhr/http mocks
-    xmock().restore();
     // Clear the http cache
     Swagger.clearCache();
+
+    undici.setGlobalDispatcher(originalGlobalDispatcher);
+    mockAgent = null;
+    originalGlobalDispatcher = null;
   });
 
   test('should expose a resolver function', () => {
@@ -199,21 +210,18 @@ describe('resolver', () => {
     }
   });
 
-  test('should resolve the url, if no spec provided', () => {
-    // Given
+  test('should resolve the url, if no spec provided', async () => {
     const url = 'http://example.com/swagger.json';
-    xmock().get(url, (req, res) => res.send({ one: 1 }));
+    const mockPool = mockAgent.get('http://example.com');
+    mockPool
+      .intercept({ path: '/swagger.json' })
+      .reply(200, { one: 1 }, { headers: { 'Content-Type': 'application/json' } });
+    const client = await Swagger.resolve({ baseDoc: url, allowMetaPatches: false });
 
-    // When
-    return Swagger.resolve({ baseDoc: url, allowMetaPatches: false }).then(handleResponse);
-
-    // Then
-    function handleResponse(obj) {
-      expect(obj.errors).toEqual([]);
-      expect(obj.spec).toEqual({
-        one: 1,
-      });
-    }
+    expect(client.errors).toEqual([]);
+    expect(client.spec).toEqual({
+      one: 1,
+    });
   });
 
   test('should be able to resolve simple allOf', () => {

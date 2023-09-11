@@ -1,16 +1,21 @@
-import xmock from 'xmock';
+import * as undici from 'undici';
 
 import resolve from '../../../src/subtree-resolver/index.js';
 
 describe('subtree $ref resolver', () => {
-  let xapp;
+  let mockAgent;
+  let originalGlobalDispatcher;
 
   beforeAll(() => {
-    xapp = xmock();
+    mockAgent = new undici.MockAgent();
+    originalGlobalDispatcher = undici.getGlobalDispatcher();
+    undici.setGlobalDispatcher(mockAgent);
   });
 
   afterAll(() => {
-    xapp.restore();
+    undici.setGlobalDispatcher(originalGlobalDispatcher);
+    mockAgent = null;
+    originalGlobalDispatcher = null;
   });
 
   beforeEach(() => {
@@ -675,6 +680,19 @@ describe('subtree $ref resolver', () => {
     });
   });
   test('should fully resolve across remote documents correctly', async () => {
+    const mockPool = mockAgent.get('http://example.com');
+    mockPool.intercept({ path: '/remote.json' }).reply(
+      200,
+      {
+        baz: {
+          $ref: '#/remoteOther',
+        },
+        remoteOther: {
+          result: 'it works!',
+        },
+      },
+      { headers: { 'Content-Type': 'application/json' } }
+    );
     const input = {
       foo: {
         bar: {
@@ -682,19 +700,6 @@ describe('subtree $ref resolver', () => {
         },
       },
     };
-
-    xmock().get('http://example.com/remote.json', (req, res) => {
-      xmock().restore();
-      return res.send({
-        baz: {
-          $ref: '#/remoteOther',
-        },
-        remoteOther: {
-          result: 'it works!',
-        },
-      });
-    });
-
     const res = await resolve(input, [], {
       baseDoc: 'http://example.com/main.json',
     });
@@ -717,7 +722,27 @@ describe('subtree $ref resolver', () => {
       },
     });
   });
+
   test('should redirect and resolve nested remote document requests', async () => {
+    const mockPool = mockAgent.get('http://example.com');
+    mockPool.intercept({ path: '/remote.json', headers: { authorization: 'wow' } }).reply(
+      200,
+      {
+        baz: {
+          $ref: '#/remoteOther',
+        },
+        remoteOther: {
+          $ref: './fake-nested.json',
+        },
+      },
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+    mockPool.intercept({ path: '/remote.json' }).reply(403);
+    mockPool
+      .intercept({ path: '/nested.json', headers: { authorization: 'wow' } })
+      .reply(200, { result: 'it works!' }, { headers: { 'Content-Type': 'application/json' } });
+    mockPool.intercept({ path: '/nested.json' }).reply(403);
+
     const input = {
       foo: {
         bar: {
@@ -725,7 +750,6 @@ describe('subtree $ref resolver', () => {
         },
       },
     };
-
     const requestInterceptor = jest.fn((req) => {
       req.headers.authorization = 'wow';
 
@@ -737,30 +761,6 @@ describe('subtree $ref resolver', () => {
       }
       return req;
     });
-
-    xmock()
-      .get('http://example.com/remote.json', (req, res) => {
-        if (req.header.authorization !== 'wow') {
-          res.status(403);
-        }
-        res.send({
-          baz: {
-            $ref: '#/remoteOther',
-          },
-          remoteOther: {
-            $ref: './fake-nested.json',
-          },
-        });
-      })
-      .get('http://example.com/nested.json', (req, res) => {
-        if (req.header.authorization !== 'wow') {
-          res.status(403);
-        }
-        res.send({
-          result: 'it works!',
-        });
-      });
-
     const res = await resolve(input, [], {
       baseDoc: 'http://example.com/main.json',
       requestInterceptor,

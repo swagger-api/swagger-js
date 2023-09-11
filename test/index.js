@@ -1,37 +1,45 @@
-import xmock from 'xmock';
+import * as undici from 'undici';
 import cloneDeep from 'lodash/cloneDeep';
 
-import Swagger from '../src/index.js';
+import SwaggerClient from '../src/index.js';
 
 describe('constructor', () => {
+  let mockAgent;
+  let originalGlobalDispatcher;
+
+  beforeEach(() => {
+    mockAgent = new undici.MockAgent();
+    originalGlobalDispatcher = undici.getGlobalDispatcher();
+    undici.setGlobalDispatcher(mockAgent);
+  });
+
   afterEach(() => {
     jest.restoreAllMocks();
-    xmock().restore();
+    undici.setGlobalDispatcher(originalGlobalDispatcher);
+    mockAgent = null;
+    originalGlobalDispatcher = null;
   });
 
   test('should export a function', () => {
-    expect(typeof Swagger).toBe('function');
+    expect(typeof SwaggerClient).toBe('function');
   });
 
-  test('should return an instance, without "new"', (cb) => {
-    Swagger({ spec: {} }).then((instance) => {
-      expect(instance).toBeInstanceOf(Swagger);
-      cb();
+  test('should return an instance, without "new"', (done) => {
+    SwaggerClient({ spec: {} }).then((instance) => {
+      expect(instance).toBeInstanceOf(SwaggerClient);
+      done();
     });
   });
 
   describe('instance', () => {
-    test('should ignore an empty spec', () => {
-      // Given
+    test('should ignore an empty spec', async () => {
       const spec = {};
+      const client = await SwaggerClient({ spec });
 
-      return Swagger({ spec }).then((swag) => {
-        expect(swag.spec).toEqual({});
-      });
+      expect(client.spec).toEqual({});
     });
 
-    test('should resolve the spec', () => {
-      // Given
+    test('should resolve the spec', async () => {
       const spec = {
         one: {
           $ref: '#/two',
@@ -40,20 +48,19 @@ describe('constructor', () => {
           hi: 'hello',
         },
       };
+      const client = await SwaggerClient({ spec, allowMetaPatches: false });
 
-      return Swagger({ spec, allowMetaPatches: false }).then((swag) => {
-        expect(swag.spec).toEqual({
-          one: {
-            hi: 'hello',
-          },
-          two: {
-            hi: 'hello',
-          },
-        });
+      expect(client.spec).toEqual({
+        one: {
+          hi: 'hello',
+        },
+        two: {
+          hi: 'hello',
+        },
       });
     });
 
-    test('should resolve a cyclic spec when baseDoc is specified', (cb) => {
+    test('should resolve a cyclic spec when baseDoc is specified', async () => {
       const spec = {
         paths: {
           post: {
@@ -77,31 +84,25 @@ describe('constructor', () => {
           },
         },
       };
+      const client = await SwaggerClient.resolve({ spec, baseDoc: 'http://whatever/' });
 
-      Swagger.resolve({ spec, baseDoc: 'http://whatever/' }).then((swag) => {
-        expect(swag.errors).toEqual([]);
-        cb();
-      });
+      expect(client.errors).toEqual([]);
     });
 
-    test('should keep resolve errors in #errors', () => {
-      // Given
-      const spec = {
-        $ref: 1,
-      };
+    test('should keep resolve errors in #errors', async () => {
+      const spec = { $ref: 1 };
+      const client = await SwaggerClient({ spec });
 
-      return Swagger({ spec }).then((swag) => {
-        expect(swag.errors[0].message).toEqual('$ref: must be a string (JSON-Ref)');
-      });
+      expect(client.errors[0].message).toEqual('$ref: must be a string (JSON-Ref)');
     });
 
-    test('should NOT add `apis` if disableInterfaces', () =>
-      Swagger({ spec: {}, disableInterfaces: true }).then((swag) => {
-        expect(swag.apis).toEqual();
-      }));
+    test('should NOT add `apis` if disableInterfaces', async () => {
+      const client = await SwaggerClient({ spec: {}, disableInterfaces: true });
 
-    test('should add `apis` from the makeApisTagOperation', () => {
-      // Given
+      expect(client.apis).toEqual();
+    });
+
+    test('should add `apis` from the makeApisTagOperation', async () => {
       const spec = {
         paths: {
           '/one': {
@@ -112,15 +113,10 @@ describe('constructor', () => {
           },
         },
       };
+      const { apis } = await SwaggerClient({ spec });
 
-      // When
-      return Swagger({ spec }).then((swag) => {
-        const { apis } = swag;
-
-        // Then
-        expect(typeof apis).toBe('object');
-        expect(apis.me.getMe).toBeInstanceOf(Function);
-      });
+      expect(typeof apis).toBe('object');
+      expect(apis.me.getMe).toBeInstanceOf(Function);
     });
 
     test('should honor `v2OperationIdCompatibilityMode` when building `apis`', () => {
@@ -138,7 +134,7 @@ describe('constructor', () => {
       };
 
       // When
-      return Swagger({
+      return SwaggerClient({
         spec,
         v2OperationIdCompatibilityMode: true,
       }).then((swag) => {
@@ -175,7 +171,7 @@ describe('constructor', () => {
       };
 
       // When
-      return Swagger.resolve({
+      return SwaggerClient.resolve({
         spec,
         allowMetaPatches: false,
         baseDoc: 'http://example.com/swagger.json',
@@ -190,69 +186,63 @@ describe('constructor', () => {
   });
 
   describe('#http', () => {
-    test('should throw if fetch error', (cb) => {
-      const xapp = xmock();
-      xapp.get('http://petstore.swagger.io/404', (req, res) => {
-        res.status(404);
-        res.send('not found');
-      });
+    test('should throw if fetch error', (done) => {
+      const mockPool = mockAgent.get('http://petstore.swagger.io');
+      mockPool.intercept({ path: '/404' }).reply(404, 'not found');
 
-      new Swagger({ url: 'http://petstore.swagger.io/404' }).catch((err) => {
+      new SwaggerClient({ url: 'http://petstore.swagger.io/404' }).catch((err) => {
         expect(err.status).toBe(404);
         expect(err.message).toBe('Not Found');
-        cb();
+        done();
       });
     });
 
-    test('should serialize the response', () => {
-      // Given
-      xmock().get('https://swagger.io/one', (req, res) => {
-        res.set('hi', 'ho');
-        return res.send({ me: true });
-      });
-
-      const req = {
-        url: 'https://swagger.io/one',
-      };
-
-      return Swagger.http(req).then((res) => {
-        expect(res).toMatchObject({
-          url: req.url,
-          ok: true,
-          status: 200,
+    test('should serialize the response', async () => {
+      const mockPool = mockAgent.get('https://swagger.io');
+      mockPool.intercept({ path: '/one' }).reply(
+        200,
+        { me: true },
+        {
           headers: {
-            connection: 'close',
-            'content-type': 'application/json',
-
+            'Content-Type': 'application/json',
             hi: 'ho',
           },
-          statusText: 'OK',
-          data: '{"me":true}',
-          text: '{"me":true}',
-          body: {
-            me: true,
-          },
-          obj: {
-            me: true,
-          },
-        });
+        }
+      );
+      const req = { url: 'https://swagger.io/one' };
+      const res = await SwaggerClient.http(req);
+
+      expect(res).toMatchObject({
+        url: req.url,
+        ok: true,
+        status: 200,
+        headers: {
+          hi: 'ho',
+        },
+        statusText: 'OK',
+        data: '{"me":true}',
+        text: '{"me":true}',
+        body: {
+          me: true,
+        },
+        obj: {
+          me: true,
+        },
       });
     });
 
-    test('should handle invalid JSON bodies', () => {
-      // Given
-      xmock().get('https://swagger.io/one', (req, res) => res.send('['));
+    test('should handle invalid JSON bodies', async () => {
+      const mockPool = mockAgent.get('https://swagger.io');
+      mockPool
+        .intercept({ path: '/one' })
+        .reply(200, '[', { headers: { 'Content-Type': 'text/plain' } });
+      const req = { url: 'https://swagger.io/one' };
+      const res = await SwaggerClient.http(req);
+      const { body, text, status } = res;
 
-      const req = {
-        url: 'https://swagger.io/one',
-      };
-
-      return Swagger.http(req).then((res) => {
-        const { body, text, status } = res;
-        expect(status).toEqual(200);
-        expect(text).toEqual('[');
-        expect(body).toEqual();
-      });
+      expect(status).toEqual(200);
+      expect(text).toEqual('[');
+      expect(body).toEqual();
     });
   });
 
@@ -267,7 +257,7 @@ describe('constructor', () => {
           },
         },
       };
-      return Swagger({ spec }).then((client) => {
+      return SwaggerClient({ spec }).then((client) => {
         const http = jest.fn();
         client.execute({ http, operationId: 'getPets' });
         expect(http.mock.calls.length).toEqual(1);
@@ -290,7 +280,7 @@ describe('constructor', () => {
           },
         },
       };
-      return Swagger({ spec }).then((client) => {
+      return SwaggerClient({ spec }).then((client) => {
         const http = jest.fn();
         http.withCredentials = true;
         client.execute({ http, operationId: 'getPets' });
@@ -328,7 +318,7 @@ describe('constructor', () => {
         },
       };
 
-      return Swagger({ spec, authorizations }).then((client) => {
+      return SwaggerClient({ spec, authorizations }).then((client) => {
         const http = jest.fn();
         client.execute({ http, operationId: 'getPets' });
         expect(http.mock.calls.length).toEqual(1);
@@ -366,7 +356,7 @@ describe('constructor', () => {
         petKey: 'fooBar',
       };
 
-      return Swagger({ spec, authorizations }).then((client) => {
+      return SwaggerClient({ spec, authorizations }).then((client) => {
         const http = jest.fn();
         client.execute({ http, operationId: 'getPets' });
         expect(http.mock.calls.length).toEqual(1);
@@ -404,7 +394,7 @@ describe('constructor', () => {
         petKey: 'barFoo',
       };
 
-      return Swagger({ spec, authorizations }).then((client) => {
+      return SwaggerClient({ spec, authorizations }).then((client) => {
         const http = jest.fn();
         client.execute({ http, operationId: 'getPets' });
         expect(http.mock.calls.length).toEqual(1);
@@ -442,7 +432,7 @@ describe('constructor', () => {
         },
       };
 
-      return Swagger({ spec, authorizations }).then((client) => {
+      return SwaggerClient({ spec, authorizations }).then((client) => {
         const http = jest.fn();
         client.execute({ http, operationId: 'getPets' });
         expect(http.mock.calls.length).toEqual(1);
@@ -485,7 +475,7 @@ describe('constructor', () => {
         },
       };
 
-      return Swagger({ spec, authorizations }).then((client) => {
+      return SwaggerClient({ spec, authorizations }).then((client) => {
         const http = jest.fn();
         client.execute({ http, operationId: 'getPets' });
         expect(http.mock.calls.length).toEqual(1);
@@ -521,7 +511,7 @@ describe('constructor', () => {
         petKey: 'yup',
       };
 
-      return Swagger({ spec, authorizations }).then((client) => {
+      return SwaggerClient({ spec, authorizations }).then((client) => {
         const http = jest.fn();
         client.execute({ http, operationId: 'getPets' });
         expect(http.mock.calls.length).toEqual(1);
@@ -548,7 +538,7 @@ describe('constructor', () => {
       };
       const http = jest.fn();
       const requestInterceptor = jest.fn((request) => request);
-      const client = await Swagger({ spec, requestInterceptor });
+      const client = await SwaggerClient({ spec, requestInterceptor });
       await client.execute({ http, operationId: 'getPets' });
 
       expect(http.mock.calls[0][0].requestInterceptor).toStrictEqual(requestInterceptor);
@@ -566,7 +556,7 @@ describe('constructor', () => {
       };
       const http = jest.fn();
       const responseInterceptor = jest.fn((request) => request);
-      const client = await Swagger({ spec, responseInterceptor });
+      const client = await SwaggerClient({ spec, responseInterceptor });
       await client.execute({ http, operationId: 'getPets' });
 
       expect(http.mock.calls[0][0].responseInterceptor).toStrictEqual(responseInterceptor);
@@ -577,12 +567,12 @@ describe('constructor', () => {
     let originalResolveFn;
 
     beforeEach(() => {
-      originalResolveFn = Swagger.resolve;
-      Swagger.resolve = jest.fn(async (obj) => obj);
+      originalResolveFn = SwaggerClient.resolve;
+      SwaggerClient.resolve = jest.fn(async (obj) => obj);
     });
 
     afterEach(() => {
-      Swagger.resolve = originalResolveFn;
+      SwaggerClient.resolve = originalResolveFn;
     });
 
     test('should use global http option', async () => {
@@ -596,10 +586,10 @@ describe('constructor', () => {
         },
       };
       const http = jest.fn();
-      const client = await Swagger({ spec, http });
+      const client = await SwaggerClient({ spec, http });
       await client.resolve();
 
-      expect(Swagger.resolve.mock.calls[0][0].http).toStrictEqual(http);
+      expect(SwaggerClient.resolve.mock.calls[0][0].http).toStrictEqual(http);
     });
 
     test('should support passing additional options', async () => {
@@ -614,29 +604,42 @@ describe('constructor', () => {
       };
       const http = jest.fn();
       const requestInterceptor = jest.fn();
-      const client = await Swagger({ spec, http });
+      const client = await SwaggerClient({ spec, http });
       await client.resolve({ requestInterceptor });
 
-      expect(Swagger.resolve.mock.calls[1][0].requestInterceptor).toStrictEqual(requestInterceptor);
+      expect(SwaggerClient.resolve.mock.calls[1][0].requestInterceptor).toStrictEqual(
+        requestInterceptor
+      );
     });
   });
 
   describe('interceptor', () => {
     beforeEach(() => {
-      Swagger.clearCache();
-      const xapp = xmock();
-      xapp
-        .get('http://petstore.swagger.io/v2/swagger.json', () => require('./data/petstore.json'))
-        .get('http://petstore.swagger.io/v2/pet/3', () => ({ id: 3 }))
-        .get('http://petstore.swagger.io/v2/pet/4', () => ({ id: 4 }))
-        .get('http://petstore.swagger.io/v2/ref.json', () => ({ b: 2 }))
-        .get('http://petstore.swagger.io/v2/base.json', () => ({
-          $ref: 'http://petstore.swagger.io/v2/ref.json#b',
-        }));
+      SwaggerClient.clearCache();
+      const mockPool = mockAgent.get('http://petstore.swagger.io');
+      mockPool.intercept({ path: '/v2/swagger.json' }).reply(200, require('./data/petstore.json'), {
+        headers: { 'Content-Type': 'application/json' },
+      });
+      mockPool
+        .intercept({ path: '/v2/pet/3' })
+        .reply(200, { id: 3 }, { headers: { 'Content-Type': 'application/json' } });
+      mockPool
+        .intercept({ path: '/v2/pet/4' })
+        .reply(200, { id: 4 }, { headers: { 'Content-Type': 'application/json' } });
+      mockPool
+        .intercept({ path: '/v2/ref.json' })
+        .reply(200, { b: 2 }, { headers: { 'Content-Type': 'application/json' } });
+      mockPool
+        .intercept({ path: '/v2/base.json' })
+        .reply(
+          200,
+          { $ref: 'http://petstore.swagger.io/v2/ref.json#b' },
+          { headers: { 'Content-Type': 'application/json' } }
+        );
     });
 
     test('should support request interceptor', (cb) => {
-      new Swagger({
+      new SwaggerClient({
         url: 'http://petstore.swagger.io/v2/swagger.json',
         requestInterceptor: (req) => {
           if (req.loadSpec) {
@@ -654,7 +657,7 @@ describe('constructor', () => {
     });
 
     test('should support response interceptor', (cb) => {
-      new Swagger({
+      new SwaggerClient({
         url: 'http://petstore.swagger.io/v2/swagger.json',
         responseInterceptor: (res) => {
           res.body.id = 4;
@@ -669,7 +672,7 @@ describe('constructor', () => {
 
     test('should support request interceptor when fetching a spec and remote ref', (cb) => {
       const spy = jest.fn().mockImplementation((a) => a);
-      new Swagger({
+      new SwaggerClient({
         url: 'http://petstore.swagger.io/v2/base.json',
         requestInterceptor: spy,
       })
@@ -683,7 +686,7 @@ describe('constructor', () => {
     test('should support response interceptor when fetching a spec and remote ref', (cb) => {
       const spy = jest.fn().mockImplementation((a) => a);
 
-      new Swagger({
+      new SwaggerClient({
         url: 'http://petstore.swagger.io/v2/base.json',
         responseInterceptor: spy,
       })
@@ -697,7 +700,7 @@ describe('constructor', () => {
     test('should support request and response interceptor when fetching a spec and remote ref', (cb) => {
       const reqSpy = jest.fn().mockImplementation((a) => a);
       const resSpy = jest.fn().mockImplementation((a) => a);
-      new Swagger({
+      new SwaggerClient({
         url: 'http://petstore.swagger.io/v2/base.json',
         responseInterceptor: reqSpy,
         requestInterceptor: resSpy,
@@ -787,7 +790,7 @@ describe('constructor', () => {
     describe('skipNormalization', () => {
       describe('given skipNormalization option not provided', () => {
         test('should resolve with normalized interfaces', async () => {
-          const client = await new Swagger({ spec: cloneDeep(spec) });
+          const client = await new SwaggerClient({ spec: cloneDeep(spec) });
 
           expect(client.apis.clients.getGroups1).toBeInstanceOf(Function);
           expect(client.apis.groups.getGroups2).toBeInstanceOf(Function);
@@ -796,7 +799,10 @@ describe('constructor', () => {
 
       describe('given skipNormalization option provided as `false`', () => {
         test('should resolve with normalized interfaces', async () => {
-          const client = await new Swagger({ spec: cloneDeep(spec), skipNormalization: false });
+          const client = await new SwaggerClient({
+            spec: cloneDeep(spec),
+            skipNormalization: false,
+          });
 
           expect(client.apis.clients.getGroups1).toBeInstanceOf(Function);
           expect(client.apis.groups.getGroups2).toBeInstanceOf(Function);
@@ -805,7 +811,10 @@ describe('constructor', () => {
 
       describe('given skipNormalization option provided as `true`', () => {
         test('should resolve with normalized interfaces', async () => {
-          const client = await new Swagger({ spec: cloneDeep(spec), skipNormalization: true });
+          const client = await new SwaggerClient({
+            spec: cloneDeep(spec),
+            skipNormalization: true,
+          });
 
           expect(client.apis.clients.getGroups).toBeInstanceOf(Function);
           expect(client.apis.groups.getGroups).toBeInstanceOf(Function);

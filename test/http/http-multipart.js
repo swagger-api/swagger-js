@@ -1,7 +1,6 @@
 import path from 'path';
-import { Readable } from 'stream';
 import fetchMock from 'fetch-mock';
-import { File, Blob } from 'formdata-node';
+import { FormData, File, Blob } from 'formdata-node';
 import { fileFromPathSync } from 'formdata-node/lib/cjs/fileFromPath.js';
 
 import { buildRequest } from '../../src/execute/index.js';
@@ -47,8 +46,8 @@ describe('buildRequest - openapi 2.0', () => {
       });
     });
 
-    test('should build request body as Readable Stream', () => {
-      expect(req.body).toBeInstanceOf(Readable);
+    test('should build request body as FormData', () => {
+      expect(req.body).toBeInstanceOf(FormData);
     });
 
     test('should return "collectionFormat: multi" as FormData entry list and entry item entries (in order)', () => {
@@ -136,7 +135,7 @@ describe('buildRequest - openapi 2.0', () => {
           expect(json.data.email[1]).toEqual('person2');
           // fetch received a FormData instance instead of plain object
           const lastOptions = fetchMock.lastOptions();
-          expect(lastOptions.body).toBeInstanceOf(Readable);
+          expect(lastOptions.body).toBeInstanceOf(FormData);
         });
     });
   });
@@ -166,7 +165,7 @@ describe('buildRequest - openapi 3.0', () => {
     });
 
     test('should build request body as FormData', () => {
-      expect(req.body).toBeInstanceOf(Readable);
+      expect(req.body).toBeInstanceOf(FormData);
     });
 
     test('should return FormData entry list and item entries (in order)', () => {
@@ -224,7 +223,7 @@ describe('buildRequest - openapi 3.0', () => {
           expect(json.data.email[1]).toEqual('person2');
           // fetch received a FormData instance instead of plain object
           const lastOptions = fetchMock.lastOptions();
-          expect(lastOptions.body).toBeInstanceOf(Readable);
+          expect(lastOptions.body).toBeInstanceOf(FormData);
         });
     });
   });
@@ -251,7 +250,7 @@ describe('buildRequest - openapi 3.0', () => {
           'Content-Type': expect.stringMatching(/^multipart\/form-data/),
         },
       });
-      expect(req.body).toBeInstanceOf(Readable);
+      expect(req.body).toBeInstanceOf(FormData);
       const itemEntries = req.formdata.getAll('images[]');
 
       expect(itemEntries.length).toEqual(2);
@@ -287,7 +286,7 @@ describe('buildRequest - openapi 3.0', () => {
           'Content-Type': expect.stringMatching(/^multipart\/form-data/),
         },
       });
-      expect(req.body).toBeInstanceOf(Readable);
+      expect(req.body).toBeInstanceOf(FormData);
       const itemEntries = req.formdata.getAll('images[]');
 
       expect(itemEntries.length).toEqual(2);
@@ -322,7 +321,7 @@ describe('buildRequest - openapi 3.0', () => {
           'Content-Type': expect.stringMatching(/^multipart\/form-data/),
         },
       });
-      expect(req.body).toBeInstanceOf(Readable);
+      expect(req.body).toBeInstanceOf(FormData);
       const itemEntries = req.formdata.getAll('images[]');
 
       expect(itemEntries.length).toEqual(2);

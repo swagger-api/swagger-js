@@ -1,5 +1,5 @@
 import traverse from 'traverse';
-import URL from 'url';
+import { url } from '@swagger-api/apidom-reference/configuration/empty';
 
 // This will match if the direct parent's key exactly matches an item.
 const freelyNamedKeyParents = ['properties'];
@@ -73,7 +73,7 @@ export function generateAbsoluteRefPatches(
 
 export function absolutifyPointer(pointer, baseUrl) {
   const [urlPart, fragmentPart] = pointer.split('#');
-  const newRefUrlPart = URL.resolve(urlPart || '', baseUrl || '');
+  const newRefUrlPart = url.resolve(baseUrl || '', urlPart || '');
 
   return fragmentPart ? `${newRefUrlPart}#${fragmentPart}` : newRefUrlPart;
 }

@@ -1,10 +1,7 @@
-// Test runner
-//
-
 import YAML from 'js-yaml';
-import fs from 'fs';
-import Path from 'path';
-import nock from 'nock';
+import fs from 'node:fs';
+import Path from 'node:path';
+import * as undici from 'undici';
 
 import Swagger from '../../src/index.js';
 
@@ -34,29 +31,29 @@ testDocuments.forEach((doc) => {
     if (cases && cases.length) {
       return cases.forEach((currentCase) => {
         describe(currentCase.name || '', () => {
+          let originalGlobalDispatcher = undici.getGlobalDispatcher();
+
           beforeAll(() => {
             Swagger.clearCache();
 
-            if (!nock.isActive()) {
-              nock.activate();
-            }
-
-            nock.cleanAll();
-            nock.disableNetConnect();
-
-            const nockScope = nock('http://mock.swagger.test');
+            const mockAgent = new undici.MockAgent();
+            undici.setGlobalDispatcher(mockAgent);
+            const mockPool = mockAgent.get('http://mock.swagger.test');
 
             if (currentCase.remoteDocuments) {
               Object.keys(currentCase.remoteDocuments).forEach((key) => {
                 const docContent = currentCase.remoteDocuments[key];
-                nockScope.get(`/${key}`).reply(200, docContent, {
-                  'Content-Type': 'application/yaml',
+                mockPool.intercept({ path: `/${key}` }).reply(200, docContent, {
+                  headers: { 'Content-Type': 'application/yaml' },
                 });
               });
             }
           });
 
-          afterAll(nock.restore);
+          afterAll(() => {
+            undici.setGlobalDispatcher(originalGlobalDispatcher);
+            originalGlobalDispatcher = null;
+          });
 
           assertCaseExpectations(currentCase, async () => getValueForAction(currentCase.action));
         });

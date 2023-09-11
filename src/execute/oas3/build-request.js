@@ -1,7 +1,6 @@
 // This function runs after the common function,
 // `src/execute/index.js#buildRequest`
 import { isPlainObject } from 'is-plain-object';
-import get from 'lodash/get';
 
 import btoa from '../../helpers/btoa.node.js';
 
@@ -92,7 +91,7 @@ export function applySecurities({ request, securities = {}, operation = {}, spec
   const { authorized = {} } = securities;
   const security = operation.security || spec.security || [];
   const isAuthorized = authorized && !!Object.keys(authorized).length;
-  const securityDef = get(spec, ['components', 'securitySchemes']) || {};
+  const securityDef = spec?.components?.securitySchemes || {};
 
   result.headers = result.headers || {};
   result.query = result.query || {};

@@ -1,10 +1,9 @@
-import 'cross-fetch/polyfill';
 import qs from 'qs';
 import jsYaml from 'js-yaml';
 import { FormData, File, Blob } from 'formdata-node';
 
+import '../helpers/fetch-polyfill.node.js';
 import { encodeDisallowedCharacters } from '../execute/oas3/style-serializer.js';
-import foldFormDataToRequest from './fold-formdata-to-request.node.js';
 
 // For testing
 export const self = {
@@ -13,7 +12,7 @@ export const self = {
 };
 
 // Handles fetch-like syntax and the case where there is only one object passed-in
-// (which will have the URL as a property). Also serilizes the response.
+// (which will have the URL as a property). Also serializes the response.
 export default async function http(url, request = {}) {
   if (typeof url === 'object') {
     request = url;
@@ -28,7 +27,7 @@ export default async function http(url, request = {}) {
   self.mergeInQueryOrForm(request);
 
   // Newlines in header values cause weird error messages from `window.fetch`,
-  // so let's massage them out.
+  // so let's message them out.
   // Context: https://stackoverflow.com/a/50709178
   if (request.headers) {
     Object.keys(request.headers).forEach((headerName) => {
@@ -439,7 +438,8 @@ export function mergeInQueryOrForm(req = {}) {
 
     if (hasFile || /multipart\/form-data/i.test(contentType)) {
       const formdata = buildFormData(req.form);
-      foldFormDataToRequest(formdata, req);
+      req.formdata = formdata;
+      req.body = formdata;
     } else {
       req.body = encodeFormOrQuery(form);
     }

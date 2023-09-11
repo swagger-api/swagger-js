@@ -1,10 +1,22 @@
-import xmock from 'xmock';
+import * as undici from 'undici';
 
 import mapSpec, { plugins } from '../../src/specmap/index.js';
 
 describe('allOf', () => {
+  let mockAgent;
+  let originalGlobalDispatcher;
+
+  beforeEach(() => {
+    mockAgent = new undici.MockAgent();
+    originalGlobalDispatcher = undici.getGlobalDispatcher();
+    undici.setGlobalDispatcher(mockAgent);
+  });
+
   afterEach(() => {
-    xmock().restore();
+    jest.restoreAllMocks();
+    undici.setGlobalDispatcher(originalGlobalDispatcher);
+    mockAgent = null;
+    originalGlobalDispatcher = null;
   });
 
   test('should resolve simple allOf', () =>
@@ -290,9 +302,11 @@ describe('allOf', () => {
     }));
 
   test('should handle external $refs inside allOf', () => {
-    xmock().get('http://example.com', (req, res) => {
-      setTimeout(() => res.send({ fromRemote: true }), 20);
-    });
+    const mockPool = mockAgent.get('http://example.com');
+    mockPool
+      .intercept({ path: '/' })
+      .reply(200, { fromRemote: true }, { headers: { 'Content-Type': 'application/json' } })
+      .delay(20);
 
     return mapSpec({
       plugins: [plugins.refs, plugins.allOf],
