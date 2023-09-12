@@ -23,6 +23,10 @@ const parseURIReference = (uriReference) => {
     return new URL(uriReference);
   } catch {
     const parsedURL = new URL(uriReference, 'https://swagger.io');
+    const pathname = String(uriReference).startsWith('/')
+      ? parsedURL.pathname
+      : parsedURL.pathname.substring(1);
+
     return {
       hash: parsedURL.hash,
       host: '',
@@ -30,7 +34,7 @@ const parseURIReference = (uriReference) => {
       href: '',
       origin: '',
       password: '',
-      pathname: uriReference,
+      pathname,
       port: '',
       protocol: '',
       search: parsedURL.search,
