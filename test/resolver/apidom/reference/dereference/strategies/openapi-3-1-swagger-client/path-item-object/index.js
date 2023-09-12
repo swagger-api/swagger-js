@@ -321,7 +321,7 @@ describe('dereference', () => {
               expect(errors).toHaveLength(1);
               expect(errors[0]).toMatchObject({
                 message: expect.stringMatching(
-                  /^Could not resolve reference: Evaluation failed on token/
+                  /^Could not resolve reference: JSON Pointer evaluation failed while evaluating/
                 ),
                 baseDoc: expect.stringMatching(/unresolvable-path-item\/root\.json$/),
                 $ref: '#/paths/invalid-pointer',

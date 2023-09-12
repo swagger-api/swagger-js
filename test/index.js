@@ -206,7 +206,6 @@ describe('constructor', () => {
 
     test('should serialize the response', () => {
       // Given
-      require('cross-fetch/polyfill'); // To ensure global.Headers
       xmock().get('https://swagger.io/one', (req, res) => {
         res.set('hi', 'ho');
         return res.send({ me: true });
