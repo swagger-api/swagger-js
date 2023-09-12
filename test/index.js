@@ -636,6 +636,16 @@ describe('constructor', () => {
           { $ref: 'http://petstore.swagger.io/v2/ref.json#b' },
           { headers: { 'Content-Type': 'application/json' } }
         );
+      mockPool
+        .intercept({ path: "/v2/user/'" })
+        .reply(200, { u: 'quote' }, { headers: { 'Content-Type': 'application/json' } });
+      mockPool
+        .intercept({ path: '/v2/user/%27' })
+        .reply(
+          200,
+          { u: 'percent-twentyseven' },
+          { headers: { 'Content-Type': 'application/json' } }
+        );
     });
 
     test('should support request interceptor', (cb) => {
@@ -711,6 +721,28 @@ describe('constructor', () => {
           cb();
         })
         .catch(cb);
+    });
+
+    test('should give the interceptor the URL which actually hits the network', (done) => {
+      expect.assertions(2);
+
+      new SwaggerClient({
+        url: 'http://petstore.swagger.io/v2/swagger.json',
+        requestInterceptor: (req) => {
+          if (req.url === 'http://petstore.swagger.io/v2/swagger.json') {
+            return req; // skip this
+          }
+          expect(req.url).toEqual("http://petstore.swagger.io/v2/user/'"); // Not percent-escaped
+          return req;
+        },
+      })
+        .then((client) =>
+          client.apis.user.getUserByName({ username: "'" }).then((data) => {
+            expect(data.body.u).toEqual('quote'); // not percent escaped
+            done();
+          })
+        )
+        .catch(done);
     });
   });
 
