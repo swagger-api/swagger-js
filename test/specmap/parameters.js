@@ -1,12 +1,6 @@
-import xmock from 'xmock';
-
 import mapSpec, { plugins } from '../../src/specmap/index.js';
 
 describe('parameters', () => {
-  afterEach(() => {
-    xmock().restore();
-  });
-
   test('should add default value to parameter', () => {
     const parameterMacro = () => 'test';
 

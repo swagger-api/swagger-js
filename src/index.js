@@ -1,6 +1,4 @@
 /* eslint-disable camelcase */
-import Url from 'url';
-
 import Http, { makeHttp, serializeRes, serializeHeaders } from './http/index.js';
 import { makeResolve } from './resolver/index.js';
 import { makeResolveSubtree } from './subtree-resolver/index.js';
@@ -135,7 +133,7 @@ Swagger.prototype.applyDefaults = function applyDefaults() {
   const specUrl = this.url;
   // TODO: OAS3: support servers here
   if (specUrl && specUrl.startsWith('http')) {
-    const parsed = Url.parse(specUrl);
+    const parsed = new URL(specUrl);
     if (!spec.host) {
       spec.host = parsed.host;
     }

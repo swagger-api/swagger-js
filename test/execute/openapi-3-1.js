@@ -20,6 +20,7 @@ const createOAS31Server = () => {
   };
 
   const server = http.createServer(requestListener);
+  server.keepAliveTimeout = 50;
   server.listen(8080);
 
   server.terminate = () =>
@@ -125,11 +126,11 @@ describe('given OpenAPI 3.1.0 definition', () => {
   };
   let server;
 
-  beforeEach(() => {
+  beforeAll(() => {
     server = createOAS31Server();
   });
 
-  afterEach(async () => {
+  afterAll(async () => {
     await server.terminate();
   });
 

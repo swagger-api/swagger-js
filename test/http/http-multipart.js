@@ -1,22 +1,25 @@
-import path from 'path';
-import { Readable } from 'stream';
-import fetchMock from 'fetch-mock';
-import { File, Blob } from 'formdata-node';
+import path from 'node:path';
+import * as undici from 'undici';
+import { FormData, File, Blob } from 'formdata-node';
 import { fileFromPathSync } from 'formdata-node/lib/cjs/fileFromPath.js';
 
 import { buildRequest } from '../../src/execute/index.js';
 import sampleMultipartOpenApi2 from '../data/sample-multipart-oas2.js';
 import sampleMultipartOpenApi3 from '../data/sample-multipart-oas3.js';
 
-/**
- * fetch-mock uses node-fetch under the hood
- * cross-fetch, which SwaggerClient uses in src, also uses node-fetch under the hood
- * therefore, fetch-mock matches the behavior used in src for both mock and live-server test
- */
+let mockAgent;
+let originalGlobalDispatcher;
+
+beforeEach(() => {
+  mockAgent = new undici.MockAgent();
+  originalGlobalDispatcher = undici.getGlobalDispatcher();
+  undici.setGlobalDispatcher(mockAgent);
+});
 
 afterEach(() => {
-  fetchMock.restore();
-  fetchMock.reset();
+  undici.setGlobalDispatcher(originalGlobalDispatcher);
+  mockAgent = null;
+  originalGlobalDispatcher = null;
 });
 
 describe('buildRequest - openapi 2.0', () => {
@@ -47,8 +50,8 @@ describe('buildRequest - openapi 2.0', () => {
       });
     });
 
-    test('should build request body as Readable Stream', () => {
-      expect(req.body).toBeInstanceOf(Readable);
+    test('should build request body as FormData', () => {
+      expect(req.body).toBeInstanceOf(FormData);
     });
 
     test('should return "collectionFormat: multi" as FormData entry list and entry item entries (in order)', () => {
@@ -106,12 +109,14 @@ describe('buildRequest - openapi 2.0', () => {
         }));
 
     test('should Mock POST multipart-formdata with entry item entries', () => {
-      // Given
-      fetchMock.post(
-        'http://localhost:3300/api/v1/formdata',
-        {
-          status: 200,
-          body: JSON.stringify({
+      const mockPool = mockAgent.get('http://localhost:3300');
+      mockPool.intercept({ method: 'POST', path: '/api/v1/formdata' }).reply(({ body }) => {
+        // fetch received a FormData instance instead of plain object
+        expect(body).toBeInstanceOf(FormData);
+
+        return {
+          statusCode: 200,
+          data: JSON.stringify({
             message: 'post received',
             data: {
               'hhlContent:sort': 'id',
@@ -119,11 +124,9 @@ describe('buildRequest - openapi 2.0', () => {
               email: ['person1', 'person2'],
             },
           }),
-        },
-        {
-          sendAsJson: false,
-        }
-      );
+          headers: { 'Content-Type': 'application/json' },
+        };
+      });
 
       return fetch('http://localhost:3300/api/v1/formdata', {
         method: 'POST',
@@ -134,9 +137,6 @@ describe('buildRequest - openapi 2.0', () => {
           expect(json.data.email.length).toEqual(2);
           expect(json.data.email[0]).toEqual('person1');
           expect(json.data.email[1]).toEqual('person2');
-          // fetch received a FormData instance instead of plain object
-          const lastOptions = fetchMock.lastOptions();
-          expect(lastOptions.body).toBeInstanceOf(Readable);
         });
     });
   });
@@ -166,7 +166,7 @@ describe('buildRequest - openapi 3.0', () => {
     });
 
     test('should build request body as FormData', () => {
-      expect(req.body).toBeInstanceOf(Readable);
+      expect(req.body).toBeInstanceOf(FormData);
     });
 
     test('should return FormData entry list and item entries (in order)', () => {
@@ -194,12 +194,14 @@ describe('buildRequest - openapi 3.0', () => {
         }));
 
     test('should Mock POST multipart-formdata with entry item entries', () => {
-      // Given
-      fetchMock.post(
-        'http://localhost:3300/api/v1/formdata',
-        {
-          status: 200,
-          body: JSON.stringify({
+      const mockPool = mockAgent.get('http://localhost:3300');
+      mockPool.intercept({ method: 'POST', path: '/api/v1/formdata' }).reply(({ body }) => {
+        // fetch received a FormData instance instead of plain object
+        expect(body).toBeInstanceOf(FormData);
+
+        return {
+          statusCode: 200,
+          data: JSON.stringify({
             message: 'post received',
             data: {
               'hhlContent:sort': 'id',
@@ -207,11 +209,9 @@ describe('buildRequest - openapi 3.0', () => {
               email: ['person1', 'person2'],
             },
           }),
-        },
-        {
-          sendAsJson: false,
-        }
-      );
+          headers: { 'Content-Type': 'application/json' },
+        };
+      });
 
       return fetch('http://localhost:3300/api/v1/formdata', {
         method: 'POST',
@@ -222,9 +222,6 @@ describe('buildRequest - openapi 3.0', () => {
           expect(json.data.email.length).toEqual(2);
           expect(json.data.email[0]).toEqual('person1');
           expect(json.data.email[1]).toEqual('person2');
-          // fetch received a FormData instance instead of plain object
-          const lastOptions = fetchMock.lastOptions();
-          expect(lastOptions.body).toBeInstanceOf(Readable);
         });
     });
   });
@@ -251,7 +248,7 @@ describe('buildRequest - openapi 3.0', () => {
           'Content-Type': expect.stringMatching(/^multipart\/form-data/),
         },
       });
-      expect(req.body).toBeInstanceOf(Readable);
+      expect(req.body).toBeInstanceOf(FormData);
       const itemEntries = req.formdata.getAll('images[]');
 
       expect(itemEntries.length).toEqual(2);
@@ -287,7 +284,7 @@ describe('buildRequest - openapi 3.0', () => {
           'Content-Type': expect.stringMatching(/^multipart\/form-data/),
         },
       });
-      expect(req.body).toBeInstanceOf(Readable);
+      expect(req.body).toBeInstanceOf(FormData);
       const itemEntries = req.formdata.getAll('images[]');
 
       expect(itemEntries.length).toEqual(2);
@@ -322,7 +319,7 @@ describe('buildRequest - openapi 3.0', () => {
           'Content-Type': expect.stringMatching(/^multipart\/form-data/),
         },
       });
-      expect(req.body).toBeInstanceOf(Readable);
+      expect(req.body).toBeInstanceOf(FormData);
       const itemEntries = req.formdata.getAll('images[]');
 
       expect(itemEntries.length).toEqual(2);

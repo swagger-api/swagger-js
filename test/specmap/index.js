@@ -1,5 +1,5 @@
+import * as undici from 'undici';
 import cloneDeep from 'lodash/cloneDeep';
-import xmock from 'xmock';
 import traverse from 'traverse';
 
 import mapSpec, { SpecMap, plugins } from '../../src/specmap/index.js';
@@ -7,9 +7,20 @@ import lib from '../../src/specmap/lib/index.js';
 
 describe('specmap', () => {
   let testContext;
+  let mockAgent;
+  let originalGlobalDispatcher;
 
   beforeEach(() => {
     testContext = {};
+    mockAgent = new undici.MockAgent();
+    originalGlobalDispatcher = undici.getGlobalDispatcher();
+    undici.setGlobalDispatcher(mockAgent);
+  });
+
+  afterEach(() => {
+    undici.setGlobalDispatcher(originalGlobalDispatcher);
+    mockAgent = null;
+    originalGlobalDispatcher = null;
   });
 
   describe('#dispatch', () => {
@@ -558,80 +569,84 @@ describe('specmap', () => {
         describe('allowMetaPatches = true', () => {
           test('should retain external $refs', () => {
             plugins.refs.clearCache();
-            const xapp = xmock();
-
-            xapp.get('http://example.com/common.json', (req, res) => {
-              res.send({ works: { yay: true } });
-            });
+            const mockPool = mockAgent.get('http://example.com');
+            mockPool
+              .intercept({ path: '/common.json' })
+              .reply(
+                200,
+                { works: { yay: true } },
+                { headers: { 'Content-Type': 'application/json' } }
+              );
 
             return mapSpec({
               spec: { a: 1, $ref: 'http://example.com/common.json#/works' },
               plugins: [plugins.refs],
               allowMetaPatches: true,
-            })
-              .then((res) => {
-                expect(res.spec.$$ref).toEqual('http://example.com/common.json#/works');
-              })
-              .then(() => xapp.restore());
+            }).then((res) => {
+              expect(res.spec.$$ref).toEqual('http://example.com/common.json#/works');
+            });
           });
 
           test('should rewrite $$ref artifacts inside external $refs', () => {
             plugins.refs.clearCache();
-            const xapp = xmock();
-
-            xapp.get('http://example.com/common.json', (req, res) => {
-              res.send({
+            const mockPool = mockAgent.get('http://example.com');
+            mockPool.intercept({ path: '/common.json' }).reply(
+              200,
+              {
                 works: {
                   one: { a: 1, $ref: '#/works/two' },
                   two: { b: 2 },
                 },
-              });
-            });
+              },
+              { headers: { 'Content-Type': 'application/json' } }
+            );
 
             return mapSpec({
               spec: { a: 1, $ref: 'http://example.com/common.json#/works' },
               plugins: [plugins.refs],
               allowMetaPatches: true,
-            })
-              .then((res) => {
-                expect(res.spec.$$ref).toEqual('http://example.com/common.json#/works');
-                expect(res.spec.one.$$ref).toEqual('http://example.com/common.json#/works/two');
-              })
-              .then(() => xapp.restore());
+            }).then((res) => {
+              expect(res.spec.$$ref).toEqual('http://example.com/common.json#/works');
+              expect(res.spec.one.$$ref).toEqual('http://example.com/common.json#/works/two');
+            });
           });
         });
 
         test('should resolve external $refs', () => {
           plugins.refs.clearCache();
-          const xapp = xmock();
-
-          xapp.get('http://example.com/common.json', (req, res) => {
-            res.send({ works: { yay: true } });
-          });
+          const mockPool = mockAgent.get('http://example.com');
+          mockPool
+            .intercept({ path: '/common.json' })
+            .reply(
+              200,
+              { works: { yay: true } },
+              { headers: { 'Content-Type': 'application/json' } }
+            );
 
           return mapSpec({
             spec: { $ref: 'http://example.com/common.json#/works' },
             plugins: [plugins.refs],
-          })
-            .then((res) => {
-              expect(res.errors).toEqual([]);
-              expect(res.spec).toEqual({ yay: true });
-            })
-            .then(() => xapp.restore());
+          }).then((res) => {
+            expect(res.errors).toEqual([]);
+            expect(res.spec).toEqual({ yay: true });
+          });
         });
 
         test('should store the absolute path, in context', () => {
           plugins.refs.clearCache();
-          const xapp = xmock();
-
-          xapp.get('http://example.com/common.json', () => ({
-            works: {
-              whoop: true,
+          const mockPool = mockAgent.get('http://example.com');
+          mockPool.intercept({ path: '/common.json' }).reply(
+            200,
+            {
+              works: {
+                whoop: true,
+              },
+              almost: {
+                $ref: '#/works',
+              },
             },
-            almost: {
-              $ref: '#/works',
-            },
-          }));
+            { headers: { 'Content-Type': 'application/json' } }
+          );
 
           return mapSpec({
             context: {
@@ -641,31 +656,32 @@ describe('specmap', () => {
               $ref: '../common.json#/almost',
             },
             plugins: [plugins.refs],
-          })
-            .then((res) => {
-              expect(res.errors).toEqual([]);
-              expect(res.spec).toEqual({
-                whoop: true,
-              });
-            })
-            .then(() => xapp.restore());
+          }).then((res) => {
+            expect(res.errors).toEqual([]);
+            expect(res.spec).toEqual({
+              whoop: true,
+            });
+          });
         });
 
         test('should use absPath for the context, not refPath', () => {
           plugins.refs.clearCache();
-
-          const xapp = xmock();
-          xapp.get('http://example.com/models.json', () => ({
-            Parent: {
-              parent: true,
-              child: {
-                $ref: '#/Child',
+          const mockPool = mockAgent.get('http://example.com');
+          mockPool.intercept({ path: '/models.json' }).reply(
+            200,
+            {
+              Parent: {
+                parent: true,
+                child: {
+                  $ref: '#/Child',
+                },
+              },
+              Child: {
+                child: true,
               },
             },
-            Child: {
-              child: true,
-            },
-          }));
+            { headers: { 'Content-Type': 'application/json' } }
+          );
 
           return mapSpec({
             context: {
@@ -675,38 +691,35 @@ describe('specmap', () => {
               $ref: 'models.json#/Parent',
             },
             plugins: [plugins.refs],
-          })
-            .then((res) => {
-              expect(res.errors).toEqual([]);
-              expect(res.spec).toEqual({
-                parent: true,
-                child: {
-                  child: true,
-                },
-              });
-            })
-            .then(() => xapp.restore());
+          }).then((res) => {
+            expect(res.errors).toEqual([]);
+            expect(res.spec).toEqual({
+              parent: true,
+              child: {
+                child: true,
+              },
+            });
+          });
         });
 
         test('should resolve a complex spec', () => {
-          const xapp = xmock();
           const spec = cloneDeep(require('./data/specs/example.json')); // eslint-disable-line global-require
           const underten = cloneDeep(require('./data/specs/example-underten.json')); // eslint-disable-line global-require
           const resolved = cloneDeep(require('./data/specs/example.resolved.json')); // eslint-disable-line global-require
-
-          xapp.get('http://example.com/underten', () => underten);
+          const mockPool = mockAgent.get('http://example.com');
+          mockPool
+            .intercept({ path: '/underten' })
+            .reply(200, underten, { headers: { 'Content-Type': 'application/json' } });
 
           return mapSpec({
             spec,
             plugins: [plugins.refs],
-          })
-            .then((res) => {
-              expect(res).toEqual({
-                errors: [],
-                spec: resolved,
-              });
-            })
-            .then(() => xapp.restore());
+          }).then((res) => {
+            expect(res).toEqual({
+              errors: [],
+              spec: resolved,
+            });
+          });
         });
       });
     });

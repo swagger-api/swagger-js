@@ -60,6 +60,7 @@ describe('http', () => {
         });
       })
       .listen(8000);
+    server.keepAliveTimeout = 50;
   });
 
   afterAll(() => {
@@ -175,8 +176,8 @@ describe('http', () => {
         throw new Error('Expected an error.');
       })
       .catch((error) => {
-        expect(error.message).toMatch(/request to http:\/\/localhost:1\/untouchable\.yaml failed/);
-        expect(error.name).toEqual('FetchError');
+        expect(error.message).toMatch('fetch failed');
+        expect(error.name).toEqual('TypeError');
       }));
 
   /**
@@ -260,9 +261,7 @@ describe('http', () => {
         return req;
       },
     }).catch((err) => {
-      expect(err.message).toMatch(
-        /^request to https:\/\/localhost:8000\/petstore\.json failed, reason: (socket hang up|write EPROTO)/
-      );
+      expect(err.message).toMatch('fetch failed');
     }));
 
   test('should use requestInterceptor for resolving nested $refs', () => {

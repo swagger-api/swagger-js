@@ -3,10 +3,8 @@
 ### Prerequisites
 
 - git, any version
-- Node.js >=16.16
-- NPM >=8.11.0
-
-Generally, we recommend following guidelines from [Node.js Releases](https://nodejs.org/en/about/releases/) to only use `Current`, `Active LTS` or `Maintenance LTS` releases.
+- Node.js >=20.3.0
+- NPM >=9.6.7
 
 ### Setting up
 
@@ -16,12 +14,13 @@ If you use [nvm](https://github.com/nvm-sh/nvm), running following command insid
  $ nvm use
 ```
 
-#### Setup teps
+#### Setup steps
 
 1. `git clone https://github.com/swagger-api/swagger-js.git`
 2. `cd swagger-js`
 3. `npm install`
 4. `npm run build`
+5. `npm run test`
 
 ### Testing with Swagger-UI
 

@@ -1,7 +1,7 @@
-import 'cross-fetch/polyfill';
 import jsYaml from 'js-yaml';
-import url from 'url';
+import { url } from '@swagger-api/apidom-reference/configuration/empty';
 
+import '../../helpers/fetch-polyfill.node.js';
 import lib from './index.js';
 import createError from './create-error.js';
 import { isFreelyNamed, absolutifyPointer } from '../helpers.js';

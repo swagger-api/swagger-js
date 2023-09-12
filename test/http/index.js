@@ -1,6 +1,5 @@
-import xmock from 'xmock';
-import fetchMock from 'fetch-mock';
 import { File, Blob } from 'formdata-node';
+import * as undici from 'undici';
 
 import http, {
   serializeHeaders,
@@ -12,17 +11,26 @@ import http, {
 } from '../../src/http/index.js';
 
 describe('http', () => {
-  let xapp;
+  let mockAgent;
+  let originalGlobalDispatcher;
+
+  beforeEach(() => {
+    mockAgent = new undici.MockAgent();
+    originalGlobalDispatcher = undici.getGlobalDispatcher();
+    undici.setGlobalDispatcher(mockAgent);
+  });
 
   afterEach(() => {
-    if (xapp) {
-      xapp.restore();
-    }
+    undici.setGlobalDispatcher(originalGlobalDispatcher);
+    mockAgent = null;
+    originalGlobalDispatcher = null;
   });
 
   test('should be able to GET a url', () => {
-    xapp = xmock();
-    xapp.get('http://swagger.io', (req, res) => res.send('hi'));
+    const mockPool = mockAgent.get('http://swagger.io');
+    mockPool
+      .intercept({ path: '/' })
+      .reply(200, 'hi', { headers: { 'Content-Type': 'text/plain' } });
 
     return http({
       url: 'http://swagger.io',
@@ -33,11 +41,10 @@ describe('http', () => {
   });
 
   test('should always load a spec as text', () => {
-    xapp = xmock();
-    xapp.get('http://swagger.io/somespec', (req, res) => {
-      res.set('Content-Type', 'application/octet-stream');
-      res.send('key: val');
-    });
+    const mockPool = mockAgent.get('http://swagger.io');
+    mockPool
+      .intercept({ path: '/somespec' })
+      .reply(200, 'key: val', { headers: { 'Content-Type': 'application/octet-stream' } });
 
     return http({ url: 'http://swagger.io/somespec', loadSpec: true }).then((res) => {
       expect(res.status).toEqual(200);
@@ -46,8 +53,10 @@ describe('http', () => {
   });
 
   test('should include status code and response with HTTP Error', () => {
-    xapp = xmock();
-    xapp.get('http://swagger.io', (req, res) => res.status(400).send('hi'));
+    const mockPool = mockAgent.get('http://swagger.io');
+    mockPool
+      .intercept({ path: '/' })
+      .reply(400, 'hi', { headers: { 'Content-Type': 'text/plain' } });
 
     return http({
       url: 'http://swagger.io',
@@ -64,8 +73,10 @@ describe('http', () => {
   });
 
   test('should call request interceptor', () => {
-    xapp = xmock();
-    xapp.get('http://swagger.io', (req, res) => res.status(req.requestHeaders.mystatus).send('hi'));
+    const mockPool = mockAgent.get('http://swagger.io');
+    mockPool
+      .intercept({ path: '/' })
+      .reply(200, 'hi', { headers: { 'Content-Type': 'text/plain' } });
 
     return http({
       url: 'http://swagger.io',
@@ -79,8 +90,10 @@ describe('http', () => {
   });
 
   test('should allow the requestInterceptor to return a promise', () => {
-    xapp = xmock();
-    xapp.get('http://swagger.io', (req, res) => res.status(req.requestHeaders.mystatus).send('hi'));
+    const mockPool = mockAgent.get('http://swagger.io');
+    mockPool
+      .intercept({ path: '/' })
+      .reply(200, 'hi', { headers: { 'Content-Type': 'text/plain' } });
 
     return http({
       url: 'http://swagger.io',
@@ -97,8 +110,10 @@ describe('http', () => {
   });
 
   test('should apply responseInterceptor to error responses', () => {
-    xapp = xmock();
-    xapp.get('http://swagger.io', (req, res) => res.status(400).send('hi'));
+    const mockPool = mockAgent.get('http://swagger.io');
+    mockPool
+      .intercept({ path: '/' })
+      .reply(400, 'hi', { headers: { 'Content-Type': 'text/plain' } });
 
     return http({
       url: 'http://swagger.io',
@@ -116,9 +131,14 @@ describe('http', () => {
   });
 
   test('should allow the responseInterceptor to return a promise for a final response', () => {
-    xapp = xmock();
-    xapp.get('http://swagger.io', (req, res) => res.status(400).send('doit'));
-    xapp.get('http://example.com', (req, res) => res.send('hi'));
+    mockAgent
+      .get('http://swagger.io')
+      .intercept({ path: '/' })
+      .reply(400, 'doit', { headers: { 'Content-Type': 'text/plain' } });
+    mockAgent
+      .get('http://example.com')
+      .intercept({ path: '/' })
+      .reply(200, 'hi', { headers: { 'Content-Type': 'text/plain' } });
 
     return http({
       url: 'http://swagger.io',
@@ -133,8 +153,10 @@ describe('http', () => {
   });
 
   test('should set responseError on responseInterceptor Error', () => {
-    xapp = xmock();
-    xapp.get('http://swagger.io', (req, res) => res.status(400).send('hi'));
+    const mockPool = mockAgent.get('http://swagger.io');
+    mockPool
+      .intercept({ path: '/' })
+      .reply(400, 'hi', { headers: { 'Content-Type': 'text/plain' } });
 
     const testError = new Error();
     return http({
@@ -283,7 +305,11 @@ describe('http', () => {
     });
 
     test('should handle custom array serialization', () => {
-      fetchMock.get('*', { body: 'response body' });
+      const mockPool = mockAgent.get('http://swagger.io');
+      mockPool
+        .intercept({ path: '/', query: 'anotherOne=one,two&evenMore=hi&bar=1%202%203' })
+        .reply(200, 'response body', { headers: { 'Content-Type': 'applicaton/json' } });
+
       const req = {
         url: 'http://example.com',
         method: 'GET',
@@ -298,24 +324,26 @@ describe('http', () => {
         },
       };
 
-      return http('http://example.com', req)
-        .then((response) => {
-          expect(response.url).toEqual(
-            'http://example.com/?anotherOne=one,two&evenMore=hi&bar=1%202%203'
-          );
-          expect(response.status).toEqual(200);
-        })
-        .then(fetchMock.restore);
+      return http('http://example.com', req).then((response) => {
+        expect(response.url).toEqual(
+          'http://example.com/?anotherOne=one,two&evenMore=hi&bar=1%202%203'
+        );
+        expect(response.status).toEqual(200);
+      });
     });
 
     test('should remove newlines from header values', () => {
-      // Given
-      fetchMock.get('*', (url, opts) => ({
-        headers: {
-          'Content-Type': 'text/plain',
-        },
-        body: opts.headers.WilliamCWilliamsHeader,
-      }));
+      const mockPool = mockAgent.get('http://example.com');
+      mockPool
+        .intercept({
+          path: '/',
+          headers: {
+            WilliamCWilliamsHeader: 'so much depends upon a red wheel barrow',
+          },
+        })
+        .reply(200, 'so much depends upon a red wheel barrow', {
+          headers: { 'Content-Type': 'text/plain' },
+        });
       const req = {
         url: 'http://example.com',
         method: 'GET',
@@ -324,12 +352,10 @@ describe('http', () => {
         },
       };
 
-      return http('http://example.com', req)
-        .then((response) => {
-          expect(response.url).toEqual('http://example.com/');
-          expect(response.data.toString()).toEqual('so much depends upon a red wheel barrow');
-        })
-        .then(fetchMock.restore);
+      return http('http://example.com', req).then((response) => {
+        expect(response.url).toEqual('http://example.com/');
+        expect(response.data.toString()).toEqual('so much depends upon a red wheel barrow');
+      });
     });
   });
 
@@ -353,12 +379,10 @@ describe('http', () => {
     });
 
     test('should set .text and .data to body Blob or Buffer for binary response', () => {
-      const headers = {
-        'Content-Type': 'application/octet-stream',
-      };
-
+      const headers = { 'Content-Type': 'application/octet-stream' };
       const body = 'body data';
-      fetchMock.mock('http://swagger.io', { body, headers });
+      const mockPool = mockAgent.get('http://swagger.io');
+      mockPool.intercept({ path: '/' }).reply(200, body, { headers });
 
       let originalRes;
 
@@ -376,17 +400,14 @@ describe('http', () => {
             expect(resSerialize.data).toBeInstanceOf(Buffer);
             expect(resSerialize.data).toEqual(Buffer.from(body));
           }
-        })
-        .then(fetchMock.restore);
+        });
     });
 
     test('should set .text and .data to body string for text response', () => {
-      const headers = {
-        'Content-Type': 'application/json',
-      };
-
+      const headers = { 'Content-Type': 'application/json' };
       const body = '{}';
-      fetchMock.mock('http://swagger.io', { body, headers });
+      const mockPool = mockAgent.get('http://swagger.io');
+      mockPool.intercept({ path: '/' }).reply(200, body, { headers });
 
       return fetch('http://swagger.io')
         .then((_res) =>
@@ -396,8 +417,7 @@ describe('http', () => {
         .then((resSerialize) => {
           expect(resSerialize.data).toBe(resSerialize.text);
           expect(resSerialize.data).toBe(body);
-        })
-        .then(fetchMock.restore);
+        });
     });
   });
 

@@ -1,12 +1,6 @@
-import xmock from 'xmock';
-
 import mapSpec, { plugins } from '../../src/specmap/index.js';
 
 describe('properties', () => {
-  afterEach(() => {
-    xmock().restore();
-  });
-
   test('should add default value to each property', () => {
     const modelPropertyMacro = () => 'test';
 

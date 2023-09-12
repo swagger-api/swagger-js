@@ -2,24 +2,18 @@ import process from 'node:process';
 import http from 'node:http';
 import path from 'node:path';
 import fs from 'node:fs';
-import fetchMock from 'fetch-mock';
-import fetch, { Headers, Request, Response } from 'cross-fetch';
 import AbortController from 'abort-controller';
 
-// configures fetchMock
-fetchMock.config.fetch = fetch;
-fetchMock.config.Request = Request;
-fetchMock.config.Response = Response;
-fetchMock.config.Headers = Headers;
+import { fetch, Headers, Request, Response } from '../src/helpers/fetch-ponyfill-undici.node.js';
 
-// force node-fetch to be used even for Node.js >= 18 where native fetch exists
+// force using undici for testing
 globalThis.fetch = fetch;
+globalThis.Headers = Headers;
 globalThis.Request = Request;
 globalThis.Response = Response;
-globalThis.Headers = Headers;
 
 // provide AbortController for older Node.js versions
-globalThis.AbortController = globalThis.AbortController ?? AbortController;
+globalThis.AbortController = AbortController;
 
 // helpers for reading local files
 globalThis.loadFile = (uri) => fs.readFileSync(uri).toString();
@@ -41,6 +35,10 @@ globalThis.createHTTPServer = ({ port = 8123, cwd = process.cwd() } = {}) => {
     res.end(data);
   });
 
+  // makes node:http and undici work properly
+  if (process.version.startsWith('v18') || process.version.startsWith('v16')) {
+    server.keepAliveTimeout = 100;
+  }
   server.listen(port);
 
   server.terminate = () =>

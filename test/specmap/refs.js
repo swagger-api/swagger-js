@@ -1,27 +1,30 @@
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import cloneDeep from 'lodash/cloneDeep';
 import { globSync } from 'glob';
-import xmock from 'xmock';
-import fs from 'fs';
 import jsYaml from 'js-yaml';
+import * as undici from 'undici';
 
 import mapSpec, { plugins } from '../../src/specmap/index.js';
 
 const { refs } = plugins;
 
 describe('refs', () => {
-  let xapp;
-
-  beforeAll(() => {
-    xapp = xmock();
-  });
-
-  afterAll(() => {
-    xapp.restore();
-  });
+  let mockAgent;
+  let originalGlobalDispatcher;
 
   beforeEach(() => {
     refs.clearCache();
+    mockAgent = new undici.MockAgent();
+    originalGlobalDispatcher = undici.getGlobalDispatcher();
+    undici.setGlobalDispatcher(mockAgent);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+    undici.setGlobalDispatcher(originalGlobalDispatcher);
+    mockAgent = null;
+    originalGlobalDispatcher = null;
   });
 
   describe('JSONRefError', () => {
@@ -90,28 +93,32 @@ describe('refs', () => {
   describe('getDoc', () => {
     test('should fetch documents', () => {
       const url = 'http://example.com/common.json';
-      xapp.get(url, (req, res) => {
-        res.send({ works: { yay: true } });
-      });
+      const mockPool = mockAgent.get('http://example.com');
+      mockPool
+        .intercept({ path: '/common.json' })
+        .reply(200, { works: { yay: true } }, { headers: { 'Content-Type': 'application/json' } });
       return refs.getDoc(url).then((doc) => {
         expect(doc).toEqual({ works: { yay: true } });
       });
     });
     test('should parse YAML docs into JSON', () => {
       const url = 'http://example.com/common.yaml';
-      xapp.get(url, (req, res) => {
-        res.set('Content-Type', 'application/yaml');
-        res.send('works:\n  yay: true');
-      });
+      const mockPool = mockAgent.get('http://example.com');
+      mockPool
+        .intercept({ path: '/common.yaml' })
+        .reply(200, 'works:\n  yay: true', { headers: { 'Content-Type': 'application/yaml' } });
+
       return refs.getDoc(url).then((doc) => {
         expect(doc).toEqual({ works: { yay: true } });
       });
     });
     test('should cache requests', () => {
       const url = 'http://example.com/common.json';
-      xapp.get(url, (req, res) => {
-        res.send({ works: { yay: true } });
-      });
+      const mockPool = mockAgent.get('http://example.com');
+      mockPool
+        .intercept({ path: '/common.json' })
+        .reply(200, { works: { yay: true } }, { headers: { 'Content-Type': 'application/json' } });
+
       return refs
         .getDoc(url)
         .then((doc) => {
@@ -128,12 +135,17 @@ describe('refs', () => {
           });
         });
     });
+
     test('should cache pending HTTP requests', () => {
       const url = 'http://example.com/common.json';
-      xapp.get(url, () => {});
+      const mockPool = mockAgent.get('http://example.com');
+      mockPool
+        .intercept({ path: '/common.json' })
+        .reply(200, {}, { headers: { 'Content-Type': 'application/json' } });
       const p1 = refs.getDoc(url);
       const p2 = refs.getDoc(url);
       const p3 = refs.docCache[url];
+
       expect(p1).toBe(p2);
       expect(p1).toBe(p3);
     });
@@ -187,10 +199,10 @@ describe('refs', () => {
   describe('.clearCache', () => {
     test('should clear the docCache', () => {
       const url = 'http://example.com/common.json';
-
-      xapp.get(url, (req, res) => {
-        res.send({ works: { yay: true } });
-      });
+      const mockPool = mockAgent.get('http://example.com');
+      mockPool
+        .intercept({ path: '/common.json' })
+        .reply(200, { works: { yay: true } }, { headers: { 'Content-Type': 'application/json' } });
 
       return refs
         .getDoc(url)
@@ -210,13 +222,13 @@ describe('refs', () => {
       const url = 'http://example.com/common.json';
       const url2 = 'http://example.com/common2.json';
 
-      xapp
-        .get(url, (req, res) => {
-          res.send({ works: { yay: true } });
-        })
-        .get(url2, (req, res) => {
-          res.send({ works: { yup: true } });
-        });
+      const mockPool = mockAgent.get('http://example.com');
+      mockPool
+        .intercept({ path: '/common.json' })
+        .reply(200, { works: { yay: true } }, { headers: { 'Content-Type': 'application/json' } });
+      mockPool
+        .intercept({ path: '/common2.json' })
+        .reply(200, { works: { yup: true } }, { headers: { 'Content-Type': 'application/json' } });
 
       return refs
         .getDoc(url)
@@ -309,7 +321,11 @@ describe('refs', () => {
           const external = testCase.external || {};
 
           Object.keys(external).forEach((url) => {
-            xapp.get(url, () => external[url]);
+            const parsedURL = new URL(url);
+            const mockPool = mockAgent.get(parsedURL.origin);
+            mockPool
+              .intercept({ path: parsedURL.pathname })
+              .reply(200, external[url], { headers: { 'Content-Type': 'application/json' } });
           });
 
           return mapSpec({ spec, plugins: [refs] })
@@ -678,9 +694,10 @@ describe('refs', () => {
 
   describe('deeply resolved', () => {
     test('should resolve deeply serial $refs, across documents', () => {
-      xmock().get('http://example.com/doc-a', (req, res) => {
-        xmock().restore();
-        return res.send({
+      const mockPool = mockAgent.get('http://example.com');
+      mockPool.intercept({ path: '/doc-a' }).reply(
+        200,
+        {
           two: {
             $ref: '#/three',
           },
@@ -690,8 +707,9 @@ describe('refs', () => {
           four: {
             four: 4,
           },
-        });
-      });
+        },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
 
       return mapSpec({
         plugins: [plugins.refs],
@@ -705,9 +723,10 @@ describe('refs', () => {
       });
     });
     test('should resolve deeply nested $refs, across documents', () => {
-      xmock().get('http://example.com/doc-a', (req, res) => {
-        xmock().restore();
-        return res.send({
+      const mockPool = mockAgent.get('http://example.com');
+      mockPool.intercept({ path: '/doc-a' }).reply(
+        200,
+        {
           two: {
             innerTwo: {
               $ref: '#/three',
@@ -721,8 +740,9 @@ describe('refs', () => {
           four: {
             four: 4,
           },
-        });
-      });
+        },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
 
       return mapSpec({
         plugins: [plugins.refs],

@@ -1,6 +1,5 @@
-import path from 'path';
+import path from 'node:path';
 import { globSync } from 'glob';
-import xmock from 'xmock';
 
 import mapSpec, { plugins } from '../../src/specmap/index.js';
 
@@ -8,23 +7,12 @@ const { refs } = plugins;
 const { allOf } = plugins;
 
 describe('complex', () => {
-  let xapp;
-
-  beforeAll(() => {
-    xapp = xmock();
-  });
-
-  afterAll(() => {
-    xapp.restore();
-  });
-
   beforeEach(() => {
     refs.clearCache();
   });
 
   test('should resolve complex specs', () => {
     jest.setTimeout(100000);
-    xapp.restore();
 
     const dir = path.join(__dirname, 'data', 'complex');
     const specFiles = globSync(`${dir}/**/*.json`);

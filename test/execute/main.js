@@ -1,4 +1,4 @@
-import { Readable } from 'stream';
+import { FormData } from 'formdata-node';
 import AbortController from 'abort-controller';
 
 import { execute, buildRequest, self as stubs } from '../../src/execute/index.js';
@@ -740,7 +740,6 @@ describe('execute', () => {
 
       // Then
       expect(req.headers).toEqual({
-        'Content-Length': '134',
         'Content-Type': expect.stringMatching(/^multipart\/form-data/),
       });
 
@@ -748,7 +747,7 @@ describe('execute', () => {
       // but I don't feel like attacking the interals of the node pollyfill
       // for FormData, as it seems to be missing `.get()`)
       expect(req.url).toEqual('http://swagger.io/one');
-      expect(req.body).toBeInstanceOf(Readable);
+      expect(req.body).toBeInstanceOf(FormData);
     });
 
     test('should add Content-Type application/x-www-form-urlencoded when in: formData ', () => {
@@ -1230,7 +1229,7 @@ describe('execute', () => {
     });
 
     expect(fetchSpy.mock.calls.length).toEqual(1);
-    expect(fetchSpy.mock.calls[0][0].body).toBeInstanceOf(Readable);
+    expect(fetchSpy.mock.calls[0][0].body).toBeInstanceOf(FormData);
   });
 
   describe('parameterBuilders', () => {

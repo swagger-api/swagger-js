@@ -9,10 +9,6 @@ updates:
     prefix: "chore"
     include: "scope"
   open-pull-requests-limit: 10
-  ignore:
-    # cross-fetch and node-fetch must be synced manually
-    - dependency-name: "cross-fetch"
-    - dependency-name: "node-fetch"
 
 - package-ecosystem: "github-actions"
   target-branch: "master"

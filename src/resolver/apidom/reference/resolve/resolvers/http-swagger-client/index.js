@@ -1,6 +1,7 @@
-import 'cross-fetch/polyfill';
+import AbortController from 'abort-controller';
 import { ResolverError, HttpResolver } from '@swagger-api/apidom-reference/configuration/empty';
 
+import '../../../../../../helpers/fetch-polyfill.node.js';
 import Http from '../../../../../../http/index.js';
 
 const HttpResolverSwaggerClient = HttpResolver.compose({
@@ -26,7 +27,7 @@ const HttpResolverSwaggerClient = HttpResolver.compose({
       }, this.timeout);
       const credentials =
         this.getHttpClient().withCredentials || this.withCredentials ? 'include' : 'same-origin';
-      const redirects = this.redirects === 0 ? 'error' : 'follow';
+      const redirect = this.redirects === 0 ? 'error' : 'follow';
       const follow = this.redirects > 0 ? this.redirects : undefined;
 
       try {
@@ -37,7 +38,7 @@ const HttpResolverSwaggerClient = HttpResolver.compose({
             let res = await fetch(resource, options);
 
             try {
-              // node-fetch supports mutations
+              // undici supports mutations
               res.headers.delete('Content-Type');
             } catch {
               // Fetch API has guards which prevent mutations
@@ -51,7 +52,7 @@ const HttpResolverSwaggerClient = HttpResolver.compose({
             return res;
           },
           credentials,
-          redirects,
+          redirect,
           follow,
           ...this.swaggerHTTPClientConfig,
         });

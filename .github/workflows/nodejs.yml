@@ -15,7 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.x, 16.x, 18.x, 20.x]
+        node-version: [16.x, 18.x, 20.x]
 
     steps:
     - uses: actions/checkout@v4
@@ -29,6 +29,9 @@ jobs:
       with:
         path: node_modules
         key: node-modules-${{ hashFiles('package-lock.json') }}
+    - name: Update npm
+      if: startsWith(matrix.node-version, '14')
+      run: npm install -g npm@9
     - name: Install dependencies
       if: steps.cache-node-modules.outputs.cache-hit != 'true'
       run: npm ci
@@ -44,7 +47,7 @@ jobs:
     - name: Build swagger-js
       run: npm run build
     - name: Upload commonjs build artifacts
-      if: startsWith(matrix.node-version, '14')
+      if: startsWith(matrix.node-version, '20')
       uses: actions/upload-artifact@v3
       with:
         name: commonjs
@@ -57,10 +60,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Use Node.js 12.20.0
+    - name: Use Node.js 20
       uses: actions/setup-node@v3
       with:
-        node-version: 12.20.0
+        node-version: 20
+
     - name: Cache Node Modules
       id: cache-node-modules
       uses: actions/cache@v3
@@ -77,6 +81,10 @@ jobs:
       with:
         name: commonjs
 
+    - name: Use Node 12.20.0
+      uses: actions/setup-node@v3
+      with:
+        node-version: 12.20.0
     - name: Run commonjs build artifacts on Node.js 12.20.0
       run: node -p "require('./commonjs')"
 
@@ -84,7 +92,6 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: 14.x
-
     - name: Run commonjs build artifacts on Node.js 14.x
       run: node -p "require('./commonjs')"
 
@@ -92,7 +99,6 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: 16.x
-
     - name: Run commonjs build artifacts on Node.js 16.x
       run: node -p "require('./commonjs')"
 
@@ -100,7 +106,6 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: 18.x
-
     - name: Run commonjs build artifacts on Node.js 18.x
       run: node -p "require('./commonjs')"
 
@@ -108,7 +113,6 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: 20.x
-
     - name: Run commonjs build artifacts on Node.js 20.x
       run: node -p "require('./commonjs')"
 

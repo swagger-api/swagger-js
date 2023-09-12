@@ -1,7 +1,6 @@
-import getIn from 'lodash/get';
-import url from 'url';
 import cookie from 'cookie';
 import { isPlainObject } from 'is-plain-object';
+import { url } from '@swagger-api/apidom-reference/configuration/empty';
 
 import stockHttp, { mergeInQueryOrForm } from '../http/index.js';
 import createError from '../specmap/lib/create-error.js';
@@ -13,6 +12,36 @@ import { getOperationRaw, idFromPathMethodLegacy } from '../helpers/index.js';
 import { isOpenAPI3 } from '../helpers/openapi-predicates.js';
 
 const arrayOrEmpty = (ar) => (Array.isArray(ar) ? ar : []);
+
+/**
+ * `parseURIReference` function simulates the behavior of `node:url` parse function.
+ * New WHATWG URL API is not capable of parsing relative references natively,
+ * but can be adapter by utilizing the `base` parameter.
+ */
+const parseURIReference = (uriReference) => {
+  try {
+    return new URL(uriReference);
+  } catch {
+    const parsedURL = new URL(uriReference, 'https://swagger.io');
+    const pathname = String(uriReference).startsWith('/')
+      ? parsedURL.pathname
+      : parsedURL.pathname.substring(1);
+
+    return {
+      hash: parsedURL.hash,
+      host: '',
+      hostname: '',
+      href: '',
+      origin: '',
+      password: '',
+      pathname,
+      port: '',
+      protocol: '',
+      search: parsedURL.search,
+      searchParams: parsedURL.searchParams,
+    };
+  }
+};
 
 const OperationNotFoundError = createError(
   'OperationNotFoundError',
@@ -291,9 +320,9 @@ export function baseUrl(obj) {
 
 function oas3BaseUrl({ spec, pathName, method, server, contextUrl, serverVariables = {} }) {
   const servers =
-    getIn(spec, ['paths', pathName, (method || '').toLowerCase(), 'servers']) ||
-    getIn(spec, ['paths', pathName, 'servers']) ||
-    getIn(spec, ['servers']);
+    spec?.paths?.[pathName]?.[(method || '').toLowerCase()]?.servers ||
+    spec?.paths?.[pathName]?.servers ||
+    spec?.servers;
 
   let selectedServerUrl = '';
   let selectedServerObj = null;
@@ -334,13 +363,15 @@ function oas3BaseUrl({ spec, pathName, method, server, contextUrl, serverVariabl
 function buildOas3UrlWithContext(ourUrl = '', contextUrl = '') {
   // relative server url should be resolved against contextUrl
   const parsedUrl =
-    ourUrl && contextUrl ? url.parse(url.resolve(contextUrl, ourUrl)) : url.parse(ourUrl);
-  const parsedContextUrl = url.parse(contextUrl);
+    ourUrl && contextUrl
+      ? parseURIReference(url.resolve(contextUrl, ourUrl))
+      : parseURIReference(ourUrl);
+  const parsedContextUrl = parseURIReference(contextUrl);
 
   const computedScheme =
-    stripNonAlpha(parsedUrl.protocol) || stripNonAlpha(parsedContextUrl.protocol) || '';
+    stripNonAlpha(parsedUrl.protocol) || stripNonAlpha(parsedContextUrl.protocol);
   const computedHost = parsedUrl.host || parsedContextUrl.host;
-  const computedPath = parsedUrl.pathname || '';
+  const computedPath = parsedUrl.pathname;
   let res;
 
   if (computedScheme && computedHost) {
@@ -368,7 +399,7 @@ function getVariableTemplateNames(str) {
 
 // Compose the baseUrl ( scheme + host + basePath )
 function swagger2BaseUrl({ spec, scheme, contextUrl = '' }) {
-  const parsedContextUrl = url.parse(contextUrl);
+  const parsedContextUrl = parseURIReference(contextUrl);
   const firstSchemeInSpec = Array.isArray(spec.schemes) ? spec.schemes[0] : null;
 
   const computedScheme =

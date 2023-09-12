@@ -51,6 +51,7 @@ describe('http - OpenAPI Specification 3.0', () => {
         });
       })
       .listen(8000);
+    server.keepAliveTimeout = 50;
   });
 
   afterAll(() => {
