@@ -60,6 +60,7 @@ describe('http', () => {
         });
       })
       .listen(8000);
+    server.keepAliveTimeout = 50;
   });
 
   afterAll(() => {

@@ -1,14 +1,25 @@
-import { fetch, Headers, Request, Response } from './fetch-ponyfill.browser.js';
+import {
+  fetch as fetchU,
+  Headers as HeaderU,
+  Request as RequestU,
+  Response as ResponseU,
+} from './fetch-ponyfill-undici.node.js';
+import {
+  fetch as fetchNF,
+  Headers as HeadersNF,
+  Request as RequestNF,
+  Response as ResponseNF,
+} from './fetch-ponyfill-node-fetch.node.js';
 
 if (typeof globalThis.fetch === 'undefined') {
-  globalThis.fetch = fetch;
+  globalThis.fetch = fetchU || fetchNF;
 }
 if (typeof globalThis.Headers === 'undefined') {
-  globalThis.Headers = Headers;
+  globalThis.Headers = HeaderU || HeadersNF;
 }
 if (typeof globalThis.Request === 'undefined') {
-  globalThis.Headers = Request;
+  globalThis.Request = RequestU || RequestNF;
 }
 if (typeof globalThis.Response === 'undefined') {
-  globalThis.Headers = Response;
+  globalThis.Response = ResponseU || ResponseNF;
 }

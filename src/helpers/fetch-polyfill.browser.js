@@ -7,8 +7,8 @@ if (typeof globalThis.Headers === 'undefined') {
   globalThis.Headers = Headers;
 }
 if (typeof globalThis.Request === 'undefined') {
-  globalThis.Headers = Request;
+  globalThis.Request = Request;
 }
 if (typeof globalThis.Response === 'undefined') {
-  globalThis.Headers = Response;
+  globalThis.Response = Response;
 }

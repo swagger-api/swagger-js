@@ -117,6 +117,7 @@
     "formdata-node": "^4.0.0",
     "is-plain-object": "^5.0.0",
     "js-yaml": "^4.1.0",
+    "node-fetch-cjs": "^3.2.10",
     "qs": "^6.10.2",
     "traverse": "~0.6.6",
     "undici": "^5.24.0"

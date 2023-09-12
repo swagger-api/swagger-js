@@ -19,24 +19,24 @@ const arrayOrEmpty = (ar) => (Array.isArray(ar) ? ar : []);
  * but can be adapter by utilizing the `base` parameter.
  */
 const parseURIReference = (uriReference) => {
-  if (URL.canParse(uriReference)) {
+  try {
     return new URL(uriReference);
+  } catch {
+    const parsedURL = new URL(uriReference, 'https://swagger.io');
+    return {
+      hash: parsedURL.hash,
+      host: '',
+      hostname: '',
+      href: '',
+      origin: '',
+      password: '',
+      pathname: uriReference,
+      port: '',
+      protocol: '',
+      search: parsedURL.search,
+      searchParams: parsedURL.searchParams,
+    };
   }
-
-  const parsedURL = new URL(uriReference, 'https://swagger.io');
-  return {
-    hash: parsedURL.hash,
-    host: '',
-    hostname: '',
-    href: '',
-    origin: '',
-    password: '',
-    pathname: uriReference,
-    port: '',
-    protocol: '',
-    search: parsedURL.search,
-    searchParams: parsedURL.searchParams,
-  };
 };
 
 const OperationNotFoundError = createError(

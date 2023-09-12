@@ -4,16 +4,16 @@ import path from 'node:path';
 import fs from 'node:fs';
 import AbortController from 'abort-controller';
 
-import { fetch, Headers, Request, Response } from '../src/helpers/fetch-ponyfill.node.js';
+import { fetch, Headers, Request, Response } from '../src/helpers/fetch-ponyfill-undici.node.js';
 
-// force undici to be used even for Node.js >= 18 where native fetch exists
+// force using undici for testing
 globalThis.fetch = fetch;
+globalThis.Headers = Headers;
 globalThis.Request = Request;
 globalThis.Response = Response;
-globalThis.Headers = Headers;
 
 // provide AbortController for older Node.js versions
-globalThis.AbortController = globalThis.AbortController ?? AbortController;
+globalThis.AbortController = AbortController;
 
 // helpers for reading local files
 globalThis.loadFile = (uri) => fs.readFileSync(uri).toString();
@@ -35,6 +35,10 @@ globalThis.createHTTPServer = ({ port = 8123, cwd = process.cwd() } = {}) => {
     res.end(data);
   });
 
+  // makes node:http and undici work properly
+  if (process.version.startsWith('v18') || process.version.startsWith('v16')) {
+    server.keepAliveTimeout = 100;
+  }
   server.listen(port);
 
   server.terminate = () =>

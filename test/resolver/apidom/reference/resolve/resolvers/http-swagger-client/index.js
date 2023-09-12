@@ -88,14 +88,8 @@ describe('HttpResolverSwaggerClient', () => {
         resolver = HttpResolverSwaggerClient({ timeout: 1 });
         const url = 'http://localhost:8123/local-file.txt';
         const cwd = path.join(__dirname, '__fixtures__');
-        const readThunk = async () => {
-          const server = globalThis.createHTTPServer({ port: 8123, cwd });
-          try {
-            return await resolver.read(ApiDOMFile({ uri: url }));
-          } finally {
-            await server.terminate();
-          }
-        };
+        const httpServer = globalThis.createHTTPServer({ port: 8123, cwd });
+        const readThunk = async () => resolver.read(ApiDOMFile({ uri: url }));
 
         await expect(readThunk()).rejects.toThrow(ResolverError);
         await expect(readThunk()).rejects.toHaveProperty(
@@ -104,8 +98,9 @@ describe('HttpResolverSwaggerClient', () => {
         );
         await expect(readThunk).rejects.toHaveProperty(
           'cause.message',
-          'This operation was aborted'
+          expect.stringMatching(/operation was aborted/)
         );
+        await httpServer.terminate();
       });
 
       describe('given withCredentials option', () => {
@@ -178,18 +173,18 @@ describe('HttpResolverSwaggerClient', () => {
           });
 
           expect.assertions(2);
-          server.listen(4444, () => {
-            resolver
-              .read(ApiDOMFile({ uri: url }))
-              .catch((error) => {
-                expect(error).toBeInstanceOf(ResolverError);
-                expect(error.cause).toHaveProperty('message', 'fetch failed');
-              })
-              .catch((error) => error)
-              .then((error) => {
-                server.close();
-                done(error);
+          server.keepAliveTimeout = 50;
+          server.listen(4444, async () => {
+            try {
+              await resolver.read(ApiDOMFile({ uri: url }));
+            } catch (error) {
+              expect(error).toBeInstanceOf(ResolverError);
+              expect(error.cause).toHaveProperty('message', 'fetch failed');
+            } finally {
+              server.close(() => {
+                done();
               });
+            }
           });
         });
       });

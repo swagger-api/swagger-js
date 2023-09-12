@@ -181,27 +181,23 @@ describe('dereference', () => {
           describe('and allowMetaPatches=true', () => {
             test('should dereference', async () => {
               const fixturePath = path.join(rootFixturePath, 'meta-patches-external');
-              const dereferenceThunk = async () => {
-                const httpServer = globalThis.createHTTPServer({ port: 8123, cwd: fixturePath });
+              const httpServer = globalThis.createHTTPServer({ port: 8123, cwd: fixturePath });
+              const dereferenceThunk = async () =>
+                toValue(
+                  await dereference('http://localhost:8123/root.json', {
+                    parse: { mediaType: mediaTypes.latest('json') },
+                    dereference: {
+                      strategies: [
+                        OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                      ],
+                    },
+                  })
+                );
 
-                try {
-                  return toValue(
-                    await dereference('http://localhost:8123/root.json', {
-                      parse: { mediaType: mediaTypes.latest('json') },
-                      dereference: {
-                        strategies: [
-                          OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
-                        ],
-                      },
-                    })
-                  );
-                } finally {
-                  await httpServer.terminate();
-                }
-              };
               const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
               await expect(dereferenceThunk()).resolves.toEqual(expected);
+              await httpServer.terminate();
             });
           });
         });
