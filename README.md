@@ -61,6 +61,9 @@ on Node.js version.
 - `>=16.8 <18` - [undici](https://www.npmjs.com/package/undici) 
 - `>=18` - [native Node.js fetch](https://nodejs.org/dist/latest-v18.x/docs/api/globals.html#fetch)
 
+> NOTE: swagger-client minimum Node.js runtime version aligns with [Node.js Releases](https://nodejs.org/en/about/releases/)
+> which means that we can drop support for **EOL** (End Of Life) Node.js versions without doing major version bump.
+
 ### Browsers
 
 `swagger-client` works in the latest versions of Chrome, Safari, Firefox, and Edge
