@@ -10,18 +10,27 @@ export function path({ req, value, parameter }) {
     req.url = req.url
       .split(`{${name}}`)
       .join(encodeDisallowedCharacters(serialize(value, effectiveMediaType), { escape: true }));
+    req.url = req.url
+      .split(`{*${name}}`)
+      .join(encodeDisallowedCharacters(serialize(value, effectiveMediaType), { escape: false }));
     return;
   }
 
-  const styledValue = stylize({
+  req.url = req.url.split(`{${name}}`).join(stylize({
     key: parameter.name,
     value,
     style: style || 'simple',
     explode: explode || false,
     escape: true,
-  });
+  }));
 
-  req.url = req.url.split(`{${name}}`).join(styledValue);
+  req.url = req.url.split(`{*${name}}`).join(stylize({
+    key: parameter.name,
+    value,
+    style: style || 'simple',
+    explode: explode || false,
+    escape: false,
+  }));
 }
 
 export function query({ req, value, parameter }) {
