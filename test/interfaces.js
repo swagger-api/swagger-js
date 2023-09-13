@@ -1,5 +1,3 @@
-import AbortController from 'abort-controller';
-
 import {
   mapTagOperations,
   makeApisTagOperationsOperationExecute,

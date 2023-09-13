@@ -1,5 +1,3 @@
-import AbortController from 'abort-controller';
-
 import { execute, buildRequest, self as stubs } from '../../src/execute/index.js';
 // eslint-disable-next-line camelcase
 import normalize from '../../src/resolver/strategies/generic/normalize.js';

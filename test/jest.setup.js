@@ -2,7 +2,6 @@ import process from 'node:process';
 import http from 'node:http';
 import path from 'node:path';
 import fs from 'node:fs';
-import AbortController from 'abort-controller';
 
 import {
   fetch,
@@ -22,9 +21,6 @@ globalThis.Response = Response;
 globalThis.FormData = FormData;
 globalThis.File = File;
 globalThis.Blob = Blob;
-
-// provide AbortController for older Node.js versions
-globalThis.AbortController = AbortController;
 
 // helpers for reading local files
 globalThis.loadFile = (uri) => fs.readFileSync(uri).toString();
