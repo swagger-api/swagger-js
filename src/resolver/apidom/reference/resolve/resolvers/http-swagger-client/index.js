@@ -1,6 +1,7 @@
 import { ResolverError, HttpResolver } from '@swagger-api/apidom-reference/configuration/empty';
 
 import '../../../../../../helpers/fetch-polyfill.node.js';
+import '../../../../../../helpers/abortcontroller-polyfill.node.js';
 import Http from '../../../../../../http/index.js';
 
 const HttpResolverSwaggerClient = HttpResolver.compose({

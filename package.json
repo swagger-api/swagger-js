@@ -8,7 +8,10 @@
     "./es/helpers/btoa.node.js": "./es/helpers/btoa.browser.js",
     "./src/helpers/fetch-polyfill.node.js": "./src/helpers/fetch-polyfill.browser.js",
     "./es/helpers/fetch-polyfill.node.js": "./es/helpers/fetch-polyfill.browser.js",
-    "./lib/helpers/fetch-polyfill.node.js": "./lib/helpers/fetch-polyfill.browser.js"
+    "./lib/helpers/fetch-polyfill.node.js": "./lib/helpers/fetch-polyfill.browser.js",
+    "./src/helpers/abortcontroller-polyfill.node.js": "./src/helpers/abortcontroller-polyfill.browser.js",
+    "./es/helpers/abortcontroller-polyfill.node.js": "./es/helpers/abortcontroller-polyfill.browser.js",
+    "./lib/helpers/abortcontroller-polyfill.node.js": "./lib/helpers/abortcontroller-polyfill.browser.js"
   },
   "main": "lib/commonjs.js",
   "module": "es/index.js",
@@ -116,6 +119,7 @@
     "is-plain-object": "^5.0.0",
     "js-yaml": "^4.1.0",
     "node-fetch-commonjs": "^3.3.1",
+    "node-abort-controller": "^3.1.1",
     "qs": "^6.10.2",
     "traverse": "~0.6.6",
     "undici": "^5.24.0"
