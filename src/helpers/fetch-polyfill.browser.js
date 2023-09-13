@@ -1,4 +1,12 @@
-import { fetch, Headers, Request, Response, FormData } from './fetch-ponyfill.browser.js';
+import {
+  fetch,
+  Headers,
+  Request,
+  Response,
+  FormData,
+  File,
+  Blob,
+} from './fetch-ponyfill.browser.js';
 
 if (typeof globalThis.fetch === 'undefined') {
   globalThis.fetch = fetch;
