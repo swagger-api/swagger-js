@@ -1,4 +1,3 @@
-import AbortController from 'abort-controller';
 import { ResolverError, HttpResolver } from '@swagger-api/apidom-reference/configuration/empty';
 
 import '../../../../../../helpers/fetch-polyfill.node.js';
