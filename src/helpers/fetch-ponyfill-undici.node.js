@@ -1,3 +1,6 @@
-import { fetch, Response, Headers, Request } from 'undici';
+import { Blob } from 'buffer';
+import { fetch, Response, Headers, Request, FormData, File } from 'undici';
 
-export { fetch, Response, Headers, Request };
+const BlobU = typeof fetch === 'undefined' ? undefined : Blob;
+
+export { fetch, Response, Headers, Request, FormData, File, BlobU as Blob };

@@ -1,6 +1,5 @@
 import qs from 'qs';
 import jsYaml from 'js-yaml';
-import { FormData, File, Blob } from 'formdata-node';
 
 import '../helpers/fetch-polyfill.node.js';
 import { encodeDisallowedCharacters } from '../execute/oas3/style-serializer.js';

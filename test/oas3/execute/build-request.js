@@ -1,5 +1,3 @@
-import { File } from 'formdata-node';
-
 // https://github.com/swagger-api/swagger-js/issues/1116
 import { buildRequest } from '../../../src/execute/index.js';
 
@@ -145,7 +143,7 @@ describe('buildRequest - OAS 3.0.x', () => {
       expect(json).toStrictEqual(JSON.stringify(options));
       expect(file).toBeInstanceOf(File);
       expect(file.valueOf()).toStrictEqual(JSON.stringify(options));
-      expect(file.type).toStrictEqual('application/json; charset=utf-8');
+      expect(file.type).toStrictEqual('application/json;charset=utf-8');
     });
   });
 
