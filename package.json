@@ -114,7 +114,6 @@
     "cookie": "~0.5.0",
     "deepmerge": "~4.3.0",
     "fast-json-patch": "^3.0.0-1",
-    "formdata-node": "^4.0.0",
     "is-plain-object": "^5.0.0",
     "js-yaml": "^4.1.0",
     "node-fetch-commonjs": "^3.3.1",

@@ -4,13 +4,24 @@ import path from 'node:path';
 import fs from 'node:fs';
 import AbortController from 'abort-controller';
 
-import { fetch, Headers, Request, Response } from '../src/helpers/fetch-ponyfill-undici.node.js';
+import {
+  fetch,
+  Headers,
+  Request,
+  Response,
+  FormData,
+  File,
+  Blob,
+} from '../src/helpers/fetch-ponyfill-undici.node.js';
 
 // force using undici for testing
 globalThis.fetch = fetch;
 globalThis.Headers = Headers;
 globalThis.Request = Request;
 globalThis.Response = Response;
+globalThis.FormData = FormData;
+globalThis.File = File;
+globalThis.Blob = Blob;
 
 // provide AbortController for older Node.js versions
 globalThis.AbortController = AbortController;

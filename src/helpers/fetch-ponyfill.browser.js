@@ -1,4 +1,4 @@
 // we're targeting browsers that already support fetch API
-const { fetch, Response, Headers, Request } = globalThis;
+const { fetch, Response, Headers, Request, FormData, File, Blob } = globalThis;
 
-export { fetch, Response, Headers, Request };
+export { fetch, Response, Headers, Request, FormData, File, Blob };

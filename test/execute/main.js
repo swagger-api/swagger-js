@@ -1,4 +1,3 @@
-import { FormData } from 'formdata-node';
 import AbortController from 'abort-controller';
 
 import { execute, buildRequest, self as stubs } from '../../src/execute/index.js';

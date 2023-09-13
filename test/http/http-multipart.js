@@ -1,7 +1,6 @@
+import fs from 'node:fs';
 import path from 'node:path';
 import * as undici from 'undici';
-import { FormData, File, Blob } from 'formdata-node';
-import { fileFromPathSync } from 'formdata-node/lib/cjs/fileFromPath.js';
 
 import { buildRequest } from '../../src/execute/index.js';
 import sampleMultipartOpenApi2 from '../data/sample-multipart-oas2.js';
@@ -263,8 +262,16 @@ describe('buildRequest - openapi 3.0', () => {
      * `fileFromPathSync` helper should be used to load files from Node.js env
      * that are further used as values for FormData.
      */
-    const file1 = fileFromPathSync(path.join(__dirname, 'data', 'file1.txt'));
-    const file2 = fileFromPathSync(path.join(__dirname, 'data', 'file2.txt'));
+    const file1 = new File(
+      fs.readFileSync(path.join(__dirname, 'data', 'file1.txt')),
+      'file1.txt',
+      { type: 'text/plain' }
+    );
+    const file2 = new File(
+      fs.readFileSync(path.join(__dirname, 'data', 'file1.txt')),
+      'file1.txt',
+      { type: 'text/plain' }
+    );
 
     const req = buildRequest({
       spec: sampleMultipartOpenApi3,
