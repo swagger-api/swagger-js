@@ -16,21 +16,25 @@ export function path({ req, value, parameter }) {
     return;
   }
 
-  req.url = req.url.split(`{${name}}`).join(stylize({
-    key: parameter.name,
-    value,
-    style: style || 'simple',
-    explode: explode || false,
-    escape: true,
-  }));
+  req.url = req.url.split(`{${name}}`).join(
+    stylize({
+      key: parameter.name,
+      value,
+      style: style || 'simple',
+      explode: explode || false,
+      escape: true,
+    })
+  );
 
-  req.url = req.url.split(`{*${name}}`).join(stylize({
-    key: parameter.name,
-    value,
-    style: style || 'simple',
-    explode: explode || false,
-    escape: false,
-  }));
+  req.url = req.url.split(`{*${name}}`).join(
+    stylize({
+      key: parameter.name,
+      value,
+      style: style || 'simple',
+      explode: explode || false,
+      escape: false,
+    })
+  );
 }
 
 export function query({ req, value, parameter }) {
