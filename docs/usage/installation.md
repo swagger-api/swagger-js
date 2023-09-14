@@ -86,5 +86,9 @@ See unpkg's main page for more information on how to use [unpkg](https://unpkg.c
 
 ### Static files without HTTP or HTML
 
-Once swagger-ui has successfully generated the `/dist` directory, 
-you can copy files from that directory to your own file system and host from there.
+You can pass an object to SwaggerClient, using an OpenAPI decription you ship with your code
+```js
+const data = readFileSync('./357490.json');
+const spec = JSON.parse(data);
+const api = await new SwaggerClient({spec:spec})
+```
