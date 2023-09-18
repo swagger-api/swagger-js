@@ -16,6 +16,7 @@ import {
 import BinaryParser from '@swagger-api/apidom-reference/parse/parsers/binary';
 import OpenApi3_1ResolveStrategy from '@swagger-api/apidom-reference/resolve/strategies/openapi-3-1';
 
+import { DEFAULT_BASE_URL } from '../../../constants.js';
 import * as optionsUtil from '../../utils/options.js';
 import normalize from './normalize.js';
 import HttpResolverSwaggerClient from '../../apidom/reference/resolve/resolvers/http-swagger-client/index.js';
@@ -44,7 +45,7 @@ const resolveOpenAPI31Strategy = async (options) => {
     const { cache } = resolveOpenAPI31Strategy;
 
     // determining BaseURI
-    const cwd = url.isHttpUrl(url.cwd()) ? url.cwd() : 'https://smartbear.com/';
+    const cwd = url.isHttpUrl(url.cwd()) ? url.cwd() : DEFAULT_BASE_URL;
     const retrievalURI = optionsUtil.retrievalURI(options);
     const baseURI = url.resolve(cwd, retrievalURI);
 
