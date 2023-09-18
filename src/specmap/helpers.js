@@ -73,7 +73,18 @@ export function generateAbsoluteRefPatches(
 
 export function absolutifyPointer(pointer, baseUrl) {
   const [urlPart, fragmentPart] = pointer.split('#');
-  const newRefUrlPart = url.resolve(baseUrl || '', urlPart || '');
+  const safeBaseUrl = baseUrl ?? '';
+  const safeUrlPart = urlPart ?? '';
+  let newRefUrlPart;
+
+  if (!url.isHttpUrl(safeBaseUrl)) {
+    const cwd = url.cwd();
+    const absoluteBaseUrl = url.resolve(cwd, safeBaseUrl);
+    const absoluteRefUrlPart = url.resolve(absoluteBaseUrl, safeUrlPart);
+    newRefUrlPart = absoluteRefUrlPart.replace(cwd, '');
+  } else {
+    newRefUrlPart = url.resolve(safeBaseUrl, safeUrlPart);
+  }
 
   return fragmentPart ? `${newRefUrlPart}#${fragmentPart}` : newRefUrlPart;
 }
