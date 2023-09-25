@@ -5,10 +5,6 @@ module.exports = {
   testEnvironment: 'node',
   testMatch: ['**/test/*.js', '**/test/**/*.js'],
   setupFilesAfterEnv: ['<rootDir>/test/jest.setup.js'],
-  moduleNameMapper: {
-    'formdata-node/lib/cjs/fileFromPath.js':
-      '<rootDir>/node_modules/formdata-node/lib/cjs/fileFromPath.js',
-  },
   testPathIgnorePatterns: [
     '<rootDir>/node_modules/',
     '<rootDir>/test/data/',
