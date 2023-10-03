@@ -83,12 +83,3 @@ You can embed Swagger UI's code directly in your HTML by using [unpkg's](https:/
 ```
 
 See unpkg's main page for more information on how to use [unpkg](https://unpkg.com/).
-
-### Static files without HTTP or HTML
-
-You can pass an object to SwaggerClient, using an OpenAPI decription you ship with your code
-```js
-const data = readFileSync('./357490.json');
-const spec = JSON.parse(data);
-const api = await new SwaggerClient({spec:spec})
-```
