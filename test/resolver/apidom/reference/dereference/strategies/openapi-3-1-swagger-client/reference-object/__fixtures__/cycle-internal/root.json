@@ -1,12 +1,11 @@
 {
   "openapi": "3.1.0",
   "components": {
-    "schemas": {
-      "User": {
-        "type": "object",
-        "properties": {
-          "parent": {
-            "$ref": "#/components/schemas/User"
+    "parameters": {
+      "param1": {
+        "examples": {
+          "example1": {
+            "$ref": "#/components/parameters/param1"
           }
         }
       }
