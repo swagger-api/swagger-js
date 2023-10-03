@@ -2,6 +2,7 @@ import cookie from 'cookie';
 import { isPlainObject } from 'is-plain-object';
 import { url } from '@swagger-api/apidom-reference/configuration/empty';
 
+import { DEFAULT_BASE_URL } from '../constants.js';
 import stockHttp, { mergeInQueryOrForm } from '../http/index.js';
 import createError from '../specmap/lib/create-error.js';
 import SWAGGER2_PARAMETER_BUILDERS from './swagger2/parameter-builders.js';
@@ -22,7 +23,7 @@ const parseURIReference = (uriReference) => {
   try {
     return new URL(uriReference);
   } catch {
-    const parsedURL = new URL(uriReference, 'https://swagger.io');
+    const parsedURL = new URL(uriReference, DEFAULT_BASE_URL);
     const pathname = String(uriReference).startsWith('/')
       ? parsedURL.pathname
       : parsedURL.pathname.substring(1);

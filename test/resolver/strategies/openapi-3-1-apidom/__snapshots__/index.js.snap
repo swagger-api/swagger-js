@@ -634,7 +634,12 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL a
         "UserProfile": {
           "properties": {
             "user": {
-              "$ref": "https://example.com/circular-structures.json#/components/schemas/User",
+              "properties": {
+                "profile": {
+                  "$ref": "https://example.com/circular-structures.json#/components/schemas/UserProfile",
+                },
+              },
+              "type": "object",
             },
           },
           "type": "object",
@@ -658,7 +663,12 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL a
             "profile": {
               "properties": {
                 "user": {
-                  "properties": [Circular],
+                  "properties": {
+                    "profile": {
+                      "properties": [Circular],
+                      "type": "object",
+                    },
+                  },
                   "type": "object",
                 },
               },
@@ -1034,7 +1044,7 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
         },
         "Pets": {
           "items": {
-            "$$ref": "https://smartbear.com/petstore.json#/components/schemas/Pet",
+            "$$ref": "https://swagger.io/petstore.json#/components/schemas/Pet",
             "properties": {
               "id": {
                 "format": "int64",
@@ -1088,9 +1098,9 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "content": {
                 "application/json": {
                   "schema": {
-                    "$$ref": "https://smartbear.com/petstore.json#/components/schemas/Pets",
+                    "$$ref": "https://swagger.io/petstore.json#/components/schemas/Pets",
                     "items": {
-                      "$$ref": "https://smartbear.com/petstore.json#/components/schemas/Pet",
+                      "$$ref": "https://swagger.io/petstore.json#/components/schemas/Pet",
                       "properties": {
                         "id": {
                           "format": "int64",
@@ -1128,7 +1138,7 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "content": {
                 "application/json": {
                   "schema": {
-                    "$$ref": "https://smartbear.com/petstore.json#/components/schemas/Error",
+                    "$$ref": "https://swagger.io/petstore.json#/components/schemas/Error",
                     "properties": {
                       "code": {
                         "format": "int32",
@@ -1169,7 +1179,7 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "content": {
                 "application/json": {
                   "schema": {
-                    "$$ref": "https://smartbear.com/petstore.json#/components/schemas/Error",
+                    "$$ref": "https://swagger.io/petstore.json#/components/schemas/Error",
                     "properties": {
                       "code": {
                         "format": "int32",
@@ -1225,7 +1235,7 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "content": {
                 "application/json": {
                   "schema": {
-                    "$$ref": "https://smartbear.com/petstore.json#/components/schemas/Pet",
+                    "$$ref": "https://swagger.io/petstore.json#/components/schemas/Pet",
                     "properties": {
                       "id": {
                         "format": "int64",
@@ -1252,7 +1262,7 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "content": {
                 "application/json": {
                   "schema": {
-                    "$$ref": "https://smartbear.com/petstore.json#/components/schemas/Error",
+                    "$$ref": "https://swagger.io/petstore.json#/components/schemas/Error",
                     "properties": {
                       "code": {
                         "format": "int32",
@@ -1763,7 +1773,7 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
         },
         "Pets": {
           "items": {
-            "$$ref": "https://smartbear.com/#/components/schemas/Pet",
+            "$$ref": "https://swagger.io/#/components/schemas/Pet",
             "properties": {
               "id": {
                 "format": "int64",
@@ -1817,9 +1827,9 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "content": {
                 "application/json": {
                   "schema": {
-                    "$$ref": "https://smartbear.com/#/components/schemas/Pets",
+                    "$$ref": "https://swagger.io/#/components/schemas/Pets",
                     "items": {
-                      "$$ref": "https://smartbear.com/#/components/schemas/Pet",
+                      "$$ref": "https://swagger.io/#/components/schemas/Pet",
                       "properties": {
                         "id": {
                           "format": "int64",
@@ -1857,7 +1867,7 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "content": {
                 "application/json": {
                   "schema": {
-                    "$$ref": "https://smartbear.com/#/components/schemas/Error",
+                    "$$ref": "https://swagger.io/#/components/schemas/Error",
                     "properties": {
                       "code": {
                         "format": "int32",
@@ -1898,7 +1908,7 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "content": {
                 "application/json": {
                   "schema": {
-                    "$$ref": "https://smartbear.com/#/components/schemas/Error",
+                    "$$ref": "https://swagger.io/#/components/schemas/Error",
                     "properties": {
                       "code": {
                         "format": "int32",
@@ -1954,7 +1964,7 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "content": {
                 "application/json": {
                   "schema": {
-                    "$$ref": "https://smartbear.com/#/components/schemas/Pet",
+                    "$$ref": "https://swagger.io/#/components/schemas/Pet",
                     "properties": {
                       "id": {
                         "format": "int64",
@@ -1981,7 +1991,7 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "content": {
                 "application/json": {
                   "schema": {
-                    "$$ref": "https://smartbear.com/#/components/schemas/Error",
+                    "$$ref": "https://swagger.io/#/components/schemas/Error",
                     "properties": {
                       "code": {
                         "format": "int32",
@@ -2847,23 +2857,7 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
         },
         "Pets": {
           "items": {
-            "properties": {
-              "id": {
-                "format": "int64",
-                "type": "integer",
-              },
-              "name": {
-                "type": "string",
-              },
-              "tag": {
-                "type": "string",
-              },
-            },
-            "required": [
-              "id",
-              "name",
-            ],
-            "type": "object",
+            "$ref": "#/components/schemas/Pet",
           },
           "maxItems": 100,
           "type": "array",

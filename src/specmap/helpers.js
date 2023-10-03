@@ -1,6 +1,8 @@
 import traverse from 'traverse';
 import { url } from '@swagger-api/apidom-reference/configuration/empty';
 
+import { DEFAULT_BASE_URL } from '../constants.js';
+
 // This will match if the direct parent's key exactly matches an item.
 const freelyNamedKeyParents = ['properties'];
 
@@ -73,7 +75,18 @@ export function generateAbsoluteRefPatches(
 
 export function absolutifyPointer(pointer, baseUrl) {
   const [urlPart, fragmentPart] = pointer.split('#');
-  const newRefUrlPart = url.resolve(baseUrl || '', urlPart || '');
+  const safeBaseUrl = baseUrl ?? '';
+  const safeUrlPart = urlPart ?? '';
+  let newRefUrlPart;
+
+  if (!url.isHttpUrl(safeBaseUrl)) {
+    const absoluteBaseUrl = url.resolve(DEFAULT_BASE_URL, safeBaseUrl);
+    const absoluteRefUrlPart = url.resolve(absoluteBaseUrl, safeUrlPart);
+    const rawRefUrlPart = absoluteRefUrlPart.replace(DEFAULT_BASE_URL, '');
+    newRefUrlPart = safeUrlPart.startsWith('/') ? rawRefUrlPart : rawRefUrlPart.substring(1);
+  } else {
+    newRefUrlPart = url.resolve(safeBaseUrl, safeUrlPart);
+  }
 
   return fragmentPart ? `${newRefUrlPart}#${fragmentPart}` : newRefUrlPart;
 }

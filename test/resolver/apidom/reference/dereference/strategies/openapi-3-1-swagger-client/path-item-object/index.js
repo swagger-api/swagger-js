@@ -350,7 +350,7 @@ describe('dereference', () => {
                 dereference: { dereferenceOpts: { errors } },
               });
 
-              expect(errors).toHaveLength(1);
+              expect(errors).toHaveLength(2);
               expect(errors[0]).toMatchObject({
                 message: expect.stringMatching(
                   /^Could not resolve reference: Recursive JSON Pointer detected/
@@ -384,7 +384,7 @@ describe('dereference', () => {
                 dereference: { dereferenceOpts: { errors } },
               });
 
-              expect(errors).toHaveLength(1);
+              expect(errors).toHaveLength(3);
               expect(errors[0]).toMatchObject({
                 message: expect.stringMatching(
                   /^Could not resolve reference: Recursive JSON Pointer detected/

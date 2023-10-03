@@ -1,4 +1,4 @@
-import { isMemberElement, isArrayElement } from '@swagger-api/apidom-core';
+import { isMemberElement, isArrayElement, toValue } from '@swagger-api/apidom-core';
 
 const trimParseResult = (elementPath) => elementPath.slice(2);
 
@@ -13,7 +13,7 @@ const toPath = (elementPath) => {
 
   return elementPathSanitized.reduce((path, element, index) => {
     if (isMemberElement(element)) {
-      const token = String(element.key.toValue());
+      const token = String(toValue(element.key));
       path.push(token);
     } else if (isArrayElement(elementPathSanitized[index - 2])) {
       const token = elementPathSanitized[index - 2].content.indexOf(element);

@@ -1,4 +1,4 @@
-import { isArrayElement, deepmerge } from '@swagger-api/apidom-core';
+import { isArrayElement, deepmerge, cloneDeep, toValue } from '@swagger-api/apidom-core';
 import { isSchemaElement, SchemaElement } from '@swagger-api/apidom-ns-openapi-3-1';
 
 import compose from '../utils/compose.js';
@@ -27,11 +27,9 @@ const AllOfVisitor = compose({
         // remove allOf keyword if empty
         if (schemaElement.allOf.isEmpty) {
           return new SchemaElement(
-            schemaElement.content.filter(
-              (memberElement) => memberElement.key.toValue() !== 'allOf'
-            ),
-            schemaElement.meta.clone(),
-            schemaElement.attributes.clone()
+            schemaElement.content.filter((memberElement) => toValue(memberElement.key) !== 'allOf'),
+            cloneDeep(schemaElement.meta),
+            cloneDeep(schemaElement.attributes)
           );
         }
 
