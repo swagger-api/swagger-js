@@ -8,15 +8,15 @@
           "description": "description 1"
         },
         "indirection1": {
-          "$ref": "#/components/parameters/userId",
+          "$ref": "#/components/parameters/indirection1",
           "description": "description 1"
         },
         "indirection2": {
-          "$ref": "#/components/parameters/userId",
+          "$ref": "#/components/parameters/indirection2",
           "description": "description 1"
         },
         "indirection3": {
-          "$ref": "#/components/parameters/userId",
+          "$ref": "#/components/parameters/indirection3",
           "description": "description 1"
         }
       }
