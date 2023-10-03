@@ -83,8 +83,3 @@ You can embed Swagger UI's code directly in your HTML by using [unpkg's](https:/
 ```
 
 See unpkg's main page for more information on how to use [unpkg](https://unpkg.com/).
-
-### Static files without HTTP or HTML
-
-Once swagger-ui has successfully generated the `/dist` directory, 
-you can copy files from that directory to your own file system and host from there.
