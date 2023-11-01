@@ -70,8 +70,6 @@ on Node.js version.
 and uses [native fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) implementation
 provided by each supported browser.
 
-
-
 ## Security contact
 
 Please disclose any security-related issues or vulnerabilities by emailing [security@swagger.io](mailto:security@swagger.io), instead of using the public issue tracker.
