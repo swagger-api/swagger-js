@@ -144,9 +144,9 @@ Swagger.prototype.applyDefaults = function applyDefaults() {
     if (!spec.basePath) {
       spec.basePath = '/';
     }
-  } else if (isOpenAPI3(spec) && isHttpUrl(specUrl)) {
-    if (!spec.servers) {
-      spec.servers = [{ url: specUrl }];
+  } else if (isOpenAPI3(spec)) {
+    if (!spec.servers || (Array.isArray(spec.servers) && spec.servers.length === 0)) {
+      spec.servers = [{ url: '/' }];
     }
   }
 };

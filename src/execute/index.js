@@ -343,7 +343,7 @@ function oas3BaseUrl({ spec, pathName, method, server, contextUrl, serverVariabl
     [selectedServerObj] = servers;
   }
 
-  if (selectedServerUrl.indexOf('{') > -1) {
+  if (selectedServerUrl.includes('{')) {
     // do variable substitution
     const varNames = getVariableTemplateNames(selectedServerUrl);
     varNames.forEach((vari) => {
