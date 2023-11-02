@@ -8,7 +8,8 @@ import openApi30ResolveStrategy from './resolver/strategies/openapi-3-0/index.js
 import openApi31ApiDOMResolveStrategy from './resolver/strategies/openapi-3-1-apidom/index.js';
 import { makeApisTagOperation } from './interfaces.js';
 import { execute, buildRequest, baseUrl } from './execute/index.js';
-import { opId } from './helpers/index.js';
+import { opId, isHttpUrl } from './helpers/index.js';
+import { isOpenAPI2, isOpenAPI3 } from './helpers/openapi-predicates.js';
 import HttpResolverSwaggerClient from './resolver/apidom/reference/resolve/resolvers/http-swagger-client/index.js';
 import JsonParser from './resolver/apidom/reference/parse/parsers/json/index.js';
 import YamlParser from './resolver/apidom/reference/parse/parsers/yaml-1-2/index.js';
@@ -131,8 +132,8 @@ Swagger.prototype = {
 Swagger.prototype.applyDefaults = function applyDefaults() {
   const { spec } = this;
   const specUrl = this.url;
-  // TODO: OAS3: support servers here
-  if (specUrl && specUrl.startsWith('http')) {
+
+  if (isOpenAPI2(spec) && isHttpUrl(specUrl)) {
     const parsed = new URL(specUrl);
     if (!spec.host) {
       spec.host = parsed.host;
@@ -142,6 +143,10 @@ Swagger.prototype.applyDefaults = function applyDefaults() {
     }
     if (!spec.basePath) {
       spec.basePath = '/';
+    }
+  } else if (isOpenAPI3(spec) && isHttpUrl(specUrl)) {
+    if (!spec.servers) {
+      spec.servers = [{ url: specUrl }];
     }
   }
 };
