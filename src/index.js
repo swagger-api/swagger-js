@@ -131,7 +131,6 @@ Swagger.prototype = {
 Swagger.prototype.applyDefaults = function applyDefaults() {
   const { spec } = this;
   const specUrl = this.url;
-  // TODO: OAS3: support servers here
   if (specUrl && specUrl.startsWith('http')) {
     const parsed = new URL(specUrl);
     if (!spec.host) {
