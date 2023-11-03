@@ -26,9 +26,24 @@ exports[`helpers normalize OpenAPI 3.1 given denormalized Header Object examples
             },
           },
         },
+        "servers": [
+          {
+            "url": "/",
+          },
+        ],
       },
+      "servers": [
+        {
+          "url": "/",
+        },
+      ],
     },
   },
+  "servers": [
+    {
+      "url": "/",
+    },
+  ],
 }
 `;
 
@@ -41,9 +56,24 @@ exports[`helpers normalize OpenAPI 3.1 given denormalized Operation.id fields sh
       "get": {
         "__originalOperationId": "get operation ^",
         "operationId": "get_operation__",
+        "servers": [
+          {
+            "url": "/",
+          },
+        ],
       },
+      "servers": [
+        {
+          "url": "/",
+        },
+      ],
     },
   },
+  "servers": [
+    {
+      "url": "/",
+    },
+  ],
 }
 `;
 
@@ -70,8 +100,18 @@ exports[`helpers normalize OpenAPI 3.1 given denormalized Parameter Object examp
           },
         },
       ],
+      "servers": [
+        {
+          "url": "/",
+        },
+      ],
     },
   },
+  "servers": [
+    {
+      "url": "/",
+    },
+  ],
 }
 `;
 
@@ -92,6 +132,11 @@ exports[`helpers normalize OpenAPI 3.1 given denormalized Parameter Objects shou
             "name": "param2",
           },
         ],
+        "servers": [
+          {
+            "url": "/",
+          },
+        ],
       },
       "parameters": [
         {
@@ -103,8 +148,18 @@ exports[`helpers normalize OpenAPI 3.1 given denormalized Parameter Objects shou
           "name": "param2",
         },
       ],
+      "servers": [
+        {
+          "url": "/",
+        },
+      ],
     },
   },
+  "servers": [
+    {
+      "url": "/",
+    },
+  ],
 }
 `;
 
@@ -123,7 +178,17 @@ exports[`helpers normalize OpenAPI 3.1 given denormalized Security Requirements 
             ],
           },
         ],
+        "servers": [
+          {
+            "url": "/",
+          },
+        ],
       },
+      "servers": [
+        {
+          "url": "/",
+        },
+      ],
     },
   },
   "security": [
@@ -132,6 +197,11 @@ exports[`helpers normalize OpenAPI 3.1 given denormalized Security Requirements 
         "write:pets",
         "read:pets",
       ],
+    },
+  ],
+  "servers": [
+    {
+      "url": "/",
     },
   ],
 }

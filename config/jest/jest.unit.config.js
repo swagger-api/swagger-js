@@ -4,6 +4,7 @@ module.exports = {
   rootDir: path.join(__dirname, '..', '..'),
   testEnvironment: 'node',
   testMatch: ['**/test/*.js', '**/test/**/*.js'],
+  // testMatch: ['**/test/resolver/strategies/openapi-3-1-apidom/index.js'],
   setupFilesAfterEnv: ['<rootDir>/test/jest.setup.js'],
   testPathIgnorePatterns: [
     '<rootDir>/node_modules/',
