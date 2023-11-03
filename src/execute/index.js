@@ -346,7 +346,7 @@ function oas3BaseUrl({ spec, pathName, method, server, contextUrl, serverVariabl
 
   // default to the first server if we don't have one by now
   if (!selectedServerUrl) {
-    selectedServerObj = servers.at(0);
+    [selectedServerObj] = servers;
     selectedServerUrl = selectedServerObj.url;
   }
 
