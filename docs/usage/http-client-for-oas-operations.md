@@ -27,6 +27,8 @@ Property | Description
 `http` | `Function=Http`. A function with an interface compatible with [HTTP Client](http-client.md).
 `userFetch` | `Function=cross-fetch`. Custom **asynchronous** fetch function that accepts two arguments: the `url` and the `Request` object and must return a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response) object. More info in [HTTP Client](http-client.md) documentation.
 `signal` | `AbortSignal=null`. AbortSignal object instance, which can be used to abort a request as desired.
+`server` | `String`. URL (`https://example.com`) or relative URI Reference (`/path/subpath`). Must match with of the defined `Server Objects`. If matched, it will be prepended to every requested path.
+`contextUrl` | `String`. URL, e.g. `https://example.com`. Used in following situations: <br /><br />If `server` option is not matched and there is no `Server Object` defined in the definition, this URL will be prepended to every requested path.<br /><br />If matched `Server Object` is defined as relative URI Reference its `url` fixed field is resolved against `contenxtUrl`. Resolved URL will be prepended to every requested path. 
 
 For all later references, we will always use following OpenAPI 3.0.0 definition when referring
 to a `spec`.
@@ -62,6 +64,7 @@ components:
             read: authorize to read
 servers:
   - url: 'http://localhost:8080'
+  - url: '/'  
 paths:
   /users:
     get:
@@ -151,6 +154,37 @@ SwaggerClient.execute({
   method: 'get',
   parameters: { q: 'search string' },
   securities: { authorized: { BearerAuth: "3492342948239482398" } },
+}); // => Promise.<Response>
+```
+
+*Using `server` option*
+
+We can use `server` option to pick one of the defined `Server Objects` in the definition
+to send requests against.
+
+```js
+SwaggerClient.execute({
+  spec: pojoDefinition,
+  operationId: 'getUserList',
+  parameters: { q: 'search string' }, 
+  securities: { authorized: { BearerAuth: "3492342948239482398" } },
+  server: 'http://localhost:8080',
+}); // => Promise.<Response>
+```
+
+*Using `contextUrl` as fallback*
+
+We can use `contextUrl` in case when no `Server Objects` are defined in the definition,
+or the `Server Objects` are defined as relative URI References.
+
+```js
+SwaggerClient.execute({
+  spec: pojoDefinition,
+  operationId: 'getUserList',
+  parameters: { q: 'search string' }, 
+  securities: { authorized: { BearerAuth: "3492342948239482398" } },
+  server: '/',
+  contextUrl: 'https://example.com', 
 }); // => Promise.<Response>
 ```
 
