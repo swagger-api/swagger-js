@@ -2,7 +2,7 @@ import cookie from 'cookie';
 import { isPlainObject } from 'is-plain-object';
 import { url } from '@swagger-api/apidom-reference/configuration/empty';
 
-import { DEFAULT_BASE_URL } from '../constants.js';
+import { DEFAULT_BASE_URL, DEFAULT_OPENAPI_3_SERVER } from '../constants.js';
 import stockHttp, { mergeInQueryOrForm } from '../http/index.js';
 import createError from '../specmap/lib/create-error.js';
 import SWAGGER2_PARAMETER_BUILDERS from './swagger2/parameter-builders.js';
@@ -319,40 +319,47 @@ export function baseUrl(obj) {
   return specIsOAS3 ? oas3BaseUrl(obj) : swagger2BaseUrl(obj);
 }
 
+const isNonEmptyServerList = (value) => Array.isArray(value) && value.length > 0;
+
 function oas3BaseUrl({ spec, pathName, method, server, contextUrl, serverVariables = {} }) {
-  const servers =
-    spec?.paths?.[pathName]?.[(method || '').toLowerCase()]?.servers ||
-    spec?.paths?.[pathName]?.servers ||
-    spec?.servers;
-
+  let servers = [];
   let selectedServerUrl = '';
-  let selectedServerObj = null;
+  let selectedServerObj;
 
-  if (server && servers && servers.length) {
-    const serverUrls = servers.map((srv) => srv.url);
+  // compute the servers (this will be taken care of by ApiDOM refrator plugins in future
+  const operationLevelServers = spec?.paths?.[pathName]?.[(method || '').toLowerCase()]?.servers;
+  const pathItemLevelServers = spec?.paths?.[pathName]?.servers;
+  const rootLevelServers = spec?.servers;
+  servers = isNonEmptyServerList(operationLevelServers) // eslint-disable-line no-nested-ternary
+    ? operationLevelServers
+    : isNonEmptyServerList(pathItemLevelServers) // eslint-disable-line no-nested-ternary
+    ? pathItemLevelServers
+    : isNonEmptyServerList(rootLevelServers)
+    ? rootLevelServers
+    : [DEFAULT_OPENAPI_3_SERVER];
 
-    if (serverUrls.indexOf(server) > -1) {
-      selectedServerUrl = server;
-      selectedServerObj = servers[serverUrls.indexOf(server)];
-    }
+  // pick the first server that matches the server url
+  if (server) {
+    selectedServerObj = servers.find((srv) => srv.url === server);
+    if (selectedServerObj) selectedServerUrl = server;
   }
 
-  if (!selectedServerUrl && servers && servers.length) {
-    // default to the first server if we don't have one by now
-    selectedServerUrl = servers[0].url; // eslint-disable-line semi
-    [selectedServerObj] = servers;
+  // default to the first server if we don't have one by now
+  if (!selectedServerUrl) {
+    selectedServerObj = servers.at(0);
+    selectedServerUrl = selectedServerObj.url;
   }
 
   if (selectedServerUrl.includes('{')) {
     // do variable substitution
     const varNames = getVariableTemplateNames(selectedServerUrl);
-    varNames.forEach((vari) => {
-      if (selectedServerObj.variables && selectedServerObj.variables[vari]) {
+    varNames.forEach((variable) => {
+      if (selectedServerObj.variables && selectedServerObj.variables[variable]) {
         // variable is defined in server
-        const variableDefinition = selectedServerObj.variables[vari];
-        const variableValue = serverVariables[vari] || variableDefinition.default;
+        const variableDefinition = selectedServerObj.variables[variable];
+        const variableValue = serverVariables[variable] || variableDefinition.default;
 
-        const re = new RegExp(`{${vari}}`, 'g');
+        const re = new RegExp(`{${variable}}`, 'g');
         selectedServerUrl = selectedServerUrl.replace(re, variableValue);
       }
     });
@@ -378,7 +385,7 @@ function buildOas3UrlWithContext(ourUrl = '', contextUrl = '') {
   if (computedScheme && computedHost) {
     res = `${computedScheme}://${computedHost + computedPath}`;
 
-    // If last character is '/', trim it off
+    // if last character is '/', trim it off
   } else {
     res = computedPath;
   }

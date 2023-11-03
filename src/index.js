@@ -1,4 +1,5 @@
 /* eslint-disable camelcase */
+import { DEFAULT_OPENAPI_3_SERVER } from './constants.js';
 import Http, { makeHttp, serializeRes, serializeHeaders } from './http/index.js';
 import { makeResolve } from './resolver/index.js';
 import { makeResolveSubtree } from './subtree-resolver/index.js';
@@ -135,6 +136,7 @@ Swagger.prototype.applyDefaults = function applyDefaults() {
 
   if (isOpenAPI2(spec) && isHttpUrl(specUrl)) {
     const parsed = new URL(specUrl);
+
     if (!spec.host) {
       spec.host = parsed.host;
     }
@@ -145,8 +147,10 @@ Swagger.prototype.applyDefaults = function applyDefaults() {
       spec.basePath = '/';
     }
   } else if (isOpenAPI3(spec)) {
-    if (!spec.servers || (Array.isArray(spec.servers) && spec.servers.length === 0)) {
-      spec.servers = [{ url: '/' }];
+    const isEmptyServerList = Array.isArray(spec.servers) && spec.servers.length === 0;
+
+    if (!spec.servers || isEmptyServerList) {
+      spec.servers = [DEFAULT_OPENAPI_3_SERVER];
     }
   }
 };
