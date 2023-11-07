@@ -20,7 +20,12 @@
           "type": "object",
           "properties": {
             "user": {
-              "$ref": "/home/smartbear/root.json#/components/schemas/User"
+              "type": "object",
+              "properties": {
+                "profile": {
+                  "$ref": "/home/smartbear/root.json#/components/schemas/UserProfile"
+                }
+              }
             }
           }
         }

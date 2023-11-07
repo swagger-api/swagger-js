@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { toValue, toJSON } from '@swagger-api/apidom-core';
 import { isSchemaElement, mediaTypes } from '@swagger-api/apidom-ns-openapi-3-1';
-import { evaluate } from '@swagger-api/apidom-json-pointer';
+import { evaluate, escape } from '@swagger-api/apidom-json-pointer';
 import {
   parse,
   dereference,
@@ -278,6 +278,91 @@ describe('dereference', () => {
           });
         });
 
+        describe('given Schema Objects with advanced internal cycles #2', () => {
+          test('should dereference', async () => {
+            const fixturePath = path.join(rootFixturePath, 'cycle-internal-advanced-2');
+            const rootFilePath = path.join(fixturePath, 'root.json');
+            const dereferenced = await dereference(rootFilePath, {
+              parse: { mediaType: mediaTypes.latest('json') },
+            });
+            const parent = evaluate(
+              `/0/paths/${escape('/hello')}/get/responses/200/content/${escape(
+                'application/json'
+              )}/schema/properties/details/anyOf/0/items/properties/details`,
+              dereferenced
+            );
+            const cyclicParent = evaluate(
+              `/0/paths/${escape('/hello')}/get/responses/200/content/${escape(
+                'application/json'
+              )}/schema/properties/details/anyOf/0/items/properties/details/anyOf/0/items/properties/details`,
+              dereferenced
+            );
+
+            expect(parent).toStrictEqual(cyclicParent);
+          });
+
+          describe('and useCircularStructures=false', () => {
+            test('should avoid cycles by skipping transclusion', async () => {
+              const fixturePath = path.join(
+                rootFixturePath,
+                'cycle-internal-advanced-circular-structures-2'
+              );
+              const rootFilePath = path.join(fixturePath, 'root.json');
+              const refSet = await resolve(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+              });
+              refSet.refs[0].uri = '/home/smartbear/root.json';
+              const actual = await dereference(refSet.refs[0].uri, {
+                parse: { mediaType: mediaTypes.latest('json') },
+                dereference: {
+                  refSet,
+                  strategies: [
+                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
+                  ],
+                },
+              });
+              const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
+
+              expect(typeof toJSON(actual)).toBe('string');
+              expect(toValue(actual)).toEqual(expected);
+            });
+
+            describe('and using HTTP protocol', () => {
+              test('should make JSON Pointer absolute', async () => {
+                const fixturePath = path.join(
+                  rootFixturePath,
+                  'cycle-internal-advanced-http-circular-structures-2'
+                );
+                const dereferenceThunk = async () => {
+                  const httpServer = globalThis.createHTTPServer({ port: 8123, cwd: fixturePath });
+
+                  try {
+                    return toValue(
+                      await dereference('http://localhost:8123/root.json', {
+                        parse: { mediaType: mediaTypes.latest('json') },
+                        dereference: {
+                          strategies: [
+                            OpenApi3_1SwaggerClientDereferenceStrategy({
+                              useCircularStructures: false,
+                            }),
+                          ],
+                        },
+                      })
+                    );
+                  } finally {
+                    await httpServer.terminate();
+                  }
+                };
+                const expected = globalThis.loadJsonFile(
+                  path.join(fixturePath, 'dereferenced.json')
+                );
+
+                await expect(dereferenceThunk()).resolves.toEqual(expected);
+              });
+            });
+          });
+        });
+
         describe('given Schema Objects with external cycles', () => {
           test('should dereference', async () => {
             const fixturePath = path.join(rootFixturePath, 'cycle-external');
@@ -354,7 +439,7 @@ describe('dereference', () => {
 
         describe('given Schema Object pointing externally', () => {
           describe('and allowMetaPatches=true', () => {
-            test.only('should dereference', async () => {
+            test('should dereference', async () => {
               const fixturePath = path.join(rootFixturePath, 'meta-patches-external');
               const httpServer = globalThis.createHTTPServer({ port: 8123, cwd: fixturePath });
               const dereferenceThunk = async () =>
@@ -1683,14 +1768,22 @@ describe('dereference', () => {
               dereference: { dereferenceOpts: { errors } },
             });
 
-            expect(errors).toHaveLength(1);
-            expect(errors[0]).toMatchObject({
+            expect(errors).toHaveLength(2);
+            expect(errors.at(0)).toMatchObject({
               message: expect.stringMatching(
                 /^Could not resolve reference: Recursive Schema Object reference detected/
               ),
               baseDoc: expect.stringMatching(/infinite-recursion\/root\.json$/),
               $ref: '#/components/schemas/User',
               fullPath: ['components', 'schemas', 'User', '$ref'],
+            });
+            expect(errors.at(1)).toMatchObject({
+              message: expect.stringMatching(
+                /^Could not resolve reference: Recursive Schema Object reference detected/
+              ),
+              baseDoc: expect.stringMatching(/infinite-recursion\/root\.json$/),
+              $ref: '#/components/schemas/UserProfile',
+              fullPath: ['components', 'schemas', 'UserProfile', '$ref'],
             });
           });
         });
@@ -1856,14 +1949,22 @@ describe('dereference', () => {
               dereference: { dereferenceOpts: { errors } },
             });
 
-            expect(errors).toHaveLength(1);
-            expect(errors[0]).toMatchObject({
+            expect(errors).toHaveLength(4);
+            expect(errors.at(0)).toMatchObject({
               message: expect.stringMatching(
                 /^Could not resolve reference: Recursive Schema Object reference detected/
               ),
               baseDoc: expect.stringMatching(/indirect-internal-circular\/root\.json$/),
               $ref: '#/components/schemas/User',
               fullPath: ['components', 'schemas', 'User', '$ref'],
+            });
+            expect(errors.at(3)).toMatchObject({
+              message: expect.stringMatching(
+                /^Could not resolve reference: Recursive Schema Object reference detected/
+              ),
+              baseDoc: expect.stringMatching(/indirect-internal-circular\/root\.json$/),
+              $ref: '#/components/schemas/Indirection3',
+              fullPath: ['components', 'schemas', 'Indirection3', '$ref'],
             });
           });
 
@@ -1891,14 +1992,22 @@ describe('dereference', () => {
                 },
               });
 
-              expect(errors).toHaveLength(1);
-              expect(errors[0]).toMatchObject({
+              expect(errors).toHaveLength(4);
+              expect(errors.at(0)).toMatchObject({
                 message: expect.stringMatching(
                   /^Could not resolve reference: Recursive Schema Object reference detected/
                 ),
                 baseDoc: expect.stringMatching(/indirect-internal-circular\/root\.json$/),
                 $ref: '#/components/schemas/User',
                 fullPath: ['components', 'schemas', 'User', '$ref'],
+              });
+              expect(errors.at(3)).toMatchObject({
+                message: expect.stringMatching(
+                  /^Could not resolve reference: Recursive Schema Object reference detected/
+                ),
+                baseDoc: expect.stringMatching(/indirect-internal-circular\/root\.json$/),
+                $ref: '#/components/schemas/Indirection3',
+                fullPath: ['components', 'schemas', 'Indirection3', '$ref'],
               });
             });
           });

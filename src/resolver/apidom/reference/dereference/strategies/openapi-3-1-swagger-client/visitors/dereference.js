@@ -4,11 +4,14 @@ import {
   isPrimitiveElement,
   isStringElement,
   isMemberElement,
+  IdentityManager,
   visit,
+  includesClasses,
   toValue,
   cloneShallow,
   cloneDeep,
 } from '@swagger-api/apidom-core';
+import { ApiDOMError } from '@swagger-api/apidom-error';
 import {
   isReferenceElementExternal,
   isReferenceLikeElement,
@@ -47,7 +50,21 @@ import specMapMod from '../../../../../../../specmap/lib/refs.js';
 import { SchemaRefError } from '../errors/index.js';
 
 const { wrapError } = specMapMod;
+
 const visitAsync = visit[Symbol.for('nodejs.util.promisify.custom')];
+
+// initialize element identity manager
+const identityManager = IdentityManager();
+
+/**
+ * Predicate for detecting if element was created by merging referencing
+ * element with particular element identity with a referenced element.
+ */
+const wasReferencedBy = (referencingElement) => (element) =>
+  element.meta.hasKey('ref-referencing-element-id') &&
+  element.meta
+    .get('ref-referencing-element-id')
+    .equals(toValue(identityManager.identify(referencingElement)));
 
 const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.compose({
   props: {
@@ -68,6 +85,11 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
     async ReferenceElement(referencingElement, key, parent, path, ancestors) {
       try {
         const [ancestorsLineage, directAncestors] = this.toAncestorLineage([...ancestors, parent]);
+
+        // skip already identified cycled Path Item Objects
+        if (includesClasses(['cycle'], referencingElement.$ref)) {
+          return false;
+        }
 
         // detect possible cycle in traversal and avoid it
         if (ancestorsLineage.includesCycle(referencingElement)) {
@@ -107,7 +129,7 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
 
         // detect direct or indirect reference
         if (this.indirections.includes(referencedElement)) {
-          throw new Error('Recursive JSON Pointer detected');
+          throw new ApiDOMError('Recursive JSON Pointer detected');
         }
 
         // detect maximum depth of dereferencing
@@ -122,11 +144,13 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
           if (hasCycles) {
             if (url.isHttpUrl(retrievalURI) || url.isFileSystemPath(retrievalURI)) {
               // make the referencing URL or file system path absolute
-              return new ReferenceElement(
+              const cycledReferenceElement = new ReferenceElement(
                 { $ref: $refBaseURI },
                 cloneDeep(referencingElement.meta),
                 cloneDeep(referencingElement.attributes)
               );
+              cycledReferenceElement.get('$ref').classes.push('cycle');
+              return cycledReferenceElement;
             }
             // skip processing this reference
             return false;
@@ -166,26 +190,25 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
           // annotate fragment with info about original Reference element
           copy.setMetaProperty('ref-fields', {
             $ref: toValue(referencingElement.$ref),
-            // @ts-ignore
             description: toValue(referencingElement.description),
-            // @ts-ignore
             summary: toValue(referencingElement.summary),
           });
           // annotate fragment with info about origin
           copy.setMetaProperty('ref-origin', reference.uri);
+          // annotate fragment with info about referencing element
+          copy.setMetaProperty(
+            'ref-referencing-element-id',
+            cloneDeep(identityManager.identify(referencingElement))
+          );
 
           // override description and summary (outer has higher priority then inner)
           if (isObjectElement(refedElement)) {
             if (referencingElement.hasKey('description') && 'description' in refedElement) {
-              // @ts-ignore
               copy.remove('description');
-              // @ts-ignore
               copy.set('description', referencingElement.get('description'));
             }
             if (referencingElement.hasKey('summary') && 'summary' in refedElement) {
-              // @ts-ignore
               copy.remove('summary');
-              // @ts-ignore
               copy.set('summary', referencingElement.get('summary'));
             }
           }
@@ -203,13 +226,18 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
         };
 
         // attempting to create cycle
-        if (ancestorsLineage.includes(referencedElement)) {
+        if (
+          ancestorsLineage.includes(referencingElement) ||
+          ancestorsLineage.includes(referencedElement)
+        ) {
+          const replaceWith =
+            ancestorsLineage.findItem(wasReferencedBy(referencingElement)) ??
+            mergeAndAnnotateReferencedElement(referencedElement);
           if (isMemberElement(parent)) {
-            parent.value = mergeAndAnnotateReferencedElement(referencedElement); // eslint-disable-line no-param-reassign
+            parent.value = replaceWith; // eslint-disable-line no-param-reassign
           } else if (Array.isArray(parent)) {
-            parent[key] = mergeAndAnnotateReferencedElement(referencedElement); // eslint-disable-line no-param-reassign
+            parent[key] = replaceWith; // eslint-disable-line no-param-reassign
           }
-
           return false;
         }
 
@@ -241,6 +269,11 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
           return undefined;
         }
 
+        // skip already identified cycled Path Item Objects
+        if (includesClasses(['cycle'], pathItemElement.$ref)) {
+          return false;
+        }
+
         // detect possible cycle in traversal and avoid it
         if (ancestorsLineage.includesCycle(pathItemElement)) {
           return false;
@@ -269,7 +302,7 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
 
         // detect direct or indirect reference
         if (this.indirections.includes(referencedElement)) {
-          throw new Error('Recursive JSON Pointer detected');
+          throw new ApiDOMError('Recursive JSON Pointer detected');
         }
 
         // detect maximum depth of dereferencing
@@ -284,11 +317,13 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
           if (hasCycles) {
             if (url.isHttpUrl(retrievalURI) || url.isFileSystemPath(retrievalURI)) {
               // make the referencing URL or file system path absolute
-              return new PathItemElement(
+              const cycledPathItemElement = new PathItemElement(
                 { $ref: $refBaseURI },
                 cloneDeep(pathItemElement.meta),
                 cloneDeep(pathItemElement.attributes)
               );
+              cycledPathItemElement.get('$ref').classes.push('cycle');
+              return cycledPathItemElement;
             }
             // skip processing this path item and all it's child elements
             return false;
@@ -339,6 +374,11 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
           });
           // annotate referenced element with info about origin
           mergedElement.setMetaProperty('ref-origin', reference.uri);
+          // annotate fragment with info about referencing element
+          mergedElement.setMetaProperty(
+            'ref-referencing-element-id',
+            cloneDeep(identityManager.identify(pathItemElement))
+          );
 
           // apply meta patches
           if (this.allowMetaPatches) {
@@ -353,13 +393,18 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
         };
 
         // attempting to create cycle
-        if (ancestorsLineage.includes(referencedElement)) {
+        if (
+          ancestorsLineage.includes(pathItemElement) ||
+          ancestorsLineage.includes(referencedElement)
+        ) {
+          const replaceWith =
+            ancestorsLineage.findItem(wasReferencedBy(pathItemElement)) ??
+            mergeAndAnnotateReferencedElement(referencedElement);
           if (isMemberElement(parent)) {
-            parent.value = mergeAndAnnotateReferencedElement(referencedElement); // eslint-disable-line no-param-reassign
+            parent.value = replaceWith; // eslint-disable-line no-param-reassign
           } else if (Array.isArray(parent)) {
-            parent[key] = mergeAndAnnotateReferencedElement(referencedElement); // eslint-disable-line no-param-reassign
+            parent[key] = replaceWith; // eslint-disable-line no-param-reassign
           }
-
           return false;
         }
 
@@ -387,6 +432,11 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
         if (!isStringElement(referencingElement.$ref)) {
           // skip traversing this schema but traverse all it's child schemas
           return undefined;
+        }
+
+        // skip already identified cycled Path Item Objects
+        if (includesClasses(['cycle'], referencingElement.$ref)) {
+          return false;
         }
 
         // detect possible cycle in traversal and avoid it
@@ -463,7 +513,7 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
 
         // detect direct or indirect reference
         if (this.indirections.includes(referencedElement)) {
-          throw new Error('Recursive Schema Object reference detected');
+          throw new ApiDOMError('Recursive Schema Object reference detected');
         }
 
         // detect maximum depth of dereferencing
@@ -475,16 +525,18 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
 
         // useCircularStructures option processing
         if (!this.useCircularStructures) {
-          const hasCycles = ancestorsLineage.some((ancs) => ancs.has(referencedElement));
+          const hasCycles = ancestorsLineage.includes(referencedElement);
           if (hasCycles) {
             if (url.isHttpUrl(retrievalURI) || url.isFileSystemPath(retrievalURI)) {
               // make the referencing URL or file system path absolute
               const baseURI = url.resolve(retrievalURI, $refBaseURI);
-              return new SchemaElement(
+              const cycledSchemaElement = new SchemaElement(
                 { $ref: baseURI },
                 cloneDeep(referencingElement.meta),
                 cloneDeep(referencingElement.attributes)
               );
+              cycledSchemaElement.get('$ref').classes.push('cycle');
+              return cycledSchemaElement;
             }
             // skip processing this schema and all it's child schemas
             return false;
@@ -526,6 +578,11 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
           });
           // annotate referenced element with info about origin
           booleanJsonSchemaElement.setMetaProperty('ref-origin', reference.uri);
+          // annotate fragment with info about referencing element
+          booleanJsonSchemaElement.setMetaProperty(
+            'ref-referencing-element-id',
+            cloneDeep(identityManager.identify(referencingElement))
+          );
           return booleanJsonSchemaElement;
         }
 
@@ -548,6 +605,11 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
           });
           // annotate fragment with info about origin
           mergedElement.setMetaProperty('ref-origin', reference.uri);
+          // annotate fragment with info about referencing element
+          mergedElement.setMetaProperty(
+            'ref-referencing-element-id',
+            cloneDeep(identityManager.identify(referencingElement))
+          );
 
           // allowMetaPatches option processing
           if (this.allowMetaPatches) {
@@ -562,13 +624,18 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
         };
 
         // attempting to create cycle
-        if (ancestorsLineage.includes(referencedElement)) {
+        if (
+          ancestorsLineage.includes(referencingElement) ||
+          ancestorsLineage.includes(referencedElement)
+        ) {
+          const replaceWith =
+            ancestorsLineage.findItem(wasReferencedBy(referencingElement)) ??
+            mergeAndAnnotateReferencedElement(referencedElement);
           if (isMemberElement(parent)) {
-            parent.value = mergeAndAnnotateReferencedElement(referencedElement); // eslint-disable-line no-param-reassign
+            parent.value = replaceWith; // eslint-disable-line no-param-reassign
           } else if (Array.isArray(parent)) {
-            parent[key] = mergeAndAnnotateReferencedElement(referencedElement); // eslint-disable-line no-param-reassign
+            parent[key] = replaceWith; // eslint-disable-line no-param-reassign
           }
-
           return false;
         }
 
