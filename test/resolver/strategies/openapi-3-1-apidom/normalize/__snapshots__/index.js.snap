@@ -115,6 +115,102 @@ exports[`helpers normalize OpenAPI 3.1 given denormalized Parameter Object examp
 }
 `;
 
+exports[`helpers normalize OpenAPI 3.1 given denormalized Parameter Objects pojoAdapter 1`] = `
+{
+  "$$normalized": true,
+  "openapi": "3.1.0",
+  "paths": {
+    "/": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "param1",
+          },
+          {
+            "in": "query",
+            "name": "param2",
+          },
+        ],
+        "servers": [
+          {
+            "url": "/",
+          },
+        ],
+      },
+      "parameters": [
+        {
+          "in": "query",
+          "name": "param1",
+        },
+        {
+          "in": "query",
+          "name": "param2",
+        },
+      ],
+      "servers": [
+        {
+          "url": "/",
+        },
+      ],
+    },
+  },
+  "servers": [
+    {
+      "url": "/",
+    },
+  ],
+}
+`;
+
+exports[`helpers normalize OpenAPI 3.1 given denormalized Parameter Objects pojoAdapter 2`] = `
+{
+  "$$normalized": true,
+  "openapi": "3.1.0",
+  "paths": {
+    "/": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "param1",
+          },
+          {
+            "in": "query",
+            "name": "param2",
+          },
+        ],
+        "servers": [
+          {
+            "url": "/",
+          },
+        ],
+      },
+      "parameters": [
+        {
+          "in": "query",
+          "name": "param1",
+        },
+        {
+          "in": "query",
+          "name": "param2",
+        },
+      ],
+      "servers": [
+        {
+          "url": "/",
+        },
+      ],
+    },
+  },
+  "servers": [
+    {
+      "url": "/",
+    },
+  ],
+}
+`;
+
 exports[`helpers normalize OpenAPI 3.1 given denormalized Parameter Objects should normalize 1`] = `
 {
   "$$normalized": true,
