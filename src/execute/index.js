@@ -333,10 +333,10 @@ function oas3BaseUrl({ spec, pathName, method, server, contextUrl, serverVariabl
   servers = isNonEmptyServerList(operationLevelServers) // eslint-disable-line no-nested-ternary
     ? operationLevelServers
     : isNonEmptyServerList(pathItemLevelServers) // eslint-disable-line no-nested-ternary
-    ? pathItemLevelServers
-    : isNonEmptyServerList(rootLevelServers)
-    ? rootLevelServers
-    : [DEFAULT_OPENAPI_3_SERVER];
+      ? pathItemLevelServers
+      : isNonEmptyServerList(rootLevelServers)
+        ? rootLevelServers
+        : [DEFAULT_OPENAPI_3_SERVER];
 
   // pick the first server that matches the server url
   if (server) {

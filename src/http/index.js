@@ -317,8 +317,8 @@ function formatKeyValueBySerializationOption(key, value, skipEncoding, serializa
   const escape = skipEncoding
     ? false
     : serializationOption && serializationOption.allowReserved
-    ? 'unsafe'
-    : 'reserved';
+      ? 'unsafe'
+      : 'reserved';
   const encodeFn = (v) => encodeDisallowedCharacters(v, { escape });
   const encodeKeyFn = skipEncoding ? (k) => k : (k) => encodeDisallowedCharacters(k, { escape });
 
