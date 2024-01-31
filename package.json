@@ -123,7 +123,7 @@
     "node-abort-controller": "^3.1.1",
     "qs": "^6.10.2",
     "traverse": "~0.6.6",
-    "undici": "^5.24.0"
+    "undici": "^6.5.0"
   },
   "overrides": {
     "@swagger-api/apidom-reference": {
