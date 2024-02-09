@@ -50,7 +50,7 @@ export function query({ req, value, parameter }) {
     value = '0';
   }
 
-  if (value) {
+  if (value && (!Array.isArray(value) || value.length > 0)) {
     const { style, explode, allowReserved } = parameter;
     req.query[parameter.name] = {
       value,
@@ -79,7 +79,7 @@ export function header({ req, parameter, value }) {
     return;
   }
 
-  if (typeof value !== 'undefined') {
+  if (typeof value !== 'undefined' && (!Array.isArray(value) || value.length > 0)) {
     req.headers[parameter.name] = stylize({
       key: parameter.name,
       value,
@@ -101,7 +101,7 @@ export function cookie({ req, parameter, value }) {
     return;
   }
 
-  if (type !== 'undefined') {
+  if (type !== 'undefined' && (!Array.isArray(value) || value.length > 0)) {
     const prefix =
       type === 'object' && !Array.isArray(value) && parameter.explode ? '' : `${parameter.name}=`;
 
