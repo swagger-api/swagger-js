@@ -79,7 +79,7 @@ export function header({ req, parameter, value }) {
     return;
   }
 
-  if (typeof value !== 'undefined') {
+  if (value !== undefined && !(Array.isArray(value) && value.length === 0)) {
     req.headers[parameter.name] = stylize({
       key: parameter.name,
       value,
@@ -101,7 +101,7 @@ export function cookie({ req, parameter, value }) {
     return;
   }
 
-  if (type !== 'undefined') {
+  if (value !== undefined && !(Array.isArray(value) && value.length === 0)) {
     const prefix =
       type === 'object' && !Array.isArray(value) && parameter.explode ? '' : `${parameter.name}=`;
 
