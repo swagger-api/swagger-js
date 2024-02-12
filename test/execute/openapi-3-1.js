@@ -122,6 +122,60 @@ describe('given OpenAPI 3.1.0 definition', () => {
           },
         },
       },
+      '/findWithQuery': {
+        get: {
+          operationId: 'findWithQuery',
+          parameters: [
+            {
+              name: 'status',
+              in: 'query',
+              schema: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                  enum: ['admin', 'customer'],
+                },
+              },
+            },
+          ],
+        },
+      },
+      '/findWithHeader': {
+        get: {
+          operationId: 'findWithHeader',
+          parameters: [
+            {
+              name: 'status',
+              in: 'header',
+              schema: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                  enum: ['admin', 'customer'],
+                },
+              },
+            },
+          ],
+        },
+      },
+      '/findWithCookie': {
+        get: {
+          operationId: 'findWithCookie',
+          parameters: [
+            {
+              name: 'status',
+              in: 'cookie',
+              schema: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                  enum: ['admin', 'customer'],
+                },
+              },
+            },
+          ],
+        },
+      },
     },
   };
   let server;
@@ -185,6 +239,216 @@ describe('given OpenAPI 3.1.0 definition', () => {
       headers: {
         accept: 'application/json',
         Authorization: 'Bearer 3492342948239482398',
+      },
+      method: 'GET',
+    });
+  });
+
+  test('should build a request without empty multi-value parameters in query', () => {
+    const request = SwaggerClient.buildRequest({
+      spec,
+      operationId: 'findWithQuery',
+      parameters: { status: [] },
+    });
+
+    expect(request).toEqual({
+      url: 'http://localhost:8080/findWithQuery',
+      credentials: 'same-origin',
+      headers: {},
+      method: 'GET',
+    });
+  });
+
+  test('should build a request without empty multi-value parameters in header', () => {
+    const request = SwaggerClient.buildRequest({
+      spec,
+      operationId: 'findWithHeader',
+      parameters: { status: [] },
+    });
+
+    expect(request).toEqual({
+      url: 'http://localhost:8080/findWithHeader',
+      credentials: 'same-origin',
+      headers: {},
+      method: 'GET',
+    });
+  });
+
+  test('should build a request without empty multi-value parameters in cookie', () => {
+    const request = SwaggerClient.buildRequest({
+      spec,
+      operationId: 'findWithCookie',
+      parameters: { status: [] },
+    });
+
+    expect(request).toEqual({
+      url: 'http://localhost:8080/findWithCookie',
+      credentials: 'same-origin',
+      headers: {},
+      method: 'GET',
+    });
+  });
+});
+
+describe('given OpenAPI 3.1.0 definition with multi-value parameters', () => {
+  const spec = {
+    openapi: '3.1.0',
+    info: {
+      title: 'Testing API',
+      version: '1.0.0',
+    },
+    servers: [
+      {
+        url: 'http://localhost:8080',
+      },
+    ],
+    paths: {
+      '/findWithQuery': {
+        get: {
+          operationId: 'findWithQuery',
+          parameters: [
+            {
+              name: 'status',
+              in: 'query',
+              schema: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                  enum: ['admin', 'customer'],
+                },
+              },
+            },
+          ],
+        },
+      },
+      '/findWithHeader': {
+        get: {
+          operationId: 'findWithHeader',
+          parameters: [
+            {
+              name: 'status',
+              in: 'header',
+              schema: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                  enum: ['admin', 'customer'],
+                },
+              },
+            },
+          ],
+        },
+      },
+      '/findWithCookie': {
+        get: {
+          operationId: 'findWithCookie',
+          parameters: [
+            {
+              name: 'status',
+              in: 'cookie',
+              schema: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                  enum: ['admin', 'customer'],
+                },
+              },
+            },
+          ],
+        },
+      },
+    },
+  };
+
+  test('should build a request without parameters in query', () => {
+    const request = SwaggerClient.buildRequest({
+      spec,
+      operationId: 'findWithQuery',
+      parameters: { status: [] },
+    });
+
+    expect(request).toEqual({
+      url: 'http://localhost:8080/findWithQuery',
+      credentials: 'same-origin',
+      headers: {},
+      method: 'GET',
+    });
+  });
+
+  test('should build a request with an empty string parameter in query', () => {
+    const request = SwaggerClient.buildRequest({
+      spec,
+      operationId: 'findWithQuery',
+      parameters: { status: [''] },
+    });
+
+    expect(request).toEqual({
+      url: 'http://localhost:8080/findWithQuery?status=',
+      credentials: 'same-origin',
+      headers: {},
+      method: 'GET',
+    });
+  });
+
+  test('should build a request without parameters in header', () => {
+    const request = SwaggerClient.buildRequest({
+      spec,
+      operationId: 'findWithHeader',
+      parameters: { status: [] },
+    });
+
+    expect(request).toEqual({
+      url: 'http://localhost:8080/findWithHeader',
+      credentials: 'same-origin',
+      headers: {},
+      method: 'GET',
+    });
+  });
+
+  test('should build a request with an empty string parameter in header', () => {
+    const request = SwaggerClient.buildRequest({
+      spec,
+      operationId: 'findWithHeader',
+      parameters: { status: [''] },
+    });
+
+    expect(request).toEqual({
+      url: 'http://localhost:8080/findWithHeader',
+      credentials: 'same-origin',
+      headers: {
+        status: '',
+      },
+      method: 'GET',
+    });
+  });
+
+  test('should build a request without parameters in cookie', () => {
+    const request = SwaggerClient.buildRequest({
+      spec,
+      operationId: 'findWithCookie',
+      parameters: { status: [] },
+    });
+
+    expect(request).toEqual({
+      url: 'http://localhost:8080/findWithCookie',
+      credentials: 'same-origin',
+      headers: {},
+      method: 'GET',
+    });
+  });
+
+  test('should build a request with an empty string parameter in cookie', () => {
+    const request = SwaggerClient.buildRequest({
+      spec,
+      operationId: 'findWithCookie',
+      parameters: { status: [''] },
+    });
+
+    expect(request).toEqual({
+      url: 'http://localhost:8080/findWithCookie',
+      credentials: 'same-origin',
+      headers: {
+        Cookie: 'status=',
       },
       method: 'GET',
     });
