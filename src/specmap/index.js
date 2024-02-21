@@ -5,7 +5,8 @@ import parameters from './lib/parameters.js';
 import properties from './lib/properties.js';
 import ContextTree from './lib/context-tree.js';
 
-const HARD_LIMIT = 100;
+const PLUGIN_DISPATCH_LIMIT = 100;
+const TRAVERSE_LIMIT = 1000;
 const noop = () => {};
 
 class SpecMap {
@@ -39,6 +40,7 @@ class SpecMap {
           getInstance: () => this,
         }),
         allowMetaPatches: false,
+        currentTraverseCount: 0,
       },
       opts
     );
@@ -70,6 +72,7 @@ class SpecMap {
 
   wrapPlugin(plugin, name) {
     const { pathDiscriminator } = this;
+    const that = this;
     let ctx = null;
     let fn;
 
@@ -105,10 +108,15 @@ class SpecMap {
 
         // eslint-disable-next-line no-restricted-syntax
         for (const patch of patches.filter(lib.isAdditiveMutation)) {
-          yield* traverse(patch.value, patch.path, patch);
+          if (that.currentTraverseCount < TRAVERSE_LIMIT) {
+            yield* traverse(patch.value, patch.path, patch);
+          } else {
+            return;
+          }
         }
 
         function* traverse(obj, path, patch) {
+          that.currentTraverseCount += 1;
           if (!lib.isObject(obj)) {
             if (pluginObj.key === path[path.length - 1]) {
               yield pluginObj.plugin(obj, pluginObj.key, path, specmap);
@@ -134,7 +142,11 @@ class SpecMap {
                   if (specmap.allowMetaPatches && objRef) {
                     refCache[objRef] = true;
                   }
-                  yield* traverse(val, updatedPath, patch);
+                  if (that.currentTraverseCount < TRAVERSE_LIMIT) {
+                    yield* traverse(val, updatedPath, patch);
+                  } else {
+                    return;
+                  }
                 }
               }
 
@@ -313,6 +325,8 @@ class SpecMap {
     const that = this;
     const plugin = this.nextPlugin();
 
+    that.currentTraverseCount = 0;
+
     if (!plugin) {
       const nextPromise = this.nextPromisedPatch();
       if (nextPromise) {
@@ -328,13 +342,13 @@ class SpecMap {
     }
 
     // Makes sure plugin isn't running an endless loop
-    that.pluginCount = that.pluginCount || {};
-    that.pluginCount[plugin] = (that.pluginCount[plugin] || 0) + 1;
-    if (that.pluginCount[plugin] > HARD_LIMIT) {
+    that.pluginCount = that.pluginCount || new WeakMap();
+    that.pluginCount.set(plugin, (that.pluginCount.get(plugin) || 0) + 1);
+    if (that.pluginCount[plugin] > PLUGIN_DISPATCH_LIMIT) {
       return Promise.resolve({
         spec: that.state,
         errors: that.errors.concat(
-          new Error(`We've reached a hard limit of ${HARD_LIMIT} plugin runs`)
+          new Error(`We've reached a hard limit of ${PLUGIN_DISPATCH_LIMIT} plugin runs`)
         ),
       });
     }

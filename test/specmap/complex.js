@@ -2,6 +2,7 @@ import path from 'node:path';
 import { globSync } from 'glob';
 
 import mapSpec, { plugins } from '../../src/specmap/index.js';
+import Swagger from '../../src/index.js';
 
 const { refs } = plugins;
 const { allOf } = plugins;
@@ -48,5 +49,18 @@ describe('complex', () => {
 
       runNextTestCase(0);
     });
+  });
+
+  test('should resolve complex specs with allOf and nested references', async () => {
+    // Given
+    const spec = globalThis.loadJsonFile(
+      path.join(__dirname, 'data', 'specs', 'complex-example.json')
+    );
+
+    // When
+    const result = await Swagger.resolve({ spec });
+
+    // Then
+    expect(result).not.toEqual(null);
   });
 });
