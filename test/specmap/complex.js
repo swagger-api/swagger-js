@@ -51,16 +51,28 @@ describe('complex', () => {
     });
   });
 
-  test('should resolve complex specs with allOf and nested references', async () => {
+  test('should partially resolve complex specs with allOf and nested references', async () => {
     // Given
     const spec = globalThis.loadJsonFile(
-      path.join(__dirname, 'data', 'specs', 'complex-example.json')
+      path.join(__dirname, 'data', 'complex', 'complex-example.json')
     );
 
     // When
     const result = await Swagger.resolve({ spec });
 
     // Then
-    expect(result).not.toEqual(null);
+    expect(
+      result.spec.components.schemas[
+        'com.sap.ctsm.backend.core.api.study.v1.StudyAPIv1.StudyTreatments-create'
+      ].properties.scenario.allOf[0].$ref
+    ).toEqual(
+      '#/components/schemas/com.sap.ctsm.backend.core.api.study.v1.StudyAPIv1.Scenarios-create'
+    );
+
+    expect(
+      result.spec.components.schemas[
+        'com.sap.ctsm.backend.core.api.study.v1.StudyAPIv1.BlindingGroups'
+      ].properties.study.properties.scenarios.items.$$ref
+    ).toEqual('#/components/schemas/com.sap.ctsm.backend.core.api.study.v1.StudyAPIv1.Scenarios');
   });
 });
