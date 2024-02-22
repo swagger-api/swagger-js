@@ -57,8 +57,7 @@ Swagger Client Version | Release Date | OpenAPI Spec compatibility             |
 `swagger-client` requires Node.js `>=12.20.0` and uses different `fetch` implementation depending
 on Node.js version.
 
-- `>=12.20.0 <16.8` - [node-fetch@3](https://www.npmjs.com/package/node-fetch)
-- `>=16.8 <18` - [undici](https://www.npmjs.com/package/undici) 
+- `>=12.20.0 <18` - [node-fetch@3](https://www.npmjs.com/package/node-fetch) 
 - `>=18` - [native Node.js fetch](https://nodejs.org/dist/latest-v18.x/docs/api/globals.html#fetch)
 
 > NOTE: swagger-client minimum Node.js runtime version aligns with [Node.js Releases](https://nodejs.org/en/about/releases/)
