@@ -2,6 +2,7 @@ import path from 'node:path';
 import { globSync } from 'glob';
 
 import mapSpec, { plugins } from '../../src/specmap/index.js';
+import Swagger from '../../src/index.js';
 
 const { refs } = plugins;
 const { allOf } = plugins;
@@ -48,5 +49,30 @@ describe('complex', () => {
 
       runNextTestCase(0);
     });
+  });
+
+  test('should partially resolve complex specs with allOf and nested references', async () => {
+    // Given
+    const spec = globalThis.loadJsonFile(
+      path.join(__dirname, 'data', 'complex', 'complex-example.json')
+    );
+
+    // When
+    const result = await Swagger.resolve({ spec });
+
+    // Then
+    expect(
+      result.spec.components.schemas[
+        'com.sap.ctsm.backend.core.api.study.v1.StudyAPIv1.StudyTreatments-create'
+      ].properties.scenario.allOf[0].$ref
+    ).toEqual(
+      '#/components/schemas/com.sap.ctsm.backend.core.api.study.v1.StudyAPIv1.Scenarios-create'
+    );
+
+    expect(
+      result.spec.components.schemas[
+        'com.sap.ctsm.backend.core.api.study.v1.StudyAPIv1.BlindingGroups'
+      ].properties.study.properties.scenarios.items.$$ref
+    ).toEqual('#/components/schemas/com.sap.ctsm.backend.core.api.study.v1.StudyAPIv1.Scenarios');
   });
 });
