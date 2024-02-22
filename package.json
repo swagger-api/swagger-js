@@ -102,6 +102,7 @@
     "rimraf": "=5.0.5",
     "source-map-explorer": "^2.5.3",
     "terser-webpack-plugin": "^5.0.3",
+    "undici": "^5.28.3",
     "webpack": "=5.90.3",
     "webpack-bundle-size-analyzer": "=3.1.0",
     "webpack-cli": "=5.1.4",
@@ -119,11 +120,10 @@
     "fast-json-patch": "^3.0.0-1",
     "is-plain-object": "^5.0.0",
     "js-yaml": "^4.1.0",
-    "node-fetch-commonjs": "^3.3.1",
     "node-abort-controller": "^3.1.1",
+    "node-fetch-commonjs": "^3.3.2",
     "qs": "^6.10.2",
-    "traverse": "~0.6.6",
-    "undici": "^5.24.0"
+    "traverse": "~0.6.6"
   },
   "overrides": {
     "@swagger-api/apidom-reference": {
