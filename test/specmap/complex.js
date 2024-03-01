@@ -36,7 +36,7 @@ describe('complex', () => {
         const startTime = new Date();
         console.log('Run', spec.name); // eslint-disable-line no-console
 
-        return mapSpec({ spec: spec.spec, plugins: [refs, allOf] })
+        return mapSpec({ spec: spec.spec, plugins: [refs, allOf], allowMetaPatches: true })
           .then((res) => {
             if (res.errors.length) throw res.errors[0];
             expect(res.errors.length).toEqual(0);
