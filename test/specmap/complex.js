@@ -36,7 +36,7 @@ describe('complex', () => {
         const startTime = new Date();
         console.log('Run', spec.name); // eslint-disable-line no-console
 
-        return mapSpec({ spec: spec.spec, plugins: [refs, allOf] })
+        return mapSpec({ spec: spec.spec, plugins: [refs, allOf], allowMetaPatches: true })
           .then((res) => {
             if (res.errors.length) throw res.errors[0];
             expect(res.errors.length).toEqual(0);
@@ -64,7 +64,7 @@ describe('complex', () => {
     expect(
       result.spec.components.schemas[
         'com.sap.ctsm.backend.core.api.study.v1.StudyAPIv1.StudyTreatments-create'
-      ].properties.scenario.allOf[0].$ref
+      ].properties.scenario.$ref
     ).toEqual(
       '#/components/schemas/com.sap.ctsm.backend.core.api.study.v1.StudyAPIv1.Scenarios-create'
     );
@@ -72,7 +72,9 @@ describe('complex', () => {
     expect(
       result.spec.components.schemas[
         'com.sap.ctsm.backend.core.api.study.v1.StudyAPIv1.BlindingGroups'
-      ].properties.study.properties.scenarios.items.$$ref
-    ).toEqual('#/components/schemas/com.sap.ctsm.backend.core.api.study.v1.StudyAPIv1.Scenarios');
+      ].properties.study.properties.materials.items.$$ref
+    ).toEqual(
+      '#/components/schemas/com.sap.ctsm.backend.core.api.study.v1.StudyAPIv1.StudyMaterials'
+    );
   });
 });

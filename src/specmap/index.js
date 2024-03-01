@@ -6,7 +6,7 @@ import properties from './lib/properties.js';
 import ContextTree from './lib/context-tree.js';
 
 const PLUGIN_DISPATCH_LIMIT = 100;
-const TRAVERSE_LIMIT = 1000;
+const TRAVERSE_LIMIT = 3000;
 const noop = () => {};
 
 class SpecMap {
@@ -40,7 +40,6 @@ class SpecMap {
           getInstance: () => this,
         }),
         allowMetaPatches: false,
-        currentTraverseCount: 0,
       },
       opts
     );
@@ -72,7 +71,6 @@ class SpecMap {
 
   wrapPlugin(plugin, name) {
     const { pathDiscriminator } = this;
-    const that = this;
     let ctx = null;
     let fn;
 
@@ -107,8 +105,8 @@ class SpecMap {
         const refCache = {};
 
         // eslint-disable-next-line no-restricted-syntax
-        for (const patch of patches.filter(lib.isAdditiveMutation)) {
-          if (that.currentTraverseCount < TRAVERSE_LIMIT) {
+        for (const [i, patch] of patches.filter(lib.isAdditiveMutation).entries()) {
+          if (i < TRAVERSE_LIMIT) {
             yield* traverse(patch.value, patch.path, patch);
           } else {
             return;
@@ -116,7 +114,6 @@ class SpecMap {
         }
 
         function* traverse(obj, path, patch) {
-          that.currentTraverseCount += 1;
           if (!lib.isObject(obj)) {
             if (pluginObj.key === path[path.length - 1]) {
               yield pluginObj.plugin(obj, pluginObj.key, path, specmap);
@@ -142,11 +139,7 @@ class SpecMap {
                   if (specmap.allowMetaPatches && objRef) {
                     refCache[objRef] = true;
                   }
-                  if (that.currentTraverseCount < TRAVERSE_LIMIT) {
-                    yield* traverse(val, updatedPath, patch);
-                  } else {
-                    return;
-                  }
+                  yield* traverse(val, updatedPath, patch);
                 }
               }
 
@@ -324,8 +317,6 @@ class SpecMap {
   dispatch() {
     const that = this;
     const plugin = this.nextPlugin();
-
-    that.currentTraverseCount = 0;
 
     if (!plugin) {
       const nextPromise = this.nextPromisedPatch();
