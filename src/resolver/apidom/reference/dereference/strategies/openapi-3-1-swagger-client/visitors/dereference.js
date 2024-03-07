@@ -13,9 +13,7 @@ import {
 } from '@swagger-api/apidom-core';
 import { ApiDOMError } from '@swagger-api/apidom-error';
 import {
-  isReferenceElementExternal,
   isReferenceLikeElement,
-  isPathItemElementExternal,
   isBooleanJsonSchemaElement,
   ReferenceElement,
   PathItemElement,
@@ -96,13 +94,20 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
           return false;
         }
 
+        const retrievalURI = this.toBaseURI(toValue(referencingElement.$ref));
+        const isInternalReference = url.stripHash(this.reference.uri) === retrievalURI;
+        const isExternalReference = !isInternalReference;
+
+        // ignore resolving internal Reference Objects
+        if (!this.options.resolve.internal && isInternalReference) {
+          return false;
+        }
         // ignore resolving external Reference Objects
-        if (!this.options.resolve.external && isReferenceElementExternal(referencingElement)) {
+        if (!this.options.resolve.external && isExternalReference) {
           return false;
         }
 
         const reference = await this.toReference(toValue(referencingElement.$ref));
-        const { uri: retrievalURI } = reference;
         const $refBaseURI = url.resolve(retrievalURI, toValue(referencingElement.$ref));
 
         this.indirections.push(referencingElement);
@@ -115,15 +120,20 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
         // applying semantics to a fragment
         if (isPrimitiveElement(referencedElement)) {
           const referencedElementType = toValue(referencingElement.meta.get('referenced-element'));
+          const cacheKey = `${referencedElementType}-${toValue(identityManager.identify(referencedElement))}`;
 
-          if (isReferenceLikeElement(referencedElement)) {
+          if (this.refractCache.has(cacheKey)) {
+            referencedElement = this.refractCache.get(cacheKey);
+          } else if (isReferenceLikeElement(referencedElement)) {
             // handling indirect references
             referencedElement = ReferenceElement.refract(referencedElement);
             referencedElement.setMetaProperty('referenced-element', referencedElementType);
+            this.refractCache.set(cacheKey, referencedElement);
           } else {
             // handling direct references
             const ElementClass = this.namespace.getElementClass(referencedElementType);
             referencedElement = ElementClass.refract(referencedElement);
+            this.refractCache.set(cacheKey, referencedElement);
           }
         }
 
@@ -279,13 +289,20 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
           return false;
         }
 
+        const retrievalURI = this.toBaseURI(toValue(pathItemElement.$ref));
+        const isInternalReference = url.stripHash(this.reference.uri) === retrievalURI;
+        const isExternalReference = !isInternalReference;
+
+        // ignore resolving internal Path Item Elements
+        if (!this.options.resolve.internal && isInternalReference) {
+          return undefined;
+        }
         // ignore resolving external Path Item Elements
-        if (!this.options.resolve.external && isPathItemElementExternal(pathItemElement)) {
+        if (!this.options.resolve.external && isExternalReference) {
           return undefined;
         }
 
         const reference = await this.toReference(toValue(pathItemElement.$ref));
-        const { uri: retrievalURI } = reference;
         const $refBaseURI = url.resolve(retrievalURI, toValue(pathItemElement.$ref));
 
         this.indirections.push(pathItemElement);
@@ -297,7 +314,14 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
 
         // applying semantics to a referenced element
         if (isPrimitiveElement(referencedElement)) {
-          referencedElement = PathItemElement.refract(referencedElement);
+          const cacheKey = `pathItem-${toValue(identityManager.identify(referencedElement))}`;
+
+          if (this.refractCache.has(cacheKey)) {
+            referencedElement = this.refractCache.get(cacheKey);
+          } else {
+            referencedElement = PathItemElement.refract(referencedElement);
+            this.refractCache.set(cacheKey, referencedElement);
+          }
         }
 
         // detect direct or indirect reference
@@ -452,13 +476,8 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
         const file = File({ uri: $refBaseURIStrippedHash });
         const isUnknownURI = !this.options.resolve.resolvers.some((r) => r.canRead(file));
         const isURL = !isUnknownURI;
-        const isExternal = isURL && retrievalURI !== $refBaseURIStrippedHash;
-
-        // ignore resolving external Schema Objects
-        if (!this.options.resolve.external && isExternal) {
-          // skip traversing this schema but traverse all it's child schemas
-          return undefined;
-        }
+        const isInternalReference = (uri) => url.stripHash(this.reference.uri) === uri;
+        const isExternalReference = (uri) => !isInternalReference(uri);
 
         this.indirections.push(referencingElement);
 
@@ -475,8 +494,20 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
             );
           } else {
             // we're assuming here that we're dealing with JSON Pointer here
+            retrievalURI = this.toBaseURI(toValue($refBaseURI));
+
+            // ignore resolving internal Schema Objects
+            if (!this.options.resolve.internal && isInternalReference(retrievalURI)) {
+              // skip traversing this schema element but traverse all it's child elements
+              return undefined;
+            }
+            // ignore resolving external Schema Objects
+            if (!this.options.resolve.external && isExternalReference(retrievalURI)) {
+              // skip traversing this schema element but traverse all it's child elements
+              return undefined;
+            }
+
             reference = await this.toReference(url.unsanitize($refBaseURI));
-            retrievalURI = reference.uri;
             const selector = uriToPointer($refBaseURI);
             referencedElement = maybeRefractToSchemaElement(
               jsonPointerEvaluate(selector, reference.value.result)
@@ -490,8 +521,20 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
           if (isURL && error instanceof EvaluationJsonSchemaUriError) {
             if (isAnchor(uriToAnchor($refBaseURI))) {
               // we're dealing with JSON Schema $anchor here
+              retrievalURI = this.toBaseURI(toValue($refBaseURI));
+
+              // ignore resolving internal Schema Objects
+              if (!this.options.resolve.internal && isInternalReference(retrievalURI)) {
+                // skip traversing this schema element but traverse all it's child elements
+                return undefined;
+              }
+              // ignore resolving external Schema Objects
+              if (!this.options.resolve.external && isExternalReference(retrievalURI)) {
+                // skip traversing this schema element but traverse all it's child elements
+                return undefined;
+              }
+
               reference = await this.toReference(url.unsanitize($refBaseURI));
-              retrievalURI = reference.uri;
               const selector = uriToAnchor($refBaseURI);
               referencedElement = $anchorEvaluate(
                 selector,
@@ -499,8 +542,20 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
               );
             } else {
               // we're assuming here that we're dealing with JSON Pointer here
+              retrievalURI = this.toBaseURI(toValue($refBaseURI));
+
+              // ignore resolving internal Schema Objects
+              if (!this.options.resolve.internal && isInternalReference(retrievalURI)) {
+                // skip traversing this schema element but traverse all it's child elements
+                return undefined;
+              }
+              // ignore resolving external Schema Objects
+              if (!this.options.resolve.external && isExternalReference(retrievalURI)) {
+                // skip traversing this schema element but traverse all it's child elements
+                return undefined;
+              }
+
               reference = await this.toReference(url.unsanitize($refBaseURI));
-              retrievalURI = reference.uri;
               const selector = uriToPointer($refBaseURI);
               referencedElement = maybeRefractToSchemaElement(
                 jsonPointerEvaluate(selector, reference.value.result)
