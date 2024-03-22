@@ -650,6 +650,89 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
         },
       });
     });
+
+    it('should not serialize undefined parameters', () => {
+      const spec = {
+        openapi: '3.0.1',
+        info: {
+          title: 'OpenAPI definition',
+          version: 'v0',
+        },
+        servers: [
+          {
+            url: 'http://localhost:8080',
+            description: 'Generated server url',
+          },
+        ],
+        paths: {
+          '/{pathParam}': {
+            post: {
+              operationId: 'undefinedParams',
+              parameters: [
+                {
+                  name: 'pathParam',
+                  in: 'path',
+                  required: false,
+                  content: {
+                    'text/plain': {
+                      schema: {},
+                    },
+                  },
+                },
+                {
+                  name: 'headerParam',
+                  in: 'header',
+                  required: false,
+                  content: {
+                    'text/plain': {
+                      schema: {},
+                    },
+                  },
+                },
+                {
+                  name: 'queryParam',
+                  in: 'query',
+                  required: false,
+                  content: {
+                    'text/plain': {
+                      schema: {},
+                    },
+                  },
+                },
+                {
+                  name: 'cookieParam',
+                  in: 'cookie',
+                  required: false,
+                  content: {
+                    'text/plain': {
+                      schema: {},
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        },
+      };
+
+      const request = buildRequest({
+        spec,
+        operationId: 'undefinedParams',
+        parameters: {
+          pathParam: undefined,
+          queryParam: undefined,
+          headerParam: undefined,
+          cookieParam: undefined,
+        },
+      });
+
+      expect(request).toEqual({
+        url: 'http://localhost:8080/',
+        credentials: 'same-origin',
+        headers: {},
+        method: 'POST',
+      });
+    });
   });
   describe('baseUrl', () => {
     // Verify that given serverUrl and contextUrl produces exepcted baseUrl
