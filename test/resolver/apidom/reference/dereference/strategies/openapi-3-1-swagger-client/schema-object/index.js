@@ -851,10 +851,7 @@ describe('dereference', () => {
 
           describe('and useCircularStructures=false', () => {
             test('should dereference', async () => {
-              const fixturePath = path.join(
-                rootFixturePath,
-                '$id-uri-external-circular-structures'
-              );
+              const fixturePath = path.join(rootFixturePath, '$id-uri-external');
               const rootFilePath = path.join(fixturePath, 'root.json');
               const refSet = await resolve(rootFilePath, {
                 parse: { mediaType: mediaTypes.latest('json') },
