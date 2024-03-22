@@ -122,6 +122,7 @@ const resolveOpenAPI31Strategy = async (options) => {
         ],
         refSet,
         dereferenceOpts: { errors },
+        immutable: false,
       },
     });
     const transcluded = transclude(fragmentElement, dereferenced, openApiElement);

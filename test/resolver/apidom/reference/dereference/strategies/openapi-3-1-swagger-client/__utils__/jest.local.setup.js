@@ -3,6 +3,7 @@ import { options } from '@swagger-api/apidom-reference/configuration/empty';
 import FileResolver from '@swagger-api/apidom-reference/resolve/resolvers/file';
 import BinaryParser from '@swagger-api/apidom-reference/parse/parsers/binary';
 import OpenApi3_1ResolveStrategy from '@swagger-api/apidom-reference/resolve/strategies/openapi-3-1';
+import OpenApi3_1DereferenceStrategy from '@swagger-api/apidom-reference/dereference/strategies/openapi-3-1';
 
 import JsonParser from '../../../../../../../../src/resolver/apidom/reference/parse/parsers/json/index.js';
 import YamlParser from '../../../../../../../../src/resolver/apidom/reference/parse/parsers/yaml-1-2/index.js';
@@ -28,7 +29,10 @@ export const beforeAll = () => {
   options.resolve.strategies = [OpenApi3_1ResolveStrategy()];
 
   // configure custom dereference strategy globally
-  options.dereference.strategies = [OpenApi3_1SwaggerClientDereferenceStrategy()];
+  options.dereference.strategies = [
+    OpenApi3_1SwaggerClientDereferenceStrategy(),
+    OpenApi3_1DereferenceStrategy(),
+  ];
 };
 
 export const afterAll = () => {
