@@ -672,7 +672,6 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
                 {
                   name: 'pathParam',
                   in: 'path',
-                  required: false,
                   content: {
                     'text/plain': {
                       schema: {},
@@ -682,7 +681,6 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
                 {
                   name: 'headerParam',
                   in: 'header',
-                  required: false,
                   content: {
                     'text/plain': {
                       schema: {},
@@ -692,7 +690,6 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
                 {
                   name: 'queryParam',
                   in: 'query',
-                  required: false,
                   content: {
                     'text/plain': {
                       schema: {},
@@ -702,7 +699,6 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
                 {
                   name: 'cookieParam',
                   in: 'cookie',
-                  required: false,
                   content: {
                     'text/plain': {
                       schema: {},
@@ -727,7 +723,7 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
       });
 
       expect(request).toEqual({
-        url: 'http://localhost:8080/',
+        url: 'http://localhost:8080/{pathParam}',
         credentials: 'same-origin',
         headers: {},
         method: 'POST',
