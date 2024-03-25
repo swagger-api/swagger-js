@@ -16,6 +16,14 @@ function bodyBuilder({ req, value }) {
 
 // Add a form data object.
 function formDataBuilder({ req, value, parameter }) {
+  if (value === false && parameter.type === 'boolean') {
+    value = 'false';
+  }
+
+  if (value === 0 && ['number', 'integer'].indexOf(parameter.type) > -1) {
+    value = '0';
+  }
+
   if (value || parameter.allowEmptyValue) {
     req.form = req.form || {};
     req.form[parameter.name] = {

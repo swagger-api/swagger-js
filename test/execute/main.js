@@ -482,6 +482,58 @@ describe('execute', () => {
         // Then
         expect(req.body).toEqual('petId=1,2,3');
       });
+
+      test('should correctly process falsy parameters', () => {
+        // Given
+        const spec = {
+          host: 'swagger.io',
+          basePath: '/v1',
+          paths: {
+            '/pets/find': {
+              get: {
+                operationId: 'getMe',
+                parameters: [
+                  {
+                    in: 'formData',
+                    name: 'status',
+                    type: 'boolean',
+                    required: false,
+                  },
+                  {
+                    in: 'formData',
+                    name: 'id',
+                    type: 'integer',
+                    required: false,
+                  },
+                ],
+                responses: {
+                  200: {
+                    description: 'ok',
+                  },
+                },
+              },
+            },
+          },
+        };
+
+        // When
+        const req = buildRequest({
+          spec,
+          operationId: 'getMe',
+          parameters: { status: false, id: 0 },
+        });
+
+        // Then
+        expect(req).toEqual({
+          url: 'http://swagger.io/v1/pets/find',
+          method: 'GET',
+          credentials: 'same-origin',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: 'status=false&id=0',
+        });
+      });
     });
 
     test('should correctly process boolean parameters', () => {
