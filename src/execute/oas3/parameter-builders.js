@@ -4,24 +4,26 @@ import serialize from './content-serializer.js';
 export function path({ req, value, parameter }) {
   const { name, style, explode, content } = parameter;
 
-  if (value !== undefined) {
-    if (content) {
-      const effectiveMediaType = Object.keys(content)[0];
+  if (value === undefined) {
+    return;
+  }
 
-      req.url = req.url
-        .split(`{${name}}`)
-        .join(encodeDisallowedCharacters(serialize(value, effectiveMediaType), { escape: true }));
-    } else {
-      const styledValue = stylize({
-        key: parameter.name,
-        value,
-        style: style || 'simple',
-        explode: explode || false,
-        escape: true,
-      });
+  if (content) {
+    const effectiveMediaType = Object.keys(content)[0];
 
-      req.url = req.url.replace(new RegExp(`{${name}}`, 'g'), styledValue);
-    }
+    req.url = req.url
+      .split(`{${name}}`)
+      .join(encodeDisallowedCharacters(serialize(value, effectiveMediaType), { escape: true }));
+  } else {
+    const styledValue = stylize({
+      key: parameter.name,
+      value,
+      style: style || 'simple',
+      explode: explode || false,
+      escape: true,
+    });
+
+    req.url = req.url.replace(new RegExp(`{${name}}`, 'g'), styledValue);
   }
 }
 
