@@ -24,13 +24,17 @@ function formDataBuilder({ req, value, parameter }) {
     value = '0';
   }
 
-  if (value || parameter.allowEmptyValue) {
+  if (value) {
     req.form = req.form || {};
     req.form[parameter.name] = {
-      value,
-      allowEmptyValue: parameter.allowEmptyValue,
       collectionFormat: parameter.collectionFormat,
+      value,
     };
+  } else if (parameter.allowEmptyValue && value !== undefined) {
+    req.form = req.form || {};
+    const paramName = parameter.name;
+    req.form[paramName] = req.form[paramName] || {};
+    req.form[paramName].allowEmptyValue = true;
   }
 }
 

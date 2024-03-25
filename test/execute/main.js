@@ -424,7 +424,7 @@ describe('execute', () => {
     });
 
     describe('formData', () => {
-      test('should add an empty query param if the value is empty and allowEmptyValue: true', () => {
+      test('should not add an empty query param if the value is empty and allowEmptyValue: true', () => {
         // Given
         const spec = {
           host: 'swagger.io',
@@ -449,7 +449,12 @@ describe('execute', () => {
         const req = buildRequest({ spec, operationId: 'deleteMe', parameters: {} });
 
         // Then
-        expect(req.body).toEqual('petId=');
+        expect(req).toEqual({
+          url: 'http://swagger.io/v1/one',
+          method: 'DELETE',
+          credentials: 'same-origin',
+          headers: {},
+        });
       });
 
       test('should support collectionFormat', () => {
