@@ -16,8 +16,6 @@ function bodyBuilder({ req, value }) {
 
 // Add a form data object.
 function formDataBuilder({ req, value, parameter }) {
-  req.form = req.form || {};
-
   if (value === false && parameter.type === 'boolean') {
     value = 'false';
   }
@@ -27,11 +25,13 @@ function formDataBuilder({ req, value, parameter }) {
   }
 
   if (value) {
+    req.form = req.form || {};
     req.form[parameter.name] = {
       collectionFormat: parameter.collectionFormat,
       value,
     };
   } else if (parameter.allowEmptyValue && value !== undefined) {
+    req.form = req.form || {};
     const paramName = parameter.name;
     req.form[paramName] = req.form[paramName] || {};
     req.form[paramName].allowEmptyValue = true;
