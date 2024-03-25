@@ -4,9 +4,7 @@ import serialize from './content-serializer.js';
 export function path({ req, value, parameter }) {
   const { name, style, explode, content } = parameter;
 
-  if (value === undefined) {
-    return;
-  }
+  if (value === undefined) return;
 
   if (content) {
     const effectiveMediaType = Object.keys(content)[0];
