@@ -4,36 +4,37 @@ import serialize from './content-serializer.js';
 export function path({ req, value, parameter }) {
   const { name, style, explode, content } = parameter;
 
+  if (value === undefined) return;
+
   if (content) {
     const effectiveMediaType = Object.keys(content)[0];
 
     req.url = req.url
       .split(`{${name}}`)
       .join(encodeDisallowedCharacters(serialize(value, effectiveMediaType), { escape: true }));
-    return;
+  } else {
+    const styledValue = stylize({
+      key: parameter.name,
+      value,
+      style: style || 'simple',
+      explode: explode || false,
+      escape: true,
+    });
+
+    req.url = req.url.replace(new RegExp(`{${name}}`, 'g'), styledValue);
   }
-
-  const styledValue = stylize({
-    key: parameter.name,
-    value,
-    style: style || 'simple',
-    explode: explode || false,
-    escape: true,
-  });
-
-  req.url = req.url.split(`{${name}}`).join(styledValue);
 }
 
 export function query({ req, value, parameter }) {
   req.query = req.query || {};
 
-  if (parameter.content) {
+  if (value !== undefined && parameter.content) {
     const effectiveMediaType = Object.keys(parameter.content)[0];
     const serializedValue = serialize(value, effectiveMediaType);
 
     if (serializedValue) {
       req.query[parameter.name] = serializedValue;
-    } else if (parameter.allowEmptyValue && value !== undefined) {
+    } else if (parameter.allowEmptyValue) {
       const paramName = parameter.name;
       req.query[paramName] = req.query[paramName] || {};
       req.query[paramName].allowEmptyValue = true;
@@ -72,7 +73,7 @@ export function header({ req, parameter, value }) {
     return;
   }
 
-  if (parameter.content) {
+  if (value !== undefined && parameter.content) {
     const effectiveMediaType = Object.keys(parameter.content)[0];
 
     req.headers[parameter.name] = serialize(value, effectiveMediaType);
@@ -94,7 +95,7 @@ export function cookie({ req, parameter, value }) {
   req.headers = req.headers || {};
   const type = typeof value;
 
-  if (parameter.content) {
+  if (value !== undefined && parameter.content) {
     const effectiveMediaType = Object.keys(parameter.content)[0];
 
     req.headers.Cookie = `${parameter.name}=${serialize(value, effectiveMediaType)}`;
