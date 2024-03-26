@@ -11,7 +11,9 @@ export default {
 
 // Add the body to the request
 function bodyBuilder({ req, value }) {
-  req.body = value;
+  if (value !== undefined) {
+    req.body = value;
+  }
 }
 
 // Add a form data object.
@@ -48,7 +50,9 @@ function headerBuilder({ req, parameter, value }) {
 
 // Replace path paramters, with values ( ie: the URL )
 function pathBuilder({ req, value, parameter }) {
-  req.url = req.url.split(`{${parameter.name}}`).join(encodeURIComponent(value));
+  if (value !== undefined) {
+    req.url = req.url.replace(new RegExp(`{${parameter.name}}`, 'g'), encodeURIComponent(value));
+  }
 }
 
 // Add a query to the `query` object, which will later be stringified into the URL's search
