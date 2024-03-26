@@ -1739,13 +1739,29 @@ describe('execute', () => {
           });
         });
 
-        test('should generate a request with an empty body parameter', () => {
+        test('should not generate a request with an empty body parameter', () => {
           const req = buildRequest({ spec, operationId: 'postMe', parameters: {} });
 
-          expect(req).toEqual({
+          expect(req).toStrictEqual({
             url: 'http://swagger.io/v1/one',
             method: 'POST',
-            body: undefined,
+            credentials: 'same-origin',
+            headers: {},
+          });
+        });
+
+        test('should not generate a request with an undefined body parameter', () => {
+          const req = buildRequest({
+            spec,
+            operationId: 'postMe',
+            parameters: {
+              bodyParam: undefined,
+            },
+          });
+
+          expect(req).toStrictEqual({
+            url: 'http://swagger.io/v1/one',
+            method: 'POST',
             credentials: 'same-origin',
             headers: {},
           });
@@ -1960,6 +1976,41 @@ describe('execute', () => {
 
         expect(req).toEqual({
           url: 'http://swagger.io/v1/123',
+          method: 'GET',
+          credentials: 'same-origin',
+          headers: {},
+        });
+      });
+
+      test('should not replace path parameters with undefined values', () => {
+        const spec = {
+          host: 'swagger.io',
+          basePath: '/v1',
+          paths: {
+            '/{id}/{status}': {
+              get: {
+                operationId: 'getMe',
+                parameters: [
+                  {
+                    in: 'path',
+                    name: 'id',
+                    type: 'number',
+                  },
+                  {
+                    in: 'path',
+                    name: 'status',
+                    type: 'string',
+                  },
+                ],
+              },
+            },
+          },
+        };
+
+        const req = buildRequest({ spec, operationId: 'getMe', parameters: { id: undefined } });
+
+        expect(req).toEqual({
+          url: 'http://swagger.io/v1/{id}/{status}',
           method: 'GET',
           credentials: 'same-origin',
           headers: {},
