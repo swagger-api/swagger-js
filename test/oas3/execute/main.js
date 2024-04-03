@@ -524,6 +524,97 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
         method: 'GET',
       });
     });
+
+    it('should encode JSON values provided as objects', () => {
+      const req = buildRequest({
+        spec: {
+          openapi: '3.0.0',
+          paths: {
+            '/{pathPartial}': {
+              post: {
+                operationId: 'myOp',
+                parameters: [
+                  {
+                    name: 'query',
+                    in: 'query',
+                    schema: {
+                      type: 'object',
+                    },
+                  },
+                  {
+                    name: 'FooHeader',
+                    in: 'header',
+                    schema: {
+                      type: 'object',
+                    },
+                    explode: true,
+                  },
+                  {
+                    name: 'pathPartial',
+                    in: 'path',
+                    schema: {
+                      type: 'object',
+                    },
+                    explode: true,
+                  },
+                  {
+                    name: 'myCookie',
+                    in: 'cookie',
+                    schema: {
+                      type: 'object',
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+        operationId: 'myOp',
+        parameters: {
+          query: {
+            a: {
+              b: {
+                c: 'd',
+              },
+            },
+          },
+          FooHeader: {
+            a: {
+              b: {
+                c: {
+                  d: 'e',
+                },
+              },
+            },
+          },
+          pathPartial: {
+            foo: {
+              bar: { baz: 'qux' },
+            },
+            a: {
+              b: {
+                c: 'd',
+              },
+            },
+          },
+          myCookie: {
+            foo: {
+              bar: { baz: 'qux' },
+            },
+          },
+        },
+      });
+
+      expect(req).toEqual({
+        method: 'POST',
+        url: `/foo=${escape('{"bar":{"baz":"qux"}}')},a=${escape('{"b":{"c":"d"}}')}?a=${escape('{"b":{"c":"d"}}')}`,
+        credentials: 'same-origin',
+        headers: {
+          FooHeader: 'a={"b":{"c":{"d":"e"}}}',
+          Cookie: 'myCookie=foo,{"bar":{"baz":"qux"}}',
+        },
+      });
+    });
   });
   describe('with petstore v3', () => {
     it('should build updatePetWithForm correctly', () => {

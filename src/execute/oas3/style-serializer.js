@@ -6,6 +6,11 @@ export function encodeDisallowedCharacters(str, { escape } = {}, parse) {
   if (typeof str === 'number') {
     str = str.toString();
   }
+
+  if (typeof str === 'object' && !Array.isArray(str)) {
+    str = JSON.stringify(str);
+  }
+
   if (typeof str !== 'string' || !str.length) {
     return str;
   }
