@@ -524,7 +524,55 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
         method: 'GET',
       });
     });
+  });
+  describe('with petstore v3', () => {
+    it('should build updatePetWithForm correctly', () => {
+      const req = buildRequest({
+        spec: petstoreSpec,
+        requestContentType: 'application/x-www-form-urlencoded',
+        operationId: 'updatePetWithForm',
+        parameters: {
+          petId: 1234,
+        },
+        requestBody: {
+          thePetId: 1234,
+          name: 'OAS3 pet',
+        },
+      });
 
+      expect(req).toEqual({
+        method: 'POST',
+        url: 'http://petstore.swagger.io/v2/pet/1234',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'thePetId=1234&name=OAS3%20pet',
+      });
+    });
+
+    it('should build addPet correctly', () => {
+      const req = buildRequest({
+        spec: petstoreSpec,
+        operationId: 'addPet',
+        requestBody: {
+          one: 1,
+        },
+      });
+
+      expect(req).toEqual({
+        method: 'POST',
+        url: 'http://petstore.swagger.io/v2/pet',
+        credentials: 'same-origin',
+        headers: {},
+        body: {
+          one: 1,
+        },
+      });
+    });
+  });
+
+  describe('`schema` parameters', () => {
     it('should encode JSON values provided as objects', () => {
       const req = buildRequest({
         spec: {
@@ -612,52 +660,6 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
         headers: {
           FooHeader: 'a={"b":{"c":{"d":"e"}}}',
           Cookie: 'myCookie=foo,{"bar":{"baz":"qux"}}',
-        },
-      });
-    });
-  });
-  describe('with petstore v3', () => {
-    it('should build updatePetWithForm correctly', () => {
-      const req = buildRequest({
-        spec: petstoreSpec,
-        requestContentType: 'application/x-www-form-urlencoded',
-        operationId: 'updatePetWithForm',
-        parameters: {
-          petId: 1234,
-        },
-        requestBody: {
-          thePetId: 1234,
-          name: 'OAS3 pet',
-        },
-      });
-
-      expect(req).toEqual({
-        method: 'POST',
-        url: 'http://petstore.swagger.io/v2/pet/1234',
-        credentials: 'same-origin',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: 'thePetId=1234&name=OAS3%20pet',
-      });
-    });
-
-    it('should build addPet correctly', () => {
-      const req = buildRequest({
-        spec: petstoreSpec,
-        operationId: 'addPet',
-        requestBody: {
-          one: 1,
-        },
-      });
-
-      expect(req).toEqual({
-        method: 'POST',
-        url: 'http://petstore.swagger.io/v2/pet',
-        credentials: 'same-origin',
-        headers: {},
-        body: {
-          one: 1,
         },
       });
     });

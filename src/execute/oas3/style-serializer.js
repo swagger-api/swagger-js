@@ -7,7 +7,7 @@ export function encodeDisallowedCharacters(str, { escape } = {}, parse) {
     str = str.toString();
   }
 
-  if (typeof str === 'object' && !Array.isArray(str)) {
+  if (str !== null && typeof str === 'object' && !Array.isArray(str)) {
     str = JSON.stringify(str);
   }
 
