@@ -319,8 +319,19 @@ function formatKeyValueBySerializationOption(key, value, skipEncoding, serializa
     : serializationOption && serializationOption.allowReserved
       ? 'unsafe'
       : 'reserved';
-  const encodeFn = (v) => encodeDisallowedCharacters(v, { escape });
-  const encodeKeyFn = skipEncoding ? (k) => k : (k) => encodeDisallowedCharacters(k, { escape });
+
+  const encodeFn = (v) => {
+    if (v !== null && typeof v === 'object') {
+      v = JSON.stringify(v);
+    } else if (typeof val === 'number') {
+      v = v.toString();
+    }
+    return encodeDisallowedCharacters(v, {
+      escape,
+    });
+  };
+
+  const encodeKeyFn = skipEncoding ? (k) => k : (k) => encodeFn(k);
 
   // Primitive
   if (typeof value !== 'object') {

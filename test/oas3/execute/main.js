@@ -663,6 +663,133 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
         },
       });
     });
+
+    it('should encode arrays of arrays and objects', () => {
+      const req = buildRequest({
+        spec: {
+          openapi: '3.0.0',
+          paths: {
+            '/': {
+              post: {
+                operationId: 'myOp',
+                parameters: [
+                  {
+                    name: 'arrayOfObjects',
+                    in: 'query',
+                    schema: {
+                      type: 'array',
+                      items: {
+                        type: 'object',
+                      },
+                    },
+                    explode: false,
+                  },
+                  {
+                    name: 'arrayOfArrays',
+                    in: 'query',
+                    schema: {
+                      type: 'array',
+                      items: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                        },
+                      },
+                    },
+                    explode: false,
+                  },
+                  {
+                    name: 'headerArrayOfObjects',
+                    in: 'header',
+                    schema: {
+                      type: 'array',
+                      items: {
+                        type: 'object',
+                      },
+                    },
+                  },
+                  {
+                    name: 'headerArrayOfArrays',
+                    in: 'header',
+                    schema: {
+                      type: 'array',
+                      items: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                        },
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+        operationId: 'myOp',
+        parameters: {
+          arrayOfObjects: [
+            {
+              a: {
+                b: 'c',
+              },
+            },
+            {
+              d: {
+                e: 'f',
+              },
+            },
+          ],
+          arrayOfArrays: [
+            [
+              {
+                a: {
+                  b: 'c',
+                },
+              },
+            ],
+          ],
+          headerArrayOfObjects: [
+            {
+              a: {
+                b: 'c',
+              },
+            },
+            {
+              d: {
+                e: 'f',
+              },
+            },
+          ],
+          headerArrayOfArrays: [
+            [
+              {
+                a: {
+                  b: 'c',
+                },
+              },
+            ],
+            [
+              {
+                d: {
+                  e: 'f',
+                },
+              },
+            ],
+          ],
+        },
+      });
+
+      expect(req).toEqual({
+        method: 'POST',
+        url: `/?arrayOfObjects=${escape('{"a":{"b":"c"}}')},${escape('{"d":{"e":"f"}}')}&arrayOfArrays=${escape('[{"a":{"b":"c"}}]')}`,
+        credentials: 'same-origin',
+        headers: {
+          headerArrayOfObjects: '{"a":{"b":"c"}},{"d":{"e":"f"}}',
+          headerArrayOfArrays: '[{"a":{"b":"c"}}],[{"d":{"e":"f"}}]',
+        },
+      });
+    });
   });
 
   describe('`content` parameters', () => {
