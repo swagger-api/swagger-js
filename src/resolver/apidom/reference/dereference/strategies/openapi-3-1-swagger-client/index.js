@@ -10,6 +10,7 @@ import ModelPropertyMacroVisitor from './visitors/properties.js';
 import AllOfVisitor from './visitors/all-of.js';
 
 const visitAsync = visit[Symbol.for('nodejs.util.promisify.custom')];
+const mergeAllVisitorsAsync = mergeAllVisitors[Symbol.for('nodejs.util.promisify.custom')];
 
 const OpenApi3_1SwaggerClientDereferenceStrategy = OpenApi3_1DereferenceStrategy.compose({
   props: {
@@ -87,7 +88,7 @@ const OpenApi3_1SwaggerClientDereferenceStrategy = OpenApi3_1DereferenceStrategy
       }
 
       // establish root visitor by visitor merging
-      const rootVisitor = mergeAllVisitors(visitors, { nodeTypeGetter: getNodeType });
+      const rootVisitor = mergeAllVisitorsAsync(visitors, { nodeTypeGetter: getNodeType });
 
       const dereferencedElement = await visitAsync(refSet.rootRef.value, rootVisitor, {
         keyMap,
