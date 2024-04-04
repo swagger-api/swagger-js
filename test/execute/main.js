@@ -424,7 +424,7 @@ describe('execute', () => {
     });
 
     describe('formData', () => {
-      test('should add an empty query param if the value is empty and allowEmptyValue: true', () => {
+      test('should not add an empty query param if the value is empty and allowEmptyValue: true', () => {
         // Given
         const spec = {
           host: 'swagger.io',
@@ -449,7 +449,12 @@ describe('execute', () => {
         const req = buildRequest({ spec, operationId: 'deleteMe', parameters: {} });
 
         // Then
-        expect(req.body).toEqual('petId=');
+        expect(req).toEqual({
+          url: 'http://swagger.io/v1/one',
+          method: 'DELETE',
+          credentials: 'same-origin',
+          headers: {},
+        });
       });
 
       test('should support collectionFormat', () => {
@@ -481,6 +486,58 @@ describe('execute', () => {
 
         // Then
         expect(req.body).toEqual('petId=1,2,3');
+      });
+
+      test('should correctly process falsy parameters', () => {
+        // Given
+        const spec = {
+          host: 'swagger.io',
+          basePath: '/v1',
+          paths: {
+            '/pets/find': {
+              get: {
+                operationId: 'getMe',
+                parameters: [
+                  {
+                    in: 'formData',
+                    name: 'status',
+                    type: 'boolean',
+                    required: false,
+                  },
+                  {
+                    in: 'formData',
+                    name: 'id',
+                    type: 'integer',
+                    required: false,
+                  },
+                ],
+                responses: {
+                  200: {
+                    description: 'ok',
+                  },
+                },
+              },
+            },
+          },
+        };
+
+        // When
+        const req = buildRequest({
+          spec,
+          operationId: 'getMe',
+          parameters: { status: false, id: 0 },
+        });
+
+        // Then
+        expect(req).toEqual({
+          url: 'http://swagger.io/v1/pets/find',
+          method: 'GET',
+          credentials: 'same-origin',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: 'status=false&id=0',
+        });
       });
     });
 
@@ -1682,13 +1739,29 @@ describe('execute', () => {
           });
         });
 
-        test('should generate a request with an empty body parameter', () => {
+        test('should not generate a request with an empty body parameter', () => {
           const req = buildRequest({ spec, operationId: 'postMe', parameters: {} });
 
-          expect(req).toEqual({
+          expect(req).toStrictEqual({
             url: 'http://swagger.io/v1/one',
             method: 'POST',
-            body: undefined,
+            credentials: 'same-origin',
+            headers: {},
+          });
+        });
+
+        test('should not generate a request with an undefined body parameter', () => {
+          const req = buildRequest({
+            spec,
+            operationId: 'postMe',
+            parameters: {
+              bodyParam: undefined,
+            },
+          });
+
+          expect(req).toStrictEqual({
+            url: 'http://swagger.io/v1/one',
+            method: 'POST',
             credentials: 'same-origin',
             headers: {},
           });
@@ -1903,6 +1976,41 @@ describe('execute', () => {
 
         expect(req).toEqual({
           url: 'http://swagger.io/v1/123',
+          method: 'GET',
+          credentials: 'same-origin',
+          headers: {},
+        });
+      });
+
+      test('should not replace path parameters with undefined values', () => {
+        const spec = {
+          host: 'swagger.io',
+          basePath: '/v1',
+          paths: {
+            '/{id}/{status}': {
+              get: {
+                operationId: 'getMe',
+                parameters: [
+                  {
+                    in: 'path',
+                    name: 'id',
+                    type: 'number',
+                  },
+                  {
+                    in: 'path',
+                    name: 'status',
+                    type: 'string',
+                  },
+                ],
+              },
+            },
+          },
+        };
+
+        const req = buildRequest({ spec, operationId: 'getMe', parameters: { id: undefined } });
+
+        expect(req).toEqual({
+          url: 'http://swagger.io/v1/{id}/{status}',
           method: 'GET',
           credentials: 'same-origin',
           headers: {},
