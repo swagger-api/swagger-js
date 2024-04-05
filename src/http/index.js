@@ -2,7 +2,7 @@ import qs from 'qs';
 import jsYaml from 'js-yaml';
 
 import '../helpers/fetch-polyfill.node.js';
-import { encodeDisallowedCharacters } from '../execute/oas3/style-serializer.js';
+import { valueEncoder } from '../execute/oas3/style-serializer.js';
 
 // For testing
 export const self = {
@@ -319,8 +319,9 @@ function formatKeyValueBySerializationOption(key, value, skipEncoding, serializa
     : serializationOption && serializationOption.allowReserved
       ? 'unsafe'
       : 'reserved';
-  const encodeFn = (v) => encodeDisallowedCharacters(v, { escape });
-  const encodeKeyFn = skipEncoding ? (k) => k : (k) => encodeDisallowedCharacters(k, { escape });
+
+  const encodeFn = (v) => valueEncoder(v, escape);
+  const encodeKeyFn = skipEncoding ? (k) => k : (k) => encodeFn(k);
 
   // Primitive
   if (typeof value !== 'object') {

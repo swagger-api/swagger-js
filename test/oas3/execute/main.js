@@ -572,6 +572,226 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
     });
   });
 
+  describe('`schema` parameters', () => {
+    it('should encode JSON values provided as objects', () => {
+      const req = buildRequest({
+        spec: {
+          openapi: '3.0.0',
+          paths: {
+            '/{pathPartial}': {
+              post: {
+                operationId: 'myOp',
+                parameters: [
+                  {
+                    name: 'query',
+                    in: 'query',
+                    schema: {
+                      type: 'object',
+                    },
+                  },
+                  {
+                    name: 'FooHeader',
+                    in: 'header',
+                    schema: {
+                      type: 'object',
+                    },
+                    explode: true,
+                  },
+                  {
+                    name: 'pathPartial',
+                    in: 'path',
+                    schema: {
+                      type: 'object',
+                    },
+                    explode: true,
+                  },
+                  {
+                    name: 'myCookie',
+                    in: 'cookie',
+                    schema: {
+                      type: 'object',
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+        operationId: 'myOp',
+        parameters: {
+          query: {
+            a: {
+              b: {
+                c: 'd',
+              },
+            },
+          },
+          FooHeader: {
+            a: {
+              b: {
+                c: {
+                  d: 'e',
+                },
+              },
+            },
+          },
+          pathPartial: {
+            foo: {
+              bar: { baz: 'qux' },
+            },
+            a: {
+              b: {
+                c: 'd',
+              },
+            },
+          },
+          myCookie: {
+            foo: {
+              bar: { baz: 'qux' },
+            },
+          },
+        },
+      });
+
+      expect(req).toEqual({
+        method: 'POST',
+        url: `/foo=${escape('{"bar":{"baz":"qux"}}')},a=${escape('{"b":{"c":"d"}}')}?a=${escape('{"b":{"c":"d"}}')}`,
+        credentials: 'same-origin',
+        headers: {
+          FooHeader: 'a={"b":{"c":{"d":"e"}}}',
+          Cookie: 'myCookie=foo,{"bar":{"baz":"qux"}}',
+        },
+      });
+    });
+
+    it('should encode arrays of arrays and objects', () => {
+      const req = buildRequest({
+        spec: {
+          openapi: '3.0.0',
+          paths: {
+            '/': {
+              post: {
+                operationId: 'myOp',
+                parameters: [
+                  {
+                    name: 'arrayOfObjects',
+                    in: 'query',
+                    schema: {
+                      type: 'array',
+                      items: {
+                        type: 'object',
+                      },
+                    },
+                    explode: false,
+                  },
+                  {
+                    name: 'arrayOfArrays',
+                    in: 'query',
+                    schema: {
+                      type: 'array',
+                      items: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                        },
+                      },
+                    },
+                    explode: false,
+                  },
+                  {
+                    name: 'headerArrayOfObjects',
+                    in: 'header',
+                    schema: {
+                      type: 'array',
+                      items: {
+                        type: 'object',
+                      },
+                    },
+                  },
+                  {
+                    name: 'headerArrayOfArrays',
+                    in: 'header',
+                    schema: {
+                      type: 'array',
+                      items: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                        },
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+        operationId: 'myOp',
+        parameters: {
+          arrayOfObjects: [
+            {
+              a: {
+                b: 'c',
+              },
+            },
+            {
+              d: {
+                e: 'f',
+              },
+            },
+          ],
+          arrayOfArrays: [
+            [
+              {
+                a: {
+                  b: 'c',
+                },
+              },
+            ],
+          ],
+          headerArrayOfObjects: [
+            {
+              a: {
+                b: 'c',
+              },
+            },
+            {
+              d: {
+                e: 'f',
+              },
+            },
+          ],
+          headerArrayOfArrays: [
+            [
+              {
+                a: {
+                  b: 'c',
+                },
+              },
+            ],
+            [
+              {
+                d: {
+                  e: 'f',
+                },
+              },
+            ],
+          ],
+        },
+      });
+
+      expect(req).toEqual({
+        method: 'POST',
+        url: `/?arrayOfObjects=${escape('{"a":{"b":"c"}}')},${escape('{"d":{"e":"f"}}')}&arrayOfArrays=${escape('[{"a":{"b":"c"}}]')}`,
+        credentials: 'same-origin',
+        headers: {
+          headerArrayOfObjects: '{"a":{"b":"c"}},{"d":{"e":"f"}}',
+          headerArrayOfArrays: '[{"a":{"b":"c"}}],[{"d":{"e":"f"}}]',
+        },
+      });
+    });
+  });
+
   describe('`content` parameters', () => {
     it('should serialize JSON values provided as objects', () => {
       const req = buildRequest({

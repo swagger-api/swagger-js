@@ -6,6 +6,7 @@ export function encodeDisallowedCharacters(str, { escape } = {}, parse) {
   if (typeof str === 'number') {
     str = str.toString();
   }
+
   if (typeof str !== 'string' || !str.length) {
     return str;
   }
@@ -55,23 +56,27 @@ export default function stylize(config) {
   return encodePrimitive(config);
 }
 
-function encodeArray({ key, value, style, explode, escape }) {
-  const valueEncoder = (str) =>
-    encodeDisallowedCharacters(str, {
-      escape,
-    });
+export function valueEncoder(value, escape) {
+  if (Array.isArray(value) || (value !== null && typeof value === 'object')) {
+    value = JSON.stringify(value);
+  }
+  return encodeDisallowedCharacters(value, {
+    escape,
+  });
+}
 
+function encodeArray({ key, value, style, explode, escape }) {
   if (style === 'simple') {
-    return value.map((val) => valueEncoder(val)).join(',');
+    return value.map((val) => valueEncoder(val, escape)).join(',');
   }
 
   if (style === 'label') {
-    return `.${value.map((val) => valueEncoder(val)).join('.')}`;
+    return `.${value.map((val) => valueEncoder(val, escape)).join('.')}`;
   }
 
   if (style === 'matrix') {
     return value
-      .map((val) => valueEncoder(val))
+      .map((val) => valueEncoder(val, escape))
       .reduce((prev, curr) => {
         if (!prev || explode) {
           return `${prev || ''};${key}=${curr}`;
@@ -82,33 +87,28 @@ function encodeArray({ key, value, style, explode, escape }) {
 
   if (style === 'form') {
     const after = explode ? `&${key}=` : ',';
-    return value.map((val) => valueEncoder(val)).join(after);
+    return value.map((val) => valueEncoder(val, escape)).join(after);
   }
 
   if (style === 'spaceDelimited') {
     const after = explode ? `${key}=` : '';
-    return value.map((val) => valueEncoder(val)).join(` ${after}`);
+    return value.map((val) => valueEncoder(val, escape)).join(` ${after}`);
   }
 
   if (style === 'pipeDelimited') {
     const after = explode ? `${key}=` : '';
-    return value.map((val) => valueEncoder(val)).join(`|${after}`);
+    return value.map((val) => valueEncoder(val, escape)).join(`|${after}`);
   }
 
   return undefined;
 }
 
 function encodeObject({ key, value, style, explode, escape }) {
-  const valueEncoder = (str) =>
-    encodeDisallowedCharacters(str, {
-      escape,
-    });
-
   const valueKeys = Object.keys(value);
 
   if (style === 'simple') {
     return valueKeys.reduce((prev, curr) => {
-      const val = valueEncoder(value[curr]);
+      const val = valueEncoder(value[curr], escape);
       const middleChar = explode ? '=' : ',';
       const prefix = prev ? `${prev},` : '';
 
@@ -118,7 +118,7 @@ function encodeObject({ key, value, style, explode, escape }) {
 
   if (style === 'label') {
     return valueKeys.reduce((prev, curr) => {
-      const val = valueEncoder(value[curr]);
+      const val = valueEncoder(value[curr], escape);
       const middleChar = explode ? '=' : '.';
       const prefix = prev ? `${prev}.` : '.';
 
@@ -128,7 +128,7 @@ function encodeObject({ key, value, style, explode, escape }) {
 
   if (style === 'matrix' && explode) {
     return valueKeys.reduce((prev, curr) => {
-      const val = valueEncoder(value[curr]);
+      const val = valueEncoder(value[curr], escape);
       const prefix = prev ? `${prev};` : ';';
 
       return `${prefix}${curr}=${val}`;
@@ -138,7 +138,7 @@ function encodeObject({ key, value, style, explode, escape }) {
   if (style === 'matrix') {
     // no explode
     return valueKeys.reduce((prev, curr) => {
-      const val = valueEncoder(value[curr]);
+      const val = valueEncoder(value[curr], escape);
       const prefix = prev ? `${prev},` : `;${key}=`;
 
       return `${prefix}${curr},${val}`;
@@ -147,7 +147,7 @@ function encodeObject({ key, value, style, explode, escape }) {
 
   if (style === 'form') {
     return valueKeys.reduce((prev, curr) => {
-      const val = valueEncoder(value[curr]);
+      const val = valueEncoder(value[curr], escape);
       const prefix = prev ? `${prev}${explode ? '&' : ','}` : '';
       const separator = explode ? '=' : ',';
 
@@ -159,29 +159,24 @@ function encodeObject({ key, value, style, explode, escape }) {
 }
 
 function encodePrimitive({ key, value, style, escape }) {
-  const valueEncoder = (str) =>
-    encodeDisallowedCharacters(str, {
-      escape,
-    });
-
   if (style === 'simple') {
-    return valueEncoder(value);
+    return valueEncoder(value, escape);
   }
 
   if (style === 'label') {
-    return `.${valueEncoder(value)}`;
+    return `.${valueEncoder(value, escape)}`;
   }
 
   if (style === 'matrix') {
-    return `;${key}=${valueEncoder(value)}`;
+    return `;${key}=${valueEncoder(value, escape)}`;
   }
 
   if (style === 'form') {
-    return valueEncoder(value);
+    return valueEncoder(value, escape);
   }
 
   if (style === 'deepObject') {
-    return valueEncoder(value, {}, true);
+    return valueEncoder(value, escape);
   }
 
   return undefined;
