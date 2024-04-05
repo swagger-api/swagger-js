@@ -56,11 +56,9 @@ export default function stylize(config) {
   return encodePrimitive(config);
 }
 
-function valueEncoder(value, escape) {
-  if (value !== null && typeof value === 'object') {
+export function valueEncoder(value, escape) {
+  if (Array.isArray(value) || (value !== null && typeof value === 'object')) {
     value = JSON.stringify(value);
-  } else if (typeof val === 'number') {
-    value = value.toString();
   }
   return encodeDisallowedCharacters(value, {
     escape,
