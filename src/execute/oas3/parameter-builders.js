@@ -1,4 +1,4 @@
-import stylize, { encodeDisallowedCharacters } from './style-serializer.js';
+import stylize, { encodeCharacters } from './style-serializer.js';
 import serialize from './content-serializer.js';
 
 export function path({ req, value, parameter }) {
@@ -11,7 +11,7 @@ export function path({ req, value, parameter }) {
 
     req.url = req.url
       .split(`{${name}}`)
-      .join(encodeDisallowedCharacters(serialize(value, effectiveMediaType), { escape: true }));
+      .join(encodeCharacters(serialize(value, effectiveMediaType)));
   } else {
     const styledValue = stylize({
       key: parameter.name,

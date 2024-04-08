@@ -1,35 +1,19 @@
 const isRfc3986Reserved = (char) => ":/?#[]@!$&'()*+,;=".indexOf(char) > -1;
-const isRrc3986Unreserved = (char) => /^[a-z0-9\-._~]+$/i.test(char);
+const isRfc3986Unreserved = (char) => /^[a-z0-9\-._~]+$/i.test(char);
 
 // eslint-disable-next-line default-param-last
-export function encodeDisallowedCharacters(str, { escape } = {}, parse) {
-  if (typeof str === 'number') {
-    str = str.toString();
-  }
-
-  if (typeof str !== 'string' || !str.length) {
-    return str;
-  }
-
-  if (!escape) {
-    return str;
-  }
-
-  if (parse) {
-    return JSON.parse(str);
-  }
-
+export function encodeCharacters(str, { characterSet = 'reserved' } = {}) {
   // In ES6 you can do this quite easily by using the new ... spread operator.
   // This causes the string iterator (another new ES6 feature) to be used internally,
   // and because that iterator is designed to deal with
   // code points rather than UCS-2/UTF-16 code units.
   return [...str]
     .map((char) => {
-      if (isRrc3986Unreserved(char)) {
+      if (isRfc3986Unreserved(char)) {
         return char;
       }
 
-      if (isRfc3986Reserved(char) && escape === 'unsafe') {
+      if (isRfc3986Reserved(char) && characterSet === 'unsafe') {
         return char;
       }
 
@@ -59,10 +43,14 @@ export default function stylize(config) {
 export function valueEncoder(value, escape) {
   if (Array.isArray(value) || (value !== null && typeof value === 'object')) {
     value = JSON.stringify(value);
+  } else if (typeof value === 'number' || typeof value === 'boolean') {
+    value = value.toString();
   }
-  return encodeDisallowedCharacters(value, {
-    escape,
-  });
+
+  if (escape && value.length > 0) {
+    return encodeCharacters(value, escape === true ? {} : { characterSet: escape });
+  }
+  return value;
 }
 
 function encodeArray({ key, value, style, explode, escape }) {
