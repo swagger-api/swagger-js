@@ -1,5 +1,3 @@
-import { escape } from 'querystring';
-
 import { encodeCharacters, valueEncoder } from '../../../src/execute/oas3/style-serializer.js';
 
 describe('OAS3 style serializer', () => {
@@ -42,49 +40,53 @@ describe('OAS3 style serializer', () => {
   });
 
   describe('valueEncoder', () => {
-    test('should correctly encode primitive values with escape set to `reserved`', () => {
+    test('should correctly encode primitive values with `escape` set to `reserved`', () => {
       const tested = (value) => valueEncoder(value, 'reserved');
 
       expect(tested(123)).toEqual('123');
-      expect(tested('a#b$c%d[e]_~1')).toEqual(escape('a#b$c%d[e]_~1'));
+      expect(tested('a#b$c%d[e]_~1')).toEqual('a%23b%24c%25d%5Be%5D_~1');
       expect(tested(false)).toEqual('false');
     });
 
-    test('should correctly encode primitive values with escape set to `unsafe`', () => {
+    test('should correctly encode primitive values with `escape` set to `unsafe`', () => {
       const tested = (value) => valueEncoder(value, 'unsafe');
 
       expect(tested(123)).toEqual('123');
-      expect(tested('a#b$c%d[e]_~1')).toEqual(`a#b$c${escape('%')}d[e]_~1`);
-      expect(tested(false)).toEqual(escape('false'));
+      expect(tested('a#b$c%d[e]_~1')).toEqual('a#b$c%25d[e]_~1');
+      expect(tested(false)).toEqual('false');
     });
 
-    test('should correctly encode objects with escape set to `reserved`', () => {
+    test('should correctly encode objects with `escape` set to `reserved`', () => {
       const tested = (value) => valueEncoder(value, 'reserved');
-
-      expect(tested({ a: 'a#b$c%d[e]_~1' })).toEqual(escape('{"a":"a#b$c%d[e]_~1"}'));
-      expect(tested({ a: { b: { c: 'd' } } })).toEqual(escape('{"a":{"b":{"c":"d"}}}'));
-      expect(tested({ a: 123 })).toEqual(escape('{"a":123}'));
-      expect(tested({ a: false })).toEqual(escape('{"a":false}'));
-    });
-
-    test('should correctly encode objects with escape set to `unsafe`', () => {
-      const tested = (value) => valueEncoder(value, 'unsafe');
 
       expect(tested({ a: 'a#b$c%d[e]_~1' })).toEqual(
-        `${escape('{"a"')}:${escape('"')}a#b$c${escape('%')}d[e]_~1${escape('"}')}`
+        '%7B%22a%22%3A%22a%23b%24c%25d%5Be%5D_~1%22%7D'
       );
       expect(tested({ a: { b: { c: 'd' } } })).toEqual(
-        `${escape('{"a"')}:${escape('{"b"')}:${escape('{"c"')}:${escape('"d"}}}')}`
+        '%7B%22a%22%3A%7B%22b%22%3A%7B%22c%22%3A%22d%22%7D%7D%7D'
       );
-      expect(tested({ a: 123 })).toEqual(`${escape('{"a"')}:${escape('123}')}`);
-      expect(tested({ a: false })).toEqual(`${escape('{"a"')}:${escape('false}')}`);
+      expect(tested({ a: 123 })).toEqual('%7B%22a%22%3A123%7D');
+      expect(tested({ a: false })).toEqual('%7B%22a%22%3Afalse%7D');
     });
 
-    test('should correctly encode arrays with escape set to `reserved`', () => {
+    test('should correctly encode objects with `escape` set to `unsafe`', () => {
+      const tested = (value) => valueEncoder(value, 'unsafe');
+
+      expect(tested({ a: 'a#b$c%d[e]_~1' })).toEqual('%7B%22a%22:%22a#b$c%25d[e]_~1%22%7D');
+      expect(tested({ a: { b: { c: 'd' } } })).toEqual(
+        '%7B%22a%22:%7B%22b%22:%7B%22c%22:%22d%22%7D%7D%7D'
+      );
+      expect(tested({ a: 123 })).toEqual('%7B%22a%22:123%7D');
+      expect(tested({ a: false })).toEqual('%7B%22a%22:false%7D');
+    });
+
+    test('should correctly encode arrays with `escape` set to `reserved`', () => {
       const tested = (value) => valueEncoder(value, 'reserved');
 
-      expect(tested([1, 2, 3])).toEqual(escape('[1,2,3]'));
-      expect(tested(['1', '2', 'a#b$c%d[e]_~1'])).toEqual(escape('["1","2","a#b$c%d[e]_~1"]'));
+      expect(tested([1, 2, 3])).toEqual('%5B1%2C2%2C3%5D');
+      expect(tested(['1', '2', 'a#b$c%d[e]_~1'])).toEqual(
+        '%5B%221%22%2C%222%22%2C%22a%23b%24c%25d%5Be%5D_~1%22%5D'
+      );
       expect(
         tested([
           {
@@ -93,7 +95,7 @@ describe('OAS3 style serializer', () => {
             },
           },
         ])
-      ).toEqual(escape('[{"a":{"b":"c"}}]'));
+      ).toEqual('%5B%7B%22a%22%3A%7B%22b%22%3A%22c%22%7D%7D%5D');
       expect(
         tested([
           [
@@ -104,15 +106,15 @@ describe('OAS3 style serializer', () => {
             },
           ],
         ])
-      ).toEqual(escape('[[{"a":{"b":"c"}}]]'));
+      ).toEqual('%5B%5B%7B%22a%22%3A%7B%22b%22%3A%22c%22%7D%7D%5D%5D');
     });
 
-    test('should correctly encode arrays with escape set to `unsafe`', () => {
+    test('should correctly encode arrays with `escape` set to `unsafe`', () => {
       const tested = (value) => valueEncoder(value, 'unsafe');
 
       expect(tested([1, 2, 3])).toEqual('[1,2,3]');
       expect(tested(['1', '2', 'a#b$c%d[e]_~1'])).toEqual(
-        `[${escape('"1"')},${escape('"2"')},${escape('"')}a#b$c${escape('%')}d[e]_~1${escape('"')}]`
+        '[%221%22,%222%22,%22a#b$c%25d[e]_~1%22]'
       );
       expect(
         tested([
@@ -122,7 +124,7 @@ describe('OAS3 style serializer', () => {
             },
           },
         ])
-      ).toEqual(`[${escape('{"a"')}:${escape('{"b"')}:${escape('"c"}}')}]`);
+      ).toEqual('[%7B%22a%22:%7B%22b%22:%22c%22%7D%7D]');
       expect(
         tested([
           [
@@ -133,7 +135,7 @@ describe('OAS3 style serializer', () => {
             },
           ],
         ])
-      ).toEqual(`[[${escape('{"a"')}:${escape('{"b"')}:${escape('"c"}}')}]]`);
+      ).toEqual('[[%7B%22a%22:%7B%22b%22:%22c%22%7D%7D]]');
     });
 
     test('should skip encoding if `escape` is not set', () => {
