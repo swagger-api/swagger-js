@@ -2,7 +2,7 @@ const isRfc3986Reserved = (char) => ":/?#[]@!$&'()*+,;=".indexOf(char) > -1;
 const isRfc3986Unreserved = (char) => /^[a-z0-9\-._~]+$/i.test(char);
 
 // eslint-disable-next-line default-param-last
-export function encodeCharacters(str, { characterSet = 'reserved' } = {}) {
+export function encodeCharacters(str, characterSet = 'reserved') {
   // In ES6 you can do this quite easily by using the new ... spread operator.
   // This causes the string iterator (another new ES6 feature) to be used internally,
   // and because that iterator is designed to deal with
@@ -40,15 +40,15 @@ export default function stylize(config) {
   return encodePrimitive(config);
 }
 
-export function valueEncoder(value, escape) {
+export function valueEncoder(value, escape = false) {
   if (Array.isArray(value) || (value !== null && typeof value === 'object')) {
     value = JSON.stringify(value);
   } else if (typeof value === 'number' || typeof value === 'boolean') {
-    value = value.toString();
+    value = String(value);
   }
 
   if (escape && value.length > 0) {
-    return encodeCharacters(value, escape === true ? {} : { characterSet: escape });
+    return encodeCharacters(value, escape);
   }
   return value;
 }

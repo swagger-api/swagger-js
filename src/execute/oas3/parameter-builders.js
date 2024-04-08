@@ -18,7 +18,7 @@ export function path({ req, value, parameter }) {
       value,
       style: style || 'simple',
       explode: explode || false,
-      escape: true,
+      escape: 'reserved',
     });
 
     req.url = req.url.replace(new RegExp(`{${name}}`, 'g'), styledValue);
