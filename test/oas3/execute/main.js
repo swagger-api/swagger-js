@@ -871,6 +871,96 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
       });
     });
 
+    it('should serialize JSON values provided as arrays of stringified objects', () => {
+      const req = buildRequest({
+        spec: {
+          openapi: '3.0.0',
+          paths: {
+            '/{pathPartial}': {
+              post: {
+                operationId: 'myOp',
+                parameters: [
+                  {
+                    name: 'query',
+                    in: 'query',
+                    content: {
+                      'application/json': {
+                        schema: {
+                          type: 'array',
+                          items: {
+                            type: 'object',
+                          },
+                        },
+                      },
+                    },
+                  },
+                  {
+                    name: 'FooHeader',
+                    in: 'header',
+                    content: {
+                      'application/json': {
+                        schema: {
+                          type: 'array',
+                          items: {
+                            type: 'object',
+                          },
+                        },
+                      },
+                    },
+                  },
+                  {
+                    name: 'pathPartial',
+                    in: 'path',
+                    content: {
+                      'application/json': {
+                        schema: {
+                          type: 'array',
+                          items: {
+                            type: 'object',
+                          },
+                        },
+                      },
+                    },
+                  },
+                  {
+                    name: 'myCookie',
+                    in: 'cookie',
+                    content: {
+                      'application/json': {
+                        schema: {
+                          type: 'array',
+                          items: {
+                            type: 'object',
+                          },
+                        },
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+        operationId: 'myOp',
+        parameters: {
+          query: ['{"a":1}', '{"b":"2"}'],
+          FooHeader: ['{"foo":"bar"}'],
+          pathPartial: ['{"baz":"qux"}'],
+          myCookie: ['{"flavor":"chocolate chip"}'],
+        },
+      });
+
+      expect(req).toEqual({
+        method: 'POST',
+        url: `/${escape('[{"baz":"qux"}]')}?query=${escape('[{"a":1},{"b":"2"}]')}`,
+        credentials: 'same-origin',
+        headers: {
+          FooHeader: '[{"foo":"bar"}]',
+          Cookie: 'myCookie=[{"flavor":"chocolate chip"}]',
+        },
+      });
+    });
+
     it('should not serialize undefined parameters', () => {
       const spec = {
         openapi: '3.0.1',
