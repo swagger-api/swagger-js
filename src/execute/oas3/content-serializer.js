@@ -9,8 +9,19 @@ export default function serialize(value, mediaType) {
       // Assume the user has a JSON string
       return value;
     }
+
+    if (Array.isArray(value)) {
+      value = value.map((v) => {
+        try {
+          return JSON.parse(v);
+        } catch (e) {
+          return v;
+        }
+      });
+    }
+
     return JSON.stringify(value);
   }
 
-  return value.toString();
+  return String(value);
 }
