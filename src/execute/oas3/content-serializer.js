@@ -23,5 +23,5 @@ export default function serialize(value, mediaType) {
     return JSON.stringify(value);
   }
 
-  return value.toString();
+  return String(value);
 }
