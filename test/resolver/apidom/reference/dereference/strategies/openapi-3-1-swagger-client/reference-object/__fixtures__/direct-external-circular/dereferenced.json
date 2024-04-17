@@ -4,7 +4,7 @@
     "components": {
       "parameters": {
         "externalRef": {
-          "$ref": "./root.json#/components/parameters/externalRef",
+          "$ref": "./ex.json#/externalParameter",
           "description": "another ref"
         }
       }

@@ -1,0 +1,12 @@
+[
+  {
+    "openapi": "3.1.0",
+    "components": {
+      "schemas": {
+        "User": {
+          "$ref": "/home/smartbear/root.json#/components/schemas/User"
+        }
+      }
+    }
+  }
+]

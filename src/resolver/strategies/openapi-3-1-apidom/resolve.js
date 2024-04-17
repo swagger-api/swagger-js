@@ -1,17 +1,24 @@
 /* eslint-disable camelcase */
-import { toValue, transclude, ParseResultElement } from '@swagger-api/apidom-core';
+import {
+  ParseResultElement,
+  ObjectElement,
+  toValue,
+  transclude,
+  cloneDeep,
+} from '@swagger-api/apidom-core';
 import {
   compile as jsonPointerCompile,
   evaluate as jsonPointerEvaluate,
   EvaluationJsonPointerError,
   InvalidJsonPointerError,
 } from '@swagger-api/apidom-json-pointer';
-import { OpenApi3_1Element, mediaTypes } from '@swagger-api/apidom-ns-openapi-3-1';
+import { mediaTypes, OpenApi3_1Element } from '@swagger-api/apidom-ns-openapi-3-1';
 import {
   dereferenceApiDOM,
   url,
   ReferenceSet,
   Reference,
+  options as referenceOptions,
 } from '@swagger-api/apidom-reference/configuration/empty';
 import BinaryParser from '@swagger-api/apidom-reference/parse/parsers/binary';
 import OpenApi3_1ResolveStrategy from '@swagger-api/apidom-reference/resolve/strategies/openapi-3-1';
@@ -25,6 +32,21 @@ import YamlParser from '../../apidom/reference/parse/parsers/yaml-1-2/index.js';
 import OpenApiJson3_1Parser from '../../apidom/reference/parse/parsers/openapi-json-3-1/index.js';
 import OpenApiYaml3_1Parser from '../../apidom/reference/parse/parsers/openapi-yaml-3-1/index.js';
 import OpenApi3_1SwaggerClientDereferenceStrategy from '../../apidom/reference/dereference/strategies/openapi-3-1-swagger-client/index.js';
+
+export const circularReplacer = (refElement) => {
+  const $refBaseURI = toValue(refElement.meta.get('baseURI'));
+  const referencingElement = refElement.meta.get('referencingElement');
+
+  /**
+   * Removing semantics from the absolutified referencing element by
+   * using generic ObjectElement to represent the reference.
+   */
+  return new ObjectElement(
+    { $ref: $refBaseURI },
+    cloneDeep(referencingElement.meta),
+    cloneDeep(referencingElement.attributes)
+  );
+};
 
 const resolveOpenAPI31Strategy = async (options) => {
   const {
@@ -123,6 +145,10 @@ const resolveOpenAPI31Strategy = async (options) => {
         refSet,
         dereferenceOpts: { errors },
         immutable: false,
+        circular: useCircularStructures ? 'ignore' : 'replace',
+        circularReplacer: useCircularStructures
+          ? referenceOptions.dereference.circularReplacer
+          : circularReplacer,
       },
     });
     const transcluded = transclude(fragmentElement, dereferenced, openApiElement);

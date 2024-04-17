@@ -341,26 +341,6 @@ describe('dereference', () => {
 
               expect(toValue(actual)).toEqual(expected);
             });
-
-            test('should collect error', async () => {
-              const errors = [];
-
-              await dereference(rootFilePath, {
-                parse: { mediaType: mediaTypes.latest('json') },
-                dereference: { dereferenceOpts: { errors } },
-              });
-
-              expect(errors).toHaveLength(2);
-              expect(errors[0]).toMatchObject({
-                message: expect.stringMatching(
-                  /^Could not resolve reference: Recursive JSON Pointer detected/
-                ),
-                baseDoc: expect.stringMatching(/direct-internal-circular\/root\.json$/),
-                $ref: '#/paths/~1path1',
-                pointer: '/paths/~1path1',
-                fullPath: ['paths', '/path1', '$ref'],
-              });
-            });
           });
 
           describe('given $ref field with with indirect circular internal reference', () => {
@@ -374,26 +354,6 @@ describe('dereference', () => {
               const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
               expect(toValue(actual)).toEqual(expected);
-            });
-
-            test('should collect error', async () => {
-              const errors = [];
-
-              await dereference(rootFilePath, {
-                parse: { mediaType: mediaTypes.latest('json') },
-                dereference: { dereferenceOpts: { errors } },
-              });
-
-              expect(errors).toHaveLength(3);
-              expect(errors[0]).toMatchObject({
-                message: expect.stringMatching(
-                  /^Could not resolve reference: Recursive JSON Pointer detected/
-                ),
-                baseDoc: expect.stringMatching(/indirect-internal-circular\/root\.json$/),
-                $ref: '#/paths/~1path1',
-                pointer: '/paths/~1path1',
-                fullPath: ['paths', '/path1', '$ref'],
-              });
             });
           });
 
@@ -409,26 +369,6 @@ describe('dereference', () => {
 
               expect(toValue(actual)).toEqual(expected);
             });
-
-            test('should collect error', async () => {
-              const errors = [];
-
-              await dereference(rootFilePath, {
-                parse: { mediaType: mediaTypes.latest('json') },
-                dereference: { dereferenceOpts: { errors } },
-              });
-
-              expect(errors).toHaveLength(1);
-              expect(errors[0]).toMatchObject({
-                message: expect.stringMatching(
-                  /^Could not resolve reference: Recursive JSON Pointer detected/
-                ),
-                baseDoc: expect.stringMatching(/direct-external-circular\/ex\.json$/),
-                $ref: './root.json#/paths/~1path1',
-                pointer: '/paths/~1path1',
-                fullPath: ['paths', '/path1', '$ref'],
-              });
-            });
           });
 
           describe('given $ref field with with indirect circular external reference', () => {
@@ -442,26 +382,6 @@ describe('dereference', () => {
               const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
               expect(toValue(actual)).toEqual(expected);
-            });
-
-            test('should collect error', async () => {
-              const errors = [];
-
-              await dereference(rootFilePath, {
-                parse: { mediaType: mediaTypes.latest('json') },
-                dereference: { dereferenceOpts: { errors } },
-              });
-
-              expect(errors).toHaveLength(1);
-              expect(errors[0]).toMatchObject({
-                message: expect.stringMatching(
-                  /^Could not resolve reference: Recursive JSON Pointer detected/
-                ),
-                baseDoc: expect.stringMatching(/indirect-external-circular\/ex2\.json$/),
-                $ref: './root.json#/paths/~1path1',
-                pointer: '/paths/~1path1',
-                fullPath: ['paths', '/path1', '$ref'],
-              });
             });
           });
         });

@@ -3,6 +3,7 @@ import { toValue, toJSON } from '@swagger-api/apidom-core';
 import { isSchemaElement, mediaTypes } from '@swagger-api/apidom-ns-openapi-3-1';
 import { evaluate, escape } from '@swagger-api/apidom-json-pointer';
 import {
+  options as referenceOptions,
   parse,
   dereference,
   dereferenceApiDOM,
@@ -14,6 +15,7 @@ import {
 // eslint-disable-next-line camelcase
 import OpenApi3_1SwaggerClientDereferenceStrategy from '../../../../../../../../src/resolver/apidom/reference/dereference/strategies/openapi-3-1-swagger-client/index.js';
 import * as jestSetup from '../__utils__/jest.local.setup.js';
+import { circularReplacer } from '../../../../../../../../src/resolver/strategies/openapi-3-1-apidom/resolve.js';
 
 const rootFixturePath = path.join(__dirname, '__fixtures__');
 
@@ -114,6 +116,7 @@ describe('dereference', () => {
 
           describe('and useCircularStructures=false', () => {
             test('should avoid cycles by skipping transclusion', async () => {
+              const useCircularStructures = false;
               const fixturePath = path.join(rootFixturePath, 'cycle-internal-circular-structures');
               const rootFilePath = path.join(fixturePath, 'root.json');
               const refSet = await resolve(rootFilePath, {
@@ -123,10 +126,11 @@ describe('dereference', () => {
               const actual = await dereference(refSet.refs[0].uri, {
                 parse: { mediaType: mediaTypes.latest('json') },
                 dereference: {
+                  circular: useCircularStructures ? 'ignore' : 'replace',
+                  circularReplacer: useCircularStructures
+                    ? referenceOptions.dereference.circularReplacer
+                    : circularReplacer,
                   refSet,
-                  strategies: [
-                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
-                  ],
                 },
               });
               const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
@@ -136,6 +140,7 @@ describe('dereference', () => {
             });
 
             test('should avoid cycles by skipping transclusion on single element', async () => {
+              const useCircularStructures = false;
               const fixturePath = path.join(rootFixturePath, 'cycle-internal-circular-structures');
               const rootFilePath = path.join(fixturePath, 'root.json');
               const refSet = await resolve(rootFilePath, {
@@ -147,10 +152,11 @@ describe('dereference', () => {
                 resolve: { baseURI: '/home/smartbear/root.json' },
                 parse: { mediaType: mediaTypes.latest('json') },
                 dereference: {
+                  circular: useCircularStructures ? 'ignore' : 'replace',
+                  circularReplacer: useCircularStructures
+                    ? referenceOptions.dereference.circularReplacer
+                    : circularReplacer,
                   refSet,
-                  strategies: [
-                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
-                  ],
                 },
               });
               const [expected] = globalThis.loadJsonFile(
@@ -163,6 +169,7 @@ describe('dereference', () => {
 
             describe('and using HTTP protocol', () => {
               test('should make JSON Pointer absolute', async () => {
+                const useCircularStructures = false;
                 const fixturePath = path.join(
                   rootFixturePath,
                   'cycle-internal-http-circular-structures'
@@ -175,11 +182,10 @@ describe('dereference', () => {
                       await dereference('http://localhost:8123/root.json', {
                         parse: { mediaType: mediaTypes.latest('json') },
                         dereference: {
-                          strategies: [
-                            OpenApi3_1SwaggerClientDereferenceStrategy({
-                              useCircularStructures: false,
-                            }),
-                          ],
+                          circular: useCircularStructures ? 'ignore' : 'replace',
+                          circularReplacer: useCircularStructures
+                            ? referenceOptions.dereference.circularReplacer
+                            : circularReplacer,
                         },
                       })
                     );
@@ -218,6 +224,7 @@ describe('dereference', () => {
 
           describe('and useCircularStructures=false', () => {
             test('should avoid cycles by skipping transclusion', async () => {
+              const useCircularStructures = false;
               const fixturePath = path.join(
                 rootFixturePath,
                 'cycle-internal-advanced-circular-structures'
@@ -230,10 +237,11 @@ describe('dereference', () => {
               const actual = await dereference(refSet.refs[0].uri, {
                 parse: { mediaType: mediaTypes.latest('json') },
                 dereference: {
+                  circular: useCircularStructures ? 'ignore' : 'replace',
+                  circularReplacer: useCircularStructures
+                    ? referenceOptions.dereference.circularReplacer
+                    : circularReplacer,
                   refSet,
-                  strategies: [
-                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
-                  ],
                 },
               });
               const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
@@ -244,6 +252,7 @@ describe('dereference', () => {
 
             describe('and using HTTP protocol', () => {
               test('should make JSON Pointer absolute', async () => {
+                const useCircularStructures = false;
                 const fixturePath = path.join(
                   rootFixturePath,
                   'cycle-internal-advanced-http-circular-structures'
@@ -256,11 +265,10 @@ describe('dereference', () => {
                       await dereference('http://localhost:8123/root.json', {
                         parse: { mediaType: mediaTypes.latest('json') },
                         dereference: {
-                          strategies: [
-                            OpenApi3_1SwaggerClientDereferenceStrategy({
-                              useCircularStructures: false,
-                            }),
-                          ],
+                          circular: useCircularStructures ? 'ignore' : 'replace',
+                          circularReplacer: useCircularStructures
+                            ? referenceOptions.dereference.circularReplacer
+                            : circularReplacer,
                         },
                       })
                     );
@@ -303,6 +311,7 @@ describe('dereference', () => {
 
           describe('and useCircularStructures=false', () => {
             test('should avoid cycles by skipping transclusion', async () => {
+              const useCircularStructures = false;
               const fixturePath = path.join(
                 rootFixturePath,
                 'cycle-internal-advanced-circular-structures-2'
@@ -315,10 +324,11 @@ describe('dereference', () => {
               const actual = await dereference(refSet.refs[0].uri, {
                 parse: { mediaType: mediaTypes.latest('json') },
                 dereference: {
+                  circular: useCircularStructures ? 'ignore' : 'replace',
+                  circularReplacer: useCircularStructures
+                    ? referenceOptions.dereference.circularReplacer
+                    : circularReplacer,
                   refSet,
-                  strategies: [
-                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
-                  ],
                 },
               });
               const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
@@ -329,6 +339,7 @@ describe('dereference', () => {
 
             describe('and using HTTP protocol', () => {
               test('should make JSON Pointer absolute', async () => {
+                const useCircularStructures = false;
                 const fixturePath = path.join(
                   rootFixturePath,
                   'cycle-internal-advanced-http-circular-structures-2'
@@ -341,11 +352,10 @@ describe('dereference', () => {
                       await dereference('http://localhost:8123/root.json', {
                         parse: { mediaType: mediaTypes.latest('json') },
                         dereference: {
-                          strategies: [
-                            OpenApi3_1SwaggerClientDereferenceStrategy({
-                              useCircularStructures: false,
-                            }),
-                          ],
+                          circular: useCircularStructures ? 'ignore' : 'replace',
+                          circularReplacer: useCircularStructures
+                            ? referenceOptions.dereference.circularReplacer
+                            : circularReplacer,
                         },
                       })
                     );
@@ -384,6 +394,7 @@ describe('dereference', () => {
 
           describe('and useCircularStructures=false', () => {
             test('should avoid cycles by skipping transclusion', async () => {
+              const useCircularStructures = false;
               const fixturePath = path.join(rootFixturePath, 'cycle-external-circular-structures');
               const rootFilePath = path.join(fixturePath, 'root.json');
               const refSet = await resolve(rootFilePath, {
@@ -394,10 +405,11 @@ describe('dereference', () => {
               const actual = await dereference('/home/smartbear/root.json', {
                 parse: { mediaType: mediaTypes.latest('json') },
                 dereference: {
+                  circular: useCircularStructures ? 'ignore' : 'replace',
+                  circularReplacer: useCircularStructures
+                    ? referenceOptions.dereference.circularReplacer
+                    : circularReplacer,
                   refSet,
-                  strategies: [
-                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
-                  ],
                 },
               });
               const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
@@ -723,6 +735,7 @@ describe('dereference', () => {
 
           describe('and useCircularStructures=false', () => {
             test('should dereference', async () => {
+              const useCircularStructures = false;
               const fixturePath = path.join(rootFixturePath, '$id-uri-direct-circular-structures');
               const rootFilePath = path.join(fixturePath, 'root.json');
               const refSet = await resolve(rootFilePath, {
@@ -733,10 +746,11 @@ describe('dereference', () => {
               const actual = await dereference(refSet.refs[0].uri, {
                 parse: { mediaType: mediaTypes.latest('json') },
                 dereference: {
+                  circular: useCircularStructures ? 'ignore' : 'replace',
+                  circularReplacer: useCircularStructures
+                    ? referenceOptions.dereference.circularReplacer
+                    : circularReplacer,
                   refSet,
-                  strategies: [
-                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
-                  ],
                 },
               });
               const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
@@ -785,6 +799,7 @@ describe('dereference', () => {
 
           describe('and useCircularStructures=false', () => {
             test('should dereference', async () => {
+              const useCircularStructures = false;
               const fixturePath = path.join(
                 rootFixturePath,
                 '$id-uri-enclosing-circular-structures'
@@ -798,10 +813,11 @@ describe('dereference', () => {
               const actual = await dereference(refSet.refs[0].uri, {
                 parse: { mediaType: mediaTypes.latest('json') },
                 dereference: {
+                  circular: useCircularStructures ? 'ignore' : 'replace',
+                  circularReplacer: useCircularStructures
+                    ? referenceOptions.dereference.circularReplacer
+                    : circularReplacer,
                   refSet,
-                  strategies: [
-                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
-                  ],
                 },
               });
               const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
@@ -851,6 +867,7 @@ describe('dereference', () => {
 
           describe('and useCircularStructures=false', () => {
             test('should dereference', async () => {
+              const useCircularStructures = false;
               const fixturePath = path.join(rootFixturePath, '$id-uri-external');
               const rootFilePath = path.join(fixturePath, 'root.json');
               const refSet = await resolve(rootFilePath, {
@@ -862,10 +879,11 @@ describe('dereference', () => {
               const actual = await dereference(refSet.refs[0].uri, {
                 parse: { mediaType: mediaTypes.latest('json') },
                 dereference: {
+                  circular: useCircularStructures ? 'ignore' : 'replace',
+                  circularReplacer: useCircularStructures
+                    ? referenceOptions.dereference.circularReplacer
+                    : circularReplacer,
                   refSet,
-                  strategies: [
-                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
-                  ],
                 },
               });
               const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
@@ -944,6 +962,7 @@ describe('dereference', () => {
 
           describe('and useCircularStructures=false', () => {
             test('should dereference', async () => {
+              const useCircularStructures = false;
               const fixturePath = path.join(rootFixturePath, '$ref-url-circular-structures');
               const rootFilePath = path.join(fixturePath, 'root.json');
               const refSet = await resolve(rootFilePath, {
@@ -952,10 +971,11 @@ describe('dereference', () => {
               const actual = await dereference(refSet.refs[0].uri, {
                 parse: { mediaType: mediaTypes.latest('json') },
                 dereference: {
+                  circular: useCircularStructures ? 'ignore' : 'replace',
+                  circularReplacer: useCircularStructures
+                    ? referenceOptions.dereference.circularReplacer
+                    : circularReplacer,
                   refSet,
-                  strategies: [
-                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
-                  ],
                 },
               });
               const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
@@ -1006,6 +1026,7 @@ describe('dereference', () => {
 
           describe('and useCircularStructures=false', () => {
             test('should dereference', async () => {
+              const useCircularStructures = false;
               const fixturePath = path.join(
                 rootFixturePath,
                 '$ref-url-relative-reference-circular-structures'
@@ -1017,10 +1038,11 @@ describe('dereference', () => {
               const actual = await dereference(refSet.refs[0].uri, {
                 parse: { mediaType: mediaTypes.latest('json') },
                 dereference: {
+                  circular: useCircularStructures ? 'ignore' : 'replace',
+                  circularReplacer: useCircularStructures
+                    ? referenceOptions.dereference.circularReplacer
+                    : circularReplacer,
                   refSet,
-                  strategies: [
-                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
-                  ],
                 },
               });
               const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
@@ -1068,6 +1090,7 @@ describe('dereference', () => {
 
           describe('and useCircularStructures=false', () => {
             test('should dereference', async () => {
+              const useCircularStructures = false;
               const fixturePath = path.join(
                 rootFixturePath,
                 '$ref-url-pointer-circular-structures'
@@ -1080,10 +1103,11 @@ describe('dereference', () => {
               const actual = await dereference(refSet.refs[0].uri, {
                 parse: { mediaType: mediaTypes.latest('json') },
                 dereference: {
+                  circular: useCircularStructures ? 'ignore' : 'replace',
+                  circularReplacer: useCircularStructures
+                    ? referenceOptions.dereference.circularReplacer
+                    : circularReplacer,
                   refSet,
-                  strategies: [
-                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
-                  ],
                 },
               });
               const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
@@ -1191,6 +1215,7 @@ describe('dereference', () => {
 
           describe('and useCircularStructures=false', () => {
             test('should dereference', async () => {
+              const useCircularStructures = false;
               const fixturePath = path.join(
                 rootFixturePath,
                 '$ref-url-resolvable-circular-structures'
@@ -1204,10 +1229,11 @@ describe('dereference', () => {
               const actual = await dereference(refSet.refs[0].uri, {
                 parse: { mediaType: mediaTypes.latest('json') },
                 dereference: {
+                  circular: useCircularStructures ? 'ignore' : 'replace',
+                  circularReplacer: useCircularStructures
+                    ? referenceOptions.dereference.circularReplacer
+                    : circularReplacer,
                   refSet,
-                  strategies: [
-                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
-                  ],
                 },
               });
               const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
@@ -1309,6 +1335,7 @@ describe('dereference', () => {
 
           describe('and useCircularStructures=false', () => {
             test('should dereference', async () => {
+              const useCircularStructures = false;
               const fixturePath = path.join(rootFixturePath, '$ref-urn-circular-structures');
               const rootFilePath = path.join(fixturePath, 'root.json');
               const refSet = await resolve(rootFilePath, {
@@ -1317,10 +1344,11 @@ describe('dereference', () => {
               const actual = await dereference(refSet.refs[0].uri, {
                 parse: { mediaType: mediaTypes.latest('json') },
                 dereference: {
+                  circular: useCircularStructures ? 'ignore' : 'replace',
+                  circularReplacer: useCircularStructures
+                    ? referenceOptions.dereference.circularReplacer
+                    : circularReplacer,
                   refSet,
-                  strategies: [
-                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
-                  ],
                 },
               });
               const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
@@ -1452,6 +1480,7 @@ describe('dereference', () => {
 
           describe('and useCircularStructures=false', () => {
             test('should dereference', async () => {
+              const useCircularStructures = false;
               const fixturePath = path.join(
                 rootFixturePath,
                 '$anchor-internal-circular-structures'
@@ -1464,9 +1493,10 @@ describe('dereference', () => {
               const actual = await dereference(refSet.refs[0].uri, {
                 parse: { mediaType: mediaTypes.latest('json') },
                 dereference: {
-                  strategies: [
-                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
-                  ],
+                  circular: useCircularStructures ? 'ignore' : 'replace',
+                  circularReplacer: useCircularStructures
+                    ? referenceOptions.dereference.circularReplacer
+                    : circularReplacer,
                   refSet,
                 },
               });
@@ -1517,6 +1547,7 @@ describe('dereference', () => {
 
           describe('and useCircularStructures=false', () => {
             test('should dereference', async () => {
+              const useCircularStructures = false;
               const fixturePath = path.join(
                 rootFixturePath,
                 '$anchor-external-circular-structures'
@@ -1531,9 +1562,10 @@ describe('dereference', () => {
               const actual = await dereference(refSet.refs[0].uri, {
                 parse: { mediaType: mediaTypes.latest('json') },
                 dereference: {
-                  strategies: [
-                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
-                  ],
+                  circular: useCircularStructures ? 'ignore' : 'replace',
+                  circularReplacer: useCircularStructures
+                    ? referenceOptions.dereference.circularReplacer
+                    : circularReplacer,
                   refSet,
                 },
               });
@@ -1756,33 +1788,6 @@ describe('dereference', () => {
 
             expect(toValue(actual)).toEqual(expected);
           });
-
-          test('should collect error', async () => {
-            const errors = [];
-
-            await dereference(rootFilePath, {
-              parse: { mediaType: mediaTypes.latest('json') },
-              dereference: { dereferenceOpts: { errors } },
-            });
-
-            expect(errors).toHaveLength(2);
-            expect(errors.at(0)).toMatchObject({
-              message: expect.stringMatching(
-                /^Could not resolve reference: Recursive Schema Object reference detected/
-              ),
-              baseDoc: expect.stringMatching(/infinite-recursion\/root\.json$/),
-              $ref: '#/components/schemas/User',
-              fullPath: ['components', 'schemas', 'User', '$ref'],
-            });
-            expect(errors.at(1)).toMatchObject({
-              message: expect.stringMatching(
-                /^Could not resolve reference: Recursive Schema Object reference detected/
-              ),
-              baseDoc: expect.stringMatching(/infinite-recursion\/root\.json$/),
-              $ref: '#/components/schemas/UserProfile',
-              fullPath: ['components', 'schemas', 'UserProfile', '$ref'],
-            });
-          });
         });
 
         describe('given Schema Objects with direct circular external reference', () => {
@@ -1796,25 +1801,6 @@ describe('dereference', () => {
             const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
             expect(toValue(actual)).toEqual(expected);
-          });
-
-          test('should collect error', async () => {
-            const errors = [];
-
-            await dereference(rootFilePath, {
-              parse: { mediaType: mediaTypes.latest('json') },
-              dereference: { dereferenceOpts: { errors } },
-            });
-
-            expect(errors).toHaveLength(1);
-            expect(errors[0]).toMatchObject({
-              message: expect.stringMatching(
-                /^Could not resolve reference: Recursive Schema Object reference detected/
-              ),
-              baseDoc: expect.stringMatching(/direct-external-circular\/ex\.json$/),
-              $ref: './root.json#/components/schemas/User',
-              fullPath: ['components', 'schemas', 'User', '$ref'],
-            });
           });
         });
 
@@ -1864,63 +1850,32 @@ describe('dereference', () => {
             expect(toValue(actual)).toEqual(expected);
           });
 
-          test('should collect error', async () => {
-            const errors = [];
-
-            await dereference(rootFilePath, {
-              parse: { mediaType: mediaTypes.latest('json') },
-              dereference: { dereferenceOpts: { errors } },
-            });
-
-            expect(errors).toHaveLength(1);
-            expect(errors[0]).toMatchObject({
-              message: expect.stringMatching(
-                /^Could not resolve reference: Recursive Schema Object reference detected/
-              ),
-              baseDoc: expect.stringMatching(/indirect-external-circular\/ex3\.json$/),
-              $ref: './root.json#/components/schemas/User',
-              fullPath: ['components', 'schemas', 'User', '$ref'],
-            });
-          });
-
           describe('and useCircularStructures=false', () => {
             test('should dereference', async () => {
-              const actual = await dereference(rootFilePath, {
+              const useCircularStructures = false;
+              const refSet = await resolve(rootFilePath, {
+                parse: { mediaType: mediaTypes.latest('json') },
+              });
+              refSet.refs[0].uri = '/home/smartbear/root.json';
+              refSet.refs[1].uri = '/home/smartbear/ex1.json';
+              refSet.refs[2].uri = '/home/smartbear/ex2.json';
+              refSet.refs[3].uri = '/home/smartbear/ex3.json';
+              const actual = await dereference(refSet.refs[0].uri, {
                 parse: { mediaType: mediaTypes.latest('json') },
                 dereference: {
-                  strategies: [
-                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
-                  ],
+                  circular: useCircularStructures ? 'ignore' : 'replace',
+                  circularReplacer: useCircularStructures
+                    ? referenceOptions.dereference.circularReplacer
+                    : circularReplacer,
+                  refSet,
                 },
               });
-              const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
+              const expected = globalThis.loadJsonFile(
+                path.join(fixturePath, 'dereferenced-no-circular-structures.json')
+              );
 
               expect(typeof toJSON(actual)).toBe('string');
               expect(toValue(actual)).toEqual(expected);
-            });
-
-            test('should collect error', async () => {
-              const errors = [];
-
-              await dereference(rootFilePath, {
-                parse: { mediaType: mediaTypes.latest('json') },
-                dereference: {
-                  dereferenceOpts: { errors },
-                  strategies: [
-                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
-                  ],
-                },
-              });
-
-              expect(errors).toHaveLength(1);
-              expect(errors[0]).toMatchObject({
-                message: expect.stringMatching(
-                  /^Could not resolve reference: Recursive Schema Object reference detected/
-                ),
-                baseDoc: expect.stringMatching(/indirect-external-circular\/ex3\.json$/),
-                $ref: './root.json#/components/schemas/User',
-                fullPath: ['components', 'schemas', 'User', '$ref'],
-              });
             });
           });
         });
@@ -1938,74 +1893,29 @@ describe('dereference', () => {
             expect(toValue(actual)).toEqual(expected);
           });
 
-          test('should collect error', async () => {
-            const errors = [];
-
-            await dereference(rootFilePath, {
-              parse: { mediaType: mediaTypes.latest('json') },
-              dereference: { dereferenceOpts: { errors } },
-            });
-
-            expect(errors).toHaveLength(4);
-            expect(errors.at(0)).toMatchObject({
-              message: expect.stringMatching(
-                /^Could not resolve reference: Recursive Schema Object reference detected/
-              ),
-              baseDoc: expect.stringMatching(/indirect-internal-circular\/root\.json$/),
-              $ref: '#/components/schemas/User',
-              fullPath: ['components', 'schemas', 'User', '$ref'],
-            });
-            expect(errors.at(3)).toMatchObject({
-              message: expect.stringMatching(
-                /^Could not resolve reference: Recursive Schema Object reference detected/
-              ),
-              baseDoc: expect.stringMatching(/indirect-internal-circular\/root\.json$/),
-              $ref: '#/components/schemas/Indirection3',
-              fullPath: ['components', 'schemas', 'Indirection3', '$ref'],
-            });
-          });
-
           describe('and useCircularStructures=false', () => {
             test('should dereference', async () => {
-              const actual = await dereference(rootFilePath, {
+              const useCircularStructures = false;
+              const refSet = await resolve(rootFilePath, {
                 parse: { mediaType: mediaTypes.latest('json') },
               });
-              const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
+              refSet.refs[0].uri = '/home/smartbear/root.json';
+              const actual = await dereference(refSet.refs[0].uri, {
+                parse: { mediaType: mediaTypes.latest('json') },
+                dereference: {
+                  circular: useCircularStructures ? 'ignore' : 'replace',
+                  circularReplacer: useCircularStructures
+                    ? referenceOptions.dereference.circularReplacer
+                    : circularReplacer,
+                  refSet,
+                },
+              });
+              const expected = globalThis.loadJsonFile(
+                path.join(fixturePath, 'dereferenced-no-circular-structures.json')
+              );
 
               expect(typeof toJSON(actual)).toBe('string');
               expect(toValue(actual)).toEqual(expected);
-            });
-
-            test('should collect error', async () => {
-              const errors = [];
-
-              await dereference(rootFilePath, {
-                parse: { mediaType: mediaTypes.latest('json') },
-                dereference: {
-                  dereferenceOpts: { errors },
-                  strategies: [
-                    OpenApi3_1SwaggerClientDereferenceStrategy({ useCircularStructures: false }),
-                  ],
-                },
-              });
-
-              expect(errors).toHaveLength(4);
-              expect(errors.at(0)).toMatchObject({
-                message: expect.stringMatching(
-                  /^Could not resolve reference: Recursive Schema Object reference detected/
-                ),
-                baseDoc: expect.stringMatching(/indirect-internal-circular\/root\.json$/),
-                $ref: '#/components/schemas/User',
-                fullPath: ['components', 'schemas', 'User', '$ref'],
-              });
-              expect(errors.at(3)).toMatchObject({
-                message: expect.stringMatching(
-                  /^Could not resolve reference: Recursive Schema Object reference detected/
-                ),
-                baseDoc: expect.stringMatching(/indirect-internal-circular\/root\.json$/),
-                $ref: '#/components/schemas/Indirection3',
-                fullPath: ['components', 'schemas', 'Indirection3', '$ref'],
-              });
             });
           });
         });
