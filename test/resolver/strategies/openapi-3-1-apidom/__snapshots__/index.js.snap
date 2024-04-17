@@ -634,12 +634,7 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL a
         "UserProfile": {
           "properties": {
             "user": {
-              "properties": {
-                "profile": {
-                  "$ref": "https://example.com/circular-structures.json#/components/schemas/UserProfile",
-                },
-              },
-              "type": "object",
+              "$ref": "https://example.com/circular-structures.json#/components/schemas/User",
             },
           },
           "type": "object",
@@ -668,12 +663,7 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL a
             "profile": {
               "properties": {
                 "user": {
-                  "properties": {
-                    "profile": {
-                      "properties": [Circular],
-                      "type": "object",
-                    },
-                  },
+                  "properties": [Circular],
                   "type": "object",
                 },
               },
@@ -2882,7 +2872,23 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
         },
         "Pets": {
           "items": {
-            "$ref": "#/components/schemas/Pet",
+            "properties": {
+              "id": {
+                "format": "int64",
+                "type": "integer",
+              },
+              "name": {
+                "type": "string",
+              },
+              "tag": {
+                "type": "string",
+              },
+            },
+            "required": [
+              "id",
+              "name",
+            ],
+            "type": "object",
           },
           "maxItems": 100,
           "type": "array",

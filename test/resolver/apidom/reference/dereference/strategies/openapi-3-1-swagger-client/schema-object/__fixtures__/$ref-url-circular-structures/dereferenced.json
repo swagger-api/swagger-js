@@ -23,13 +23,7 @@
           "type": "object",
           "properties": {
             "user": {
-              "$id": "https://swagger.io/schemas/user",
-              "type": "object",
-              "properties": {
-                "profile": {
-                  "$ref": "https://swagger.io/schemas/user-profile"
-                }
-              }
+              "$ref": "https://swagger.io/schemas/user"
             }
           }
         }

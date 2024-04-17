@@ -1,5 +1,5 @@
-import { isArrayElement, deepmerge, cloneDeep, toValue } from '@swagger-api/apidom-core';
-import { isSchemaElement, SchemaElement } from '@swagger-api/apidom-ns-openapi-3-1';
+import { isArrayElement, deepmerge } from '@swagger-api/apidom-core';
+import { isSchemaElement } from '@swagger-api/apidom-ns-openapi-3-1';
 
 import compose from '../utils/compose.js';
 import toPath from '../utils/to-path.js';
@@ -26,11 +26,8 @@ const AllOfVisitor = compose({
 
         // remove allOf keyword if empty
         if (schemaElement.allOf.isEmpty) {
-          return new SchemaElement(
-            schemaElement.content.filter((memberElement) => toValue(memberElement.key) !== 'allOf'),
-            cloneDeep(schemaElement.meta),
-            cloneDeep(schemaElement.attributes)
-          );
+          schemaElement.remove('allOf');
+          return undefined;
         }
 
         // collect errors if allOf keyword contains anything else than Schema Object
@@ -42,37 +39,45 @@ const AllOfVisitor = compose({
           return undefined;
         }
 
-        const mergedSchemaElement = deepmerge.all([...schemaElement.allOf.content, schemaElement]);
+        while (schemaElement.hasKey('allOf')) {
+          const { allOf } = schemaElement;
+          schemaElement.remove('allOf');
+          const allOfMerged = deepmerge.all([...allOf.content, schemaElement]);
 
-        /**
-         * If there was not an original $$ref value, make sure to remove
-         * any $$ref value that may exist from the result of `allOf` merges.
-         */
-        if (!schemaElement.hasKey('$$ref')) {
-          mergedSchemaElement.remove('$$ref');
+          /**
+           * If there was not an original $$ref value, make sure to remove
+           * any $$ref value that may exist from the result of `allOf` merges.
+           */
+          if (!schemaElement.hasKey('$$ref')) {
+            allOfMerged.remove('$$ref');
+          }
+
+          /**
+           * If there was an example keyword in the original schema,
+           * keep it instead of merging with example from other schema.
+           */
+          if (schemaElement.hasKey('example')) {
+            const member = allOfMerged.getMember('example');
+            if (member) {
+              member.value = schemaElement.get('example');
+            }
+          }
+
+          /**
+           * If there was an examples keyword in the original schema,
+           * keep it instead of merging with examples from other schema.
+           */
+          if (schemaElement.hasKey('examples')) {
+            const member = allOfMerged.getMember('examples');
+            if (member) {
+              member.value = schemaElement.get('examples');
+            }
+          }
+
+          schemaElement.content = allOfMerged.content;
         }
 
-        /**
-         * If there was an example keyword in the original definition,
-         * keep it instead of merging with example from other schema.
-         */
-        if (schemaElement.hasKey('example')) {
-          const member = mergedSchemaElement.getMember('example');
-          member.value = schemaElement.get('example');
-        }
-
-        /**
-         * If there was an examples keyword in the original definition,
-         * keep it instead of merging with examples from other schema.
-         */
-        if (schemaElement.hasKey('examples')) {
-          const member = mergedSchemaElement.getMember('examples');
-          member.value = schemaElement.get('examples');
-        }
-
-        // remove allOf keyword after the merge
-        mergedSchemaElement.remove('allOf');
-        return mergedSchemaElement;
+        return undefined;
       },
     },
   },

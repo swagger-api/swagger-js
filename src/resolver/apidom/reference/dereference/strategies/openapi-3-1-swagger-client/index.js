@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import { createNamespace, visit, mergeAllVisitors } from '@swagger-api/apidom-core';
+import { createNamespace, visit, mergeAllVisitors, cloneDeep } from '@swagger-api/apidom-core';
 import { ReferenceSet, Reference } from '@swagger-api/apidom-reference/configuration/empty';
 import OpenApi3_1DereferenceStrategy from '@swagger-api/apidom-reference/dereference/strategies/openapi-3-1';
 import openApi3_1Namespace, { getNodeType, keyMap } from '@swagger-api/apidom-ns-openapi-3-1';
@@ -14,7 +14,6 @@ const mergeAllVisitorsAsync = mergeAllVisitors[Symbol.for('nodejs.util.promisify
 
 const OpenApi3_1SwaggerClientDereferenceStrategy = OpenApi3_1DereferenceStrategy.compose({
   props: {
-    useCircularStructures: true,
     allowMetaPatches: false,
     parameterMacro: null,
     modelPropertyMacro: null,
@@ -22,7 +21,6 @@ const OpenApi3_1SwaggerClientDereferenceStrategy = OpenApi3_1DereferenceStrategy
     ancestors: null,
   },
   init({
-    useCircularStructures = this.useCircularStructures,
     allowMetaPatches = this.allowMetaPatches,
     parameterMacro = this.parameterMacro,
     modelPropertyMacro = this.modelPropertyMacro,
@@ -30,7 +28,6 @@ const OpenApi3_1SwaggerClientDereferenceStrategy = OpenApi3_1DereferenceStrategy
     ancestors = [],
   } = {}) {
     this.name = 'openapi-3-1-swagger-client';
-    this.useCircularStructures = useCircularStructures;
     this.allowMetaPatches = allowMetaPatches;
     this.parameterMacro = parameterMacro;
     this.modelPropertyMacro = modelPropertyMacro;
@@ -41,15 +38,34 @@ const OpenApi3_1SwaggerClientDereferenceStrategy = OpenApi3_1DereferenceStrategy
     async dereference(file, options) {
       const visitors = [];
       const namespace = createNamespace(openApi3_1Namespace);
-      const refSet = options.dereference.refSet ?? ReferenceSet();
+      const immutableRefSet = options.dereference.refSet ?? ReferenceSet();
+      const mutableRefsSet = ReferenceSet();
+      let refSet = immutableRefSet;
       let reference;
 
-      if (!refSet.has(file.uri)) {
+      if (!immutableRefSet.has(file.uri)) {
         reference = Reference({ uri: file.uri, value: file.parseResult });
-        refSet.add(reference);
+        immutableRefSet.add(reference);
       } else {
         // pre-computed refSet was provided as configuration option
-        reference = refSet.find((ref) => ref.uri === file.uri);
+        reference = immutableRefSet.find((ref) => ref.uri === file.uri);
+      }
+
+      /**
+       * Clone refSet due the dereferencing process being mutable.
+       * We don't want to mutate the original refSet and the references.
+       */
+      if (options.dereference.immutable) {
+        immutableRefSet.refs
+          .map((ref) =>
+            Reference({
+              ...ref,
+              value: cloneDeep(ref.value),
+            })
+          )
+          .forEach((ref) => mutableRefsSet.add(ref));
+        reference = mutableRefsSet.find((ref) => ref.uri === file.uri);
+        refSet = mutableRefsSet;
       }
 
       // create main dereference visitor
@@ -57,7 +73,6 @@ const OpenApi3_1SwaggerClientDereferenceStrategy = OpenApi3_1DereferenceStrategy
         reference,
         namespace,
         options,
-        useCircularStructures: this.useCircularStructures,
         allowMetaPatches: this.allowMetaPatches,
         ancestors: this.ancestors,
       });
@@ -96,12 +111,31 @@ const OpenApi3_1SwaggerClientDereferenceStrategy = OpenApi3_1DereferenceStrategy
       });
 
       /**
-       * Release all memory if this refSet was not provided as a configuration option.
+       * If immutable option is set, replay refs from the refSet.
+       */
+      if (options.dereference.immutable) {
+        mutableRefsSet.refs
+          .filter((ref) => ref.uri.startsWith('immutable://'))
+          .map((ref) =>
+            Reference({
+              ...ref,
+              uri: ref.uri.replace(/^immutable:\/\//, ''),
+            })
+          )
+          .forEach((ref) => immutableRefSet.add(ref));
+        reference = immutableRefSet.find((ref) => ref.uri === file.uri);
+        refSet = immutableRefSet;
+      }
+
+      /**
+       * Release all memory if this refSet was not provided as an configuration option.
        * If provided as configuration option, then provider is responsible for cleanup.
        */
       if (options.dereference.refSet === null) {
-        refSet.clean();
+        immutableRefSet.clean();
       }
+
+      mutableRefsSet.clean();
 
       return dereferencedElement;
     },

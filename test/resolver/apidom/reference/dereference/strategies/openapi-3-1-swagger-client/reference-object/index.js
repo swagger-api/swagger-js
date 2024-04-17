@@ -260,7 +260,7 @@ describe('dereference', () => {
             expect(errors).toHaveLength(1);
             expect(errors[0]).toMatchObject({
               message: expect.stringMatching(
-                /^Could not resolve reference: Recursive JSON Pointer detected/
+                /^Could not resolve reference: Recursive Reference Object detected/
               ),
               baseDoc: expect.stringMatching(/direct-internal-circular\/root\.json$/),
               $ref: '#/components/parameters/userId',
@@ -282,26 +282,6 @@ describe('dereference', () => {
 
             expect(toValue(actual)).toEqual(expected);
           });
-
-          test('should collect error', async () => {
-            const errors = [];
-
-            await dereference(rootFilePath, {
-              parse: { mediaType: mediaTypes.latest('json') },
-              dereference: { dereferenceOpts: { errors } },
-            });
-
-            expect(errors).toHaveLength(4);
-            expect(errors[0]).toMatchObject({
-              message: expect.stringMatching(
-                /^Could not resolve reference: Recursive JSON Pointer detected/
-              ),
-              baseDoc: expect.stringMatching(/indirect-internal-circular\/root\.json$/),
-              $ref: '#/components/parameters/userId',
-              pointer: '/components/parameters/userId',
-              fullPath: ['components', 'parameters', 'userId', '$ref'],
-            });
-          });
         });
 
         describe('given Reference Objects with direct circular external reference', () => {
@@ -316,26 +296,6 @@ describe('dereference', () => {
 
             expect(toValue(actual)).toEqual(expected);
           });
-
-          test('should collect error', async () => {
-            const errors = [];
-
-            await dereference(rootFilePath, {
-              parse: { mediaType: mediaTypes.latest('json') },
-              dereference: { dereferenceOpts: { errors } },
-            });
-
-            expect(errors).toHaveLength(1);
-            expect(errors[0]).toMatchObject({
-              message: expect.stringMatching(
-                /^Could not resolve reference: Recursive JSON Pointer detected/
-              ),
-              baseDoc: expect.stringMatching(/direct-external-circular\/ex\.json$/),
-              $ref: './root.json#/components/parameters/externalRef',
-              pointer: '/components/parameters/externalRef',
-              fullPath: ['components', 'parameters', 'externalRef', '$ref'],
-            });
-          });
         });
 
         describe('given Reference Objects with indirect circular external reference', () => {
@@ -349,26 +309,6 @@ describe('dereference', () => {
             const expected = globalThis.loadJsonFile(path.join(fixturePath, 'dereferenced.json'));
 
             expect(toValue(actual)).toEqual(expected);
-          });
-
-          test('should collect error', async () => {
-            const errors = [];
-
-            await dereference(rootFilePath, {
-              parse: { mediaType: mediaTypes.latest('json') },
-              dereference: { dereferenceOpts: { errors } },
-            });
-
-            expect(errors).toHaveLength(1);
-            expect(errors[0]).toMatchObject({
-              message: expect.stringMatching(
-                /^Could not resolve reference: Recursive JSON Pointer detected/
-              ),
-              baseDoc: expect.stringMatching(/indirect-external-circular\/ex3\.json$/),
-              $ref: './root.json#/components/parameters/externalRef',
-              pointer: '/components/parameters/externalRef',
-              fullPath: ['components', 'parameters', 'externalRef', '$ref'],
-            });
           });
         });
 
@@ -520,15 +460,17 @@ describe('dereference', () => {
             const errors = [];
 
             await dereference(rootFilePath, {
-              resolve: { maxDepth: 2 },
               parse: { mediaType: mediaTypes.latest('json') },
-              dereference: { dereferenceOpts: { errors } },
+              dereference: {
+                dereferenceOpts: { errors },
+                maxDepth: 2,
+              },
             });
 
             expect(errors).toHaveLength(1);
             expect(errors[0]).toMatchObject({
               message: expect.stringMatching(
-                /^Could not resolve reference: Maximum resolution depth/
+                /^Could not resolve reference: Maximum dereference depth of/
               ),
               baseDoc: expect.stringMatching(/max-depth\/ex2\.json$/),
               $ref: './ex3.json#/externalParameter',

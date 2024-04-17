@@ -14,4 +14,5 @@ module.exports = {
     '/__fixtures__/',
     '/__utils__/',
   ],
+  silent: true,
 };
