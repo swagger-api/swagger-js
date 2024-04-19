@@ -450,13 +450,7 @@ export function mergeInQueryOrForm(req = {}) {
       req.formdata = formdata;
       req.body = formdata;
     } else {
-      let data = {};
-      if (typeof form === 'string') {
-        data = { form };
-      } else {
-        data = form;
-      }
-      req.body = encodeFormOrQuery(data);
+      req.body = encodeFormOrQuery(form);
     }
 
     delete req.form;
