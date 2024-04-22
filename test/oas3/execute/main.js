@@ -961,6 +961,45 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
       });
     });
 
+    it('should serialize JSON values provided for schemas without properties', () => {
+      const req = buildRequest({
+        spec: {
+          openapi: '3.0.0',
+          paths: {
+            '/': {
+              post: {
+                operationId: 'myOp',
+                requestBody: {
+                  content: {
+                    'application/x-www-form-urlencoded': {
+                      schema: {
+                        type: 'object',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        operationId: 'myOp',
+        requestBody: JSON.stringify({
+          primitiveParam: 'string',
+          objectParam: { a: { b: 'c' }, d: [1, 2, 3] },
+        }),
+      });
+
+      expect(req).toEqual({
+        method: 'POST',
+        url: `/`,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        credentials: 'same-origin',
+        body: 'primitiveParam=string&objectParam=%7B%22a%22%3A%7B%22b%22%3A%22c%22%7D%2C%22d%22%3A%5B1%2C2%2C3%5D%7D',
+      });
+    });
+
     it('should not serialize undefined parameters', () => {
       const spec = {
         openapi: '3.0.1',

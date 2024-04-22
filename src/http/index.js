@@ -405,6 +405,19 @@ export function encodeFormOrQuery(data) {
    * @param {string} parameterName - Parameter name
    * @return {object} encoded parameter names and values
    */
+  if (typeof data === 'string') {
+    try {
+      data = JSON.parse(data);
+      Object.entries(data).forEach(([key, value]) => {
+        if (typeof value === 'object' && !Array.isArray(value)) {
+          data[key] = JSON.stringify(value);
+        }
+      });
+    } catch {
+      return valueEncoder(data, 'reserved');
+    }
+  }
+
   const encodedQuery = Object.keys(data).reduce((result, parameterName) => {
     // eslint-disable-next-line no-restricted-syntax
     for (const [key, value] of formatKeyValue(parameterName, data[parameterName])) {
