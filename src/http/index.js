@@ -323,6 +323,14 @@ function formatKeyValueBySerializationOption(key, value, skipEncoding, serializa
   const encodeFn = (v) => valueEncoder(v, escape);
   const encodeKeyFn = skipEncoding ? (k) => k : (k) => encodeFn(k);
 
+  if (typeof value === 'string') {
+    try {
+      value = JSON.parse(value);
+    } catch {
+      // can't parse the value so treat it as as a simple string
+    }
+  }
+
   // Primitive
   if (typeof value !== 'object') {
     return [[encodeKeyFn(key), encodeFn(value)]];

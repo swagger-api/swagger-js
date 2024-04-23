@@ -871,6 +871,71 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
       });
     });
 
+    it('should serialize JSON values provided as objects in `deepObject` style', () => {
+      const req = buildRequest({
+        spec: {
+          openapi: '3.0.0',
+          paths: {
+            '/': {
+              post: {
+                operationId: 'myOp',
+                requestBody: {
+                  content: {
+                    'application/x-www-form-urlencoded': {
+                      schema: {
+                        type: 'object',
+                        properties: {
+                          a: {
+                            type: 'object',
+                            properties: {
+                              b: {
+                                type: 'string',
+                              },
+                              c: {
+                                type: 'array',
+                              },
+                              d: {
+                                type: 'object',
+                              },
+                            },
+                          },
+                        },
+                      },
+                      encoding: {
+                        a: {
+                          style: 'deepObject',
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        operationId: 'myOp',
+        requestBody: {
+          a: {
+            b: 'c',
+            c: ['d', 'e'],
+            d: {
+              e: 'f',
+            },
+          },
+        },
+      });
+
+      expect(req).toEqual({
+        method: 'POST',
+        url: `/`,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        credentials: 'same-origin',
+        body: 'a%5Bb%5D=c&a%5Bc%5D=%5B%22d%22%2C%22e%22%5D&a%5Bd%5D=%7B%22e%22%3A%22f%22%7D',
+      });
+    });
+
     it('should serialize JSON values provided as arrays of stringified objects', () => {
       const req = buildRequest({
         spec: {
