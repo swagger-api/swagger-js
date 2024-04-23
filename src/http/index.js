@@ -1,10 +1,8 @@
 import '../helpers/fetch-polyfill.node.js';
-import { mergeInQueryOrForm, encodeFormOrQuery, isFile } from './serializers/request/index.js';
-import {
-  serializeRes,
-  serializeHeaders,
-  shouldDownloadAsText,
-} from './serializers/response/index.js';
+import { serializeRequest } from './serializers/request/index.js';
+import { serializeResponse, serializeHeaders } from './serializers/response/index.js';
+
+export { serializeResponse as serializeRes, serializeHeaders };
 
 // Handles fetch-like syntax and the case where there is only one object passed-in
 // (which will have the URL as a property). Also serializes the response.
@@ -19,7 +17,7 @@ export default async function http(url, request = {}) {
   // Serializes query, for convenience
   // Should be the last thing we do, as its hard to mutate the URL with
   // the search string, but much easier to manipulate the req.query object
-  mergeInQueryOrForm(request);
+  request = serializeRequest(request);
 
   // Newlines in header values cause weird error messages from `window.fetch`,
   // so let's message them out.
@@ -55,7 +53,7 @@ export default async function http(url, request = {}) {
   let res;
   try {
     res = await (request.userFetch || fetch)(request.url, request);
-    res = await serializeRes(res, url, request);
+    res = await serializeResponse(res, url, request);
     if (request.responseInterceptor) {
       res = (await request.responseInterceptor(res)) || res;
     }
@@ -82,25 +80,15 @@ export default async function http(url, request = {}) {
 }
 
 // Wrap a http function ( there are otherways to do this, consider this deprecated )
-function makeHttp(httpFn, preFetch, postFetch) {
+export function makeHttp(httpFn, preFetch, postFetch) {
   postFetch = postFetch || ((a) => a);
   preFetch = preFetch || ((a) => a);
   return (req) => {
     if (typeof req === 'string') {
       req = { url: req };
     }
-    mergeInQueryOrForm(req);
+    req = serializeRequest(req);
     req = preFetch(req);
     return postFetch(httpFn(req));
   };
 }
-
-export {
-  makeHttp,
-  mergeInQueryOrForm,
-  encodeFormOrQuery,
-  isFile,
-  serializeRes,
-  serializeHeaders,
-  shouldDownloadAsText,
-};

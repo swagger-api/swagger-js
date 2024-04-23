@@ -1,4 +1,4 @@
-function isFile(obj, navigatorObj) {
+export function isFile(obj, navigatorObj) {
   if (!navigatorObj && typeof navigator !== 'undefined') {
     // eslint-disable-next-line no-undef
     navigatorObj = navigator;
@@ -23,7 +23,7 @@ function isFile(obj, navigatorObj) {
   return obj !== null && typeof obj === 'object' && typeof obj.pipe === 'function';
 }
 
-function isArrayOfFile(obj, navigatorObj) {
+export function isArrayOfFile(obj, navigatorObj) {
   return Array.isArray(obj) && obj.some((v) => isFile(v, navigatorObj));
 }
 
@@ -35,7 +35,7 @@ function isArrayOfFile(obj, navigatorObj) {
  * This sub-class is exclusively used only when Encoding Object
  * is defined within the Media Type Object (OpenAPI 3.x.y).
  */
-class FileWithData extends File {
+export class FileWithData extends File {
   constructor(data, name = '', options = {}) {
     super([data], name, options);
     this.data = data;
@@ -49,5 +49,3 @@ class FileWithData extends File {
     return this.valueOf();
   }
 }
-
-export { isFile, isArrayOfFile, FileWithData };

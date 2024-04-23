@@ -41,7 +41,7 @@ function buildFormData(reqForm) {
 }
 
 // Encodes an object using appropriate serializer.
-function encodeFormOrQuery(data) {
+export function encodeFormOrQuery(data) {
   /**
    * Encode parameter names and values
    * @param {Object} result - parameter names and values
@@ -65,7 +65,7 @@ function encodeFormOrQuery(data) {
 
 // If the request has a `query` object, merge it into the request.url, and delete the object
 // If file and/or multipart, also create FormData instance
-function mergeInQueryOrForm(req = {}) {
+export function serializeRequest(req = {}) {
   const { url = '', query, form } = req;
   const joinSearch = (...strs) => {
     const search = strs.filter((a) => a).join('&'); // Only truthy value
@@ -108,5 +108,3 @@ function mergeInQueryOrForm(req = {}) {
   }
   return req;
 }
-
-export { mergeInQueryOrForm, encodeFormOrQuery, isFile };

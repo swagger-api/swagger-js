@@ -1,13 +1,13 @@
 import * as undici from 'undici';
 
-import http, {
+import http from '../../src/http/index.js';
+import { serializeRequest, encodeFormOrQuery } from '../../src/http/serializers/request/index.js';
+import { isFile } from '../../src/http/serializers/request/file.js';
+import {
+  serializeResponse,
   serializeHeaders,
-  mergeInQueryOrForm,
-  encodeFormOrQuery,
-  serializeRes,
   shouldDownloadAsText,
-  isFile,
-} from '../../src/http/index.js';
+} from '../../src/http/serializers/response/index.js';
 
 describe('http', () => {
   let mockAgent;
@@ -226,7 +226,7 @@ describe('http', () => {
     });
   });
 
-  describe('mergeInQueryOrForm', () => {
+  describe('serializeRequest', () => {
     test('should add query into URL ( with exising url )', () => {
       const req = {
         url: 'https://swagger.io?one=1&two=1',
@@ -239,7 +239,7 @@ describe('http', () => {
           },
         },
       };
-      expect(mergeInQueryOrForm(req)).toEqual({
+      expect(serializeRequest(req)).toEqual({
         url: 'https://swagger.io?one=1&two=2&three=3',
       });
     });
@@ -255,7 +255,7 @@ describe('http', () => {
           },
         },
       };
-      mergeInQueryOrForm(req);
+      serializeRequest(req);
       const fdArrayItem = req.formdata.getAll('testJson');
       expect(fdArrayItem.length).toEqual(1);
       expect(fdArrayItem[0]).toEqual('{"name": "John"}');
@@ -358,7 +358,7 @@ describe('http', () => {
     });
   });
 
-  describe('serializeRes', () => {
+  describe('serializeResponse', () => {
     test('should serialize fetch-like response and call serializeHeaders', () => {
       const response = new Response('data', {
         // eslint-disable-line no-undef
@@ -369,7 +369,7 @@ describe('http', () => {
         },
       });
 
-      return serializeRes(response, 'https://swagger.io').then((serializedResponse) => {
+      return serializeResponse(response, 'https://swagger.io').then((serializedResponse) => {
         expect(serializedResponse.headers).toEqual({
           authorization: ['Basic hoop-la', 'Advanced hoop-la'],
           'content-type': 'text/plain',
@@ -389,7 +389,7 @@ describe('http', () => {
         .then((_res) => {
           // eslint-disable-line no-undef
           originalRes = _res;
-          return serializeRes(_res, 'https://swagger.io');
+          return serializeResponse(_res, 'https://swagger.io');
         })
         .then((resSerialize) => {
           expect(resSerialize.data).toBe(resSerialize.text);
@@ -411,7 +411,7 @@ describe('http', () => {
       return fetch('http://swagger.io')
         .then((_res) =>
           // eslint-disable-line no-undef
-          serializeRes(_res, 'https://swagger.io')
+          serializeResponse(_res, 'https://swagger.io')
         )
         .then((resSerialize) => {
           expect(resSerialize.data).toBe(resSerialize.text);
