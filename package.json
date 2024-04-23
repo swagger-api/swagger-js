@@ -1,6 +1,6 @@
 {
   "name": "swagger-client",
-  "version": "3.27.0",
+  "version": "3.27.1",
   "description": "SwaggerJS - a collection of interfaces for OAI specs",
   "browser": {
     "./src/helpers/btoa.node.js": "./src/helpers/btoa.browser.js",
@@ -123,7 +123,7 @@
     "node-abort-controller": "^3.1.1",
     "node-fetch-commonjs": "^3.3.2",
     "qs": "^6.10.2",
-    "traverse": "~0.6.6"
+    "traverse": "=0.6.8"
   },
   "overrides": {
     "@swagger-api/apidom-reference": {
