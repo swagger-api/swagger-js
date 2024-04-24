@@ -64,11 +64,32 @@ export default function buildRequest(options, req) {
 
             req.form = {};
             Object.keys(requestBody).forEach((k) => {
+              let value;
+              try {
+                value = JSON.parse(requestBody[k]);
+              } catch {
+                value = requestBody[k];
+              }
               req.form[k] = {
-                value: requestBody[k],
+                value,
                 encoding: encoding[k] || {},
               };
             });
+          } else if (typeof requestBody === 'string') {
+            const encoding = requestBodyDef.content[requestContentType]?.encoding ?? {};
+
+            try {
+              req.form = {};
+              const form = JSON.parse(requestBody);
+              Object.entries(form).forEach(([key, value]) => {
+                req.form[key] = {
+                  value,
+                  encoding: encoding[key] || {},
+                };
+              });
+            } catch {
+              req.form = requestBody;
+            }
           } else {
             req.form = requestBody;
           }

@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 import { DEFAULT_OPENAPI_3_SERVER } from './constants.js';
-import Http, { makeHttp, serializeRes, serializeHeaders } from './http/index.js';
+import Http, { makeHttp, serializeRes } from './http/index.js';
+import { serializeHeaders } from './http/serializers/response/index.js';
 import { makeResolve } from './resolver/index.js';
 import { makeResolveSubtree } from './subtree-resolver/index.js';
 import genericResolveStrategy from './resolver/strategies/generic/index.js';
