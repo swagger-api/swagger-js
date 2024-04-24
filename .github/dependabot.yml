@@ -11,7 +11,7 @@ updates:
   open-pull-requests-limit: 10
   ignore:
     - dependency-name: "traverse"
-    - dependency-name: "undici" # we need to stay on unidici@5 for testing on Node.js@16
+    - dependency-name: "undici" # we need to stay on undici@5 for testing on Node.js@16
       dependency-type: "development"
       update-types:
         - "version-update:semver-major"
