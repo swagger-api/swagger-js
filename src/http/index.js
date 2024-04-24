@@ -1,8 +1,8 @@
 import '../helpers/fetch-polyfill.node.js';
 import { serializeRequest } from './serializers/request/index.js';
-import { serializeResponse, serializeHeaders } from './serializers/response/index.js';
+import { serializeResponse } from './serializers/response/index.js';
 
-export { serializeResponse as serializeRes, serializeHeaders };
+export { serializeResponse as serializeRes };
 
 // Handles fetch-like syntax and the case where there is only one object passed-in
 // (which will have the URL as a property). Also serializes the response.
