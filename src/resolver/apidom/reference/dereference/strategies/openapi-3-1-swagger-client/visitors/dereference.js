@@ -49,7 +49,7 @@ import {
 import toPath from '../utils/to-path.js';
 import getRootCause from '../utils/get-root-cause.js';
 import specMapMod from '../../../../../../specmap/lib/refs.js';
-import { SchemaRefError } from '../errors/index.js';
+import SchemaRefError from '../errors/SchemaRefError.js';
 
 const { wrapError } = specMapMod;
 
@@ -799,8 +799,8 @@ const OpenApi3_1SwaggerClientDereferenceVisitor = OpenApi3_1DereferenceVisitor.c
               ...toPath([...ancestors, parent, referencingElement]),
               '$ref',
             ],
-          },
-          rootCause
+            cause: rootCause,
+          }
         );
         this.options.dereference.dereferenceOpts?.errors?.push?.(wrappedError);
 

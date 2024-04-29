@@ -1,18 +1,15 @@
 import jsYaml from 'js-yaml';
+import { ApiDOMStructuredError } from '@swagger-api/apidom-error';
 import { url } from '@swagger-api/apidom-reference/configuration/empty';
 
 import '../../../helpers/fetch-polyfill.node.js';
 import lib from './index.js';
-import createError from './create-error.js';
 import { isFreelyNamed, absolutifyPointer } from '../helpers.js';
 import { ACCEPT_HEADER_VALUE_FOR_DOCUMENTS } from '../../../constants.js';
 
 const ABSOLUTE_URL_REGEXP = /^([a-z]+:\/\/|\/\/)/i;
 
-const JSONRefError = createError('JSONRefError', function cb(message, extra, oriError) {
-  this.originalError = oriError;
-  Object.assign(this, extra || {});
-});
+class JSONRefError extends ApiDOMStructuredError {}
 
 const docCache = {};
 const specmapRefs = new WeakMap();
@@ -295,7 +292,10 @@ function wrapError(e, extra) {
     message = e.message;
   }
 
-  return new JSONRefError(`Could not resolve reference: ${message}`, extra, e);
+  return new JSONRefError(`Could not resolve reference: ${message}`, {
+    ...extra,
+    cause: e,
+  });
 }
 
 /**
