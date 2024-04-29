@@ -48,7 +48,7 @@ import {
 
 import toPath from '../utils/to-path.js';
 import getRootCause from '../utils/get-root-cause.js';
-import specMapMod from '../../../../../../../specmap/lib/refs.js';
+import specMapMod from '../../../../../../specmap/lib/refs.js';
 import { SchemaRefError } from '../errors/index.js';
 
 const { wrapError } = specMapMod;

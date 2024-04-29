@@ -1,8 +1,8 @@
 import path from 'node:path';
 import { globSync } from 'glob';
 
-import mapSpec, { plugins } from '../../src/specmap/index.js';
-import Swagger from '../../src/index.js';
+import mapSpec, { plugins } from '../../../src/resolver/specmap/index.js';
+import Swagger from '../../../src/index.js';
 
 const { refs } = plugins;
 const { allOf } = plugins;

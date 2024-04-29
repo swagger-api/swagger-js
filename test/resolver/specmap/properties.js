@@ -1,4 +1,4 @@
-import mapSpec, { plugins } from '../../src/specmap/index.js';
+import mapSpec, { plugins } from '../../../src/resolver/specmap/index.js';
 
 describe('properties', () => {
   test('should add default value to each property', () => {

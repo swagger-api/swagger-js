@@ -1,11 +1,11 @@
 import jsYaml from 'js-yaml';
 import { url } from '@swagger-api/apidom-reference/configuration/empty';
 
-import '../../helpers/fetch-polyfill.node.js';
+import '../../../helpers/fetch-polyfill.node.js';
 import lib from './index.js';
 import createError from './create-error.js';
 import { isFreelyNamed, absolutifyPointer } from '../helpers.js';
-import { ACCEPT_HEADER_VALUE_FOR_DOCUMENTS } from '../../constants.js';
+import { ACCEPT_HEADER_VALUE_FOR_DOCUMENTS } from '../../../constants.js';
 
 const ABSOLUTE_URL_REGEXP = /^([a-z]+:\/\/|\/\/)/i;
 

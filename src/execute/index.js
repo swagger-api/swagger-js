@@ -5,7 +5,7 @@ import { url } from '@swagger-api/apidom-reference/configuration/empty';
 import { DEFAULT_BASE_URL, DEFAULT_OPENAPI_3_SERVER } from '../constants.js';
 import stockHttp from '../http/index.js';
 import { serializeRequest } from '../http/serializers/request/index.js';
-import createError from '../specmap/lib/create-error.js';
+import createError from '../resolver/specmap/lib/create-error.js';
 import SWAGGER2_PARAMETER_BUILDERS from './swagger2/parameter-builders.js';
 import * as OAS3_PARAMETER_BUILDERS from './oas3/parameter-builders.js';
 import oas3BuildRequest from './oas3/build-request.js';

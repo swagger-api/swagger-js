@@ -1,6 +1,6 @@
 import resolveGenericStrategy from './resolve.js';
 import normalize from './normalize.js';
-import { plugins } from '../../../specmap/index.js';
+import { plugins } from '../../specmap/index.js';
 
 export function clearCache() {
   plugins.refs.clearCache();

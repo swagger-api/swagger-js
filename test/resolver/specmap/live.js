@@ -1,4 +1,4 @@
-import mapSpec, { plugins } from '../../src/specmap/index.js';
+import mapSpec, { plugins } from '../../../src/resolver/specmap/index.js';
 
 if (process.env.NODE_LIVETESTS === 'true') {
   describe('Live tests against the internet', () => {

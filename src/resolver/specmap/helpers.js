@@ -1,7 +1,7 @@
 import traverse from 'traverse';
 import { url } from '@swagger-api/apidom-reference/configuration/empty';
 
-import { DEFAULT_BASE_URL } from '../constants.js';
+import { DEFAULT_BASE_URL } from '../../constants.js';
 
 // This will match if the direct parent's key exactly matches an item.
 const freelyNamedKeyParents = ['properties'];

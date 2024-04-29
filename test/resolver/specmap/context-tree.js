@@ -1,4 +1,4 @@
-import ContextTree from '../../src/specmap/lib/context-tree.js';
+import ContextTree from '../../../src/resolver/specmap/lib/context-tree.js';
 
 describe('ContextTree', () => {
   test('should set and get a deep value', () => {

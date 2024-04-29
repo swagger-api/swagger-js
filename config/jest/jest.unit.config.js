@@ -9,7 +9,7 @@ module.exports = {
     '<rootDir>/node_modules/',
     '<rootDir>/test/data/',
     '<rootDir>/test/jest.setup.js',
-    '<rootDir>/test/specmap/data/',
+    '<rootDir>/test/resolver/specmap/data/',
     '<rootDir>/test/build-artifacts/',
     '/__fixtures__/',
     '/__utils__/',

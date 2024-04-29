@@ -5,7 +5,7 @@ import { globSync } from 'glob';
 import jsYaml from 'js-yaml';
 import * as undici from 'undici';
 
-import mapSpec, { plugins } from '../../src/specmap/index.js';
+import mapSpec, { plugins } from '../../../src/resolver/specmap/index.js';
 
 const { refs } = plugins;
 
