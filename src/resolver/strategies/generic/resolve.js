@@ -1,4 +1,4 @@
-import mapSpec, { plugins } from '../../../specmap/index.js';
+import mapSpec, { plugins } from '../../specmap/index.js';
 import normalize from './normalize.js';
 import { makeFetchJSON } from '../../utils/index.js';
 import * as optionsUtil from '../../utils/options.js';

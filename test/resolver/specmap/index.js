@@ -2,8 +2,8 @@ import * as undici from 'undici';
 import cloneDeep from 'lodash/cloneDeep';
 import traverse from 'traverse';
 
-import mapSpec, { SpecMap, plugins } from '../../src/specmap/index.js';
-import lib from '../../src/specmap/lib/index.js';
+import mapSpec, { SpecMap, plugins } from '../../../src/resolver/specmap/index.js';
+import lib from '../../../src/resolver/specmap/lib/index.js';
 
 describe('specmap', () => {
   let testContext;

@@ -1,4 +1,4 @@
-import lib from '../../src/specmap/lib/index.js';
+import lib from '../../../src/resolver/specmap/lib/index.js';
 
 describe('lib', () => {
   describe('applyPatch', () => {
