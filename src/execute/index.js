@@ -347,7 +347,7 @@ function oas3BaseUrl({ spec, pathName, method, server, contextUrl, serverVariabl
 
   if (selectedServerUrl.includes('{')) {
     // do variable substitution
-    const varNames = getVariableTemplateNames(selectedServerUrl);
+    const varNames = extractServerVariableNames(selectedServerUrl);
     varNames.forEach((variable) => {
       if (selectedServerObj.variables && selectedServerObj.variables[variable]) {
         // variable is defined in server
@@ -388,16 +388,9 @@ function buildOas3UrlWithContext(ourUrl = '', contextUrl = '') {
   return res[res.length - 1] === '/' ? res.slice(0, -1) : res;
 }
 
-function getVariableTemplateNames(str) {
-  const results = [];
-  const re = /{([^}]{1,29})}/g;
-  let text;
-
-  // eslint-disable-next-line no-cond-assign
-  while ((text = re.exec(str))) {
-    results.push(text[1]);
-  }
-  return results;
+function extractServerVariableNames(serverURL) {
+  const match = serverURL.matchAll(/\{([^{}]+)}|([^{}]+)/g);
+  return Array.from(match, ([, variable]) => variable).filter(Boolean);
 }
 
 // Compose the baseUrl ( scheme + host + basePath )
