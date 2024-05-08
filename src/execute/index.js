@@ -2,6 +2,7 @@ import cookie from 'cookie';
 import { isPlainObject } from 'is-plain-object';
 import { ApiDOMStructuredError } from '@swagger-api/apidom-error';
 import { url } from '@swagger-api/apidom-reference/configuration/empty';
+import { escapeRegExp } from 'ramda-adjunct';
 
 import { DEFAULT_BASE_URL, DEFAULT_OPENAPI_3_SERVER } from '../constants.js';
 import stockHttp from '../http/index.js';
@@ -353,7 +354,7 @@ function oas3BaseUrl({ spec, pathName, method, server, contextUrl, serverVariabl
         const variableDefinition = selectedServerObj.variables[variable];
         const variableValue = serverVariables[variable] || variableDefinition.default;
 
-        const re = new RegExp(`{${variable}}`, 'g');
+        const re = new RegExp(`{${escapeRegExp(variable)}}`, 'g');
         selectedServerUrl = selectedServerUrl.replace(re, variableValue);
       }
     });
