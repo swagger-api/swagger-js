@@ -1,4 +1,4 @@
-import { resolve } from 'openapi-path-templating';
+import { resolve as resolvePathTemplate } from 'openapi-path-templating';
 
 import { DEFAULT_BASE_URL } from '../../constants.js';
 import stylize, { encodeCharacters } from './style-serializer.js';
@@ -15,7 +15,7 @@ export function path({ req, value, parameter }) {
   if (content) {
     const effectiveMediaType = Object.keys(content)[0];
 
-    const resolvedPathname = resolve(
+    const resolvedPathname = resolvePathTemplate(
       pathname,
       { [name]: value },
       { encoder: (val) => encodeCharacters(serialize(val, effectiveMediaType)) }
@@ -23,7 +23,7 @@ export function path({ req, value, parameter }) {
 
     req.url = req.url.replace(pathname, resolvedPathname);
   } else {
-    const resolvedPathname = resolve(
+    const resolvedPathname = resolvePathTemplate(
       pathname,
       { [name]: value },
       {

@@ -1,4 +1,4 @@
-import { resolve } from 'openapi-path-templating';
+import { resolve as resolvePathTemplate } from 'openapi-path-templating';
 
 import { DEFAULT_BASE_URL } from '../../constants.js';
 
@@ -58,7 +58,7 @@ function pathBuilder({ req, value, parameter }) {
     const url = new URL(req.url, DEFAULT_BASE_URL);
     const pathname = decodeURIComponent(url.pathname);
 
-    const resolvedPathname = resolve(pathname, { [parameter.name]: value });
+    const resolvedPathname = resolvePathTemplate(pathname, { [parameter.name]: value });
 
     req.url = req.url.replace(pathname, resolvedPathname);
   }
