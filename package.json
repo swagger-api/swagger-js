@@ -122,7 +122,7 @@
     "js-yaml": "^4.1.0",
     "node-abort-controller": "^3.1.1",
     "node-fetch-commonjs": "^3.3.2",
-    "openapi-path-templating": "^1.5.0",
+    "openapi-path-templating": "^1.5.1",
     "qs": "^6.10.2",
     "traverse": "=0.6.8"
   },

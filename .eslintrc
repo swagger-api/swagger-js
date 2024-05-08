@@ -44,8 +44,7 @@
           "^@swagger-api/apidom-reference/dereference/strategies/openapi-3-1/selectors/uri$",
           "^@swagger-api/apidom-reference/resolve/resolvers/file$",
           "^@swagger-api/apidom-reference/resolve/strategies/openapi-3-1$",
-          "^@swagger-api/apidom-reference/parse/parsers/binary$",
-          "openapi-path-templating"
+          "^@swagger-api/apidom-reference/parse/parsers/binary$"
         ]
       }
     ],

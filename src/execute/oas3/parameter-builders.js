@@ -8,18 +8,18 @@ export function path({ req, value, parameter, pathName }) {
 
   if (value === undefined) return;
 
+  let resolvedPathname;
+
   if (content) {
     const effectiveMediaType = Object.keys(content)[0];
 
-    const resolvedPathname = resolvePathTemplate(
+    resolvedPathname = resolvePathTemplate(
       pathName,
       { [name]: value },
       { encoder: (val) => encodeCharacters(serialize(val, effectiveMediaType)) }
     );
-
-    req.url = req.url.replace(pathName, resolvedPathname);
   } else {
-    const resolvedPathname = resolvePathTemplate(
+    resolvedPathname = resolvePathTemplate(
       pathName,
       { [name]: value },
       {
@@ -33,9 +33,9 @@ export function path({ req, value, parameter, pathName }) {
           }),
       }
     );
-
-    req.url = req.url.replace(pathName, resolvedPathname);
   }
+
+  req.url = req.url.replace(pathName, resolvedPathname);
 }
 
 export function query({ req, value, parameter }) {
