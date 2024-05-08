@@ -1,8 +1,8 @@
 import cookie from 'cookie';
 import { isPlainObject } from 'is-plain-object';
+import { escapeRegExp } from 'ramda-adjunct';
 import { ApiDOMStructuredError } from '@swagger-api/apidom-error';
 import { url } from '@swagger-api/apidom-reference/configuration/empty';
-import { escapeRegExp } from 'ramda-adjunct';
 
 import { DEFAULT_BASE_URL, DEFAULT_OPENAPI_3_SERVER } from '../constants.js';
 import stockHttp from '../http/index.js';
