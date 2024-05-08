@@ -388,7 +388,7 @@ function buildOas3UrlWithContext(ourUrl = '', contextUrl = '') {
 
 function getVariableTemplateNames(str) {
   const results = [];
-  const re = /{([^}]+)}/g;
+  const re = /{([\s\S]+?)}/g;
   let text;
 
   // eslint-disable-next-line no-cond-assign
