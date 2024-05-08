@@ -395,7 +395,7 @@ function getVariableTemplateNames(str) {
 
   // eslint-disable-next-line no-cond-assign
   while ((text = re.exec(str))) {
-    results.push(text[1]);
+    if (text[1]) results.push(text[1]);
   }
   return results;
 }
