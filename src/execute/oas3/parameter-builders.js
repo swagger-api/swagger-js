@@ -1,30 +1,26 @@
 import { resolve as resolvePathTemplate } from 'openapi-path-templating';
 
-import { DEFAULT_BASE_URL } from '../../constants.js';
 import stylize, { encodeCharacters } from './style-serializer.js';
 import serialize from './content-serializer.js';
 
-export function path({ req, value, parameter }) {
+export function path({ req, value, parameter, pathName }) {
   const { name, style, explode, content } = parameter;
 
   if (value === undefined) return;
-
-  const url = new URL(req.url, DEFAULT_BASE_URL);
-  const pathname = decodeURIComponent(url.pathname);
 
   if (content) {
     const effectiveMediaType = Object.keys(content)[0];
 
     const resolvedPathname = resolvePathTemplate(
-      pathname,
+      pathName,
       { [name]: value },
       { encoder: (val) => encodeCharacters(serialize(val, effectiveMediaType)) }
     );
 
-    req.url = req.url.replace(pathname, resolvedPathname);
+    req.url = req.url.replace(pathName, resolvedPathname);
   } else {
     const resolvedPathname = resolvePathTemplate(
-      pathname,
+      pathName,
       { [name]: value },
       {
         encoder: (val) =>
@@ -38,7 +34,7 @@ export function path({ req, value, parameter }) {
       }
     );
 
-    req.url = req.url.replace(pathname, resolvedPathname);
+    req.url = req.url.replace(pathName, resolvedPathname);
   }
 }
 

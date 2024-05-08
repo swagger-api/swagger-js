@@ -1,7 +1,5 @@
 import { resolve as resolvePathTemplate } from 'openapi-path-templating';
 
-import { DEFAULT_BASE_URL } from '../../constants.js';
-
 // These functions will update the request.
 // They'll be given {req, value, paramter, spec, operation}.
 
@@ -53,14 +51,11 @@ function headerBuilder({ req, parameter, value }) {
 }
 
 // Replace path paramters, with values ( ie: the URL )
-function pathBuilder({ req, value, parameter }) {
+function pathBuilder({ req, value, parameter, pathName }) {
   if (value !== undefined) {
-    const url = new URL(req.url, DEFAULT_BASE_URL);
-    const pathname = decodeURIComponent(url.pathname);
+    const resolvedPathname = resolvePathTemplate(pathName, { [parameter.name]: value });
 
-    const resolvedPathname = resolvePathTemplate(pathname, { [parameter.name]: value });
-
-    req.url = req.url.replace(pathname, resolvedPathname);
+    req.url = req.url.replace(pathName, resolvedPathname);
   }
 }
 
