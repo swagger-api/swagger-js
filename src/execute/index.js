@@ -265,6 +265,7 @@ export function buildRequest(options) {
         value,
         operation,
         spec,
+        pathName,
       });
     }
   });
