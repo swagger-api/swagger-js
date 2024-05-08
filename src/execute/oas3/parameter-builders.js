@@ -1,3 +1,6 @@
+import { resolve } from 'openapi-path-templating';
+
+import { DEFAULT_BASE_URL } from '../../constants.js';
 import stylize, { encodeCharacters } from './style-serializer.js';
 import serialize from './content-serializer.js';
 
@@ -6,22 +9,36 @@ export function path({ req, value, parameter }) {
 
   if (value === undefined) return;
 
+  const url = new URL(req.url, DEFAULT_BASE_URL);
+  const pathname = decodeURIComponent(url.pathname);
+
   if (content) {
     const effectiveMediaType = Object.keys(content)[0];
 
-    req.url = req.url
-      .split(`{${name}}`)
-      .join(encodeCharacters(serialize(value, effectiveMediaType)));
-  } else {
-    const styledValue = stylize({
-      key: parameter.name,
-      value,
-      style: style || 'simple',
-      explode: explode || false,
-      escape: 'reserved',
-    });
+    const resolvedPathname = resolve(
+      pathname,
+      { [name]: value },
+      { encoder: (val) => encodeCharacters(serialize(val, effectiveMediaType)) }
+    );
 
-    req.url = req.url.replace(new RegExp(`{${name}}`, 'g'), styledValue);
+    req.url = req.url.replace(pathname, resolvedPathname);
+  } else {
+    const resolvedPathname = resolve(
+      pathname,
+      { [name]: value },
+      {
+        encoder: (val) =>
+          stylize({
+            key: parameter.name,
+            value: val,
+            style: style || 'simple',
+            explode: explode || false,
+            escape: 'reserved',
+          }),
+      }
+    );
+
+    req.url = req.url.replace(pathname, resolvedPathname);
   }
 }
 
