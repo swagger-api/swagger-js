@@ -1982,6 +1982,53 @@ describe('execute', () => {
         });
       });
 
+      test('should replace all path parameters with their values', () => {
+        const spec = {
+          host: 'swagger.io',
+          basePath: '/v1',
+          paths: {
+            '/{id}/orders/{order}/{itemId}': {
+              get: {
+                operationId: 'getMe',
+                parameters: [
+                  {
+                    in: 'path',
+                    name: 'id',
+                    type: 'number',
+                    required: true,
+                  },
+                  {
+                    in: 'path',
+                    name: 'order',
+                    type: 'number',
+                    required: true,
+                  },
+                  {
+                    in: 'path',
+                    name: 'itemId',
+                    type: 'number',
+                    required: true,
+                  },
+                ],
+              },
+            },
+          },
+        };
+
+        const req = buildRequest({
+          spec,
+          operationId: 'getMe',
+          parameters: { id: '123', order: '456', itemId: '789' },
+        });
+
+        expect(req).toEqual({
+          url: 'http://swagger.io/v1/123/orders/456/789',
+          method: 'GET',
+          credentials: 'same-origin',
+          headers: {},
+        });
+      });
+
       test('should not replace path parameters with undefined values', () => {
         const spec = {
           host: 'swagger.io',

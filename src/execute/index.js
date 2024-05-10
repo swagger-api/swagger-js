@@ -172,7 +172,7 @@ export function buildRequest(options) {
 
   const { operation = {}, method, pathName } = operationRaw;
 
-  req.url += baseUrl({
+  const baseURL = baseUrl({
     spec,
     scheme,
     contextUrl,
@@ -181,6 +181,8 @@ export function buildRequest(options) {
     pathName,
     method,
   });
+
+  req.url += baseURL;
 
   // Mostly for testing
   if (!operationId) {
@@ -266,7 +268,7 @@ export function buildRequest(options) {
         value,
         operation,
         spec,
-        pathName,
+        baseURL,
       });
     }
   });

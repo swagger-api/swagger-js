@@ -51,11 +51,12 @@ function headerBuilder({ req, parameter, value }) {
 }
 
 // Replace path paramters, with values ( ie: the URL )
-function pathBuilder({ req, value, parameter, pathName }) {
+function pathBuilder({ req, value, parameter, baseURL }) {
   if (value !== undefined) {
-    const resolvedPathname = resolvePathTemplate(pathName, { [parameter.name]: value });
+    const pathname = req.url.replace(baseURL, '');
+    const resolvedPathname = resolvePathTemplate(pathname, { [parameter.name]: value });
 
-    req.url = req.url.replace(pathName, resolvedPathname);
+    req.url = baseURL + resolvedPathname;
   }
 }
 
