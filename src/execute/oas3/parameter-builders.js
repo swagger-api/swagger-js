@@ -3,7 +3,7 @@ import { resolve as resolvePathTemplate } from 'openapi-path-templating';
 import stylize, { encodeCharacters } from './style-serializer.js';
 import serialize from './content-serializer.js';
 
-export function path({ req, value, parameter, pathName }) {
+export function path({ req, value, parameter, pathNameRef }) {
   const { name, style, explode, content } = parameter;
 
   if (value === undefined) return;
@@ -14,13 +14,13 @@ export function path({ req, value, parameter, pathName }) {
     const effectiveMediaType = Object.keys(content)[0];
 
     resolvedPathname = resolvePathTemplate(
-      pathName,
+      pathNameRef.pathName,
       { [name]: value },
       { encoder: (val) => encodeCharacters(serialize(val, effectiveMediaType)) }
     );
   } else {
     resolvedPathname = resolvePathTemplate(
-      pathName,
+      pathNameRef.pathName,
       { [name]: value },
       {
         encoder: (val) =>
@@ -35,7 +35,8 @@ export function path({ req, value, parameter, pathName }) {
     );
   }
 
-  req.url = req.url.replace(pathName, resolvedPathname);
+  req.url = req.url.replace(pathNameRef.pathName, resolvedPathname);
+  pathNameRef.pathName = resolvedPathname;
 }
 
 export function query({ req, value, parameter }) {

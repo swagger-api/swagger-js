@@ -211,6 +211,8 @@ export function buildRequest(options) {
   // REVIEW: OAS3: have any key names or parameter shapes changed?
   // Any new features that need to be plugged in here?
 
+  const pathNameRef = {pathName} // Creating a object pathNameRef so that it can be updated 
+
   // Add values to request
   combinedParameters.forEach((parameter) => {
     const builder = parameterBuilders[parameter.in];
@@ -266,7 +268,7 @@ export function buildRequest(options) {
         value,
         operation,
         spec,
-        pathName,
+        pathNameRef,
       });
     }
   });
