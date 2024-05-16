@@ -12,7 +12,7 @@ import { makeApisTagOperation } from './interfaces.js';
 import { execute, buildRequest, baseUrl } from './execute/index.js';
 import { opId, isHttpUrl } from './helpers/index.js';
 import { isOpenAPI2, isOpenAPI3 } from './helpers/openapi-predicates.js';
-import HttpResolverSwaggerClient from './resolver/apidom/reference/resolve/resolvers/http-swagger-client/index.js';
+import HTTPResolverSwaggerClient from './resolver/apidom/reference/resolve/resolvers/http-swagger-client/index.js';
 import JsonParser from './resolver/apidom/reference/parse/parsers/json/index.js';
 import YamlParser from './resolver/apidom/reference/parse/parsers/yaml-1-2/index.js';
 import OpenApiJson3_1Parser from './resolver/apidom/reference/parse/parsers/openapi-json-3-1/index.js';
@@ -53,7 +53,7 @@ Swagger.helpers = { opId };
 Swagger.getBaseUrl = baseUrl;
 Swagger.apidom = {
   resolve: {
-    resolvers: { HttpResolverSwaggerClient },
+    resolvers: { HTTPResolverSwaggerClient },
   },
   parse: {
     parsers: {

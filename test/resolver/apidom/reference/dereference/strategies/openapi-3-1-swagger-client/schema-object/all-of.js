@@ -4,7 +4,7 @@ import { mediaTypes, OpenApi3_1Element } from '@swagger-api/apidom-ns-openapi-3-
 import { dereferenceApiDOM } from '@swagger-api/apidom-reference/configuration/empty';
 
 import * as jestSetup from '../__utils__/jest.local.setup.js';
-import OpenApi3_1SwaggerClientDereferenceStrategy from '../../../../../../../../src/resolver/apidom/reference/dereference/strategies/openapi-3-1-swagger-client/index.js';
+import OpenAPI3_1SwaggerClientDereferenceStrategy from '../../../../../../../../src/resolver/apidom/reference/dereference/strategies/openapi-3-1-swagger-client/index.js';
 
 describe('dereference', () => {
   beforeAll(() => {
@@ -261,7 +261,7 @@ describe('dereference', () => {
             parse: { mediaType: mediaTypes.latest('json') },
             dereference: {
               strategies: [
-                OpenApi3_1SwaggerClientDereferenceStrategy({
+                new OpenAPI3_1SwaggerClientDereferenceStrategy({
                   allowMetaPatches: true,
                 }),
               ],

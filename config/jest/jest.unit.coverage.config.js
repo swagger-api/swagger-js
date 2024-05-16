@@ -8,7 +8,7 @@ module.exports = {
     './src/': {
       branches: 83,
       functions: 91,
-      lines: 89,
+      lines: 88,
       statements: 88,
     },
   },

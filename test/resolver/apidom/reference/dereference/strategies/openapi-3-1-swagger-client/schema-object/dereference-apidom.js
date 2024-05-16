@@ -78,11 +78,11 @@ describe('dereference', () => {
             const parseResult = await parse(fixturePath, {
               parse: { mediaType: mediaTypes.latest('json') },
             });
-            const pathItemElement = evaluate(
+            const schemaElement = evaluate(
               '/components/schemas/User/properties/profile',
               parseResult.api
             );
-            const dereferenced = await dereferenceApiDOM(pathItemElement, {
+            const dereferenced = await dereferenceApiDOM(schemaElement, {
               parse: { mediaType: mediaTypes.latest('json') },
               resolve: { baseURI: fixturePath },
             });

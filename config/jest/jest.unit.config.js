@@ -8,11 +8,12 @@ module.exports = {
   testPathIgnorePatterns: [
     '<rootDir>/node_modules/',
     '<rootDir>/test/data/',
+    '<rootDir>/test/.eslintrc.js',
     '<rootDir>/test/jest.setup.js',
     '<rootDir>/test/resolver/specmap/data/',
     '<rootDir>/test/build-artifacts/',
     '/__fixtures__/',
     '/__utils__/',
   ],
-  silent: true,
+  silent: false,
 };

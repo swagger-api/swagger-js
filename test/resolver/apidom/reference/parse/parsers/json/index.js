@@ -2,14 +2,14 @@ import { Buffer } from 'node:buffer';
 import { isParseResultElement } from '@swagger-api/apidom-core';
 import { File, ParserError } from '@swagger-api/apidom-reference/configuration/empty';
 
-import JsonParser from '../../../../../../../src/resolver/apidom/reference/parse/parsers/json/index.js';
+import JSONParser from '../../../../../../../src/resolver/apidom/reference/parse/parsers/json/index.js';
 
-describe('JsonParser', () => {
+describe('JSONParser', () => {
   describe('canParse', () => {
     describe('given file with .json extension', () => {
       test('should return true', async () => {
-        const file = File({ uri: '/path/to/file.json', data: '{"a":"b"}' });
-        const parser = JsonParser();
+        const file = new File({ uri: '/path/to/file.json', data: '{"a":"b"}' });
+        const parser = new JSONParser();
 
         expect(await parser.canParse(file)).toBe(true);
       });
@@ -17,8 +17,8 @@ describe('JsonParser', () => {
 
     describe('given file with unknown extension', () => {
       test('should return false', async () => {
-        const file = File({ uri: '/path/to/file.yaml' });
-        const parser = JsonParser();
+        const file = new File({ uri: '/path/to/file.yaml' });
+        const parser = new JSONParser();
 
         expect(await parser.canParse(file)).toBe(false);
       });
@@ -26,8 +26,8 @@ describe('JsonParser', () => {
 
     describe('given file with no extension', () => {
       test('should return false', async () => {
-        const file = File({ uri: '/path/to/file' });
-        const parser = JsonParser();
+        const file = new File({ uri: '/path/to/file' });
+        const parser = new JSONParser();
 
         expect(await parser.canParse(file)).toBe(false);
       });
@@ -36,11 +36,11 @@ describe('JsonParser', () => {
     describe('given file with supported extension', () => {
       describe('and file data is buffer and can be detected as JSON', () => {
         test('should return true', async () => {
-          const file = File({
+          const file = new File({
             uri: '/path/to/json-file.json',
             data: Buffer.from('{"a":"b"}'),
           });
-          const parser = JsonParser();
+          const parser = new JSONParser();
 
           expect(await parser.canParse(file)).toBe(true);
         });
@@ -48,11 +48,11 @@ describe('JsonParser', () => {
 
       describe('and file data is string and can be detected as JSON', () => {
         test('should return true', async () => {
-          const file = File({
+          const file = new File({
             uri: '/path/to/json-file.json',
             data: '{"a":"b"}',
           });
-          const parser = JsonParser();
+          const parser = new JSONParser();
 
           expect(await parser.canParse(file)).toBe(true);
         });
@@ -63,8 +63,8 @@ describe('JsonParser', () => {
   describe('parse', () => {
     describe('given generic JSON data', () => {
       test('should return parse result', async () => {
-        const file = File({ uri: '/path/to/file.json', data: '{"prop": "val"}' });
-        const parser = JsonParser();
+        const file = new File({ uri: '/path/to/file.json', data: '{"prop": "val"}' });
+        const parser = new JSONParser();
         const result = await parser.parse(file);
         const objElement = result.get(0);
 
@@ -75,8 +75,8 @@ describe('JsonParser', () => {
 
     describe('given generic JSON data as buffer', () => {
       test('should return parse result', async () => {
-        const file = File({ uri: '/path/to/file.json', data: Buffer.from('{"prop": "val"}') });
-        const parser = JsonParser();
+        const file = new File({ uri: '/path/to/file.json', data: Buffer.from('{"prop": "val"}') });
+        const parser = new JSONParser();
         const result = await parser.parse(file);
         const objElement = result.get(0);
 
@@ -87,8 +87,8 @@ describe('JsonParser', () => {
 
     describe('given data that is not a generic JSON data', () => {
       test('should coerce to string and parse', async () => {
-        const file = File({ uri: '/path/to/file.json', data: 1 });
-        const parser = JsonParser();
+        const file = new File({ uri: '/path/to/file.json', data: 1 });
+        const parser = new JSONParser();
         const result = await parser.parse(file);
         const numberElement = result.get(0);
 
@@ -99,8 +99,8 @@ describe('JsonParser', () => {
 
     describe('given empty file', () => {
       test('should return empty parse result', async () => {
-        const file = File({ uri: '/path/to/file.json', data: '' });
-        const parser = JsonParser();
+        const file = new File({ uri: '/path/to/file.json', data: '' });
+        const parser = new JSONParser();
         const result = await parser.parse(file);
 
         expect(isParseResultElement(result)).toBe(true);
@@ -111,8 +111,8 @@ describe('JsonParser', () => {
     describe('sourceMap', () => {
       describe('given sourceMap enabled', () => {
         test('should throw error', async () => {
-          const file = File({ uri: '/path/to/file.json', data: '{"prop": "val"}' });
-          const parser = JsonParser({ sourceMap: true });
+          const file = new File({ uri: '/path/to/file.json', data: '{"prop": "val"}' });
+          const parser = new JSONParser({ sourceMap: true });
           const parseWithSourceMapThunk = () => parser.parse(file);
 
           await expect(parseWithSourceMapThunk()).rejects.toThrow(
@@ -123,8 +123,8 @@ describe('JsonParser', () => {
 
       describe('given sourceMap disabled', () => {
         test('should not decorate ApiDOM with source maps', async () => {
-          const file = File({ uri: '/path/to/file.json', data: '{"prop": "val"}' });
-          const parser = JsonParser({ sourceMap: false });
+          const file = new File({ uri: '/path/to/file.json', data: '{"prop": "val"}' });
+          const parser = new JSONParser({ sourceMap: false });
           const result = await parser.parse(file);
           const objElement = result.get(0);
 
