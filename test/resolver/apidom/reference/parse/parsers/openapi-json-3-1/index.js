@@ -5,22 +5,22 @@ import { File, ParserError } from '@swagger-api/apidom-reference/configuration/e
 import { mediaTypes } from '@swagger-api/apidom-ns-openapi-3-1';
 
 // eslint-disable-next-line camelcase
-import OpenApiJson3_1Parser from '../../../../../../../src/resolver/apidom/reference/parse/parsers/openapi-json-3-1/index.js';
+import OpenAPIJson3_1Parser from '../../../../../../../src/resolver/apidom/reference/parse/parsers/openapi-json-3-1/index.js';
 
-describe('OpenApiJson3_1Parser', () => {
+describe('OpenAPIJson3_1Parser', () => {
   describe('canParser', () => {
     describe('given file with .json extension', () => {
       describe('and with proper media type', () => {
         test('should return true', async () => {
-          const file1 = File({
+          const file1 = new File({
             uri: '/path/to/openapi.json',
             mediaType: mediaTypes.latest('generic'),
           });
-          const file2 = File({
+          const file2 = new File({
             uri: '/path/to/openapi.json',
             mediaType: mediaTypes.latest('json'),
           });
-          const parser = OpenApiJson3_1Parser();
+          const parser = new OpenAPIJson3_1Parser();
 
           expect(await parser.canParse(file1)).toBe(true);
           expect(await parser.canParse(file2)).toBe(true);
@@ -29,11 +29,11 @@ describe('OpenApiJson3_1Parser', () => {
 
       describe('and with improper media type', () => {
         test('should return false', async () => {
-          const file = File({
+          const file = new File({
             uri: '/path/to/openapi.json',
             mediaType: 'application/vnd.aai.asyncapi+json;version=2.5.0',
           });
-          const parser = OpenApiJson3_1Parser();
+          const parser = new OpenAPIJson3_1Parser();
 
           expect(await parser.canParse(file)).toBe(false);
         });
@@ -42,11 +42,11 @@ describe('OpenApiJson3_1Parser', () => {
 
     describe('given file with unknown extension', () => {
       test('should return false', async () => {
-        const file = File({
+        const file = new File({
           uri: '/path/to/openapi.yaml',
           mediaType: mediaTypes.latest('json'),
         });
-        const parser = OpenApiJson3_1Parser();
+        const parser = new OpenAPIJson3_1Parser();
 
         expect(await parser.canParse(file)).toBe(false);
       });
@@ -54,11 +54,11 @@ describe('OpenApiJson3_1Parser', () => {
 
     describe('given file with no extension', () => {
       test('should return false', async () => {
-        const file = File({
+        const file = new File({
           uri: '/path/to/openapi',
           mediaType: mediaTypes.latest('json'),
         });
-        const parser = OpenApiJson3_1Parser();
+        const parser = new OpenAPIJson3_1Parser();
 
         expect(await parser.canParse(file)).toBe(false);
       });
@@ -68,11 +68,11 @@ describe('OpenApiJson3_1Parser', () => {
       describe('and file data is buffer and can be detected as OpenAPI 3.1.0', () => {
         test('should return true', async () => {
           const url = path.join(__dirname, '__fixtures__', 'sample-api.json');
-          const file = File({
+          const file = new File({
             uri: '/path/to/open-api.json',
             data: fs.readFileSync(url),
           });
-          const parser = OpenApiJson3_1Parser();
+          const parser = new OpenAPIJson3_1Parser();
 
           expect(await parser.canParse(file)).toBe(true);
         });
@@ -81,11 +81,11 @@ describe('OpenApiJson3_1Parser', () => {
       describe('and file data is string and can be detected as OpenAPI 3.1.0', () => {
         test('should return true', async () => {
           const url = path.join(__dirname, '__fixtures__', 'sample-api.json');
-          const file = File({
+          const file = new File({
             uri: '/path/to/open-api.json',
             data: fs.readFileSync(url).toString(),
           });
-          const parser = OpenApiJson3_1Parser();
+          const parser = new OpenAPIJson3_1Parser();
 
           expect(await parser.canParse(file)).toBe(true);
         });
@@ -98,12 +98,12 @@ describe('OpenApiJson3_1Parser', () => {
       test('should return parse result', async () => {
         const url = path.join(__dirname, '__fixtures__', 'sample-api.json');
         const data = fs.readFileSync(url).toString();
-        const file = File({
+        const file = new File({
           url,
           data,
           mediaType: mediaTypes.latest('json'),
         });
-        const parser = OpenApiJson3_1Parser();
+        const parser = new OpenAPIJson3_1Parser();
         const parseResult = await parser.parse(file);
 
         expect(isParseResultElement(parseResult)).toBe(true);
@@ -114,12 +114,12 @@ describe('OpenApiJson3_1Parser', () => {
       test('should return parse result', async () => {
         const url = path.join(__dirname, '__fixtures__', 'sample-api.json');
         const data = fs.readFileSync(url);
-        const file = File({
+        const file = new File({
           url,
           data,
           mediaType: mediaTypes.latest('json'),
         });
-        const parser = OpenApiJson3_1Parser();
+        const parser = new OpenAPIJson3_1Parser();
         const parseResult = await parser.parse(file);
 
         expect(isParseResultElement(parseResult)).toBe(true);
@@ -128,12 +128,12 @@ describe('OpenApiJson3_1Parser', () => {
 
     describe('given data that is not an OpenApi 3.1.x JSON data', () => {
       test('should coerce to string and parse', async () => {
-        const file = File({
+        const file = new File({
           uri: '/path/to/file.json',
           data: 1,
           mediaType: mediaTypes.latest('json'),
         });
-        const parser = OpenApiJson3_1Parser();
+        const parser = new OpenAPIJson3_1Parser();
         const parseResult = await parser.parse(file);
         const numberElement = parseResult.get(0);
 
@@ -144,12 +144,12 @@ describe('OpenApiJson3_1Parser', () => {
 
     describe('given empty file', () => {
       test('should return empty parse result', async () => {
-        const file = File({
+        const file = new File({
           uri: '/path/to/file.json',
           data: '',
           mediaType: mediaTypes.latest('json'),
         });
-        const parser = OpenApiJson3_1Parser();
+        const parser = new OpenAPIJson3_1Parser();
         const parseResult = await parser.parse(file);
 
         expect(isParseResultElement(parseResult)).toBe(true);
@@ -160,8 +160,8 @@ describe('OpenApiJson3_1Parser', () => {
     describe('sourceMap', () => {
       describe('given sourceMap enabled', () => {
         test('should throw error', async () => {
-          const file = File({ uri: '/path/to/file.json', data: '{"prop": "val"}' });
-          const parser = OpenApiJson3_1Parser({ sourceMap: true });
+          const file = new File({ uri: '/path/to/file.json', data: '{"prop": "val"}' });
+          const parser = new OpenAPIJson3_1Parser({ sourceMap: true });
           const parseWithSourceMapThunk = () => parser.parse(file);
 
           await expect(parseWithSourceMapThunk()).rejects.toThrow(
@@ -176,12 +176,12 @@ describe('OpenApiJson3_1Parser', () => {
         test('should not decorate ApiDOM with source maps', async () => {
           const url = path.join(__dirname, '__fixtures__', 'sample-api.json');
           const data = fs.readFileSync(url).toString();
-          const file = File({
+          const file = new File({
             url,
             data,
             mediaType: mediaTypes.latest('json'),
           });
-          const parser = OpenApiJson3_1Parser();
+          const parser = new OpenAPIJson3_1Parser();
           const parseResult = await parser.parse(file);
 
           expect(parseResult.api.meta.get('sourceMap')).toBeUndefined();

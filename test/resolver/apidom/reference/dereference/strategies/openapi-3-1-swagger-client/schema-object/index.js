@@ -13,7 +13,7 @@ import {
 } from '@swagger-api/apidom-reference/configuration/empty';
 
 // eslint-disable-next-line camelcase
-import OpenApi3_1SwaggerClientDereferenceStrategy from '../../../../../../../../src/resolver/apidom/reference/dereference/strategies/openapi-3-1-swagger-client/index.js';
+import OpenAPI3_1SwaggerClientDereferenceStrategy from '../../../../../../../../src/resolver/apidom/reference/dereference/strategies/openapi-3-1-swagger-client/index.js';
 import * as jestSetup from '../__utils__/jest.local.setup.js';
 import { circularReplacer } from '../../../../../../../../src/resolver/strategies/openapi-3-1-apidom/resolve.js';
 
@@ -433,7 +433,9 @@ describe('dereference', () => {
                       parse: { mediaType: mediaTypes.latest('json') },
                       dereference: {
                         strategies: [
-                          OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                          new OpenAPI3_1SwaggerClientDereferenceStrategy({
+                            allowMetaPatches: true,
+                          }),
                         ],
                       },
                     })
@@ -460,7 +462,7 @@ describe('dereference', () => {
                     parse: { mediaType: mediaTypes.latest('json') },
                     dereference: {
                       strategies: [
-                        OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                        new OpenAPI3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
                       ],
                     },
                   })
@@ -723,7 +725,7 @@ describe('dereference', () => {
                 dereference: {
                   refSet,
                   strategies: [
-                    OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                    new OpenAPI3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
                   ],
                 },
               });
@@ -787,7 +789,7 @@ describe('dereference', () => {
                 dereference: {
                   refSet,
                   strategies: [
-                    OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                    new OpenAPI3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
                   ],
                 },
               });
@@ -855,7 +857,7 @@ describe('dereference', () => {
                 dereference: {
                   refSet,
                   strategies: [
-                    OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                    new OpenAPI3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
                   ],
                 },
               });
@@ -950,7 +952,7 @@ describe('dereference', () => {
                 dereference: {
                   refSet,
                   strategies: [
-                    OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                    new OpenAPI3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
                   ],
                 },
               });
@@ -1014,7 +1016,7 @@ describe('dereference', () => {
                 dereference: {
                   refSet,
                   strategies: [
-                    OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                    new OpenAPI3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
                   ],
                 },
               });
@@ -1078,7 +1080,7 @@ describe('dereference', () => {
                 dereference: {
                   refSet,
                   strategies: [
-                    OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                    new OpenAPI3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
                   ],
                 },
               });
@@ -1143,7 +1145,7 @@ describe('dereference', () => {
                 dereference: {
                   refSet,
                   strategies: [
-                    OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                    new OpenAPI3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
                   ],
                 },
               });
@@ -1163,8 +1165,8 @@ describe('dereference', () => {
               parse: { mediaType: mediaTypes.latest('json') },
             });
             const uri = 'https://example.com/';
-            const reference = Reference({ uri, value: parseResult });
-            const refSet = ReferenceSet({ refs: [reference] });
+            const reference = new Reference({ uri, value: parseResult });
+            const refSet = new ReferenceSet({ refs: [reference] });
 
             const actual = await dereference(uri, {
               dereference: { refSet },
@@ -1203,7 +1205,7 @@ describe('dereference', () => {
                 dereference: {
                   refSet,
                   strategies: [
-                    OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                    new OpenAPI3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
                   ],
                 },
               });
@@ -1253,8 +1255,8 @@ describe('dereference', () => {
               parse: { mediaType: mediaTypes.latest('json') },
             });
             const uri = 'https://example.com/';
-            const reference = Reference({ uri, value: parseResult });
-            const refSet = ReferenceSet({ refs: [reference] });
+            const reference = new Reference({ uri, value: parseResult });
+            const refSet = new ReferenceSet({ refs: [reference] });
 
             const actual = await dereference(uri, {
               dereference: { refSet },
@@ -1323,7 +1325,7 @@ describe('dereference', () => {
                 dereference: {
                   refSet,
                   strategies: [
-                    OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                    new OpenAPI3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
                   ],
                 },
               });
@@ -1384,7 +1386,7 @@ describe('dereference', () => {
                 dereference: {
                   refSet,
                   strategies: [
-                    OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                    new OpenAPI3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
                   ],
                 },
               });
@@ -1467,7 +1469,7 @@ describe('dereference', () => {
                 parse: { mediaType: mediaTypes.latest('json') },
                 dereference: {
                   strategies: [
-                    OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                    new OpenAPI3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
                   ],
                   refSet,
                 },
@@ -1534,7 +1536,7 @@ describe('dereference', () => {
                 parse: { mediaType: mediaTypes.latest('json') },
                 dereference: {
                   strategies: [
-                    OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                    new OpenAPI3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
                   ],
                   refSet,
                 },

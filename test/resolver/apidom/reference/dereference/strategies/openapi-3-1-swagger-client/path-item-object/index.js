@@ -4,7 +4,7 @@ import { mediaTypes } from '@swagger-api/apidom-ns-openapi-3-1';
 import { dereference } from '@swagger-api/apidom-reference/configuration/empty';
 
 // eslint-disable-next-line camelcase
-import OpenApi3_1SwaggerClientDereferenceStrategy from '../../../../../../../../src/resolver/apidom/reference/dereference/strategies/openapi-3-1-swagger-client/index.js';
+import OpenAPI3_1SwaggerClientDereferenceStrategy from '../../../../../../../../src/resolver/apidom/reference/dereference/strategies/openapi-3-1-swagger-client/index.js';
 import * as jestSetup from '../__utils__/jest.local.setup.js';
 
 const rootFixturePath = path.join(__dirname, '__fixtures__');
@@ -176,7 +176,9 @@ describe('dereference', () => {
                         parse: { mediaType: mediaTypes.latest('json') },
                         dereference: {
                           strategies: [
-                            OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                            new OpenAPI3_1SwaggerClientDereferenceStrategy({
+                              allowMetaPatches: true,
+                            }),
                           ],
                         },
                       })
@@ -209,7 +211,9 @@ describe('dereference', () => {
                       parse: { mediaType: mediaTypes.latest('json') },
                       dereference: {
                         strategies: [
-                          OpenApi3_1SwaggerClientDereferenceStrategy({ allowMetaPatches: true }),
+                          new OpenAPI3_1SwaggerClientDereferenceStrategy({
+                            allowMetaPatches: true,
+                          }),
                         ],
                       },
                     })

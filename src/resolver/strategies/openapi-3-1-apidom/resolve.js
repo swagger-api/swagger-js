@@ -21,17 +21,17 @@ import {
   options as referenceOptions,
 } from '@swagger-api/apidom-reference/configuration/empty';
 import BinaryParser from '@swagger-api/apidom-reference/parse/parsers/binary';
-import OpenApi3_1ResolveStrategy from '@swagger-api/apidom-reference/resolve/strategies/openapi-3-1';
+import OpenAPI3_1ResolveStrategy from '@swagger-api/apidom-reference/resolve/strategies/openapi-3-1';
 
 import { DEFAULT_BASE_URL } from '../../../constants.js';
 import * as optionsUtil from '../../utils/options.js';
 import normalize from './normalize.js';
-import HttpResolverSwaggerClient from '../../apidom/reference/resolve/resolvers/http-swagger-client/index.js';
-import JsonParser from '../../apidom/reference/parse/parsers/json/index.js';
-import YamlParser from '../../apidom/reference/parse/parsers/yaml-1-2/index.js';
-import OpenApiJson3_1Parser from '../../apidom/reference/parse/parsers/openapi-json-3-1/index.js';
-import OpenApiYaml3_1Parser from '../../apidom/reference/parse/parsers/openapi-yaml-3-1/index.js';
-import OpenApi3_1SwaggerClientDereferenceStrategy from '../../apidom/reference/dereference/strategies/openapi-3-1-swagger-client/index.js';
+import HTTPResolverSwaggerClient from '../../apidom/reference/resolve/resolvers/http-swagger-client/index.js';
+import JSONParser from '../../apidom/reference/parse/parsers/json/index.js';
+import YAMLParser from '../../apidom/reference/parse/parsers/yaml-1-2/index.js';
+import OpenAPIJSON3_1Parser from '../../apidom/reference/parse/parsers/openapi-json-3-1/index.js';
+import OpenAPIYAML3_1Parser from '../../apidom/reference/parse/parsers/openapi-yaml-3-1/index.js';
+import OpenAPI3_1SwaggerClientDereferenceStrategy from '../../apidom/reference/dereference/strategies/openapi-3-1-swagger-client/index.js';
 
 export const circularReplacer = (refElement) => {
   const $refBaseURI = toValue(refElement.meta.get('baseURI'));
@@ -89,9 +89,12 @@ const resolveOpenAPI31Strategy = async (options) => {
     const fragmentElement = jsonPointerEvaluate(jsonPointer, openApiElement);
 
     // prepare reference set for dereferencing
-    const openApiElementReference = Reference({ uri: baseURI, value: openApiParseResultElement });
-    const refSet = ReferenceSet({ refs: [openApiElementReference] });
-    if (jsonPointer !== '') refSet.rootRef = null; // reset root reference as we want fragment to become the root reference
+    const openApiElementReference = new Reference({
+      uri: baseURI,
+      value: openApiParseResultElement,
+    });
+    const refSet = new ReferenceSet({ refs: [openApiElementReference] });
+    if (jsonPointer !== '') refSet.rootRef = undefined; // reset root reference as we want fragment to become the root reference
 
     // prepare ancestors; needed for cases where fragment is not OpenAPI element
     const ancestors = [new Set([fragmentElement])];
@@ -107,7 +110,7 @@ const resolveOpenAPI31Strategy = async (options) => {
          */
         baseURI: `${baseURI}${jsonPointerURI}`,
         resolvers: [
-          HttpResolverSwaggerClient({
+          new HTTPResolverSwaggerClient({
             timeout: timeout || 10000,
             redirects: redirects || 10,
           }),
@@ -118,22 +121,22 @@ const resolveOpenAPI31Strategy = async (options) => {
             responseInterceptor,
           },
         },
-        strategies: [OpenApi3_1ResolveStrategy()],
+        strategies: [new OpenAPI3_1ResolveStrategy()],
       },
       parse: {
         mediaType: mediaTypes.latest(),
         parsers: [
-          OpenApiJson3_1Parser({ allowEmpty: false, sourceMap: false }),
-          OpenApiYaml3_1Parser({ allowEmpty: false, sourceMap: false }),
-          JsonParser({ allowEmpty: false, sourceMap: false }),
-          YamlParser({ allowEmpty: false, sourceMap: false }),
-          BinaryParser({ allowEmpty: false, sourceMap: false }),
+          new OpenAPIJSON3_1Parser({ allowEmpty: false, sourceMap: false }),
+          new OpenAPIYAML3_1Parser({ allowEmpty: false, sourceMap: false }),
+          new JSONParser({ allowEmpty: false, sourceMap: false }),
+          new YAMLParser({ allowEmpty: false, sourceMap: false }),
+          new BinaryParser({ allowEmpty: false, sourceMap: false }),
         ],
       },
       dereference: {
         maxDepth: 100,
         strategies: [
-          OpenApi3_1SwaggerClientDereferenceStrategy({
+          new OpenAPI3_1SwaggerClientDereferenceStrategy({
             allowMetaPatches,
             useCircularStructures,
             parameterMacro,

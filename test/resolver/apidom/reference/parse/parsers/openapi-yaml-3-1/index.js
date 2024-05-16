@@ -5,22 +5,22 @@ import { File, ParserError } from '@swagger-api/apidom-reference/configuration/e
 import { mediaTypes } from '@swagger-api/apidom-ns-openapi-3-1';
 
 // eslint-disable-next-line camelcase
-import OpenApiYaml3_1Parser from '../../../../../../../src/resolver/apidom/reference/parse/parsers/openapi-yaml-3-1/index.js';
+import OpenAPIYaml3_1Parser from '../../../../../../../src/resolver/apidom/reference/parse/parsers/openapi-yaml-3-1/index.js';
 
-describe('OpenApiYaml3_1Parser', () => {
+describe('OpenAPIYaml3_1Parser', () => {
   describe('canParser', () => {
     describe('given file with .yaml extension', () => {
       describe('and with proper media type', () => {
         test('should return true', async () => {
-          const file1 = File({
+          const file1 = new File({
             uri: '/path/to/openapi.yaml',
             mediaType: mediaTypes.latest('generic'),
           });
-          const file2 = File({
+          const file2 = new File({
             uri: '/path/to/openapi.yaml',
             mediaType: mediaTypes.latest('yaml'),
           });
-          const parser = OpenApiYaml3_1Parser();
+          const parser = new OpenAPIYaml3_1Parser();
 
           expect(await parser.canParse(file1)).toBe(true);
           expect(await parser.canParse(file2)).toBe(true);
@@ -29,11 +29,11 @@ describe('OpenApiYaml3_1Parser', () => {
 
       describe('and with improper media type', () => {
         test('should return false', async () => {
-          const file = File({
+          const file = new File({
             uri: '/path/to/openapi.yaml',
             mediaType: 'application/vnd.aai.asyncapi+json;version=2.5.0',
           });
-          const parser = OpenApiYaml3_1Parser();
+          const parser = new OpenAPIYaml3_1Parser();
 
           expect(await parser.canParse(file)).toBe(false);
         });
@@ -43,15 +43,15 @@ describe('OpenApiYaml3_1Parser', () => {
     describe('given file with .yml extension', () => {
       describe('and with proper media type', () => {
         test('should return true', async () => {
-          const file1 = File({
+          const file1 = new File({
             uri: '/path/to/openapi.yml',
             mediaType: mediaTypes.latest('generic'),
           });
-          const file2 = File({
+          const file2 = new File({
             uri: '/path/to/openapi.yaml',
             mediaType: mediaTypes.latest('yaml'),
           });
-          const parser = OpenApiYaml3_1Parser();
+          const parser = new OpenAPIYaml3_1Parser();
 
           expect(await parser.canParse(file1)).toBe(true);
           expect(await parser.canParse(file2)).toBe(true);
@@ -60,11 +60,11 @@ describe('OpenApiYaml3_1Parser', () => {
 
       describe('and with improper media type', () => {
         test('should return false', async () => {
-          const file = File({
+          const file = new File({
             uri: '/path/to/openapi.yaml',
             mediaType: 'application/vnd.aai.asyncapi+json;version=2.5.0',
           });
-          const parser = OpenApiYaml3_1Parser();
+          const parser = new OpenAPIYaml3_1Parser();
 
           expect(await parser.canParse(file)).toBe(false);
         });
@@ -73,11 +73,11 @@ describe('OpenApiYaml3_1Parser', () => {
 
     describe('given file with unknown extension', () => {
       test('should return false', async () => {
-        const file = File({
+        const file = new File({
           uri: '/path/to/openapi.json',
           mediaType: mediaTypes.latest('yaml'),
         });
-        const parser = OpenApiYaml3_1Parser();
+        const parser = new OpenAPIYaml3_1Parser();
 
         expect(await parser.canParse(file)).toBe(false);
       });
@@ -85,11 +85,11 @@ describe('OpenApiYaml3_1Parser', () => {
 
     describe('given file with no extension', () => {
       test('should return false', async () => {
-        const file = File({
+        const file = new File({
           uri: '/path/to/openapi',
           mediaType: mediaTypes.latest('yaml'),
         });
-        const parser = OpenApiYaml3_1Parser();
+        const parser = new OpenAPIYaml3_1Parser();
 
         expect(await parser.canParse(file)).toBe(false);
       });
@@ -99,11 +99,11 @@ describe('OpenApiYaml3_1Parser', () => {
       describe('and file data is buffer and can be detected as OpenAPI 3.1.0', () => {
         test('should return true', async () => {
           const url = path.join(__dirname, '__fixtures__', 'sample-api.yaml');
-          const file = File({
+          const file = new File({
             uri: '/path/to/open-api.yaml',
             data: fs.readFileSync(url),
           });
-          const parser = OpenApiYaml3_1Parser();
+          const parser = new OpenAPIYaml3_1Parser();
 
           expect(await parser.canParse(file)).toBe(true);
         });
@@ -112,11 +112,11 @@ describe('OpenApiYaml3_1Parser', () => {
       describe('and file data is string and can be detected as OpenAPI 3.1.0', () => {
         test('should return true', async () => {
           const url = path.join(__dirname, '__fixtures__', 'sample-api.yaml');
-          const file = File({
+          const file = new File({
             uri: '/path/to/open-api.yaml',
             data: fs.readFileSync(url).toString(),
           });
-          const parser = OpenApiYaml3_1Parser();
+          const parser = new OpenAPIYaml3_1Parser();
 
           expect(await parser.canParse(file)).toBe(true);
         });
@@ -129,12 +129,12 @@ describe('OpenApiYaml3_1Parser', () => {
       test('should return parse result', async () => {
         const url = path.join(__dirname, '__fixtures__', 'sample-api.yaml');
         const data = fs.readFileSync(url).toString();
-        const file = File({
+        const file = new File({
           url,
           data,
           mediaType: mediaTypes.latest('yaml'),
         });
-        const parser = OpenApiYaml3_1Parser();
+        const parser = new OpenAPIYaml3_1Parser();
         const parseResult = await parser.parse(file);
 
         expect(isParseResultElement(parseResult)).toBe(true);
@@ -145,12 +145,12 @@ describe('OpenApiYaml3_1Parser', () => {
       test('should return parse result', async () => {
         const url = path.join(__dirname, '__fixtures__', 'sample-api.yaml');
         const data = fs.readFileSync(url);
-        const file = File({
+        const file = new File({
           url,
           data,
           mediaType: mediaTypes.latest('yaml'),
         });
-        const parser = OpenApiYaml3_1Parser();
+        const parser = new OpenAPIYaml3_1Parser();
         const parseResult = await parser.parse(file);
 
         expect(isParseResultElement(parseResult)).toBe(true);
@@ -159,12 +159,12 @@ describe('OpenApiYaml3_1Parser', () => {
 
     describe('given data that is not an OpenApi 3.1.x YAML data', () => {
       test('should coerce to string and parse', async () => {
-        const file = File({
+        const file = new File({
           uri: '/path/to/file.yaml',
           data: 1,
           mediaType: mediaTypes.latest('yaml'),
         });
-        const parser = OpenApiYaml3_1Parser();
+        const parser = new OpenAPIYaml3_1Parser();
         const parseResult = await parser.parse(file);
         const numberElement = parseResult.get(0);
 
@@ -175,12 +175,12 @@ describe('OpenApiYaml3_1Parser', () => {
 
     describe('given empty file', () => {
       test('should return empty parse result', async () => {
-        const file = File({
+        const file = new File({
           uri: '/path/to/file.yaml',
           data: '',
           mediaType: mediaTypes.latest('yaml'),
         });
-        const parser = OpenApiYaml3_1Parser();
+        const parser = new OpenAPIYaml3_1Parser();
         const parseResult = await parser.parse(file);
 
         expect(isParseResultElement(parseResult)).toBe(true);
@@ -190,9 +190,9 @@ describe('OpenApiYaml3_1Parser', () => {
 
     describe('sourceMap', () => {
       describe('given sourceMap enabled', () => {
-        test('should throw error', async () => {
-          const file = File({ uri: '/path/to/file.yaml', data: 'prop: val' });
-          const parser = OpenApiYaml3_1Parser({ sourceMap: true });
+        test.only('should throw error', async () => {
+          const file = new File({ uri: '/path/to/file.yaml', data: 'prop: val' });
+          const parser = new OpenAPIYaml3_1Parser({ sourceMap: true });
           const parseWithSourceMapThunk = () => parser.parse(file);
 
           await expect(parseWithSourceMapThunk()).rejects.toThrow(
@@ -207,12 +207,12 @@ describe('OpenApiYaml3_1Parser', () => {
         test('should not decorate ApiDOM with source maps', async () => {
           const url = path.join(__dirname, '__fixtures__', 'sample-api.yaml');
           const data = fs.readFileSync(url).toString();
-          const file = File({
+          const file = new File({
             url,
             data,
             mediaType: mediaTypes.latest('yaml'),
           });
-          const parser = OpenApiYaml3_1Parser();
+          const parser = new OpenAPIYaml3_1Parser();
           const parseResult = await parser.parse(file);
 
           expect(parseResult.api.meta.get('sourceMap')).toBeUndefined();
