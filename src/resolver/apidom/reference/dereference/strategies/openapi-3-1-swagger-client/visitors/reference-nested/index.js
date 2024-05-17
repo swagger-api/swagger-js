@@ -6,7 +6,7 @@ import ParameterMacroVisitor from './parameters.js';
 /**
  * This visitor represents merge of all ReferenceElement adjunct nested visitors.
  */
-class ReferenceNestedVisitor {
+class Index {
   canTraverse = false;
 
   constructor({ parameterMacro, options }) {
@@ -23,4 +23,4 @@ class ReferenceNestedVisitor {
   }
 }
 
-export default ReferenceNestedVisitor;
+export default Index;

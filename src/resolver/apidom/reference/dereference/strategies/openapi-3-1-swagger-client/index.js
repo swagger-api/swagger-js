@@ -5,8 +5,8 @@ import OpenAPI3_1DereferenceStrategy from '@swagger-api/apidom-reference/derefer
 import openApi3_1Namespace, { getNodeType, keyMap } from '@swagger-api/apidom-ns-openapi-3-1';
 
 import OpenAPI3_1SwaggerClientDereferenceVisitor from './visitors/dereference.js';
-import SchemaNestedVisitor from './visitors/schema-nested-visitor.js';
-import ReferenceNestedVisitor from './visitors/reference-nested-visitor.js';
+import SchemaNestedVisitor from './visitors/schema-nested/index.js';
+import ReferenceNestedVisitor from './visitors/reference-nested/index.js';
 
 const visitAsync = visit[Symbol.for('nodejs.util.promisify.custom')];
 const mergeAllVisitorsAsync = mergeAllVisitors[Symbol.for('nodejs.util.promisify.custom')];

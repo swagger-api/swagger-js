@@ -7,7 +7,7 @@ import ModelPropertyMacroVisitor from './properties.js';
 /**
  * This visitor represents merge of all SchemaElement adjunct nested visitors.
  */
-class SchemaNestedVisitor {
+class Index {
   canTraverse = false;
 
   constructor({ modelPropertyMacro, mode, options }) {
@@ -28,4 +28,4 @@ class SchemaNestedVisitor {
   }
 }
 
-export default SchemaNestedVisitor;
+export default Index;
