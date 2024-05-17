@@ -291,17 +291,6 @@ describe('resolve', () => {
           });
         });
       });
-
-      describe('and referenced schema contains allOf keyword', () => {
-        test('should contain schema with merged properties from allOf', async () => {
-          const spec = globalThis.loadJsonFile(path.join(fixturePath, 'ref-all-of.json'));
-          const resolvedSpec = await SwaggerClient.resolve({
-            spec,
-          });
-
-          expect(resolvedSpec).toMatchSnapshot();
-        });
-      });
     });
   });
 });

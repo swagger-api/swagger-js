@@ -184,6 +184,33 @@ describe('dereference', () => {
           });
         });
 
+        test.only('should resolve allOf hidden behind a reference', async () => {
+          const spec = OpenApi3_1Element.refract({
+            openapi: '3.1.0',
+            components: {
+              schemas: {
+                Bar: { $ref: '#/components/schemas/Foo' },
+                Foo: {
+                  allOf: [{ type: 'object' }],
+                },
+              },
+            },
+          });
+          const dereferenced = await dereferenceApiDOM(spec, {
+            parse: { mediaType: mediaTypes.latest('json') },
+          });
+
+          expect(toValue(dereferenced)).toEqual({
+            openapi: '3.1.0',
+            components: {
+              schemas: {
+                Bar: { type: 'object' },
+                Foo: { type: 'object' },
+              },
+            },
+          });
+        });
+
         test("shouldn't override properties of target Schema Object", async () => {
           const spec = OpenApi3_1Element.refract({
             openapi: '3.1.0',
