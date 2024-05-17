@@ -227,7 +227,7 @@ describe('resolve', () => {
           expect(resolvedSpec).toMatchSnapshot();
         });
 
-        test.only('should call parameterMacro with Parameter Object only', async () => {
+        test('should call parameterMacro with Parameter Object only', async () => {
           const spec = globalThis.loadJsonFile(
             path.join(fixturePath, 'parameter-macro-no-operation.json')
           );

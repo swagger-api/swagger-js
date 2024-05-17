@@ -11,7 +11,6 @@ import {
   toValue,
   cloneShallow,
   cloneDeep,
-  mergeAllVisitors,
 } from '@swagger-api/apidom-core';
 import { ApiDOMError } from '@swagger-api/apidom-error';
 import {
@@ -51,9 +50,6 @@ import toPath from '../utils/to-path.js';
 import getRootCause from '../utils/get-root-cause.js';
 import specMapMod from '../../../../../../specmap/lib/refs.js';
 import SchemaRefError from '../errors/SchemaRefError.js';
-import ParameterMacroVisitor from './parameters.js';
-import ModelPropertyMacroVisitor from './properties.js';
-import AllOfVisitor from './all-of.js';
 
 const { wrapError } = specMapMod;
 
@@ -69,19 +65,13 @@ class OpenAPI3_1SwaggerClientDereferenceVisitor extends OpenAPI3_1DereferenceVis
 
   basePath;
 
-  parameterMacro;
-
-  modelPropertyMacro;
-
-  mode;
+  nestedVisitors;
 
   constructor({
     allowMetaPatches = true,
     useCircularStructures = false,
     basePath = null,
-    parameterMacro = null,
-    modelPropertyMacro = null,
-    mode = '',
+    nestedVisitors = null,
     ...rest
   }) {
     super(rest);
@@ -89,9 +79,7 @@ class OpenAPI3_1SwaggerClientDereferenceVisitor extends OpenAPI3_1DereferenceVis
     this.allowMetaPatches = allowMetaPatches;
     this.useCircularStructures = useCircularStructures;
     this.basePath = basePath;
-    this.parameterMacro = parameterMacro;
-    this.modelPropertyMacro = modelPropertyMacro;
-    this.mode = mode;
+    this.nestedVisitors = nestedVisitors;
   }
 
   async ReferenceElement(referencingElement, key, parent, path, ancestors) {
@@ -222,6 +210,7 @@ class OpenAPI3_1SwaggerClientDereferenceVisitor extends OpenAPI3_1DereferenceVis
             ...toPath([...ancestors, parent, referencingElement]),
             '$ref',
           ],
+          nestedVisitors: this.nestedVisitors,
         });
         referencedElement = await visitAsync(referencedElement, visitor, {
           keyMap,
@@ -233,6 +222,16 @@ class OpenAPI3_1SwaggerClientDereferenceVisitor extends OpenAPI3_1DereferenceVis
       }
 
       this.indirections.pop();
+
+      /**
+       * Traverse the referencedElement with adjunct nested visitors.
+       */
+      if (this.nestedVisitors?.ReferenceElement?.canTraverse) {
+        referencedElement = visit(referencedElement, this.nestedVisitors.ReferenceElement, {
+          keyMap,
+          nodeTypeGetter: getNodeType,
+        });
+      }
 
       const mergedElement = cloneShallow(referencedElement);
 
@@ -425,6 +424,7 @@ class OpenAPI3_1SwaggerClientDereferenceVisitor extends OpenAPI3_1DereferenceVis
           allowMetaPatches: this.allowMetaPatches,
           useCircularStructures: this.useCircularStructures,
           basePath: this.basePath ?? [...toPath([...ancestors, parent, pathItemElement]), '$ref'],
+          nestedVisitors: this.nestedVisitors,
         });
         referencedElement = await visitAsync(referencedElement, visitor, {
           keyMap,
@@ -711,6 +711,7 @@ class OpenAPI3_1SwaggerClientDereferenceVisitor extends OpenAPI3_1DereferenceVis
             ...toPath([...ancestors, parent, referencingElement]),
             '$ref',
           ],
+          nestedVisitor: this.nestedVisitors,
         });
         referencedElement = await visitAsync(referencedElement, mergeVisitor, {
           keyMap,
@@ -787,42 +788,14 @@ class OpenAPI3_1SwaggerClientDereferenceVisitor extends OpenAPI3_1DereferenceVis
       }
 
       /**
-       * Traverse the referencedElement with other visitors
+       * Traverse the referencedElement with adjunct nested visitors.
        */
-      const visitors = [];
-      const options = { ...this.options };
-
-      // create parameter macro visitor (if necessary)
-      if (typeof this.parameterMacro === 'function') {
-        const parameterMacroVisitor = new ParameterMacroVisitor({
-          parameterMacro: this.parameterMacro,
-          options,
+      if (this.nestedVisitors?.SchemaElement?.canTraverse) {
+        referencedElement = visit(referencedElement, this.nestedVisitors.SchemaElement, {
+          keyMap,
+          nodeTypeGetter: getNodeType,
         });
-        visitors.push(parameterMacroVisitor);
       }
-
-      // create model property macro visitor (if necessary)
-      if (typeof this.modelPropertyMacro === 'function') {
-        const modelPropertyMacroVisitor = new ModelPropertyMacroVisitor({
-          modelPropertyMacro: this.modelPropertyMacro,
-          options,
-        });
-        visitors.push(modelPropertyMacroVisitor);
-      }
-
-      // create allOf visitor (if necessary)
-      if (this.mode !== 'strict') {
-        const allOfVisitor = new AllOfVisitor({ options });
-        visitors.push(allOfVisitor);
-      }
-
-      // establish root visitor by visitor merging
-      const rootVisitor = mergeAllVisitors(visitors, { nodeTypeGetter: getNodeType });
-
-      referencedElement = visit(referencedElement, rootVisitor, {
-        keyMap,
-        nodeTypeGetter: getNodeType,
-      });
 
       /**
        * Transclude referencing element with merged referenced element.
