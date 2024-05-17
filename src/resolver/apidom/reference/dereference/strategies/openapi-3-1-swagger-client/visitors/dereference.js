@@ -11,6 +11,7 @@ import {
   toValue,
   cloneShallow,
   cloneDeep,
+  mergeAllVisitors,
 } from '@swagger-api/apidom-core';
 import { ApiDOMError } from '@swagger-api/apidom-error';
 import {
@@ -50,6 +51,9 @@ import toPath from '../utils/to-path.js';
 import getRootCause from '../utils/get-root-cause.js';
 import specMapMod from '../../../../../../specmap/lib/refs.js';
 import SchemaRefError from '../errors/SchemaRefError.js';
+import ParameterMacroVisitor from './parameters.js';
+import ModelPropertyMacroVisitor from './properties.js';
+import AllOfVisitor from './all-of.js';
 
 const { wrapError } = specMapMod;
 
@@ -65,10 +69,19 @@ class OpenAPI3_1SwaggerClientDereferenceVisitor extends OpenAPI3_1DereferenceVis
 
   basePath;
 
+  parameterMacro;
+
+  modelPropertyMacro;
+
+  mode;
+
   constructor({
     allowMetaPatches = true,
     useCircularStructures = false,
     basePath = null,
+    parameterMacro = null,
+    modelPropertyMacro = null,
+    mode = '',
     ...rest
   }) {
     super(rest);
@@ -76,6 +89,9 @@ class OpenAPI3_1SwaggerClientDereferenceVisitor extends OpenAPI3_1DereferenceVis
     this.allowMetaPatches = allowMetaPatches;
     this.useCircularStructures = useCircularStructures;
     this.basePath = basePath;
+    this.parameterMacro = parameterMacro;
+    this.modelPropertyMacro = modelPropertyMacro;
+    this.mode = mode;
   }
 
   async ReferenceElement(referencingElement, key, parent, path, ancestors) {
@@ -769,6 +785,44 @@ class OpenAPI3_1SwaggerClientDereferenceVisitor extends OpenAPI3_1DereferenceVis
 
         referencedElement = mergedElement;
       }
+
+      /**
+       * Traverse the referencedElement with other visitors
+       */
+      const visitors = [];
+      const options = { ...this.options };
+
+      // create parameter macro visitor (if necessary)
+      if (typeof this.parameterMacro === 'function') {
+        const parameterMacroVisitor = new ParameterMacroVisitor({
+          parameterMacro: this.parameterMacro,
+          options,
+        });
+        visitors.push(parameterMacroVisitor);
+      }
+
+      // create model property macro visitor (if necessary)
+      if (typeof this.modelPropertyMacro === 'function') {
+        const modelPropertyMacroVisitor = new ModelPropertyMacroVisitor({
+          modelPropertyMacro: this.modelPropertyMacro,
+          options,
+        });
+        visitors.push(modelPropertyMacroVisitor);
+      }
+
+      // create allOf visitor (if necessary)
+      if (this.mode !== 'strict') {
+        const allOfVisitor = new AllOfVisitor({ options });
+        visitors.push(allOfVisitor);
+      }
+
+      // establish root visitor by visitor merging
+      const rootVisitor = mergeAllVisitors(visitors, { nodeTypeGetter: getNodeType });
+
+      referencedElement = visit(referencedElement, rootVisitor, {
+        keyMap,
+        nodeTypeGetter: getNodeType,
+      });
 
       /**
        * Transclude referencing element with merged referenced element.

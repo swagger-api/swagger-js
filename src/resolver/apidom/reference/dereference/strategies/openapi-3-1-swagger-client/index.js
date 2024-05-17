@@ -82,6 +82,9 @@ class OpenAPI3_1SwaggerClientDereferenceStrategy extends OpenAPI3_1DereferenceSt
       options,
       allowMetaPatches: this.allowMetaPatches,
       ancestors: this.ancestors,
+      parameterMacro: this.parameterMacro,
+      modelPropertyMacro: this.modelPropertyMacro,
+      mode: this.mode,
     });
     visitors.push(dereferenceVisitor);
 
