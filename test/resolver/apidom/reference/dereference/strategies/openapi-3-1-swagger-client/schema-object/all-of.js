@@ -184,7 +184,7 @@ describe('dereference', () => {
           });
         });
 
-        test.only('should resolve allOf hidden behind a reference', async () => {
+        test('should resolve allOf hidden behind a reference', async () => {
           const spec = OpenApi3_1Element.refract({
             openapi: '3.1.0',
             components: {
