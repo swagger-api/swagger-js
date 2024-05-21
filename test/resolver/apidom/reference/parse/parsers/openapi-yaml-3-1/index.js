@@ -190,7 +190,7 @@ describe('OpenAPIYaml3_1Parser', () => {
 
     describe('sourceMap', () => {
       describe('given sourceMap enabled', () => {
-        test.only('should throw error', async () => {
+        test('should throw error', async () => {
           const file = new File({ uri: '/path/to/file.yaml', data: 'prop: val' });
           const parser = new OpenAPIYaml3_1Parser({ sourceMap: true });
           const parseWithSourceMapThunk = () => parser.parse(file);

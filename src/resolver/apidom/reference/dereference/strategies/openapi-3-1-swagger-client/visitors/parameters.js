@@ -1,6 +1,6 @@
 import { toValue } from '@swagger-api/apidom-core';
 
-import toPath from '../../utils/to-path.js';
+import toPath from '../utils/to-path.js';
 
 class ParameterMacroVisitor {
   parameterMacro;

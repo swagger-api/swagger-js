@@ -1,7 +1,7 @@
 import { isArrayElement, deepmerge } from '@swagger-api/apidom-core';
 import { isSchemaElement } from '@swagger-api/apidom-ns-openapi-3-1';
 
-import toPath from '../../utils/to-path.js';
+import toPath from '../utils/to-path.js';
 
 class AllOfVisitor {
   options;
