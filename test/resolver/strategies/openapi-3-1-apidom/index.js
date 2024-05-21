@@ -291,6 +291,20 @@ describe('resolve', () => {
           });
         });
       });
+
+      describe('and modelPropertyMacro and parameterMacro are provided as functions', () => {
+        test('should call functions on dereferenced Objects which contained allOf', async () => {
+          const spec = globalThis.loadJsonFile(path.join(fixturePath, 'ref-all-of-macros.json'));
+          const resolvedSpec = await SwaggerClient.resolve({
+            spec,
+            modelPropertyMacro: (property) => `${property.type}-test`,
+            parameterMacro: (operation, parameter) =>
+              operation ? `${operation.operationId}-${parameter.name}` : parameter.name,
+          });
+
+          expect(resolvedSpec).toMatchSnapshot();
+        });
+      });
     });
   });
 });

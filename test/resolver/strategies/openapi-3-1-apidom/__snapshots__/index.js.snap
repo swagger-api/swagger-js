@@ -1611,6 +1611,103 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
 }
 `;
 
+exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec option and modelPropertyMacro and parameterMacro are provided as functions should call functions on dereferenced Objects which contained allOf 1`] = `
+{
+  "errors": [],
+  "spec": {
+    "$$normalized": true,
+    "components": {
+      "parameters": {
+        "Baz": {
+          "default": "baz",
+          "in": "query",
+          "name": "baz",
+          "schema": {
+            "type": "object",
+          },
+        },
+      },
+      "schemas": {
+        "Bar": {
+          "type": "object",
+        },
+        "Foo": {
+          "type": "object",
+        },
+        "Xyz": {
+          "properties": {
+            "bar": {
+              "default": "object-test",
+              "type": "object",
+            },
+            "id": {
+              "default": "integer-test",
+              "type": "integer",
+            },
+          },
+          "type": "object",
+        },
+      },
+    },
+    "openapi": "3.1.0",
+    "paths": {
+      "/": {
+        "get": {
+          "operationId": "test",
+          "parameters": [
+            {
+              "default": "test-baz",
+              "in": "query",
+              "name": "baz",
+              "schema": {
+                "type": "object",
+              },
+            },
+          ],
+          "responses": {
+            "200": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "properties": {
+                      "bar": {
+                        "default": "object-test",
+                        "type": "object",
+                      },
+                      "id": {
+                        "default": "integer-test",
+                        "type": "integer",
+                      },
+                    },
+                    "type": "object",
+                  },
+                },
+              },
+              "description": "OK",
+            },
+          },
+          "servers": [
+            {
+              "url": "/",
+            },
+          ],
+        },
+        "servers": [
+          {
+            "url": "/",
+          },
+        ],
+      },
+    },
+    "servers": [
+      {
+        "url": "/",
+      },
+    ],
+  },
+}
+`;
+
 exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec option and modelPropertyMacro is provided as a function given the function throws error should collect error 1`] = `
 {
   "$$normalized": true,
