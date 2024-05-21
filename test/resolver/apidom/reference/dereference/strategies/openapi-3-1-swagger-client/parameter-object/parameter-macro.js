@@ -39,7 +39,7 @@ describe('dereference', () => {
                   name: 'baz',
                   in: 'query',
                   schema: {
-                    allOf: [{ allOf: [{ allOf: [{ type: 'object' }] }] }],
+                    type: 'object',
                   },
                 },
               },

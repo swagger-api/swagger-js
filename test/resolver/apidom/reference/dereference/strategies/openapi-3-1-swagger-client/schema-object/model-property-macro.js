@@ -41,22 +41,18 @@ describe('dereference', () => {
             components: {
               schemas: {
                 Foo: {
-                  allOf: [
-                    {
-                      type: 'object',
-                      properties: {
-                        id: {
-                          type: 'integer',
-                        },
-                        bar: {
-                          $ref: '#/components/schemas/Bar',
-                        },
-                      },
+                  type: 'object',
+                  properties: {
+                    id: {
+                      type: 'integer',
                     },
-                  ],
+                    bar: {
+                      $ref: '#/components/schemas/Bar',
+                    },
+                  },
                 },
                 Bar: {
-                  allOf: [{ allOf: [{ allOf: [{ type: 'object' }] }] }],
+                  type: 'object',
                 },
               },
             },
