@@ -227,7 +227,7 @@ describe('resolve', () => {
           expect(resolvedSpec).toMatchSnapshot();
         });
 
-        test.only('should call parameterMacro with Parameter Object only', async () => {
+        test('should call parameterMacro with Parameter Object only', async () => {
           const spec = globalThis.loadJsonFile(
             path.join(fixturePath, 'parameter-macro-no-operation.json')
           );
@@ -289,6 +289,20 @@ describe('resolve', () => {
               fullPath: ['components', 'schemas', 'Pet', 'properties'],
             });
           });
+        });
+      });
+
+      describe('and modelPropertyMacro and parameterMacro are provided as functions', () => {
+        test('should call functions on dereferenced Objects which contained allOf', async () => {
+          const spec = globalThis.loadJsonFile(path.join(fixturePath, 'ref-all-of-macros.json'));
+          const resolvedSpec = await SwaggerClient.resolve({
+            spec,
+            modelPropertyMacro: (property) => `${property.type}-test`,
+            parameterMacro: (operation, parameter) =>
+              operation ? `${operation.operationId}-${parameter.name}` : parameter.name,
+          });
+
+          expect(resolvedSpec).toMatchSnapshot();
         });
       });
     });

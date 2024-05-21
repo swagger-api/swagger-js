@@ -1,0 +1,59 @@
+{
+  "openapi": "3.1.0",
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "test",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Baz"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Xyz"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Bar": { "$ref": "#/components/schemas/Foo" },
+      "Foo": {
+        "allOf": [{ "allOf": [{ "allOf": [{ "type": "object" }] }] }]
+      },
+      "Xyz": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "bar": {
+                "$ref": "#/components/schemas/Bar"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "parameters": {
+      "Baz": {
+        "name": "baz",
+        "in": "query",
+        "schema": {
+          "allOf": [{ "allOf": [{ "allOf": [{ "type": "object" }] }] }]
+        }
+      }
+    }
+  }
+}

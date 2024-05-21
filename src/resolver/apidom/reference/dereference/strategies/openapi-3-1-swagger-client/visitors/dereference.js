@@ -58,6 +58,15 @@ const visitAsync = visit[Symbol.for('nodejs.util.promisify.custom')];
 // initialize element identity manager
 const identityManager = new IdentityManager();
 
+// custom mutation replacer
+const mutationReplacer = (newElement, oldElement, key, parent) => {
+  if (isMemberElement(parent)) {
+    parent.value = newElement; // eslint-disable-line no-param-reassign
+  } else if (Array.isArray(parent)) {
+    parent[key] = newElement; // eslint-disable-line no-param-reassign
+  }
+};
+
 class OpenAPI3_1SwaggerClientDereferenceVisitor extends OpenAPI3_1DereferenceVisitor {
   useCircularStructures;
 
@@ -78,7 +87,7 @@ class OpenAPI3_1SwaggerClientDereferenceVisitor extends OpenAPI3_1DereferenceVis
     this.basePath = basePath;
   }
 
-  async ReferenceElement(referencingElement, key, parent, path, ancestors) {
+  async ReferenceElement(referencingElement, key, parent, path, ancestors, link) {
     try {
       // skip current referencing element as it's already been access
       if (this.indirections.includes(referencingElement)) {
@@ -162,11 +171,7 @@ class OpenAPI3_1SwaggerClientDereferenceVisitor extends OpenAPI3_1DereferenceVis
             this.options.dereference.circularReplacer;
           const replacement = replacer(refElement);
 
-          if (isMemberElement(parent)) {
-            parent.value = replacement; // eslint-disable-line no-param-reassign
-          } else if (Array.isArray(parent)) {
-            parent[key] = replacement; // eslint-disable-line no-param-reassign
-          }
+          link.replaceWith(refElement, mutationReplacer);
 
           return !parent ? replacement : false;
         }
@@ -258,11 +263,7 @@ class OpenAPI3_1SwaggerClientDereferenceVisitor extends OpenAPI3_1DereferenceVis
       /**
        * Transclude referencing element with merged referenced element.
        */
-      if (isMemberElement(parent)) {
-        parent.value = mergedElement; // eslint-disable-line no-param-reassign
-      } else if (Array.isArray(parent)) {
-        parent[key] = mergedElement; // eslint-disable-line no-param-reassign
-      }
+      link.replaceWith(mergedElement, mutationReplacer);
 
       /**
        * We're at the root of the tree, so we're just replacing the entire tree.
@@ -282,7 +283,7 @@ class OpenAPI3_1SwaggerClientDereferenceVisitor extends OpenAPI3_1DereferenceVis
     }
   }
 
-  async PathItemElement(pathItemElement, key, parent, path, ancestors) {
+  async PathItemElement(pathItemElement, key, parent, path, ancestors, link) {
     try {
       // ignore PathItemElement without $ref field
       if (!isStringElement(pathItemElement.$ref)) {
@@ -368,11 +369,7 @@ class OpenAPI3_1SwaggerClientDereferenceVisitor extends OpenAPI3_1DereferenceVis
             this.options.dereference.circularReplacer;
           const replacement = replacer(refElement);
 
-          if (isMemberElement(parent)) {
-            parent.value = replacement; // eslint-disable-line no-param-reassign
-          } else if (Array.isArray(parent)) {
-            parent[key] = replacement; // eslint-disable-line no-param-reassign
-          }
+          link.replaceWith(refElement, mutationReplacer);
 
           return !parent ? replacement : false;
         }
@@ -464,11 +461,7 @@ class OpenAPI3_1SwaggerClientDereferenceVisitor extends OpenAPI3_1DereferenceVis
       /**
        * Transclude referencing element with merged referenced element.
        */
-      if (isMemberElement(parent)) {
-        parent.value = referencedElement; // eslint-disable-line no-param-reassign
-      } else if (Array.isArray(parent)) {
-        parent[key] = referencedElement; // eslint-disable-line no-param-reassign
-      }
+      link.replaceWith(referencedElement, mutationReplacer);
 
       /**
        * We're at the root of the tree, so we're just replacing the entire tree.
@@ -488,7 +481,7 @@ class OpenAPI3_1SwaggerClientDereferenceVisitor extends OpenAPI3_1DereferenceVis
     }
   }
 
-  async SchemaElement(referencingElement, key, parent, path, ancestors) {
+  async SchemaElement(referencingElement, key, parent, path, ancestors, link) {
     try {
       // skip current referencing schema as $ref keyword was not defined
       if (!isStringElement(referencingElement.$ref)) {
@@ -651,11 +644,7 @@ class OpenAPI3_1SwaggerClientDereferenceVisitor extends OpenAPI3_1DereferenceVis
             this.options.dereference.circularReplacer;
           const replacement = replacer(refElement);
 
-          if (isMemberElement(parent)) {
-            parent.value = replacement; // eslint-disable-line no-param-reassign
-          } else if (Array.isArray(parent)) {
-            parent[key] = replacement; // eslint-disable-line no-param-reassign
-          }
+          link.replaceWith(replacement, mutationReplacer);
 
           return !parent ? replacement : false;
         }
@@ -721,11 +710,7 @@ class OpenAPI3_1SwaggerClientDereferenceVisitor extends OpenAPI3_1DereferenceVis
           cloneDeep(identityManager.identify(referencingElement))
         );
 
-        if (isMemberElement(parent)) {
-          parent.value = booleanJsonSchemaElement; // eslint-disable-line no-param-reassign
-        } else if (Array.isArray(parent)) {
-          parent[key] = booleanJsonSchemaElement; // eslint-disable-line no-param-reassign
-        }
+        link.replaceWith(booleanJsonSchemaElement, mutationReplacer);
 
         return !parent ? booleanJsonSchemaElement : false;
       }
@@ -773,11 +758,7 @@ class OpenAPI3_1SwaggerClientDereferenceVisitor extends OpenAPI3_1DereferenceVis
       /**
        * Transclude referencing element with merged referenced element.
        */
-      if (isMemberElement(parent)) {
-        parent.value = referencedElement; // eslint-disable-line no-param-reassign
-      } else if (Array.isArray(parent)) {
-        parent[key] = referencedElement; // eslint-disable-line no-param-reassign
-      }
+      link.replaceWith(referencedElement, mutationReplacer);
 
       /**
        * We're at the root of the tree, so we're just replacing the entire tree.
@@ -807,9 +788,9 @@ class OpenAPI3_1SwaggerClientDereferenceVisitor extends OpenAPI3_1DereferenceVis
     return undefined;
   }
 
-  async ExampleElement(exampleElement, key, parent, path, ancestors) {
+  async ExampleElement(exampleElement, key, parent, path, ancestors, link) {
     try {
-      return await super.ExampleElement(exampleElement, key, parent, path, ancestors);
+      return await super.ExampleElement(exampleElement, key, parent, path, ancestors, link);
     } catch (error) {
       const rootCause = getRootCause(error);
       const wrappedError = wrapError(rootCause, {

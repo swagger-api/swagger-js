@@ -1,16 +1,12 @@
 /* eslint-disable camelcase */
-import { createNamespace, visit, mergeAllVisitors, cloneDeep } from '@swagger-api/apidom-core';
+import { createNamespace, visit, cloneDeep } from '@swagger-api/apidom-core';
 import { ReferenceSet, Reference } from '@swagger-api/apidom-reference/configuration/empty';
 import OpenAPI3_1DereferenceStrategy from '@swagger-api/apidom-reference/dereference/strategies/openapi-3-1';
 import openApi3_1Namespace, { getNodeType, keyMap } from '@swagger-api/apidom-ns-openapi-3-1';
 
-import OpenAPI3_1SwaggerClientDereferenceVisitor from './visitors/dereference.js';
-import ParameterMacroVisitor from './visitors/parameters.js';
-import ModelPropertyMacroVisitor from './visitors/properties.js';
-import AllOfVisitor from './visitors/all-of.js';
+import RootVisitor from './visitors/root.js';
 
 const visitAsync = visit[Symbol.for('nodejs.util.promisify.custom')];
-const mergeAllVisitorsAsync = mergeAllVisitors[Symbol.for('nodejs.util.promisify.custom')];
 
 class OpenAPI3_1SwaggerClientDereferenceStrategy extends OpenAPI3_1DereferenceStrategy {
   allowMetaPatches;
@@ -42,7 +38,6 @@ class OpenAPI3_1SwaggerClientDereferenceStrategy extends OpenAPI3_1DereferenceSt
   }
 
   async dereference(file, options) {
-    const visitors = [];
     const namespace = createNamespace(openApi3_1Namespace);
     const immutableRefSet = options.dereference.refSet ?? new ReferenceSet();
     const mutableRefsSet = new ReferenceSet();
@@ -75,42 +70,16 @@ class OpenAPI3_1SwaggerClientDereferenceStrategy extends OpenAPI3_1DereferenceSt
       refSet = mutableRefsSet;
     }
 
-    // create main dereference visitor
-    const dereferenceVisitor = new OpenAPI3_1SwaggerClientDereferenceVisitor({
+    const rootVisitor = new RootVisitor({
       reference,
       namespace,
       options,
       allowMetaPatches: this.allowMetaPatches,
       ancestors: this.ancestors,
+      modelPropertyMacro: this.modelPropertyMacro,
+      mode: this.mode,
+      parameterMacro: this.parameterMacro,
     });
-    visitors.push(dereferenceVisitor);
-
-    // create parameter macro visitor (if necessary)
-    if (typeof this.parameterMacro === 'function') {
-      const parameterMacroVisitor = new ParameterMacroVisitor({
-        parameterMacro: this.parameterMacro,
-        options,
-      });
-      visitors.push(parameterMacroVisitor);
-    }
-
-    // create model property macro visitor (if necessary)
-    if (typeof this.modelPropertyMacro === 'function') {
-      const modelPropertyMacroVisitor = new ModelPropertyMacroVisitor({
-        modelPropertyMacro: this.modelPropertyMacro,
-        options,
-      });
-      visitors.push(modelPropertyMacroVisitor);
-    }
-
-    // create allOf visitor (if necessary)
-    if (this.mode !== 'strict') {
-      const allOfVisitor = new AllOfVisitor({ options });
-      visitors.push(allOfVisitor);
-    }
-
-    // establish root visitor by visitor merging
-    const rootVisitor = mergeAllVisitorsAsync(visitors, { nodeTypeGetter: getNodeType });
 
     const dereferencedElement = await visitAsync(refSet.rootRef.value, rootVisitor, {
       keyMap,
