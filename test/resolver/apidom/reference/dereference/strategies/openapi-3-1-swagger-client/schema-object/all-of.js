@@ -187,25 +187,138 @@ describe('dereference', () => {
         test('should resolve allOf hidden behind a reference', async () => {
           const spec = OpenApi3_1Element.refract({
             openapi: '3.1.0',
+            paths: {
+              '/': {
+                get: {
+                  parameters: [
+                    {
+                      $ref: '#/components/parameters/Baz',
+                    },
+                  ],
+                  responses: {
+                    200: {
+                      content: {
+                        'application/json': {
+                          schema: {
+                            $ref: '#/components/schemas/Quz',
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
             components: {
               schemas: {
                 Bar: { $ref: '#/components/schemas/Foo' },
                 Foo: {
-                  allOf: [{ type: 'object' }],
+                  allOf: [{ allOf: [{ allOf: [{ type: 'object' }] }] }],
+                },
+                Quz: {
+                  $ref: '#/components/schemas/Xyz',
+                },
+                Xyz: {
+                  allOf: [
+                    {
+                      type: 'object',
+                      properties: {
+                        id: {
+                          type: 'integer',
+                        },
+                        bar: {
+                          $ref: '#/components/schemas/Bar',
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+              parameters: {
+                Baz: {
+                  name: 'baz',
+                  in: 'query',
+                  schema: {
+                    allOf: [{ allOf: [{ allOf: [{ type: 'object' }] }] }],
+                  },
                 },
               },
             },
           });
+
           const dereferenced = await dereferenceApiDOM(spec, {
             parse: { mediaType: mediaTypes.latest('json') },
           });
 
           expect(toValue(dereferenced)).toEqual({
             openapi: '3.1.0',
+            paths: {
+              '/': {
+                get: {
+                  parameters: [
+                    {
+                      name: 'baz',
+                      in: 'query',
+                      schema: { type: 'object' },
+                    },
+                  ],
+                  responses: {
+                    200: {
+                      content: {
+                        'application/json': {
+                          schema: {
+                            type: 'object',
+                            properties: {
+                              id: {
+                                type: 'integer',
+                              },
+                              bar: {
+                                type: 'object',
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
             components: {
               schemas: {
                 Bar: { type: 'object' },
                 Foo: { type: 'object' },
+                Quz: {
+                  type: 'object',
+                  properties: {
+                    id: {
+                      type: 'integer',
+                    },
+                    bar: {
+                      type: 'object',
+                    },
+                  },
+                },
+                Xyz: {
+                  type: 'object',
+                  properties: {
+                    id: {
+                      type: 'integer',
+                    },
+                    bar: {
+                      type: 'object',
+                    },
+                  },
+                },
+              },
+              parameters: {
+                Baz: {
+                  name: 'baz',
+                  in: 'query',
+                  schema: {
+                    type: 'object',
+                  },
+                },
               },
             },
           });
