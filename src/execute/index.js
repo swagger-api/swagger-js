@@ -125,10 +125,10 @@ export function buildRequest(options) {
     server,
     serverVariables,
     http,
-    signal,
+    signal
   } = options;
 
-  let { parameters, parameterBuilders } = options;
+  let { parameters, parameterBuilders, baseURL } = options;
 
   const specIsOAS3 = isOpenAPI3(spec);
   if (!parameterBuilders) {
@@ -172,7 +172,7 @@ export function buildRequest(options) {
 
   const { operation = {}, method, pathName } = operationRaw;
 
-  const baseURL = baseUrl({
+  baseURL = baseURL ?? baseUrl({
     spec,
     scheme,
     contextUrl,
