@@ -44,6 +44,16 @@ exports[`helpers normalize OpenAPI 3.1 given denormalized Header Object examples
       "url": "/",
     },
   ],
+  "x-normalized": {
+    "header-examples": [
+      "/paths/~1/get/responses/200/headers/content-type",
+    ],
+    "security-requirements": [],
+    "servers": [
+      "/paths/~1",
+      "/paths/~1/get",
+    ],
+  },
 }
 `;
 
@@ -74,6 +84,16 @@ exports[`helpers normalize OpenAPI 3.1 given denormalized Operation.id fields sh
       "url": "/",
     },
   ],
+  "x-normalized": {
+    "operation-ids": [
+      "/paths/~1/get",
+    ],
+    "security-requirements": [],
+    "servers": [
+      "/paths/~1",
+      "/paths/~1/get",
+    ],
+  },
 }
 `;
 
@@ -112,6 +132,14 @@ exports[`helpers normalize OpenAPI 3.1 given denormalized Parameter Object examp
       "url": "/",
     },
   ],
+  "x-normalized": {
+    "parameter-examples": [
+      "/paths/~1/parameters/0",
+    ],
+    "servers": [
+      "/paths/~1",
+    ],
+  },
 }
 `;
 
@@ -160,6 +188,16 @@ exports[`helpers normalize OpenAPI 3.1 given denormalized Parameter Objects shou
       "url": "/",
     },
   ],
+  "x-normalized": {
+    "parameters": [
+      "/paths/~1/get",
+    ],
+    "security-requirements": [],
+    "servers": [
+      "/paths/~1",
+      "/paths/~1/get",
+    ],
+  },
 }
 `;
 
@@ -204,6 +242,15 @@ exports[`helpers normalize OpenAPI 3.1 given denormalized Security Requirements 
       "url": "/",
     },
   ],
+  "x-normalized": {
+    "security-requirements": [
+      "/paths/~1/get",
+    ],
+    "servers": [
+      "/paths/~1",
+      "/paths/~1/get",
+    ],
+  },
 }
 `;
 
@@ -235,5 +282,12 @@ exports[`helpers normalize OpenAPI 3.1 given denormalized Servers Objects should
       "url": "https://example.com/",
     },
   ],
+  "x-normalized": {
+    "security-requirements": [],
+    "servers": [
+      "/paths/~1",
+      "/paths/~1/get",
+    ],
+  },
 }
 `;
