@@ -224,6 +224,17 @@ exports[`subtree-resolver OpenAPI 3.1.0 strategy should not resolve an untargete
         "url": "http://petstore.swagger.io/v1",
       },
     ],
+    "x-normalized": {
+      "operation-ids": [],
+      "security-requirements": [],
+      "servers": [
+        "/paths/~1pets",
+        "/paths/~1pets/get",
+        "/paths/~1pets/post",
+        "/paths/~1pets~1%7BpetId%7D",
+        "/paths/~1pets~1%7BpetId%7D/get",
+      ],
+    },
   },
 }
 `;
