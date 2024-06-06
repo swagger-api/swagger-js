@@ -1,6 +1,6 @@
 // This function runs after the common function,
 // `src/execute/index.js#buildRequest`
-import { isPlainObject } from 'is-plain-object';
+import { isPlainObject } from 'ramda-adjunct';
 
 import btoa from '../../helpers/btoa.node.js';
 

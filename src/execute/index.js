@@ -1,6 +1,9 @@
 import cookie from 'cookie';
-import { isPlainObject } from 'is-plain-object';
-import { escapeRegExp } from 'ramda-adjunct';
+import { isPlainObject } from 'ramda-adjunct';
+import {
+  test as testServerURLTemplate,
+  substitute as substituteServerURLTemplate,
+} from 'openapi-server-url-templating';
 import { ApiDOMStructuredError } from '@swagger-api/apidom-error';
 import { url } from '@swagger-api/apidom-reference/configuration/empty';
 
@@ -347,19 +350,22 @@ function oas3BaseUrl({ spec, pathName, method, server, contextUrl, serverVariabl
     selectedServerUrl = selectedServerObj.url;
   }
 
-  if (selectedServerUrl.includes('{')) {
-    // do variable substitution
-    const varNames = extractServerVariableNames(selectedServerUrl);
-    varNames.forEach((variable) => {
-      if (selectedServerObj.variables && selectedServerObj.variables[variable]) {
-        // variable is defined in server
-        const variableDefinition = selectedServerObj.variables[variable];
-        const variableValue = serverVariables[variable] || variableDefinition.default;
+  if (
+    isPlainObject(selectedServerObj.variables) &&
+    testServerURLTemplate(selectedServerUrl, { strict: true })
+  ) {
+    const selectedServerVariables = Object.entries(selectedServerObj.variables).reduce(
+      (acc, [serverVariableName]) => {
+        const serverVariableDefinition = selectedServerObj.variables[serverVariableName];
+        const serverVariableDefaultValue = serverVariableDefinition.default;
 
-        const re = new RegExp(`{${escapeRegExp(variable)}}`, 'g');
-        selectedServerUrl = selectedServerUrl.replace(re, variableValue);
-      }
-    });
+        acc[serverVariableName] = serverVariables[serverVariableName] ?? serverVariableDefaultValue;
+        return acc;
+      },
+      {}
+    );
+
+    selectedServerUrl = substituteServerURLTemplate(selectedServerUrl, selectedServerVariables);
   }
 
   return buildOas3UrlWithContext(selectedServerUrl, contextUrl);
@@ -388,11 +394,6 @@ function buildOas3UrlWithContext(ourUrl = '', contextUrl = '') {
   }
 
   return res[res.length - 1] === '/' ? res.slice(0, -1) : res;
-}
-
-function extractServerVariableNames(serverURL) {
-  const match = serverURL.matchAll(/\{([^{}]+)}|([^{}]+)/g);
-  return Array.from(match, ([, variable]) => variable).filter(Boolean);
 }
 
 // Compose the baseUrl ( scheme + host + basePath )
