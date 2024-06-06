@@ -81,11 +81,11 @@
     "cookie": "~0.6.0",
     "deepmerge": "~4.3.0",
     "fast-json-patch": "^3.0.0-1",
-    "is-plain-object": "^5.0.0",
     "js-yaml": "^4.1.0",
     "node-abort-controller": "^3.1.1",
     "node-fetch-commonjs": "^3.3.2",
     "openapi-path-templating": "^1.5.1",
+    "openapi-server-url-templating": "^1.0.0",
     "qs": "^6.10.2",
     "ramda-adjunct": "^5.0.0",
     "traverse": "=0.6.8"
