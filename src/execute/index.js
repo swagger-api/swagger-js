@@ -350,22 +350,17 @@ function oas3BaseUrl({ spec, pathName, method, server, contextUrl, serverVariabl
     selectedServerUrl = selectedServerObj.url;
   }
 
-  if (
-    isPlainObject(selectedServerObj.variables) &&
-    testServerURLTemplate(selectedServerUrl, { strict: true })
-  ) {
-    const selectedServerVariables = Object.entries(selectedServerObj.variables).reduce(
-      (acc, [serverVariableName]) => {
-        const serverVariableDefinition = selectedServerObj.variables[serverVariableName];
-        const serverVariableDefaultValue = serverVariableDefinition.default;
-
-        acc[serverVariableName] = serverVariables[serverVariableName] ?? serverVariableDefaultValue;
+  if (testServerURLTemplate(selectedServerUrl, { strict: true })) {
+    const selectedServerVariables = Object.entries({ ...selectedServerObj.variables }).reduce(
+      (acc, [serverVariableName, serverVariable]) => {
+        acc[serverVariableName] = serverVariable.default;
         return acc;
       },
       {}
     );
+    const mergedServerVariables = { ...selectedServerVariables, ...serverVariables };
 
-    selectedServerUrl = substituteServerURLTemplate(selectedServerUrl, selectedServerVariables);
+    selectedServerUrl = substituteServerURLTemplate(selectedServerUrl, mergedServerVariables);
   }
 
   return buildOas3UrlWithContext(selectedServerUrl, contextUrl);
