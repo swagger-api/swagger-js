@@ -358,9 +358,11 @@ function oas3BaseUrl({ spec, pathName, method, server, contextUrl, serverVariabl
       },
       {}
     );
-    const mergedServerVariables = { ...selectedServerVariables, ...serverVariables };
 
-    selectedServerUrl = substituteServerURLTemplate(selectedServerUrl, mergedServerVariables);
+    selectedServerUrl = substituteServerURLTemplate(selectedServerUrl, {
+      ...selectedServerVariables,
+      ...serverVariables,
+    });
   }
 
   return buildOas3UrlWithContext(selectedServerUrl, contextUrl);
