@@ -63,6 +63,33 @@ describe('execute', () => {
       });
     });
 
+    test('should override the host and basePath if baseURL is provided in the options', () => {
+      // Given
+      const spec = {
+        host: 'foo.com:8081',
+        basePath: '/v1',
+        paths: {
+          '/': {
+            get: {
+              operationId: 'foo',
+            },
+          },
+        },
+      };
+
+      // When
+      const baseURL = 'https://exmpl.com/v1'
+      const req = buildRequest({ spec, operationId: 'foo' , baseURL });
+
+      // Then
+      expect(req).toEqual({
+        url: `${baseURL}/`,
+        method: 'GET',
+        credentials: 'same-origin',
+        headers: {},
+      });
+    });
+
     test('should include operation specifics', () => {
       // Given
       const spec = {
