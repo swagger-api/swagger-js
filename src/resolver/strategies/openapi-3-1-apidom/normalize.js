@@ -17,7 +17,6 @@ import opId from '../../../helpers/op-id.js';
 
 const normalize = (element) => {
   if (!isObjectElement(element)) return element;
-  if (element.hasKey('$$normalized')) return element;
 
   const plugins = [
     refractorPluginNormalizeOperationIds({
@@ -36,7 +35,6 @@ const normalize = (element) => {
     visitorOptions: { keyMap, nodeTypeGetter: getNodeType },
   });
 
-  normalized.set('$$normalized', true);
   return normalized;
 };
 
@@ -46,7 +44,6 @@ const normalize = (element) => {
  * Plain Old JavaScript Objects and returns Plain Old JavaScript Objects.
  */
 export const pojoAdapter = (normalizeFn) => (spec) => {
-  if (spec?.$$normalized) return spec;
   if (pojoAdapter.cache.has(spec)) return pojoAdapter.cache.get(spec);
 
   const openApiElement = OpenApi3_1Element.refract(spec);

@@ -2,7 +2,6 @@
 
 exports[`helpers normalize OpenAPI 3.1 given denormalized Header Object examples should normalize 1`] = `
 {
-  "$$normalized": true,
   "openapi": "3.1.0",
   "paths": {
     "/": {
@@ -59,7 +58,6 @@ exports[`helpers normalize OpenAPI 3.1 given denormalized Header Object examples
 
 exports[`helpers normalize OpenAPI 3.1 given denormalized Operation.id fields should normalize 1`] = `
 {
-  "$$normalized": true,
   "openapi": "3.1.0",
   "paths": {
     "/": {
@@ -99,7 +97,6 @@ exports[`helpers normalize OpenAPI 3.1 given denormalized Operation.id fields sh
 
 exports[`helpers normalize OpenAPI 3.1 given denormalized Parameter Object examples should normalize 1`] = `
 {
-  "$$normalized": true,
   "openapi": "3.1.0",
   "paths": {
     "/": {
@@ -145,7 +142,6 @@ exports[`helpers normalize OpenAPI 3.1 given denormalized Parameter Object examp
 
 exports[`helpers normalize OpenAPI 3.1 given denormalized Parameter Objects should normalize 1`] = `
 {
-  "$$normalized": true,
   "openapi": "3.1.0",
   "paths": {
     "/": {
@@ -203,7 +199,6 @@ exports[`helpers normalize OpenAPI 3.1 given denormalized Parameter Objects shou
 
 exports[`helpers normalize OpenAPI 3.1 given denormalized Security Requirements Objects should normalize 1`] = `
 {
-  "$$normalized": true,
   "openapi": "3.1.0",
   "paths": {
     "/": {
@@ -256,7 +251,6 @@ exports[`helpers normalize OpenAPI 3.1 given denormalized Security Requirements 
 
 exports[`helpers normalize OpenAPI 3.1 given denormalized Servers Objects should normalize 1`] = `
 {
-  "$$normalized": true,
   "openapi": "3.1.0",
   "paths": {
     "/": {

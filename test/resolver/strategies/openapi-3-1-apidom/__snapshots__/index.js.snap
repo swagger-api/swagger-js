@@ -4,7 +4,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL a
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "schemas": {
         "Error": {
@@ -317,7 +316,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL a
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "schemas": {
         "Error": {
@@ -637,7 +635,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL a
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "schemas": {
         "User": {
@@ -677,7 +674,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL a
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "schemas": {
         "User": {
@@ -724,7 +720,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL s
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "schemas": {
         "Error": {
@@ -1037,7 +1032,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "schemas": {
         "Error": {
@@ -1357,7 +1351,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "schemas": {
         "Error": {
@@ -1670,7 +1663,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "parameters": {
         "Baz": {
@@ -1773,7 +1765,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
 
 exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec option and modelPropertyMacro is provided as a function given the function throws error should collect error 1`] = `
 {
-  "$$normalized": true,
   "components": {
     "schemas": {
       "Pet": {
@@ -1811,7 +1802,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "schemas": {
         "Error": {
@@ -1903,7 +1893,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "schemas": {
         "Error": {
@@ -2221,7 +2210,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
 
 exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec option and parameterMacro is provided sa a function given the function throws error should collect error 1`] = `
 {
-  "$$normalized": true,
   "components": {
     "schemas": {
       "Error": {
@@ -2450,7 +2438,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "schemas": {
         "Error": {
@@ -2681,7 +2668,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "parameters": {
         "limit": {
@@ -2719,7 +2705,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "schemas": {
         "Error": {
@@ -3032,7 +3017,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "schemas": {
         "Error": {
@@ -3316,7 +3300,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "schemas": {
         "Error": {
@@ -3905,7 +3888,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "schemas": {
         "Error": {
