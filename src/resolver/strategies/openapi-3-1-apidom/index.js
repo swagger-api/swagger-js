@@ -1,3 +1,4 @@
+import { isPlainObject } from 'ramda-adjunct';
 import { isElement } from '@swagger-api/apidom-core';
 
 import resolveOpenAPI31Strategy from './resolve.js';
@@ -10,16 +11,18 @@ const openApi31ApiDOMStrategy = {
     return isOpenAPI31(spec);
   },
   normalize(spec) {
-    /**
-     * We need to perform pre-normalization only once before the first lazy dereference.
-     * We always need to perform post-normalization after every lazy dereference.
-     */
+    // pre-normalization - happens only once before the first lazy dereferencing and in JavaScript context
+    if (!isElement(spec) && isPlainObject(spec) && !spec.$$normalized) {
+      const preNormalized = pojoAdapter(normalize)(spec);
+      preNormalized.$$normalized = true;
+      return preNormalized;
+    }
+    // post-normalization - happens after each dereferencing and in ApiDOM context
     if (isElement(spec)) {
-      // post-normalization - happens after the dereferencing and in ApiDOM context
       return normalize(spec);
     }
-    // pre-normalization - happens only once before the first lazy dereferencing and in JavaScript context
-    return spec?.$$normalized ? spec : pojoAdapter(normalize)(spec);
+
+    return spec;
   },
   async resolve(options) {
     return resolveOpenAPI31Strategy(options);
