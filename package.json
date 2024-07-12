@@ -123,7 +123,7 @@
     "source-map-explorer": "^2.5.3",
     "terser-webpack-plugin": "^5.0.3",
     "undici": "^5.28.4",
-    "webpack": "=5.92.1",
+    "webpack": "=5.93.0",
     "webpack-bundle-size-analyzer": "=3.1.0",
     "webpack-cli": "=5.1.4",
     "webpack-stats-plugin": "=1.1.3"
