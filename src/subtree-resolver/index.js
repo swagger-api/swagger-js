@@ -48,13 +48,14 @@ const resolveSubtree = async (obj, path, options = {}) => {
     useCircularStructures,
     strategies,
   };
-  const strategy = strategies.find((strg) => strg.match(resolveOptions));
-  const normalized = strategy.normalize(resolveOptions);
+  const strategy = strategies.find((strg) => strg.match(obj));
+  const normalized = strategy.normalize(obj);
+
   const result = await resolve({
-    ...resolveOptions,
     spec: normalized,
+    ...resolveOptions,
     allowMetaPatches: true,
-    skipNormalization: !isOpenAPI31(normalized),
+    skipNormalization: !isOpenAPI31(obj),
   });
 
   if (!returnEntireTree && Array.isArray(path) && path.length) {

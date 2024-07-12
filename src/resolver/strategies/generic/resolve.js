@@ -1,5 +1,4 @@
 import mapSpec, { plugins } from '../../specmap/index.js';
-import normalize from './normalize.js';
 import { makeFetchJSON } from '../../utils/index.js';
 import * as optionsUtil from '../../utils/options.js';
 
@@ -13,16 +12,18 @@ export default async function resolveGenericStrategy(options) {
     parameterMacro,
     requestInterceptor,
     responseInterceptor,
-    skipNormalization,
+    skipNormalization = false,
     useCircularStructures,
+    strategies,
   } = options;
 
   const retrievalURI = optionsUtil.retrievalURI(options);
   const httpClient = optionsUtil.httpClient(options);
+  const strategy = strategies.find((strg) => strg.match(spec));
 
   return doResolve(spec);
 
-  function doResolve(_spec) {
+  async function doResolve(_spec) {
     if (retrievalURI) {
       plugins.refs.docCache[retrievalURI] = _spec;
     }
@@ -45,7 +46,7 @@ export default async function resolveGenericStrategy(options) {
     }
 
     // mapSpec is where the hard work happens
-    return mapSpec({
+    const result = await mapSpec({
       spec: _spec,
       context: { baseDoc: retrievalURI },
       plugins: plugs,
@@ -54,7 +55,10 @@ export default async function resolveGenericStrategy(options) {
       parameterMacro,
       modelPropertyMacro,
       useCircularStructures,
-      // eslint-disable-next-line camelcase
-    }).then(skipNormalization ? async (a) => a : normalize);
+    });
+
+    result.spec = skipNormalization ? result.spec : strategy.normalize(result.spec);
+
+    return result;
   }
 }

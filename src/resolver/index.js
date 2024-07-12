@@ -13,7 +13,7 @@ const resolve = async (options) => {
     spec ||
     (await makeFetchJSON(httpClient, { requestInterceptor, responseInterceptor })(retrievalURI));
   const strategyOptions = { ...options, spec: retrievedSpec };
-  const strategy = options.strategies.find((strg) => strg.match(strategyOptions));
+  const strategy = options.strategies.find((strg) => strg.match(retrievedSpec));
 
   return strategy.resolve(strategyOptions);
 };
