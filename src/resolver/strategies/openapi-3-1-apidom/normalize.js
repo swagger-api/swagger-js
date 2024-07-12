@@ -49,12 +49,13 @@ export const pojoAdapter = (normalizeFn) => (spec) => {
   openApiElement.classes.push('result');
 
   const normalized = normalizeFn(openApiElement);
+  const value = toValue(normalized);
 
   /**
    * We're setting the cache here to avoid repeated refracting
    * in `openapi-3-1-apidom` strategy resolve method.
    */
-  resolveOpenAPI31Strategy.cache.set(spec, normalized);
+  resolveOpenAPI31Strategy.cache.set(value, normalized);
 
   return toValue(normalized);
 };

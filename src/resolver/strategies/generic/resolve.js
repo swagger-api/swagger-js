@@ -57,7 +57,9 @@ export default async function resolveGenericStrategy(options) {
       useCircularStructures,
     });
 
-    result.spec = skipNormalization ? result.spec : strategy.normalize(result.spec);
+    if (!skipNormalization) {
+      result.spec = strategy.normalize(result.spec);
+    }
 
     return result;
   }
