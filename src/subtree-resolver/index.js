@@ -24,6 +24,7 @@ import resolve from '../resolver/index.js';
 import genericResolverStrategy from '../resolver/strategies/generic/index.js';
 import openApi2ResolverStrategy from '../resolver/strategies/openapi-2/index.js';
 import openApi30ResolverStrategy from '../resolver/strategies/openapi-3-0/index.js';
+import { isOpenAPI31 } from '../helpers/openapi-predicates.js';
 
 const resolveSubtree = async (obj, path, options = {}) => {
   const {
@@ -47,13 +48,14 @@ const resolveSubtree = async (obj, path, options = {}) => {
     useCircularStructures,
     strategies,
   };
-  const strategy = strategies.find((strg) => strg.match(resolveOptions));
-  const normalized = strategy.normalize(resolveOptions);
+  const strategy = strategies.find((strg) => strg.match(obj));
+  const normalized = strategy.normalize(obj);
+
   const result = await resolve({
-    ...resolveOptions,
     spec: normalized,
+    ...resolveOptions,
     allowMetaPatches: true,
-    skipNormalization: true,
+    skipNormalization: !isOpenAPI31(obj),
   });
 
   if (!returnEntireTree && Array.isArray(path) && path.length) {

@@ -25,7 +25,6 @@ import OpenAPI3_1ResolveStrategy from '@swagger-api/apidom-reference/resolve/str
 
 import { DEFAULT_BASE_URL } from '../../../constants.js';
 import * as optionsUtil from '../../utils/options.js';
-import normalize from './normalize.js';
 import HTTPResolverSwaggerClient from '../../apidom/reference/resolve/resolvers/http-swagger-client/index.js';
 import JSONParser from '../../apidom/reference/parse/parsers/json/index.js';
 import YAMLParser from '../../apidom/reference/parse/parsers/yaml-1-2/index.js';
@@ -62,9 +61,11 @@ const resolveOpenAPI31Strategy = async (options) => {
     parameterMacro = null,
     modelPropertyMacro = null,
     mode = 'non-strict',
+    strategies,
   } = options;
   try {
     const { cache } = resolveOpenAPI31Strategy;
+    const strategy = strategies.find((strg) => strg.match(spec));
 
     // determining BaseURI
     const cwd = url.isHttpUrl(url.cwd()) ? url.cwd() : DEFAULT_BASE_URL;
@@ -155,7 +156,7 @@ const resolveOpenAPI31Strategy = async (options) => {
       },
     });
     const transcluded = transclude(fragmentElement, dereferenced, openApiElement);
-    const normalized = skipNormalization ? transcluded : normalize(transcluded);
+    const normalized = skipNormalization ? transcluded : strategy.normalize(transcluded);
 
     return { spec: toValue(normalized), errors };
   } catch (error) {

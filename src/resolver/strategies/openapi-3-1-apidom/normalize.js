@@ -14,10 +14,10 @@ import {
 } from '@swagger-api/apidom-ns-openapi-3-1';
 
 import opId from '../../../helpers/op-id.js';
+import resolveOpenAPI31Strategy from './resolve.js';
 
 const normalize = (element) => {
   if (!isObjectElement(element)) return element;
-  if (element.hasKey('$$normalized')) return element;
 
   const plugins = [
     refractorPluginNormalizeOperationIds({
@@ -36,7 +36,6 @@ const normalize = (element) => {
     visitorOptions: { keyMap, nodeTypeGetter: getNodeType },
   });
 
-  normalized.set('$$normalized', true);
   return normalized;
 };
 
@@ -46,18 +45,20 @@ const normalize = (element) => {
  * Plain Old JavaScript Objects and returns Plain Old JavaScript Objects.
  */
 export const pojoAdapter = (normalizeFn) => (spec) => {
-  if (spec?.$$normalized) return spec;
-  if (pojoAdapter.cache.has(spec)) return pojoAdapter.cache.get(spec);
-
   const openApiElement = OpenApi3_1Element.refract(spec);
+  openApiElement.classes.push('result');
+
   const normalized = normalizeFn(openApiElement);
   const value = toValue(normalized);
 
-  pojoAdapter.cache.set(spec, value);
+  /**
+   * We're setting the cache here to avoid repeated refracting
+   * in `openapi-3-1-apidom` strategy resolve method.
+   */
+  resolveOpenAPI31Strategy.cache.set(value, normalized);
 
-  return value;
+  return toValue(normalized);
 };
-pojoAdapter.cache = new WeakMap();
 
 export default normalize;
 /* eslint-enable camelcase */
