@@ -1,7 +1,16 @@
-import qs from 'qs';
+import * as pq from 'picoquery';
 
 import formatKeyValue from './format.js';
 import { isFile, isArrayOfFile, FileWithData } from './file.js';
+
+const PQ_OPTIONS = {
+  arrayRepeat: true,
+  arrayRepeatSyntax: 'repeat',
+};
+
+function stringifyQuery(obj) {
+  return decodeURIComponent(pq.stringify(obj, PQ_OPTIONS));
+}
 
 function buildFormData(reqForm) {
   /**
@@ -60,7 +69,7 @@ export function encodeFormOrQuery(data) {
     return result;
   }, {});
 
-  return qs.stringify(encodedQuery, { encode: false, indices: false }) || '';
+  return stringifyQuery(encodedQuery);
 }
 
 // If the request has a `query` object, merge it into the request.url, and delete the object
@@ -96,10 +105,10 @@ export function serializeRequest(req = {}) {
     let newStr = '';
 
     if (oriSearch) {
-      const oriQuery = qs.parse(oriSearch);
+      const oriQuery = pq.parse(oriSearch, PQ_OPTIONS);
       const keysToRemove = Object.keys(query);
       keysToRemove.forEach((key) => delete oriQuery[key]);
-      newStr = qs.stringify(oriQuery, { encode: true });
+      newStr = pq.stringify(oriQuery, PQ_OPTIONS);
     }
 
     const finalStr = joinSearch(newStr, encodeFormOrQuery(query));
