@@ -1,4 +1,4 @@
-import traverse from 'traverse';
+import traverse from 'neotraverse/legacy';
 import { url } from '@swagger-api/apidom-reference/configuration/empty';
 
 import { DEFAULT_BASE_URL } from '../../constants.js';
