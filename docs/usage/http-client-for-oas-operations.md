@@ -29,6 +29,7 @@ Property | Description
 `signal` | `AbortSignal=null`. AbortSignal object instance, which can be used to abort a request as desired.
 `server` | `String`. URL (`https://example.com`) or relative URI Reference (`/path/subpath`). Must match with of the defined `Server Objects`. If matched, it will be prepended to every requested path.
 `contextUrl` | `String`. URL, e.g. `https://example.com`. Used in following situations: <br /><br />If `server` option is not matched and there is no `Server Object` defined in the definition, this URL will be prepended to every requested path.<br /><br />If matched `Server Object` is defined as relative URI Reference its `url` fixed field is resolved against `contenxtUrl`. Resolved URL will be prepended to every requested path. 
+`baseURL` | `String`. URL (`https://example.com`) . Takes precedence over server and any defined servers in the Spec. It will be prepended to every requested path.
 
 For all later references, we will always use following OpenAPI 3.0.0 definition when referring
 to a `spec`.
