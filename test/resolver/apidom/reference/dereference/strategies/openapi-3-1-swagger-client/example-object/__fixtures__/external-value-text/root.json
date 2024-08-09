@@ -4,7 +4,7 @@
     "examples": {
       "example1": {
         "description": "example1 description",
-        "externalValue": "./ex.csv"
+        "externalValue": "./ex.dat"
       }
     }
   }

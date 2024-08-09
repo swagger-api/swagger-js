@@ -5,8 +5,8 @@
       "examples": {
         "example1": {
           "description": "example1 description",
-          "value": "dmFsMTt2YWwyO3ZhbDMK",
-          "externalValue": "./ex.csv"
+          "value": "a2V5OiAidmFsdWU6IHdpdGggOiBjb2xvbnMiIDogYW5vdGhlcl92YWx1ZQo=",
+          "externalValue": "./ex.dat"
         }
       }
     }

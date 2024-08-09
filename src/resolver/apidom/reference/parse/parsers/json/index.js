@@ -4,10 +4,9 @@ import { ParserError, Parser } from '@swagger-api/apidom-reference/configuration
 class JSONParser extends Parser {
   constructor(options = {}) {
     super({
-      ...options,
       name: 'json-swagger-client',
-      fileExtensions: ['.json'],
       mediaTypes: ['application/json'],
+      ...options,
     });
   }
 
