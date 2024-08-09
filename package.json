@@ -88,7 +88,7 @@
     "openapi-server-url-templating": "^1.0.0",
     "qs": "^6.10.2",
     "ramda-adjunct": "^5.0.0",
-    "traverse": "=0.6.8"
+    "neotraverse": "=0.6.15"
   },
   "devDependencies": {
     "@babel/cli": "^7.21.0",
