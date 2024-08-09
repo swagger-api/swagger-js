@@ -15,12 +15,11 @@ class OpenAPIYAML31Parser extends Parser {
   constructor(options = {}) {
     super({
       name: 'openapi-yaml-3-1-swagger-client',
-      ...options,
-      fileExtensions: ['.yaml', '.yml'],
       mediaTypes: new OpenAPIMediaTypes(
         ...mediaTypes.filterByFormat('generic'),
         ...mediaTypes.filterByFormat('yaml')
       ),
+      ...options,
     });
   }
 
