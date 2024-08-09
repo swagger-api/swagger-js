@@ -4,7 +4,6 @@ import {
   refractorPluginNormalizeOperationIds,
   refractorPluginNormalizeParameters,
   refractorPluginNormalizeSecurityRequirements,
-  refractorPluginNormalizeServers,
   refractorPluginNormalizeParameterExamples,
   refractorPluginNormalizeHeaderExamples,
   createToolbox,
@@ -26,7 +25,6 @@ const normalize = (element) => {
     }),
     refractorPluginNormalizeParameters(),
     refractorPluginNormalizeSecurityRequirements(),
-    refractorPluginNormalizeServers(),
     refractorPluginNormalizeParameterExamples(),
     refractorPluginNormalizeHeaderExamples(),
   ];
