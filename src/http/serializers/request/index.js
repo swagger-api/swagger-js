@@ -1,5 +1,3 @@
-import qs from 'qs';
-
 import formatKeyValue from './format.js';
 import { isFile, isArrayOfFile, FileWithData } from './file.js';
 
@@ -59,8 +57,28 @@ export function encodeFormOrQuery(data) {
     }
     return result;
   }, {});
+  const buildNestedParams = (params, key, value) => {
+    if (value == null) {
+      params.append(key, '');
+    } else if (Array.isArray(value)) {
+      value.reduce((acc, v) => buildNestedParams(params, key, v), params);
+    } else if (typeof value === 'object') {
+      Object.entries(value).reduce(
+        (acc, [k, v]) => buildNestedParams(params, `${key}[${k}]`, v),
+        params
+      );
+    } else {
+      params.append(key, value);
+    }
 
-  return qs.stringify(encodedQuery, { encode: false, indices: false }) || '';
+    return params;
+  };
+  const params = Object.entries(encodedQuery).reduce(
+    (acc, [key, value]) => buildNestedParams(acc, key, value),
+    new URLSearchParams()
+  );
+
+  return decodeURIComponent(String(params));
 }
 
 // If the request has a `query` object, merge it into the request.url, and delete the object
