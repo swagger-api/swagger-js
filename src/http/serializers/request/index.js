@@ -96,10 +96,10 @@ export function serializeRequest(req = {}) {
     let newStr = '';
 
     if (oriSearch) {
-      const oriQuery = qs.parse(oriSearch);
+      const oriQuery = new URLSearchParams(oriSearch);
       const keysToRemove = Object.keys(query);
-      keysToRemove.forEach((key) => delete oriQuery[key]);
-      newStr = qs.stringify(oriQuery, { encode: true });
+      keysToRemove.forEach((key) => oriQuery.delete(key));
+      newStr = String(oriQuery);
     }
 
     const finalStr = joinSearch(newStr, encodeFormOrQuery(query));
