@@ -1,7 +1,11 @@
 import * as undici from 'undici';
 
 import http from '../../src/http/index.js';
-import { serializeRequest, encodeFormOrQuery } from '../../src/http/serializers/request/index.js';
+import {
+  serializeRequest,
+  encodeFormOrQuery,
+  stringifyQuery,
+} from '../../src/http/serializers/request/index.js';
 import { isFile } from '../../src/http/serializers/request/file.js';
 import {
   serializeResponse,
@@ -259,6 +263,53 @@ describe('http', () => {
       const fdArrayItem = req.formdata.getAll('testJson');
       expect(fdArrayItem.length).toEqual(1);
       expect(fdArrayItem[0]).toEqual('{"name": "John"}');
+    });
+  });
+
+  describe('stringifyQuery', () => {
+    test('should encode by default', () => {
+      const queryObject = { a: '&' };
+
+      expect(stringifyQuery(queryObject)).toEqual('a=%26');
+    });
+
+    test('should support encode option', () => {
+      const queryObject = { a: '&' };
+
+      expect(stringifyQuery(queryObject, { encode: false })).toEqual('a=&');
+      expect(stringifyQuery(queryObject, { encode: true })).toEqual('a=%26');
+    });
+
+    test('should handle Date object instances', () => {
+      const queryObject = {
+        date: new Date(Date.UTC(1995, 11, 17, 2, 24, 0)),
+      };
+
+      expect(stringifyQuery(queryObject)).toEqual('date=1995-12-17T02%3A24%3A00.000Z');
+    });
+
+    test('should support nested object', () => {
+      const queryObject = {
+        a: { b: { c: 1 } },
+      };
+
+      expect(stringifyQuery(queryObject, { encode: false })).toEqual('a[b][c]=1');
+    });
+
+    test('should support nested arrays', () => {
+      const queryObject = {
+        a: ['b', ['c', 'd']],
+      };
+
+      expect(stringifyQuery(queryObject, { encode: false })).toEqual('a=b&a=c&a=d');
+    });
+
+    test('should support nested objects and arrays', () => {
+      const queryObject = {
+        a: { b: { c: ['d', ['e']] } },
+      };
+
+      expect(stringifyQuery(queryObject, { encode: false })).toEqual('a[b][c]=d&a[b][c]=e');
     });
   });
 
