@@ -282,7 +282,7 @@ describe('http', () => {
 
     test('should handle Date object instances', () => {
       const queryObject = {
-        date: new Date('December 17, 1995 03:24:00'),
+        date: new Date(Date.UTC(1995, 11, 17, 2, 24, 0)),
       };
 
       expect(stringifyQuery(queryObject)).toEqual('date=1995-12-17T02%3A24%3A00.000Z');
