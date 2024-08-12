@@ -38,25 +38,7 @@ function buildFormData(reqForm) {
   }, new FormData());
 }
 
-// Encodes an object using appropriate serializer.
-export function encodeFormOrQuery(data) {
-  /**
-   * Encode parameter names and values
-   * @param {Object} result - parameter names and values
-   * @param {string} parameterName - Parameter name
-   * @return {object} encoded parameter names and values
-   */
-  const encodedQuery = Object.keys(data).reduce((result, parameterName) => {
-    // eslint-disable-next-line no-restricted-syntax
-    for (const [key, value] of formatKeyValue(parameterName, data[parameterName])) {
-      if (value instanceof FileWithData) {
-        result[key] = value.valueOf();
-      } else {
-        result[key] = value;
-      }
-    }
-    return result;
-  }, {});
+export const stringifyQuery = (queryObject, { encode = true } = {}) => {
   const buildNestedParams = (params, key, value) => {
     if (value == null) {
       params.append(key, '');
@@ -75,12 +57,36 @@ export function encodeFormOrQuery(data) {
 
     return params;
   };
-  const params = Object.entries(encodedQuery).reduce(
+  const params = Object.entries(queryObject).reduce(
     (acc, [key, value]) => buildNestedParams(acc, key, value),
     new URLSearchParams()
   );
+  const queryString = String(params);
 
-  return decodeURIComponent(String(params));
+  return encode ? queryString : decodeURIComponent(queryString);
+};
+
+// Encodes an object using appropriate serializer.
+export function encodeFormOrQuery(data) {
+  /**
+   * Encode parameter names and values
+   * @param {Object} result - parameter names and values
+   * @param {string} parameterName - Parameter name
+   * @return {object} encoded parameter names and values
+   */
+  const encodedQueryObj = Object.keys(data).reduce((result, parameterName) => {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const [key, value] of formatKeyValue(parameterName, data[parameterName])) {
+      if (value instanceof FileWithData) {
+        result[key] = value.valueOf();
+      } else {
+        result[key] = value;
+      }
+    }
+    return result;
+  }, {});
+
+  return stringifyQuery(encodedQueryObj, { encode: false });
 }
 
 // If the request has a `query` object, merge it into the request.url, and delete the object
