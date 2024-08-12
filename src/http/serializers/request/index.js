@@ -62,6 +62,8 @@ export function encodeFormOrQuery(data) {
       params.append(key, '');
     } else if (Array.isArray(value)) {
       value.reduce((acc, v) => buildNestedParams(params, key, v), params);
+    } else if (value instanceof Date) {
+      params.append(key, value.toISOString());
     } else if (typeof value === 'object') {
       Object.entries(value).reduce(
         (acc, [k, v]) => buildNestedParams(params, `${key}[${k}]`, v),
