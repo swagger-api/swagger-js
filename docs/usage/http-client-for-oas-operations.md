@@ -28,6 +28,7 @@ Property | Description
 `userFetch` | `Function=cross-fetch`. Custom **asynchronous** fetch function that accepts two arguments: the `url` and the `Request` object and must return a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response) object. More info in [HTTP Client](http-client.md) documentation.
 `signal` | `AbortSignal=null`. AbortSignal object instance, which can be used to abort a request as desired.
 `server` | `String`. URL (`https://example.com`) or relative URI Reference (`/path/subpath`). Must match with of the defined `Server Objects`. If matched, it will be prepended to every requested path.
+`serverVariableEncoder` | `Function=identity`. An encoder function that is run on a server variable before substituted to the URL template.
 `contextUrl` | `String`. URL, e.g. `https://example.com`. Used in following situations: <br /><br />If `server` option is not matched and there is no `Server Object` defined in the definition, this URL will be prepended to every requested path.<br /><br />If matched `Server Object` is defined as relative URI Reference its `url` fixed field is resolved against `contenxtUrl`. Resolved URL will be prepended to every requested path. 
 
 For all later references, we will always use following OpenAPI 3.0.0 definition when referring
