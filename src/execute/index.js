@@ -1,4 +1,5 @@
 import cookie from 'cookie';
+import { identity } from 'ramda';
 import { isPlainObject } from 'ramda-adjunct';
 import {
   test as testServerURLTemplate,
@@ -129,6 +130,7 @@ export function buildRequest(options) {
     serverVariables,
     http,
     signal,
+    serverVariableEncoder,
   } = options;
 
   let { parameters, parameterBuilders } = options;
@@ -183,6 +185,7 @@ export function buildRequest(options) {
     serverVariables,
     pathName,
     method,
+    serverVariableEncoder,
   });
 
   req.url += baseURL;
@@ -321,7 +324,15 @@ export function baseUrl(obj) {
 
 const isNonEmptyServerList = (value) => Array.isArray(value) && value.length > 0;
 
-function oas3BaseUrl({ spec, pathName, method, server, contextUrl, serverVariables = {} }) {
+function oas3BaseUrl({
+  spec,
+  pathName,
+  method,
+  server,
+  contextUrl,
+  serverVariables = {},
+  serverVariableEncoder,
+}) {
   let servers = [];
   let selectedServerUrl = '';
   let selectedServerObj;
@@ -359,10 +370,14 @@ function oas3BaseUrl({ spec, pathName, method, server, contextUrl, serverVariabl
       {}
     );
 
-    selectedServerUrl = substituteServerURLTemplate(selectedServerUrl, {
-      ...selectedServerVariables,
-      ...serverVariables,
-    });
+    selectedServerUrl = substituteServerURLTemplate(
+      selectedServerUrl,
+      {
+        ...selectedServerVariables,
+        ...serverVariables,
+      },
+      { encoder: typeof serverVariableEncoder === 'function' ? serverVariableEncoder : identity }
+    );
   }
 
   return buildOas3UrlWithContext(selectedServerUrl, contextUrl);
