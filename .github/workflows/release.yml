@@ -30,7 +30,7 @@ jobs:
 
       - name: Semantic Release
         id: semantic
-        uses: cycjimmy/semantic-release-action@v4.1.0
+        uses: cycjimmy/semantic-release-action@v4.1.1
         with:
           dry_run: false
           extra_plugins: |
