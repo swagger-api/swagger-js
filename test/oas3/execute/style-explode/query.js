@@ -540,7 +540,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters', () 
 
       expect(req).toEqual({
         method: 'GET',
-        url: `/users?id=3,4,5,${SAFE_INPUT_RESULT}`,
+        url: `/users?id=3%2C4%2C5%2C${SAFE_INPUT_RESULT}`,
         credentials: 'same-origin',
         headers: {},
       });
@@ -617,7 +617,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters', () 
 
       expect(req).toEqual({
         method: 'GET',
-        url: '/users?id=%3A,%2F,%3F,%23,%5B,%5D,%40,%21,%24,%26,%27,%28,%29,%2A,%2B,%2C,%3B,%3D',
+        url: '/users?id=%3A%2C%2F%2C%3F%2C%23%2C%5B%2C%5D%2C%40%2C%21%2C%24%2C%26%2C%27%2C%28%2C%29%2C%2A%2C%2B%2C%2C%2C%3B%2C%3D',
         credentials: 'same-origin',
         headers: {},
       });
@@ -1123,7 +1123,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters', () 
 
       expect(req).toEqual({
         method: 'GET',
-        url: `/users?id=role,admin,firstName,Alex,greeting,${SAFE_INPUT_RESULT}`,
+        url: `/users?id=role%2Cadmin%2CfirstName%2CAlex%2Cgreeting%2C${SAFE_INPUT_RESULT}`,
         credentials: 'same-origin',
         headers: {},
       });
@@ -1206,7 +1206,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters', () 
 
       expect(req).toEqual({
         method: 'GET',
-        url: `/users?id=role,admin,firstName,${RESERVED_INPUT_ENCODED_RESULT}`,
+        url: `/users?id=role%2Cadmin%2CfirstName%2C${RESERVED_INPUT_ENCODED_RESULT}`,
         credentials: 'same-origin',
         headers: {},
       });

@@ -121,6 +121,10 @@ function formatKeyValueBySerializationOption(key, value, skipEncoding, serializa
     : serializationOption && serializationOption.allowReserved
       ? 'unsafe'
       : 'reserved';
+  const styleSeparator =
+    style === 'form' && !serializationOption?.allowReserved && !skipEncoding
+      ? '%2C'
+      : STYLE_SEPARATORS[style];
 
   const encodeFn = (v) => valueEncoder(v, escape);
   const encodeKeyFn = skipEncoding ? (k) => k : (k) => encodeFn(k);
@@ -137,7 +141,7 @@ function formatKeyValueBySerializationOption(key, value, skipEncoding, serializa
       // Otherwise, the caller will convert it to a query by qs.stringify.
       return [[encodeKeyFn(key), value.map(encodeFn)]];
     }
-    return [[encodeKeyFn(key), value.map(encodeFn).join(STYLE_SEPARATORS[style])]];
+    return [[encodeKeyFn(key), value.map(encodeFn).join(styleSeparator)]];
   }
 
   // Object
@@ -156,8 +160,10 @@ function formatKeyValueBySerializationOption(key, value, skipEncoding, serializa
     [
       encodeKeyFn(key),
       Object.keys(value)
-        .map((valueKey) => [`${encodeKeyFn(valueKey)},${encodeFn(value[valueKey])}`])
-        .join(','),
+        .map((valueKey) => [
+          `${encodeKeyFn(valueKey)}${styleSeparator}${encodeFn(value[valueKey])}`,
+        ])
+        .join(styleSeparator),
     ],
   ];
 }

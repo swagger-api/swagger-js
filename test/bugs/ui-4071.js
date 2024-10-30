@@ -64,6 +64,6 @@ test('should generate a request with application/x-www-form-urlencoded', () => {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
     },
-    body: 'industries=1,16',
+    body: 'industries=1%2C16',
   });
 });

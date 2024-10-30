@@ -782,7 +782,7 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
 
       expect(req).toEqual({
         method: 'POST',
-        url: `/?arrayOfObjects=${escape('{"a":{"b":"c"}}')},${escape('{"d":{"e":"f"}}')}&arrayOfArrays=${escape('[{"a":{"b":"c"}}]')}`,
+        url: `/?arrayOfObjects=${escape('{"a":{"b":"c"}},{"d":{"e":"f"}}')}&arrayOfArrays=${escape('[{"a":{"b":"c"}}]')}`,
         credentials: 'same-origin',
         headers: {
           headerArrayOfObjects: '{"a":{"b":"c"}},{"d":{"e":"f"}}',
