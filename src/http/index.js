@@ -76,6 +76,14 @@ export default async function http(url, request = {}) {
     error.response = res;
     throw error;
   }
+  if (res.parseError) {
+    const error = new Error(res.statusText || `response status is ${res.status}`);
+    error.status = res.status;
+    error.statusCode = res.status;
+    error.response = res;
+    error.parseError = res.parseError;
+    throw error;
+  }
   return res;
 }
 
