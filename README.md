@@ -30,10 +30,10 @@ Swagger Client Version | Release Date | OpenAPI Spec compatibility             |
 
 ## Anonymized analytics
 
-Swagger Client uses [Scarf](https://scarf.sh/) to collect [anonymized installation analytics](https://github.com/scarf-sh/scarf-js?tab=readme-ov-file#what-information-does-scarf-js-provide-me-as-a-package-author). 
-These analytics help support the maintainers of this library. However, if you'd like to [opt out](https://github.com/scarf-sh/scarf-js?tab=readme-ov-file#as-a-user-of-a-package-using-scarf-js-how-can-i-opt-out-of-analytics),
-you can do so by setting `scarfSettings.enabled = false` in your project's package.json.
-Alternatively, you can set the environment variable `SCARF_ANALYTICS=false` before you install.
+Swagger Client uses [Scarf](https://scarf.sh/) to collect [anonymized installation analytics](https://github.com/scarf-sh/scarf-js?tab=readme-ov-file#as-a-user-of-a-package-using-scarf-js-what-information-does-scarf-js-send-about-me). 
+These analytics help support the maintainers of this library and ONLY run during installation. To [opt out](https://github.com/scarf-sh/scarf-js?tab=readme-ov-file#as-a-user-of-a-package-using-scarf-js-how-can-i-opt-out-of-analytics),
+you can set the `scafeSettings.enabled` field to `false` in your project's `package.json` file, e.g.,  `{ ... "scarfSettings.enabled":  false }`.
+Alternatively, you can set the environment variable `SCARF_ANALYTICS` to `false` as part of the environment that installs your npm packages, e.g., `SCARF_ANALYTICS=false npm install`.
 
 ## Documentation
 
