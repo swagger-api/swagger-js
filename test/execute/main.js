@@ -78,8 +78,8 @@ describe('execute', () => {
       };
 
       // When
-      const baseURL = 'https://exmpl.com/v1'
-      const req = buildRequest({ spec, operationId: 'foo' , baseURL });
+      const baseURL = 'https://exmpl.com/v1';
+      const req = buildRequest({ spec, operationId: 'foo', baseURL });
 
       // Then
       expect(req).toEqual({
