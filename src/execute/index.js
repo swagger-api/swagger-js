@@ -133,7 +133,7 @@ export function buildRequest(options) {
     serverVariableEncoder,
   } = options;
 
-  let { parameters, parameterBuilders } = options;
+  let { parameters, parameterBuilders, baseURL } = options;
 
   const specIsOAS3 = isOpenAPI3(spec);
   if (!parameterBuilders) {
@@ -177,16 +177,18 @@ export function buildRequest(options) {
 
   const { operation = {}, method, pathName } = operationRaw;
 
-  const baseURL = baseUrl({
-    spec,
-    scheme,
-    contextUrl,
-    server,
-    serverVariables,
-    pathName,
-    method,
-    serverVariableEncoder,
-  });
+  baseURL =
+    baseURL ??
+    baseUrl({
+      spec,
+      scheme,
+      contextUrl,
+      server,
+      serverVariables,
+      pathName,
+      method,
+      serverVariableEncoder,
+    });
 
   req.url += baseURL;
 
