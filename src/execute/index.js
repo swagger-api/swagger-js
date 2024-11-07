@@ -177,16 +177,18 @@ export function buildRequest(options) {
 
   const { operation = {}, method, pathName } = operationRaw;
 
-  baseURL = baseURL ?? baseUrl({
-    spec,
-    scheme,
-    contextUrl,
-    server,
-    serverVariables,
-    pathName,
-    method,
-    serverVariableEncoder,
-  });
+  baseURL =
+    baseURL ??
+    baseUrl({
+      spec,
+      scheme,
+      contextUrl,
+      server,
+      serverVariables,
+      pathName,
+      method,
+      serverVariableEncoder,
+    });
 
   req.url += baseURL;
 
