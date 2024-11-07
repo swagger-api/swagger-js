@@ -129,7 +129,7 @@ export function buildRequest(options) {
     server,
     serverVariables,
     http,
-    signal
+    signal,
     serverVariableEncoder,
   } = options;
 
