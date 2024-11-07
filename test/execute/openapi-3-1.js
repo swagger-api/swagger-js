@@ -191,14 +191,14 @@ describe('given OpenAPI 3.1.0 definition', () => {
   });
 
   test('should build a request using provided baseURL in options', () => {
-    const baseURL = 'https://exmpl.com/v1'
+    const baseURL = 'https://exmpl.com/v1';
     const request = SwaggerClient.buildRequest({
       spec,
       operationId: 'getUserList',
       parameters: { q: 'search string' },
       securities: { authorized: { BearerAuth: '3492342948239482398' } },
       responseContentType: 'application/json',
-      baseURL
+      baseURL,
     });
 
     expect(request).toEqual({
