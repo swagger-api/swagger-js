@@ -11,7 +11,7 @@ const genericStrategy = {
   match() {
     return true;
   },
-  normalize({ spec }) {
+  normalize(spec) {
     const { spec: normalized } = normalize({ spec });
     return normalized;
   },

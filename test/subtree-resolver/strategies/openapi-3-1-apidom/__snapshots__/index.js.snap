@@ -4,7 +4,6 @@ exports[`subtree-resolver OpenAPI 3.1.0 strategy should not resolve an untargete
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "schemas": {
         "Error": {
@@ -123,11 +122,6 @@ exports[`subtree-resolver OpenAPI 3.1.0 strategy should not resolve an untargete
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "List all pets",
           "tags": [
             "pets",
@@ -150,21 +144,11 @@ exports[`subtree-resolver OpenAPI 3.1.0 strategy should not resolve an untargete
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "Create a pet",
           "tags": [
             "pets",
           ],
         },
-        "servers": [
-          {
-            "url": "http://petstore.swagger.io/v1",
-          },
-        ],
       },
       "/pets/{petId}": {
         "get": {
@@ -202,21 +186,11 @@ exports[`subtree-resolver OpenAPI 3.1.0 strategy should not resolve an untargete
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "Info for a specific pet",
           "tags": [
             "pets",
           ],
         },
-        "servers": [
-          {
-            "url": "http://petstore.swagger.io/v1",
-          },
-        ],
       },
     },
     "servers": [
@@ -224,6 +198,10 @@ exports[`subtree-resolver OpenAPI 3.1.0 strategy should not resolve an untargete
         "url": "http://petstore.swagger.io/v1",
       },
     ],
+    "x-normalized": {
+      "operation-ids": [],
+      "security-requirements": [],
+    },
   },
 }
 `;

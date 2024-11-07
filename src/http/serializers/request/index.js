@@ -1,5 +1,3 @@
-import qs from 'qs';
-
 import formatKeyValue from './format.js';
 import { isFile, isArrayOfFile, FileWithData } from './file.js';
 
@@ -40,6 +38,34 @@ function buildFormData(reqForm) {
   }, new FormData());
 }
 
+export const stringifyQuery = (queryObject, { encode = true } = {}) => {
+  const buildNestedParams = (params, key, value) => {
+    if (value == null) {
+      params.append(key, '');
+    } else if (Array.isArray(value)) {
+      value.reduce((acc, v) => buildNestedParams(params, key, v), params);
+    } else if (value instanceof Date) {
+      params.append(key, value.toISOString());
+    } else if (typeof value === 'object') {
+      Object.entries(value).reduce(
+        (acc, [k, v]) => buildNestedParams(params, `${key}[${k}]`, v),
+        params
+      );
+    } else {
+      params.append(key, value);
+    }
+
+    return params;
+  };
+  const params = Object.entries(queryObject).reduce(
+    (acc, [key, value]) => buildNestedParams(acc, key, value),
+    new URLSearchParams()
+  );
+  const queryString = String(params);
+
+  return encode ? queryString : decodeURIComponent(queryString);
+};
+
 // Encodes an object using appropriate serializer.
 export function encodeFormOrQuery(data) {
   /**
@@ -48,7 +74,7 @@ export function encodeFormOrQuery(data) {
    * @param {string} parameterName - Parameter name
    * @return {object} encoded parameter names and values
    */
-  const encodedQuery = Object.keys(data).reduce((result, parameterName) => {
+  const encodedQueryObj = Object.keys(data).reduce((result, parameterName) => {
     // eslint-disable-next-line no-restricted-syntax
     for (const [key, value] of formatKeyValue(parameterName, data[parameterName])) {
       if (value instanceof FileWithData) {
@@ -60,7 +86,7 @@ export function encodeFormOrQuery(data) {
     return result;
   }, {});
 
-  return qs.stringify(encodedQuery, { encode: false, indices: false }) || '';
+  return stringifyQuery(encodedQueryObj, { encode: false });
 }
 
 // If the request has a `query` object, merge it into the request.url, and delete the object
@@ -96,10 +122,10 @@ export function serializeRequest(req = {}) {
     let newStr = '';
 
     if (oriSearch) {
-      const oriQuery = qs.parse(oriSearch);
+      const oriQuery = new URLSearchParams(oriSearch);
       const keysToRemove = Object.keys(query);
-      keysToRemove.forEach((key) => delete oriQuery[key]);
-      newStr = qs.stringify(oriQuery, { encode: true });
+      keysToRemove.forEach((key) => oriQuery.delete(key));
+      newStr = String(oriQuery);
     }
 
     const finalStr = joinSearch(newStr, encodeFormOrQuery(query));

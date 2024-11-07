@@ -28,6 +28,23 @@ Swagger Client Version | Release Date | OpenAPI Spec compatibility             |
 3.10.x | 2020-01-17   | 2.0, 3.0.0, 3.0.1, 3.0.2, 3.0.3        | [tag v3.10.0](https://github.com/swagger-api/swagger-js/tree/v3.10.0)
 2.1.32 | 2017-01-12   | 1.0, 1.1, 1.2                          | [tag v2.1.32](https://github.com/swagger-api/swagger-js/tree/v2.1.32). This [release](https://github.com/swagger-api/swagger-js/releases/tag/v2.1.32) is only available on GitHub.
 
+## Anonymized analytics
+
+Swagger Client uses [Scarf](https://scarf.sh/) to collect [anonymized installation analytics](https://github.com/scarf-sh/scarf-js?tab=readme-ov-file#as-a-user-of-a-package-using-scarf-js-what-information-does-scarf-js-send-about-me). These analytics help support the maintainers of this library and ONLY run during installation. To [opt out](https://github.com/scarf-sh/scarf-js?tab=readme-ov-file#as-a-user-of-a-package-using-scarf-js-how-can-i-opt-out-of-analytics), you can set the `scarfSettings.enabled` field to `false` in your project's `package.json`:
+
+```
+// package.json
+{
+  // ...
+  "scarfSettings": {
+    "enabled": false
+  }
+  // ...
+}
+```
+
+Alternatively, you can set the environment variable `SCARF_ANALYTICS` to `false` as part of the environment that installs your npm packages, e.g., `SCARF_ANALYTICS=false npm install`.
+
 ## Documentation
 
 #### Usage

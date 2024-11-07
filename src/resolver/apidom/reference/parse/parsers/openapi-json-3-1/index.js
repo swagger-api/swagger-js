@@ -12,13 +12,12 @@ class OpenAPIJSON3_1Parser extends Parser {
 
   constructor(options = {}) {
     super({
-      ...options,
       name: 'openapi-json-3-1-swagger-client',
-      fileExtensions: ['.json'],
       mediaTypes: new OpenAPIMediaTypes(
         ...mediaTypes.filterByFormat('generic'),
         ...mediaTypes.filterByFormat('json')
       ),
+      ...options,
     });
   }
 

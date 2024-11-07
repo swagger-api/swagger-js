@@ -77,7 +77,7 @@ describe('OpenAPIYaml3_1Parser', () => {
           uri: '/path/to/openapi.json',
           mediaType: mediaTypes.latest('yaml'),
         });
-        const parser = new OpenAPIYaml3_1Parser();
+        const parser = new OpenAPIYaml3_1Parser({ fileExtensions: ['.yaml', '.yml'] });
 
         expect(await parser.canParse(file)).toBe(false);
       });
@@ -89,7 +89,7 @@ describe('OpenAPIYaml3_1Parser', () => {
           uri: '/path/to/openapi',
           mediaType: mediaTypes.latest('yaml'),
         });
-        const parser = new OpenAPIYaml3_1Parser();
+        const parser = new OpenAPIYaml3_1Parser({ fileExtensions: ['.yaml', '.yml'] });
 
         expect(await parser.canParse(file)).toBe(false);
       });

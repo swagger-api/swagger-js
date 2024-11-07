@@ -27,7 +27,7 @@ describe('YAMLParser', () => {
     describe('given file with unknown extension', () => {
       test('should return false', async () => {
         const file = new File({ uri: '/path/to/file.txt' });
-        const parser = new YAMLParser();
+        const parser = new YAMLParser({ fileExtensions: ['.yaml', '.yml'] });
 
         expect(await parser.canParse(file)).toBe(false);
       });
@@ -36,7 +36,7 @@ describe('YAMLParser', () => {
     describe('given file with no extension', () => {
       test('should return false', async () => {
         const file = new File({ uri: '/path/to/file' });
-        const parser = new YAMLParser();
+        const parser = new YAMLParser({ fileExtensions: ['.yaml', '.yml'] });
 
         expect(await parser.canParse(file)).toBe(false);
       });

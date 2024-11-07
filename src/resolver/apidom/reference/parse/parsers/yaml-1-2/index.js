@@ -5,10 +5,9 @@ import { ParserError, Parser } from '@swagger-api/apidom-reference/configuration
 class YAMLParser extends Parser {
   constructor(options = {}) {
     super({
-      ...options,
       name: 'yaml-1-2-swagger-client',
-      fileExtensions: ['.yaml', '.yml'],
       mediaTypes: ['text/yaml', 'application/yaml'],
+      ...options,
     });
   }
 

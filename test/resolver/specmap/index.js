@@ -1,6 +1,6 @@
 import * as undici from 'undici';
 import cloneDeep from 'lodash/cloneDeep';
-import traverse from 'traverse';
+import traverse from 'neotraverse/legacy';
 
 import mapSpec, { SpecMap, plugins } from '../../../src/resolver/specmap/index.js';
 import lib from '../../../src/resolver/specmap/lib/index.js';

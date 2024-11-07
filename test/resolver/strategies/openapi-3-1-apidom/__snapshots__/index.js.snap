@@ -4,7 +4,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL a
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "schemas": {
         "Error": {
@@ -155,11 +154,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL a
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "List all pets",
           "tags": [
             "pets",
@@ -195,21 +189,11 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL a
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "Create a pet",
           "tags": [
             "pets",
           ],
         },
-        "servers": [
-          {
-            "url": "http://petstore.swagger.io/v1",
-          },
-        ],
       },
       "/pets/{petId}": {
         "get": {
@@ -276,21 +260,11 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL a
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "Info for a specific pet",
           "tags": [
             "pets",
           ],
         },
-        "servers": [
-          {
-            "url": "http://petstore.swagger.io/v1",
-          },
-        ],
       },
     },
     "servers": [
@@ -298,6 +272,10 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL a
         "url": "http://petstore.swagger.io/v1",
       },
     ],
+    "x-normalized": {
+      "operation-ids": [],
+      "security-requirements": [],
+    },
   },
 }
 `;
@@ -306,7 +284,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL a
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "schemas": {
         "Error": {
@@ -461,11 +438,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL a
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "List all pets",
           "tags": [
             "pets",
@@ -502,21 +474,11 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL a
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "Create a pet",
           "tags": [
             "pets",
           ],
         },
-        "servers": [
-          {
-            "url": "http://petstore.swagger.io/v1",
-          },
-        ],
       },
       "/pets/{petId}": {
         "get": {
@@ -585,21 +547,11 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL a
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "Info for a specific pet",
           "tags": [
             "pets",
           ],
         },
-        "servers": [
-          {
-            "url": "http://petstore.swagger.io/v1",
-          },
-        ],
       },
     },
     "servers": [
@@ -607,6 +559,10 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL a
         "url": "http://petstore.swagger.io/v1",
       },
     ],
+    "x-normalized": {
+      "operation-ids": [],
+      "security-requirements": [],
+    },
   },
 }
 `;
@@ -615,7 +571,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL a
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "schemas": {
         "User": {
@@ -642,11 +597,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL a
       },
     },
     "openapi": "3.1.0",
-    "servers": [
-      {
-        "url": "/",
-      },
-    ],
   },
 }
 `;
@@ -655,7 +605,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL a
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "schemas": {
         "User": {
@@ -689,11 +638,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL a
       },
     },
     "openapi": "3.1.0",
-    "servers": [
-      {
-        "url": "/",
-      },
-    ],
   },
 }
 `;
@@ -702,7 +646,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL s
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "schemas": {
         "Error": {
@@ -853,11 +796,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL s
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "List all pets",
           "tags": [
             "pets",
@@ -893,21 +831,11 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL s
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "Create a pet",
           "tags": [
             "pets",
           ],
         },
-        "servers": [
-          {
-            "url": "http://petstore.swagger.io/v1",
-          },
-        ],
       },
       "/pets/{petId}": {
         "get": {
@@ -974,21 +902,11 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL s
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "Info for a specific pet",
           "tags": [
             "pets",
           ],
         },
-        "servers": [
-          {
-            "url": "http://petstore.swagger.io/v1",
-          },
-        ],
       },
     },
     "servers": [
@@ -996,6 +914,10 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL s
         "url": "http://petstore.swagger.io/v1",
       },
     ],
+    "x-normalized": {
+      "operation-ids": [],
+      "security-requirements": [],
+    },
   },
 }
 `;
@@ -1004,7 +926,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "schemas": {
         "Error": {
@@ -1159,11 +1080,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "List all pets",
           "tags": [
             "pets",
@@ -1200,21 +1116,11 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "Create a pet",
           "tags": [
             "pets",
           ],
         },
-        "servers": [
-          {
-            "url": "http://petstore.swagger.io/v1",
-          },
-        ],
       },
       "/pets/{petId}": {
         "get": {
@@ -1283,21 +1189,11 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "Info for a specific pet",
           "tags": [
             "pets",
           ],
         },
-        "servers": [
-          {
-            "url": "http://petstore.swagger.io/v1",
-          },
-        ],
       },
     },
     "servers": [
@@ -1305,6 +1201,10 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
         "url": "http://petstore.swagger.io/v1",
       },
     ],
+    "x-normalized": {
+      "operation-ids": [],
+      "security-requirements": [],
+    },
   },
 }
 `;
@@ -1313,7 +1213,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "schemas": {
         "Error": {
@@ -1464,11 +1363,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "List all pets",
           "tags": [
             "pets",
@@ -1504,21 +1398,11 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "Create a pet",
           "tags": [
             "pets",
           ],
         },
-        "servers": [
-          {
-            "url": "http://petstore.swagger.io/v1",
-          },
-        ],
       },
       "/pets/{petId}": {
         "get": {
@@ -1585,21 +1469,11 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "Info for a specific pet",
           "tags": [
             "pets",
           ],
         },
-        "servers": [
-          {
-            "url": "http://petstore.swagger.io/v1",
-          },
-        ],
       },
     },
     "servers": [
@@ -1607,6 +1481,10 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
         "url": "http://petstore.swagger.io/v1",
       },
     ],
+    "x-normalized": {
+      "operation-ids": [],
+      "security-requirements": [],
+    },
   },
 }
 `;
@@ -1615,7 +1493,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "parameters": {
         "Baz": {
@@ -1686,31 +1563,19 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "description": "OK",
             },
           },
-          "servers": [
-            {
-              "url": "/",
-            },
-          ],
         },
-        "servers": [
-          {
-            "url": "/",
-          },
-        ],
       },
     },
-    "servers": [
-      {
-        "url": "/",
-      },
-    ],
+    "x-normalized": {
+      "operation-ids": [],
+      "security-requirements": [],
+    },
   },
 }
 `;
 
 exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec option and modelPropertyMacro is provided as a function given the function throws error should collect error 1`] = `
 {
-  "$$normalized": true,
   "components": {
     "schemas": {
       "Pet": {
@@ -1736,11 +1601,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
     "version": "1.0.0",
   },
   "openapi": "3.1.0",
-  "servers": [
-    {
-      "url": "/",
-    },
-  ],
 }
 `;
 
@@ -1748,7 +1608,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "schemas": {
         "Error": {
@@ -1827,11 +1686,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
       "version": "1.0.0",
     },
     "openapi": "3.1.0",
-    "servers": [
-      {
-        "url": "/",
-      },
-    ],
   },
 }
 `;
@@ -1840,7 +1694,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "schemas": {
         "Error": {
@@ -1995,11 +1848,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "List all pets",
           "tags": [
             "pets",
@@ -2036,21 +1884,11 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "Create a pet",
           "tags": [
             "pets",
           ],
         },
-        "servers": [
-          {
-            "url": "http://petstore.swagger.io/v1",
-          },
-        ],
       },
       "/pets/{petId}": {
         "get": {
@@ -2119,21 +1957,11 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "Info for a specific pet",
           "tags": [
             "pets",
           ],
         },
-        "servers": [
-          {
-            "url": "http://petstore.swagger.io/v1",
-          },
-        ],
       },
     },
     "servers": [
@@ -2141,13 +1969,16 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
         "url": "http://petstore.swagger.io/v1",
       },
     ],
+    "x-normalized": {
+      "operation-ids": [],
+      "security-requirements": [],
+    },
   },
 }
 `;
 
 exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec option and parameterMacro is provided sa a function given the function throws error should collect error 1`] = `
 {
-  "$$normalized": true,
   "components": {
     "schemas": {
       "Error": {
@@ -2298,11 +2129,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
             "description": "unexpected error",
           },
         },
-        "servers": [
-          {
-            "url": "http://petstore.swagger.io/v1",
-          },
-        ],
         "summary": "List all pets",
         "tags": [
           "pets",
@@ -2338,21 +2164,11 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
             "description": "unexpected error",
           },
         },
-        "servers": [
-          {
-            "url": "http://petstore.swagger.io/v1",
-          },
-        ],
         "summary": "Create a pet",
         "tags": [
           "pets",
         ],
       },
-      "servers": [
-        {
-          "url": "http://petstore.swagger.io/v1",
-        },
-      ],
     },
   },
   "servers": [
@@ -2360,6 +2176,10 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
       "url": "http://petstore.swagger.io/v1",
     },
   ],
+  "x-normalized": {
+    "operation-ids": [],
+    "security-requirements": [],
+  },
 }
 `;
 
@@ -2367,7 +2187,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "schemas": {
         "Error": {
@@ -2519,11 +2338,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "List all pets",
           "tags": [
             "pets",
@@ -2559,21 +2373,11 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "Create a pet",
           "tags": [
             "pets",
           ],
         },
-        "servers": [
-          {
-            "url": "http://petstore.swagger.io/v1",
-          },
-        ],
       },
     },
     "servers": [
@@ -2581,6 +2385,10 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
         "url": "http://petstore.swagger.io/v1",
       },
     ],
+    "x-normalized": {
+      "operation-ids": [],
+      "security-requirements": [],
+    },
   },
 }
 `;
@@ -2589,7 +2397,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "parameters": {
         "limit": {
@@ -2614,11 +2421,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
       "version": "1.0.0",
     },
     "openapi": "3.1.0",
-    "servers": [
-      {
-        "url": "/",
-      },
-    ],
   },
 }
 `;
@@ -2627,7 +2429,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "schemas": {
         "Error": {
@@ -2778,11 +2579,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "List all pets",
           "tags": [
             "pets",
@@ -2818,21 +2614,11 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "Create a pet",
           "tags": [
             "pets",
           ],
         },
-        "servers": [
-          {
-            "url": "http://petstore.swagger.io/v1",
-          },
-        ],
       },
       "/pets/{petId}": {
         "get": {
@@ -2899,21 +2685,11 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "Info for a specific pet",
           "tags": [
             "pets",
           ],
         },
-        "servers": [
-          {
-            "url": "http://petstore.swagger.io/v1",
-          },
-        ],
       },
     },
     "servers": [
@@ -2921,6 +2697,10 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
         "url": "http://petstore.swagger.io/v1",
       },
     ],
+    "x-normalized": {
+      "operation-ids": [],
+      "security-requirements": [],
+    },
   },
 }
 `;
@@ -2929,7 +2709,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "schemas": {
         "Error": {
@@ -3080,11 +2859,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "List all pets",
           "tags": [
             "pets",
@@ -3120,21 +2894,11 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "Create a pet",
           "tags": [
             "pets",
           ],
         },
-        "servers": [
-          {
-            "url": "http://petstore.swagger.io/v1",
-          },
-        ],
       },
       "/pets/{petId}": {
         "get": {
@@ -3172,21 +2936,11 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "Info for a specific pet",
           "tags": [
             "pets",
           ],
         },
-        "servers": [
-          {
-            "url": "http://petstore.swagger.io/v1",
-          },
-        ],
       },
     },
     "servers": [
@@ -3194,6 +2948,10 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
         "url": "http://petstore.swagger.io/v1",
       },
     ],
+    "x-normalized": {
+      "operation-ids": [],
+      "security-requirements": [],
+    },
   },
 }
 `;
@@ -3202,7 +2960,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "schemas": {
         "Error": {
@@ -3353,11 +3110,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "List all pets",
           "tags": [
             "pets",
@@ -3393,21 +3145,11 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "Create a pet",
           "tags": [
             "pets",
           ],
         },
-        "servers": [
-          {
-            "url": "http://petstore.swagger.io/v1",
-          },
-        ],
       },
       "/pets/{petId}": {
         "get": {
@@ -3474,21 +3216,11 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "Info for a specific pet",
           "tags": [
             "pets",
           ],
         },
-        "servers": [
-          {
-            "url": "http://petstore.swagger.io/v1",
-          },
-        ],
       },
     },
     "servers": [
@@ -3496,6 +3228,10 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
         "url": "http://petstore.swagger.io/v1",
       },
     ],
+    "x-normalized": {
+      "operation-ids": [],
+      "security-requirements": [],
+    },
   },
 }
 `;
@@ -3780,7 +3516,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
 {
   "errors": [],
   "spec": {
-    "$$normalized": true,
     "components": {
       "schemas": {
         "Error": {
@@ -3931,11 +3666,6 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "List all pets",
           "tags": [
             "pets",
@@ -3971,21 +3701,11 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "Create a pet",
           "tags": [
             "pets",
           ],
         },
-        "servers": [
-          {
-            "url": "http://petstore.swagger.io/v1",
-          },
-        ],
       },
       "/pets/{petId}": {
         "get": {
@@ -4052,21 +3772,11 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
               "description": "unexpected error",
             },
           },
-          "servers": [
-            {
-              "url": "http://petstore.swagger.io/v1",
-            },
-          ],
           "summary": "Info for a specific pet",
           "tags": [
             "pets",
           ],
         },
-        "servers": [
-          {
-            "url": "http://petstore.swagger.io/v1",
-          },
-        ],
       },
     },
     "servers": [
@@ -4074,6 +3784,10 @@ exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via spec 
         "url": "http://petstore.swagger.io/v1",
       },
     ],
+    "x-normalized": {
+      "operation-ids": [],
+      "security-requirements": [],
+    },
   },
 }
 `;

@@ -6,10 +6,10 @@ export { clearCache } from '../generic/index.js';
 
 const openApi2Strategy = {
   name: 'openapi-2',
-  match({ spec }) {
+  match(spec) {
     return isOpenAPI2(spec);
   },
-  normalize({ spec }) {
+  normalize(spec) {
     const { spec: normalized } = normalize({ spec });
     return normalized;
   },
