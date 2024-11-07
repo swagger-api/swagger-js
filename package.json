@@ -1,6 +1,6 @@
 {
   "name": "swagger-client",
-  "version": "3.30.1",
+  "version": "3.31.0",
   "description": "SwaggerJS - a collection of interfaces for OAI specs",
   "browser": {
     "./src/helpers/btoa.node.js": "./src/helpers/btoa.browser.js",
