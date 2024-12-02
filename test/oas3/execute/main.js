@@ -664,6 +664,78 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
       });
     });
 
+    it('should encode objects with a property with `null` value', () => {
+      const req = buildRequest({
+        spec: {
+          openapi: '3.0.0',
+          paths: {
+            '/{pathPartial}': {
+              post: {
+                operationId: 'myOp',
+                parameters: [
+                  {
+                    name: 'query',
+                    in: 'query',
+                    schema: {
+                      type: 'object',
+                    },
+                  },
+                  {
+                    name: 'FooHeader',
+                    in: 'header',
+                    schema: {
+                      type: 'object',
+                    },
+                    explode: true,
+                  },
+                  {
+                    name: 'pathPartial',
+                    in: 'path',
+                    schema: {
+                      type: 'object',
+                    },
+                    explode: true,
+                  },
+                  {
+                    name: 'myCookie',
+                    in: 'cookie',
+                    schema: {
+                      type: 'object',
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+        operationId: 'myOp',
+        parameters: {
+          pathPartial: {
+            a: null,
+          },
+          query: {
+            b: null,
+          },
+          FooHeader: {
+            c: null,
+          },
+          myCookie: {
+            d: null,
+          },
+        },
+      });
+
+      expect(req).toEqual({
+        method: 'POST',
+        url: `/a=null?b=null`,
+        credentials: 'same-origin',
+        headers: {
+          FooHeader: 'c=null',
+          Cookie: 'myCookie=d,null',
+        },
+      });
+    });
+
     it('should encode arrays of arrays and objects', () => {
       const req = buildRequest({
         spec: {

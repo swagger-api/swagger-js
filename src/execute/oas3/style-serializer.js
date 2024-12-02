@@ -41,7 +41,7 @@ export default function stylize(config) {
 }
 
 export function valueEncoder(value, escape = false) {
-  if (Array.isArray(value) || (value !== null && typeof value === 'object')) {
+  if (Array.isArray(value) || typeof value === 'object') {
     value = JSON.stringify(value);
   } else if (typeof value === 'number' || typeof value === 'boolean') {
     value = String(value);
