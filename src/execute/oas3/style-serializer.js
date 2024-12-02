@@ -47,7 +47,7 @@ export function valueEncoder(value, escape = false) {
     value = String(value);
   }
 
-  if (escape && value.length > 0) {
+  if (escape && typeof value === 'string' && value.length > 0) {
     return encodeCharacters(value, escape);
   }
   return value;

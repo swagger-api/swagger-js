@@ -736,6 +736,70 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
       });
     });
 
+    it('should encode arrays with `undefined` items', () => {
+      const req = buildRequest({
+        spec: {
+          openapi: '3.0.0',
+          paths: {
+            '/{pathPartial}': {
+              post: {
+                operationId: 'myOp',
+                parameters: [
+                  {
+                    name: 'query',
+                    in: 'query',
+                    schema: {
+                      type: 'array',
+                    },
+                  },
+                  {
+                    name: 'FooHeader',
+                    in: 'header',
+                    schema: {
+                      type: 'array',
+                    },
+                    explode: true,
+                  },
+                  {
+                    name: 'pathPartial',
+                    in: 'path',
+                    schema: {
+                      type: 'array',
+                    },
+                    explode: true,
+                  },
+                  {
+                    name: 'myCookie',
+                    in: 'cookie',
+                    schema: {
+                      type: 'array',
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+        operationId: 'myOp',
+        parameters: {
+          pathPartial: [undefined],
+          query: [undefined],
+          FooHeader: [undefined],
+          myCookie: [undefined],
+        },
+      });
+
+      expect(req).toEqual({
+        method: 'POST',
+        url: `/?query=`,
+        credentials: 'same-origin',
+        headers: {
+          FooHeader: '',
+          Cookie: 'myCookie=',
+        },
+      });
+    });
+
     it('should encode arrays of arrays and objects', () => {
       const req = buildRequest({
         spec: {
