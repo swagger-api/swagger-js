@@ -41,7 +41,7 @@ export default function stylize(config) {
 }
 
 export function valueEncoder(value, escape = false) {
-  if (Array.isArray(value) || typeof value === 'object') {
+  if (Array.isArray(value) || (value !== null && typeof value === 'object')) {
     value = JSON.stringify(value);
   } else if (typeof value === 'number' || typeof value === 'boolean') {
     value = String(value);
@@ -96,7 +96,7 @@ function encodeObject({ key, value, style, explode, escape }) {
 
   if (style === 'simple') {
     return valueKeys.reduce((prev, curr) => {
-      const val = valueEncoder(value[curr], escape);
+      const val = valueEncoder(value[curr], escape) ?? '';
       const middleChar = explode ? '=' : ',';
       const prefix = prev ? `${prev},` : '';
 
@@ -106,7 +106,7 @@ function encodeObject({ key, value, style, explode, escape }) {
 
   if (style === 'label') {
     return valueKeys.reduce((prev, curr) => {
-      const val = valueEncoder(value[curr], escape);
+      const val = valueEncoder(value[curr], escape) ?? '';
       const middleChar = explode ? '=' : '.';
       const prefix = prev ? `${prev}.` : '.';
 
@@ -116,7 +116,7 @@ function encodeObject({ key, value, style, explode, escape }) {
 
   if (style === 'matrix' && explode) {
     return valueKeys.reduce((prev, curr) => {
-      const val = valueEncoder(value[curr], escape);
+      const val = valueEncoder(value[curr], escape) ?? '';
       const prefix = prev ? `${prev};` : ';';
 
       return `${prefix}${curr}=${val}`;
@@ -126,7 +126,7 @@ function encodeObject({ key, value, style, explode, escape }) {
   if (style === 'matrix') {
     // no explode
     return valueKeys.reduce((prev, curr) => {
-      const val = valueEncoder(value[curr], escape);
+      const val = valueEncoder(value[curr], escape) ?? '';
       const prefix = prev ? `${prev},` : `;${key}=`;
 
       return `${prefix}${curr},${val}`;
@@ -135,7 +135,7 @@ function encodeObject({ key, value, style, explode, escape }) {
 
   if (style === 'form') {
     return valueKeys.reduce((prev, curr) => {
-      const val = valueEncoder(value[curr], escape);
+      const val = valueEncoder(value[curr], escape) ?? '';
       const prefix = prev ? `${prev}${explode ? '&' : ','}` : '';
       const separator = explode ? '=' : ',';
 

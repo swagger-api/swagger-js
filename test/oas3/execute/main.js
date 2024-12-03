@@ -727,11 +727,11 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
 
       expect(req).toEqual({
         method: 'POST',
-        url: `/a=null?b=null`,
+        url: `/a=?b=`,
         credentials: 'same-origin',
         headers: {
-          FooHeader: 'c=null',
-          Cookie: 'myCookie=d,null',
+          FooHeader: 'c=',
+          Cookie: 'myCookie=d,',
         },
       });
     });
@@ -758,7 +758,6 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
                     schema: {
                       type: 'array',
                     },
-                    explode: true,
                   },
                   {
                     name: 'pathPartial',
@@ -766,7 +765,6 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
                     schema: {
                       type: 'array',
                     },
-                    explode: true,
                   },
                   {
                     name: 'myCookie',
@@ -796,6 +794,69 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
         headers: {
           FooHeader: '',
           Cookie: 'myCookie=',
+        },
+      });
+    });
+
+    it('should encode arrays with multiple `undefined` items', () => {
+      const req = buildRequest({
+        spec: {
+          openapi: '3.0.0',
+          paths: {
+            '/{pathPartial}': {
+              post: {
+                operationId: 'myOp',
+                parameters: [
+                  {
+                    name: 'query',
+                    in: 'query',
+                    schema: {
+                      type: 'array',
+                    },
+                    explode: false,
+                  },
+                  {
+                    name: 'FooHeader',
+                    in: 'header',
+                    schema: {
+                      type: 'array',
+                    },
+                  },
+                  {
+                    name: 'pathPartial',
+                    in: 'path',
+                    schema: {
+                      type: 'array',
+                    },
+                  },
+                  {
+                    name: 'myCookie',
+                    in: 'cookie',
+                    schema: {
+                      type: 'array',
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+        operationId: 'myOp',
+        parameters: {
+          pathPartial: [undefined, undefined, undefined],
+          query: [undefined, undefined, undefined],
+          FooHeader: [undefined, undefined, undefined],
+          myCookie: [undefined, undefined, undefined],
+        },
+      });
+
+      expect(req).toEqual({
+        method: 'POST',
+        url: `/,,?query=,,`,
+        credentials: 'same-origin',
+        headers: {
+          FooHeader: ',,',
+          Cookie: 'myCookie=,,',
         },
       });
     });
