@@ -664,6 +664,203 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
       });
     });
 
+    it('should encode objects with a property with `null` value', () => {
+      const req = buildRequest({
+        spec: {
+          openapi: '3.0.0',
+          paths: {
+            '/{pathPartial}': {
+              post: {
+                operationId: 'myOp',
+                parameters: [
+                  {
+                    name: 'query',
+                    in: 'query',
+                    schema: {
+                      type: 'object',
+                    },
+                  },
+                  {
+                    name: 'FooHeader',
+                    in: 'header',
+                    schema: {
+                      type: 'object',
+                    },
+                    explode: true,
+                  },
+                  {
+                    name: 'pathPartial',
+                    in: 'path',
+                    schema: {
+                      type: 'object',
+                    },
+                    explode: true,
+                  },
+                  {
+                    name: 'myCookie',
+                    in: 'cookie',
+                    schema: {
+                      type: 'object',
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+        operationId: 'myOp',
+        parameters: {
+          pathPartial: {
+            a: null,
+          },
+          query: {
+            b: null,
+          },
+          FooHeader: {
+            c: null,
+          },
+          myCookie: {
+            d: null,
+          },
+        },
+      });
+
+      expect(req).toEqual({
+        method: 'POST',
+        url: `/a=?b=`,
+        credentials: 'same-origin',
+        headers: {
+          FooHeader: 'c=',
+          Cookie: 'myCookie=d,',
+        },
+      });
+    });
+
+    it('should encode arrays with `undefined` items', () => {
+      const req = buildRequest({
+        spec: {
+          openapi: '3.0.0',
+          paths: {
+            '/{pathPartial}': {
+              post: {
+                operationId: 'myOp',
+                parameters: [
+                  {
+                    name: 'query',
+                    in: 'query',
+                    schema: {
+                      type: 'array',
+                    },
+                  },
+                  {
+                    name: 'FooHeader',
+                    in: 'header',
+                    schema: {
+                      type: 'array',
+                    },
+                  },
+                  {
+                    name: 'pathPartial',
+                    in: 'path',
+                    schema: {
+                      type: 'array',
+                    },
+                  },
+                  {
+                    name: 'myCookie',
+                    in: 'cookie',
+                    schema: {
+                      type: 'array',
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+        operationId: 'myOp',
+        parameters: {
+          pathPartial: [undefined],
+          query: [undefined],
+          FooHeader: [undefined],
+          myCookie: [undefined],
+        },
+      });
+
+      expect(req).toEqual({
+        method: 'POST',
+        url: `/?query=`,
+        credentials: 'same-origin',
+        headers: {
+          FooHeader: '',
+          Cookie: 'myCookie=',
+        },
+      });
+    });
+
+    it('should encode arrays with multiple `undefined` items', () => {
+      const req = buildRequest({
+        spec: {
+          openapi: '3.0.0',
+          paths: {
+            '/{pathPartial}': {
+              post: {
+                operationId: 'myOp',
+                parameters: [
+                  {
+                    name: 'query',
+                    in: 'query',
+                    schema: {
+                      type: 'array',
+                    },
+                    explode: false,
+                  },
+                  {
+                    name: 'FooHeader',
+                    in: 'header',
+                    schema: {
+                      type: 'array',
+                    },
+                  },
+                  {
+                    name: 'pathPartial',
+                    in: 'path',
+                    schema: {
+                      type: 'array',
+                    },
+                  },
+                  {
+                    name: 'myCookie',
+                    in: 'cookie',
+                    schema: {
+                      type: 'array',
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+        operationId: 'myOp',
+        parameters: {
+          pathPartial: [undefined, undefined, undefined],
+          query: [undefined, undefined, undefined],
+          FooHeader: [undefined, undefined, undefined],
+          myCookie: [undefined, undefined, undefined],
+        },
+      });
+
+      expect(req).toEqual({
+        method: 'POST',
+        url: `/,,?query=,,`,
+        credentials: 'same-origin',
+        headers: {
+          FooHeader: ',,',
+          Cookie: 'myCookie=,,',
+        },
+      });
+    });
+
     it('should encode arrays of arrays and objects', () => {
       const req = buildRequest({
         spec: {

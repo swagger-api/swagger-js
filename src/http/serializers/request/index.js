@@ -40,9 +40,7 @@ function buildFormData(reqForm) {
 
 export const stringifyQuery = (queryObject, { encode = true } = {}) => {
   const buildNestedParams = (params, key, value) => {
-    if (value == null) {
-      params.append(key, '');
-    } else if (Array.isArray(value)) {
+    if (Array.isArray(value)) {
       value.reduce((acc, v) => buildNestedParams(params, key, v), params);
     } else if (value instanceof Date) {
       params.append(key, value.toISOString());
