@@ -86,7 +86,7 @@
     "neotraverse": "=0.6.18",
     "node-abort-controller": "^3.1.1",
     "node-fetch-commonjs": "^3.3.2",
-    "openapi-path-templating": "^1.5.1",
+    "openapi-path-templating": "^2.0.0",
     "openapi-server-url-templating": "^1.0.0",
     "ramda": "^0.30.1",
     "ramda-adjunct": "^5.0.0"
