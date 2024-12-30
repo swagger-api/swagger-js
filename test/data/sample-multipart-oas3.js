@@ -1,5 +1,5 @@
 export default {
-  openapi: '3.0.0',
+  openapi: '3.0.4',
   servers: [
     {
       url: '/api/v1',

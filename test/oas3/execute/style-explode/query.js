@@ -21,7 +21,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters', () 
     test('default: should build a query parameter in form/explode format', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         paths: {
           '/users': {
             get: {
@@ -57,7 +57,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters', () 
     test('should build a query parameter with escaped non-RFC3986 characters', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         paths: {
           '/users': {
             get: {
@@ -93,7 +93,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters', () 
     test('should build a query parameter with escaped non-RFC3986 characters with allowReserved', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         paths: {
           '/users': {
             get: {
@@ -133,7 +133,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters', () 
     test('should build a query parameter with escaped non-RFC3986 characters in parameter name', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         paths: {
           '/users': {
             get: {
@@ -169,7 +169,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters', () 
     test('should build an empty query parameter with escaped non-RFC3986 characters in parameter name', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         paths: {
           '/users': {
             get: {
@@ -206,7 +206,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters', () 
     test('should build a query parameter in form/explode format', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         paths: {
           '/users': {
             get: {

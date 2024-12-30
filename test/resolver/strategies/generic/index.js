@@ -28,6 +28,146 @@ describe('resolver', () => {
     expect(Swagger.resolve).toBeInstanceOf(Function);
   });
 
+  test('should resolve OpenAPI 2.0 Description', async () => {
+    const spec = {
+      swagger: '2.0',
+      definitions: {
+        one: { type: 'string' },
+        two: { $ref: '#/definitions/one' },
+      },
+    };
+    const result = await Swagger.resolve({ spec, allowMetaPatches: false });
+
+    expect(result.errors).toEqual([]);
+    expect(result.spec).toEqual({
+      swagger: '2.0',
+      definitions: {
+        one: { type: 'string' },
+        two: { type: 'string' },
+      },
+    });
+  });
+
+  test('should resolve OpenAPI 3.0.0 Description', async () => {
+    const spec = {
+      openapi: '3.0.0',
+      components: {
+        schemas: {
+          one: { type: 'string' },
+          two: { $ref: '#/components/schemas/one' },
+        },
+      },
+    };
+    const result = await Swagger.resolve({ spec, allowMetaPatches: false });
+
+    expect(result.errors).toEqual([]);
+    expect(result.spec).toEqual({
+      openapi: '3.0.0',
+      components: {
+        schemas: {
+          one: { type: 'string' },
+          two: { type: 'string' },
+        },
+      },
+    });
+  });
+
+  test('should resolve OpenAPI 3.0.1 Description', async () => {
+    const spec = {
+      openapi: '3.0.1',
+      components: {
+        schemas: {
+          one: { type: 'string' },
+          two: { $ref: '#/components/schemas/one' },
+        },
+      },
+    };
+    const result = await Swagger.resolve({ spec, allowMetaPatches: false });
+
+    expect(result.errors).toEqual([]);
+    expect(result.spec).toEqual({
+      openapi: '3.0.1',
+      components: {
+        schemas: {
+          one: { type: 'string' },
+          two: { type: 'string' },
+        },
+      },
+    });
+  });
+
+  test('should resolve OpenAPI 3.0.2 Description', async () => {
+    const spec = {
+      openapi: '3.0.2',
+      components: {
+        schemas: {
+          one: { type: 'string' },
+          two: { $ref: '#/components/schemas/one' },
+        },
+      },
+    };
+    const result = await Swagger.resolve({ spec, allowMetaPatches: false });
+
+    expect(result.errors).toEqual([]);
+    expect(result.spec).toEqual({
+      openapi: '3.0.2',
+      components: {
+        schemas: {
+          one: { type: 'string' },
+          two: { type: 'string' },
+        },
+      },
+    });
+  });
+
+  test('should resolve OpenAPI 3.0.3 Description', async () => {
+    const spec = {
+      openapi: '3.0.3',
+      components: {
+        schemas: {
+          one: { type: 'string' },
+          two: { $ref: '#/components/schemas/one' },
+        },
+      },
+    };
+    const result = await Swagger.resolve({ spec, allowMetaPatches: false });
+
+    expect(result.errors).toEqual([]);
+    expect(result.spec).toEqual({
+      openapi: '3.0.3',
+      components: {
+        schemas: {
+          one: { type: 'string' },
+          two: { type: 'string' },
+        },
+      },
+    });
+  });
+
+  test('should resolve OpenAPI 3.0.4 Description', async () => {
+    const spec = {
+      openapi: '3.0.4',
+      components: {
+        schemas: {
+          one: { type: 'string' },
+          two: { $ref: '#/components/schemas/one' },
+        },
+      },
+    };
+    const result = await Swagger.resolve({ spec, allowMetaPatches: false });
+
+    expect(result.errors).toEqual([]);
+    expect(result.spec).toEqual({
+      openapi: '3.0.4',
+      components: {
+        schemas: {
+          one: { type: 'string' },
+          two: { type: 'string' },
+        },
+      },
+    });
+  });
+
   test('should be able to resolve simple $refs', () => {
     // Given
     const spec = {

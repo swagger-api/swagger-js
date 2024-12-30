@@ -5,7 +5,7 @@ cases:
 - name: cross-document circular reference
   remoteDocuments:
     b.yaml:
-      openapi: 3.0.2
+      openapi: 3.0.4
       components:
         schemas:
           Action:
@@ -20,7 +20,7 @@ cases:
     type: resolveSubtree
     config:
       obj:
-        openapi: 3.0.2
+        openapi: 3.0.4
         components:
           schemas:
             MessageWidgetData:
@@ -33,7 +33,7 @@ cases:
   - equal:
       errors: []
       spec:
-        openapi: 3.0.2
+        openapi: 3.0.4
         components:
           schemas:
             MessageWidgetData:
@@ -47,7 +47,7 @@ cases:
 - name: cross-document circular reference with `useCircularStructures` set
   remoteDocuments:
     b.yaml:
-      openapi: 3.0.2
+      openapi: 3.0.4
       components:
         schemas:
           Action:

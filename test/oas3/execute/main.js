@@ -17,7 +17,7 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
     it('should build a request for the given operationId', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         paths: {
           '/one': {
             get: {
@@ -44,7 +44,7 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
     it('should build a twice-included path parameter request', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         paths: {
           '/one/{myParam}/{myParam}': {
             get: {
@@ -83,7 +83,7 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
     it('should build a request for the given operationId, using the first server by default', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         servers: [
           {
             url: 'http://petstore.swagger.io/v2',
@@ -117,7 +117,7 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
     it('should build a request for the given operationId, using a specfied server', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         servers: [
           {
             url: 'http://not-real-petstore.swagger.io/v2',
@@ -163,7 +163,7 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
     it('should build a request for the given operationId with a requestBody', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         servers: [
           {
             url: 'http://petstore.swagger.io/v2',
@@ -212,7 +212,7 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
     it('should stringify object values of form data bodies', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         servers: [
           {
             url: 'http://petstore.swagger.io/v2',
@@ -264,7 +264,7 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
     it('should build a request for the given operationId with a requestBody, and not be overriden by an invalid Swagger2 body parameter value', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         servers: [
           {
             url: 'http://petstore.swagger.io/v2',
@@ -319,7 +319,7 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
     it('should build a request for the given operationId with a requestBody and a defined requestContentType', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         servers: [
           {
             url: 'http://petstore.swagger.io/v2',
@@ -369,7 +369,7 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
     it('should build an operation without a body or Content-Type if the requestBody definition lacks the requestContentType', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         servers: [
           {
             url: 'http://petstore.swagger.io/v2',
@@ -416,7 +416,7 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
     it('should build a request body-bearing operation with a provided requestContentType that appears in the requestBody definition even if no payload is present', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         servers: [
           {
             url: 'http://petstore.swagger.io/v2',
@@ -461,7 +461,7 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
     it('should build a request body-bearing operation without a provided requestContentType that does not appear in the requestBody definition even if no payload is present', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         servers: [
           {
             url: 'http://petstore.swagger.io/v2',

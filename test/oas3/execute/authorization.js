@@ -6,7 +6,7 @@ import { buildRequest } from '../../../src/execute/index.js';
 describe('Authorization - OpenAPI Specification 3.0', () => {
   test('should ignore a header parameter named `Authorization`', () => {
     const spec = {
-      openapi: '3.0.0',
+      openapi: '3.0.4',
       paths: {
         '/': {
           get: {
@@ -44,7 +44,7 @@ describe('Authorization - OpenAPI Specification 3.0', () => {
     describe('Basic', () => {
       test('should encode credentials into the Authorization header', () => {
         const spec = {
-          openapi: '3.0.0',
+          openapi: '3.0.4',
           components: {
             securitySchemes: {
               myBasicAuth: {
@@ -93,7 +93,7 @@ describe('Authorization - OpenAPI Specification 3.0', () => {
 
       test('should consider scheme to be case insensitive', () => {
         const spec = {
-          openapi: '3.0.0',
+          openapi: '3.0.4',
           components: {
             securitySchemes: {
               myBasicAuth: {
@@ -141,7 +141,7 @@ describe('Authorization - OpenAPI Specification 3.0', () => {
 
       test('should not add credentials to operations without the security requirement', () => {
         const spec = {
-          openapi: '3.0.0',
+          openapi: '3.0.4',
           components: {
             securitySchemes: {
               myBasicAuth: {
@@ -182,7 +182,7 @@ describe('Authorization - OpenAPI Specification 3.0', () => {
       });
       test('should allow empty password without casting undefined to string', () => {
         const spec = {
-          openapi: '3.0.0',
+          openapi: '3.0.4',
           components: {
             securitySchemes: {
               myBasicAuth: {
@@ -232,7 +232,7 @@ describe('Authorization - OpenAPI Specification 3.0', () => {
     describe('Bearer', () => {
       test('should add token to the Authorization header', () => {
         const spec = {
-          openapi: '3.0.0',
+          openapi: '3.0.4',
           components: {
             securitySchemes: {
               myBearerAuth: {
@@ -280,7 +280,7 @@ describe('Authorization - OpenAPI Specification 3.0', () => {
 
       test('should consider scheme to be case insensitive', () => {
         const spec = {
-          openapi: '3.0.0',
+          openapi: '3.0.4',
           components: {
             securitySchemes: {
               myBearerAuth: {

@@ -4,7 +4,7 @@ import { buildRequest } from '../../../src/execute/index.js';
 describe('buildRequest - OAS 3.0.x', () => {
   describe('test accept header', () => {
     const spec = {
-      openapi: '3.0.0',
+      openapi: '3.0.4',
       servers: [
         {
           url: 'https://test.com/v1',
@@ -84,7 +84,7 @@ describe('buildRequest - OAS 3.0.x', () => {
 
   describe('given Encoding Object to describe multipart/form-data', () => {
     const spec = {
-      openapi: '3.0.0',
+      openapi: '3.0.4',
       paths: {
         '/upload/': {
           post: {
@@ -149,7 +149,7 @@ describe('buildRequest - OAS 3.0.x', () => {
 
   describe('given Encoding Object to describe application/x-www-form-urlencoded', () => {
     const spec = {
-      openapi: '3.0.0',
+      openapi: '3.0.4',
       paths: {
         '/upload/': {
           post: {

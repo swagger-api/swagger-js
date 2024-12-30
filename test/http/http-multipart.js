@@ -338,7 +338,7 @@ describe('buildRequest - openapi 3.0', () => {
   describe('respect Encoding Object', () => {
     test('Should be set to object in the style of deepObject', () => {
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         servers: [
           {
             url: 'http://petstore.swagger.io/v2',
