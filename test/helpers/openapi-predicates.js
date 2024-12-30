@@ -9,11 +9,13 @@ import {
 describe('helpers', () => {
   describe('OpenAPI predicates', () => {
     describe('isOpenAPI30', () => {
-      test('should detect OpenAPI 3.0.x versions', () => {
+      test('should detect OpenAPI 3.0.x versions in forward compatible way', () => {
         expect(isOpenAPI30({ openapi: '3.0.0' })).toBe(true);
         expect(isOpenAPI30({ openapi: '3.0.1' })).toBe(true);
         expect(isOpenAPI30({ openapi: '3.0.2' })).toBe(true);
         expect(isOpenAPI30({ openapi: '3.0.3' })).toBe(true);
+        expect(isOpenAPI30({ openapi: '3.0.4' })).toBe(true);
+        expect(isOpenAPI30({ openapi: '3.0.25' })).toBe(true);
       });
 
       test('should reject other OpenAPI versions', () => {
@@ -29,9 +31,10 @@ describe('helpers', () => {
     });
 
     describe('isOpenAPI31', () => {
-      test('should detect OpenAPI 3.1.x versions', () => {
+      test('should detect OpenAPI 3.1.x versions in forward compatible way', () => {
         expect(isOpenAPI31({ openapi: '3.1.0' })).toBe(true);
         expect(isOpenAPI31({ openapi: '3.1.1' })).toBe(true);
+        expect(isOpenAPI31({ openapi: '3.1.25' })).toBe(true);
       });
 
       test('should reject other OpenAPI versions', () => {
@@ -52,6 +55,7 @@ describe('helpers', () => {
         expect(isOpenAPI3({ openapi: '3.0.1' })).toBe(true);
         expect(isOpenAPI3({ openapi: '3.0.2' })).toBe(true);
         expect(isOpenAPI3({ openapi: '3.0.3' })).toBe(true);
+        expect(isOpenAPI3({ openapi: '3.0.4' })).toBe(true);
         expect(isOpenAPI3({ openapi: '3.1.0' })).toBe(true);
         expect(isOpenAPI3({ openapi: '3.1.1' })).toBe(true);
       });

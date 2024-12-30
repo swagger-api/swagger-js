@@ -1,4 +1,4 @@
-openapi: 3.0.0
+openapi: 3.0.4
 servers:
   - description: "mock definition for swagger-client issue #1719"
     url: https://test.com/v1
@@ -7,7 +7,7 @@ info:
   title: Test Defect
   description: >-
     A client side JS error occured when the throwError endpoint was expanded in
-    the UI Docs panel. This error was specifically visible when a $ref is seen 
+    the UI Docs panel. This error was specifically visible when a $ref is seen
     by the subtree resolver after an allOf or after an anyOf. E.g. the subtree
     resolver was treating the $ref as a reference instead as an object.
 paths:
@@ -38,7 +38,7 @@ components:
     2_RefWithAllOf:
       allOf:
         - $ref: '#/components/schemas/3_InnerAllOfRef'
-    
+
     3_InnerAllOfRef:
       type: object
       properties:

@@ -2,7 +2,7 @@
 import { buildRequest } from '../../src/execute/index.js';
 
 const spec = {
-  openapi: '3.0.0',
+  openapi: '3.0.4',
   servers: [
     {
       url: 'https://workbcjobs.api.gov.bc.ca/v1',

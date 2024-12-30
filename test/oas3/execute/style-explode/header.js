@@ -7,7 +7,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - header parameters', ()
     test('default: should build a header parameter in simple/no-explode format', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         paths: {
           '/users': {
             get: {
@@ -45,7 +45,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - header parameters', ()
     test('should build a header parameter in simple/no-explode format', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         paths: {
           '/users': {
             get: {
@@ -85,7 +85,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - header parameters', ()
     test('should build a header parameter in simple/no-explode format with special characters', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         paths: {
           '/users': {
             get: {
@@ -125,7 +125,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - header parameters', ()
     test('should build a header parameter in simple/explode format', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         paths: {
           '/users': {
             get: {
@@ -168,7 +168,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - header parameters', ()
     test('default: should build a header parameter in simple/no-explode format', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         paths: {
           '/users': {
             get: {
@@ -206,7 +206,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - header parameters', ()
     test('should build a header parameter in simple/no-explode format', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         paths: {
           '/users': {
             get: {
@@ -246,7 +246,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - header parameters', ()
     test('should build a header parameter in simple/explode format', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         paths: {
           '/users': {
             get: {
@@ -292,7 +292,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - header parameters', ()
     test('default: should build a header parameter in simple/no-explode format', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         paths: {
           '/users': {
             get: {
@@ -330,7 +330,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - header parameters', ()
     test('should build a header parameter in simple/no-explode format', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         paths: {
           '/users': {
             get: {

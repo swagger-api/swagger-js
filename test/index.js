@@ -748,7 +748,7 @@ describe('constructor', () => {
 
   describe('skipNormalization', () => {
     const spec = {
-      openapi: '3.0.0',
+      openapi: '3.0.4',
       info: {
         title: 'Cloudpotato - Medwork',
         description: 'The Cloudpotato API',

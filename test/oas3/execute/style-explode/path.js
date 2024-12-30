@@ -5,7 +5,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
     test('default: should build a path parameter in a simple/no-explode format', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         paths: {
           '/path/{id}': {
             get: {
@@ -41,7 +41,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
     test('should build a path parameter in a simple/no-explode format', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         paths: {
           '/path/{id}': {
             get: {
@@ -79,7 +79,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
     test('should build a path parameter in a simple/explode format', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         paths: {
           '/path/{id}': {
             get: {
@@ -117,7 +117,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
     test('should build a path parameter in a label/no-explode format', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         paths: {
           '/path/{id}': {
             get: {
@@ -155,7 +155,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
     test('should build a path parameter in a label/explode format', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         paths: {
           '/path/{id}': {
             get: {
@@ -193,7 +193,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
     test('should build a path parameter in a matrix/no-explode format', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         paths: {
           '/path/{id}': {
             get: {
@@ -231,7 +231,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
     test('should build a path parameter in a matrix/explode format', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         paths: {
           '/path/{id}': {
             get: {
@@ -270,7 +270,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
     test('default: should build a path parameter in a simple/no-explode format', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         paths: {
           '/path/{id}': {
             get: {
@@ -306,7 +306,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - path parameters', () =
     test('should build a path parameter in a simple/no-explode format', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         paths: {
           '/path/{id}': {
             get: {

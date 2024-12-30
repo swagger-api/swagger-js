@@ -4,13 +4,13 @@ cases:
 - name: cross-document $ref
   remoteDocuments:
     a.yaml:
-      openapi: 3.0.2
+      openapi: 3.0.4
       components:
         schemas:
           MessageWidgetData:
             $ref: "./b.yaml#/components/schemas/Action"
     b.yaml:
-      openapi: 3.0.2
+      openapi: 3.0.4
       components:
         schemas:
           Action:
@@ -29,7 +29,7 @@ cases:
   - equal:
       errors: []
       spec:
-        openapi: 3.0.2
+        openapi: 3.0.4
         components:
           schemas:
             MessageWidgetData:
@@ -43,14 +43,14 @@ cases:
 - name: cross-document $ref within allOf
   remoteDocuments:
     a.yaml:
-      openapi: 3.0.2
+      openapi: 3.0.4
       components:
         schemas:
           MessageWidgetData:
             allOf:
               - $ref: "./b.yaml#/components/schemas/Action"
     b.yaml:
-      openapi: 3.0.2
+      openapi: 3.0.4
       components:
         schemas:
           Action:
@@ -69,7 +69,7 @@ cases:
   - equal:
       errors: []
       spec:
-        openapi: 3.0.2
+        openapi: 3.0.4
         components:
           schemas:
             MessageWidgetData:
@@ -179,13 +179,13 @@ cases:
             MyThing:
               type: object
               properties:
-                aContent: 
+                aContent:
                   $$ref: "http://mock.swagger.test/a.yaml#/components/schemas/APrivateThing"
                   type: string
-                bContent: 
+                bContent:
                   $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/BPrivateThing"
                   type: string
-                cContent: 
+                cContent:
                   $$ref: "http://mock.swagger.test/c.yaml#/components/schemas/CPrivateThing"
                   type: string
 - name: nested cross-document $refs within multi-member allOf
@@ -228,7 +228,7 @@ cases:
                 - $ref: '#/components/schemas/CPrivateThing'
           CPrivateThing:
             $ref: "../partials/e.yaml"
-    partials/d.yaml: 
+    partials/d.yaml:
       type: string
     partials/e.yaml:
       type: object
@@ -254,10 +254,10 @@ cases:
             MyThing:
               type: object
               properties:
-                aContent: 
+                aContent:
                   $$ref: "http://mock.swagger.test/a.yaml#/components/schemas/APrivateThing"
                   type: string
-                bContent: 
+                bContent:
                   type: string
-                cContent: 
+                cContent:
                   type: object

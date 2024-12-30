@@ -9,7 +9,7 @@ export const isOpenAPI2 = (spec) => {
 export const isOpenAPI30 = (spec) => {
   try {
     const { openapi } = spec;
-    return typeof openapi === 'string' && /^3\.0\.([0123])(?:-rc[012])?$/.test(openapi);
+    return typeof openapi === 'string' && /^3\.0\.(?:[1-9]\d*|0)$/.test(openapi);
   } catch {
     return false;
   }

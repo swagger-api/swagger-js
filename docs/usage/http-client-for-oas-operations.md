@@ -32,11 +32,11 @@ Property | Description
 `contextUrl` | `String`. URL, e.g. `https://example.com`. Used in following situations: <br /><br />If `server` option is not matched and there is no `Server Object` defined in the definition, this URL will be prepended to every requested path.<br /><br />If matched `Server Object` is defined as relative URI Reference its `url` fixed field is resolved against `contenxtUrl`. Resolved URL will be prepended to every requested path. 
 `baseURL` | `String`. URL (`https://example.com`) . Takes precedence over server and any defined servers in the Spec. It will be prepended to every requested path.
 
-For all later references, we will always use following OpenAPI 3.0.0 definition when referring
+For all later references, we will always use following OpenAPI 3.0.4 definition when referring
 to a `spec`.
 
 ```yaml
-openapi: 3.0.0
+openapi: 3.0.4
 info:
   title: Testing API
   version: 1.0.0

@@ -7,7 +7,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - cookie parameters', ()
     test('default: should build a cookie parameter in form/no-explode format', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         paths: {
           '/users': {
             get: {
@@ -45,7 +45,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - cookie parameters', ()
     test('should build a cookie parameter in form/no-explode format', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         paths: {
           '/users': {
             get: {
@@ -85,7 +85,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - cookie parameters', ()
     test('should build a cookie parameter in form/explode format', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         paths: {
           '/users': {
             get: {
@@ -128,7 +128,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - cookie parameters', ()
     test('default: should build a cookie parameter in form/no-explode format', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         paths: {
           '/users': {
             get: {
@@ -166,7 +166,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - cookie parameters', ()
     test('should build a cookie parameter in form/no-explode format', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         paths: {
           '/users': {
             get: {
@@ -206,7 +206,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - cookie parameters', ()
     test('should build a cookie parameter in form/explode format', () => {
       // Given
       const spec = {
-        openapi: '3.0.0',
+        openapi: '3.0.4',
         paths: {
           '/users': {
             get: {

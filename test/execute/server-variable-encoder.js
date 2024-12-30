@@ -3,7 +3,7 @@ import { execute, buildRequest } from '../../src/execute/index.js';
 describe('execute/serverVariableEncoder', () => {
   test('should encode when encoder provided', () => {
     const spec = {
-      openapi: '3.0.3',
+      openapi: '3.0.4',
       servers: [
         {
           url: '{server}/v1',
@@ -44,7 +44,7 @@ describe('execute/serverVariableEncoder', () => {
 
   test('should not encode when encoder not provided', () => {
     const spec = {
-      openapi: '3.0.3',
+      openapi: '3.0.4',
       servers: [
         {
           url: '{server}/v1',
@@ -86,7 +86,7 @@ describe('execute/serverVariableEncoder', () => {
 describe('buildRequest/serverVariableEncoder', () => {
   test('should encode when encoder provided', () => {
     const spec = {
-      openapi: '3.0.3',
+      openapi: '3.0.4',
       servers: [
         {
           url: '{server}/v1',
@@ -124,7 +124,7 @@ describe('buildRequest/serverVariableEncoder', () => {
 
   test('should not encode when encoder not provided', () => {
     const spec = {
-      openapi: '3.0.3',
+      openapi: '3.0.4',
       servers: [
         {
           url: '{server}/v1',

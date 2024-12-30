@@ -14,7 +14,7 @@
 //
 // This is useful for cases where resolving your entire object is unnecessary
 // and/or non-performant; we use this interface for lazily resolving operations
-// and models in Swagger-UI, which allows us to handle larger definitions.
+// and models in Swagger-UI, which allows us to handle larger OpenAPI descriptions.
 //
 // It's likely that Swagger-Client will rely entirely on lazy resolving in
 // future versions.

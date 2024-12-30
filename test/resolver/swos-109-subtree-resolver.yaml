@@ -4,7 +4,7 @@ cases:
 - name: cross-document $ref
   remoteDocuments:
     b.yaml:
-      openapi: 3.0.2
+      openapi: 3.0.4
       components:
         schemas:
           Action:
@@ -19,7 +19,7 @@ cases:
     type: resolveSubtree
     config:
       obj:
-        openapi: 3.0.2
+        openapi: 3.0.4
         components:
           schemas:
             MessageWidgetData:
@@ -32,7 +32,7 @@ cases:
   - equal:
       errors: []
       spec:
-        openapi: 3.0.2
+        openapi: 3.0.4
         components:
           schemas:
             MessageWidgetData:
@@ -46,7 +46,7 @@ cases:
 - name: cross-document $ref to a remote document within allOf
   remoteDocuments:
     b.yaml:
-      openapi: 3.0.2
+      openapi: 3.0.4
       components:
         schemas:
           Action:
@@ -61,7 +61,7 @@ cases:
     type: resolveSubtree
     config:
       obj:
-        openapi: 3.0.2
+        openapi: 3.0.4
         components:
           schemas:
             MessageWidgetData:
@@ -75,7 +75,7 @@ cases:
   - equal:
       errors: []
       spec:
-        openapi: 3.0.2
+        openapi: 3.0.4
         components:
           schemas:
             MessageWidgetData:
@@ -88,7 +88,7 @@ cases:
 - name: cross-document $ref to a remote document within allOf with a circular reference
   remoteDocuments:
     b.yaml:
-      openapi: 3.0.2
+      openapi: 3.0.4
       components:
         schemas:
           Action:
@@ -103,7 +103,7 @@ cases:
     type: resolveSubtree
     config:
       obj:
-        openapi: 3.0.2
+        openapi: 3.0.4
         components:
           schemas:
             MessageWidgetData:
@@ -177,13 +177,13 @@ cases:
       spec:
         type: object
         properties:
-          aContent: 
+          aContent:
             $$ref: "http://mock.swagger.test/a.yaml#/components/schemas/APrivateThing"
             type: string
-          bContent: 
+          bContent:
             $$ref: "http://mock.swagger.test/b.yaml#/components/schemas/BPrivateThing"
             type: string
-          cContent: 
+          cContent:
             $$ref: "http://mock.swagger.test/c.yaml#/components/schemas/CPrivateThing"
             type: string
 - name: nested cross-document $refs within multi-member allOf
@@ -210,7 +210,7 @@ cases:
                 - $ref: '#/components/schemas/CPrivateThing'
           CPrivateThing:
             $ref: "../partials/e.yaml"
-    partials/d.yaml: 
+    partials/d.yaml:
       type: string
     partials/e.yaml:
       type: object
@@ -242,10 +242,10 @@ cases:
       spec:
         type: object
         properties:
-          aContent: 
+          aContent:
             $$ref: "http://mock.swagger.test/a.yaml#/components/schemas/APrivateThing"
             type: string
-          bContent: 
+          bContent:
             type: string
-          cContent: 
+          cContent:
             type: object
