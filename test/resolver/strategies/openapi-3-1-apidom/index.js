@@ -205,7 +205,7 @@ describe('resolve', () => {
       });
 
       describe('and pathDiscriminator compiles into invalid JSON Pointer', () => {
-        test('should not resole', async () => {
+        test('should not resolve', async () => {
           const spec = globalThis.loadJsonFile(path.join(fixturePath, 'petstore.json'));
           const resolvedSpec = await SwaggerClient.resolve({
             spec,
