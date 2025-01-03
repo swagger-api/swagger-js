@@ -120,6 +120,7 @@ Swagger.prototype = {
       useCircularStructures: this.useCircularStructures,
       requestInterceptor: this.requestInterceptor || null,
       responseInterceptor: this.responseInterceptor || null,
+      pathDiscriminator: this.pathDiscriminator || [],
       skipNormalization: this.skipNormalization || false,
       ...options,
     }).then((obj) => {

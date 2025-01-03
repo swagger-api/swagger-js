@@ -205,14 +205,14 @@ describe('resolve', () => {
       });
 
       describe('and pathDiscriminator compiles into invalid JSON Pointer', () => {
-        test('should return spec as null', async () => {
+        test('should not resole', async () => {
           const spec = globalThis.loadJsonFile(path.join(fixturePath, 'petstore.json'));
           const resolvedSpec = await SwaggerClient.resolve({
             spec,
             pathDiscriminator: ['path', 'to', 'nothing'],
           });
 
-          expect(resolvedSpec).toEqual({ spec: null, errors: [] });
+          expect(resolvedSpec).toEqual({ spec, errors: [] });
         });
       });
 
