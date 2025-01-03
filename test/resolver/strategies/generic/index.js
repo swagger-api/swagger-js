@@ -48,6 +48,30 @@ describe('resolver', () => {
     });
   });
 
+  test('should resolve nothing when invalid pathDiscriminator supplied', async () => {
+    const spec = {
+      openapi: '3.0.4',
+      components: {
+        schemas: {
+          one: { type: 'string' },
+          two: { $ref: '#/components/schemas/one' },
+        },
+      },
+    };
+    const result = await Swagger.resolve({ spec, pathDiscriminator: ['info1'] });
+
+    expect(result.errors).toEqual([]);
+    expect(result.spec).toEqual({
+      openapi: '3.0.4',
+      components: {
+        schemas: {
+          one: { type: 'string' },
+          two: { $ref: '#/components/schemas/one' },
+        },
+      },
+    });
+  });
+
   test('should resolve OpenAPI 3.0.0 Description', async () => {
     const spec = {
       openapi: '3.0.0',

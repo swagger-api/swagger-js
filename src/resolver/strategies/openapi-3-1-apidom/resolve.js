@@ -161,7 +161,7 @@ const resolveOpenAPI31Strategy = async (options) => {
     return { spec: toValue(normalized), errors };
   } catch (error) {
     if (error instanceof InvalidJsonPointerError || error instanceof EvaluationJsonPointerError) {
-      return { spec: null, errors: [] };
+      return { spec, errors: [] };
     }
     throw error;
   }
