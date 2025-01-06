@@ -474,6 +474,54 @@ describe('Authorization - OpenAPI Specification 3.0', () => {
               name: 'MyApiKeyCookie',
               in: 'cookie',
             },
+          },
+        },
+        paths: {
+          '/': {
+            get: {
+              operationId: 'myOperation',
+              security: [
+                {
+                  myApiKey: [],
+                },
+              ],
+            },
+          },
+        },
+      };
+
+      // when
+      const req = buildRequest({
+        spec,
+        operationId: 'myOperation',
+        securities: {
+          authorized: {
+            myApiKey: {
+              value: 'MyToken',
+            },
+          },
+        },
+      });
+
+      expect(req).toEqual({
+        method: 'GET',
+        url: '/',
+        credentials: 'same-origin',
+        headers: {
+          Cookie: 'MyApiKeyCookie=MyToken',
+        },
+      });
+    });
+    test('should add multiple apiKey credentials as a cookie', () => {
+      const spec = {
+        openapi: '3.0.0',
+        components: {
+          securitySchemes: {
+            myApiKey: {
+              type: 'apiKey',
+              name: 'MyApiKeyCookie',
+              in: 'cookie',
+            },
             myApiKey1: {
               type: 'apiKey',
               name: 'MyApiKeyCookie1',
@@ -518,6 +566,68 @@ describe('Authorization - OpenAPI Specification 3.0', () => {
         credentials: 'same-origin',
         headers: {
           Cookie: 'MyApiKeyCookie=MyToken; MyApiKeyCookie1=MyToken1',
+        },
+      });
+    });
+    test('should append apiKey credentials to a cookie', () => {
+      const spec = {
+        openapi: '3.0.0',
+        components: {
+          securitySchemes: {
+            myApiKey: {
+              type: 'apiKey',
+              name: 'MyApiKeyCookie',
+              in: 'cookie',
+            },
+          },
+        },
+        paths: {
+          '/': {
+            get: {
+              operationId: 'myOperation',
+              parameters: [
+                {
+                  name: 'id',
+                  in: 'cookie',
+                  style: 'form',
+                  explode: true,
+                },
+              ],
+              security: [
+                {
+                  myApiKey: [],
+                },
+              ],
+            },
+          },
+        },
+      };
+
+      // when
+      const req = buildRequest({
+        spec,
+        operationId: 'myOperation',
+        parameters: {
+          id: [1, 2, 3],
+        },
+        securities: {
+          authorized: {
+            myApiKey: {
+              value: 'MyToken',
+            },
+            myApiKey1: {
+              value: 'MyToken1',
+            },
+          },
+        },
+      });
+
+      expect(req).toEqual({
+        method: 'GET',
+        url: '/',
+        credentials: 'same-origin',
+        headers: {
+          Cookie: 'id=1&id=2&id=3; MyApiKeyCookie=MyToken',
         },
       });
     });
