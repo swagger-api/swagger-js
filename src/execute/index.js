@@ -299,20 +299,16 @@ export function buildRequest(options) {
   // If the cookie convenience object exists in our request,
   // serialize its content and then delete the cookie object.
   if (req.cookies && Object.keys(req.cookies).length) {
-    const cookieString = Object.keys(req.cookies).reduce((prev, cookieName) => {
-      const cookieValue = req.cookies[cookieName];
-      const prefix = prev ? '&' : '';
-      const stringified = serializeCookie([[cookieName, cookieValue]], {
-        encoders: {
-          value: cookieValueLenientEncoder,
-        },
-        validators: {
-          name: cookieNameLenientValidator,
-          value: cookieValueLenientValidator,
-        },
-      });
-      return prev + prefix + stringified;
-    }, '');
+    const cookieString = serializeCookie(req.cookies, {
+      encoders: {
+        value: cookieValueLenientEncoder,
+      },
+      validators: {
+        name: cookieNameLenientValidator,
+        value: cookieValueLenientValidator,
+      },
+    });
+
     req.headers.Cookie = cookieString;
   }
 

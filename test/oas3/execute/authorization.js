@@ -474,6 +474,11 @@ describe('Authorization - OpenAPI Specification 3.0', () => {
               name: 'MyApiKeyCookie',
               in: 'cookie',
             },
+            myApiKey1: {
+              type: 'apiKey',
+              name: 'MyApiKeyCookie1',
+              in: 'cookie',
+            },
           },
         },
         paths: {
@@ -483,6 +488,7 @@ describe('Authorization - OpenAPI Specification 3.0', () => {
               security: [
                 {
                   myApiKey: [],
+                  myApiKey1: [],
                 },
               ],
             },
@@ -499,6 +505,9 @@ describe('Authorization - OpenAPI Specification 3.0', () => {
             myApiKey: {
               value: 'MyToken',
             },
+            myApiKey1: {
+              value: 'MyToken1',
+            },
           },
         },
       });
@@ -508,7 +517,7 @@ describe('Authorization - OpenAPI Specification 3.0', () => {
         url: '/',
         credentials: 'same-origin',
         headers: {
-          Cookie: 'MyApiKeyCookie=MyToken',
+          Cookie: 'MyApiKeyCookie=MyToken; MyApiKeyCookie1=MyToken1',
         },
       });
     });
