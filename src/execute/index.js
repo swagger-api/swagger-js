@@ -1,5 +1,5 @@
 import { identity } from 'ramda';
-import { isPlainObject } from 'ramda-adjunct';
+import { isPlainObject, isNonEmptyString } from 'ramda-adjunct';
 import {
   test as testServerURLTemplate,
   substitute as substituteServerURLTemplate,
@@ -309,7 +309,11 @@ export function buildRequest(options) {
       },
     });
 
-    req.headers.Cookie = cookieString;
+    if (isNonEmptyString(req.headers.Cookie)) {
+      req.headers.Cookie += `; ${cookieString}`;
+    } else {
+      req.headers.Cookie = cookieString;
+    }
   }
 
   if (req.cookies) {
