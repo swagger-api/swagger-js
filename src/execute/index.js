@@ -1,10 +1,15 @@
-import cookie from 'cookie';
 import { identity } from 'ramda';
 import { isPlainObject } from 'ramda-adjunct';
 import {
   test as testServerURLTemplate,
   substitute as substituteServerURLTemplate,
 } from 'openapi-server-url-templating';
+import {
+  serializeCookie,
+  cookieValueLenientEncoder,
+  cookieNameLenientValidator,
+  cookieValueLenientValidator,
+} from '@swaggerexpert/cookie';
 import { ApiDOMStructuredError } from '@swagger-api/apidom-error';
 import { url } from '@swagger-api/apidom-reference/configuration/empty';
 
@@ -297,7 +302,15 @@ export function buildRequest(options) {
     const cookieString = Object.keys(req.cookies).reduce((prev, cookieName) => {
       const cookieValue = req.cookies[cookieName];
       const prefix = prev ? '&' : '';
-      const stringified = cookie.serialize(cookieName, cookieValue);
+      const stringified = serializeCookie([[cookieName, cookieValue]], {
+        encoders: {
+          value: cookieValueLenientEncoder,
+        },
+        validators: {
+          name: cookieNameLenientValidator,
+          value: cookieValueLenientValidator,
+        },
+      });
       return prev + prefix + stringified;
     }, '');
     req.headers.Cookie = cookieString;
