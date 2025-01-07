@@ -1,7 +1,9 @@
 import { resolve as resolvePathTemplate } from 'openapi-path-templating';
+import { serializeCookie } from '@swaggerexpert/cookie';
 
 import stylize, { encodeCharacters } from './style-serializer.js';
 import serialize from './content-serializer.js';
+import cookieValueEncoder from '../../helpers/cookie-value-encoder.js';
 
 export function path({ req, value, parameter, baseURL }) {
   const { name, style, explode, content } = parameter;
@@ -29,7 +31,7 @@ export function path({ req, value, parameter, baseURL }) {
             key: parameter.name,
             value: val,
             style: style || 'simple',
-            explode: explode || false,
+            explode: explode ?? false,
             escape: 'reserved',
           }),
       }
@@ -106,28 +108,41 @@ export function header({ req, parameter, value }) {
 }
 
 export function cookie({ req, parameter, value }) {
+  const { name: cookieName } = parameter;
+
   req.headers = req.headers || {};
-  const type = typeof value;
 
   if (value !== undefined && parameter.content) {
     const effectiveMediaType = Object.keys(parameter.content)[0];
+    const cookieValue = serialize(value, effectiveMediaType);
 
-    req.headers.Cookie = `${parameter.name}=${serialize(value, effectiveMediaType)}`;
+    req.headers.Cookie = serializeCookie(
+      { [cookieName]: cookieValue },
+      {
+        encoders: { value: cookieValueEncoder },
+      }
+    );
     return;
   }
 
   if (value !== undefined && !(Array.isArray(value) && value.length === 0)) {
-    const prefix =
-      type === 'object' && !Array.isArray(value) && parameter.explode ? '' : `${parameter.name}=`;
+    const serializedValue = stylize({
+      key: parameter.name,
+      value,
+      escape: false,
+      style: parameter.style || 'form',
+      explode: parameter.explode ?? false,
+    });
+    const cookieValue =
+      Array.isArray(value) && parameter.explode
+        ? `${cookieName}=${serializedValue}`
+        : serializedValue;
 
-    req.headers.Cookie =
-      prefix +
-      stylize({
-        key: parameter.name,
-        value,
-        escape: false,
-        style: parameter.style || 'form',
-        explode: typeof parameter.explode === 'undefined' ? false : parameter.explode,
-      });
+    req.headers.Cookie = serializeCookie(
+      { [cookieName]: cookieValue },
+      {
+        encoders: { value: cookieValueEncoder },
+      }
+    );
   }
 }

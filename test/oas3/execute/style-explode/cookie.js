@@ -137,6 +137,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - cookie parameters', ()
                 {
                   name: 'id',
                   in: 'cookie',
+                  explode: false,
                 },
               ],
             },
@@ -158,7 +159,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - cookie parameters', ()
         url: '/users',
         credentials: 'same-origin',
         headers: {
-          Cookie: 'id=3,4,5',
+          Cookie: 'id=3%2C4%2C5',
         },
       });
     });
@@ -198,7 +199,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - cookie parameters', ()
         url: '/users',
         credentials: 'same-origin',
         headers: {
-          Cookie: 'id=3,4,5',
+          Cookie: 'id=3%2C4%2C5',
         },
       });
     });
@@ -238,7 +239,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - cookie parameters', ()
         url: '/users',
         credentials: 'same-origin',
         headers: {
-          Cookie: 'id=3&id=4&id=5',
+          Cookie: 'id=id%3D3%26id%3D4%26id%3D5',
         },
       });
     });
@@ -282,7 +283,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - cookie parameters', ()
         url: '/users',
         credentials: 'same-origin',
         headers: {
-          Cookie: 'id=role,admin,firstName,Alex',
+          Cookie: 'id=role%2Cadmin%2CfirstName%2CAlex',
         },
       });
     });
@@ -322,7 +323,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - cookie parameters', ()
         url: '/users',
         credentials: 'same-origin',
         headers: {
-          Cookie: 'id=role,admin,firstName,Alex',
+          Cookie: 'id=role%2Cadmin%2CfirstName%2CAlex',
         },
       });
     });
@@ -362,7 +363,7 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - cookie parameters', ()
         url: '/users',
         credentials: 'same-origin',
         headers: {
-          Cookie: 'role=admin&firstName=Alex',
+          Cookie: 'id=role%3Dadmin%26firstName%3DAlex',
         },
       });
     });
