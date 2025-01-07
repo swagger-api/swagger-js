@@ -659,7 +659,7 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
         credentials: 'same-origin',
         headers: {
           FooHeader: 'a={"b":{"c":{"d":"e"}}}',
-          Cookie: 'myCookie=foo,{"bar":{"baz":"qux"}}',
+          Cookie: 'myCookie=foo%2C{%22bar%22:{%22baz%22:%22qux%22}}',
         },
       });
     });
@@ -731,7 +731,7 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
         credentials: 'same-origin',
         headers: {
           FooHeader: 'c=',
-          Cookie: 'myCookie=d,',
+          Cookie: 'myCookie=d%2C',
         },
       });
     });
@@ -856,7 +856,7 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
         credentials: 'same-origin',
         headers: {
           FooHeader: ',,',
-          Cookie: 'myCookie=,,',
+          Cookie: 'myCookie=%2C%2C',
         },
       });
     });
@@ -1063,7 +1063,7 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
         credentials: 'same-origin',
         headers: {
           FooHeader: '{"foo":"bar"}',
-          Cookie: 'myCookie={"flavor":"chocolate chip"}',
+          Cookie: 'myCookie={%22flavor%22:%22chocolate%20chip%22}',
         },
       });
     });
@@ -1218,7 +1218,7 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
         credentials: 'same-origin',
         headers: {
           FooHeader: '[{"foo":"bar"}]',
-          Cookie: 'myCookie=[{"flavor":"chocolate chip"}]',
+          Cookie: 'myCookie=[{%22flavor%22:%22chocolate%20chip%22}]',
         },
       });
     });
