@@ -1,4 +1,5 @@
-import { identity } from 'ramda';
+import traverse from 'neotraverse/legacy';
+import { identity, isEmpty } from 'ramda';
 import { isPlainObject, isNonEmptyString } from 'ramda-adjunct';
 import {
   test as testServerURLTemplate,
@@ -24,6 +25,26 @@ import { getOperationRaw, idFromPathMethodLegacy } from '../helpers/index.js';
 import { isOpenAPI3 } from '../helpers/openapi-predicates.js';
 
 const arrayOrEmpty = (ar) => (Array.isArray(ar) ? ar : []);
+
+const hasCombinedSchema = (schema) => !!schema?.oneOf || !!schema?.anyOf;
+
+const hasObjectTypeProperty = (schema) => {
+  let hasObjectType = false;
+  traverse(schema).forEach(function callback() {
+    if (this.key === 'type' && this.node.includes('object')) {
+      hasObjectType = true;
+      this.stop();
+    }
+  });
+  return hasObjectType;
+};
+
+const hasAnySchemaHasObjectTypeProperty = (schema) => {
+  if (!isEmpty(schema.oneOf) && hasObjectTypeProperty(schema.oneOf)) {
+    return true;
+  }
+  return !isEmpty(schema.anyOf) && hasObjectTypeProperty(schema.anyOf);
+};
 
 /**
  * `parseURIReference` function simulates the behavior of `node:url` parse function.
@@ -261,14 +282,20 @@ export function buildRequest(options) {
       throw new Error(`Required parameter ${parameter.name} is not provided`);
     }
 
+    const isSchemaCombined = hasCombinedSchema(parameter.schema);
+
     if (
       specIsOAS3 &&
-      parameter.schema &&
-      parameter.schema.type === 'object' &&
-      typeof value === 'string'
+      ((parameter.schema?.type?.includes('object') && typeof value === 'string') ||
+        isSchemaCombined)
     ) {
       try {
-        value = JSON.parse(value);
+        const parsedValue = JSON.parse(value);
+        if (!isSchemaCombined) {
+          value = parsedValue;
+        } else if (isSchemaCombined && hasAnySchemaHasObjectTypeProperty(parameter.schema)) {
+          value = parsedValue;
+        }
       } catch (e) {
         throw new Error('Could not parse object parameter value string as JSON');
       }
