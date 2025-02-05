@@ -612,7 +612,7 @@ describe('dereference', () => {
           test('should retain $schema before dereferencing', () => {
             const profile = evaluate('/0/components/schemas/User/properties/profile', dereferenced);
 
-            expect(profile.meta.get('inherited$schema').toValue()).toStrictEqual(
+            expect(profile.meta.get('inheritedDialectIdentifier').toValue()).toStrictEqual(
               'https://spec.openapis.org/oas/3.1/dialect/base'
             );
           });
@@ -652,7 +652,7 @@ describe('dereference', () => {
           test('should inherit default $schema dialect for User', () => {
             const user = evaluate('/0/components/schemas/User', dereferenced);
 
-            expect(user.meta.get('inherited$schema').toValue()).toStrictEqual(
+            expect(user.meta.get('inheritedDialectIdentifier').toValue()).toStrictEqual(
               'https://spec.openapis.org/oas/3.1/dialect/base'
             );
           });
@@ -660,7 +660,7 @@ describe('dereference', () => {
           test('should inherit default $schema dialect for User.login', () => {
             const user = evaluate('/0/components/schemas/User/properties/login', dereferenced);
 
-            expect(user.meta.get('inherited$schema').toValue()).toStrictEqual(
+            expect(user.meta.get('inheritedDialectIdentifier').toValue()).toStrictEqual(
               'https://spec.openapis.org/oas/3.1/dialect/base'
             );
           });
@@ -668,7 +668,7 @@ describe('dereference', () => {
           test('should inherit default $schema dialect for UserProfile', () => {
             const user = evaluate('/0/components/schemas/UserProfile', dereferenced);
 
-            expect(user.meta.get('inherited$schema').toValue()).toStrictEqual(
+            expect(user.meta.get('inheritedDialectIdentifier').toValue()).toStrictEqual(
               'https://spec.openapis.org/oas/3.1/dialect/base'
             );
           });
@@ -679,7 +679,7 @@ describe('dereference', () => {
               dereferenced
             );
 
-            expect(user.meta.get('inherited$schema').toValue()).toStrictEqual(
+            expect(user.meta.get('inheritedDialectIdentifier').toValue()).toStrictEqual(
               'https://spec.openapis.org/oas/3.1/dialect/base'
             );
           });
