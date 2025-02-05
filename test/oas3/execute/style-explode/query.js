@@ -1179,6 +1179,62 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters', () 
       });
     });
 
+    test('should build a query parameter in form/explode format with nested subschemas', () => {
+      // Given
+      const spec = {
+        openapi: '3.0.0',
+        paths: {
+          '/users': {
+            get: {
+              operationId: 'myOperation',
+              parameters: [
+                {
+                  in: 'query',
+                  name: 'parameters',
+                  style: 'form',
+                  explode: true,
+                  schema: {
+                    anyOf: [
+                      {
+                        oneOf: [
+                          {
+                            oneOf: [
+                              {
+                                anyOf: [
+                                  {
+                                    type: ['string', 'object'],
+                                  },
+                                ],
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        },
+      };
+      // when
+      const req = buildRequest({
+        spec,
+        operationId: 'myOperation',
+        parameters: {
+          'query.parameters': '{\n  "role": "admin",\n  "firstname": "alex"\n}',
+        },
+      });
+
+      expect(req).toEqual({
+        method: 'GET',
+        url: `/users?role=admin&firstname=alex`,
+        credentials: 'same-origin',
+        headers: {},
+      });
+    });
+
     test('should build a query parameter in form/explode format when object type is an array element', () => {
       // Given
       const spec = {

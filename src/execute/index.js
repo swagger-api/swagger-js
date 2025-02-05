@@ -1,5 +1,4 @@
-import traverse from 'neotraverse/legacy';
-import { identity, isEmpty } from 'ramda';
+import { identity } from 'ramda';
 import { isPlainObject, isNonEmptyString } from 'ramda-adjunct';
 import {
   test as testServerURLTemplate,
@@ -14,7 +13,7 @@ import {
 import { ApiDOMStructuredError } from '@swagger-api/apidom-error';
 import { url } from '@swagger-api/apidom-reference/configuration/empty';
 
-import { DEFAULT_BASE_URL, DEFAULT_OPENAPI_3_SERVER } from '../constants.js';
+import { DEFAULT_BASE_URL, DEFAULT_OPENAPI_3_SERVER, TRAVERSE_LIMIT } from '../constants.js';
 import stockHttp from '../http/index.js';
 import { serializeRequest } from '../http/serializers/request/index.js';
 import SWAGGER2_PARAMETER_BUILDERS from './swagger2/parameter-builders.js';
@@ -28,22 +27,33 @@ const arrayOrEmpty = (ar) => (Array.isArray(ar) ? ar : []);
 
 const hasCombinedSchema = (schema) => !!schema?.oneOf || !!schema?.anyOf;
 
-const hasObjectTypeProperty = (schema) => {
-  let hasObjectType = false;
-  traverse(schema).forEach(function callback() {
-    if (this.key === 'type' && this.node.includes('object')) {
-      hasObjectType = true;
-      this.stop();
-    }
-  });
-  return hasObjectType;
-};
+const findObjectSchema = (schema) => {
+  if (!isPlainObject(schema)) return undefined;
 
-const hasAnySchemaHasObjectTypeProperty = (schema) => {
-  if (!isEmpty(schema.oneOf) && hasObjectTypeProperty(schema.oneOf)) {
-    return true;
+  // check if the schema is an object type
+  if (schema.type === 'object' || (Array.isArray(schema.type) && schema.type.includes('object'))) {
+    return schema;
   }
-  return !isEmpty(schema.anyOf) && hasObjectTypeProperty(schema.anyOf);
+
+  // traverse oneOf keyword first
+  if (Array.isArray(schema.oneOf)) {
+    const result = schema.oneOf.find(
+      (subschema, index) => index < TRAVERSE_LIMIT && !!findObjectSchema(subschema)
+    );
+
+    if (result) return result;
+  }
+
+  // traverse anyOf keyword second
+  if (Array.isArray(schema.anyOf)) {
+    const result = schema.anyOf.find(
+      (subschema, index) => index < TRAVERSE_LIMIT && !!findObjectSchema(subschema)
+    );
+
+    if (result) return result;
+  }
+
+  return undefined;
 };
 
 /**
@@ -284,16 +294,14 @@ export function buildRequest(options) {
 
     const isSchemaCombined = hasCombinedSchema(parameter.schema);
 
-    if (
-      specIsOAS3 &&
-      ((parameter.schema?.type?.includes('object') && typeof value === 'string') ||
-        isSchemaCombined)
-    ) {
+    const isPlainObjectSchema = parameter.schema?.type === 'object' && typeof value === 'string';
+
+    if (specIsOAS3 && (isPlainObjectSchema || isSchemaCombined)) {
       try {
         const parsedValue = JSON.parse(value);
-        if (!isSchemaCombined) {
+        if (isPlainObjectSchema) {
           value = parsedValue;
-        } else if (isSchemaCombined && hasAnySchemaHasObjectTypeProperty(parameter.schema)) {
+        } else if (findObjectSchema(parameter.schema)) {
           value = parsedValue;
         }
       } catch (e) {
