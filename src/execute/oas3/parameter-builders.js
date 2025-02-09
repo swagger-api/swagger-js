@@ -1,9 +1,8 @@
 import { resolve as resolvePathTemplate } from 'openapi-path-templating';
-import { serializeCookie } from '@swaggerexpert/cookie';
 
 import stylize, { encodeCharacters } from './style-serializer.js';
 import serialize from './content-serializer.js';
-import cookieValueEncoder from '../../helpers/cookie-value-encoder.js';
+import { serialize as serializeCookie } from '../../helpers/cookie.js';
 
 export function path({ req, value, parameter, baseURL }) {
   const { name, style, explode, content } = parameter;
@@ -116,12 +115,7 @@ export function cookie({ req, parameter, value }) {
     const effectiveMediaType = Object.keys(parameter.content)[0];
     const cookieValue = serialize(value, effectiveMediaType);
 
-    req.headers.Cookie = serializeCookie(
-      { [cookieName]: cookieValue },
-      {
-        encoders: { value: cookieValueEncoder },
-      }
-    );
+    req.headers.Cookie = serializeCookie({ [cookieName]: cookieValue });
     return;
   }
 
@@ -138,11 +132,6 @@ export function cookie({ req, parameter, value }) {
         ? `${cookieName}=${serializedValue}`
         : serializedValue;
 
-    req.headers.Cookie = serializeCookie(
-      { [cookieName]: cookieValue },
-      {
-        encoders: { value: cookieValueEncoder },
-      }
-    );
+    req.headers.Cookie = serializeCookie({ [cookieName]: cookieValue });
   }
 }
