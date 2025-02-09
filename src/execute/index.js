@@ -7,7 +7,7 @@ import {
 import { ApiDOMStructuredError } from '@swagger-api/apidom-error';
 import { url } from '@swagger-api/apidom-reference/configuration/empty';
 
-import { DEFAULT_BASE_URL, DEFAULT_OPENAPI_3_SERVER } from '../constants.js';
+import { DEFAULT_BASE_URL, DEFAULT_OPENAPI_3_SERVER, TRAVERSE_LIMIT } from '../constants.js';
 import stockHttp from '../http/index.js';
 import { serializeRequest } from '../http/serializers/request/index.js';
 import SWAGGER2_PARAMETER_BUILDERS from './swagger2/parameter-builders.js';
@@ -19,6 +19,37 @@ import { isOpenAPI3 } from '../helpers/openapi-predicates.js';
 import { serialize as serializeCookie } from '../helpers/cookie.js';
 
 const arrayOrEmpty = (ar) => (Array.isArray(ar) ? ar : []);
+
+const hasCombinedSchema = (schema) => !!schema?.oneOf || !!schema?.anyOf;
+
+const findObjectSchema = (schema) => {
+  if (!isPlainObject(schema)) return undefined;
+
+  // check if the schema is an object type
+  if (schema.type === 'object' || (Array.isArray(schema.type) && schema.type.includes('object'))) {
+    return schema;
+  }
+
+  // traverse oneOf keyword first
+  if (Array.isArray(schema.oneOf)) {
+    const result = schema.oneOf.find(
+      (subschema, index) => index < TRAVERSE_LIMIT && !!findObjectSchema(subschema)
+    );
+
+    if (result) return result;
+  }
+
+  // traverse anyOf keyword second
+  if (Array.isArray(schema.anyOf)) {
+    const result = schema.anyOf.find(
+      (subschema, index) => index < TRAVERSE_LIMIT && !!findObjectSchema(subschema)
+    );
+
+    if (result) return result;
+  }
+
+  return undefined;
+};
 
 /**
  * `parseURIReference` function simulates the behavior of `node:url` parse function.
@@ -256,14 +287,18 @@ export function buildRequest(options) {
       throw new Error(`Required parameter ${parameter.name} is not provided`);
     }
 
-    if (
-      specIsOAS3 &&
-      parameter.schema &&
-      parameter.schema.type === 'object' &&
-      typeof value === 'string'
-    ) {
+    const isSchemaCombined = hasCombinedSchema(parameter.schema);
+
+    const isPlainObjectSchema = parameter.schema?.type === 'object' && typeof value === 'string';
+
+    if (specIsOAS3 && (isPlainObjectSchema || isSchemaCombined)) {
       try {
-        value = JSON.parse(value);
+        const parsedValue = JSON.parse(value);
+        if (isPlainObjectSchema) {
+          value = parsedValue;
+        } else if (findObjectSchema(parameter.schema)) {
+          value = parsedValue;
+        }
       } catch (e) {
         throw new Error('Could not parse object parameter value string as JSON');
       }

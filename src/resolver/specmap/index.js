@@ -4,9 +4,9 @@ import allOf from './lib/all-of.js';
 import parameters from './lib/parameters.js';
 import properties from './lib/properties.js';
 import ContextTree from './lib/context-tree.js';
+import { TRAVERSE_LIMIT } from '../../constants.js';
 
 const PLUGIN_DISPATCH_LIMIT = 100;
-const TRAVERSE_LIMIT = 3000;
 const noop = () => {};
 
 class SpecMap {
