@@ -4,12 +4,6 @@ import {
   test as testServerURLTemplate,
   substitute as substituteServerURLTemplate,
 } from 'openapi-server-url-templating';
-import {
-  serializeCookie,
-  cookieValueLenientEncoder,
-  cookieNameLenientValidator,
-  cookieValueLenientValidator,
-} from '@swaggerexpert/cookie';
 import { ApiDOMStructuredError } from '@swagger-api/apidom-error';
 import { url } from '@swagger-api/apidom-reference/configuration/empty';
 
@@ -22,6 +16,7 @@ import oas3BuildRequest from './oas3/build-request.js';
 import swagger2BuildRequest from './swagger2/build-request.js';
 import { getOperationRaw, idFromPathMethodLegacy } from '../helpers/index.js';
 import { isOpenAPI3 } from '../helpers/openapi-predicates.js';
+import { serialize as serializeCookie } from '../helpers/cookie.js';
 
 const arrayOrEmpty = (ar) => (Array.isArray(ar) ? ar : []);
 
@@ -298,16 +293,8 @@ export function buildRequest(options) {
 
   // If the cookie convenience object exists in our request,
   // serialize its content and then delete the cookie object.
-  if (req.cookies && Object.keys(req.cookies).length) {
-    const cookieString = serializeCookie(req.cookies, {
-      encoders: {
-        value: cookieValueLenientEncoder,
-      },
-      validators: {
-        name: cookieNameLenientValidator,
-        value: cookieValueLenientValidator,
-      },
-    });
+  if (req.cookies && Object.keys(req.cookies).length > 0) {
+    const cookieString = serializeCookie(req.cookies);
 
     if (isNonEmptyString(req.headers.Cookie)) {
       req.headers.Cookie += `; ${cookieString}`;
