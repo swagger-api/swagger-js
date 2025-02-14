@@ -54,14 +54,21 @@ const findObjectSchema = (schema, { recurse = true, depth = 1 } = {}) => {
   return undefined;
 };
 
-const parseJsonValue = (value) => {
+const parseJsonValue = ({ value, shouldFailSafe = false }) => {
   try {
     const parsedValue = JSON.parse(value);
-    if (typeof parsedValue !== 'object') throw new Error('Expected JSON serialized object');
-    return parsedValue;
+    if (typeof parsedValue === 'object') {
+      return parsedValue;
+    }
+    if (!shouldFailSafe) {
+      throw new Error('Expected JSON serialized object');
+    }
   } catch (e) {
-    throw new Error('Could not parse object parameter value string as JSON Object');
+    if (!shouldFailSafe) {
+      throw new Error('Could not parse object parameter value string as JSON Object');
+    }
   }
+  return value;
 };
 
 /**
@@ -301,11 +308,13 @@ export function buildRequest(options) {
     }
 
     if (specIsOAS3 && typeof value === 'string') {
-      if (
-        findObjectSchema(parameter.schema, { recurse: false }) ||
-        (isNil(parameter.schema?.type) && findObjectSchema(parameter.schema, { recurse: true }))
+      if (findObjectSchema(parameter.schema, { recurse: false })) {
+        value = parseJsonValue({ value, shouldFailSafe: false });
+      } else if (
+        isNil(parameter.schema?.type) &&
+        findObjectSchema(parameter.schema, { recurse: true })
       ) {
-        value = parseJsonValue(value);
+        value = parseJsonValue({ value, shouldFailSafe: true });
       }
     }
 
