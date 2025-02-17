@@ -1,4 +1,4 @@
-import { identity, isNil } from 'ramda';
+import { identity, has } from 'ramda';
 import { isPlainObject, isNonEmptyString } from 'ramda-adjunct';
 import {
   test as testServerURLTemplate,
@@ -54,17 +54,17 @@ const findObjectSchema = (schema, { recurse = true, depth = 1 } = {}) => {
   return undefined;
 };
 
-const parseJsonValue = ({ value, shouldFailSafe = false }) => {
+const parseJsonObject = ({ value, silentFail = false }) => {
   try {
     const parsedValue = JSON.parse(value);
     if (typeof parsedValue === 'object') {
       return parsedValue;
     }
-    if (!shouldFailSafe) {
+    if (!silentFail) {
       throw new Error('Expected JSON serialized object');
     }
-  } catch (e) {
-    if (!shouldFailSafe) {
+  } catch {
+    if (!silentFail) {
       throw new Error('Could not parse object parameter value string as JSON Object');
     }
   }
@@ -308,13 +308,10 @@ export function buildRequest(options) {
     }
 
     if (specIsOAS3 && typeof value === 'string') {
-      if (findObjectSchema(parameter.schema, { recurse: false })) {
-        value = parseJsonValue({ value, shouldFailSafe: false });
-      } else if (
-        isNil(parameter.schema?.type) &&
-        findObjectSchema(parameter.schema, { recurse: true })
-      ) {
-        value = parseJsonValue({ value, shouldFailSafe: true });
+      if (has('type', parameter.schema) && findObjectSchema(parameter.schema, { recurse: false })) {
+        value = parseJsonObject({ value, silentFail: false });
+      } else if (findObjectSchema(parameter.schema, { recurse: true })) {
+        value = parseJsonObject({ value, silentFail: true });
       }
     }
 
