@@ -1,4 +1,4 @@
-import { identity } from 'ramda';
+import { identity, has } from 'ramda';
 import { isPlainObject, isNonEmptyString } from 'ramda-adjunct';
 import {
   test as testServerURLTemplate,
@@ -7,7 +7,7 @@ import {
 import { ApiDOMStructuredError } from '@swagger-api/apidom-error';
 import { url } from '@swagger-api/apidom-reference/configuration/empty';
 
-import { DEFAULT_BASE_URL, DEFAULT_OPENAPI_3_SERVER } from '../constants.js';
+import { DEFAULT_BASE_URL, DEFAULT_OPENAPI_3_SERVER, TRAVERSE_LIMIT } from '../constants.js';
 import stockHttp from '../http/index.js';
 import { serializeRequest } from '../http/serializers/request/index.js';
 import SWAGGER2_PARAMETER_BUILDERS from './swagger2/parameter-builders.js';
@@ -19,6 +19,52 @@ import { isOpenAPI3 } from '../helpers/openapi-predicates.js';
 import { serialize as serializeCookie } from '../helpers/cookie.js';
 
 const arrayOrEmpty = (ar) => (Array.isArray(ar) ? ar : []);
+
+const findObjectSchema = (schema, { recurse = true, depth = 1 } = {}) => {
+  if (!isPlainObject(schema)) return undefined;
+
+  // check if the schema is an object type
+  if (schema.type === 'object' || (Array.isArray(schema.type) && schema.type.includes('object'))) {
+    return schema;
+  }
+
+  if (depth > TRAVERSE_LIMIT) return undefined;
+
+  if (recurse) {
+    // traverse oneOf keyword first
+    const oneOfResult = Array.isArray(schema.oneOf)
+      ? schema.oneOf.find((subschema) => findObjectSchema(subschema, { recurse, depth: depth + 1 }))
+      : undefined;
+
+    if (oneOfResult) return oneOfResult;
+
+    // traverse anyOf keyword second
+    const anyOfResult = Array.isArray(schema.anyOf)
+      ? schema.anyOf.find((subschema) => findObjectSchema(subschema, { recurse, depth: depth + 1 }))
+      : undefined;
+
+    if (anyOfResult) return anyOfResult;
+  }
+
+  return undefined;
+};
+
+const parseJsonObject = ({ value, silentFail = false }) => {
+  try {
+    const parsedValue = JSON.parse(value);
+    if (typeof parsedValue === 'object') {
+      return parsedValue;
+    }
+    if (!silentFail) {
+      throw new Error('Expected JSON serialized object');
+    }
+  } catch {
+    if (!silentFail) {
+      throw new Error('Could not parse object parameter value string as JSON Object');
+    }
+  }
+  return value;
+};
 
 /**
  * `parseURIReference` function simulates the behavior of `node:url` parse function.
@@ -256,16 +302,11 @@ export function buildRequest(options) {
       throw new Error(`Required parameter ${parameter.name} is not provided`);
     }
 
-    if (
-      specIsOAS3 &&
-      parameter.schema &&
-      parameter.schema.type === 'object' &&
-      typeof value === 'string'
-    ) {
-      try {
-        value = JSON.parse(value);
-      } catch (e) {
-        throw new Error('Could not parse object parameter value string as JSON');
+    if (specIsOAS3 && typeof value === 'string') {
+      if (has('type', parameter.schema) && findObjectSchema(parameter.schema, { recurse: false })) {
+        value = parseJsonObject({ value, silentFail: false });
+      } else if (findObjectSchema(parameter.schema, { recurse: true })) {
+        value = parseJsonObject({ value, silentFail: true });
       }
     }
 
