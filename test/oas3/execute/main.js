@@ -573,6 +573,82 @@ describe('buildRequest - OpenAPI Specification 3.0', () => {
   });
 
   describe('`schema` parameters', () => {
+    test('should build a request when parameter type is `string` and value is not a stringified object', () => {
+      // Given
+      const spec = {
+        openapi: '3.1.0',
+        paths: {
+          '/users': {
+            get: {
+              operationId: 'myOperation',
+              parameters: [
+                {
+                  in: 'query',
+                  name: 'parameters',
+                  schema: {
+                    type: 'string',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      };
+      // when
+      const req = buildRequest({
+        spec,
+        operationId: 'myOperation',
+        parameters: {
+          parameters: 'test',
+        },
+      });
+
+      expect(req).toEqual({
+        method: 'GET',
+        url: `/users?parameters=test`,
+        credentials: 'same-origin',
+        headers: {},
+      });
+    });
+
+    it('should build a request when parameter type is `string` and value is a stringified object', () => {
+      // Given
+      const spec = {
+        openapi: '3.1.0',
+        paths: {
+          '/users': {
+            get: {
+              operationId: 'myOperation',
+              parameters: [
+                {
+                  in: 'query',
+                  name: 'parameters',
+                  schema: {
+                    type: 'string',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      };
+      // when
+      const req = buildRequest({
+        spec,
+        operationId: 'myOperation',
+        parameters: {
+          parameters: '{"bar":{"baz":"qux"}}',
+        },
+      });
+
+      expect(req).toEqual({
+        method: 'GET',
+        url: `/users?parameters=${escape('{"bar":{"baz":"qux"}}')}`,
+        credentials: 'same-origin',
+        headers: {},
+      });
+    });
+
     it('should encode JSON values provided as objects', () => {
       const req = buildRequest({
         spec: {
