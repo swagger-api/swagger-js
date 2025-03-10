@@ -74,11 +74,11 @@
   "dependencies": {
     "@babel/runtime-corejs3": "^7.22.15",
     "@scarf/scarf": "=1.4.0",
-    "@swagger-api/apidom-core": ">=1.0.0-beta.12 <1.0.0-rc.0",
-    "@swagger-api/apidom-error": ">=1.0.0-beta.12 <1.0.0-rc.0",
-    "@swagger-api/apidom-json-pointer": ">=1.0.0-beta.12 <1.0.0-rc.0",
-    "@swagger-api/apidom-ns-openapi-3-1": ">=1.0.0-beta.12 <1.0.0-rc.0",
-    "@swagger-api/apidom-reference": ">=1.0.0-beta.12 <1.0.0-rc.0",
+    "@swagger-api/apidom-core": ">=1.0.0-beta.13 <1.0.0-rc.0",
+    "@swagger-api/apidom-error": ">=1.0.0-beta.13 <1.0.0-rc.0",
+    "@swagger-api/apidom-json-pointer": ">=1.0.0-beta.13 <1.0.0-rc.0",
+    "@swagger-api/apidom-ns-openapi-3-1": ">=1.0.0-beta.13 <1.0.0-rc.0",
+    "@swagger-api/apidom-reference": ">=1.0.0-beta.13 <1.0.0-rc.0",
     "@swaggerexpert/cookie": "^2.0.2",
     "deepmerge": "~4.3.0",
     "fast-json-patch": "^3.0.0-1",
@@ -86,10 +86,10 @@
     "neotraverse": "=0.6.18",
     "node-abort-controller": "^3.1.1",
     "node-fetch-commonjs": "^3.3.2",
-    "openapi-path-templating": "^2.0.1",
-    "openapi-server-url-templating": "^1.2.0",
+    "openapi-path-templating": "^2.2.1",
+    "openapi-server-url-templating": "^1.3.0",
     "ramda": "^0.30.1",
-    "ramda-adjunct": "^5.0.0"
+    "ramda-adjunct": "^5.1.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.21.0",
