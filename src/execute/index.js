@@ -61,7 +61,7 @@ const findObjectOrArraySchema = (schema, { recurse = true, depth = 1 } = {}) => 
 const parseJsonObjectOrArray = ({ value, silentFail = false }) => {
   try {
     const parsedValue = JSON.parse(value);
-    if (typeof parsedValue === 'object') {
+    if (isPlainObject(parsedValue) || Array.isArray(parsedValue)) {
       return parsedValue;
     }
     if (!silentFail) {
@@ -314,11 +314,20 @@ export function buildRequest(options) {
     if (specIsOAS3 && typeof value === 'string') {
       if (
         has('type', parameter.schema) &&
-        !Array.isArray(parameter.schema.type) &&
+        typeof parameter.schema.type === 'string' &&
         findObjectOrArraySchema(parameter.schema, { recurse: false })
       ) {
         value = parseJsonObjectOrArray({ value, silentFail: false });
-      } else if (findObjectOrArraySchema(parameter.schema, { recurse: true })) {
+      } else if (
+        has('type', parameter.schema) &&
+        Array.isArray(parameter.schema.type) &&
+        findObjectOrArraySchema(parameter.schema, { recurse: false })
+      ) {
+        value = parseJsonObjectOrArray({ value, silentFail: true });
+      } else if (
+        !has('type', parameter.schema) &&
+        findObjectOrArraySchema(parameter.schema, { recurse: true })
+      ) {
         value = parseJsonObjectOrArray({ value, silentFail: true });
       }
     }
