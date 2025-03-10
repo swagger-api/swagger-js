@@ -20,11 +20,16 @@ import { serialize as serializeCookie } from '../helpers/cookie.js';
 
 const arrayOrEmpty = (ar) => (Array.isArray(ar) ? ar : []);
 
-const findObjectSchema = (schema, { recurse = true, depth = 1 } = {}) => {
+const findObjectOrArraySchema = (schema, { recurse = true, depth = 1 } = {}) => {
   if (!isPlainObject(schema)) return undefined;
 
-  // check if the schema is an object type
-  if (schema.type === 'object' || (Array.isArray(schema.type) && schema.type.includes('object'))) {
+  // check if the schema is an object or array type
+  if (
+    schema.type === 'object' ||
+    schema.type === 'array' ||
+    (Array.isArray(schema.type) &&
+      (schema.type.includes('object') || schema.type.includes('array')))
+  ) {
     return schema;
   }
 
@@ -33,14 +38,18 @@ const findObjectSchema = (schema, { recurse = true, depth = 1 } = {}) => {
   if (recurse) {
     // traverse oneOf keyword first
     const oneOfResult = Array.isArray(schema.oneOf)
-      ? schema.oneOf.find((subschema) => findObjectSchema(subschema, { recurse, depth: depth + 1 }))
+      ? schema.oneOf.find((subschema) =>
+          findObjectOrArraySchema(subschema, { recurse, depth: depth + 1 })
+        )
       : undefined;
 
     if (oneOfResult) return oneOfResult;
 
     // traverse anyOf keyword second
     const anyOfResult = Array.isArray(schema.anyOf)
-      ? schema.anyOf.find((subschema) => findObjectSchema(subschema, { recurse, depth: depth + 1 }))
+      ? schema.anyOf.find((subschema) =>
+          findObjectOrArraySchema(subschema, { recurse, depth: depth + 1 })
+        )
       : undefined;
 
     if (anyOfResult) return anyOfResult;
@@ -49,18 +58,18 @@ const findObjectSchema = (schema, { recurse = true, depth = 1 } = {}) => {
   return undefined;
 };
 
-const parseJsonObject = ({ value, silentFail = false }) => {
+const parseJsonObjectOrArray = ({ value, silentFail = false }) => {
   try {
     const parsedValue = JSON.parse(value);
     if (typeof parsedValue === 'object') {
       return parsedValue;
     }
     if (!silentFail) {
-      throw new Error('Expected JSON serialized object');
+      throw new Error('Expected JSON serialized object or array');
     }
   } catch {
     if (!silentFail) {
-      throw new Error('Could not parse object parameter value string as JSON Object');
+      throw new Error('Could not parse parameter value string as JSON Object or JSON Array');
     }
   }
   return value;
@@ -303,10 +312,14 @@ export function buildRequest(options) {
     }
 
     if (specIsOAS3 && typeof value === 'string') {
-      if (has('type', parameter.schema) && findObjectSchema(parameter.schema, { recurse: false })) {
-        value = parseJsonObject({ value, silentFail: false });
-      } else if (findObjectSchema(parameter.schema, { recurse: true })) {
-        value = parseJsonObject({ value, silentFail: true });
+      if (
+        has('type', parameter.schema) &&
+        !Array.isArray(parameter.schema.type) &&
+        findObjectOrArraySchema(parameter.schema, { recurse: false })
+      ) {
+        value = parseJsonObjectOrArray({ value, silentFail: false });
+      } else if (findObjectOrArraySchema(parameter.schema, { recurse: true })) {
+        value = parseJsonObjectOrArray({ value, silentFail: true });
       }
     }
 

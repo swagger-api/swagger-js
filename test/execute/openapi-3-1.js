@@ -138,7 +138,7 @@ describe('given OpenAPI 3.1.0 definition', () => {
     const response = await SwaggerClient.execute({
       spec,
       operationId: 'getUserList',
-      parameters: { q: 'search string' },
+      parameters: { q: ['search string'] },
       securities: { authorized: { BearerAuth: '3492342948239482398' } },
     });
 
@@ -150,7 +150,7 @@ describe('given OpenAPI 3.1.0 definition', () => {
       spec,
       pathName: '/users',
       method: 'get',
-      parameters: { q: 'search string' },
+      parameters: { q: ['search string'] },
       securities: { authorized: { BearerAuth: '3492342948239482398' } },
     });
 
@@ -164,7 +164,7 @@ describe('given OpenAPI 3.1.0 definition', () => {
     });
     const response = await client.execute({
       operationId: 'getUserList',
-      parameters: { q: 'search string' },
+      parameters: { q: ['search string'] },
     });
 
     expect(response.body).toEqual([{ id: 'value' }]);
@@ -174,7 +174,7 @@ describe('given OpenAPI 3.1.0 definition', () => {
     const request = SwaggerClient.buildRequest({
       spec,
       operationId: 'getUserList',
-      parameters: { q: 'search string' },
+      parameters: { q: ['search string'] },
       securities: { authorized: { BearerAuth: '3492342948239482398' } },
       responseContentType: 'application/json',
     });
@@ -195,7 +195,7 @@ describe('given OpenAPI 3.1.0 definition', () => {
     const request = SwaggerClient.buildRequest({
       spec,
       operationId: 'getUserList',
-      parameters: { q: 'search string' },
+      parameters: { q: ['search string'] },
       securities: { authorized: { BearerAuth: '3492342948239482398' } },
       responseContentType: 'application/json',
       baseURL,
