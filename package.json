@@ -106,7 +106,7 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "=10.1.1",
     "eslint-plugin-import": "=2.31.0",
-    "eslint-plugin-prettier": "=5.2.4",
+    "eslint-plugin-prettier": "=5.2.5",
     "expect": "^29.0.3",
     "glob": "=11.0.1",
     "husky": "^9.0.11",
