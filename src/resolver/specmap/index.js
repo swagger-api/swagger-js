@@ -136,7 +136,11 @@ class SpecMap {
               if (!traversed) {
                 if (isObj) {
                   // Only store the ref if it exists
-                  if (specmap.allowMetaPatches && objRef) {
+                  if (
+                    specmap.allowMetaPatches &&
+                    objRef &&
+                    isSubPath(pathDiscriminator, updatedPath)
+                  ) {
                     refCache[objRef] = true;
                   }
                   yield* traverse(val, updatedPath, patch);
