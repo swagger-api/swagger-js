@@ -626,6 +626,33 @@ describe('subtree $ref resolver', () => {
     });
   });
 
+  test('should resolve nested allOf with $ref with no influence of order of schemas', async () => {
+    const input = {
+      components: {
+        schemas: {
+          Second: { allOf: [{ $ref: '#/components/schemas/Third' }] },
+          First: { allOf: [{ $ref: '#/components/schemas/Second' }] },
+          Third: { allOf: [{ $ref: '#/components/schemas/Fourth' }] },
+          Fourth: { allOf: [{ $ref: '#/components/schemas/Fifth' }] },
+          Fifth: { properties: { a: { type: 'string' } } },
+        },
+      },
+    };
+
+    const res = await resolve(input, ['components', 'schemas', 'First']);
+
+    expect(res).toEqual({
+      errors: [],
+      spec: {
+        properties: {
+          a: {
+            type: 'string',
+          },
+        },
+      },
+    });
+  });
+
   test('should resolve complex allOf correctly', async () => {
     const input = {
       definitions: {
@@ -679,6 +706,7 @@ describe('subtree $ref resolver', () => {
       },
     });
   });
+
   test('should fully resolve across remote documents correctly', async () => {
     const mockPool = mockAgent.get('http://example.com');
     mockPool.intercept({ path: '/remote.json' }).reply(
