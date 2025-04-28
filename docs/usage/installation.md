@@ -35,8 +35,8 @@ to speed up the installation:
     "@swagger-api/apidom-parser-adapter-openapi-json-3-1": "npm:-@0.0.1",
     "@swagger-api/apidom-parser-adapter-openapi-yaml-3-0": "npm:-@0.0.1",
     "@swagger-api/apidom-parser-adapter-openapi-yaml-3-1": "npm:-@0.0.1",
-    "@swagger-api/apidom-parser-adapter-workflows-json-1": "npm:-@0.0.1",
-    "@swagger-api/apidom-parser-adapter-workflows-yaml-1": "npm:-@0.0.1",
+    "@swagger-api/apidom-parser-adapter-arazzo-json-1": "npm:-@0.0.1",
+    "@swagger-api/apidom-parser-adapter-arazoo-yaml-1": "npm:-@0.0.1",
     "@swagger-api/apidom-parser-adapter-yaml-1-2": "npm:-@0.0.1"
   }
 }
