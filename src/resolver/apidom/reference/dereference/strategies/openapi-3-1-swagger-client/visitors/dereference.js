@@ -25,7 +25,10 @@ import {
   getNodeType,
   keyMap,
 } from '@swagger-api/apidom-ns-openapi-3-1';
-import { evaluate as jsonPointerEvaluate, uriToPointer } from '@swagger-api/apidom-json-pointer';
+import {
+  evaluate as jsonPointerEvaluate,
+  URIFragmentIdentifier,
+} from '@swagger-api/apidom-json-pointer/modern';
 import {
   url,
   MaximumDereferenceDepthError,
@@ -114,10 +117,10 @@ class OpenAPI3_1SwaggerClientDereferenceVisitor extends OpenAPI3_1DereferenceVis
 
       this.indirections.push(referencingElement);
 
-      const jsonPointer = uriToPointer($refBaseURI);
+      const jsonPointer = URIFragmentIdentifier.fromURIReference($refBaseURI);
 
       // possibly non-semantic fragment
-      let referencedElement = jsonPointerEvaluate(jsonPointer, reference.value.result);
+      let referencedElement = jsonPointerEvaluate(reference.value.result, jsonPointer);
       referencedElement.id = identityManager.identify(referencedElement);
 
       // applying semantics to a fragment
@@ -274,7 +277,7 @@ class OpenAPI3_1SwaggerClientDereferenceVisitor extends OpenAPI3_1DereferenceVis
       const wrappedError = wrapError(rootCause, {
         baseDoc: this.reference.uri,
         $ref: toValue(referencingElement.$ref),
-        pointer: uriToPointer(toValue(referencingElement.$ref)),
+        pointer: URIFragmentIdentifier.fromURIReference(toValue(referencingElement.$ref)),
         fullPath: this.basePath ?? [...toPath([...ancestors, parent, referencingElement]), '$ref'],
       });
       this.options.dereference.dereferenceOpts?.errors?.push?.(wrappedError);
@@ -320,10 +323,10 @@ class OpenAPI3_1SwaggerClientDereferenceVisitor extends OpenAPI3_1DereferenceVis
 
       this.indirections.push(pathItemElement);
 
-      const jsonPointer = uriToPointer($refBaseURI);
+      const jsonPointer = URIFragmentIdentifier.fromURIReference($refBaseURI);
 
       // possibly non-semantic referenced element
-      let referencedElement = jsonPointerEvaluate(jsonPointer, reference.value.result);
+      let referencedElement = jsonPointerEvaluate(reference.value.result, jsonPointer);
       referencedElement.id = identityManager.identify(referencedElement);
 
       // applying semantics to a referenced element
@@ -472,7 +475,7 @@ class OpenAPI3_1SwaggerClientDereferenceVisitor extends OpenAPI3_1DereferenceVis
       const wrappedError = wrapError(rootCause, {
         baseDoc: this.reference.uri,
         $ref: toValue(pathItemElement.$ref),
-        pointer: uriToPointer(toValue(pathItemElement.$ref)),
+        pointer: URIFragmentIdentifier.fromURIReference(toValue(pathItemElement.$ref)),
         fullPath: this.basePath ?? [...toPath([...ancestors, parent, pathItemElement]), '$ref'],
       });
       this.options.dereference.dereferenceOpts?.errors?.push?.(wrappedError);
@@ -550,9 +553,9 @@ class OpenAPI3_1SwaggerClientDereferenceVisitor extends OpenAPI3_1DereferenceVis
           }
 
           reference = await this.toReference(url.unsanitize($refBaseURI));
-          const selector = uriToPointer($refBaseURI);
+          const selector = URIFragmentIdentifier.fromURIReference($refBaseURI);
           const referenceAsSchema = maybeRefractToSchemaElement(reference.value.result);
-          referencedElement = jsonPointerEvaluate(selector, referenceAsSchema);
+          referencedElement = jsonPointerEvaluate(referenceAsSchema, selector);
           referencedElement = maybeRefractToSchemaElement(referencedElement);
           referencedElement.id = identityManager.identify(referencedElement);
         }
@@ -602,9 +605,9 @@ class OpenAPI3_1SwaggerClientDereferenceVisitor extends OpenAPI3_1DereferenceVis
             }
 
             reference = await this.toReference(url.unsanitize($refBaseURI));
-            const selector = uriToPointer($refBaseURI);
+            const selector = URIFragmentIdentifier.fromURIReference($refBaseURI);
             const referenceAsSchema = maybeRefractToSchemaElement(reference.value.result);
-            referencedElement = jsonPointerEvaluate(selector, referenceAsSchema);
+            referencedElement = jsonPointerEvaluate(referenceAsSchema, selector);
             referencedElement = maybeRefractToSchemaElement(referencedElement);
             referencedElement.id = identityManager.identify(referencedElement);
           }

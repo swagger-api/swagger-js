@@ -1736,7 +1736,7 @@ describe('dereference', () => {
             expect(errors).toHaveLength(1);
             expect(errors[0]).toMatchObject({
               message: expect.stringMatching(
-                /^Could not resolve reference: JSON Pointer evaluation failed while/
+                /^Could not resolve reference: Invalid object key "UserProfile" at position 2 in "\/components\/schemas\/UserProfile": key not found in object/
               ),
               baseDoc: expect.stringMatching(/unresolvable-reference\/root\.json$/),
               $ref: '#/components/schemas/UserProfile',
@@ -1769,7 +1769,7 @@ describe('dereference', () => {
             expect(errors).toHaveLength(1);
             expect(errors[0]).toMatchObject({
               message: expect.stringMatching(
-                /^Could not resolve reference: JSON Pointer evaluation failed while evaluating/
+                /^Could not resolve reference: Invalid object key "invalid-pointer" at position 2 in "\/components\/schemas\/invalid-pointer": key not found in object/
               ),
               baseDoc: expect.stringMatching(/invalid-pointer\/root\.json$/),
               $ref: '#/components/schemas/invalid-pointer',

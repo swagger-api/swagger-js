@@ -52,6 +52,7 @@ module.exports = {
           '^@swagger-api/apidom-reference/resolve/resolvers/file$',
           '^@swagger-api/apidom-reference/resolve/strategies/openapi-3-1$',
           '^@swagger-api/apidom-reference/parse/parsers/binary$',
+          '^@swagger-api/apidom-json-pointer/modern$',
         ],
       },
     ],
