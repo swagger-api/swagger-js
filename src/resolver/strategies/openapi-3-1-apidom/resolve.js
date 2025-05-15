@@ -9,9 +9,8 @@ import {
 import {
   compile as jsonPointerCompile,
   evaluate as jsonPointerEvaluate,
-  EvaluationJsonPointerError,
-  InvalidJsonPointerError,
-} from '@swagger-api/apidom-json-pointer';
+  JSONPointerEvaluateError,
+} from '@swagger-api/apidom-json-pointer/modern';
 import { mediaTypes, OpenApi3_1Element } from '@swagger-api/apidom-ns-openapi-3-1';
 import {
   dereferenceApiDOM,
@@ -87,7 +86,7 @@ const resolveOpenAPI31Strategy = async (options) => {
     // prepare fragment for dereferencing
     const jsonPointer = jsonPointerCompile(pathDiscriminator);
     const jsonPointerURI = jsonPointer === '' ? '' : `#${jsonPointer}`;
-    const fragmentElement = jsonPointerEvaluate(jsonPointer, openApiElement);
+    const fragmentElement = jsonPointerEvaluate(openApiElement, jsonPointer);
 
     // prepare reference set for dereferencing
     const openApiElementReference = new Reference({
@@ -160,7 +159,7 @@ const resolveOpenAPI31Strategy = async (options) => {
 
     return { spec: toValue(normalized), errors };
   } catch (error) {
-    if (error instanceof InvalidJsonPointerError || error instanceof EvaluationJsonPointerError) {
+    if (error instanceof JSONPointerEvaluateError) {
       return { spec, errors: [] };
     }
     throw error;
