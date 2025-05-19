@@ -85,10 +85,12 @@ export default function normalize(parsedSpec) {
                 for (const param of inherits[inheritName]) {
                   const exists = operation[inheritName].some(
                     (opParam) =>
-                      (opParam.name && opParam.name === param.name) ||
-                      (opParam.$ref && opParam.$ref === param.$ref) ||
-                      (opParam.$$ref && opParam.$$ref === param.$$ref) ||
-                      opParam === param
+                      opParam &&
+                      param &&
+                      ((opParam.name && opParam.name === param.name) ||
+                        (opParam.$ref && opParam.$ref === param.$ref) ||
+                        (opParam.$$ref && opParam.$$ref === param.$$ref) ||
+                        opParam === param)
                   );
 
                   if (!exists) {
