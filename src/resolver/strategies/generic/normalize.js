@@ -1,3 +1,5 @@
+import { isPlainObject } from 'ramda-adjunct';
+
 import opId from '../../../helpers/op-id.js';
 
 export default function normalize(parsedSpec) {
@@ -78,20 +80,22 @@ export default function normalize(parsedSpec) {
           for (const inherits of inheritsList) {
             // eslint-disable-next-line no-restricted-syntax
             for (const inheritName in inherits) {
-              if (!operation[inheritName]) {
+              if (!Array.isArray(operation[inheritName])) {
                 operation[inheritName] = inherits[inheritName];
               } else if (inheritName === 'parameters') {
                 // eslint-disable-next-line no-restricted-syntax
                 for (const param of inherits[inheritName]) {
-                  const exists = operation[inheritName].some(
-                    (opParam) =>
-                      opParam &&
-                      param &&
-                      ((opParam.name && opParam.name === param.name) ||
-                        (opParam.$ref && opParam.$ref === param.$ref) ||
-                        (opParam.$$ref && opParam.$$ref === param.$$ref) ||
-                        opParam === param)
-                  );
+                  const exists = operation[inheritName].some((opParam) => {
+                    if (!isPlainObject(opParam) && !isPlainObject(param)) return false;
+                    if (opParam === param) return true;
+
+                    return ['name', '$ref', '$$ref'].some(
+                      (key) =>
+                        typeof opParam[key] === 'string' &&
+                        typeof param[key] === 'string' &&
+                        opParam[key] === param[key]
+                    );
+                  });
 
                   if (!exists) {
                     operation[inheritName].push(param);
