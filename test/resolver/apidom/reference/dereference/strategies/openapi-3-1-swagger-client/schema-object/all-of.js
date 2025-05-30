@@ -1034,7 +1034,7 @@ describe('dereference', () => {
                     },
                     {
                       properties: {
-                        foo: { enum: [1, 2, 3, 5] },
+                        foo: { enum: [1, 2, 3, 5, { enum: [1, 2, 3] }] },
                         bar: { enum: [{ enum: [1, 2, 3, 4] }] },
                       },
                     },
@@ -1053,8 +1053,10 @@ describe('dereference', () => {
               schemas: {
                 one: {
                   properties: {
-                    foo: { enum: [1, 2, 3, 4, 5] },
-                    bar: { enum: [{ enum: [1, 2, 3] }, { enum: [1, 2, 3, 4] }] },
+                    foo: { enum: [1, 2, 3, 4, 5, { enum: [1, 2, 3] }] },
+                    bar: {
+                      enum: [{ enum: [1, 2, 3] }, { enum: [1, 2, 3, 4] }, { enum: [1, 2, 3, 4] }],
+                    },
                   },
                 },
               },
