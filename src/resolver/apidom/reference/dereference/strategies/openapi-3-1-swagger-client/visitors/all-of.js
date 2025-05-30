@@ -1,5 +1,6 @@
-import { isArrayElement, deepmerge } from '@swagger-api/apidom-core';
+import { ArrayElement, isArrayElement, deepmerge, toValue } from '@swagger-api/apidom-core';
 import { isSchemaElement } from '@swagger-api/apidom-ns-openapi-3-1';
+import { uniqWith, equals } from 'ramda';
 
 import toPath from '../utils/to-path.js';
 
@@ -37,7 +38,21 @@ class AllOfVisitor {
       while (schemaElement.hasKey('allOf')) {
         const { allOf } = schemaElement;
         schemaElement.remove('allOf');
-        const allOfMerged = deepmerge.all([...allOf.content, schemaElement]);
+        const allOfMerged = deepmerge.all([...allOf.content, schemaElement], {
+          customMerge: (keyElement) => {
+            if (toValue(keyElement) === 'enum') {
+              return (targetElement, sourceElement) => {
+                if (isArrayElement(targetElement) && isArrayElement(sourceElement)) {
+                  return new ArrayElement(
+                    uniqWith(equals)([...toValue(targetElement), ...toValue(sourceElement)])
+                  );
+                }
+                return deepmerge(targetElement, sourceElement);
+              };
+            }
+            return deepmerge;
+          },
+        });
 
         /**
          * If there was not an original $$ref value, make sure to remove
