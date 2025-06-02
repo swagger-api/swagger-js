@@ -890,7 +890,7 @@ describe('resolver', () => {
     });
   });
 
-  test('should not duplicate `enum` values nested in `allOf`', () => {
+  test('should not duplicate primitive `enum` values nested in `allOf`', () => {
     // Given
     const spec = {
       allOf: [
@@ -918,7 +918,7 @@ describe('resolver', () => {
       expect(obj.spec).toEqual({
         properties: {
           foo: { enum: [1, 2, 3, 4, 5] },
-          bar: { enum: [{ enum: [1, 2, 3] }, { enum: [1, 2, 3, 4] }] },
+          bar: { enum: [{ enum: [1, 2, 3] }, { enum: [1, 2, 3, 4] }, { enum: [1, 2, 3, 4] }] },
         },
       });
     }

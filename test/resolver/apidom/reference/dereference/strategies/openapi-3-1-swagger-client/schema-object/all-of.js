@@ -1019,7 +1019,7 @@ describe('dereference', () => {
           });
         });
 
-        test('should not duplicate `enum` values nested in `allOf`', async () => {
+        test('should not duplicate primitive `enum` values nested in `allOf`', async () => {
           const spec = OpenApi3_1Element.refract({
             openapi: '3.1.0',
             components: {
