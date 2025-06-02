@@ -1,10 +1,5 @@
-import {
-  ArrayElement,
-  isArrayElement,
-  isPrimitiveElement,
-  deepmerge,
-  toValue,
-} from '@swagger-api/apidom-core';
+import { uniqWith } from 'ramda';
+import { isArrayElement, isObjectElement, deepmerge, toValue } from '@swagger-api/apidom-core';
 import { isSchemaElement } from '@swagger-api/apidom-ns-openapi-3-1';
 
 import toPath from '../utils/to-path.js';
@@ -48,20 +43,23 @@ class AllOfVisitor {
             if (toValue(keyElement) === 'enum') {
               return (targetElement, sourceElement) => {
                 if (isArrayElement(targetElement) && isArrayElement(sourceElement)) {
-                  const primitiveElements = new ArrayElement([
-                    ...targetElement.findElements(isPrimitiveElement),
-                    ...sourceElement.findElements(isPrimitiveElement),
-                  ]);
-                  const nonPrimitiveElements = new ArrayElement([
-                    ...targetElement.findElements((element) => !isPrimitiveElement(element)),
-                    ...sourceElement.findElements((element) => !isPrimitiveElement(element)),
-                  ]);
+                  const areElementsEqual = (a, b) => {
+                    if (
+                      isArrayElement(a) ||
+                      isArrayElement(b) ||
+                      isObjectElement(a) ||
+                      isObjectElement(b)
+                    ) {
+                      return false;
+                    }
+                    return a.equals(toValue(b));
+                  };
+                  const mergedElements = targetElement.concat(sourceElement);
+                  const uniqueElements = uniqWith(areElementsEqual)(mergedElements.content);
 
-                  const uniquePrimitiveElements = new ArrayElement([
-                    ...new Set(toValue(primitiveElements)),
-                  ]);
+                  mergedElements.content = uniqueElements;
 
-                  return uniquePrimitiveElements.concat(nonPrimitiveElements);
+                  return mergedElements;
                 }
                 return deepmerge(targetElement, sourceElement);
               };
