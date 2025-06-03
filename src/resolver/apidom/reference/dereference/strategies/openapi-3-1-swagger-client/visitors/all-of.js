@@ -5,6 +5,7 @@ import {
   deepmerge,
   toValue,
   cloneShallow,
+  includesClasses,
 } from '@swagger-api/apidom-core';
 import { isSchemaElement } from '@swagger-api/apidom-ns-openapi-3-1';
 
@@ -48,7 +49,10 @@ class AllOfVisitor {
           customMerge: (keyElement) => {
             if (toValue(keyElement) === 'enum') {
               return (targetElement, sourceElement) => {
-                if (isArrayElement(targetElement) && isArrayElement(sourceElement)) {
+                if (
+                  includesClasses(['json-schema-enum'], targetElement) &&
+                  includesClasses(['json-schema-enum'], sourceElement)
+                ) {
                   const areElementsEqual = (a, b) => {
                     if (
                       isArrayElement(a) ||
