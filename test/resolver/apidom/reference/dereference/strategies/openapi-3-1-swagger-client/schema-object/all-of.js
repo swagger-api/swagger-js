@@ -1018,6 +1018,51 @@ describe('dereference', () => {
             },
           });
         });
+
+        test('should not duplicate primitive `enum` values nested in `allOf`', async () => {
+          const spec = OpenApi3_1Element.refract({
+            openapi: '3.1.0',
+            components: {
+              schemas: {
+                one: {
+                  allOf: [
+                    {
+                      properties: {
+                        foo: { enum: [1, 2, 3, 4] },
+                        bar: { enum: [{ enum: [1, 2, 3] }, { enum: [1, 2, 3, 4] }] },
+                      },
+                    },
+                    {
+                      properties: {
+                        foo: { enum: [1, 2, 3, 5, { enum: [1, 2, 3] }] },
+                        bar: { enum: [{ enum: [1, 2, 3, 4] }] },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          });
+          const dereferenced = await dereferenceApiDOM(spec, {
+            parse: { mediaType: mediaTypes.latest('json') },
+          });
+
+          expect(toValue(dereferenced)).toEqual({
+            openapi: '3.1.0',
+            components: {
+              schemas: {
+                one: {
+                  properties: {
+                    foo: { enum: [1, 2, 3, 4, 5, { enum: [1, 2, 3] }] },
+                    bar: {
+                      enum: [{ enum: [1, 2, 3] }, { enum: [1, 2, 3, 4] }, { enum: [1, 2, 3, 4] }],
+                    },
+                  },
+                },
+              },
+            },
+          });
+        });
       });
     });
   });

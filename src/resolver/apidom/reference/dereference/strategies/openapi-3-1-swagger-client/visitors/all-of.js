@@ -1,4 +1,12 @@
-import { isArrayElement, deepmerge } from '@swagger-api/apidom-core';
+import { uniqWith } from 'ramda';
+import {
+  isArrayElement,
+  isObjectElement,
+  deepmerge,
+  toValue,
+  cloneShallow,
+  includesClasses,
+} from '@swagger-api/apidom-core';
 import { isSchemaElement } from '@swagger-api/apidom-ns-openapi-3-1';
 
 import toPath from '../utils/to-path.js';
@@ -37,7 +45,39 @@ class AllOfVisitor {
       while (schemaElement.hasKey('allOf')) {
         const { allOf } = schemaElement;
         schemaElement.remove('allOf');
-        const allOfMerged = deepmerge.all([...allOf.content, schemaElement]);
+        const allOfMerged = deepmerge.all([...allOf.content, schemaElement], {
+          customMerge: (keyElement) => {
+            if (toValue(keyElement) === 'enum') {
+              return (targetElement, sourceElement) => {
+                if (
+                  includesClasses(['json-schema-enum'], targetElement) &&
+                  includesClasses(['json-schema-enum'], sourceElement)
+                ) {
+                  const areElementsEqual = (a, b) => {
+                    if (
+                      isArrayElement(a) ||
+                      isArrayElement(b) ||
+                      isObjectElement(a) ||
+                      isObjectElement(b)
+                    ) {
+                      return false;
+                    }
+                    return a.equals(toValue(b));
+                  };
+                  const clone = cloneShallow(targetElement);
+                  clone.content = uniqWith(areElementsEqual)([
+                    ...targetElement.content,
+                    ...sourceElement.content,
+                  ]);
+
+                  return clone;
+                }
+                return deepmerge(targetElement, sourceElement);
+              };
+            }
+            return deepmerge;
+          },
+        });
 
         /**
          * If there was not an original $$ref value, make sure to remove
