@@ -1,5 +1,11 @@
 import { uniqWith } from 'ramda';
-import { isArrayElement, isObjectElement, deepmerge, toValue } from '@swagger-api/apidom-core';
+import {
+  isArrayElement,
+  isObjectElement,
+  deepmerge,
+  toValue,
+  cloneShallow,
+} from '@swagger-api/apidom-core';
 import { isSchemaElement } from '@swagger-api/apidom-ns-openapi-3-1';
 
 import toPath from '../utils/to-path.js';
@@ -54,12 +60,13 @@ class AllOfVisitor {
                     }
                     return a.equals(toValue(b));
                   };
-                  const mergedElements = targetElement.concat(sourceElement);
-                  const uniqueElements = uniqWith(areElementsEqual)(mergedElements.content);
+                  const clone = cloneShallow(targetElement);
+                  clone.content = uniqWith(areElementsEqual)([
+                    ...targetElement.content,
+                    ...sourceElement.content,
+                  ]);
 
-                  mergedElements.content = uniqueElements;
-
-                  return mergedElements;
+                  return clone;
                 }
                 return deepmerge(targetElement, sourceElement);
               };
