@@ -152,10 +152,15 @@ const resolveOpenAPI31Strategy = async (options) => {
         circularReplacer: useCircularStructures
           ? referenceOptions.dereference.circularReplacer
           : circularReplacer,
+        strategyOpts: {
+          'openapi-3-1': { dereferenceDiscriminatorMapping: true },
+        },
       },
     });
     const transcluded = transclude(fragmentElement, dereferenced, openApiElement);
-    const normalized = skipNormalization ? transcluded : strategy.normalize(transcluded);
+    const normalized = skipNormalization
+      ? transcluded
+      : strategy.normalize(transcluded, { baseURI });
 
     return { spec: toValue(normalized), errors };
   } catch (error) {

@@ -10,7 +10,7 @@ const openApi31ApiDOMStrategy = {
   match(spec) {
     return isOpenAPI31(spec);
   },
-  normalize(spec) {
+  normalize(spec, options = {}) {
     // pre-normalization - happens only once before the first lazy dereferencing and in JavaScript context
     if (!isElement(spec) && isPlainObject(spec) && !spec.$$normalized) {
       const preNormalized = pojoAdapter(normalize)(spec);
@@ -19,7 +19,7 @@ const openApi31ApiDOMStrategy = {
     }
     // post-normalization - happens after each dereferencing and in ApiDOM context
     if (isElement(spec)) {
-      return normalize(spec);
+      return normalize(spec, options);
     }
 
     return spec;

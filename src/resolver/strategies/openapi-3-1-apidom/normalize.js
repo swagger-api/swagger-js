@@ -6,6 +6,7 @@ import {
   refractorPluginNormalizeSecurityRequirements,
   refractorPluginNormalizeParameterExamples,
   refractorPluginNormalizeHeaderExamples,
+  refractorPluginNormalizeDiscriminatorMapping,
   createToolbox,
   keyMap,
   getNodeType,
@@ -15,7 +16,7 @@ import {
 import opId from '../../../helpers/op-id.js';
 import resolveOpenAPI31Strategy from './resolve.js';
 
-const normalize = (element) => {
+const normalize = (element, options = {}) => {
   if (!isObjectElement(element)) return element;
 
   const plugins = [
@@ -27,6 +28,7 @@ const normalize = (element) => {
     refractorPluginNormalizeSecurityRequirements(),
     refractorPluginNormalizeParameterExamples(),
     refractorPluginNormalizeHeaderExamples(),
+    refractorPluginNormalizeDiscriminatorMapping(options),
   ];
 
   const normalized = dispatchRefractorPlugins(element, plugins, {

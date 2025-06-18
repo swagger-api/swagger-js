@@ -704,6 +704,7 @@ class OpenAPI3_1SwaggerClientDereferenceVisitor extends OpenAPI3_1DereferenceVis
         // annotate referenced element with info about original referencing element
         booleanJsonSchemaElement.setMetaProperty('ref-fields', {
           $ref: toValue(referencingElement.$ref),
+          $refBaseURI,
         });
         // annotate referenced element with info about origin
         booleanJsonSchemaElement.setMetaProperty('ref-origin', reference.uri);
@@ -737,6 +738,7 @@ class OpenAPI3_1SwaggerClientDereferenceVisitor extends OpenAPI3_1DereferenceVis
         // annotate referenced element with info about original referencing element
         mergedElement.setMetaProperty('ref-fields', {
           $ref: toValue(referencingElement.$ref),
+          $refBaseURI,
         });
         // annotate fragment with info about origin
         mergedElement.setMetaProperty('ref-origin', reference.uri);
