@@ -469,6 +469,22 @@ describe('http', () => {
           expect(resSerialize.data).toBe(body);
         });
     });
+
+    test('should not parse xml response', () => {
+      const headers = { 'Content-Type': 'application/xml' };
+      const body = '<Pet><name>cat: with: colon: and: spaces</name></Pet>';
+      const mockPool = mockAgent.get('http://swagger.io');
+      mockPool.intercept({ path: '/' }).reply(200, body, { headers });
+
+      return fetch('http://swagger.io')
+        .then((_res) =>
+          // eslint-disable-line no-undef
+          serializeResponse(_res, 'https://swagger.io')
+        )
+        .then((resSerialize) => {
+          expect(resSerialize.body).toBe(body);
+        });
+    });
   });
 
   describe('shouldDownloadAsText', () => {
