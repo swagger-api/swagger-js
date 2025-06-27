@@ -483,6 +483,7 @@ describe('http', () => {
         )
         .then((resSerialize) => {
           expect(resSerialize.body).toBe(body);
+          expect(resSerialize.parseError).toBeUndefined();
         });
     });
   });
