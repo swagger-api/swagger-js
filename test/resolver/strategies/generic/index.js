@@ -890,6 +890,40 @@ describe('resolver', () => {
     });
   });
 
+  test('should not duplicate primitive `enum` values nested in `allOf`', () => {
+    // Given
+    const spec = {
+      allOf: [
+        {
+          properties: {
+            foo: { enum: [1, 2, 3, 4] },
+            bar: { enum: [{ enum: [1, 2, 3] }, { enum: [1, 2, 3, 4] }] },
+          },
+        },
+        {
+          properties: {
+            foo: { enum: [1, 2, 3, 5] },
+            bar: { enum: [{ enum: [1, 2, 3, 4] }] },
+          },
+        },
+      ],
+    };
+
+    // When
+    return Swagger.resolve({ spec }).then(handleResponse);
+
+    // Then
+    function handleResponse(obj) {
+      expect(obj.errors).toEqual([]);
+      expect(obj.spec).toEqual({
+        properties: {
+          foo: { enum: [1, 2, 3, 4, 5] },
+          bar: { enum: [{ enum: [1, 2, 3] }, { enum: [1, 2, 3, 4] }, { enum: [1, 2, 3, 4] }] },
+        },
+      });
+    }
+  });
+
   test('should not throw errors on resvered-keywords in freely-named-fields', () => {
     // Given
     const ReservedKeywordSpec = jsYaml.load(
