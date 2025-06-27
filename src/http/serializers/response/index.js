@@ -8,7 +8,7 @@ function parseBody(body, contentType) {
     if (contentType.indexOf('application/json') === 0 || contentType.indexOf('+json') > 0) {
       return JSON.parse(body);
     }
-    if (/xml\b/.test(contentType)) {
+    if (contentType.indexOf('application/xml') === 0 || contentType.indexOf('+xml')) {
       return body;
     }
   }
