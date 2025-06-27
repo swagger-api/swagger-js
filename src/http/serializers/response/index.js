@@ -4,11 +4,13 @@ export const shouldDownloadAsText = (contentType = '') =>
   /(json|xml|yaml|text)\b/.test(contentType);
 
 function parseBody(body, contentType) {
-  if (
-    contentType &&
-    (contentType.indexOf('application/json') === 0 || contentType.indexOf('+json') > 0)
-  ) {
-    return JSON.parse(body);
+  if (contentType) {
+    if (contentType.indexOf('application/json') === 0 || contentType.indexOf('+json') > 0) {
+      return JSON.parse(body);
+    }
+    if (contentType.indexOf('application/xml') === 0 || contentType.indexOf('+xml') > 0) {
+      return body;
+    }
   }
   return jsYaml.load(body);
 }
