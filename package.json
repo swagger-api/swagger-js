@@ -107,7 +107,7 @@
     "eslint-config-prettier": "=10.1.8",
     "eslint-plugin-import": "=2.32.0",
     "eslint-plugin-prettier": "=5.5.4",
-    "expect": "^29.0.3",
+    "expect": "^30.1.1",
     "glob": "=11.0.3",
     "husky": "^9.0.11",
     "inspectpack": "=4.7.1",
