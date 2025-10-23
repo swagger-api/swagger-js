@@ -99,7 +99,7 @@
     "@babel/preset-env": "^7.20.2",
     "@babel/register": "^7.21.0",
     "@commitlint/cli": "^19.0.3",
-    "@commitlint/config-conventional": "^19.0.3",
+    "@commitlint/config-conventional": "^20.0.0",
     "babel-loader": "=10.0.0",
     "cross-env": "=7.0.3",
     "eslint": "^8.42.0",
