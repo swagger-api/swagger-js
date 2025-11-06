@@ -48,7 +48,7 @@ jobs:
       run: npm run build
     - name: Upload commonjs build artifacts
       if: startsWith(matrix.node-version, '22')
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: commonjs
         path: ./lib/
@@ -77,7 +77,7 @@ jobs:
       run: npm ci
 
     - name: Download commonjs build artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v6
       with:
         name: commonjs
 
