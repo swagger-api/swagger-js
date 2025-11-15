@@ -18,9 +18,9 @@ jobs:
         node-version: [16.x, 18.x, 20.x, 22.x]
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version: ${{ matrix.node-version }}
     - name: Cache Node Modules
@@ -48,7 +48,7 @@ jobs:
       run: npm run build
     - name: Upload commonjs build artifacts
       if: startsWith(matrix.node-version, '22')
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: commonjs
         path: ./lib/
@@ -59,9 +59,9 @@ jobs:
     needs: [build]
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - name: Use Node.js 22
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version: 22
 
@@ -77,47 +77,47 @@ jobs:
       run: npm ci
 
     - name: Download commonjs build artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v6
       with:
         name: commonjs
 
     - name: Use Node 12.20.0
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version: 12.20.0
     - name: Run commonjs build artifacts on Node.js 12.20.0
       run: node -p "require('./commonjs')"
 
     - name: Use Node 14.x
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version: 14.x
     - name: Run commonjs build artifacts on Node.js 14.x
       run: node -p "require('./commonjs')"
 
     - name: Use Node 16.x
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version: 16.x
     - name: Run commonjs build artifacts on Node.js 16.x
       run: node -p "require('./commonjs')"
 
     - name: Use Node 18.x
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version: 18.x
     - name: Run commonjs build artifacts on Node.js 18.x
       run: node -p "require('./commonjs')"
 
     - name: Use Node 20.x
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version: 20.x
     - name: Run commonjs build artifacts on Node.js 20.x
       run: node -p "require('./commonjs')"
 
     - name: Use Node 22.x
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version: 22.x
     - name: Run commonjs build artifacts on Node.js 22.x
