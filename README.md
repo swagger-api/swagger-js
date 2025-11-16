@@ -4,6 +4,20 @@
 
 **Swagger Client** is a JavaScript module that allows you to fetch, resolve, and interact with Swagger/OpenAPI documents.
 
+## Table of Contents
+
+ - [New](#new)
+ - [Compatibility](#compatibility)
+ - [Anonymized analytics](#anonymized-analytics)
+ - [Documentation](#documentation)
+  - [Usage](#usage)
+  - [Development](#development)
+  - [Migrations](#migrations)
+ - [Runtime](#runtime)
+  - [Node js](#nodejs)
+  - [Browsers](#browsers)
+ - [Security Contact](#security-contact)
+
 ## New!
 
 **This is the new version of swagger-js, 3.x.** The new version supports Swagger 2.0 as well as OpenAPI 3.
@@ -48,7 +62,7 @@ Alternatively, you can set the environment variable `SCARF_ANALYTICS` to `false`
 
 ## Documentation
 
-#### Usage
+### Usage
 
 - [Installation](docs/usage/installation.md)
 - [Tags Interface](docs/usage/tags-interface.md)
@@ -57,18 +71,18 @@ Alternatively, you can set the environment variable `SCARF_ANALYTICS` to `false`
 - [HTTP Client](docs/usage/http-client.md)
 - [Swagger Client API](docs/usage/api.md)
 
-#### Development
+### Development
 
 - [Contributing](https://github.com/swagger-api/.github/blob/master/CONTRIBUTING.md)
 - [Setting up](docs/development/setting-up.md)
 - [Scripts](docs/development/scripts.md)
 
-#### Migrations 
+### Migrations 
 
 - [Migration guide](docs/migration/migration-2-x-to-3-x.md)
 - [Graveyard](docs/migration/graveyard-3-x.md)
 
-### Runtime 
+## Runtime 
 
 ### Node.js
 
