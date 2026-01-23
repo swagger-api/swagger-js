@@ -77,7 +77,7 @@ jobs:
       run: npm ci
 
     - name: Download commonjs build artifacts
-      uses: actions/download-artifact@v6
+      uses: actions/download-artifact@v7
       with:
         name: commonjs
 
