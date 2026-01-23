@@ -19,15 +19,16 @@ For the older version of swagger-js, refer to the [*2.x branch*](https://github.
 We'll be consolidating that soon. Just giving you the heads-up. You may see references to both names.*
 
 ## Compatibility
-The OpenAPI Specification has undergone multiple revisions since initial creation in 2010. 
+The OpenAPI Specification has undergone multiple revisions since initial creation in 2010.
 Compatibility between Swagger Client and the OpenAPI Specification is as follows:
 
-Swagger Client Version | Release Date | OpenAPI Spec compatibility                    | Notes
------------------- |--------------|-----------------------------------------------| -----
-3.33.x | 2024-12-30   | 2.0, 3.0.0, 3.0.1, 3.0.2, 3.0.3, 3.0.4, 3.1.0 | [tag v3.33.0](https://github.com/swagger-api/swagger-js/releases/tag/v3.33.0)
-3.19.x | 2023-01-23   | 2.0, 3.0.0, 3.0.1, 3.0.2, 3.0.3, 3.1.0        | [tag v3.19.0-alpha.3](https://github.com/swagger-api/swagger-js/releases/tag/v3.19.0-alpha.3)
-3.10.x | 2020-01-17   | 2.0, 3.0.0, 3.0.1, 3.0.2, 3.0.3               | [tag v3.10.0](https://github.com/swagger-api/swagger-js/tree/v3.10.0)
-2.1.32 | 2017-01-12   | 1.0, 1.1, 1.2                                 | [tag v2.1.32](https://github.com/swagger-api/swagger-js/tree/v2.1.32). This [release](https://github.com/swagger-api/swagger-js/releases/tag/v2.1.32) is only available on GitHub.
+Swagger Client Version | Release Date | OpenAPI Spec compatibility                              | Notes
+------------------ |--------------|---------------------------------------------------------| -----
+3.37.x | TBA          | 2.0, 3.0.0, 3.0.1, 3.0.2, 3.0.3, 3.0.4, 3.1.0, 3.2.0   | [tag v3.37.0](https://github.com/swagger-api/swagger-js/releases/tag/v3.37.0)
+3.33.x | 2024-12-30   | 2.0, 3.0.0, 3.0.1, 3.0.2, 3.0.3, 3.0.4, 3.1.0           | [tag v3.33.0](https://github.com/swagger-api/swagger-js/releases/tag/v3.33.0)
+3.19.x | 2023-01-23   | 2.0, 3.0.0, 3.0.1, 3.0.2, 3.0.3, 3.1.0                  | [tag v3.19.0-alpha.3](https://github.com/swagger-api/swagger-js/releases/tag/v3.19.0-alpha.3)
+3.10.x | 2020-01-17   | 2.0, 3.0.0, 3.0.1, 3.0.2, 3.0.3                         | [tag v3.10.0](https://github.com/swagger-api/swagger-js/tree/v3.10.0)
+2.1.32 | 2017-01-12   | 1.0, 1.1, 1.2                                           | [tag v2.1.32](https://github.com/swagger-api/swagger-js/tree/v2.1.32). This [release](https://github.com/swagger-api/swagger-js/releases/tag/v2.1.32) is only available on GitHub.
 
 ## Anonymized analytics
 

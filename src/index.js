@@ -8,6 +8,7 @@ import genericResolveStrategy from './resolver/strategies/generic/index.js';
 import openApi2ResolveStrategy, { clearCache } from './resolver/strategies/openapi-2/index.js';
 import openApi30ResolveStrategy from './resolver/strategies/openapi-3-0/index.js';
 import openApi31ApiDOMResolveStrategy from './resolver/strategies/openapi-3-1-apidom/index.js';
+import openApi32ApiDOMResolveStrategy from './resolver/strategies/openapi-3-2-apidom/index.js';
 import { makeApisTagOperation } from './interfaces.js';
 import { execute, buildRequest, baseUrl } from './execute/index.js';
 import { opId, isHttpUrl } from './helpers/index.js';
@@ -17,11 +18,15 @@ import JsonParser from './resolver/apidom/reference/parse/parsers/json/index.js'
 import YamlParser from './resolver/apidom/reference/parse/parsers/yaml-1-2/index.js';
 import OpenApiJson3_1Parser from './resolver/apidom/reference/parse/parsers/openapi-json-3-1/index.js';
 import OpenApiYaml3_1Parser from './resolver/apidom/reference/parse/parsers/openapi-yaml-3-1/index.js';
+import OpenApiJson3_2Parser from './resolver/apidom/reference/parse/parsers/openapi-json-3-2/index.js';
+import OpenApiYaml3_2Parser from './resolver/apidom/reference/parse/parsers/openapi-yaml-3-2/index.js';
 import OpenApi3_1SwaggerClientDereferenceStrategy from './resolver/apidom/reference/dereference/strategies/openapi-3-1-swagger-client/index.js';
+import OpenApi3_2SwaggerClientDereferenceStrategy from './resolver/apidom/reference/dereference/strategies/openapi-3-2-swagger-client/index.js';
 
 Swagger.http = Http;
 Swagger.makeHttp = makeHttp.bind(null, Swagger.http);
 Swagger.resolveStrategies = {
+  'openapi-3-2-apidom': openApi32ApiDOMResolveStrategy,
   'openapi-3-1-apidom': openApi31ApiDOMResolveStrategy,
   'openapi-3-0': openApi30ResolveStrategy,
   'openapi-2-0': openApi2ResolveStrategy,
@@ -29,6 +34,7 @@ Swagger.resolveStrategies = {
 };
 Swagger.resolve = makeResolve({
   strategies: [
+    Swagger.resolveStrategies['openapi-3-2-apidom'],
     Swagger.resolveStrategies['openapi-3-1-apidom'],
     Swagger.resolveStrategies['openapi-3-0'],
     Swagger.resolveStrategies['openapi-2-0'],
@@ -37,6 +43,7 @@ Swagger.resolve = makeResolve({
 });
 Swagger.resolveSubtree = makeResolveSubtree({
   strategies: [
+    Swagger.resolveStrategies['openapi-3-2-apidom'],
     Swagger.resolveStrategies['openapi-3-1-apidom'],
     Swagger.resolveStrategies['openapi-3-0'],
     Swagger.resolveStrategies['openapi-2-0'],
@@ -61,10 +68,15 @@ Swagger.apidom = {
       YamlParser,
       OpenApiJson3_1Parser,
       OpenApiYaml3_1Parser,
+      OpenApiJson3_2Parser,
+      OpenApiYaml3_2Parser,
     },
   },
   dereference: {
-    strategies: { OpenApi3_1SwaggerClientDereferenceStrategy },
+    strategies: {
+      OpenApi3_1SwaggerClientDereferenceStrategy,
+      OpenApi3_2SwaggerClientDereferenceStrategy,
+    },
   },
 };
 
