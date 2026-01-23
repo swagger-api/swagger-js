@@ -1,0 +1,44 @@
+[
+  {
+    "openapi": "3.2.0",
+    "info": {
+      "title": "Test API",
+      "version": "1.0.0"
+    },
+    "paths": {
+      "/users/{id}": {
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User ID"
+          }
+        ],
+        "get": {
+          "responses": {
+            "200": {
+              "description": "Success"
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "parameters": {
+        "UserId": {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "User ID"
+        }
+      }
+    }
+  }
+]

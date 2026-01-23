@@ -1,0 +1,25 @@
+{
+  "openapi": "3.2.0",
+  "info": {
+    "title": "Test API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/products": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./external.json#/components/schemas/Product"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
