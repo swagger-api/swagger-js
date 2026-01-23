@@ -4,7 +4,7 @@ import { ReferenceSet, Reference } from '@swagger-api/apidom-reference/configura
 import OpenAPI3_2DereferenceStrategy from '@swagger-api/apidom-reference/dereference/strategies/openapi-3-2';
 import openApi3_2Namespace, { getNodeType, keyMap } from '@swagger-api/apidom-ns-openapi-3-2';
 
-import RootVisitor from '../openapi-3-1-swagger-client/visitors/root.js';
+import RootVisitor from './visitors/root.js';
 
 const visitAsync = visit[Symbol.for('nodejs.util.promisify.custom')];
 
