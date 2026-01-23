@@ -215,5 +215,119 @@ describe('resolve', () => {
         expect(resolvedSpec.spec.paths['/test/{id}'].get.parameters[0].name).toBe('id');
       });
     });
+
+    describe('parameterMacro option', () => {
+      describe('given parameterMacro is provided as a function', () => {
+        test('should call parameterMacro with Operation and Parameter Objects', async () => {
+          const spec = globalThis.loadJsonFile(path.join(fixturePath, 'parameter-macro.json'));
+          const parameterMacro = jest.fn((operation, parameter) => {
+            return `${operation.operationId}-${parameter.name}`;
+          });
+
+          const resolvedSpec = await SwaggerClient.resolve({
+            spec,
+            parameterMacro,
+          });
+
+          expect(parameterMacro).toHaveBeenCalled();
+          expect(resolvedSpec.spec.openapi).toBe('3.2.0');
+        });
+
+        test('should call parameterMacro with Parameter Object only', async () => {
+          const spec = globalThis.loadJsonFile(
+            path.join(fixturePath, 'parameter-macro-no-operation.json')
+          );
+          const parameterMacro = jest.fn((operation, parameter) => {
+            return `${String(operation)}-${parameter.name}`;
+          });
+
+          const resolvedSpec = await SwaggerClient.resolve({
+            spec,
+            parameterMacro,
+          });
+
+          expect(parameterMacro).toHaveBeenCalled();
+          expect(resolvedSpec.spec.openapi).toBe('3.2.0');
+        });
+
+        describe('given the function throws error', () => {
+          test('should collect error', async () => {
+            const spec = globalThis.loadJsonFile(path.join(fixturePath, 'parameter-macro.json'));
+            const { spec: resolvedSpec, errors } = await SwaggerClient.resolve({
+              spec,
+              parameterMacro: () => {
+                throw new Error('this macro throws');
+              },
+            });
+
+            expect(resolvedSpec.openapi).toBe('3.2.0');
+            expect(errors.length).toBeGreaterThan(0);
+            expect(errors[0]).toMatchObject({
+              message: expect.stringMatching(/^Error: this macro throws/),
+            });
+          });
+        });
+      });
+    });
+
+    describe('modelPropertyMacro option', () => {
+      describe('given modelPropertyMacro is provided as a function', () => {
+        test('should call modelPropertyMacro with Schema Object property', async () => {
+          const spec = globalThis.loadJsonFile(
+            path.join(fixturePath, 'model-property-macro.json')
+          );
+          const modelPropertyMacro = jest.fn((property) => {
+            return `${property.type}-modified`;
+          });
+
+          const resolvedSpec = await SwaggerClient.resolve({
+            spec,
+            modelPropertyMacro,
+          });
+
+          expect(modelPropertyMacro).toHaveBeenCalled();
+          expect(resolvedSpec.spec.openapi).toBe('3.2.0');
+        });
+
+        describe('given the function throws error', () => {
+          test('should collect error', async () => {
+            const spec = globalThis.loadJsonFile(
+              path.join(fixturePath, 'model-property-macro-error.json')
+            );
+            const { spec: resolvedSpec, errors } = await SwaggerClient.resolve({
+              spec,
+              modelPropertyMacro: () => {
+                throw new Error('this macro throws');
+              },
+            });
+
+            expect(resolvedSpec.openapi).toBe('3.2.0');
+            expect(errors.length).toBeGreaterThan(0);
+            expect(errors[0]).toMatchObject({
+              message: expect.stringMatching(/^Error: this macro throws/),
+            });
+          });
+        });
+      });
+
+      describe('given modelPropertyMacro and parameterMacro are provided', () => {
+        test('should call functions on dereferenced Objects which contained allOf', async () => {
+          const spec = globalThis.loadJsonFile(path.join(fixturePath, 'ref-all-of-macros.json'));
+          const modelPropertyMacro = jest.fn((property) => `${property.type}-modified`);
+          const parameterMacro = jest.fn((operation, parameter) => {
+            return operation ? `${operation.operationId}-${parameter.name}` : parameter.name;
+          });
+
+          const resolvedSpec = await SwaggerClient.resolve({
+            spec,
+            modelPropertyMacro,
+            parameterMacro,
+          });
+
+          expect(modelPropertyMacro).toHaveBeenCalled();
+          expect(resolvedSpec.spec.openapi).toBe('3.2.0');
+        });
+      });
+    });
   });
 });

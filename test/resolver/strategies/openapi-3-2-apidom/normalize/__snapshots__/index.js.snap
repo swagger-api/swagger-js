@@ -1,0 +1,230 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`helpers normalize OpenAPI 3.2 given denormalized Header Object examples should normalize 1`] = `
+{
+  "info": {
+    "title": "Test API",
+    "version": "1.0.0",
+  },
+  "openapi": "3.2.0",
+  "paths": {
+    "/test": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "X-Rate-Limit": {
+                "example": 100,
+                "schema": {
+                  "type": "integer",
+                },
+              },
+              "X-Request-ID": {
+                "examples": {
+                  "uuid": {
+                    "value": "123e4567-e89b-12d3-a456-426614174000",
+                  },
+                },
+                "schema": {
+                  "type": "string",
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  "x-normalized": {
+    "security-requirements": [],
+  },
+}
+`;
+
+exports[`helpers normalize OpenAPI 3.2 given denormalized Operation.id fields should normalize 1`] = `
+{
+  "info": {
+    "title": "Test API",
+    "version": "1.0.0",
+  },
+  "openapi": "3.2.0",
+  "paths": {
+    "/users": {
+      "get": {
+        "id": "listUsers",
+      },
+    },
+  },
+  "x-normalized": {
+    "security-requirements": [],
+  },
+}
+`;
+
+exports[`helpers normalize OpenAPI 3.2 given denormalized Parameter Object examples should normalize 1`] = `
+{
+  "info": {
+    "title": "Test API",
+    "version": "1.0.0",
+  },
+  "openapi": "3.2.0",
+  "paths": {
+    "/users": {
+      "get": {
+        "parameters": [
+          {
+            "example": 42,
+            "in": "query",
+            "name": "id",
+            "schema": {
+              "type": "integer",
+            },
+          },
+          {
+            "examples": {
+              "active": {
+                "value": "status=active",
+              },
+            },
+            "in": "query",
+            "name": "filter",
+            "schema": {
+              "type": "string",
+            },
+          },
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+          },
+        },
+      },
+    },
+  },
+  "x-normalized": {
+    "security-requirements": [],
+  },
+}
+`;
+
+exports[`helpers normalize OpenAPI 3.2 given denormalized Parameter Objects should normalize 1`] = `
+{
+  "info": {
+    "title": "Test API",
+    "version": "1.0.0",
+  },
+  "openapi": "3.2.0",
+  "paths": {
+    "/users/{id}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+            },
+          },
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+          },
+        },
+      },
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string",
+          },
+        },
+      ],
+    },
+  },
+  "x-normalized": {
+    "parameters": [
+      "/paths/~1users~1{id}/get",
+    ],
+    "security-requirements": [],
+  },
+}
+`;
+
+exports[`helpers normalize OpenAPI 3.2 given denormalized Security Requirements Objects should normalize 1`] = `
+{
+  "components": {
+    "securitySchemes": {
+      "apiKey": {
+        "in": "header",
+        "name": "X-API-KEY",
+        "type": "apiKey",
+      },
+    },
+  },
+  "info": {
+    "title": "Test API",
+    "version": "1.0.0",
+  },
+  "openapi": "3.2.0",
+  "paths": {
+    "/users": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+          },
+        },
+        "security": [
+          {
+            "apiKey": [],
+          },
+        ],
+      },
+    },
+  },
+  "security": [
+    {
+      "apiKey": [],
+    },
+  ],
+  "x-normalized": {
+    "security-requirements": [
+      "/paths/~1users/get",
+    ],
+  },
+}
+`;
+
+exports[`helpers normalize OpenAPI 3.2 given denormalized Servers Objects should normalize 1`] = `
+{
+  "info": {
+    "title": "Test API",
+    "version": "1.0.0",
+  },
+  "openapi": "3.2.0",
+  "paths": {},
+  "servers": [
+    {
+      "url": "https://api.example.com/v1",
+    },
+    {
+      "url": "https://{environment}.example.com/v1",
+      "variables": {
+        "environment": {
+          "default": "staging",
+          "enum": [
+            "dev",
+            "staging",
+            "prod",
+          ],
+        },
+      },
+    },
+  ],
+}
+`;
