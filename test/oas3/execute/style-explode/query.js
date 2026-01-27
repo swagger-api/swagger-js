@@ -1124,6 +1124,50 @@ describe('OAS 3.0 - buildRequest w/ `style` & `explode` - query parameters', () 
         headers: {},
       });
     });
+
+    test('should build a query parameter when schema type is array and example type is string', () => {
+      // Given
+      const spec = {
+        openapi: '3.0.0',
+        paths: {
+          '/users': {
+            get: {
+              operationId: 'myOperation',
+              parameters: [
+                {
+                  in: 'query',
+                  name: 'test',
+                  required: true,
+                  schema: {
+                    type: 'array',
+                    example: 'test1',
+                    items: {
+                      type: 'string',
+                      enum: ['test1', 'test2', 'test3'],
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        },
+      };
+      // when
+      const req = buildRequest({
+        spec,
+        operationId: 'myOperation',
+        parameters: {
+          test: 'test1',
+        },
+      });
+
+      expect(req).toEqual({
+        method: 'GET',
+        url: `/users?test=test1`,
+        credentials: 'same-origin',
+        headers: {},
+      });
+    });
   });
   describe('object values', () => {
     const VALUE = {

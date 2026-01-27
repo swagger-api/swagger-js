@@ -310,25 +310,32 @@ export function buildRequest(options) {
     if (typeof value === 'undefined' && parameter.required && !parameter.allowEmptyValue) {
       throw new Error(`Required parameter ${parameter.name} is not provided`);
     }
+    // case for mismatch between example type and schema type
+    const isSchemaTypeExampleTypeMismatch =
+      has('type', parameter.schema) &&
+      parameter.schema.type === 'array' &&
+      typeof parameter.schema.example === 'string';
 
     if (specIsOAS3 && typeof value === 'string') {
-      if (
-        has('type', parameter.schema) &&
-        typeof parameter.schema.type === 'string' &&
-        findObjectOrArraySchema(parameter.schema, { recurse: false })
-      ) {
-        value = parseJsonObjectOrArray({ value, silentFail: false });
-      } else if (
-        has('type', parameter.schema) &&
-        Array.isArray(parameter.schema.type) &&
-        findObjectOrArraySchema(parameter.schema, { recurse: false })
-      ) {
-        value = parseJsonObjectOrArray({ value, silentFail: true });
-      } else if (
-        !has('type', parameter.schema) &&
-        findObjectOrArraySchema(parameter.schema, { recurse: true })
-      ) {
-        value = parseJsonObjectOrArray({ value, silentFail: true });
+      if (!isSchemaTypeExampleTypeMismatch) {
+        if (
+          has('type', parameter.schema) &&
+          typeof parameter.schema.type === 'string' &&
+          findObjectOrArraySchema(parameter.schema, { recurse: false })
+        ) {
+          value = parseJsonObjectOrArray({ value, silentFail: false });
+        } else if (
+          has('type', parameter.schema) &&
+          Array.isArray(parameter.schema.type) &&
+          findObjectOrArraySchema(parameter.schema, { recurse: false })
+        ) {
+          value = parseJsonObjectOrArray({ value, silentFail: true });
+        } else if (
+          !has('type', parameter.schema) &&
+          findObjectOrArraySchema(parameter.schema, { recurse: true })
+        ) {
+          value = parseJsonObjectOrArray({ value, silentFail: true });
+        }
       }
     }
 
