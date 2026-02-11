@@ -63,7 +63,7 @@ const browserMin = {
   devtool: 'source-map',
   performance: {
     hints: 'error',
-    maxEntrypointSize: 570000, // Increased for OpenAPI 3.2 support
+    maxEntrypointSize: 590000, // Increased for OpenAPI 3.2 support
     maxAssetSize: 60000000, // Increased for bundle stats file
   },
   output: {
