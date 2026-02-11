@@ -135,6 +135,8 @@
       "@swagger-api/apidom-ns-asyncapi-2": "npm:-@0.0.1",
       "@swagger-api/apidom-ns-asyncapi-3": "npm:-@0.0.1",
       "@swagger-api/apidom-ns-openapi-2": "npm:-@0.0.1",
+      "@swagger-api/apidom-ns-openapi-3-0": "npm:-@0.0.1",
+      "@swagger-api/apidom-ns-openapi-3-1": "npm:-@0.0.1",
       "@swagger-api/apidom-ns-openapi-3-2": "npm:-@0.0.1",
       "@swagger-api/apidom-parser-adapter-api-design-systems-json": "npm:-@0.0.1",
       "@swagger-api/apidom-parser-adapter-api-design-systems-yaml": "npm:-@0.0.1",
