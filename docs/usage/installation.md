@@ -23,11 +23,14 @@ to speed up the installation:
 "overrides": {
   "@swagger-api/apidom-reference": {
     "@swagger-api/apidom-ns-asyncapi-2": "npm:-@0.0.1",
+    "@swagger-api/apidom-ns-asyncapi-3": "npm:-@0.0.1",
     "@swagger-api/apidom-ns-openapi-2": "npm:-@0.0.1",
     "@swagger-api/apidom-parser-adapter-api-design-systems-json": "npm:-@0.0.1",
     "@swagger-api/apidom-parser-adapter-api-design-systems-yaml": "npm:-@0.0.1",
     "@swagger-api/apidom-parser-adapter-asyncapi-json-2": "npm:-@0.0.1",
+    "@swagger-api/apidom-parser-adapter-asyncapi-json-3": "npm:-@0.0.1",
     "@swagger-api/apidom-parser-adapter-asyncapi-yaml-2": "npm:-@0.0.1",
+    "@swagger-api/apidom-parser-adapter-asyncapi-yaml-3": "npm:-@0.0.1",
     "@swagger-api/apidom-parser-adapter-json": "npm:-@0.0.1",
     "@swagger-api/apidom-parser-adapter-openapi-json-2": "npm:-@0.0.1",
     "@swagger-api/apidom-parser-adapter-openapi-yaml-2": "npm:-@0.0.1",
