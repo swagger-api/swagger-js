@@ -220,9 +220,9 @@ describe('resolve', () => {
       describe('given parameterMacro is provided as a function', () => {
         test('should call parameterMacro with Operation and Parameter Objects', async () => {
           const spec = globalThis.loadJsonFile(path.join(fixturePath, 'parameter-macro.json'));
-          const parameterMacro = jest.fn((operation, parameter) => {
-            return `${operation.operationId}-${parameter.name}`;
-          });
+          const parameterMacro = jest.fn(
+            (operation, parameter) => `${operation.operationId}-${parameter.name}`
+          );
 
           const resolvedSpec = await SwaggerClient.resolve({
             spec,
@@ -237,9 +237,9 @@ describe('resolve', () => {
           const spec = globalThis.loadJsonFile(
             path.join(fixturePath, 'parameter-macro-no-operation.json')
           );
-          const parameterMacro = jest.fn((operation, parameter) => {
-            return `${String(operation)}-${parameter.name}`;
-          });
+          const parameterMacro = jest.fn(
+            (operation, parameter) => `${String(operation)}-${parameter.name}`
+          );
 
           const resolvedSpec = await SwaggerClient.resolve({
             spec,
@@ -273,12 +273,8 @@ describe('resolve', () => {
     describe('modelPropertyMacro option', () => {
       describe('given modelPropertyMacro is provided as a function', () => {
         test('should call modelPropertyMacro with Schema Object property', async () => {
-          const spec = globalThis.loadJsonFile(
-            path.join(fixturePath, 'model-property-macro.json')
-          );
-          const modelPropertyMacro = jest.fn((property) => {
-            return `${property.type}-modified`;
-          });
+          const spec = globalThis.loadJsonFile(path.join(fixturePath, 'model-property-macro.json'));
+          const modelPropertyMacro = jest.fn((property) => `${property.type}-modified`);
 
           const resolvedSpec = await SwaggerClient.resolve({
             spec,
@@ -314,9 +310,9 @@ describe('resolve', () => {
         test('should call functions on dereferenced Objects which contained allOf', async () => {
           const spec = globalThis.loadJsonFile(path.join(fixturePath, 'ref-all-of-macros.json'));
           const modelPropertyMacro = jest.fn((property) => `${property.type}-modified`);
-          const parameterMacro = jest.fn((operation, parameter) => {
-            return operation ? `${operation.operationId}-${parameter.name}` : parameter.name;
-          });
+          const parameterMacro = jest.fn((operation, parameter) =>
+            operation ? `${operation.operationId}-${parameter.name}` : parameter.name
+          );
 
           const resolvedSpec = await SwaggerClient.resolve({
             spec,
