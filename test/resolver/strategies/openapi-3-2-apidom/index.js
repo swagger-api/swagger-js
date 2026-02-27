@@ -26,35 +26,19 @@ describe('resolve', () => {
       expect(SwaggerClient.resolve).toBeInstanceOf(Function);
     });
 
-    test('should match OpenAPI 3.2.0 specs', () => {
-      const spec = { openapi: '3.2.0', paths: {} };
-      const strategy = SwaggerClient.resolveStrategies['openapi-3-2-apidom'];
-
-      expect(strategy.match(spec)).toBe(true);
-    });
-
-    test('should not match OpenAPI 3.1.0 specs', () => {
-      const spec = { openapi: '3.1.0', paths: {} };
-      const strategy = SwaggerClient.resolveStrategies['openapi-3-2-apidom'];
-
-      expect(strategy.match(spec)).toBe(false);
-    });
-
     describe('given OpenAPI 3.2.0 definition via URL', () => {
       test('should resolve', async () => {
         const url = 'https://example.com/petstore.json';
         const mockPool = mockAgent.get('https://example.com');
         mockPool
-          .intercept({ path: '/petstore.json' })
+          .intercept({ path: 'petstore.json' })
           .reply(200, globalThis.loadFile(path.join(fixturePath, 'petstore.json')));
         const resolvedSpec = await SwaggerClient.resolve({
           url,
           allowMetaPatches: false,
         });
 
-        expect(resolvedSpec.spec.openapi).toBe('3.2.0');
-        expect(resolvedSpec.spec.info.title).toBe('Swagger Petstore');
-        expect(resolvedSpec.spec.paths['/pets'].get.operationId).toBe('listPets');
+        expect(resolvedSpec).toMatchSnapshot();
       });
 
       describe('and allowMetaPatches=true', () => {
@@ -62,62 +46,76 @@ describe('resolve', () => {
           const url = 'https://example.com/petstore.json';
           const mockPool = mockAgent.get('https://example.com');
           mockPool
-            .intercept({ path: '/petstore.json' })
+            .intercept({ path: 'petstore.json' })
             .reply(200, globalThis.loadFile(path.join(fixturePath, 'petstore.json')));
           const resolvedSpec = await SwaggerClient.resolve({
             url,
             allowMetaPatches: true,
           });
 
-          expect(resolvedSpec.spec.openapi).toBe('3.2.0');
+          expect(resolvedSpec).toMatchSnapshot();
+        });
+      });
+
+      describe('and allowMetaPatches=false', () => {
+        test('should resolve', async () => {
+          const url = 'https://example.com/petstore.json';
+          const mockPool = mockAgent.get('https://example.com');
+          mockPool
+            .intercept({ path: 'petstore.json' })
+            .reply(200, globalThis.loadFile(path.join(fixturePath, 'petstore.json')));
+          const resolvedSpec = await SwaggerClient.resolve({
+            url,
+            allowMetaPatches: false,
+          });
+
+          expect(resolvedSpec).toMatchSnapshot();
         });
       });
 
       describe('and useCircularStructures=true', () => {
-        test('should resolve circular references', async () => {
-          const url = 'https://example.com/circular-refs.json';
+        test('should resolve', async () => {
+          const url = 'https://example.com/circular-structures.json';
           const mockPool = mockAgent.get('https://example.com');
           mockPool
-            .intercept({ path: '/circular-refs.json' })
-            .reply(200, globalThis.loadFile(path.join(fixturePath, 'circular-refs.json')));
+            .intercept({ path: '/circular-structures.json' })
+            .reply(200, globalThis.loadFile(path.join(fixturePath, 'circular-structures.json')));
           const resolvedSpec = await SwaggerClient.resolve({
             url,
             useCircularStructures: true,
           });
 
-          expect(resolvedSpec.spec.openapi).toBe('3.2.0');
-          expect(resolvedSpec.spec.components.schemas.Node).toBeDefined();
+          expect(resolvedSpec).toMatchSnapshot();
         });
       });
 
       describe('and useCircularStructures=false', () => {
-        test('should resolve circular references with replacer', async () => {
-          const url = 'https://example.com/circular-refs.json';
+        test('should resolve', async () => {
+          const url = 'https://example.com/circular-structures.json';
           const mockPool = mockAgent.get('https://example.com');
           mockPool
-            .intercept({ path: '/circular-refs.json' })
-            .reply(200, globalThis.loadFile(path.join(fixturePath, 'circular-refs.json')));
+            .intercept({ path: '/circular-structures.json' })
+            .reply(200, globalThis.loadFile(path.join(fixturePath, 'circular-structures.json')));
           const resolvedSpec = await SwaggerClient.resolve({
             url,
             useCircularStructures: false,
           });
 
-          expect(resolvedSpec.spec.openapi).toBe('3.2.0');
-          expect(resolvedSpec.spec.components.schemas.Node).toBeDefined();
+          expect(resolvedSpec).toMatchSnapshot();
         });
       });
     });
 
     describe('given OpenAPI 3.2.0 definition via spec option', () => {
       describe('and neither baseDoc nor url option is provided', () => {
-        test('should resolve using implicit baseURI', async () => {
+        test('should resolve using implicit baseURI=https://smartbear.com/', async () => {
           const spec = globalThis.loadJsonFile(path.join(fixturePath, 'petstore.json'));
           const resolvedSpec = await SwaggerClient.resolve({
             spec,
+            allowMetaPatches: true, // used only to assert on resolved baseURI within the snapshot
           });
 
-          expect(resolvedSpec.spec.openapi).toBe('3.2.0');
-          expect(resolvedSpec.spec.info.title).toBe('Swagger Petstore');
+          expect(resolvedSpec).toMatchSnapshot();
         });
       });
 
@@ -129,7 +127,20 @@ describe('resolve', () => {
             baseDoc: 'https://example.com/',
           });
 
-          expect(resolvedSpec.spec.openapi).toBe('3.2.0');
+          expect(resolvedSpec).toMatchSnapshot();
+        });
+
+        describe('and baseDoc option is a relative reference', () => {
+          test('should resolve the definition with the resolved baseDoc', async () => {
+            const spec = globalThis.loadJsonFile(path.join(fixturePath, 'petstore.json'));
+            const resolvedSpec = await SwaggerClient.resolve({
+              spec,
+              baseDoc: './petstore.json',
+              allowMetaPatches: true, // used only to assert on resolved baseURI within the snapshot
+            });
+
+            expect(resolvedSpec).toMatchSnapshot();
+          });
         });
       });
 
@@ -138,116 +149,94 @@ describe('resolve', () => {
           const spec = globalThis.loadJsonFile(path.join(fixturePath, 'petstore.json'));
           const resolvedSpec = await SwaggerClient.resolve({
             spec,
-            url: 'https://example.com/petstore.json',
+            url: 'https://example.com/',
           });
 
-          expect(resolvedSpec.spec.openapi).toBe('3.2.0');
+          expect(resolvedSpec).toMatchSnapshot();
         });
       });
 
       describe('and skipNormalization=true', () => {
-        test('should skip normalization', async () => {
+        test('should resolve and skip normalization', async () => {
           const spec = globalThis.loadJsonFile(path.join(fixturePath, 'petstore.json'));
           const resolvedSpec = await SwaggerClient.resolve({
             spec,
             skipNormalization: true,
           });
 
-          expect(resolvedSpec.spec.openapi).toBe('3.2.0');
-          expect(resolvedSpec.spec.$$normalized).toBeUndefined();
+          expect(resolvedSpec).toMatchSnapshot();
         });
       });
-    });
 
-    describe('$ref resolution', () => {
-      test('should resolve internal $refs', async () => {
-        const spec = globalThis.loadJsonFile(path.join(fixturePath, 'petstore.json'));
-        const resolvedSpec = await SwaggerClient.resolve({ spec });
-
-        // Check that schema $refs are resolved
-        expect(
-          resolvedSpec.spec.paths['/pets'].get.responses['200'].content['application/json'].schema
-        ).toBeDefined();
-      });
-    });
-
-    describe('normalization', () => {
-      test('should normalize operation IDs', async () => {
-        const spec = {
-          openapi: '3.2.0',
-          info: { title: 'Test', version: '1.0.0' },
-          paths: {
-            '/test': {
-              get: {
-                operationId: 'getTest',
-              },
-            },
-          },
-        };
-        const resolvedSpec = await SwaggerClient.resolve({ spec });
-
-        expect(resolvedSpec.spec.paths['/test'].get.operationId).toBe('getTest');
-      });
-
-      test('should normalize parameters from path level to operation level', async () => {
-        const spec = {
-          openapi: '3.2.0',
-          info: { title: 'Test', version: '1.0.0' },
-          paths: {
-            '/test/{id}': {
-              parameters: [
-                {
-                  name: 'id',
-                  in: 'path',
-                  required: true,
-                  schema: { type: 'string' },
-                },
-              ],
-              get: {
-                operationId: 'getTest',
-              },
-            },
-          },
-        };
-        const resolvedSpec = await SwaggerClient.resolve({ spec });
-
-        expect(resolvedSpec.spec.paths['/test/{id}'].get.parameters).toBeDefined();
-        expect(resolvedSpec.spec.paths['/test/{id}'].get.parameters[0].name).toBe('id');
-      });
-    });
-
-    describe('parameterMacro option', () => {
-      describe('given parameterMacro is provided as a function', () => {
-        test('should call parameterMacro with Operation and Parameter Objects', async () => {
-          const spec = globalThis.loadJsonFile(path.join(fixturePath, 'parameter-macro.json'));
-          const parameterMacro = jest.fn(
-            (operation, parameter) => `${operation.operationId}-${parameter.name}`
-          );
-
+      describe('and skipNormalization=false', () => {
+        test('should resolve and normalize', async () => {
+          const spec = globalThis.loadJsonFile(path.join(fixturePath, 'petstore.json'));
           const resolvedSpec = await SwaggerClient.resolve({
             spec,
-            parameterMacro,
+            skipNormalization: false,
           });
 
-          expect(parameterMacro).toHaveBeenCalled();
-          expect(resolvedSpec.spec.openapi).toBe('3.2.0');
+          expect(resolvedSpec).toMatchSnapshot();
+        });
+      });
+
+      describe('and pathDiscriminator is empty list', () => {
+        test('should resolve entire spec', async () => {
+          const spec = globalThis.loadJsonFile(path.join(fixturePath, 'petstore.json'));
+          const resolvedSpec = await SwaggerClient.resolve({
+            spec,
+            pathDiscriminator: [],
+          });
+
+          expect(resolvedSpec).toMatchSnapshot();
+        });
+      });
+
+      describe('and pathDiscriminator=[paths, /pets]', () => {
+        test('should resolve within the pathDiscriminator', async () => {
+          const spec = globalThis.loadJsonFile(path.join(fixturePath, 'petstore.json'));
+          const resolvedSpec = await SwaggerClient.resolve({
+            spec,
+            pathDiscriminator: ['paths', '/pets'],
+          });
+
+          expect(resolvedSpec).toMatchSnapshot();
+        });
+      });
+
+      describe('and pathDiscriminator compiles into invalid JSON Pointer', () => {
+        test('should not resolve', async () => {
+          const spec = globalThis.loadJsonFile(path.join(fixturePath, 'petstore.json'));
+          const resolvedSpec = await SwaggerClient.resolve({
+            spec,
+            pathDiscriminator: ['path', 'to', 'nothing'],
+          });
+
+          expect(resolvedSpec).toEqual({ spec, errors: [] });
+        });
+      });
+
+      describe('and parameterMacro is provided as a function', () => {
+        test('should call parameterMacro with Operation and Parameter Objects', async () => {
+          const spec = globalThis.loadJsonFile(path.join(fixturePath, 'parameter-macro.json'));
+          const resolvedSpec = await SwaggerClient.resolve({
+            spec,
+            parameterMacro: (operation, parameter) => `${operation.operationId}-${parameter.name}`,
+          });
+
+          expect(resolvedSpec).toMatchSnapshot();
         });
 
         test('should call parameterMacro with Parameter Object only', async () => {
           const spec = globalThis.loadJsonFile(
             path.join(fixturePath, 'parameter-macro-no-operation.json')
           );
-          const parameterMacro = jest.fn(
-            (operation, parameter) => `${String(operation)}-${parameter.name}`
-          );
-
           const resolvedSpec = await SwaggerClient.resolve({
             spec,
-            parameterMacro,
+            parameterMacro: (operation, parameter) => `${String(operation)}-${parameter.name}`,
           });
 
-          expect(parameterMacro).toHaveBeenCalled();
-          expect(resolvedSpec.spec.openapi).toBe('3.2.0');
+          expect(resolvedSpec).toMatchSnapshot();
         });
 
         describe('given the function throws error', () => {
@@ -260,29 +249,25 @@ describe('resolve', () => {
               },
             });
 
-            expect(resolvedSpec.openapi).toBe('3.2.0');
-            expect(errors.length).toBeGreaterThan(0);
+            expect(resolvedSpec).toMatchSnapshot();
+            expect(errors).toHaveLength(3);
             expect(errors[0]).toMatchObject({
               message: expect.stringMatching(/^Error: this macro throws/),
+              fullPath: ['paths', '/users/{id}', 'get', 'parameters'],
             });
           });
         });
       });
-    });
 
-    describe('modelPropertyMacro option', () => {
-      describe('given modelPropertyMacro is provided as a function', () => {
+      describe('and modelPropertyMacro is provided as a function', () => {
         test('should call modelPropertyMacro with Schema Object property', async () => {
           const spec = globalThis.loadJsonFile(path.join(fixturePath, 'model-property-macro.json'));
-          const modelPropertyMacro = jest.fn((property) => `${property.type}-modified`);
-
           const resolvedSpec = await SwaggerClient.resolve({
             spec,
-            modelPropertyMacro,
+            modelPropertyMacro: (property) => `${property.type}-3`,
           });
 
-          expect(modelPropertyMacro).toHaveBeenCalled();
-          expect(resolvedSpec.spec.openapi).toBe('3.2.0');
+          expect(resolvedSpec).toMatchSnapshot();
         });
 
         describe('given the function throws error', () => {
@@ -297,31 +282,27 @@ describe('resolve', () => {
               },
             });
 
-            expect(resolvedSpec.openapi).toBe('3.2.0');
-            expect(errors.length).toBeGreaterThan(0);
-            expect(errors[0]).toMatchObject({
+            expect(resolvedSpec).toMatchSnapshot();
+            expect(errors).toHaveLength(2);
+            expect(errors[1]).toMatchObject({
               message: expect.stringMatching(/^Error: this macro throws/),
+              fullPath: ['components', 'schemas', 'InvalidUser', 'properties'],
             });
           });
         });
       });
 
-      describe('given modelPropertyMacro and parameterMacro are provided', () => {
+      describe('and modelPropertyMacro and parameterMacro are provided as functions', () => {
         test('should call functions on dereferenced Objects which contained allOf', async () => {
           const spec = globalThis.loadJsonFile(path.join(fixturePath, 'ref-all-of-macros.json'));
-          const modelPropertyMacro = jest.fn((property) => `${property.type}-modified`);
-          const parameterMacro = jest.fn((operation, parameter) =>
-            operation ? `${operation.operationId}-${parameter.name}` : parameter.name
-          );
-
           const resolvedSpec = await SwaggerClient.resolve({
             spec,
-            modelPropertyMacro,
-            parameterMacro,
+            modelPropertyMacro: (property) => `${property.type}-test`,
+            parameterMacro: (operation, parameter) =>
+              operation ? `${operation.operationId}-${parameter.name}` : parameter.name,
           });
 
-          expect(modelPropertyMacro).toHaveBeenCalled();
-          expect(resolvedSpec.spec.openapi).toBe('3.2.0');
+          expect(resolvedSpec).toMatchSnapshot();
         });
       });
     });
