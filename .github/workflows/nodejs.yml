@@ -25,7 +25,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - name: Cache Node Modules
       id: cache-node-modules
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: node_modules
         key: node-modules-${{ hashFiles('package-lock.json') }}
@@ -48,7 +48,7 @@ jobs:
       run: npm run build
     - name: Upload commonjs build artifacts
       if: startsWith(matrix.node-version, '22')
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: commonjs
         path: ./lib/
@@ -67,7 +67,7 @@ jobs:
 
     - name: Cache Node Modules
       id: cache-node-modules
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: node_modules
         key: node-modules-${{ hashFiles('package-lock.json') }}
