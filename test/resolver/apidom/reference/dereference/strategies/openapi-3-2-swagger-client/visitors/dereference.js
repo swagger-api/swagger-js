@@ -286,7 +286,10 @@ describe('dereference', () => {
                   components: {
                     pathItems: {
                       UsersPath: {
-                        get: { operationId: 'listUsers', responses: { 200: { description: 'OK' } } },
+                        get: {
+                          operationId: 'listUsers',
+                          responses: { 200: { description: 'OK' } },
+                        },
                       },
                     },
                   },
@@ -472,8 +475,7 @@ describe('dereference', () => {
 
                 expect(errors).toHaveLength(1);
                 expect(errors[0]).toMatchObject({
-                  externalValue:
-                    'https://unresolvable-host-xyzabc123.invalid/example.json',
+                  externalValue: 'https://unresolvable-host-xyzabc123.invalid/example.json',
                 });
               });
             });

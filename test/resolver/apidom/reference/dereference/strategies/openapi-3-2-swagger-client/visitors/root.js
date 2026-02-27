@@ -53,9 +53,7 @@ describe('dereference', () => {
               const result = await dereferenceApiDOM(spec, {
                 parse: { mediaType: mediaTypes.latest('json') },
                 dereference: {
-                  strategies: [
-                    new OpenAPI3_2SwaggerClientDereferenceStrategy({ mode: 'strict' }),
-                  ],
+                  strategies: [new OpenAPI3_2SwaggerClientDereferenceStrategy({ mode: 'strict' })],
                 },
               });
 
@@ -77,9 +75,7 @@ describe('dereference', () => {
               const result = await dereferenceApiDOM(spec, {
                 parse: { mediaType: mediaTypes.latest('json') },
                 dereference: {
-                  strategies: [
-                    new OpenAPI3_2SwaggerClientDereferenceStrategy({ mode: 'strict' }),
-                  ],
+                  strategies: [new OpenAPI3_2SwaggerClientDereferenceStrategy({ mode: 'strict' })],
                 },
               });
 

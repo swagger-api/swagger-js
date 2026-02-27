@@ -1,4 +1,5 @@
 import { visit, toValue } from '@swagger-api/apidom-core';
+// eslint-disable-next-line camelcase
 import { OpenApi3_2Element, getNodeType, keyMap } from '@swagger-api/apidom-ns-openapi-3-2';
 
 import ModelPropertyMacroVisitor from '../../../../../../../../src/resolver/apidom/reference/dereference/strategies/openapi-3-2-swagger-client/visitors/properties.js';
@@ -8,6 +9,7 @@ const buildOptions = (errors = []) => ({
 });
 
 const applyMacro = (spec, macro, errors = []) => {
+  // eslint-disable-next-line camelcase
   const element = OpenApi3_2Element.refract(spec);
   const visitor = new ModelPropertyMacroVisitor({
     modelPropertyMacro: macro,
