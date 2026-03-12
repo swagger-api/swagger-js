@@ -4,7 +4,7 @@
 
 - git, any version
 - Node.js >=24.14.0
-- NPM >=11.9.2
+- NPM >=11.9.0
 
 ### Setting up
 
