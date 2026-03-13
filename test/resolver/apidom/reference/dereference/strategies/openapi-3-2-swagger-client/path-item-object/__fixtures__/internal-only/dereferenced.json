@@ -1,0 +1,55 @@
+[
+  {
+    "openapi": "3.2.0",
+    "info": {
+      "title": "Test API",
+      "version": "1.0.0"
+    },
+    "paths": {
+      "/users": {
+        "get": {
+          "operationId": "listUsers",
+          "responses": {
+            "200": {
+              "description": "Success"
+            }
+          }
+        }
+      },
+      "/products": {
+        "get": {
+          "operationId": "listProducts",
+          "responses": {
+            "200": {
+              "description": "Success"
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "pathItems": {
+        "UsersPath": {
+          "get": {
+            "operationId": "listUsers",
+            "responses": {
+              "200": {
+                "description": "Success"
+              }
+            }
+          }
+        },
+        "ProductsPath": {
+          "get": {
+            "operationId": "listProducts",
+            "responses": {
+              "200": {
+                "description": "Success"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+]

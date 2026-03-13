@@ -1,0 +1,17 @@
+{
+  "components": {
+    "schemas": {
+      "Order": {
+        "type": "object",
+        "properties": {
+          "orderId": {
+            "type": "string"
+          },
+          "total": {
+            "type": "number"
+          }
+        }
+      }
+    }
+  }
+}

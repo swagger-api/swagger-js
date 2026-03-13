@@ -15,7 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x, 18.x, 20.x, 22.x]
+        node-version: [16.x, 18.x, 20.x, 22.x, 24.x]
 
     steps:
     - uses: actions/checkout@v6
@@ -25,7 +25,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - name: Cache Node Modules
       id: cache-node-modules
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: node_modules
         key: node-modules-${{ hashFiles('package-lock.json') }}
@@ -47,8 +47,8 @@ jobs:
     - name: Build swagger-js
       run: npm run build
     - name: Upload commonjs build artifacts
-      if: startsWith(matrix.node-version, '22')
-      uses: actions/upload-artifact@v6
+      if: startsWith(matrix.node-version, '24')
+      uses: actions/upload-artifact@v7
       with:
         name: commonjs
         path: ./lib/
@@ -60,14 +60,14 @@ jobs:
 
     steps:
     - uses: actions/checkout@v6
-    - name: Use Node.js 22
+    - name: Use Node.js
       uses: actions/setup-node@v6
       with:
-        node-version: 22
+        node-version-file: .nvmrc
 
     - name: Cache Node Modules
       id: cache-node-modules
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: node_modules
         key: node-modules-${{ hashFiles('package-lock.json') }}
@@ -121,5 +121,12 @@ jobs:
       with:
         node-version: 22.x
     - name: Run commonjs build artifacts on Node.js 22.x
+      run: node -p "require('./commonjs')"
+
+    - name: Use Node 24.x
+      uses: actions/setup-node@v6
+      with:
+        node-version: 24.x
+    - name: Run commonjs build artifacts on Node.js 24.x
       run: node -p "require('./commonjs')"
 
