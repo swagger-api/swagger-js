@@ -1,0 +1,20 @@
+{
+  "openapi": "3.2.0",
+  "info": {
+    "title": "Parameter Macro Test (No Operation)",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/users": {
+      "parameters": [
+        {
+          "name": "accept",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    }
+  }
+}
