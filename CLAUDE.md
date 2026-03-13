@@ -5,7 +5,8 @@ This document provides comprehensive guidance for AI assistants working on the s
 ## Project Overview
 
 **swagger-js** (npm package: `swagger-client`) is a JavaScript module that allows you to fetch, resolve, and interact with Swagger/OpenAPI documents. It supports:
-- OpenAPI 3.1.0 (latest)
+- OpenAPI 3.2.0 (latest)
+- OpenAPI 3.1.0
 - OpenAPI 3.0.x (3.0.0 through 3.0.4)
 - Swagger/OpenAPI 2.0
 - Legacy Swagger 1.x (via version 2.x branch)
@@ -299,7 +300,8 @@ From `.prettierrc`:
 Handles $ref resolution and spec normalization. Uses different strategies based on OpenAPI version:
 
 **Resolution Strategies**:
-- `openapi-3-1-apidom`: Uses ApiDOM library for OpenAPI 3.1 (most modern)
+- `openapi-3-2-apidom`: Uses ApiDOM library for OpenAPI 3.2 (most modern)
+- `openapi-3-1-apidom`: Uses ApiDOM library for OpenAPI 3.1
 - `openapi-3-0`: Custom resolver for OpenAPI 3.0.x
 - `openapi-2-0`: Custom resolver for Swagger 2.0
 - `generic`: Fallback for unknown specs
@@ -392,8 +394,9 @@ import btoa from './helpers/btoa.browser.js';
 
 ### Adding Support for New OpenAPI Features
 
-1. **Identify the OpenAPI version** (2.0, 3.0, 3.1)
+1. **Identify the OpenAPI version** (2.0, 3.0, 3.1, 3.2)
 2. **Update the appropriate resolver strategy**:
+   - OAS 3.2: `src/resolver/strategies/openapi-3-2-apidom/`
    - OAS 3.1: `src/resolver/strategies/openapi-3-1-apidom/`
    - OAS 3.0: `src/resolver/strategies/openapi-3-0/`
    - OAS 2.0: `src/resolver/strategies/openapi-2/`

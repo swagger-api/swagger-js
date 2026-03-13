@@ -1,0 +1,17 @@
+{
+  "components": {
+    "schemas": {
+      "UserProfile": {
+        "type": "object",
+        "properties": {
+          "avatar": {
+            "type": "string"
+          },
+          "parent": {
+            "$ref": "./root.json#/components/schemas/User"
+          }
+        }
+      }
+    }
+  }
+}
