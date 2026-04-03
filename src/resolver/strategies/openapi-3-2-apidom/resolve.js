@@ -154,7 +154,9 @@ const resolveOpenAPI32Strategy = async (options) => {
           : circularReplacer,
       },
     });
-    const transcluded = transclude(fragmentElement, dereferenced, openApiElement);
+    // Re-evaluate element to be transcluded as fragmentElement might be mutated
+    const search = jsonPointerEvaluate(openApiElement, jsonPointer);
+    const transcluded = transclude(search, dereferenced, openApiElement);
     const normalized = skipNormalization ? transcluded : strategy.normalize(transcluded);
 
     return { spec: toValue(normalized), errors };
