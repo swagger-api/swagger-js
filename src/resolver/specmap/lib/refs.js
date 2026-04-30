@@ -2,7 +2,6 @@ import jsYaml from 'js-yaml';
 import { ApiDOMStructuredError } from '@swagger-api/apidom-error';
 import { url } from '@swagger-api/apidom-reference/configuration/empty';
 
-import '../../../helpers/fetch-polyfill.node.js';
 import lib from './index.js';
 import { isFreelyNamed, absolutifyPointer } from '../helpers.js';
 import { ACCEPT_HEADER_VALUE_FOR_DOCUMENTS } from '../../../constants.js';

@@ -72,11 +72,8 @@ Alternatively, you can set the environment variable `SCARF_ANALYTICS` to `false`
 
 ### Node.js
 
-`swagger-client` requires Node.js `>=12.20.0` and uses different `fetch` implementation depending
-on Node.js version.
-
-- `>=12.20.0 <18` - [node-fetch@3](https://www.npmjs.com/package/node-fetch) 
-- `>=18` - [native Node.js fetch](https://nodejs.org/dist/latest-v18.x/docs/api/globals.html#fetch)
+`swagger-client` requires Node.js `>=22` and uses [native Node.js fetch](https://nodejs.org/dist/latest-v22.x/docs/api/globals.html#fetch).
+Node.js `12`, `14`, `16`, `18`, and `20` are EOL and are no longer supported.
 
 > NOTE: swagger-client minimum Node.js runtime version aligns with [Node.js Releases](https://nodejs.org/en/about/releases/)
 > which means that we can drop support for **EOL** (End Of Life) Node.js versions without doing major version bump.
