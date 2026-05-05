@@ -89,7 +89,7 @@
     "openapi-path-templating": "^2.2.1",
     "openapi-server-url-templating": "^1.3.0",
     "ramda": "^0.30.1",
-    "ramda-adjunct": "^5.1.0"
+    "ramda-adjunct": "^6.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.21.0",
