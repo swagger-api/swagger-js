@@ -143,7 +143,7 @@ describe('buildRequest - OAS 3.0.x', () => {
       expect(json).toStrictEqual(JSON.stringify(options));
       expect(file).toBeInstanceOf(File);
       expect(file.valueOf()).toStrictEqual(JSON.stringify(options));
-      expect(file.type).toStrictEqual('application/json;charset=utf-8');
+      expect(file.type).toStrictEqual('application/json; charset=utf-8');
     });
   });
 
