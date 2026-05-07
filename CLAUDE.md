@@ -73,7 +73,7 @@ swagger-js/
 - **js-yaml**: YAML parsing
 - **deepmerge**: Deep object merging
 - **fast-json-patch**: JSON Patch operations
-- **node-fetch-commonjs**: Fetch polyfill for Node.js
+- **node-abort-controller**: AbortController polyfill for Node.js
 - **openapi-path-templating**: Path parameter templating
 - **openapi-server-url-templating**: Server URL templating
 
@@ -135,7 +135,7 @@ npm test
 
 ### Node.js Requirements
 - **Development**: Node.js >= 22.11.0, npm >= 10.9.0
-- **Runtime Support**: Node.js >= 12.20.0
+- **Runtime Support**: Node.js >= 22
 - **Note**: EOL Node.js versions may be dropped without major version bump
 
 ### Available Scripts
@@ -439,7 +439,7 @@ import btoa from './helpers/btoa.browser.js';
 ### GitHub Actions Workflow
 File: `.github/workflows/nodejs.yml`
 
-**Main Build Job** (runs on Node.js 16, 18, 20, 22):
+**Main Build Job** (runs on Node.js 22, 24):
 1. Checkout code
 2. Setup Node.js
 3. Cache node_modules
@@ -451,7 +451,7 @@ File: `.github/workflows/nodejs.yml`
 9. Upload build artifacts (Node 22 only)
 
 **Artifact Test Job**:
-Tests CommonJS build on multiple Node.js versions (12.20.0, 14.x, 16.x, 18.x, 20.x, 22.x)
+Tests CommonJS build on Node.js 22.x
 
 **Other Workflows**:
 - `codeql.yml`: Security analysis with CodeQL
