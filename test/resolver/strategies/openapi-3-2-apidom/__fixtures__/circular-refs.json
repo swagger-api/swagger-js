@@ -1,0 +1,26 @@
+{
+  "openapi": "3.2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Circular References Test"
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "Node": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Node"
+            }
+          }
+        }
+      }
+    }
+  }
+}

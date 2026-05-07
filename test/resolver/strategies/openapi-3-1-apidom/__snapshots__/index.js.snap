@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`resolve OpenAPI 3.1.0 strategy given OpenAPI 3.1.0 definition via URL and allowMetaPatches=false should resolve 1`] = `
 {

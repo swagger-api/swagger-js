@@ -1,0 +1,32 @@
+{
+  "openapi": "3.2.0",
+  "info": {
+    "title": "Test API",
+    "version": "1.0.0"
+  },
+  "security": [
+    {
+      "apiKey": []
+    }
+  ],
+  "paths": {
+    "/users": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "apiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-KEY"
+      }
+    }
+  }
+}

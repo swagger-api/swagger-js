@@ -1,0 +1,77 @@
+{
+  "openapi": "3.2.0",
+  "info": {
+    "title": "Ref AllOf Macros Test",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/users": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExtendedUser"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExtendedUser"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BaseUser": {
+        "type": "object",
+        "required": ["email"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        }
+      },
+      "ExtendedUser": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseUser"
+          },
+          {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "id": {
+                "type": "string",
+                "readOnly": true
+              },
+              "name": {
+                "type": "string"
+              },
+              "password": {
+                "type": "string",
+                "writeOnly": true
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

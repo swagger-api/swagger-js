@@ -15,23 +15,20 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x, 18.x, 20.x, 22.x]
+        node-version: [22.x, 24.x]
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version: ${{ matrix.node-version }}
     - name: Cache Node Modules
       id: cache-node-modules
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: node_modules
         key: node-modules-${{ hashFiles('package-lock.json') }}
-    - name: Update npm
-      if: startsWith(matrix.node-version, '14')
-      run: npm install -g npm@9
     - name: Install dependencies
       if: steps.cache-node-modules.outputs.cache-hit != 'true'
       run: npm ci
@@ -47,8 +44,8 @@ jobs:
     - name: Build swagger-js
       run: npm run build
     - name: Upload commonjs build artifacts
-      if: startsWith(matrix.node-version, '22')
-      uses: actions/upload-artifact@v4
+      if: startsWith(matrix.node-version, '24')
+      uses: actions/upload-artifact@v7
       with:
         name: commonjs
         path: ./lib/
@@ -59,15 +56,15 @@ jobs:
     needs: [build]
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js 22
-      uses: actions/setup-node@v4
+    - uses: actions/checkout@v6
+    - name: Use Node.js
+      uses: actions/setup-node@v6
       with:
-        node-version: 22
+        node-version-file: .nvmrc
 
     - name: Cache Node Modules
       id: cache-node-modules
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: node_modules
         key: node-modules-${{ hashFiles('package-lock.json') }}
@@ -77,49 +74,21 @@ jobs:
       run: npm ci
 
     - name: Download commonjs build artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: commonjs
 
-    - name: Use Node 12.20.0
-      uses: actions/setup-node@v4
-      with:
-        node-version: 12.20.0
-    - name: Run commonjs build artifacts on Node.js 12.20.0
-      run: node -p "require('./commonjs')"
-
-    - name: Use Node 14.x
-      uses: actions/setup-node@v4
-      with:
-        node-version: 14.x
-    - name: Run commonjs build artifacts on Node.js 14.x
-      run: node -p "require('./commonjs')"
-
-    - name: Use Node 16.x
-      uses: actions/setup-node@v4
-      with:
-        node-version: 16.x
-    - name: Run commonjs build artifacts on Node.js 16.x
-      run: node -p "require('./commonjs')"
-
-    - name: Use Node 18.x
-      uses: actions/setup-node@v4
-      with:
-        node-version: 18.x
-    - name: Run commonjs build artifacts on Node.js 18.x
-      run: node -p "require('./commonjs')"
-
-    - name: Use Node 20.x
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20.x
-    - name: Run commonjs build artifacts on Node.js 20.x
-      run: node -p "require('./commonjs')"
-
     - name: Use Node 22.x
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version: 22.x
     - name: Run commonjs build artifacts on Node.js 22.x
+      run: node -p "require('./commonjs')"
+
+    - name: Use Node 24.x
+      uses: actions/setup-node@v6
+      with:
+        node-version: 24.x
+    - name: Run commonjs build artifacts on Node.js 24.x
       run: node -p "require('./commonjs')"
 

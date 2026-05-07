@@ -1,0 +1,44 @@
+{
+  "openapi": "3.2.0",
+  "info": {
+    "title": "Test API",
+    "version": "1.0.0"
+  },
+  "paths": {},
+  "components": {
+    "pathItems": {
+      "UserResource": {
+        "get": {
+          "operationId": "getUser",
+          "responses": {
+            "200": {
+              "$ref": "#/components/responses/UserResponse"
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "UserResponse": {
+        "description": "User found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/User"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
