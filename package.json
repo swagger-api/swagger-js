@@ -83,7 +83,7 @@
     "@swaggerexpert/cookie": "^2.0.2",
     "deepmerge": "~4.3.0",
     "fast-json-patch": "^3.0.0-1",
-    "js-yaml": "^4.1.0",
+    "js-yaml": "^4.2.0",
     "neotraverse": "=0.6.18",
     "node-abort-controller": "^3.1.1",
     "openapi-path-templating": "^2.2.1",
