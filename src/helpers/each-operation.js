@@ -12,7 +12,7 @@ export default function eachOperation(spec, cb, find) {
   for (const pathName in paths) {
     // eslint-disable-next-line no-restricted-syntax, guard-for-in
     for (const method in paths[pathName]) {
-      if (method.toUpperCase() === 'PARAMETERS') {
+      if (method.toUpperCase() === 'PARAMETERS' || method === 'additionalOperations') {
         continue; // eslint-disable-line no-continue
       }
       const operation = paths[pathName][method];
@@ -30,6 +30,29 @@ export default function eachOperation(spec, cb, find) {
 
       if (find && cbValue) {
         return operationObj;
+      }
+    }
+
+    const { additionalOperations } = paths[pathName];
+    if (additionalOperations && typeof additionalOperations === 'object') {
+      // eslint-disable-next-line no-restricted-syntax, guard-for-in
+      for (const method in additionalOperations) {
+        const operation = additionalOperations[method];
+        if (!operation || typeof operation !== 'object') {
+          continue; // eslint-disable-line no-continue
+        }
+
+        const operationObj = {
+          spec,
+          pathName,
+          method,
+          operation,
+        };
+        const cbValue = cb(operationObj);
+
+        if (find && cbValue) {
+          return operationObj;
+        }
       }
     }
   }

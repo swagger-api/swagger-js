@@ -106,5 +106,45 @@ describe('helpers', () => {
         method: 'GET',
       });
     });
+
+    test('should return the operationObj from OpenAPI 3.2 additionalOperations', () => {
+      // Given
+      const spec = {
+        openapi: '3.2.0',
+        paths: {
+          '/two': {
+            get: {
+              description: 'query-filter list operation',
+            },
+            additionalOperations: {
+              LIST: {
+                operationId: 'listTwo',
+                description: 'body list operation',
+              },
+              SEARCH: {
+                operationId: 'searchTwo',
+                description: 'custom search operation',
+              },
+            },
+          },
+        },
+      };
+
+      // When
+      const listOp = getOperationRaw(spec, 'listTwo');
+      const searchOp = getOperationRaw(spec, 'searchTwo');
+
+      // Then
+      expect(listOp).toMatchObject({
+        operation: spec.paths['/two'].additionalOperations.LIST,
+        pathName: '/two',
+        method: 'LIST',
+      });
+      expect(searchOp).toMatchObject({
+        operation: spec.paths['/two'].additionalOperations.SEARCH,
+        pathName: '/two',
+        method: 'SEARCH',
+      });
+    });
   });
 });
