@@ -1,3 +1,5 @@
+import { isOpenAPI32 } from './openapi-predicates.js';
+
 // iterate over each operation, and fire a callback with details
 // `find=true` will stop iterating, when the cb returns truthy
 export default function eachOperation(spec, cb, find) {
@@ -6,6 +8,7 @@ export default function eachOperation(spec, cb, find) {
   }
 
   const { paths } = spec;
+  const supportsAdditionalOperations = isOpenAPI32(spec);
 
   // Iterate over the spec, collecting operations
   // eslint-disable-next-line no-restricted-syntax, guard-for-in
@@ -34,7 +37,11 @@ export default function eachOperation(spec, cb, find) {
     }
 
     const { additionalOperations } = paths[pathName];
-    if (additionalOperations && typeof additionalOperations === 'object') {
+    if (
+      supportsAdditionalOperations &&
+      additionalOperations &&
+      typeof additionalOperations === 'object'
+    ) {
       // eslint-disable-next-line no-restricted-syntax, guard-for-in
       for (const method in additionalOperations) {
         const operation = additionalOperations[method];

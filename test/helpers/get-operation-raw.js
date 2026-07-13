@@ -146,5 +146,20 @@ describe('helpers', () => {
         method: 'SEARCH',
       });
     });
+
+    test('should ignore additionalOperations outside OpenAPI 3.2', () => {
+      const spec = {
+        openapi: '3.1.0',
+        paths: {
+          '/two': {
+            additionalOperations: {
+              LIST: { operationId: 'listTwo' },
+            },
+          },
+        },
+      };
+
+      expect(getOperationRaw(spec, 'listTwo')).toBeNull();
+    });
   });
 });

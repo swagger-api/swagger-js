@@ -1,5 +1,18 @@
 import replaceSpecialCharsWithUnderscore from '../replace-special-chars-with-underscore.js';
 
+const STANDARD_HTTP_METHODS = new Set([
+  'connect',
+  'delete',
+  'get',
+  'head',
+  'options',
+  'patch',
+  'post',
+  'put',
+  'query',
+  'trace',
+]);
+
 export default function idFromPathMethod(
   pathName,
   method,
@@ -18,5 +31,9 @@ export default function idFromPathMethod(
       .replace(/^(_)*/g, '')
       .replace(/([_])*$/g, '');
   }
-  return `${method.toLowerCase()}${replaceSpecialCharsWithUnderscore(pathName)}`;
+  const normalizedMethod = STANDARD_HTTP_METHODS.has(method.toLowerCase())
+    ? method.toLowerCase()
+    : method;
+
+  return `${normalizedMethod}${replaceSpecialCharsWithUnderscore(pathName)}`;
 }

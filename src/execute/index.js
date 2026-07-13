@@ -242,6 +242,7 @@ export function buildRequest(options) {
       serverVariables,
       pathName,
       method,
+      operation,
       serverVariableEncoder,
     });
 
@@ -258,7 +259,9 @@ export function buildRequest(options) {
   }
 
   req.url += pathName; // Have not yet replaced the path parameters
-  req.method = `${method}`.toUpperCase();
+  // Standard operations are normalized by eachOperation; additionalOperations
+  // must retain the exact HTTP method token defined by the OAS 3.2 document.
+  req.method = method;
 
   parameters = parameters || {};
   const path = spec.paths[pathName] || {};
@@ -393,6 +396,7 @@ function oas3BaseUrl({
   spec,
   pathName,
   method,
+  operation,
   server,
   contextUrl,
   serverVariables = {},
@@ -403,7 +407,8 @@ function oas3BaseUrl({
   let selectedServerObj;
 
   // compute the servers (this will be taken care of by ApiDOM refrator plugins in future
-  const operationLevelServers = spec?.paths?.[pathName]?.[(method || '').toLowerCase()]?.servers;
+  const operationLevelServers =
+    operation?.servers ?? spec?.paths?.[pathName]?.[(method || '').toLowerCase()]?.servers;
   const pathItemLevelServers = spec?.paths?.[pathName]?.servers;
   const rootLevelServers = spec?.servers;
   servers = isNonEmptyServerList(operationLevelServers) // eslint-disable-line no-nested-ternary

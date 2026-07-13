@@ -163,6 +163,15 @@ describe('given OpenAPI 3.2.0 definition', () => {
               },
             },
           },
+          mIxEd: {
+            operationId: 'mixedUsers',
+            servers: [{ url: 'http://localhost:8082' }],
+            responses: {
+              200: {
+                description: 'List of users',
+              },
+            },
+          },
         },
       },
     },
@@ -235,6 +244,16 @@ describe('given OpenAPI 3.2.0 definition', () => {
 
     expect(request.url).toBe('http://localhost:8081/users');
     expect(request.method).toBe('SEARCH');
+  });
+
+  test('should preserve custom method casing and use operation-level servers', async () => {
+    const request = await SwaggerClient.buildRequest({
+      spec,
+      operationId: 'mixedUsers',
+    });
+
+    expect(request.url).toBe('http://localhost:8082/users');
+    expect(request.method).toBe('mIxEd');
   });
 
   test('should work with client instance', async () => {
