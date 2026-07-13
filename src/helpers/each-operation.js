@@ -42,8 +42,8 @@ export default function eachOperation(spec, cb, find) {
       additionalOperations &&
       typeof additionalOperations === 'object'
     ) {
-      // eslint-disable-next-line no-restricted-syntax, guard-for-in
-      for (const method in additionalOperations) {
+      // eslint-disable-next-line no-restricted-syntax
+      for (const method of Object.keys(additionalOperations)) {
         const operation = additionalOperations[method];
         if (!operation || typeof operation !== 'object') {
           continue; // eslint-disable-line no-continue

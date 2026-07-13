@@ -256,6 +256,29 @@ describe('given OpenAPI 3.2.0 definition', () => {
     expect(request.method).toBe('mIxEd');
   });
 
+  test('should reject an invalid custom method before building a request', async () => {
+    const invalidMethodSpec = {
+      ...spec,
+      paths: {
+        ...spec.paths,
+        '/users': {
+          ...spec.paths['/users'],
+          additionalOperations: {
+            ...spec.paths['/users'].additionalOperations,
+            'BAD METHOD': { operationId: 'invalidMethod' },
+          },
+        },
+      },
+    };
+
+    expect(() =>
+      SwaggerClient.buildRequest({
+        spec: invalidMethodSpec,
+        operationId: 'invalidMethod',
+      })
+    ).toThrow('Invalid HTTP method');
+  });
+
   test('should work with client instance', async () => {
     const client = await SwaggerClient({ spec });
 

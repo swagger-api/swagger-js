@@ -161,5 +161,24 @@ describe('helpers', () => {
 
       expect(getOperationRaw(spec, 'listTwo')).toBeNull();
     });
+
+    test('should ignore inherited additionalOperations', () => {
+      const inheritedOperation = { operationId: 'inheritedOperation' };
+      const additionalOperations = Object.create({ INHERITED: inheritedOperation });
+      additionalOperations.LIST = { operationId: 'listTwo' };
+      const spec = {
+        openapi: '3.2.0',
+        paths: {
+          '/two': { additionalOperations },
+        },
+      };
+
+      expect(getOperationRaw(spec, 'inheritedOperation')).toBeNull();
+      expect(getOperationRaw(spec, 'listTwo')).toMatchObject({
+        operation: additionalOperations.LIST,
+        pathName: '/two',
+        method: 'LIST',
+      });
+    });
   });
 });

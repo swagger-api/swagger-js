@@ -19,6 +19,9 @@ import { isOpenAPI3 } from '../helpers/openapi-predicates.js';
 import { serialize as serializeCookie } from '../helpers/cookie.js';
 
 const arrayOrEmpty = (ar) => (Array.isArray(ar) ? ar : []);
+const HTTP_METHOD_TOKEN = /^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/;
+
+const isValidHttpMethod = (method) => typeof method === 'string' && HTTP_METHOD_TOKEN.test(method);
 
 const findObjectOrArraySchema = (schema, { recurse = true, depth = 1 } = {}) => {
   if (!isPlainObject(schema)) return undefined;
@@ -231,6 +234,10 @@ export function buildRequest(options) {
   }
 
   const { operation = {}, method, pathName } = operationRaw;
+
+  if (!isValidHttpMethod(method)) {
+    throw new Error('Invalid HTTP method');
+  }
 
   baseURL =
     baseURL ??
