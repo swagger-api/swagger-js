@@ -16,43 +16,35 @@ The npm package contains transpiled and minified ES5 compatible code.
 
 `swagger-client` integrates with [ApiDOM](https://github.com/swagger-api/apidom) and use it
 as a direct dependency. Some transitive dependencies of ApiDOM are [optional](https://docs.npmjs.com/cli/v8/configuring-npm/package-json#optionaldependencies),
-which means we can use [override package.json field](https://docs.npmjs.com/cli/v8/configuring-npm/package-json#overrides)
-to speed up the installation:
+which means you can run `npm install --omit=optional` to speed up the installation:
 
 ```json
-"overrides": {
-  "@swagger-api/apidom-reference": {
-    "@swagger-api/apidom-ns-asyncapi-2": "npm:-@0.0.1",
-    "@swagger-api/apidom-ns-asyncapi-3": "npm:-@0.0.1",
-    "@swagger-api/apidom-ns-openapi-2": "npm:-@0.0.1",
-    "@swagger-api/apidom-ns-openapi-3-0": "npm:-@0.0.1",
-    "@swagger-api/apidom-ns-openapi-3-1": "npm:-@0.0.1",
-    "@swagger-api/apidom-ns-openapi-3-2": "npm:-@0.0.1",
-    "@swagger-api/apidom-parser-adapter-api-design-systems-json": "npm:-@0.0.1",
-    "@swagger-api/apidom-parser-adapter-api-design-systems-yaml": "npm:-@0.0.1",
-    "@swagger-api/apidom-parser-adapter-asyncapi-json-2": "npm:-@0.0.1",
-    "@swagger-api/apidom-parser-adapter-asyncapi-json-3": "npm:-@0.0.1",
-    "@swagger-api/apidom-parser-adapter-asyncapi-yaml-2": "npm:-@0.0.1",
-    "@swagger-api/apidom-parser-adapter-asyncapi-yaml-3": "npm:-@0.0.1",
-    "@swagger-api/apidom-parser-adapter-json": "npm:-@0.0.1",
-    "@swagger-api/apidom-parser-adapter-openapi-json-2": "npm:-@0.0.1",
-    "@swagger-api/apidom-parser-adapter-openapi-yaml-2": "npm:-@0.0.1",
-    "@swagger-api/apidom-parser-adapter-openapi-json-3-0": "npm:-@0.0.1",
-    "@swagger-api/apidom-parser-adapter-openapi-json-3-1": "npm:-@0.0.1",
-    "@swagger-api/apidom-parser-adapter-openapi-json-3-2": "npm:-@0.0.1",
-    "@swagger-api/apidom-parser-adapter-openapi-yaml-3-0": "npm:-@0.0.1",
-    "@swagger-api/apidom-parser-adapter-openapi-yaml-3-1": "npm:-@0.0.1",
-    "@swagger-api/apidom-parser-adapter-openapi-yaml-3-2": "npm:-@0.0.1",
-    "@swagger-api/apidom-parser-adapter-arazzo-json-1": "npm:-@0.0.1",
-    "@swagger-api/apidom-parser-adapter-arazoo-yaml-1": "npm:-@0.0.1",
-    "@swagger-api/apidom-parser-adapter-yaml-1-2": "npm:-@0.0.1"
-  }
+"optionalDependencies": {
+  "@swagger-api/apidom-ns-asyncapi-2": "^1.11.3",
+  "@swagger-api/apidom-ns-asyncapi-3": "^1.11.3",
+  "@swagger-api/apidom-ns-openapi-2": "^1.11.3",
+  "@swagger-api/apidom-parser-adapter-api-design-systems-json": "^1.11.3",
+  "@swagger-api/apidom-parser-adapter-api-design-systems-yaml": "^1.11.3",
+  "@swagger-api/apidom-parser-adapter-asyncapi-json-2": "^1.11.3",
+  "@swagger-api/apidom-parser-adapter-asyncapi-json-3": "^1.11.3",
+  "@swagger-api/apidom-parser-adapter-asyncapi-yaml-2": "^1.11.3",
+  "@swagger-api/apidom-parser-adapter-asyncapi-yaml-3": "^1.11.3",
+  "@swagger-api/apidom-parser-adapter-json": "^1.11.3",
+  "@swagger-api/apidom-parser-adapter-openapi-json-2": "^1.11.3",
+  "@swagger-api/apidom-parser-adapter-openapi-yaml-2": "^1.11.3",
+  "@swagger-api/apidom-parser-adapter-openapi-json-3-0": "^1.11.3",
+  "@swagger-api/apidom-parser-adapter-openapi-json-3-1": "^1.11.3",
+  "@swagger-api/apidom-parser-adapter-openapi-json-3-2": "^1.11.3",
+  "@swagger-api/apidom-parser-adapter-openapi-yaml-3-0": "^1.11.3",
+  "@swagger-api/apidom-parser-adapter-openapi-yaml-3-1": "^1.11.3",
+  "@swagger-api/apidom-parser-adapter-openapi-yaml-3-2": "^1.11.3",
+  "@swagger-api/apidom-parser-adapter-arazzo-json-1": "^1.11.3",
+  "@swagger-api/apidom-parser-adapter-arazzo-yaml-1": "^1.11.3",
+  "@swagger-api/apidom-parser-adapter-yaml-1-2": "^1.11.3"
 }
 ```
 
-> NOTE 1: Above override uses [empty npm package called "-"](https://www.npmjs.com/package/-) to override optional ApiDOM transitive dependencies.
-
-> NOTE 2: When ApiDOM optional dependencies fail to install, you can safely ignore it as `swagger-client` can work without these optional dependencies.
+> NOTE: When ApiDOM optional dependencies fail to install, you can safely ignore it as `swagger-client` can work without these optional dependencies.
 
 After installed successfully:
 
