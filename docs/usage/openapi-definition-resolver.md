@@ -39,7 +39,7 @@ recursively and resolves all `JSON-References` inside the resolved OpenAPI defin
 ```js
 import SwaggerClient from 'swagger-client';
 
-SwaggerClient.resolve({ url: 'https://raw.githubusercontent.com/swagger-api/swagger-petstore/master/src/main/resources/openapi.yaml'});
+SwaggerClient.resolve({ url: 'https://raw.githubusercontent.com/swagger-api/swagger-petstore/main/src/main/resources/openapi.yaml'});
 /**
  * Promise({
  *   spec: ...resolved pet store...,
@@ -68,7 +68,7 @@ const requestInterceptor = request => {
 };
 
 SwaggerClient.resolve({ 
-  url: 'https://raw.githubusercontent.com/swagger-api/swagger-petstore/master/src/main/resources/openapi.yaml',
+  url: 'https://raw.githubusercontent.com/swagger-api/swagger-petstore/main/src/main/resources/openapi.yaml',
   requestInterceptor,
 });
 ```
@@ -146,7 +146,7 @@ new SwaggerClient({ spec: pojoDefinition }).then(swaggerClient => {
 ```js
 import SwaggerClient from 'swagger-client';
 
-new SwaggerClient('https://raw.githubusercontent.com/swagger-api/swagger-petstore/master/src/main/resources/openapi.yaml').then(swaggerClient => {
+new SwaggerClient('https://raw.githubusercontent.com/swagger-api/swagger-petstore/main/src/main/resources/openapi.yaml').then(swaggerClient => {
   swaggerClient.spec;
   swaggerClient.errors;
 });
@@ -157,7 +157,7 @@ or
 ```js
 import SwaggerClient from 'swagger-client';
 
-new SwaggerClient({ url: 'https://raw.githubusercontent.com/swagger-api/swagger-petstore/master/src/main/resources/openapi.yaml' }).then(swaggerClient => {
+new SwaggerClient({ url: 'https://raw.githubusercontent.com/swagger-api/swagger-petstore/main/src/main/resources/openapi.yaml' }).then(swaggerClient => {
   swaggerClient.spec;
   swaggerClient.errors;
 });
@@ -258,7 +258,7 @@ to explicitly clear the internal cache before doing resolution.
 import SwaggerClient from 'swagger-client';
 
 SwaggerClient.clearCache();
-SwaggerClient.resolve({ url: 'https://raw.githubusercontent.com/swagger-api/swagger-petstore/master/src/main/resources/openapi.yaml'}).then(swaggerClient => {
+SwaggerClient.resolve({ url: 'https://raw.githubusercontent.com/swagger-api/swagger-petstore/main/src/main/resources/openapi.yaml'}).then(swaggerClient => {
   swaggerClient.spec;
   swaggerClient.errors;
 });

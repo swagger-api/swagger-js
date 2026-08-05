@@ -16,7 +16,7 @@ updates:
 
 
 - package-ecosystem: "github-actions"
-  target-branch: "master"
+  target-branch: "main"
   directory: "/"
   schedule:
     interval: daily
