@@ -151,5 +151,15 @@
     "@swagger-api/apidom-parser-adapter-arazzo-json-1": "^1.12.0",
     "@swagger-api/apidom-parser-adapter-arazzo-yaml-1": "^1.12.0",
     "@swagger-api/apidom-parser-adapter-yaml-1-2": "^1.12.0"
+  },
+  "allowScripts": {
+    "tree-sitter@0.22.4": true,
+    "tree-sitter@0.21.1": true,
+    "@tree-sitter-grammars/tree-sitter-yaml@0.7.1": true,
+    "tree-sitter-json@0.24.8": true,
+    "fsevents@2.3.3": true,
+    "unrs-resolver@1.12.2": true,
+    "@scarf/scarf": false,
+    "core-js-pure": false
   }
 }
