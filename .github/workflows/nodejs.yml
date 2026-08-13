@@ -5,9 +5,9 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build:
@@ -18,14 +18,14 @@ jobs:
         node-version: [22.x, 24.x]
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v6
+      uses: actions/setup-node@v7
       with:
         node-version: ${{ matrix.node-version }}
     - name: Cache Node Modules
       id: cache-node-modules
-      uses: actions/cache@v5
+      uses: actions/cache@v6
       with:
         path: node_modules
         key: node-modules-${{ hashFiles('package-lock.json') }}
@@ -33,7 +33,7 @@ jobs:
       if: steps.cache-node-modules.outputs.cache-hit != 'true'
       run: npm ci
     - name: Lint commit message
-      if: github.ref != 'refs/heads/master' && github.actor != 'dependabot[bot]'
+      if: github.ref != 'refs/heads/main' && github.actor != 'dependabot[bot]'
       run: git log -1 --pretty=format:"%s" | npx commitlint
     - name: Lint code
       run: npm run lint
@@ -56,15 +56,15 @@ jobs:
     needs: [build]
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     - name: Use Node.js
-      uses: actions/setup-node@v6
+      uses: actions/setup-node@v7
       with:
         node-version-file: .nvmrc
 
     - name: Cache Node Modules
       id: cache-node-modules
-      uses: actions/cache@v5
+      uses: actions/cache@v6
       with:
         path: node_modules
         key: node-modules-${{ hashFiles('package-lock.json') }}
@@ -79,14 +79,14 @@ jobs:
         name: commonjs
 
     - name: Use Node 22.x
-      uses: actions/setup-node@v6
+      uses: actions/setup-node@v7
       with:
         node-version: 22.x
     - name: Run commonjs build artifacts on Node.js 22.x
       run: node -p "require('./commonjs')"
 
     - name: Use Node 24.x
-      uses: actions/setup-node@v6
+      uses: actions/setup-node@v7
       with:
         node-version: 24.x
     - name: Run commonjs build artifacts on Node.js 24.x
