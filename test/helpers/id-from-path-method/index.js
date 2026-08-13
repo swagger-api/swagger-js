@@ -8,6 +8,10 @@ describe('helpers', () => {
       expect(id).toEqual('get_one');
     });
 
+    test('should preserve the casing of a non-standard method', () => {
+      expect(idFromPathMethod('/one', 'mIxEd')).toBe('mIxEd_one');
+    });
+
     test('should return get_one as an operationId', () => {
       const id = idFromPathMethod('/one', 'get');
 

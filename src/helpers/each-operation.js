@@ -1,3 +1,5 @@
+import { isOpenAPI32 } from './openapi-predicates.js';
+
 // iterate over each operation, and fire a callback with details
 // `find=true` will stop iterating, when the cb returns truthy
 export default function eachOperation(spec, cb, find) {
@@ -6,13 +8,14 @@ export default function eachOperation(spec, cb, find) {
   }
 
   const { paths } = spec;
+  const supportsAdditionalOperations = isOpenAPI32(spec);
 
   // Iterate over the spec, collecting operations
   // eslint-disable-next-line no-restricted-syntax, guard-for-in
   for (const pathName in paths) {
     // eslint-disable-next-line no-restricted-syntax, guard-for-in
     for (const method in paths[pathName]) {
-      if (method.toUpperCase() === 'PARAMETERS') {
+      if (method.toUpperCase() === 'PARAMETERS' || method === 'additionalOperations') {
         continue; // eslint-disable-line no-continue
       }
       const operation = paths[pathName][method];
@@ -30,6 +33,33 @@ export default function eachOperation(spec, cb, find) {
 
       if (find && cbValue) {
         return operationObj;
+      }
+    }
+
+    const { additionalOperations } = paths[pathName];
+    if (
+      supportsAdditionalOperations &&
+      additionalOperations &&
+      typeof additionalOperations === 'object'
+    ) {
+      // eslint-disable-next-line no-restricted-syntax
+      for (const method of Object.keys(additionalOperations)) {
+        const operation = additionalOperations[method];
+        if (!operation || typeof operation !== 'object') {
+          continue; // eslint-disable-line no-continue
+        }
+
+        const operationObj = {
+          spec,
+          pathName,
+          method,
+          operation,
+        };
+        const cbValue = cb(operationObj);
+
+        if (find && cbValue) {
+          return operationObj;
+        }
       }
     }
   }

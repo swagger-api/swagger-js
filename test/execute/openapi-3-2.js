@@ -121,6 +121,58 @@ describe('given OpenAPI 3.2.0 definition', () => {
             },
           },
         },
+        additionalOperations: {
+          LIST: {
+            operationId: 'listUsers',
+            description: 'List users with a request body',
+            requestBody: {
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                  },
+                },
+              },
+            },
+            responses: {
+              200: {
+                description: 'List of users',
+                content: {
+                  'application/json': {
+                    schema: {
+                      $ref: '#/components/schemas/user',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          SEARCH: {
+            operationId: 'searchUsers',
+            description: 'Search users with a custom method',
+            responses: {
+              200: {
+                description: 'List of users',
+                content: {
+                  'application/json': {
+                    schema: {
+                      $ref: '#/components/schemas/user',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          mIxEd: {
+            operationId: 'mixedUsers',
+            servers: [{ url: 'http://localhost:8082' }],
+            responses: {
+              200: {
+                description: 'List of users',
+              },
+            },
+          },
+        },
       },
     },
   };
@@ -166,6 +218,65 @@ describe('given OpenAPI 3.2.0 definition', () => {
 
     expect(request.url).toBe('http://localhost:8081/users?q=search%20string');
     expect(request.method).toBe('GET');
+  });
+
+  test('should build request for OAS 3.2 additionalOperations operation', async () => {
+    const request = await SwaggerClient.buildRequest({
+      spec,
+      operationId: 'listUsers',
+      requestBody: {
+        data: {
+          status: ['active'],
+        },
+      },
+    });
+
+    expect(request.url).toBe('http://localhost:8081/users');
+    expect(request.method).toBe('LIST');
+    expect(request.body).toEqual({ data: { status: ['active'] } });
+  });
+
+  test('should build request for arbitrary OAS 3.2 additionalOperations method', async () => {
+    const request = await SwaggerClient.buildRequest({
+      spec,
+      operationId: 'searchUsers',
+    });
+
+    expect(request.url).toBe('http://localhost:8081/users');
+    expect(request.method).toBe('SEARCH');
+  });
+
+  test('should preserve custom method casing and use operation-level servers', async () => {
+    const request = await SwaggerClient.buildRequest({
+      spec,
+      operationId: 'mixedUsers',
+    });
+
+    expect(request.url).toBe('http://localhost:8082/users');
+    expect(request.method).toBe('mIxEd');
+  });
+
+  test('should reject an invalid custom method before building a request', async () => {
+    const invalidMethodSpec = {
+      ...spec,
+      paths: {
+        ...spec.paths,
+        '/users': {
+          ...spec.paths['/users'],
+          additionalOperations: {
+            ...spec.paths['/users'].additionalOperations,
+            'BAD METHOD': { operationId: 'invalidMethod' },
+          },
+        },
+      },
+    };
+
+    expect(() =>
+      SwaggerClient.buildRequest({
+        spec: invalidMethodSpec,
+        operationId: 'invalidMethod',
+      })
+    ).toThrow('Invalid HTTP method');
   });
 
   test('should work with client instance', async () => {
