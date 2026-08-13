@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`subtree-resolver OpenAPI 3.1.0 strategy should not resolve an untargeted subtree 1`] = `
 {
