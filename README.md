@@ -60,7 +60,7 @@ Alternatively, you can set the environment variable `SCARF_ANALYTICS` to `false`
 
 #### Development
 
-- [Contributing](https://github.com/swagger-api/.github/blob/master/CONTRIBUTING.md)
+- [Contributing](https://github.com/swagger-api/.github/blob/main/CONTRIBUTING.md)
 - [Setting up](docs/development/setting-up.md)
 - [Scripts](docs/development/scripts.md)
 
