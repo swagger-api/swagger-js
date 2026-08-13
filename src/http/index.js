@@ -1,4 +1,3 @@
-import '../helpers/fetch-polyfill.node.js';
 import { serializeRequest } from './serializers/request/index.js';
 import { serializeResponse } from './serializers/response/index.js';
 

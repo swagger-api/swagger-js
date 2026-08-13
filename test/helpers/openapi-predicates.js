@@ -60,8 +60,12 @@ describe('helpers', () => {
         expect(isOpenAPI3({ openapi: '3.1.1' })).toBe(true);
       });
 
+      test('should accept OpenAPI 3.2.x versions', () => {
+        expect(isOpenAPI3({ openapi: '3.2.0' })).toBe(true);
+        expect(isOpenAPI3({ openapi: '3.2.1' })).toBe(true);
+      });
+
       test('should reject other OpenAPI versions', () => {
-        expect(isOpenAPI3({ openapi: '3.2.0' })).toBe(false);
         expect(isOpenAPI3({ swagger: '2.0' })).toBe(false);
       });
 

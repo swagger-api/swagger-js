@@ -3,8 +3,8 @@
 ### Prerequisites
 
 - git, any version
-- Node.js >=22.11.0
-- NPM >=10.9.0
+- Node.js >=24.19.0
+- NPM >=11.17.0
 
 ### Setting up
 
@@ -30,7 +30,7 @@ This section will guide you through how to do that.
 
 **1. Clone and install swagger-ui repository**
 
-You'll find complete information about how to do that in swagger-ui [Setting up documentation](https://github.com/swagger-api/swagger-ui/blob/master/docs/development/setting-up.md).
+You'll find complete information about how to do that in swagger-ui [Setting up documentation](https://github.com/swagger-api/swagger-ui/blob/main/docs/development/setting-up.md).
 
 **2. Clone and install swagger-js repository**
 
