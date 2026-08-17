@@ -121,7 +121,7 @@ client.clientAuthorizations.add('cookie', new CookieAuthorization('one=two'))
 Currently you'd use...
 
 > *__NOTE:__ We're working on changing this to be friendlier to use and to support the config file interface.*
-> *See: https://github.com/swagger-api/swagger-js/issues/971*
+> *See: https://github.com/swagger-api/swagger-client/issues/971*
 
 ```javascript
 Swagger('http://petstore.swagger.io/v2/swagger.json', {

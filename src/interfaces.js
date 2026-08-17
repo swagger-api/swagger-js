@@ -11,12 +11,12 @@ export const self = {
 };
 
 // Make an execute, bound to arguments defined in mapTagOperation's callback (cb)
-export function makeExecute(swaggerJs = {}) {
+export function makeExecute(swaggerClient = {}) {
   return ({ pathName, method, operationId }) =>
     (parameters, opts = {}) => {
-      const { requestInterceptor, responseInterceptor, userFetch } = swaggerJs;
-      return swaggerJs.execute({
-        spec: swaggerJs.spec,
+      const { requestInterceptor, responseInterceptor, userFetch } = swaggerClient;
+      return swaggerClient.execute({
+        spec: swaggerClient.spec,
         requestInterceptor,
         responseInterceptor,
         userFetch,
@@ -33,12 +33,12 @@ export function makeExecute(swaggerJs = {}) {
 // The shape
 // { apis: { [tag]: { operations: [operation]: { execute }}}}
 // NOTE: this is mostly for compatibility
-export function makeApisTagOperationsOperationExecute(swaggerJs = {}) {
+export function makeApisTagOperationsOperationExecute(swaggerClient = {}) {
   // { apis: tag: operations: execute }
-  const cb = self.makeExecute(swaggerJs);
+  const cb = self.makeExecute(swaggerClient);
   const tagOperations = self.mapTagOperations({
-    v2OperationIdCompatibilityMode: swaggerJs.v2OperationIdCompatibilityMode,
-    spec: swaggerJs.spec,
+    v2OperationIdCompatibilityMode: swaggerClient.v2OperationIdCompatibilityMode,
+    spec: swaggerClient.spec,
     cb,
   });
 
@@ -58,12 +58,12 @@ export function makeApisTagOperationsOperationExecute(swaggerJs = {}) {
 }
 
 // .apis[tag][operationId]:ExecuteFunction interface
-export function makeApisTagOperation(swaggerJs = {}) {
-  const cb = self.makeExecute(swaggerJs);
+export function makeApisTagOperation(swaggerClient = {}) {
+  const cb = self.makeExecute(swaggerClient);
   return {
     apis: self.mapTagOperations({
-      v2OperationIdCompatibilityMode: swaggerJs.v2OperationIdCompatibilityMode,
-      spec: swaggerJs.spec,
+      v2OperationIdCompatibilityMode: swaggerClient.v2OperationIdCompatibilityMode,
+      spec: swaggerClient.spec,
       cb,
     }),
   };

@@ -152,7 +152,7 @@ describe('http', () => {
   });
 
   /**
-   * See https://github.com/swagger-api/swagger-js/issues/1005
+   * See https://github.com/swagger-api/swagger-client/issues/1005
    */
   test.skip('should get a pet from the petstore', (done) => {
     Swagger('http://localhost:8000/petstore.json').then((client) => {
@@ -168,7 +168,7 @@ describe('http', () => {
   });
 
   /**
-   * See https://github.com/swagger-api/swagger-js/issues/1277
+   * See https://github.com/swagger-api/swagger-client/issues/1277
    */
   test('should return a helpful error when the connection is refused', () =>
     Swagger('http://localhost:1/untouchable.yaml')
@@ -181,7 +181,7 @@ describe('http', () => {
       }));
 
   /**
-   * See https://github.com/swagger-api/swagger-js/issues/1002
+   * See https://github.com/swagger-api/swagger-client/issues/1002
    */
   test.skip('should return an error when a spec doesnt exist', (done) => {
     Swagger('http://localhost:8000/absent.yaml')
@@ -194,7 +194,7 @@ describe('http', () => {
   });
 
   /**
-   * See https://github.com/swagger-api/swagger-js/issues/1004
+   * See https://github.com/swagger-api/swagger-client/issues/1004
    */
   test.skip('fail with invalid verbs', (done) => {
     Swagger('http://localhost:8000/invalid-operation.yaml').then((client) => {
@@ -206,7 +206,7 @@ describe('http', () => {
 
   /**
    * Loads a spec where the `host` and `schema` are not defined
-   * See https://github.com/swagger-api/swagger-js/issues/1000
+   * See https://github.com/swagger-api/swagger-client/issues/1000
    */
   test('use the host from whence the spec was fetched', (done) => {
     Swagger('http://localhost:8000/pathless.yaml')

@@ -1,4 +1,4 @@
-// https://github.com/swagger-api/swagger-js/issues/1719
+// https://github.com/swagger-api/swagger-client/issues/1719
 
 import path from 'path';
 import fs from 'fs';

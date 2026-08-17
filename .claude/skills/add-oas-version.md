@@ -1,7 +1,7 @@
 # Add OpenAPI/Swagger Version Support
 
 **Skill Name:** `add-oas-version`
-**Purpose:** Guide the process of adding support for a new OpenAPI/Swagger specification version to swagger-js
+**Purpose:** Guide the process of adding support for a new OpenAPI/Swagger specification version to swagger-client
 **Based on:** Analysis of OAS 3.1.0 implementation (commits ace708ac through 56df8f61)
 
 ## Overview
@@ -10,7 +10,7 @@ This skill provides a systematic approach to adding support for a new OpenAPI/Sw
 
 ## Background: How OAS 3.1.0 Support Was Added
 
-OpenAPI 3.1.0 support was added to swagger-js between December 2022 and January 2023. The implementation introduced a fundamentally new approach using the ApiDOM library ecosystem instead of the legacy SpecMap resolution engine.
+OpenAPI 3.1.0 support was added to swagger-client between December 2022 and January 2023. The implementation introduced a fundamentally new approach using the ApiDOM library ecosystem instead of the legacy SpecMap resolution engine.
 
 ### Key Implementation Details
 
@@ -210,7 +210,7 @@ class OpenAPIJsonXYParser extends Parser {
 
 **3.3 Implement HTTP Resolver**
 
-Create a custom HTTP resolver using swagger-js HTTP client:
+Create a custom HTTP resolver using swagger-client HTTP client:
 
 `src/helpers/{library}/reference/resolve/resolvers/http-swagger-client/index.js`:
 ```javascript
@@ -221,7 +221,7 @@ class HTTPResolverSwaggerClient extends Resolver {
   }
 
   async resolve(uri) {
-    // Use swagger-js HTTP client with interceptors
+    // Use swagger-client HTTP client with interceptors
     const response = await http({
       url: uri,
       timeout: this.timeout,
@@ -234,7 +234,7 @@ class HTTPResolverSwaggerClient extends Resolver {
 
 **3.4 Implement Dereference Strategy**
 
-Create custom dereference strategy with swagger-js specific behavior:
+Create custom dereference strategy with swagger-client specific behavior:
 
 `src/helpers/{library}/reference/dereference/strategies/openapi-X-Y-swagger-client/index.js`:
 ```javascript
@@ -981,7 +981,7 @@ Update project overview:
 ```markdown
 ## Project Overview
 
-**swagger-js** supports:
+**swagger-client** supports:
 - OpenAPI X.Y.0 (latest)
 - OpenAPI 3.1.0
 - OpenAPI 3.0.x
@@ -1276,7 +1276,7 @@ Closes #ISSUE_NUMBER
 
 ### Resolution
 - [x] New resolver strategy `openapi-X-Y-{library}`
-- [x] Custom HTTP resolver using swagger-js HTTP client
+- [x] Custom HTTP resolver using swagger-client HTTP client
 - [x] OpenAPI X.Y specific JSON/YAML parsers
 - [x] Custom dereference strategy
 - [x] Normalization plugins
@@ -1520,7 +1520,7 @@ After the PR is merged:
 
 - OpenAPI Specification: https://spec.openapis.org/
 - ApiDOM Documentation: https://github.com/swagger-api/apidom
-- SpecMap Library: Internal to swagger-js
+- SpecMap Library: Internal to swagger-client
 - Conventional Commits: https://www.conventionalcommits.org/
 
 ---
@@ -1539,4 +1539,4 @@ If you encounter any issues or have questions:
 
 **Skill Version:** 1.0
 **Last Updated:** 2026-01-23
-**Maintained By:** swagger-js maintainers
+**Maintained By:** swagger-client maintainers
