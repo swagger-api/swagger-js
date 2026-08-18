@@ -6,14 +6,14 @@
 
 ## New!
 
-**This is the new version of swagger-client, 3.x.** The new version supports Swagger 2.0 as well as OpenAPI 3.
+**This is the new version of Swagger Client, 3.x.** The new version supports Swagger 2.0 as well as OpenAPI 3.
 
 Want to learn more? Check out our [FAQ](docs/migration/migration-2-x-to-3-x.md).
 
 For features known to be missing from 3.x please see the [Graveyard](docs/migration/graveyard-3-x.md).
 
 
-For the older version of swagger-client, refer to the [*2.x branch*](https://github.com/swagger-api/swagger-client/tree/2.x).
+For the older version of Swagger Client, refer to the [*2.x branch*](https://github.com/swagger-api/swagger-client/tree/2.x).
 
 ## Compatibility
 The OpenAPI Specification has undergone multiple revisions since initial creation in 2010.
