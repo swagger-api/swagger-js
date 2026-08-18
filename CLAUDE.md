@@ -1,6 +1,6 @@
 # CLAUDE.md - AI Assistant Guide for swagger-client
 
-This document provides comprehensive guidance for AI assistants working on the swagger-client (swagger-client) codebase.
+This document provides comprehensive guidance for AI assistants working on the swagger-client codebase.
 
 ## Project Overview
 
