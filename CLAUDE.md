@@ -1,10 +1,10 @@
-# CLAUDE.md - AI Assistant Guide for swagger-js
+# CLAUDE.md - AI Assistant Guide for swagger-client
 
-This document provides comprehensive guidance for AI assistants working on the swagger-js (swagger-client) codebase.
+This document provides comprehensive guidance for AI assistants working on the swagger-client codebase.
 
 ## Project Overview
 
-**swagger-js** (npm package: `swagger-client`) is a JavaScript module that allows you to fetch, resolve, and interact with Swagger/OpenAPI documents. It supports:
+**swagger-client** is a JavaScript module that allows you to fetch, resolve, and interact with Swagger/OpenAPI documents. It supports:
 - OpenAPI 3.2.0 (latest)
 - OpenAPI 3.1.0
 - OpenAPI 3.0.x (3.0.0 through 3.0.4)
@@ -18,7 +18,7 @@ The library is used by Swagger-UI and other tools in the OpenAPI ecosystem to pa
 ## Repository Structure
 
 ```
-swagger-js/
+swagger-client/
 ├── src/                    # Source code (ES6+ modules)
 │   ├── execute/           # Request execution logic for OAS operations
 │   │   ├── oas3/         # OpenAPI 3.x execution

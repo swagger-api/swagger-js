@@ -1,7 +1,7 @@
 {
   "name": "swagger-client",
   "version": "3.38.0",
-  "description": "SwaggerJS - a collection of interfaces for OAI specs",
+  "description": "Swagger Client - a collection of interfaces for OAI specs",
   "browser": {
     "./src/helpers/btoa.node.js": "./src/helpers/btoa.browser.js",
     "./lib/helpers/btoa.node.js": "./lib/helpers/btoa.browser.js",
@@ -14,7 +14,7 @@
   "module": "es/index.js",
   "jsnext:main": "es/index.js",
   "unpkg": "dist/swagger-client.browser.min.js",
-  "repository": "git@github.com:swagger-api/swagger-js.git",
+  "repository": "git@github.com:swagger-api/swagger-client.git",
   "contributors": [
     "(in alphabetical order)",
     "Anna Bodnia <anna.bodnia@gmail.com>",

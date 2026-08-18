@@ -41,7 +41,7 @@ jobs:
       run: npm test
       env:
         CI: true
-    - name: Build swagger-js
+    - name: Build swagger-client
       run: npm run build
     - name: Upload commonjs build artifacts
       if: startsWith(matrix.node-version, '24')

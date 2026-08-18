@@ -16,8 +16,8 @@ If you use [nvm](https://github.com/nvm-sh/nvm), running following command insid
 
 #### Setup steps
 
-1. `git clone https://github.com/swagger-api/swagger-js.git`
-2. `cd swagger-js`
+1. `git clone https://github.com/swagger-api/swagger-client.git`
+2. `cd swagger-client`
 3. `npm install`
 4. `npm run build`
 5. `npm run test`
@@ -32,14 +32,14 @@ This section will guide you through how to do that.
 
 You'll find complete information about how to do that in swagger-ui [Setting up documentation](https://github.com/swagger-api/swagger-ui/blob/main/docs/development/setting-up.md).
 
-**2. Clone and install swagger-js repository**
+**2. Clone and install swagger-client repository**
 
 You'll find complete information about how to do that in [Steps](setting-up.md#steps) section of this document.
 
 **3. Link repositories using npm link**
 
 ```shell script
- $ cd /path/to/swagger-js
+ $ cd /path/to/swagger-client
  $ npm run build
  $ npm link
  $ cd /path/to/swagger-ui
@@ -68,7 +68,7 @@ in your favorite editor and return back the `"predev": "npm install"` script.
  $ cd /path/to/swagger-ui
  $ npm unlink --no-save swagger-client
  $ npm install
- $ cd /path/to/swagger-js
+ $ cd /path/to/swagger-client
  $ npm unlink
 ```
 

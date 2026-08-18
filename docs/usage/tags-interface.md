@@ -101,7 +101,7 @@ Option | Description
 `userFetch` | `Function=cross-fetch`. Custom **asynchronous** fetch function that accepts two arguments: the `url` and the `Request` object and must return a [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response) object.
 `skipNormalization` | `Boolean=false`. Normalization creates unique operationIds when explicit operationIds are duplicates, and preserve originals.
 
-> *__Note:__ for more information about [requestInterceptor](http-client.md#request-interceptor), [responseInterceptor](http-client.md#response-interceptor) and [userFetch](https://github.com/swagger-api/swagger-js/blob/main/docs/usage/http-client.md#custom-fetch), please refer to the [HTTP Client](http-client.md) documentation.*
+> *__Note:__ for more information about [requestInterceptor](http-client.md#request-interceptor), [responseInterceptor](http-client.md#response-interceptor) and [userFetch](https://github.com/swagger-api/swagger-client/blob/main/docs/usage/http-client.md#custom-fetch), please refer to the [HTTP Client](http-client.md) documentation.*
 
 ### Options override
 

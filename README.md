@@ -1,22 +1,19 @@
 # Swagger Client <img src="https://raw.githubusercontent.com/swagger-api/swagger.io/wordpress/images/assets/SW-logo-clr.png" height="50" align="right">
 
-[![Build Status](https://github.com/swagger-api/swagger-js/actions/workflows/nodejs.yml/badge.svg)](https://github.com/swagger-api/swagger-js/actions)
+[![Build Status](https://github.com/swagger-api/swagger-client/actions/workflows/nodejs.yml/badge.svg)](https://github.com/swagger-api/swagger-client/actions)
 
 **Swagger Client** is a JavaScript module that allows you to fetch, resolve, and interact with Swagger/OpenAPI documents.
 
 ## New!
 
-**This is the new version of swagger-js, 3.x.** The new version supports Swagger 2.0 as well as OpenAPI 3.
+**This is the new version of Swagger Client, 3.x.** The new version supports Swagger 2.0 as well as OpenAPI 3.
 
 Want to learn more? Check out our [FAQ](docs/migration/migration-2-x-to-3-x.md).
 
 For features known to be missing from 3.x please see the [Graveyard](docs/migration/graveyard-3-x.md).
 
 
-For the older version of swagger-js, refer to the [*2.x branch*](https://github.com/swagger-api/swagger-js/tree/2.x).
-
-> *The npm package is called `swagger-client` and the GitHub repository is `swagger-js`.
-We'll be consolidating that soon. Just giving you the heads-up. You may see references to both names.*
+For the older version of Swagger Client, refer to the [*2.x branch*](https://github.com/swagger-api/swagger-client/tree/2.x).
 
 ## Compatibility
 The OpenAPI Specification has undergone multiple revisions since initial creation in 2010.
@@ -24,11 +21,11 @@ Compatibility between Swagger Client and the OpenAPI Specification is as follows
 
 Swagger Client Version | Release Date | OpenAPI Spec compatibility                              | Notes
 ------------------ |--------------|---------------------------------------------------------| -----
-3.37.x | 2026-02-27    | 2.0, 3.0.0, 3.0.1, 3.0.2, 3.0.3, 3.0.4, 3.1.0, 3.2.0   | [tag v3.37.0](https://github.com/swagger-api/swagger-js/releases/tag/v3.37.0)
-3.33.x | 2024-12-30   | 2.0, 3.0.0, 3.0.1, 3.0.2, 3.0.3, 3.0.4, 3.1.0           | [tag v3.33.0](https://github.com/swagger-api/swagger-js/releases/tag/v3.33.0)
-3.19.x | 2023-01-23   | 2.0, 3.0.0, 3.0.1, 3.0.2, 3.0.3, 3.1.0                  | [tag v3.19.0-alpha.3](https://github.com/swagger-api/swagger-js/releases/tag/v3.19.0-alpha.3)
-3.10.x | 2020-01-17   | 2.0, 3.0.0, 3.0.1, 3.0.2, 3.0.3                         | [tag v3.10.0](https://github.com/swagger-api/swagger-js/tree/v3.10.0)
-2.1.32 | 2017-01-12   | 1.0, 1.1, 1.2                                           | [tag v2.1.32](https://github.com/swagger-api/swagger-js/tree/v2.1.32). This [release](https://github.com/swagger-api/swagger-js/releases/tag/v2.1.32) is only available on GitHub.
+3.37.x | 2026-02-27    | 2.0, 3.0.0, 3.0.1, 3.0.2, 3.0.3, 3.0.4, 3.1.0, 3.2.0   | [tag v3.37.0](https://github.com/swagger-api/swagger-client/releases/tag/v3.37.0)
+3.33.x | 2024-12-30   | 2.0, 3.0.0, 3.0.1, 3.0.2, 3.0.3, 3.0.4, 3.1.0           | [tag v3.33.0](https://github.com/swagger-api/swagger-client/releases/tag/v3.33.0)
+3.19.x | 2023-01-23   | 2.0, 3.0.0, 3.0.1, 3.0.2, 3.0.3, 3.1.0                  | [tag v3.19.0-alpha.3](https://github.com/swagger-api/swagger-client/releases/tag/v3.19.0-alpha.3)
+3.10.x | 2020-01-17   | 2.0, 3.0.0, 3.0.1, 3.0.2, 3.0.3                         | [tag v3.10.0](https://github.com/swagger-api/swagger-client/tree/v3.10.0)
+2.1.32 | 2017-01-12   | 1.0, 1.1, 1.2                                           | [tag v2.1.32](https://github.com/swagger-api/swagger-client/tree/v2.1.32). This [release](https://github.com/swagger-api/swagger-client/releases/tag/v2.1.32) is only available on GitHub.
 
 ## Anonymized analytics
 
