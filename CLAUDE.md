@@ -4,7 +4,7 @@ This document provides comprehensive guidance for AI assistants working on the s
 
 ## Project Overview
 
-**swagger-client** (npm package: `swagger-client`) is a JavaScript module that allows you to fetch, resolve, and interact with Swagger/OpenAPI documents. It supports:
+**swagger-client** is a JavaScript module that allows you to fetch, resolve, and interact with Swagger/OpenAPI documents. It supports:
 - OpenAPI 3.2.0 (latest)
 - OpenAPI 3.1.0
 - OpenAPI 3.0.x (3.0.0 through 3.0.4)
