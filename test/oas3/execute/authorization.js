@@ -792,6 +792,56 @@ describe('Authorization - OpenAPI Specification 3.0', () => {
         },
       });
     });
+    test('should not add global authorization when operation security is empty', () => {
+      const spec = {
+        openapi: '3.0.0',
+        security: [{ myOAuth2Implicit: [] }],
+        components: {
+          securitySchemes: {
+            myOAuth2Implicit: {
+              type: 'oauth2',
+              flows: {
+                implicit: {
+                  authorizationUrl: 'http://google.com/',
+                  scopes: {
+                    myScope: 'blah blah blah',
+                  },
+                },
+              },
+            },
+          },
+        },
+        paths: {
+          '/': {
+            get: {
+              operationId: 'myOperation',
+              security: [],
+            },
+          },
+        },
+      };
+
+      const req = buildRequest({
+        spec,
+        operationId: 'myOperation',
+        securities: {
+          authorized: {
+            myOAuth2Implicit: {
+              token: {
+                access_token: 'myTokenValue',
+              },
+            },
+          },
+        },
+      });
+
+      expect(req).toEqual({
+        method: 'GET',
+        url: '/',
+        credentials: 'same-origin',
+        headers: {},
+      });
+    });
     test('should build a request without authorization when spec does not require it', () => {
       const spec = {
         openapi: '3.0.0',
