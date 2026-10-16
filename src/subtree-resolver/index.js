@@ -24,7 +24,7 @@ import resolve from '../resolver/index.js';
 import genericResolverStrategy from '../resolver/strategies/generic/index.js';
 import openApi2ResolverStrategy from '../resolver/strategies/openapi-2/index.js';
 import openApi30ResolverStrategy from '../resolver/strategies/openapi-3-0/index.js';
-import { isOpenAPI31 } from '../helpers/openapi-predicates.js';
+import { isOpenAPI31, isOpenAPI32 } from '../helpers/openapi-predicates.js';
 
 const resolveSubtree = async (obj, path, options = {}) => {
   const {
@@ -55,7 +55,7 @@ const resolveSubtree = async (obj, path, options = {}) => {
     spec: normalized,
     ...resolveOptions,
     allowMetaPatches: true,
-    skipNormalization: !isOpenAPI31(obj),
+    skipNormalization: !isOpenAPI31(obj) && !isOpenAPI32(obj),
   });
 
   if (!returnEntireTree && Array.isArray(path) && path.length) {
