@@ -3,8 +3,8 @@
 ### Prerequisites
 
 - git, any version
-- Node.js >=24.21.0
-- NPM >=11.18.0
+- Node.js >=24.22.0
+- NPM >=11.19.1
 
 ### Setting up
 
